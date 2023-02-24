@@ -28,7 +28,7 @@ AnnotationManager::get_annotation(
     for(; it != annotation_.end(); ++it)
     {
         const AnnotationDescriptor& d = *it;
-        if ( d.type() && d.type()->get_kind() > 0
+        if ( d.type() && d.type()->get_kind() != TypeKind::TK_NONE
              && !d.type()->get_name().empty()
              && d.type()->get_name().compare(name) == 0)
         {
@@ -457,7 +457,7 @@ bool AnnotationManager::key_annotation() const
 }
 
 ReturnCode_t TypeDescriptor::get_descriptor(
-        TypeDescriptor& descriptor) const
+        TypeDescriptor& descriptor) const noexcept
 {
     descriptor = *this;
     return ReturnCode_t::RETCODE_OK;

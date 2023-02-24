@@ -6198,7 +6198,7 @@ void CommonBitfield::serialize(
     scdr << m_position;
     scdr << m_flags;
     scdr << m_bitcount;
-    scdr << m_holder_type;
+    scdr << static_cast<octet>(m_holder_type);
 }
 
 void CommonBitfield::deserialize(
@@ -6207,7 +6207,7 @@ void CommonBitfield::deserialize(
     dcdr >> m_position;
     dcdr >> m_flags;
     dcdr >> m_bitcount;
-    dcdr >> m_holder_type;
+    dcdr >> reinterpret_cast<octet&>(m_holder_type);
 }
 
 bool CommonBitfield::operator ==(
@@ -7258,7 +7258,7 @@ void TypeIdentifierWithDependencies::deserialize(
 
 CompleteTypeObject::CompleteTypeObject()
 {
-    m__d = 0x00;
+    m__d = TypeKind::TK_NONE;
 }
 
 CompleteTypeObject::~CompleteTypeObject()
@@ -7272,34 +7272,34 @@ CompleteTypeObject::CompleteTypeObject(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case TypeKind::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case TypeKind::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -7315,34 +7315,34 @@ CompleteTypeObject::CompleteTypeObject(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case TypeKind::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case TypeKind::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -7358,34 +7358,34 @@ CompleteTypeObject& CompleteTypeObject::operator =(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case TypeKind::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case TypeKind::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -7402,34 +7402,34 @@ CompleteTypeObject& CompleteTypeObject::operator =(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case TypeKind::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case TypeKind::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -7440,7 +7440,7 @@ CompleteTypeObject& CompleteTypeObject::operator =(
 }
 
 void CompleteTypeObject::_d(
-        octet __d)                     // Special case to ease... sets the current active member
+        TypeKind __d)                     // Special case to ease... sets the current active member
 {
     m__d = __d;
     if (m__d != __d)
@@ -7449,12 +7449,12 @@ void CompleteTypeObject::_d(
     }
 }
 
-octet CompleteTypeObject::_d() const
+TypeKind CompleteTypeObject::_d() const
 {
     return m__d;
 }
 
-octet& CompleteTypeObject::_d()
+TypeKind& CompleteTypeObject::_d()
 {
     return m__d;
 }
@@ -7463,7 +7463,7 @@ void CompleteTypeObject::alias_type(
         CompleteAliasType _alias_type)
 {
     m_alias_type = _alias_type;
-    m__d = TK_ALIAS;
+    m__d = TypeKind::TK_ALIAS;
 }
 
 const CompleteAliasType& CompleteTypeObject::alias_type() const
@@ -7472,7 +7472,7 @@ const CompleteAliasType& CompleteTypeObject::alias_type() const
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
             b = true;
             break;
         default:
@@ -7492,7 +7492,7 @@ CompleteAliasType& CompleteTypeObject::alias_type()
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
             b = true;
             break;
         default:
@@ -7511,7 +7511,7 @@ void CompleteTypeObject::annotation_type(
         CompleteAnnotationType _annotation_type)
 {
     m_annotation_type = _annotation_type;
-    m__d = TK_ANNOTATION;
+    m__d = TypeKind::TK_ANNOTATION;
 }
 
 const CompleteAnnotationType& CompleteTypeObject::annotation_type() const
@@ -7520,7 +7520,7 @@ const CompleteAnnotationType& CompleteTypeObject::annotation_type() const
 
     switch (m__d)
     {
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
             b = true;
             break;
         default:
@@ -7541,7 +7541,7 @@ CompleteAnnotationType& CompleteTypeObject::annotation_type()
 
     switch (m__d)
     {
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
             b = true;
             break;
         default:
@@ -7560,7 +7560,7 @@ void CompleteTypeObject::struct_type(
         CompleteStructType _struct_type)
 {
     m_struct_type = _struct_type;
-    m__d = TK_STRUCTURE;
+    m__d = TypeKind::TK_STRUCTURE;
 }
 
 const CompleteStructType& CompleteTypeObject::struct_type() const
@@ -7569,7 +7569,7 @@ const CompleteStructType& CompleteTypeObject::struct_type() const
 
     switch (m__d)
     {
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
             b = true;
             break;
         default:
@@ -7590,7 +7590,7 @@ CompleteStructType& CompleteTypeObject::struct_type()
 
     switch (m__d)
     {
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
             b = true;
             break;
         default:
@@ -7609,7 +7609,7 @@ void CompleteTypeObject::union_type(
         CompleteUnionType _union_type)
 {
     m_union_type = _union_type;
-    m__d = TK_UNION;
+    m__d = TypeKind::TK_UNION;
 }
 
 const CompleteUnionType& CompleteTypeObject::union_type() const
@@ -7618,7 +7618,7 @@ const CompleteUnionType& CompleteTypeObject::union_type() const
 
     switch (m__d)
     {
-        case TK_UNION:
+        case TypeKind::TK_UNION:
             b = true;
             break;
         default:
@@ -7639,7 +7639,7 @@ CompleteUnionType& CompleteTypeObject::union_type()
 
     switch (m__d)
     {
-        case TK_UNION:
+        case TypeKind::TK_UNION:
             b = true;
             break;
         default:
@@ -7658,7 +7658,7 @@ void CompleteTypeObject::bitset_type(
         CompleteBitsetType _bitset_type)
 {
     m_bitset_type = _bitset_type;
-    m__d = TK_BITSET;
+    m__d = TypeKind::TK_BITSET;
 }
 
 const CompleteBitsetType& CompleteTypeObject::bitset_type() const
@@ -7667,7 +7667,7 @@ const CompleteBitsetType& CompleteTypeObject::bitset_type() const
 
     switch (m__d)
     {
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
             b = true;
             break;
         default:
@@ -7688,7 +7688,7 @@ CompleteBitsetType& CompleteTypeObject::bitset_type()
 
     switch (m__d)
     {
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
             b = true;
             break;
         default:
@@ -7707,7 +7707,7 @@ void CompleteTypeObject::sequence_type(
         CompleteSequenceType _sequence_type)
 {
     m_sequence_type = _sequence_type;
-    m__d = TK_SEQUENCE;
+    m__d = TypeKind::TK_SEQUENCE;
 }
 
 const CompleteSequenceType& CompleteTypeObject::sequence_type() const
@@ -7716,7 +7716,7 @@ const CompleteSequenceType& CompleteTypeObject::sequence_type() const
 
     switch (m__d)
     {
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
             b = true;
             break;
         default:
@@ -7737,7 +7737,7 @@ CompleteSequenceType& CompleteTypeObject::sequence_type()
 
     switch (m__d)
     {
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
             b = true;
             break;
         default:
@@ -7756,7 +7756,7 @@ void CompleteTypeObject::array_type(
         CompleteArrayType _array_type)
 {
     m_array_type = _array_type;
-    m__d = TK_ARRAY;
+    m__d = TypeKind::TK_ARRAY;
 }
 
 const CompleteArrayType& CompleteTypeObject::array_type() const
@@ -7765,7 +7765,7 @@ const CompleteArrayType& CompleteTypeObject::array_type() const
 
     switch (m__d)
     {
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
             b = true;
             break;
         default:
@@ -7786,7 +7786,7 @@ CompleteArrayType& CompleteTypeObject::array_type()
 
     switch (m__d)
     {
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
             b = true;
             break;
         default:
@@ -7805,7 +7805,7 @@ void CompleteTypeObject::map_type(
         CompleteMapType _map_type)
 {
     m_map_type = _map_type;
-    m__d = TK_MAP;
+    m__d = TypeKind::TK_MAP;
 }
 
 const CompleteMapType& CompleteTypeObject::map_type() const
@@ -7814,7 +7814,7 @@ const CompleteMapType& CompleteTypeObject::map_type() const
 
     switch (m__d)
     {
-        case TK_MAP:
+        case TypeKind::TK_MAP:
             b = true;
             break;
         default:
@@ -7835,7 +7835,7 @@ CompleteMapType& CompleteTypeObject::map_type()
 
     switch (m__d)
     {
-        case TK_MAP:
+        case TypeKind::TK_MAP:
             b = true;
             break;
         default:
@@ -7854,7 +7854,7 @@ void CompleteTypeObject::enumerated_type(
         CompleteEnumeratedType _enumerated_type)
 {
     m_enumerated_type = _enumerated_type;
-    m__d = TK_ENUM;
+    m__d = TypeKind::TK_ENUM;
 }
 
 const CompleteEnumeratedType& CompleteTypeObject::enumerated_type() const
@@ -7863,7 +7863,7 @@ const CompleteEnumeratedType& CompleteTypeObject::enumerated_type() const
 
     switch (m__d)
     {
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
             b = true;
             break;
         default:
@@ -7884,7 +7884,7 @@ CompleteEnumeratedType& CompleteTypeObject::enumerated_type()
 
     switch (m__d)
     {
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
             b = true;
             break;
         default:
@@ -7903,7 +7903,7 @@ void CompleteTypeObject::bitmask_type(
         CompleteBitmaskType _bitmask_type)
 {
     m_bitmask_type = _bitmask_type;
-    m__d = TK_BITMASK;
+    m__d = TypeKind::TK_BITMASK;
 }
 
 const CompleteBitmaskType& CompleteTypeObject::bitmask_type() const
@@ -7912,7 +7912,7 @@ const CompleteBitmaskType& CompleteTypeObject::bitmask_type() const
 
     switch (m__d)
     {
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
             b = true;
             break;
         default:
@@ -7933,7 +7933,7 @@ CompleteBitmaskType& CompleteTypeObject::bitmask_type()
 
     switch (m__d)
     {
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
             b = true;
             break;
         default:
@@ -7952,7 +7952,7 @@ void CompleteTypeObject::extended_type(
         CompleteExtendedType _extended_type)
 {
     m_extended_type = _extended_type;
-    m__d = 0x00; // Default
+    m__d = TypeKind::TK_NONE; // Default
 }
 
 const CompleteExtendedType& CompleteTypeObject::extended_type() const
@@ -7961,16 +7961,16 @@ const CompleteExtendedType& CompleteTypeObject::extended_type() const
 
     switch (m__d)
     {
-        case TK_ALIAS:
-        case TK_ANNOTATION:
-        case TK_STRUCTURE:
-        case TK_UNION:
-        case TK_BITSET:
-        case TK_SEQUENCE:
-        case TK_ARRAY:
-        case TK_MAP:
-        case TK_ENUM:
-        case TK_BITMASK:
+        case TypeKind::TK_ALIAS:
+        case TypeKind::TK_ANNOTATION:
+        case TypeKind::TK_STRUCTURE:
+        case TypeKind::TK_UNION:
+        case TypeKind::TK_BITSET:
+        case TypeKind::TK_SEQUENCE:
+        case TypeKind::TK_ARRAY:
+        case TypeKind::TK_MAP:
+        case TypeKind::TK_ENUM:
+        case TypeKind::TK_BITMASK:
             break;
         default:
             b = true;
@@ -7991,16 +7991,16 @@ CompleteExtendedType& CompleteTypeObject::extended_type()
 
     switch (m__d)
     {
-        case TK_ALIAS:
-        case TK_ANNOTATION:
-        case TK_STRUCTURE:
-        case TK_UNION:
-        case TK_BITSET:
-        case TK_SEQUENCE:
-        case TK_ARRAY:
-        case TK_MAP:
-        case TK_ENUM:
-        case TK_BITMASK:
+        case TypeKind::TK_ALIAS:
+        case TypeKind::TK_ANNOTATION:
+        case TypeKind::TK_STRUCTURE:
+        case TypeKind::TK_UNION:
+        case TypeKind::TK_BITSET:
+        case TypeKind::TK_SEQUENCE:
+        case TypeKind::TK_ARRAY:
+        case TypeKind::TK_MAP:
+        case TypeKind::TK_ENUM:
+        case TypeKind::TK_BITMASK:
             break;
         default:
             b = true;
@@ -8024,36 +8024,36 @@ size_t CompleteTypeObject::getCdrSerializedSize(
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
     switch (data.m__d)
     {
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
             current_alignment += CompleteAliasType::getCdrSerializedSize(data.alias_type(), current_alignment);
             break;
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
             current_alignment +=
                     CompleteAnnotationType::getCdrSerializedSize(data.annotation_type(), current_alignment);
             break;
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
             current_alignment += CompleteStructType::getCdrSerializedSize(data.struct_type(), current_alignment);
             break;
-        case TK_UNION:
+        case TypeKind::TK_UNION:
             current_alignment += CompleteUnionType::getCdrSerializedSize(data.union_type(), current_alignment);
             break;
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
             current_alignment += CompleteBitsetType::getCdrSerializedSize(data.bitset_type(), current_alignment);
             break;
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
             current_alignment += CompleteSequenceType::getCdrSerializedSize(data.sequence_type(), current_alignment);
             break;
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
             current_alignment += CompleteArrayType::getCdrSerializedSize(data.array_type(), current_alignment);
             break;
-        case TK_MAP:
+        case TypeKind::TK_MAP:
             current_alignment += CompleteMapType::getCdrSerializedSize(data.map_type(), current_alignment);
             break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
             current_alignment +=
                     CompleteEnumeratedType::getCdrSerializedSize(data.enumerated_type(), current_alignment);
             break;
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
             current_alignment += CompleteBitmaskType::getCdrSerializedSize(data.bitmask_type(), current_alignment);
             break;
         default:
@@ -8067,38 +8067,38 @@ size_t CompleteTypeObject::getCdrSerializedSize(
 void CompleteTypeObject::serialize(
         eprosima::fastcdr::Cdr& cdr) const
 {
-    cdr << m__d;
+    cdr << static_cast<octet>(m__d);
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
             cdr << m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
             cdr << m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
             cdr << m_struct_type;
             break;
-        case TK_UNION:
+        case TypeKind::TK_UNION:
             cdr << m_union_type;
             break;
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
             cdr << m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
             cdr << m_sequence_type;
             break;
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
             cdr << m_array_type;
             break;
-        case TK_MAP:
+        case TypeKind::TK_MAP:
             cdr << m_map_type;
             break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
             cdr << m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
             cdr << m_bitmask_type;
             break;
         default:
@@ -8110,38 +8110,38 @@ void CompleteTypeObject::serialize(
 void CompleteTypeObject::deserialize(
         eprosima::fastcdr::Cdr& cdr)
 {
-    cdr >> m__d;
+    cdr >> reinterpret_cast<octet&>(m__d);
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
             cdr >> m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
             cdr >> m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
             cdr >> m_struct_type;
             break;
-        case TK_UNION:
+        case TypeKind::TK_UNION:
             cdr >> m_union_type;
             break;
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
             cdr >> m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
             cdr >> m_sequence_type;
             break;
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
             cdr >> m_array_type;
             break;
-        case TK_MAP:
+        case TypeKind::TK_MAP:
             cdr >> m_map_type;
             break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
             cdr >> m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
             cdr >> m_bitmask_type;
             break;
         default:
@@ -8157,25 +8157,25 @@ bool CompleteTypeObject::operator ==(
     {
         switch (m__d)
         {
-            case TK_ALIAS:
+            case TypeKind::TK_ALIAS:
                 return m_alias_type == other.m_alias_type;
-            case TK_ANNOTATION:
+            case TypeKind::TK_ANNOTATION:
                 return m_annotation_type == other.m_annotation_type;
-            case TK_STRUCTURE:
+            case TypeKind::TK_STRUCTURE:
                 return m_struct_type == other.m_struct_type;
-            case TK_UNION:
+            case TypeKind::TK_UNION:
                 return m_union_type == other.m_union_type;
-            case TK_BITSET:
+            case TypeKind::TK_BITSET:
                 return m_bitset_type == other.m_bitset_type;
-            case TK_SEQUENCE:
+            case TypeKind::TK_SEQUENCE:
                 return m_sequence_type == other.m_sequence_type;
-            case TK_ARRAY:
+            case TypeKind::TK_ARRAY:
                 return m_array_type == other.m_array_type;
-            case TK_MAP:
+            case TypeKind::TK_MAP:
                 return m_map_type == other.m_map_type;
-            case TK_ENUM:
+            case TypeKind::TK_ENUM:
                 return m_enumerated_type == other.m_enumerated_type;
-            case TK_BITMASK:
+            case TypeKind::TK_BITMASK:
                 return m_bitmask_type == other.m_bitmask_type;
             default:
                 return m_extended_type == other.m_extended_type;
@@ -8189,7 +8189,7 @@ bool CompleteTypeObject::consistent(
         const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
     // Resolve aliases
-    if (m__d == TK_ALIAS)
+    if (m__d == TypeKind::TK_ALIAS)
     {
         const TypeIdentifier& aliasedId = m_alias_type.body().common().related_type();
         const TypeObject* aliasedObj = TypeObjectFactory::get_instance()->get_type_object(&aliasedId);
@@ -8201,7 +8201,7 @@ bool CompleteTypeObject::consistent(
         return aliasedObj->complete().consistent(x, consistency);
     }
 
-    if (x.m__d == TK_ALIAS)
+    if (x.m__d == TypeKind::TK_ALIAS)
     {
         const TypeIdentifier& aliasedId = x.m_alias_type.body().common().related_type();
         const TypeObject* aliasedObj = TypeObjectFactory::get_instance()->get_type_object(&aliasedId);
@@ -8220,25 +8220,25 @@ bool CompleteTypeObject::consistent(
 
     switch (m__d)
     {
-        //case TK_ALIAS:
+        //case TypeKind::TK_ALIAS:
         //    return m_alias_type.consistent(x.m_alias_type, consistency);
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
             return m_annotation_type.consistent(x.m_annotation_type, consistency);
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
             return m_struct_type.consistent(x.m_struct_type, consistency);
-        case TK_UNION:
+        case TypeKind::TK_UNION:
             return m_union_type.consistent(x.m_union_type, consistency);
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
             return m_bitset_type.consistent(x.m_bitset_type, consistency);
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
             return m_sequence_type.consistent(x.m_sequence_type, consistency);
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
             return m_array_type.consistent(x.m_array_type, consistency);
-        case TK_MAP:
+        case TypeKind::TK_MAP:
             return m_map_type.consistent(x.m_map_type, consistency);
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
             return m_enumerated_type.consistent(x.m_enumerated_type, consistency);
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
             return m_bitmask_type.consistent(x.m_bitmask_type, consistency);
         default:
             return m_extended_type.consistent(x.m_extended_type, consistency);
@@ -8250,7 +8250,7 @@ bool CompleteTypeObject::consistent(
 
 MinimalTypeObject::MinimalTypeObject()
 {
-    m__d = 0x00;
+    m__d = TypeKind::TK_NONE;
 }
 
 MinimalTypeObject::~MinimalTypeObject()
@@ -8264,34 +8264,34 @@ MinimalTypeObject::MinimalTypeObject(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case TypeKind::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case TypeKind::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -8307,34 +8307,34 @@ MinimalTypeObject::MinimalTypeObject(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case TypeKind::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case TypeKind::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -8350,34 +8350,34 @@ MinimalTypeObject& MinimalTypeObject::operator =(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case TypeKind::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case TypeKind::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -8394,34 +8394,34 @@ MinimalTypeObject& MinimalTypeObject::operator =(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case TypeKind::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case TypeKind::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -8432,7 +8432,7 @@ MinimalTypeObject& MinimalTypeObject::operator =(
 }
 
 void MinimalTypeObject::_d(
-        octet __d)                    // Special case to ease... sets the current active member
+        TypeKind __d)                    // Special case to ease... sets the current active member
 {
     m__d = __d;
     if (m__d != __d)
@@ -8441,12 +8441,12 @@ void MinimalTypeObject::_d(
     }
 }
 
-octet MinimalTypeObject::_d() const
+TypeKind MinimalTypeObject::_d() const
 {
     return m__d;
 }
 
-octet& MinimalTypeObject::_d()
+TypeKind& MinimalTypeObject::_d()
 {
     return m__d;
 }
@@ -8455,7 +8455,7 @@ void MinimalTypeObject::alias_type(
         MinimalAliasType _alias_type)
 {
     m_alias_type = _alias_type;
-    m__d = TK_ALIAS;
+    m__d = TypeKind::TK_ALIAS;
 }
 
 const MinimalAliasType& MinimalTypeObject::alias_type() const
@@ -8464,7 +8464,7 @@ const MinimalAliasType& MinimalTypeObject::alias_type() const
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
             b = true;
             break;
         default:
@@ -8485,7 +8485,7 @@ MinimalAliasType& MinimalTypeObject::alias_type()
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
             b = true;
             break;
         default:
@@ -8504,7 +8504,7 @@ void MinimalTypeObject::annotation_type(
         MinimalAnnotationType _annotation_type)
 {
     m_annotation_type = _annotation_type;
-    m__d = TK_ANNOTATION;
+    m__d = TypeKind::TK_ANNOTATION;
 }
 
 const MinimalAnnotationType& MinimalTypeObject::annotation_type() const
@@ -8513,7 +8513,7 @@ const MinimalAnnotationType& MinimalTypeObject::annotation_type() const
 
     switch (m__d)
     {
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
             b = true;
             break;
         default:
@@ -8534,7 +8534,7 @@ MinimalAnnotationType& MinimalTypeObject::annotation_type()
 
     switch (m__d)
     {
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
             b = true;
             break;
         default:
@@ -8553,7 +8553,7 @@ void MinimalTypeObject::struct_type(
         MinimalStructType _struct_type)
 {
     m_struct_type = _struct_type;
-    m__d = TK_STRUCTURE;
+    m__d = TypeKind::TK_STRUCTURE;
 }
 
 const MinimalStructType& MinimalTypeObject::struct_type() const
@@ -8562,7 +8562,7 @@ const MinimalStructType& MinimalTypeObject::struct_type() const
 
     switch (m__d)
     {
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
             b = true;
             break;
         default:
@@ -8583,7 +8583,7 @@ MinimalStructType& MinimalTypeObject::struct_type()
 
     switch (m__d)
     {
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
             b = true;
             break;
         default:
@@ -8602,7 +8602,7 @@ void MinimalTypeObject::union_type(
         MinimalUnionType _union_type)
 {
     m_union_type = _union_type;
-    m__d = TK_UNION;
+    m__d = TypeKind::TK_UNION;
 }
 
 const MinimalUnionType& MinimalTypeObject::union_type() const
@@ -8611,7 +8611,7 @@ const MinimalUnionType& MinimalTypeObject::union_type() const
 
     switch (m__d)
     {
-        case TK_UNION:
+        case TypeKind::TK_UNION:
             b = true;
             break;
         default:
@@ -8632,7 +8632,7 @@ MinimalUnionType& MinimalTypeObject::union_type()
 
     switch (m__d)
     {
-        case TK_UNION:
+        case TypeKind::TK_UNION:
             b = true;
             break;
         default:
@@ -8651,7 +8651,7 @@ void MinimalTypeObject::bitset_type(
         MinimalBitsetType _bitset_type)
 {
     m_bitset_type = _bitset_type;
-    m__d = TK_BITSET;
+    m__d = TypeKind::TK_BITSET;
 }
 
 const MinimalBitsetType& MinimalTypeObject::bitset_type() const
@@ -8660,7 +8660,7 @@ const MinimalBitsetType& MinimalTypeObject::bitset_type() const
 
     switch (m__d)
     {
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
             b = true;
             break;
         default:
@@ -8681,7 +8681,7 @@ MinimalBitsetType& MinimalTypeObject::bitset_type()
 
     switch (m__d)
     {
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
             b = true;
             break;
         default:
@@ -8700,7 +8700,7 @@ void MinimalTypeObject::sequence_type(
         MinimalSequenceType _sequence_type)
 {
     m_sequence_type = _sequence_type;
-    m__d = TK_SEQUENCE;
+    m__d = TypeKind::TK_SEQUENCE;
 }
 
 const MinimalSequenceType& MinimalTypeObject::sequence_type() const
@@ -8709,7 +8709,7 @@ const MinimalSequenceType& MinimalTypeObject::sequence_type() const
 
     switch (m__d)
     {
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
             b = true;
             break;
         default:
@@ -8730,7 +8730,7 @@ MinimalSequenceType& MinimalTypeObject::sequence_type()
 
     switch (m__d)
     {
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
             b = true;
             break;
         default:
@@ -8749,7 +8749,7 @@ void MinimalTypeObject::array_type(
         MinimalArrayType _array_type)
 {
     m_array_type = _array_type;
-    m__d = TK_ARRAY;
+    m__d = TypeKind::TK_ARRAY;
 }
 
 const MinimalArrayType& MinimalTypeObject::array_type() const
@@ -8758,7 +8758,7 @@ const MinimalArrayType& MinimalTypeObject::array_type() const
 
     switch (m__d)
     {
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
             b = true;
             break;
         default:
@@ -8779,7 +8779,7 @@ MinimalArrayType& MinimalTypeObject::array_type()
 
     switch (m__d)
     {
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
             b = true;
             break;
         default:
@@ -8798,7 +8798,7 @@ void MinimalTypeObject::map_type(
         MinimalMapType _map_type)
 {
     m_map_type = _map_type;
-    m__d = TK_MAP;
+    m__d = TypeKind::TK_MAP;
 }
 
 const MinimalMapType& MinimalTypeObject::map_type() const
@@ -8807,7 +8807,7 @@ const MinimalMapType& MinimalTypeObject::map_type() const
 
     switch (m__d)
     {
-        case TK_MAP:
+        case TypeKind::TK_MAP:
             b = true;
             break;
         default:
@@ -8828,7 +8828,7 @@ MinimalMapType& MinimalTypeObject::map_type()
 
     switch (m__d)
     {
-        case TK_MAP:
+        case TypeKind::TK_MAP:
             b = true;
             break;
         default:
@@ -8847,7 +8847,7 @@ void MinimalTypeObject::enumerated_type(
         MinimalEnumeratedType _enumerated_type)
 {
     m_enumerated_type = _enumerated_type;
-    m__d = TK_ENUM;
+    m__d = TypeKind::TK_ENUM;
 }
 
 const MinimalEnumeratedType& MinimalTypeObject::enumerated_type() const
@@ -8856,7 +8856,7 @@ const MinimalEnumeratedType& MinimalTypeObject::enumerated_type() const
 
     switch (m__d)
     {
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
             b = true;
             break;
         default:
@@ -8877,7 +8877,7 @@ MinimalEnumeratedType& MinimalTypeObject::enumerated_type()
 
     switch (m__d)
     {
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
             b = true;
             break;
         default:
@@ -8896,7 +8896,7 @@ void MinimalTypeObject::bitmask_type(
         MinimalBitmaskType _bitmask_type)
 {
     m_bitmask_type = _bitmask_type;
-    m__d = TK_BITMASK;
+    m__d = TypeKind::TK_BITMASK;
 }
 
 const MinimalBitmaskType& MinimalTypeObject::bitmask_type() const
@@ -8905,7 +8905,7 @@ const MinimalBitmaskType& MinimalTypeObject::bitmask_type() const
 
     switch (m__d)
     {
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
             b = true;
             break;
         default:
@@ -8926,7 +8926,7 @@ MinimalBitmaskType& MinimalTypeObject::bitmask_type()
 
     switch (m__d)
     {
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
             b = true;
             break;
         default:
@@ -8945,7 +8945,7 @@ void MinimalTypeObject::extended_type(
         MinimalExtendedType _extended_type)
 {
     m_extended_type = _extended_type;
-    m__d = 0x00; // Default
+    m__d = TypeKind::TK_NONE; // Default
 }
 
 const MinimalExtendedType& MinimalTypeObject::extended_type() const
@@ -8954,16 +8954,16 @@ const MinimalExtendedType& MinimalTypeObject::extended_type() const
 
     switch (m__d)
     {
-        case TK_ALIAS:
-        case TK_ANNOTATION:
-        case TK_STRUCTURE:
-        case TK_UNION:
-        case TK_BITSET:
-        case TK_SEQUENCE:
-        case TK_ARRAY:
-        case TK_MAP:
-        case TK_ENUM:
-        case TK_BITMASK:
+        case TypeKind::TK_ALIAS:
+        case TypeKind::TK_ANNOTATION:
+        case TypeKind::TK_STRUCTURE:
+        case TypeKind::TK_UNION:
+        case TypeKind::TK_BITSET:
+        case TypeKind::TK_SEQUENCE:
+        case TypeKind::TK_ARRAY:
+        case TypeKind::TK_MAP:
+        case TypeKind::TK_ENUM:
+        case TypeKind::TK_BITMASK:
             break;
         default:
             b = true;
@@ -8984,16 +8984,16 @@ MinimalExtendedType& MinimalTypeObject::extended_type()
 
     switch (m__d)
     {
-        case TK_ALIAS:
-        case TK_ANNOTATION:
-        case TK_STRUCTURE:
-        case TK_UNION:
-        case TK_BITSET:
-        case TK_SEQUENCE:
-        case TK_ARRAY:
-        case TK_MAP:
-        case TK_ENUM:
-        case TK_BITMASK:
+        case TypeKind::TK_ALIAS:
+        case TypeKind::TK_ANNOTATION:
+        case TypeKind::TK_STRUCTURE:
+        case TypeKind::TK_UNION:
+        case TypeKind::TK_BITSET:
+        case TypeKind::TK_SEQUENCE:
+        case TypeKind::TK_ARRAY:
+        case TypeKind::TK_MAP:
+        case TypeKind::TK_ENUM:
+        case TypeKind::TK_BITMASK:
             break;
         default:
             b = true;
@@ -9017,34 +9017,34 @@ size_t MinimalTypeObject::getCdrSerializedSize(
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
     switch (data.m__d)
     {
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
             current_alignment += MinimalAliasType::getCdrSerializedSize(data.alias_type(), current_alignment);
             break;
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
             current_alignment += MinimalAnnotationType::getCdrSerializedSize(data.annotation_type(), current_alignment);
             break;
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
             current_alignment += MinimalStructType::getCdrSerializedSize(data.struct_type(), current_alignment);
             break;
-        case TK_UNION:
+        case TypeKind::TK_UNION:
             current_alignment += MinimalUnionType::getCdrSerializedSize(data.union_type(), current_alignment);
             break;
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
             current_alignment += MinimalBitsetType::getCdrSerializedSize(data.bitset_type(), current_alignment);
             break;
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
             current_alignment += MinimalSequenceType::getCdrSerializedSize(data.sequence_type(), current_alignment);
             break;
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
             current_alignment += MinimalArrayType::getCdrSerializedSize(data.array_type(), current_alignment);
             break;
-        case TK_MAP:
+        case TypeKind::TK_MAP:
             current_alignment += MinimalMapType::getCdrSerializedSize(data.map_type(), current_alignment);
             break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
             current_alignment += MinimalEnumeratedType::getCdrSerializedSize(data.enumerated_type(), current_alignment);
             break;
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
             current_alignment += MinimalBitmaskType::getCdrSerializedSize(data.bitmask_type(), current_alignment);
             break;
         default:
@@ -9058,38 +9058,38 @@ size_t MinimalTypeObject::getCdrSerializedSize(
 void MinimalTypeObject::serialize(
         eprosima::fastcdr::Cdr& cdr) const
 {
-    cdr << m__d;
+    cdr << static_cast<octet>(m__d);
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
             cdr << m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
             cdr << m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
             cdr << m_struct_type;
             break;
-        case TK_UNION:
+        case TypeKind::TK_UNION:
             cdr << m_union_type;
             break;
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
             cdr << m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
             cdr << m_sequence_type;
             break;
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
             cdr << m_array_type;
             break;
-        case TK_MAP:
+        case TypeKind::TK_MAP:
             cdr << m_map_type;
             break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
             cdr << m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
             cdr << m_bitmask_type;
             break;
         default:
@@ -9101,38 +9101,38 @@ void MinimalTypeObject::serialize(
 void MinimalTypeObject::deserialize(
         eprosima::fastcdr::Cdr& cdr)
 {
-    cdr >> m__d;
+    cdr >> reinterpret_cast<octet&>(m__d);
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
             cdr >> m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
             cdr >> m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
             cdr >> m_struct_type;
             break;
-        case TK_UNION:
+        case TypeKind::TK_UNION:
             cdr >> m_union_type;
             break;
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
             cdr >> m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
             cdr >> m_sequence_type;
             break;
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
             cdr >> m_array_type;
             break;
-        case TK_MAP:
+        case TypeKind::TK_MAP:
             cdr >> m_map_type;
             break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
             cdr >> m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
             cdr >> m_bitmask_type;
             break;
         default:
@@ -9148,25 +9148,25 @@ bool MinimalTypeObject::operator ==(
     {
         switch (m__d)
         {
-            case TK_ALIAS:
+            case TypeKind::TK_ALIAS:
                 return m_alias_type == other.m_alias_type;
-            case TK_ANNOTATION:
+            case TypeKind::TK_ANNOTATION:
                 return m_annotation_type == other.m_annotation_type;
-            case TK_STRUCTURE:
+            case TypeKind::TK_STRUCTURE:
                 return m_struct_type == other.m_struct_type;
-            case TK_UNION:
+            case TypeKind::TK_UNION:
                 return m_union_type == other.m_union_type;
-            case TK_BITSET:
+            case TypeKind::TK_BITSET:
                 return m_bitset_type == other.m_bitset_type;
-            case TK_SEQUENCE:
+            case TypeKind::TK_SEQUENCE:
                 return m_sequence_type == other.m_sequence_type;
-            case TK_ARRAY:
+            case TypeKind::TK_ARRAY:
                 return m_array_type == other.m_array_type;
-            case TK_MAP:
+            case TypeKind::TK_MAP:
                 return m_map_type == other.m_map_type;
-            case TK_ENUM:
+            case TypeKind::TK_ENUM:
                 return m_enumerated_type == other.m_enumerated_type;
-            case TK_BITMASK:
+            case TypeKind::TK_BITMASK:
                 return m_bitmask_type == other.m_bitmask_type;
             default:
                 return m_extended_type == other.m_extended_type;
@@ -9180,7 +9180,7 @@ bool MinimalTypeObject::consistent(
         const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
     // Resolve aliases
-    if (m__d == TK_ALIAS)
+    if (m__d == TypeKind::TK_ALIAS)
     {
         const TypeIdentifier& aliasedId = m_alias_type.body().common().related_type();
         const TypeObject* aliasedObj = TypeObjectFactory::get_instance()->get_type_object(&aliasedId);
@@ -9192,7 +9192,7 @@ bool MinimalTypeObject::consistent(
         return aliasedObj->minimal().consistent(x, consistency);
     }
 
-    if (x.m__d == TK_ALIAS)
+    if (x.m__d == TypeKind::TK_ALIAS)
     {
         const TypeIdentifier& aliasedId = x.m_alias_type.body().common().related_type();
         const TypeObject* aliasedObj = TypeObjectFactory::get_instance()->get_type_object(&aliasedId);
@@ -9211,25 +9211,25 @@ bool MinimalTypeObject::consistent(
 
     switch (m__d)
     {
-        //case TK_ALIAS:
+        //case TypeKind::TK_ALIAS:
         //    return m_alias_type.consistent(x.m_alias_type, consistency);
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
             return m_annotation_type.consistent(x.m_annotation_type, consistency);
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
             return m_struct_type.consistent(x.m_struct_type, consistency);
-        case TK_UNION:
+        case TypeKind::TK_UNION:
             return m_union_type.consistent(x.m_union_type, consistency);
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
             return m_bitset_type.consistent(x.m_bitset_type, consistency);
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
             return m_sequence_type.consistent(x.m_sequence_type, consistency);
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
             return m_array_type.consistent(x.m_array_type, consistency);
-        case TK_MAP:
+        case TypeKind::TK_MAP:
             return m_map_type.consistent(x.m_map_type, consistency);
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
             return m_enumerated_type.consistent(x.m_enumerated_type, consistency);
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
             return m_bitmask_type.consistent(x.m_bitmask_type, consistency);
         default:
             return m_extended_type.consistent(x.m_extended_type, consistency);
@@ -9239,7 +9239,7 @@ bool MinimalTypeObject::consistent(
 
 TypeObject::TypeObject()
 {
-    m__d = 0x00; // Default
+    m__d = TypeKind::TK_NONE; // Default
 }
 
 TypeObject::~TypeObject()
@@ -9253,10 +9253,10 @@ TypeObject::TypeObject(
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case TypeKind::EK_COMPLETE:
             m_complete = x.m_complete;
             break;
-        case EK_MINIMAL:
+        case TypeKind::EK_MINIMAL:
             m_minimal = x.m_minimal;
             break;
         default:
@@ -9271,10 +9271,10 @@ TypeObject::TypeObject(
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case TypeKind::EK_COMPLETE:
             m_complete = std::move(x.m_complete);
             break;
-        case EK_MINIMAL:
+        case TypeKind::EK_MINIMAL:
             m_minimal = std::move(x.m_minimal);
             break;
         default:
@@ -9289,10 +9289,10 @@ TypeObject& TypeObject::operator =(
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case TypeKind::EK_COMPLETE:
             m_complete = x.m_complete;
             break;
-        case EK_MINIMAL:
+        case TypeKind::EK_MINIMAL:
             m_minimal = x.m_minimal;
             break;
         default:
@@ -9309,10 +9309,10 @@ TypeObject& TypeObject::operator =(
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case TypeKind::EK_COMPLETE:
             m_complete = std::move(x.m_complete);
             break;
-        case EK_MINIMAL:
+        case TypeKind::EK_MINIMAL:
             m_minimal = std::move(x.m_minimal);
             break;
         default:
@@ -9323,49 +9323,25 @@ TypeObject& TypeObject::operator =(
 }
 
 void TypeObject::_d(
-        uint8_t __d)             // Special case to ease... sets the current active member
+        TypeKind __d)             // Special case to ease... sets the current active member
 {
-    bool b = false;
-    m__d = __d;
-
-    switch (m__d)
+    switch (__d)
     {
-        case EK_COMPLETE:
-            switch (__d)
-            {
-                case EK_COMPLETE:
-                    b = true;
-                    break;
-                default:
-                    break;
-            }
-            break;
-        case EK_MINIMAL:
-            switch (__d)
-            {
-                case EK_MINIMAL:
-                    b = true;
-                    break;
-                default:
-                    break;
-            }
-            break;
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
+            m__d = __d;
+            return;
+        default:
+            throw BadParamException("Discriminator doesn't correspond with the selected union member");
     }
-
-    if (!b)
-    {
-        throw BadParamException("Discriminator doesn't correspond with the selected union member");
-    }
-
-    m__d = __d;
 }
 
-uint8_t TypeObject::_d() const
+TypeKind TypeObject::_d() const
 {
     return m__d;
 }
 
-uint8_t& TypeObject::_d()
+TypeKind& TypeObject::_d()
 {
     return m__d;
 }
@@ -9374,14 +9350,14 @@ void TypeObject::complete(
         const CompleteTypeObject& _complete)
 {
     m_complete = _complete;
-    m__d = EK_COMPLETE;
+    m__d = TypeKind::EK_COMPLETE;
 }
 
 void TypeObject::complete(
         CompleteTypeObject&& _complete)
 {
     m_complete = std::move(_complete);
-    m__d = EK_COMPLETE;
+    m__d = TypeKind::EK_COMPLETE;
 }
 
 const CompleteTypeObject& TypeObject::complete() const
@@ -9390,7 +9366,7 @@ const CompleteTypeObject& TypeObject::complete() const
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case TypeKind::EK_COMPLETE:
             b = true;
             break;
         default:
@@ -9411,7 +9387,7 @@ CompleteTypeObject& TypeObject::complete()
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case TypeKind::EK_COMPLETE:
             b = true;
             break;
         default:
@@ -9430,14 +9406,14 @@ void TypeObject::minimal(
         const MinimalTypeObject& _minimal)
 {
     m_minimal = _minimal;
-    m__d = EK_MINIMAL;
+    m__d = TypeKind::EK_MINIMAL;
 }
 
 void TypeObject::minimal(
         MinimalTypeObject&& _minimal)
 {
     m_minimal = std::move(_minimal);
-    m__d = EK_MINIMAL;
+    m__d = TypeKind::EK_MINIMAL;
 }
 
 bool TypeObject::consistent(
@@ -9451,9 +9427,9 @@ bool TypeObject::consistent(
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case TypeKind::EK_COMPLETE:
             return m_complete.consistent(x.m_complete, consistency);
-        case EK_MINIMAL:
+        case TypeKind::EK_MINIMAL:
             return m_minimal.consistent(x.m_minimal, consistency);
         default:
             return false;
@@ -9476,7 +9452,7 @@ const MinimalTypeObject& TypeObject::minimal() const
 
     switch (m__d)
     {
-        case EK_MINIMAL:
+        case TypeKind::EK_MINIMAL:
             b = true;
             break;
         default:
@@ -9497,7 +9473,7 @@ MinimalTypeObject& TypeObject::minimal()
 
     switch (m__d)
     {
-        case EK_MINIMAL:
+        case TypeKind::EK_MINIMAL:
             b = true;
             break;
         default:
@@ -9523,10 +9499,10 @@ size_t TypeObject::getCdrSerializedSize(
 
     switch (data.m__d)
     {
-        case EK_COMPLETE:
+        case TypeKind::EK_COMPLETE:
             current_alignment += CompleteTypeObject::getCdrSerializedSize(data.complete(), current_alignment);
             break;
-        case EK_MINIMAL:
+        case TypeKind::EK_MINIMAL:
             current_alignment += MinimalTypeObject::getCdrSerializedSize(data.minimal(), current_alignment);
             break;
         default:
@@ -9539,14 +9515,14 @@ size_t TypeObject::getCdrSerializedSize(
 void TypeObject::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m__d;
+    scdr << static_cast<octet>(m__d);
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case TypeKind::EK_COMPLETE:
             scdr << m_complete;
             break;
-        case EK_MINIMAL:
+        case TypeKind::EK_MINIMAL:
             scdr << m_minimal;
             break;
         default:
@@ -9557,14 +9533,14 @@ void TypeObject::serialize(
 void TypeObject::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m__d;
+    dcdr >> reinterpret_cast<octet&>(m__d);
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case TypeKind::EK_COMPLETE:
             dcdr >> m_complete;
             break;
-        case EK_MINIMAL:
+        case TypeKind::EK_MINIMAL:
             dcdr >> m_minimal;
             break;
         default:
@@ -9579,9 +9555,9 @@ bool TypeObject::operator ==(
     {
         switch (m__d)
         {
-            case EK_COMPLETE:
+            case TypeKind::EK_COMPLETE:
                 return m_complete == other.m_complete;
-            case EK_MINIMAL:
+            case TypeKind::EK_MINIMAL:
                 return m_minimal == other.m_minimal;
             default:
                 break;

@@ -111,58 +111,203 @@ const std::string TKNAME_SEQUENCE = "sequence";
 const std::string TKNAME_ARRAY = "array";
 const std::string TKNAME_MAP = "map";
 
-// ---------- Equivalence Kinds ------------------
-typedef octet EquivalenceKind;
-const octet EK_MINIMAL = 0xF1; // 0x1111 0001
-const octet EK_COMPLETE = 0xF2; // 0x1111 0010
-const octet EK_BOTH = 0xF3; // 0x1111 0011
-
 // ---------- TypeKinds (begin) ------------------
-typedef octet TypeKind;        // Primitive TKs
 
-const octet TK_NONE = 0x00;
-const octet TK_BOOLEAN = 0x01;
-const octet TK_BYTE = 0x02;
-const octet TK_INT16 = 0x03;
-const octet TK_INT32 = 0x04;
-const octet TK_INT64 = 0x05;
-const octet TK_UINT16 = 0x06;
-const octet TK_UINT32 = 0x07;
-const octet TK_UINT64 = 0x08;
-const octet TK_FLOAT32 = 0x09;
-const octet TK_FLOAT64 = 0x0A;
-const octet TK_FLOAT128 = 0x0B;
-const octet TK_CHAR8 = 0x10;
-const octet TK_CHAR16 = 0x11;
+enum class TypeKind : octet {
+    // invalid
+    TK_NONE = 0x00,
 
-// String TKs
-const octet TK_STRING8 = 0x20;
-const octet TK_STRING16 = 0x21;
+    // Primitive TKs
+    TK_BOOLEAN = 0x01,
+    TK_BYTE = 0x02,
+    TK_INT16 = 0x03,
+    TK_INT32 = 0x04,
+    TK_INT64 = 0x05,
+    TK_UINT16 = 0x06,
+    TK_UINT32 = 0x07,
+    TK_UINT64 = 0x08,
+    TK_FLOAT32 = 0x09,
+    TK_FLOAT64 = 0x0A,
+    TK_FLOAT128 = 0x0B,
+    TK_CHAR8 = 0x10,
+    TK_CHAR16 = 0x11,
 
-// Constructed/Named types
-const octet TK_ALIAS = 0x30;
+    // String TKs
+    TK_STRING8 = 0x20,
+    TK_STRING16 = 0x21,
 
-// Enumerated TKs
-const octet TK_ENUM = 0x40;
-const octet TK_BITMASK = 0x41;
+    // Constructed/Named types
+    TK_ALIAS = 0x30,
 
-// Structured TKs
-const octet TK_ANNOTATION = 0x50;
-const octet TK_STRUCTURE = 0x51;
-const octet TK_UNION = 0x52;
-const octet TK_BITSET = 0x53;
+    // Enumerated TKs
+    TK_ENUM = 0x40,
+    TK_BITMASK = 0x41,
 
-// Collection TKs
-const octet TK_SEQUENCE = 0x60;
-const octet TK_ARRAY = 0x61;
-const octet TK_MAP = 0x62;
+    // Structured TKs
+    TK_ANNOTATION = 0x50,
+    TK_STRUCTURE = 0x51,
+    TK_UNION = 0x52,
+    TK_BITSET = 0x53,
+
+    // Collection TKs
+    TK_SEQUENCE = 0x60,
+    TK_ARRAY = 0x61,
+    TK_MAP = 0x62,
+
+    // TypeIdentifiers
+    TI_STRING8_SMALL = 0x70,
+    TI_STRING8_LARGE = 0x71,
+    TI_STRING16_SMALL = 0x72,
+    TI_STRING16_LARGE = 0x73,
+    TI_PLAIN_SEQUENCE_SMALL = 0x80,
+    TI_PLAIN_SEQUENCE_LARGE = 0x81,
+    TI_PLAIN_ARRAY_SMALL = 0x90,
+    TI_PLAIN_ARRAY_LARGE = 0x91,
+    TI_PLAIN_MAP_SMALL = 0xA0,
+    TI_PLAIN_MAP_LARGE = 0xA1,
+    TI_STRONGLY_CONNECTED_COMPONENT = 0xB0,
+
+    // Equivalence Kinds
+    EK_MINIMAL = 0xF1, // 0x1111 0001
+    EK_COMPLETE = 0xF2, // 0x1111 0010
+    EK_BOTH = 0xF3, // 0x1111 0011
+};
+
+using EquivalenceKind = TypeKind;
+
+inline bool operator==(octet a, TypeKind b)
+{
+    return a == static_cast<octet>(b);
+}
+
+inline bool operator==(TypeKind a, octet b)
+{
+    return b == a;
+}
+
+
+namespace typekind_detail {
+
+template<TypeKind kind, class CharT, class Traits>
+struct TypeKindName {};
+
+#define XTYPENAME(type)                                                \
+template<>                                                             \
+struct TypeKindName<TypeKind::type, char, std::char_traits<char>>      \
+{                                                                      \
+    static const char* name;                                           \
+};                                                                     \
+                                                                       \
+template<>                                                             \
+struct TypeKindName<TypeKind::type, wchar_t, std::char_traits<wchar_t>>\
+{                                                                      \
+    static const wchar_t* name;                                        \
+};                                                                     \
+
+XTYPENAME(TK_BOOLEAN)
+XTYPENAME(TK_BYTE)
+XTYPENAME(TK_INT16)
+XTYPENAME(TK_INT32)
+XTYPENAME(TK_INT64)
+XTYPENAME(TK_UINT16)
+XTYPENAME(TK_UINT32)
+XTYPENAME(TK_UINT64)
+XTYPENAME(TK_FLOAT32)
+XTYPENAME(TK_FLOAT64)
+XTYPENAME(TK_FLOAT128)
+XTYPENAME(TK_CHAR8)
+XTYPENAME(TK_CHAR16)
+XTYPENAME(TK_STRING8)
+XTYPENAME(TK_STRING16)
+XTYPENAME(TK_ALIAS)
+XTYPENAME(TK_ENUM)
+XTYPENAME(TK_BITMASK)
+XTYPENAME(TK_ANNOTATION)
+XTYPENAME(TK_STRUCTURE)
+XTYPENAME(TK_UNION)
+XTYPENAME(TK_BITSET)
+XTYPENAME(TK_SEQUENCE)
+XTYPENAME(TK_ARRAY)
+XTYPENAME(TK_MAP)
+XTYPENAME(TI_STRING8_SMALL)
+XTYPENAME(TI_STRING8_LARGE)
+XTYPENAME(TI_STRING16_SMALL)
+XTYPENAME(TI_STRING16_LARGE)
+XTYPENAME(TI_PLAIN_SEQUENCE_SMALL)
+XTYPENAME(TI_PLAIN_SEQUENCE_LARGE)
+XTYPENAME(TI_PLAIN_ARRAY_SMALL)
+XTYPENAME(TI_PLAIN_ARRAY_LARGE)
+XTYPENAME(TI_PLAIN_MAP_SMALL)
+XTYPENAME(TI_PLAIN_MAP_LARGE)
+XTYPENAME(TI_STRONGLY_CONNECTED_COMPONENT)
+
+#undef XTYPENAME
+
+} // namespace typekind_detail
+
+#define XTYPECASE(type)                                                                  \
+        case TypeKind::type:                                                             \
+            name = typekind_detail::TypeKindName<TypeKind::type, CharT, Traits>::name;   \
+            break;                                                                       \
+
+template< class CharT, class Traits>
+std::basic_ostream<CharT, Traits>&
+    operator<<( std::basic_ostream<CharT, Traits>& os, TypeKind kind)
+{
+    const CharT* name = nullptr;
+    switch(kind)
+    {
+        XTYPECASE(TK_BOOLEAN)
+        XTYPECASE(TK_BYTE)
+        XTYPECASE(TK_INT16)
+        XTYPECASE(TK_INT32)
+        XTYPECASE(TK_INT64)
+        XTYPECASE(TK_UINT16)
+        XTYPECASE(TK_UINT32)
+        XTYPECASE(TK_UINT64)
+        XTYPECASE(TK_FLOAT32)
+        XTYPECASE(TK_FLOAT64)
+        XTYPECASE(TK_FLOAT128)
+        XTYPECASE(TK_CHAR8)
+        XTYPECASE(TK_CHAR16)
+        XTYPECASE(TK_STRING8)
+        XTYPECASE(TK_STRING16)
+        XTYPECASE(TK_ALIAS)
+        XTYPECASE(TK_ENUM)
+        XTYPECASE(TK_BITMASK)
+        XTYPECASE(TK_ANNOTATION)
+        XTYPECASE(TK_STRUCTURE)
+        XTYPECASE(TK_UNION)
+        XTYPECASE(TK_BITSET)
+        XTYPECASE(TK_SEQUENCE)
+        XTYPECASE(TK_ARRAY)
+        XTYPECASE(TK_MAP)
+        XTYPECASE(TI_STRING8_SMALL)
+        XTYPECASE(TI_STRING8_LARGE)
+        XTYPECASE(TI_STRING16_SMALL)
+        XTYPECASE(TI_STRING16_LARGE)
+        XTYPECASE(TI_PLAIN_SEQUENCE_SMALL)
+        XTYPECASE(TI_PLAIN_SEQUENCE_LARGE)
+        XTYPECASE(TI_PLAIN_ARRAY_SMALL)
+        XTYPECASE(TI_PLAIN_ARRAY_LARGE)
+        XTYPECASE(TI_PLAIN_MAP_SMALL)
+        XTYPECASE(TI_PLAIN_MAP_LARGE)
+        XTYPECASE(TI_STRONGLY_CONNECTED_COMPONENT)
+        default:
+            return os;
+    };
+
+    return os << name;
+}
+
+#undef XTYPECASE
 
 // ---------- TypeKinds (end) ------------------
 
 // Auxiliary metadata
 
 template<TypeKind kind>
-using is_primitive = std::conditional<(kind > TK_NONE)&&(kind <= TK_CHAR16), std::true_type, std::false_type>;
+using is_primitive = std::conditional<(kind > TypeKind::TK_NONE && kind <= TypeKind::TK_CHAR16), std::true_type, std::false_type>;
 
 template<TypeKind kind>
 using is_primitive_t = typename is_primitive<kind>::type;
@@ -316,23 +461,23 @@ inline std::error_code make_error_code(const ReturnCode_t & r)
 }
 
 template<class T>
-typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value, bool>::type
+typename std::enable_if<std::is_arithmetic<T>::value
+    || std::is_same<T, ReturnCode_t::ReturnCodeValue>::value, bool>::type
 operator ==(
         T a,
         const ReturnCode_t& b)
 {
-    return b.operator ==(
-        a);
+    return b.operator==(a);
 }
 
 template<class T>
-typename std::enable_if<std::is_arithmetic<T>::value || std::is_enum<T>::value, bool>::type
+typename std::enable_if<std::is_arithmetic<T>::value
+    || std::is_same<T, ReturnCode_t::ReturnCodeValue>::value, bool>::type
 operator !=(
         T a,
         const ReturnCode_t& b)
 {
-    return b.operator !=(
-        a);
+    return b.operator!=(a);
 }
 
 // TODO Remove this alias when Fast-RTPS reaches version 2

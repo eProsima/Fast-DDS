@@ -172,6 +172,23 @@ public:
             const std::string& message,
             const Log::Context&,
             Log::Kind);
+
+    //! RAII to disable Logging
+    struct DisableLogs
+    {
+        DisableLogs(Log::Kind new_verbosity = Log::Error)
+        {
+            old_ = Log::GetVerbosity();
+            Log::SetVerbosity(new_verbosity);
+        }
+
+        ~DisableLogs()
+        {
+            Log::SetVerbosity(old_);
+        }
+
+        Log::Kind old_;
+    };
 };
 
 /**

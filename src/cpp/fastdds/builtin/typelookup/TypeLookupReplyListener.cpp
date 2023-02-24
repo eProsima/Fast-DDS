@@ -83,7 +83,7 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
                 const TypeLookup_getTypes_Out types = reply.return_value.getType().result();
                 for (auto pair : types.types)
                 {
-                    if (pair.type_object()._d() == EK_COMPLETE) // Just in case
+                    if (pair.type_object()._d() == fastrtps::types::TypeKind::EK_COMPLETE) // Just in case
                     {
                         // If build_dynamic_type failed, just sent the nullptr already contained on it.
                         tlm_->participant_->getListener()->on_type_discovery(

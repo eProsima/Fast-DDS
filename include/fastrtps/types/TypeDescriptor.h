@@ -32,7 +32,7 @@ class DynamicType;
 struct TypeDescriptorData
 {
     std::string name_;                      //!< Type Name.
-    TypeKind kind_ = TK_NONE;               //!< Type Kind.
+    TypeKind kind_ = TypeKind::TK_NONE;     //!< Type Kind.
     DynamicType_ptr base_type_;             //!< SuperType of an structure or base type of an alias type.
     DynamicType_ptr discriminator_type_;    //!< Discrimination type for a union.
     std::vector<uint32_t> bound_;           //!< Length for strings, arrays, sequences, maps and bitmasks.
@@ -41,6 +41,12 @@ struct TypeDescriptorData
     std::list<DynamicTypeMember> members_;  //!< Member descriptors sequence
 };
 
+/**
+ * The purpose of this class is providing a common state for DynamicTypes and DynamicTypeBuilsers
+ * @attention
+ *    TypeDescriptor only provides public const getters because is only meant for
+ *    informational purposes. Use a @ref DynamicTypeBuilder to access setters.
+ */
 class TypeDescriptor
       : protected TypeDescriptorData
       , protected AnnotationManager
@@ -48,27 +54,41 @@ class TypeDescriptor
 
     using TypeDescriptorData::TypeDescriptorData;
 
-public:
+protected:
 
-    RTPS_DllAPI TypeDescriptor(
+    TypeDescriptor(
             const std::string& name,
             TypeKind kind);
+public:
 
-    RTPS_DllAPI TypeDescriptor() = default;
+    //! Default constructor
+    RTPS_DllAPI TypeDescriptor() noexcept = default;
 
+    //! Copy constructor
     RTPS_DllAPI TypeDescriptor(
-            const TypeDescriptor& other);
+            const TypeDescriptor& other) noexcept;
 
+    //! Move constructor
     RTPS_DllAPI TypeDescriptor(
-            TypeDescriptor&& other) = default;
+            TypeDescriptor&& other) noexcept = default;
 
+    //! Copy assignment
     RTPS_DllAPI TypeDescriptor& operator=(
-            const TypeDescriptor& descriptor);
+            const TypeDescriptor& descriptor) noexcept;
 
+    //! Move assignment
     RTPS_DllAPI TypeDescriptor& operator=(
-            TypeDescriptor&& descriptor) = default;
+            TypeDescriptor&& descriptor) noexcept = default;
 
-    RTPS_DllAPI ~TypeDescriptor();
+    /**
+     * Destructor
+     * @attention
+     *    The destructor is not virtual despite of this class been \b superclass
+     *    of @ref DynamicType and @ref DynamicTypeBuilder because
+     *    the \b subclasses are not supposed to introduce members requiring
+     *    complex clean-up. State is constrained to the \b superclass.
+     */
+    RTPS_DllAPI ~TypeDescriptor() noexcept;
 
     static bool is_type_name_consistent(
             const std::string& sName);
@@ -81,15 +101,17 @@ protected:
 
     void refresh_indexes();
 
-    // TODO: doxigen
+    /**
+     * Returns the state of the @ref DynamicType or @ref DynamicTypeBuilder object
+     * @param[out] descriptor object state
+     * @return standard @ref ReturnCode_t
+     */
     RTPS_DllAPI ReturnCode_t get_descriptor(
-            TypeDescriptor& descriptor) const;
+            TypeDescriptor& descriptor) const noexcept;
 
     using member_iterator = std::list<DynamicTypeMember>::iterator;
 
     RTPS_DllAPI void clean();
-
-    RTPS_DllAPI uint32_t get_members_count() const;
 
     friend class DynamicTypeBuilderFactory;
     friend class TypeObjectFactory;
@@ -103,9 +125,17 @@ protected:
     bool exists_member_by_id(
             MemberId id) const;
 
+    /**
+     * Modifies the underlying type name by copy
+     * @param[in] name \b string l-value reference
+     */
     RTPS_DllAPI void set_name(
             const std::string& name);
 
+    /**
+     * Modifies the underlying type name by move
+     * @param[in] name \b string r-value reference
+     */
     RTPS_DllAPI void set_name(
             std::string&& name);
 
@@ -144,20 +174,36 @@ public:
 
 public:
 
+    /**
+     * Returns the state of the @ref DynamicType or @ref DynamicTypeBuilder object
+     * @param[out] descriptor object state
+     * @return standard @ref ReturnCode_t
+     */
     RTPS_DllAPI ReturnCode_t copy_from(
-            const TypeDescriptor& descriptor);
+            const TypeDescriptor& descriptor) noexcept;
 
     RTPS_DllAPI bool operator==(const TypeDescriptor& descriptor) const;
 
-    RTPS_DllAPI bool equals(
-            const TypeDescriptor& descriptor) const;
+    RTPS_DllAPI bool operator!=(const TypeDescriptor& descriptor) const;
 
+    /**
+     * State comparisson
+     * @remarks using `==` and `!=` operators is more convenient
+     * @param[in] descriptor object state to compare to
+     * @return \b bool `true` on equality
+     */
+    RTPS_DllAPI bool equals(
+            const TypeDescriptor& descriptor) const noexcept;
+
+    // TODO: doxygen
     RTPS_DllAPI bool is_consistent() const;
 
     RTPS_DllAPI bool is_primitive() const;
 
+    // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr get_base_type() const;
 
+    // TODO: doxygen
     RTPS_DllAPI uint32_t get_bounds(
             uint32_t index = 0) const;
 
@@ -169,10 +215,16 @@ public:
 
     RTPS_DllAPI DynamicType_ptr get_key_element_type() const;
 
-    RTPS_DllAPI TypeKind get_kind() const;
+    /**
+     * Returns the @ref TypeKind associated
+     * @return standard @ref TypeKind
+     */
+    RTPS_DllAPI TypeKind get_kind() const noexcept;
 
+    // TODO: doxygen
     RTPS_DllAPI std::string get_name() const;
 
+    // TODO: doxygen
     RTPS_DllAPI uint32_t get_total_bounds() const;
 
     // TODO: doxygen
@@ -187,14 +239,22 @@ public:
             std::map<std::string, const DynamicTypeMember*>& members) const;
 
     // TODO: doxygen
+    RTPS_DllAPI uint32_t get_member_count() const;
+
+    // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_member(
             MemberDescriptor& member,
-            MemberId id) const;
+            MemberId id) const noexcept;
+
+    // TODO: doxygen
+    RTPS_DllAPI ReturnCode_t get_member_by_index(
+            MemberDescriptor& member,
+            uint32_t index) const noexcept;
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_member_by_name(
             MemberDescriptor& member,
-            const std::string& name) const;
+            const std::string& name) const noexcept;
 };
 
 } // namespace types

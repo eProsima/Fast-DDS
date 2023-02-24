@@ -30,7 +30,7 @@ void DynamicDataHelper::print(
     {
         switch (data->type_->get_kind())
         {
-            case TK_STRUCTURE:
+            case TypeKind::TK_STRUCTURE:
             {
                 std::map<MemberId, const DynamicTypeMember*> members;
                 data->type_->get_all_members(members);
@@ -59,87 +59,87 @@ void DynamicDataHelper::print_basic_element(
 {
     switch (kind)
     {
-        case TK_NONE:
+        case TypeKind::TK_NONE:
         {
             std::cout << "<type not defined!>";
             break;
         }
-        case TK_BOOLEAN:
+        case TypeKind::TK_BOOLEAN:
         {
             std::cout << (data->get_bool_value(id) ? "true" : "false");
             break;
         }
-        case TK_BYTE:
+        case TypeKind::TK_BYTE:
         {
             std::cout << static_cast<uint32_t>(data->get_byte_value(id));
             break;
         }
-        case TK_INT16:
+        case TypeKind::TK_INT16:
         {
             std::cout << data->get_int16_value(id);
             break;
         }
-        case TK_INT32:
+        case TypeKind::TK_INT32:
         {
             std::cout << data->get_int32_value(id);
             break;
         }
-        case TK_INT64:
+        case TypeKind::TK_INT64:
         {
             std::cout << data->get_int64_value(id);
             break;
         }
-        case TK_UINT16:
+        case TypeKind::TK_UINT16:
         {
             std::cout << data->get_uint16_value(id);
             break;
         }
-        case TK_UINT32:
+        case TypeKind::TK_UINT32:
         {
             std::cout << data->get_uint32_value(id);
             break;
         }
-        case TK_UINT64:
+        case TypeKind::TK_UINT64:
         {
             std::cout << data->get_uint64_value(id);
             break;
         }
-        case TK_FLOAT32:
+        case TypeKind::TK_FLOAT32:
         {
             std::cout << data->get_float32_value(id);
             break;
         }
-        case TK_FLOAT64:
+        case TypeKind::TK_FLOAT64:
         {
             std::cout << data->get_float64_value(id);
             break;
         }
-        case TK_FLOAT128:
+        case TypeKind::TK_FLOAT128:
         {
             std::cout << data->get_float128_value(id);
             break;
         }
-        case TK_CHAR8:
+        case TypeKind::TK_CHAR8:
         {
             std::cout << data->get_char8_value(id);
             break;
         }
-        case TK_CHAR16:
+        case TypeKind::TK_CHAR16:
         {
             std::cout << data->get_char16_value(id);
             break;
         }
-        case TK_STRING8:
+        case TypeKind::TK_STRING8:
         {
             std::cout << data->get_string_value(id);
             break;
         }
-        case TK_STRING16:
+        case TypeKind::TK_STRING16:
         {
             std::wcout << data->get_wstring_value(id);
             break;
         }
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
         {
             size_t size = data->type_->get_size();
             switch (size)
@@ -151,7 +151,7 @@ void DynamicDataHelper::print_basic_element(
             }
             break;
         }
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
         {
             std::cout << data->get_uint32_value(id);
             break;
@@ -167,34 +167,34 @@ void DynamicDataHelper::print_collection(
 {
     switch (data->type_->get_element_type()->get_kind())
     {
-        case TK_NONE:
-        case TK_BOOLEAN:
-        case TK_BYTE:
-        case TK_INT16:
-        case TK_INT32:
-        case TK_INT64:
-        case TK_UINT16:
-        case TK_UINT32:
-        case TK_UINT64:
-        case TK_FLOAT32:
-        case TK_FLOAT64:
-        case TK_FLOAT128:
-        case TK_CHAR8:
-        case TK_CHAR16:
-        case TK_STRING8:
-        case TK_STRING16:
-        case TK_ENUM:
-        case TK_BITMASK:
+        case TypeKind::TK_NONE:
+        case TypeKind::TK_BOOLEAN:
+        case TypeKind::TK_BYTE:
+        case TypeKind::TK_INT16:
+        case TypeKind::TK_INT32:
+        case TypeKind::TK_INT64:
+        case TypeKind::TK_UINT16:
+        case TypeKind::TK_UINT32:
+        case TypeKind::TK_UINT64:
+        case TypeKind::TK_FLOAT32:
+        case TypeKind::TK_FLOAT64:
+        case TypeKind::TK_FLOAT128:
+        case TypeKind::TK_CHAR8:
+        case TypeKind::TK_CHAR16:
+        case TypeKind::TK_STRING8:
+        case TypeKind::TK_STRING16:
+        case TypeKind::TK_ENUM:
+        case TypeKind::TK_BITMASK:
         {
             print_basic_collection(data);
             break;
         }
-        case TK_STRUCTURE:
-        case TK_BITSET:
-        case TK_UNION:
-        case TK_SEQUENCE:
-        case TK_ARRAY:
-        case TK_MAP:
+        case TypeKind::TK_STRUCTURE:
+        case TypeKind::TK_BITSET:
+        case TypeKind::TK_UNION:
+        case TypeKind::TK_SEQUENCE:
+        case TypeKind::TK_ARRAY:
+        case TypeKind::TK_MAP:
         {
             print_complex_collection(data, tabs);
             break;
@@ -251,7 +251,7 @@ void DynamicDataHelper::aux_index_position(
 void DynamicDataHelper::print_basic_collection(
         DynamicData* data)
 {
-    if (data->type_->get_kind() == TK_SEQUENCE)
+    if (data->type_->get_kind() == TypeKind::TK_SEQUENCE)
     {
         auto count = data->get_item_count();
         std::cout << "[";
@@ -287,7 +287,7 @@ void DynamicDataHelper::print_complex_collection(
         const std::string& tabs)
 {
     std::cout << std::endl;
-    if (data->type_->get_kind() == TK_SEQUENCE)
+    if (data->type_->get_kind() == TypeKind::TK_SEQUENCE)
     {
         auto count = data->get_item_count();
 
@@ -328,8 +328,8 @@ void DynamicDataHelper::print_complex_element(
     const TypeDescriptor& desc = st_data->type_->get_type_descriptor();
     switch (desc.get_kind())
     {
-        case TK_STRUCTURE:
-        case TK_BITSET:
+        case TypeKind::TK_STRUCTURE:
+        case TypeKind::TK_BITSET:
         {
             std::cout << "<struct/bitset>" << std::endl;
             std::map<types::MemberId, const types::DynamicTypeMember*> members;
@@ -340,7 +340,7 @@ void DynamicDataHelper::print_complex_element(
             }
             break;
         }
-        case TK_UNION:
+        case TypeKind::TK_UNION:
         {
             std::cout << "<union>" << std::endl;
             MemberDescriptor member;
@@ -348,13 +348,13 @@ void DynamicDataHelper::print_complex_element(
             print_member(st_data, member, tabs + "\t");
             break;
         }
-        case TK_SEQUENCE:
-        case TK_ARRAY:
+        case TypeKind::TK_SEQUENCE:
+        case TypeKind::TK_ARRAY:
         {
             print_collection(st_data, tabs + "\t");
             break;
         }
-        case TK_MAP:
+        case TypeKind::TK_MAP:
         {
             std::cout << "<map>" << std::endl;
             std::map<types::MemberId, const types::DynamicTypeMember*> members;
@@ -386,31 +386,31 @@ void DynamicDataHelper::print_member(
     std::cout << tabs << desc.get_name() << ": ";
     switch (desc.get_kind())
     {
-        case TK_NONE:
-        case TK_BOOLEAN:
-        case TK_BYTE:
-        case TK_INT16:
-        case TK_INT32:
-        case TK_INT64:
-        case TK_UINT16:
-        case TK_UINT32:
-        case TK_UINT64:
-        case TK_FLOAT32:
-        case TK_FLOAT64:
-        case TK_FLOAT128:
-        case TK_CHAR8:
-        case TK_CHAR16:
-        case TK_STRING8:
-        case TK_STRING16:
-        case TK_ENUM:
-        case TK_BITMASK:
+        case TypeKind::TK_NONE:
+        case TypeKind::TK_BOOLEAN:
+        case TypeKind::TK_BYTE:
+        case TypeKind::TK_INT16:
+        case TypeKind::TK_INT32:
+        case TypeKind::TK_INT64:
+        case TypeKind::TK_UINT16:
+        case TypeKind::TK_UINT32:
+        case TypeKind::TK_UINT64:
+        case TypeKind::TK_FLOAT32:
+        case TypeKind::TK_FLOAT64:
+        case TypeKind::TK_FLOAT128:
+        case TypeKind::TK_CHAR8:
+        case TypeKind::TK_CHAR16:
+        case TypeKind::TK_STRING8:
+        case TypeKind::TK_STRING16:
+        case TypeKind::TK_ENUM:
+        case TypeKind::TK_BITMASK:
         {
             print_basic_element(data, desc.get_id(), desc.get_kind());
             std::cout << std::endl;
             break;
         }
-        case TK_STRUCTURE:
-        case TK_BITSET:
+        case TypeKind::TK_STRUCTURE:
+        case TypeKind::TK_BITSET:
         {
             DynamicData* st_data = data->loan_value(desc.get_id());
             std::cout << "<struct/bitset>" << std::endl;
@@ -423,7 +423,7 @@ void DynamicDataHelper::print_member(
             data->return_loaned_value(st_data);
             break;
         }
-        case TK_UNION:
+        case TypeKind::TK_UNION:
         {
             std::cout << "<union>" << std::endl;
             DynamicData* st_data = data->loan_value(desc.get_id());
@@ -432,15 +432,15 @@ void DynamicDataHelper::print_member(
             print_member(st_data, member, tabs + "\t");
             break;
         }
-        case TK_SEQUENCE:
-        case TK_ARRAY:
+        case TypeKind::TK_SEQUENCE:
+        case TypeKind::TK_ARRAY:
         {
             DynamicData* st_data = data->loan_value(desc.get_id());
             print_collection(st_data, tabs + "\t");
             data->return_loaned_value(st_data);
             break;
         }
-        case TK_MAP:
+        case TypeKind::TK_MAP:
         {
             std::cout << "<map>" << std::endl;
             DynamicData* st_data = data->loan_value(desc.get_id());

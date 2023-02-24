@@ -74,21 +74,21 @@ TypeDescriptor::TypeDescriptor(
 
 
 TypeDescriptor::TypeDescriptor(
-        const TypeDescriptor& other)
+        const TypeDescriptor& other) noexcept
         : TypeDescriptorData(other)
 {
     refresh_indexes();
 }
 
 TypeDescriptor& TypeDescriptor::operator=(
-        const TypeDescriptor& descriptor)
+        const TypeDescriptor& descriptor) noexcept
 {
     TypeDescriptorData::operator=(descriptor);
     refresh_indexes();
     return *this;
 }
 
-TypeDescriptor::~TypeDescriptor()
+TypeDescriptor::~TypeDescriptor() noexcept
 {
     clean();
 }
@@ -121,7 +121,7 @@ void TypeDescriptor::clean()
 }
 
 ReturnCode_t TypeDescriptor::copy_from(
-        const TypeDescriptor& descriptor)
+        const TypeDescriptor& descriptor) noexcept
 {
     *this = descriptor;
     return ReturnCode_t::RETCODE_OK;
@@ -140,8 +140,13 @@ bool TypeDescriptor::operator==(const TypeDescriptor& descriptor) const
            members_ == descriptor.members_;
 }
 
+bool TypeDescriptor::operator!=(const TypeDescriptor& descriptor) const
+{
+    return !operator==(descriptor);
+}
+
 bool TypeDescriptor::equals(
-        const TypeDescriptor& descriptor) const
+        const TypeDescriptor& descriptor) const noexcept
 {
     return *this == descriptor;
 }
@@ -197,7 +202,7 @@ DynamicType_ptr TypeDescriptor::get_key_element_type() const
     return key_element_type_;
 }
 
-TypeKind TypeDescriptor::get_kind() const
+TypeKind TypeDescriptor::get_kind() const noexcept
 {
     return kind_;
 }
@@ -224,51 +229,51 @@ uint32_t TypeDescriptor::get_total_bounds() const
 bool TypeDescriptor::is_consistent() const
 {
     // Alias Types need the base type to indicate what type has been aliased.
-    if (kind_ == TK_ALIAS && !base_type_)
+    if (kind_ == TypeKind::TK_ALIAS && !base_type_)
     {
         return false;
     }
 
     // Alias must have base type, and structures and bitsets optionally can have it.
-    if (base_type_ && kind_ != TK_ALIAS && kind_ != TK_STRUCTURE && kind_ != TK_BITSET)
+    if (base_type_ && kind_ != TypeKind::TK_ALIAS && kind_ != TypeKind::TK_STRUCTURE && kind_ != TypeKind::TK_BITSET)
     {
         return false;
     }
 
     // Arrays need one or more bound fields with the lenghts of each dimension.
-    if (kind_ == TK_ARRAY && bound_.size() == 0)
+    if (kind_ == TypeKind::TK_ARRAY && bound_.size() == 0)
     {
         return false;
     }
 
     // These types need one bound with the length of the field.
-    if (bound_.size() != 1 && (kind_ == TK_SEQUENCE || kind_ == TK_MAP || kind_ == TK_BITMASK ||
-            kind_ == TK_STRING8 || kind_ == TK_STRING16))
+    if (bound_.size() != 1 && (kind_ == TypeKind::TK_SEQUENCE || kind_ == TypeKind::TK_MAP || kind_ == TypeKind::TK_BITMASK ||
+            kind_ == TypeKind::TK_STRING8 || kind_ == TypeKind::TK_STRING16))
     {
         return false;
     }
 
     // Only union types need the discriminator of the union
-    if (!discriminator_type_ && kind_ == TK_UNION)
+    if (!discriminator_type_ && kind_ == TypeKind::TK_UNION)
     {
         return false;
     }
 
     // ElementType is used by these types to set the "value" type of the element, otherwise it should be null.
-    if (!element_type_ && (kind_ == TK_ARRAY || kind_ == TK_SEQUENCE || kind_ == TK_STRING8 ||
-            kind_ == TK_STRING16 || kind_ == TK_MAP || kind_ == TK_BITMASK))
+    if (!element_type_ && (kind_ == TypeKind::TK_ARRAY || kind_ == TypeKind::TK_SEQUENCE || kind_ == TypeKind::TK_STRING8 ||
+            kind_ == TypeKind::TK_STRING16 || kind_ == TypeKind::TK_MAP || kind_ == TypeKind::TK_BITMASK))
     {
         return false;
     }
 
     // For Bitmask types is mandatory that this element is boolean.
-    if (kind_ == TK_BITMASK && (element_type_->get_kind() != TK_BOOLEAN))
+    if (kind_ == TypeKind::TK_BITMASK && (element_type_->get_kind() != TypeKind::TK_BOOLEAN))
     {
         return false;
     }
 
     // Only map types need the keyElementType to store the "Key" type of the pair.
-    if (!key_element_type_ && kind_ == TK_MAP)
+    if (!key_element_type_ && kind_ == TypeKind::TK_MAP)
     {
         return false;
     }
@@ -283,7 +288,11 @@ bool TypeDescriptor::is_consistent() const
 
 bool TypeDescriptor::is_primitive() const
 {
-    return kind_ > TK_NONE && kind_ <= TK_CHAR16;
+    return kind_ > TypeKind::TK_NONE && kind_ <= TypeKind::TK_CHAR16 &&
+           annotation_.empty() &&
+           members_.empty() &&
+           !base_type_ && !discriminator_type_ &&
+           !element_type_ && !key_element_type_;
 }
 
 bool TypeDescriptor::is_type_name_consistent(
@@ -363,9 +372,26 @@ ReturnCode_t TypeDescriptor::get_all_members(
     return ReturnCode_t::RETCODE_OK;
 }
 
+ReturnCode_t TypeDescriptor::get_member_by_index(
+            MemberDescriptor& member,
+            uint32_t index) const noexcept
+{
+    if(index >=  members_.size())
+    {
+        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting member by index, member not found.");
+        return ReturnCode_t::RETCODE_ERROR;
+    }
+
+    auto it = members_.begin();
+    std::advance(it, index);
+    member = *it;
+
+    return ReturnCode_t::RETCODE_OK;
+}
+
 ReturnCode_t TypeDescriptor::get_member_by_name(
         MemberDescriptor& member,
-        const std::string& name) const
+        const std::string& name) const noexcept
 {
     auto it = member_by_name_.find(name);
     if (it != member_by_name_.end())
@@ -397,7 +423,7 @@ TypeDescriptor::get_member(
 
 ReturnCode_t TypeDescriptor::get_member(
         MemberDescriptor& member,
-        MemberId id) const
+        MemberId id) const noexcept
 {
     const DynamicTypeMember* pM;
     bool found;
@@ -415,7 +441,7 @@ ReturnCode_t TypeDescriptor::get_member(
     }
 }
 
-uint32_t TypeDescriptor::get_members_count() const
+uint32_t TypeDescriptor::get_member_count() const
 {
     return static_cast<uint32_t>(members_.size());
 }
@@ -474,4 +500,3 @@ bool TypeDescriptor::exists_member_by_id(
     }
     return member_by_id_.find(id) != member_by_id_.end();
 }
-

@@ -37,7 +37,7 @@ namespace types {
 
 TypeObjectHashId::TypeObjectHashId()
 {
-    m__d = EK_COMPLETE;
+    m__d = TypeKind::EK_COMPLETE;
 }
 
 TypeObjectHashId::~TypeObjectHashId()
@@ -50,8 +50,8 @@ TypeObjectHashId::TypeObjectHashId(const TypeObjectHashId &x)
 
     switch (m__d)
     {
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             memcpy(m_hash, x.m_hash, 14);
             break;
         default:
@@ -65,8 +65,8 @@ TypeObjectHashId::TypeObjectHashId(TypeObjectHashId &&x)
 
     switch (m__d)
     {
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             memcpy(m_hash, x.m_hash, 14);
             break;
         default:
@@ -80,8 +80,8 @@ TypeObjectHashId& TypeObjectHashId::operator=(const TypeObjectHashId &x)
 
     switch (m__d)
     {
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             memcpy(m_hash, x.m_hash, 14);
             break;
         default:
@@ -97,8 +97,8 @@ TypeObjectHashId& TypeObjectHashId::operator=(TypeObjectHashId &&x)
 
     switch (m__d)
     {
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             memcpy(m_hash, x.m_hash, 14);
             break;
         default:
@@ -108,38 +108,25 @@ TypeObjectHashId& TypeObjectHashId::operator=(TypeObjectHashId &&x)
     return *this;
 }
 
-void TypeObjectHashId::_d(uint8_t __d) // Special case to ease... sets the current active member
+void TypeObjectHashId::_d(TypeKind __d) // Special case to ease... sets the current active member
 {
-    bool b = false;
-    m__d = __d;
-
-    switch (m__d)
+    switch (__d)
     {
-        case EK_COMPLETE:
-        case EK_MINIMAL:
-            switch (__d)
-            {
-                case EK_COMPLETE:
-                case EK_MINIMAL:
-                    b = true;
-                    break;
-                default:
-                    break;
-            }
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
+            m__d = __d;
             break;
+        default:
+            throw BadParamException("Discriminator doesn't correspond with the selected union member");
     }
-
-    if (!b) throw BadParamException("Discriminator doesn't correspond with the selected union member");
-
-    m__d = __d;
 }
 
-uint8_t TypeObjectHashId::_d() const
+TypeKind TypeObjectHashId::_d() const
 {
     return m__d;
 }
 
-uint8_t& TypeObjectHashId::_d()
+TypeKind& TypeObjectHashId::_d()
 {
     return m__d;
 }
@@ -147,13 +134,13 @@ uint8_t& TypeObjectHashId::_d()
 void TypeObjectHashId::hash(const EquivalenceHash &_hash)
 {
     memcpy(m_hash, _hash, 14);
-    m__d = EK_COMPLETE;
+    m__d = TypeKind::EK_COMPLETE;
 }
 
 void TypeObjectHashId::hash(EquivalenceHash &&_hash)
 {
     memcpy(m_hash, _hash, 14);
-    m__d = EK_COMPLETE;
+    m__d = TypeKind::EK_COMPLETE;
 }
 
 const EquivalenceHash& TypeObjectHashId::hash() const
@@ -162,8 +149,8 @@ const EquivalenceHash& TypeObjectHashId::hash() const
 
     switch (m__d)
     {
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             b = true;
             break;
         default:
@@ -184,8 +171,8 @@ EquivalenceHash& TypeObjectHashId::hash()
 
     switch (m__d)
     {
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             b = true;
             break;
         default:
@@ -209,8 +196,8 @@ size_t TypeObjectHashId::getCdrSerializedSize(const TypeObjectHashId& data, size
 
     switch (data.m__d)
     {
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             current_alignment += ((14) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1); break;
         default:
             break;
@@ -221,12 +208,12 @@ size_t TypeObjectHashId::getCdrSerializedSize(const TypeObjectHashId& data, size
 
 void TypeObjectHashId::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
-    scdr << m__d;
+    scdr << static_cast<octet>(m__d);
 
     switch (m__d)
     {
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             for (int i = 0; i < 14; ++i)
             {
                 scdr << m_hash[i];
@@ -239,12 +226,12 @@ void TypeObjectHashId::serialize(eprosima::fastcdr::Cdr &scdr) const
 
 void TypeObjectHashId::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
-    dcdr >> m__d;
+    dcdr >> reinterpret_cast<octet&>(m__d);
 
     switch (m__d)
     {
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             for (int i = 0; i < 14; ++i)
             {
                 dcdr >> m_hash[i];

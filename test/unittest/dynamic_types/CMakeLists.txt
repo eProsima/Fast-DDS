@@ -109,6 +109,7 @@ add_executable(DynamicTypesTests ${DYNAMIC_TYPES_TEST_SOURCE})
 target_compile_definitions(DynamicTypesTests PRIVATE FASTRTPS_NO_LIB
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
+    ENABLE_DYNAMIC_MEMORY_CHECK
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -136,7 +137,6 @@ if(QNX)
     target_link_libraries(DynamicTypesTests socket)
 endif()
 add_gtest(DynamicTypesTests SOURCES ${DYNAMIC_TYPES_TEST_SOURCE})
-
 
 add_executable(DynamicComplexTypesTests ${DYNAMIC_COMPLEX_TYPES_TEST_SOURCE})
 target_compile_definitions(DynamicComplexTypesTests PRIVATE FASTRTPS_NO_LIB

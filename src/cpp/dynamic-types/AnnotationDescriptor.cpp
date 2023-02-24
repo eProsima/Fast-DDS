@@ -100,7 +100,7 @@ ReturnCode_t AnnotationDescriptor::get_all_value(
 
 bool AnnotationDescriptor::is_consistent() const
 {
-    if (!type_ || type_->get_kind() != TK_ANNOTATION)
+    if (!type_ || type_->get_kind() != TypeKind::TK_ANNOTATION)
     {
         return false;
     }

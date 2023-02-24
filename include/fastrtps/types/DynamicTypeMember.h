@@ -65,6 +65,9 @@ public:
         return static_cast<const MemberDescriptor&>(*this);
     }
 
+    using MemberDescriptor::operator==;
+    using MemberDescriptor::operator!=;
+
     using MemberDescriptor::get_kind;
 
     using MemberDescriptor::get_id;

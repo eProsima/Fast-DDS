@@ -69,85 +69,85 @@ TypeObjectFactory::TypeObjectFactory()
     std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
     // Generate basic TypeIdentifiers
     TypeIdentifier* auxIdent;
-    // TK_BOOLEAN:
+    // TypeKind::TK_BOOLEAN:
     auxIdent = new TypeIdentifier();
     identifiers_created_.push_back(auxIdent);
-    auxIdent->_d(TK_BOOLEAN);
+    auxIdent->_d(TypeKind::TK_BOOLEAN);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_BOOLEAN, auxIdent));
-    // TK_BYTE:
+    // TypeKind::TK_BYTE:
     auxIdent = new TypeIdentifier();
     identifiers_created_.push_back(auxIdent);
-    auxIdent->_d(TK_BYTE);
+    auxIdent->_d(TypeKind::TK_BYTE);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_BYTE, auxIdent));
-    // TK_BYTE:
+    // TypeKind::TK_BYTE:
     auxIdent = new TypeIdentifier();
     identifiers_created_.push_back(auxIdent);
-    auxIdent->_d(TK_BYTE);
+    auxIdent->_d(TypeKind::TK_BYTE);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT8, auxIdent));
-    // TK_BYTE:
+    // TypeKind::TK_BYTE:
     auxIdent = new TypeIdentifier();
     identifiers_created_.push_back(auxIdent);
-    auxIdent->_d(TK_BYTE);
+    auxIdent->_d(TypeKind::TK_BYTE);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT8, auxIdent));
-    // TK_INT16:
+    // TypeKind::TK_INT16:
     auxIdent = new TypeIdentifier();
     identifiers_created_.push_back(auxIdent);
-    auxIdent->_d(TK_INT16);
+    auxIdent->_d(TypeKind::TK_INT16);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT16, auxIdent));
-    // TK_INT32:
+    // TypeKind::TK_INT32:
     auxIdent = new TypeIdentifier();
     identifiers_created_.push_back(auxIdent);
-    auxIdent->_d(TK_INT32);
+    auxIdent->_d(TypeKind::TK_INT32);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT32, auxIdent));
-    // TK_INT64:
+    // TypeKind::TK_INT64:
     auxIdent = new TypeIdentifier();
     identifiers_created_.push_back(auxIdent);
-    auxIdent->_d(TK_INT64);
+    auxIdent->_d(TypeKind::TK_INT64);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT64, auxIdent));
-    // TK_UINT16:
+    // TypeKind::TK_UINT16:
     auxIdent = new TypeIdentifier();
     identifiers_created_.push_back(auxIdent);
-    auxIdent->_d(TK_UINT16);
+    auxIdent->_d(TypeKind::TK_UINT16);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT16, auxIdent));
-    // TK_UINT32:
+    // TypeKind::TK_UINT32:
     auxIdent = new TypeIdentifier();
     identifiers_created_.push_back(auxIdent);
-    auxIdent->_d(TK_UINT32);
+    auxIdent->_d(TypeKind::TK_UINT32);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT32, auxIdent));
-    // TK_UINT64:
+    // TypeKind::TK_UINT64:
     auxIdent = new TypeIdentifier();
     identifiers_created_.push_back(auxIdent);
-    auxIdent->_d(TK_UINT64);
+    auxIdent->_d(TypeKind::TK_UINT64);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT64, auxIdent));
-    // TK_FLOAT32:
+    // TypeKind::TK_FLOAT32:
     auxIdent = new TypeIdentifier();
     identifiers_created_.push_back(auxIdent);
-    auxIdent->_d(TK_FLOAT32);
+    auxIdent->_d(TypeKind::TK_FLOAT32);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_FLOAT32, auxIdent));
-    // TK_FLOAT64:
+    // TypeKind::TK_FLOAT64:
     auxIdent = new TypeIdentifier();
     identifiers_created_.push_back(auxIdent);
-    auxIdent->_d(TK_FLOAT64);
+    auxIdent->_d(TypeKind::TK_FLOAT64);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_FLOAT64, auxIdent));
-    // TK_FLOAT128:
+    // TypeKind::TK_FLOAT128:
     auxIdent = new TypeIdentifier();
     identifiers_created_.push_back(auxIdent);
-    auxIdent->_d(TK_FLOAT128);
+    auxIdent->_d(TypeKind::TK_FLOAT128);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_FLOAT128, auxIdent));
-    // TK_CHAR8:
+    // TypeKind::TK_CHAR8:
     auxIdent = new TypeIdentifier();
     identifiers_created_.push_back(auxIdent);
-    auxIdent->_d(TK_CHAR8);
+    auxIdent->_d(TypeKind::TK_CHAR8);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_CHAR8, auxIdent));
-    // TK_CHAR16:
+    // TypeKind::TK_CHAR16:
     auxIdent = new TypeIdentifier();
     identifiers_created_.push_back(auxIdent);
-    auxIdent->_d(TK_CHAR16);
+    auxIdent->_d(TypeKind::TK_CHAR16);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_CHAR16, auxIdent));
-    // TK_CHAR16:
+    // TypeKind::TK_CHAR16:
     auxIdent = new TypeIdentifier();
     identifiers_created_.push_back(auxIdent);
-    auxIdent->_d(TK_CHAR16);
+    auxIdent->_d(TypeKind::TK_CHAR16);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_CHAR16T, auxIdent));
 }
 
@@ -318,25 +318,25 @@ void TypeObjectFactory::fill_minimal_information(
     switch (ident->_d())
     {
         /*
-           case TK_BOOLEAN:
-           case TK_BYTE:
-           case TK_INT16:
-           case TK_INT32:
-           case TK_INT64:
-           case TK_UINT16:
-           case TK_UINT32:
-           case TK_UINT64:
-           case TK_FLOAT32:
-           case TK_FLOAT64:
-           case TK_FLOAT128:
-           case TK_CHAR8:
-           case TK_CHAR16:
-           case TK_STRING8:
-           case TK_STRING16:
+           case TypeKind::TK_BOOLEAN:
+           case TypeKind::TK_BYTE:
+           case TypeKind::TK_INT16:
+           case TypeKind::TK_INT32:
+           case TypeKind::TK_INT64:
+           case TypeKind::TK_UINT16:
+           case TypeKind::TK_UINT32:
+           case TypeKind::TK_UINT64:
+           case TypeKind::TK_FLOAT32:
+           case TypeKind::TK_FLOAT64:
+           case TypeKind::TK_FLOAT128:
+           case TypeKind::TK_CHAR8:
+           case TypeKind::TK_CHAR16:
+           case TypeKind::TK_STRING8:
+           case TypeKind::TK_STRING16:
             info->minimal().dependent_typeid_count(0);
             break;
          */
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
         {
             info->minimal().dependent_typeid_count(1);
             const TypeIdentifier* innerId = get_stored_type_identifier(
@@ -353,7 +353,7 @@ void TypeObjectFactory::fill_minimal_information(
             }
             break;
         }
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
         {
             info->minimal().dependent_typeid_count(1);
             const TypeIdentifier* innerId = get_stored_type_identifier(
@@ -370,7 +370,7 @@ void TypeObjectFactory::fill_minimal_information(
             }
             break;
         }
-        case TK_MAP:
+        case TypeKind::TK_MAP:
         {
             info->minimal().dependent_typeid_count(2);
             const TypeIdentifier* innerId = get_stored_type_identifier(
@@ -398,10 +398,10 @@ void TypeObjectFactory::fill_minimal_information(
             }
             break;
         }
-        case EK_MINIMAL:
+        case TypeKind::EK_MINIMAL:
             switch (obj->minimal()._d())
             {
-                case TK_ALIAS:
+                case TypeKind::TK_ALIAS:
                 {
                     info->minimal().dependent_typeid_count(1);
                     const TypeIdentifier* innerId = get_stored_type_identifier(
@@ -418,7 +418,7 @@ void TypeObjectFactory::fill_minimal_information(
                     }
                     break;
                 }
-                case TK_STRUCTURE:
+                case TypeKind::TK_STRUCTURE:
                 {
                     const MinimalStructMemberSeq& members = obj->minimal().struct_type().member_seq();
                     for (auto member = members.begin(); member != members.end(); ++member)
@@ -440,16 +440,16 @@ void TypeObjectFactory::fill_minimal_information(
                     info->minimal().dependent_typeid_count(static_cast<int32_t>(members.size()));
                     break;
                 }
-                case TK_ENUM:
+                case TypeKind::TK_ENUM:
                     // Already fully defined by obj
                     break;
-                case TK_BITMASK:
+                case TypeKind::TK_BITMASK:
                     // TODO To implement
                     break;
-                case TK_BITSET:
+                case TypeKind::TK_BITSET:
                     // TODO To implement
                     break;
-                case TK_UNION:
+                case TypeKind::TK_UNION:
                 {
                     const MinimalUnionMemberSeq& members = obj->minimal().union_type().member_seq();
                     for (auto member = members.begin(); member != members.end(); ++member)
@@ -483,13 +483,20 @@ void TypeObjectFactory::fill_minimal_information(
                     info->minimal().dependent_typeid_count(static_cast<int32_t>(members.size() + 1));
                     break;
                 }
-                case TK_ANNOTATION:
+                case TypeKind::TK_ANNOTATION:
                     // TODO To implement
+                    break;
+                default:
+                    // TODO:BARRO check the missing cases
                     break;
             }
             break;
-        case EK_COMPLETE:
+        case TypeKind::EK_COMPLETE:
             // Cannot happen
+            break;
+        default:
+            // TODO:BARRO check the missing cases
+            assert(0);
             break;
     }
     std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
@@ -586,25 +593,25 @@ void TypeObjectFactory::fill_complete_information(
     switch (ident->_d())
     {
         /*
-           case TK_BOOLEAN:
-           case TK_BYTE:
-           case TK_INT16:
-           case TK_INT32:
-           case TK_INT64:
-           case TK_UINT16:
-           case TK_UINT32:
-           case TK_UINT64:
-           case TK_FLOAT32:
-           case TK_FLOAT64:
-           case TK_FLOAT128:
-           case TK_CHAR8:
-           case TK_CHAR16:
-           case TK_STRING8:
-           case TK_STRING16:
+           case TypeKind::TK_BOOLEAN:
+           case TypeKind::TK_BYTE:
+           case TypeKind::TK_INT16:
+           case TypeKind::TK_INT32:
+           case TypeKind::TK_INT64:
+           case TypeKind::TK_UINT16:
+           case TypeKind::TK_UINT32:
+           case TypeKind::TK_UINT64:
+           case TypeKind::TK_FLOAT32:
+           case TypeKind::TK_FLOAT64:
+           case TypeKind::TK_FLOAT128:
+           case TypeKind::TK_CHAR8:
+           case TypeKind::TK_CHAR16:
+           case TypeKind::TK_STRING8:
+           case TypeKind::TK_STRING16:
             info->complete().dependent_typeid_count(0);
             break;
          */
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
         {
             info->complete().dependent_typeid_count(1);
             const TypeIdentifier* innerId = get_stored_type_identifier(
@@ -621,7 +628,7 @@ void TypeObjectFactory::fill_complete_information(
             }
             break;
         }
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
         {
             info->complete().dependent_typeid_count(1);
             const TypeIdentifier* innerId = get_stored_type_identifier(
@@ -638,7 +645,7 @@ void TypeObjectFactory::fill_complete_information(
             }
             break;
         }
-        case TK_MAP:
+        case TypeKind::TK_MAP:
         {
             info->complete().dependent_typeid_count(2);
             const TypeIdentifier* innerId = get_stored_type_identifier(
@@ -668,10 +675,10 @@ void TypeObjectFactory::fill_complete_information(
             }
             break;
         }
-        case EK_MINIMAL:
+        case TypeKind::EK_MINIMAL:
             switch (obj->minimal()._d())
             {
-                case TK_ALIAS:
+                case TypeKind::TK_ALIAS:
                 {
                     info->minimal().dependent_typeid_count(1);
                     const TypeIdentifier* innerId = get_stored_type_identifier(
@@ -688,7 +695,7 @@ void TypeObjectFactory::fill_complete_information(
                     }
                     break;
                 }
-                case TK_STRUCTURE:
+                case TypeKind::TK_STRUCTURE:
                 {
                     const MinimalStructMemberSeq& members = obj->minimal().struct_type().member_seq();
                     for (auto member = members.begin(); member != members.end(); ++member)
@@ -710,16 +717,16 @@ void TypeObjectFactory::fill_complete_information(
                     info->minimal().dependent_typeid_count(static_cast<int32_t>(members.size()));
                     break;
                 }
-                case TK_ENUM:
+                case TypeKind::TK_ENUM:
                     // Already fully defined by obj
                     break;
-                case TK_BITMASK:
+                case TypeKind::TK_BITMASK:
                     // TODO To implement (already fully defined?)
                     break;
-                case TK_BITSET:
+                case TypeKind::TK_BITSET:
                     // TODO To implement (already fully defined? Fields are primitives.)
                     break;
-                case TK_UNION:
+                case TypeKind::TK_UNION:
                 {
                     const MinimalUnionMemberSeq& members = obj->minimal().union_type().member_seq();
                     for (auto member = members.begin(); member != members.end(); ++member)
@@ -753,15 +760,19 @@ void TypeObjectFactory::fill_complete_information(
                     info->minimal().dependent_typeid_count(static_cast<int32_t>(members.size() + 1));
                     break;
                 }
-                case TK_ANNOTATION:
+                case TypeKind::TK_ANNOTATION:
                     // TODO To implement (already fully defined? Fields are primitives.)
+                    break;
+                default:
+                    // TODO:BARRO check the missing cases
+                    assert(0);
                     break;
             }
             break;
-        case EK_COMPLETE:
+        case TypeKind::EK_COMPLETE:
             switch (obj->complete()._d())
             {
-                case TK_ALIAS:
+                case TypeKind::TK_ALIAS:
                 {
                     info->complete().dependent_typeid_count(1);
                     const TypeIdentifier* innerId = get_stored_type_identifier(
@@ -778,7 +789,7 @@ void TypeObjectFactory::fill_complete_information(
                     }
                     break;
                 }
-                case TK_STRUCTURE:
+                case TypeKind::TK_STRUCTURE:
                 {
                     const CompleteStructMemberSeq& members = obj->complete().struct_type().member_seq();
                     for (auto member = members.begin(); member != members.end(); ++member)
@@ -800,16 +811,16 @@ void TypeObjectFactory::fill_complete_information(
                     info->complete().dependent_typeid_count(static_cast<int32_t>(members.size()));
                     break;
                 }
-                case TK_ENUM:
+                case TypeKind::TK_ENUM:
                     // Already fully defined by obj
                     break;
-                case TK_BITMASK:
+                case TypeKind::TK_BITMASK:
                     // TODO To implement
                     break;
-                case TK_BITSET:
+                case TypeKind::TK_BITSET:
                     // TODO To implement (already fully defined? Fields are primitives.)
                     break;
-                case TK_UNION:
+                case TypeKind::TK_UNION:
                 {
                     const CompleteUnionMemberSeq& members = obj->complete().union_type().member_seq();
                     for (auto member = members.begin(); member != members.end(); ++member)
@@ -843,10 +854,19 @@ void TypeObjectFactory::fill_complete_information(
                     info->complete().dependent_typeid_count(static_cast<int32_t>(members.size() + 1));
                     break;
                 }
-                case TK_ANNOTATION:
+                case TypeKind::TK_ANNOTATION:
                     // TODO To implement (already fully defined? Fields are primitives.)
                     break;
+                default:
+                    // TODO:BARRO check the missing cases
+                    assert(0);
+                    break;
             }
+            break;
+
+        default:
+            // TODO:BARRO check the missing cases
+            assert(0);
             break;
     }
     std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
@@ -877,7 +897,7 @@ const TypeObject* TypeObjectFactory::get_type_object(
     {
         return nullptr;
     }
-    if (identifier->_d() == EK_COMPLETE)
+    if (identifier->_d() == TypeKind::EK_COMPLETE)
     {
         if (complete_objects_.find(identifier) != complete_objects_.end())
         {
@@ -911,111 +931,111 @@ TypeKind TypeObjectFactory::get_type_kind(
 {
     if (type_name == TKNAME_BOOLEAN)
     {
-        return TK_BOOLEAN;
+        return TypeKind::TK_BOOLEAN;
     }
     else if (type_name == TKNAME_INT16)
     {
-        return TK_INT16;
+        return TypeKind::TK_INT16;
     }
     else if (type_name == TKNAME_INT32)
     {
-        return TK_INT32;
+        return TypeKind::TK_INT32;
     }
     else if (type_name == TKNAME_UINT16)
     {
-        return TK_UINT16;
+        return TypeKind::TK_UINT16;
     }
     else if (type_name == TKNAME_UINT32)
     {
-        return TK_UINT32;
+        return TypeKind::TK_UINT32;
     }
     else if (type_name == TKNAME_FLOAT32)
     {
-        return TK_FLOAT32;
+        return TypeKind::TK_FLOAT32;
     }
     else if (type_name == TKNAME_FLOAT64)
     {
-        return TK_FLOAT64;
+        return TypeKind::TK_FLOAT64;
     }
     else if (type_name == TKNAME_CHAR8)
     {
-        return TK_CHAR8;
+        return TypeKind::TK_CHAR8;
     }
     else if (type_name == TKNAME_BYTE || type_name == TKNAME_INT8 || type_name == TKNAME_UINT8)
     {
-        return TK_BYTE;
+        return TypeKind::TK_BYTE;
     }
     else if (type_name.find("strings_") == 0)
     {
-        return TI_STRING8_SMALL;
+        return TypeKind::TI_STRING8_SMALL;
     }
     else if (type_name.find("stringl_") == 0)
     {
-        return TI_STRING8_LARGE;
+        return TypeKind::TI_STRING8_LARGE;
     }
     else if (type_name.find("sets_") == 0)
     {
-        return TI_PLAIN_SEQUENCE_SMALL;
+        return TypeKind::TI_PLAIN_SEQUENCE_SMALL;
     }
     else if (type_name.find("setl_") == 0)
     {
-        return TI_PLAIN_SEQUENCE_LARGE;
+        return TypeKind::TI_PLAIN_SEQUENCE_LARGE;
     }
     else if (type_name.find("arrays_") == 0)
     {
-        return TI_PLAIN_ARRAY_SMALL;
+        return TypeKind::TI_PLAIN_ARRAY_SMALL;
     }
     else if (type_name.find("arrayl_") == 0)
     {
-        return TI_PLAIN_ARRAY_LARGE;
+        return TypeKind::TI_PLAIN_ARRAY_LARGE;
     }
     else if (type_name == TKNAME_INT64)
     {
-        return TK_INT64;
+        return TypeKind::TK_INT64;
     }
     else if (type_name == TKNAME_UINT64)
     {
-        return TK_UINT64;
+        return TypeKind::TK_UINT64;
     }
     else if (type_name == TKNAME_FLOAT128)
     {
-        return TK_FLOAT128;
+        return TypeKind::TK_FLOAT128;
     }
     else if (type_name == TKNAME_CHAR16 || type_name == TKNAME_CHAR16T)
     {
-        return TK_CHAR16;
+        return TypeKind::TK_CHAR16;
     }
     else if (type_name.find("wstrings_") == 0)
     {
-        return TI_STRING16_SMALL;
+        return TypeKind::TI_STRING16_SMALL;
     }
     else if (type_name.find("wstringl_") == 0)
     {
-        return TI_STRING16_LARGE;
+        return TypeKind::TI_STRING16_LARGE;
     }
     else if (type_name.find("sequences_") == 0)
     {
-        return TI_PLAIN_SEQUENCE_SMALL;
+        return TypeKind::TI_PLAIN_SEQUENCE_SMALL;
     }
     else if (type_name.find("sequencel_") == 0)
     {
-        return TI_PLAIN_SEQUENCE_LARGE;
+        return TypeKind::TI_PLAIN_SEQUENCE_LARGE;
     }
     else if (type_name.find("maps_") == 0)
     {
-        return TI_PLAIN_MAP_SMALL;
+        return TypeKind::TI_PLAIN_MAP_SMALL;
     }
     else if (type_name.find("mapl_") == 0)
     {
-        return TI_PLAIN_MAP_LARGE;
+        return TypeKind::TI_PLAIN_MAP_LARGE;
     }
     else if (get_type_identifier(type_name) != nullptr)
     {
-        return EK_MINIMAL;
+        return TypeKind::EK_MINIMAL;
     }
     else
     {
-        return TK_NONE;
+        return TypeKind::TK_NONE;
     }
 }
 
@@ -1025,19 +1045,19 @@ std::string TypeObjectFactory::get_type_name(
     switch (kind)
     {
         // Primitive types, already defined (never will be asked, but ok)
-        case TK_BOOLEAN: return TKNAME_BOOLEAN;
-        case TK_INT16: return TKNAME_INT16;
-        case TK_INT32: return TKNAME_INT32;
-        case TK_UINT16: return TKNAME_UINT16;
-        case TK_UINT32: return TKNAME_UINT32;
-        case TK_FLOAT32: return TKNAME_FLOAT32;
-        case TK_FLOAT64: return TKNAME_FLOAT64;
-        case TK_CHAR8: return TKNAME_CHAR8;
-        case TK_BYTE: return TKNAME_BYTE;
-        case TK_INT64: return TKNAME_INT64;
-        case TK_UINT64: return TKNAME_UINT64;
-        case TK_FLOAT128: return TKNAME_FLOAT128;
-        case TK_CHAR16: return TKNAME_CHAR16;
+        case TypeKind::TK_BOOLEAN: return TKNAME_BOOLEAN;
+        case TypeKind::TK_INT16: return TKNAME_INT16;
+        case TypeKind::TK_INT32: return TKNAME_INT32;
+        case TypeKind::TK_UINT16: return TKNAME_UINT16;
+        case TypeKind::TK_UINT32: return TKNAME_UINT32;
+        case TypeKind::TK_FLOAT32: return TKNAME_FLOAT32;
+        case TypeKind::TK_FLOAT64: return TKNAME_FLOAT64;
+        case TypeKind::TK_CHAR8: return TKNAME_CHAR8;
+        case TypeKind::TK_BYTE: return TKNAME_BYTE;
+        case TypeKind::TK_INT64: return TKNAME_INT64;
+        case TypeKind::TK_UINT64: return TKNAME_UINT64;
+        case TypeKind::TK_FLOAT128: return TKNAME_FLOAT128;
+        case TypeKind::TK_CHAR16: return TKNAME_CHAR16;
         default:
             break;
     }
@@ -1120,7 +1140,7 @@ const TypeIdentifier* TypeObjectFactory::get_stored_type_identifier(
     {
         return nullptr;
     }
-    if (identifier->_d() == EK_COMPLETE)
+    if (identifier->_d() == TypeKind::EK_COMPLETE)
     {
         for (auto& it : complete_identifiers_)
         {
@@ -1141,7 +1161,7 @@ const TypeIdentifier* TypeObjectFactory::get_stored_type_identifier(
         }
     }
     // If isn't minimal, return directly
-    if (identifier->_d() < EK_MINIMAL)
+    if (identifier->_d() < TypeKind::EK_MINIMAL)
     {
         return identifier;
     }
@@ -1156,7 +1176,7 @@ std::string TypeObjectFactory::get_type_name(
     {
         return "<NULLPTR>";
     }
-    if (identifier->_d() == EK_COMPLETE)
+    if (identifier->_d() == TypeKind::EK_COMPLETE)
     {
         for (auto& it : complete_identifiers_)
         {
@@ -1196,11 +1216,11 @@ std::string TypeObjectFactory::get_type_name(
 std::string TypeObjectFactory::generate_name_and_store_type_identifier(
         const TypeIdentifier* identifier) const
 {
-    if (identifier->_d() < EK_MINIMAL)
+    if (identifier->_d() < TypeKind::EK_MINIMAL)
     {
         switch (identifier->_d())
         {
-            case TI_PLAIN_ARRAY_SMALL:
+            case TypeKind::TI_PLAIN_ARRAY_SMALL:
             {
                 std::vector<uint32_t> bounds;
                 for (SBound sb : identifier->array_sdefn().array_bound_seq())
@@ -1212,56 +1232,56 @@ std::string TypeObjectFactory::generate_name_and_store_type_identifier(
                     bounds,
                     true);
             }
-            case TI_PLAIN_ARRAY_LARGE:
+            case TypeKind::TI_PLAIN_ARRAY_LARGE:
             {
                 return TypeNamesGenerator::get_array_type_name(
                     get_type_name(identifier->array_ldefn().element_identifier()),
                     identifier->array_ldefn().array_bound_seq(),
                     true);
             }
-            case TI_PLAIN_SEQUENCE_SMALL:
+            case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
             {
                 return TypeNamesGenerator::get_sequence_type_name(
                     get_type_name(identifier->seq_sdefn().element_identifier()),
                     identifier->seq_sdefn().bound(),
                     true);
             }
-            case TI_PLAIN_SEQUENCE_LARGE:
+            case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
             {
                 return TypeNamesGenerator::get_sequence_type_name(
                     get_type_name(identifier->seq_ldefn().element_identifier()),
                     identifier->seq_ldefn().bound(),
                     true);
             }
-            case TI_STRING8_SMALL:
+            case TypeKind::TI_STRING8_SMALL:
             {
                 return TypeNamesGenerator::get_string_type_name(
                     identifier->string_sdefn().bound(),
                     false,
                     true);
             }
-            case TI_STRING8_LARGE:
+            case TypeKind::TI_STRING8_LARGE:
             {
                 return TypeNamesGenerator::get_string_type_name(
                     identifier->string_ldefn().bound(),
                     false,
                     true);
             }
-            case TI_STRING16_SMALL:
+            case TypeKind::TI_STRING16_SMALL:
             {
                 return TypeNamesGenerator::get_string_type_name(
                     identifier->string_sdefn().bound(),
                     true,
                     true);
             }
-            case TI_STRING16_LARGE:
+            case TypeKind::TI_STRING16_LARGE:
             {
                 return TypeNamesGenerator::get_string_type_name(
                     identifier->string_ldefn().bound(),
                     true,
                     true);
             }
-            case TI_PLAIN_MAP_SMALL:
+            case TypeKind::TI_PLAIN_MAP_SMALL:
             {
                 return TypeNamesGenerator::get_map_type_name(
                     get_type_name(identifier->map_sdefn().key_identifier()),
@@ -1269,7 +1289,7 @@ std::string TypeObjectFactory::generate_name_and_store_type_identifier(
                     identifier->map_sdefn().bound(),
                     true);
             }
-            case TI_PLAIN_MAP_LARGE:
+            case TypeKind::TI_PLAIN_MAP_LARGE:
             {
                 return TypeNamesGenerator::get_map_type_name(
                     get_type_name(identifier->map_ldefn().key_identifier()),
@@ -1277,7 +1297,7 @@ std::string TypeObjectFactory::generate_name_and_store_type_identifier(
                     identifier->map_ldefn().bound(),
                     true);
             }
-            case TI_STRONGLY_CONNECTED_COMPONENT: // TODO: Not yet supported.
+            case TypeKind::TI_STRONGLY_CONNECTED_COMPONENT: // TODO: Not yet supported.
             default:
                 return "UNDEF";
         }
@@ -1288,7 +1308,7 @@ std::string TypeObjectFactory::generate_name_and_store_type_identifier(
 const TypeIdentifier* TypeObjectFactory::try_get_complete(
         const TypeIdentifier* identifier) const
 {
-    if (identifier->_d() == EK_COMPLETE)
+    if (identifier->_d() == TypeKind::EK_COMPLETE)
     {
         return identifier;
     }
@@ -1303,30 +1323,30 @@ bool TypeObjectFactory::is_type_identifier_complete(
 {
     switch (identifier->_d())
     {
-        case TI_STRING8_SMALL:
-        case TI_STRING8_LARGE:
-        case TI_STRING16_SMALL:
-        case TI_STRING16_LARGE:
+        case TypeKind::TI_STRING8_SMALL:
+        case TypeKind::TI_STRING8_LARGE:
+        case TypeKind::TI_STRING16_SMALL:
+        case TypeKind::TI_STRING16_LARGE:
             return false;
-        case TI_PLAIN_SEQUENCE_SMALL:
+        case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
             return is_type_identifier_complete(identifier->seq_sdefn().element_identifier());
-        case TI_PLAIN_SEQUENCE_LARGE:
+        case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
             return is_type_identifier_complete(identifier->seq_ldefn().element_identifier());
-        case TI_PLAIN_ARRAY_SMALL:
+        case TypeKind::TI_PLAIN_ARRAY_SMALL:
             return is_type_identifier_complete(identifier->array_sdefn().element_identifier());
-        case TI_PLAIN_ARRAY_LARGE:
+        case TypeKind::TI_PLAIN_ARRAY_LARGE:
             return is_type_identifier_complete(identifier->array_ldefn().element_identifier());
-        case TI_PLAIN_MAP_SMALL:
+        case TypeKind::TI_PLAIN_MAP_SMALL:
             return is_type_identifier_complete(identifier->map_sdefn().element_identifier())
                    && is_type_identifier_complete(identifier->map_sdefn().key_identifier());
-        case TI_PLAIN_MAP_LARGE:
+        case TypeKind::TI_PLAIN_MAP_LARGE:
             return is_type_identifier_complete(identifier->map_ldefn().element_identifier())
                    && is_type_identifier_complete(identifier->map_ldefn().key_identifier());
-        case TI_STRONGLY_CONNECTED_COMPONENT:
+        case TypeKind::TI_STRONGLY_CONNECTED_COMPONENT:
             return false;
-        case EK_COMPLETE:
+        case TypeKind::EK_COMPLETE:
             return true;
-        case EK_MINIMAL:
+        case TypeKind::EK_MINIMAL:
             return false;
         default:
             return false;
@@ -1387,9 +1407,9 @@ void TypeObjectFactory::add_type_object(
 
     if (object != nullptr)
     {
-        if (identifier->_d() >= EK_MINIMAL)
+        if (identifier->_d() >= TypeKind::EK_MINIMAL)
         {
-            if (object->_d() == EK_MINIMAL)
+            if (object->_d() == TypeKind::EK_MINIMAL)
             {
                 const TypeIdentifier* typeId = identifiers_[type_name];
                 if (objects_.find(typeId) == objects_.end())
@@ -1399,7 +1419,7 @@ void TypeObjectFactory::add_type_object(
                     objects_[typeId] = obj;
                 }
             }
-            else if (object->_d() == EK_COMPLETE)
+            else if (object->_d() == TypeKind::EK_COMPLETE)
             {
                 const TypeIdentifier* typeId = complete_identifiers_[type_name];
                 if (complete_objects_.find(typeId) == complete_objects_.end())
@@ -1413,7 +1433,7 @@ void TypeObjectFactory::add_type_object(
         else
         {
             const TypeIdentifier* typeId = identifiers_[type_name];
-            if (object->_d() == EK_MINIMAL)
+            if (object->_d() == TypeKind::EK_MINIMAL)
             {
                 if (objects_.find(typeId) == objects_.end())
                 {
@@ -1422,7 +1442,7 @@ void TypeObjectFactory::add_type_object(
                     objects_[typeId] = obj;
                 }
             }
-            else if (object->_d() == EK_COMPLETE)
+            else if (object->_d() == TypeKind::EK_COMPLETE)
             {
                 if (complete_objects_.find(typeId) == complete_objects_.end())
                 {
@@ -1452,12 +1472,12 @@ const TypeIdentifier* TypeObjectFactory::get_string_identifier(
         TypeIdentifier auxIdent;
         if (bound < 256)
         {
-            auxIdent._d(wide ? TI_STRING16_SMALL : TI_STRING8_SMALL);
+            auxIdent._d(wide ? TypeKind::TI_STRING16_SMALL : TypeKind::TI_STRING8_SMALL);
             auxIdent.string_sdefn().bound(static_cast<octet>(bound));
         }
         else
         {
-            auxIdent._d(wide ? TI_STRING16_LARGE : TI_STRING8_LARGE);
+            auxIdent._d(wide ? TypeKind::TI_STRING16_LARGE : TypeKind::TI_STRING8_LARGE);
             auxIdent.string_ldefn().bound(bound);
         }
         //identifiers_.insert(std::pair<std::string, TypeIdentifier*>(type, auxIdent));
@@ -1490,7 +1510,7 @@ const TypeIdentifier* TypeObjectFactory::get_sequence_identifier(
         TypeIdentifier auxIdent;
         if (bound < 256)
         {
-            auxIdent._d(TI_PLAIN_SEQUENCE_SMALL);
+            auxIdent._d(TypeKind::TI_PLAIN_SEQUENCE_SMALL);
             auxIdent.seq_sdefn().bound(static_cast<octet>(bound));
             auxIdent.seq_sdefn().element_identifier(innerIdent);
             auxIdent.seq_sdefn().header().element_flags().TRY_CONSTRUCT1(false);
@@ -1504,7 +1524,7 @@ const TypeIdentifier* TypeObjectFactory::get_sequence_identifier(
         }
         else
         {
-            auxIdent._d(TI_PLAIN_SEQUENCE_LARGE);
+            auxIdent._d(TypeKind::TI_PLAIN_SEQUENCE_LARGE);
             auxIdent.seq_ldefn().bound(bound);
             auxIdent.seq_ldefn().element_identifier(innerIdent);
             auxIdent.seq_ldefn().header().element_flags().TRY_CONSTRUCT1(false);
@@ -1553,7 +1573,7 @@ const TypeIdentifier* TypeObjectFactory::get_array_identifier(
         TypeIdentifier auxIdent;
         if (size < 256)
         {
-            auxIdent._d(TI_PLAIN_ARRAY_SMALL);
+            auxIdent._d(TypeKind::TI_PLAIN_ARRAY_SMALL);
             for (uint32_t b : bound)
             {
                 auxIdent.array_sdefn().array_bound_seq().push_back(static_cast<octet>(b));
@@ -1570,7 +1590,7 @@ const TypeIdentifier* TypeObjectFactory::get_array_identifier(
         }
         else
         {
-            auxIdent._d(TI_PLAIN_ARRAY_LARGE);
+            auxIdent._d(TypeKind::TI_PLAIN_ARRAY_LARGE);
             for (uint32_t b : bound)
             {
                 auxIdent.array_ldefn().array_bound_seq().push_back(b);
@@ -1625,7 +1645,7 @@ const TypeIdentifier* TypeObjectFactory::get_map_identifier(
         TypeIdentifier auxIdent;
         if (bound < 256)
         {
-            auxIdent._d(TI_PLAIN_MAP_SMALL);
+            auxIdent._d(TypeKind::TI_PLAIN_MAP_SMALL);
             auxIdent.map_sdefn().bound(static_cast<octet>(bound));
             auxIdent.map_sdefn().element_identifier(valIdent);
             auxIdent.map_sdefn().key_identifier(keyIdent);
@@ -1647,7 +1667,7 @@ const TypeIdentifier* TypeObjectFactory::get_map_identifier(
         }
         else
         {
-            auxIdent._d(TI_PLAIN_MAP_LARGE);
+            auxIdent._d(TypeKind::TI_PLAIN_MAP_LARGE);
             auxIdent.map_ldefn().bound(bound);
             auxIdent.map_ldefn().element_identifier(valIdent);
             auxIdent.map_ldefn().key_identifier(keyIdent);
@@ -1686,29 +1706,29 @@ static TypeKind GetTypeKindFromIdentifier(
 {
     if (identifier == nullptr)
     {
-        return TK_NONE;
+        return TypeKind::TK_NONE;
     }
     switch (identifier->_d())
     {
-        case TI_STRING8_SMALL:
-        case TI_STRING8_LARGE:
-            return TK_STRING8;
-        case TI_STRING16_SMALL:
-        case TI_STRING16_LARGE:
-            return TK_STRING16;
-        case TI_PLAIN_SEQUENCE_SMALL:
-        case TI_PLAIN_SEQUENCE_LARGE:
-            return TK_SEQUENCE;
-        case TI_PLAIN_ARRAY_SMALL:
-        case TI_PLAIN_ARRAY_LARGE:
-            return TK_ARRAY;
-        case TI_PLAIN_MAP_SMALL:
-        case TI_PLAIN_MAP_LARGE:
-            return TK_MAP;
-        case TI_STRONGLY_CONNECTED_COMPONENT:
-            return TK_NONE;
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::TI_STRING8_SMALL:
+        case TypeKind::TI_STRING8_LARGE:
+            return TypeKind::TK_STRING8;
+        case TypeKind::TI_STRING16_SMALL:
+        case TypeKind::TI_STRING16_LARGE:
+            return TypeKind::TK_STRING16;
+        case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
+        case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
+            return TypeKind::TK_SEQUENCE;
+        case TypeKind::TI_PLAIN_ARRAY_SMALL:
+        case TypeKind::TI_PLAIN_ARRAY_LARGE:
+            return TypeKind::TK_ARRAY;
+        case TypeKind::TI_PLAIN_MAP_SMALL:
+        case TypeKind::TI_PLAIN_MAP_LARGE:
+            return TypeKind::TK_MAP;
+        case TypeKind::TI_STRONGLY_CONNECTED_COMPONENT:
+            return TypeKind::TK_NONE;
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
         default:
             return identifier->_d();
     }
@@ -1725,25 +1745,25 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
     {
         // Basic types goes as default!
         /*
-           case TK_NONE:
-           case TK_BOOLEAN:
-           case TK_BYTE:
-           case TK_INT16:
-           case TK_INT32:
-           case TK_INT64:
-           case TK_UINT16:
-           case TK_UINT32:
-           case TK_UINT64:
-           case TK_FLOAT32:
-           case TK_FLOAT64:
-           case TK_FLOAT128:
-           case TK_CHAR8:
-           case TK_CHAR16:
+           case TypeKind::TK_NONE:
+           case TypeKind::TK_BOOLEAN:
+           case TypeKind::TK_BYTE:
+           case TypeKind::TK_INT16:
+           case TypeKind::TK_INT32:
+           case TypeKind::TK_INT64:
+           case TypeKind::TK_UINT16:
+           case TypeKind::TK_UINT32:
+           case TypeKind::TK_UINT64:
+           case TypeKind::TK_FLOAT32:
+           case TypeKind::TK_FLOAT64:
+           case TypeKind::TK_FLOAT128:
+           case TypeKind::TK_CHAR8:
+           case TypeKind::TK_CHAR16:
             break;
          */
-        case TK_STRING8:
+        case TypeKind::TK_STRING8:
         {
-            if (identifier->_d() == TI_STRING8_SMALL)
+            if (identifier->_d() == TypeKind::TI_STRING8_SMALL)
             {
                 descriptor.bound_.emplace_back(static_cast<uint32_t>(identifier->string_sdefn().bound()));
             }
@@ -1754,9 +1774,9 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             descriptor.element_type_ = DynamicTypeBuilderFactory::get_instance().create_char8_type();
             break;
         }
-        case TK_STRING16:
+        case TypeKind::TK_STRING16:
         {
-            if (identifier->_d() == TI_STRING16_SMALL)
+            if (identifier->_d() == TypeKind::TI_STRING16_SMALL)
             {
                 descriptor.bound_.emplace_back(static_cast<uint32_t>(identifier->string_sdefn().bound()));
             }
@@ -1767,9 +1787,9 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             descriptor.element_type_ = DynamicTypeBuilderFactory::get_instance().create_char16_type();
             break;
         }
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
         {
-            if (identifier->_d() == TI_PLAIN_SEQUENCE_SMALL)
+            if (identifier->_d() == TypeKind::TI_PLAIN_SEQUENCE_SMALL)
             {
                 const TypeIdentifier* aux = try_get_complete(identifier->seq_sdefn().element_identifier());
                 descriptor.bound_.emplace_back(static_cast<uint32_t>(identifier->seq_sdefn().bound()));
@@ -1783,9 +1803,9 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             }
             break;
         }
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
         {
-            if (identifier->_d() == TI_PLAIN_ARRAY_SMALL)
+            if (identifier->_d() == TypeKind::TI_PLAIN_ARRAY_SMALL)
             {
                 const TypeIdentifier* aux = try_get_complete(identifier->array_sdefn().element_identifier());
                 for (octet b : identifier->array_sdefn().array_bound_seq())
@@ -1802,9 +1822,9 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             }
             break;
         }
-        case TK_MAP:
+        case TypeKind::TK_MAP:
         {
-            if (identifier->_d() == TI_PLAIN_MAP_SMALL)
+            if (identifier->_d() == TypeKind::TI_PLAIN_MAP_SMALL)
             {
                 const TypeIdentifier* aux = try_get_complete(identifier->map_sdefn().element_identifier());
                 const TypeIdentifier* aux2 = try_get_complete(identifier->map_sdefn().key_identifier());
@@ -1822,15 +1842,15 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             }
             break;
         }
-        case EK_MINIMAL:
-        case EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
             // A MinimalTypeObject cannot instantiate a valid TypeDescriptor, but maybe the object isn't minimal
-            if (object != nullptr && object->_d() == EK_COMPLETE)
+            if (object != nullptr && object->_d() == TypeKind::EK_COMPLETE)
             {
                 return build_dynamic_type(descriptor, object);
             }
             break;
-        case TK_NONE:
+        case TypeKind::TK_NONE:
             return DynamicType_ptr(nullptr); // Maybe in discovery, return nullptr quietly.
         default:
             break;
@@ -1851,7 +1871,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
         const TypeObject* object,
         const DynamicType_ptr annotation_member_type) const
 {
-    if (object == nullptr || object->_d() != EK_COMPLETE)
+    if (object == nullptr || object->_d() != TypeKind::EK_COMPLETE)
     {
         return DynamicType_ptr(nullptr);
     }
@@ -1862,7 +1882,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
     switch (object->complete()._d())
     {
         // From here, we need TypeObject
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
         {
             const TypeIdentifier* aux =
                     get_stored_type_identifier(&object->complete().alias_type().body().common().related_type());
@@ -1876,10 +1896,10 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
 
             return alias_type->build();
         }
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
         {
             const TypeIdentifier* aux = &object->complete().struct_type().header().base_type();
-            if (aux->_d() == EK_COMPLETE)
+            if (aux->_d() == TypeKind::EK_COMPLETE)
             {
                 descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
             }
@@ -1911,7 +1931,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             }
             return struct_type->build();
         }
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
         {
             // bit_bound annotation effect!
             descriptor.annotation_set_bit_bound(object->complete().enumerated_type().header().common().bit_bound());
@@ -1960,7 +1980,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             }
             return enum_type->build();
         }
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
         {
             descriptor.annotation_set_bit_bound(object->complete().bitmask_type().header().common().bit_bound());
             descriptor.bound_.emplace_back(static_cast<uint32_t>(
@@ -1983,10 +2003,10 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             }
             return bitmask_type->build();
         }
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
         {
             const TypeIdentifier* aux = &object->complete().bitset_type().header().base_type();
-            if (aux->_d() == EK_COMPLETE)
+            if (aux->_d() == TypeKind::EK_COMPLETE)
             {
                 descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
             }
@@ -2024,7 +2044,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             //EPROSIMA_LOG_ERROR(XTYPES, "Bitset isn't supported by DynamicType");
             //return nullptr;
         }
-        case TK_UNION:
+        case TypeKind::TK_UNION:
         {
             const TypeIdentifier* aux =
                     get_stored_type_identifier(&object->complete().union_type().discriminator().common().type_id());
@@ -2052,7 +2072,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 memDesc.id_ = member->common().member_id();
                 memDesc.set_name(member->detail().name());
                 memDesc.set_default_union_value(member->common().member_flags().IS_DEFAULT());
-                if (descriptor.discriminator_type_->get_kind() == TK_ENUM)
+                if (descriptor.discriminator_type_->get_kind() == TypeKind::TK_ENUM)
                 {
                     MemberDescriptor enumMember;
                     descriptor.discriminator_type_->get_member(enumMember, memDesc.id_);
@@ -2076,7 +2096,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
 
             return union_type->build();
         }
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
         {
             DynamicTypeBuilder_ptr annotation_type =
                     DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
@@ -2220,7 +2240,7 @@ TypeIdentifierWithSizeSeq TypeObjectFactory::typelookup_get_type_dependencies(
             if (get_type_information(local_id) == nullptr)
             {
                 TypeInformation aux;
-                if (local_id->_d() > EK_MINIMAL)
+                if (local_id->_d() > TypeKind::EK_MINIMAL)
                 {
                     fill_complete_information(&aux, local_id);
                 }
@@ -2234,7 +2254,7 @@ TypeIdentifierWithSizeSeq TypeObjectFactory::typelookup_get_type_dependencies(
             {
                 // With the TypeInformation, retrieve directly their dependencies
                 const TypeIdentifierWithSizeSeq& full_results =
-                        (local_id->_d() > EK_MINIMAL)
+                        (local_id->_d() > TypeKind::EK_MINIMAL)
                     ? local_info->complete().dependent_typeids()
                     : local_info->minimal().dependent_typeids();
 
@@ -2297,7 +2317,7 @@ bool TypeObjectFactory::typelookup_check_type_identifier(
 const TypeObject* TypeObjectFactory::typelookup_get_type_object_from_information(
         const TypeInformation& information) const
 {
-    if (information.complete().typeid_with_size().type_id()._d() != 0)
+    if (information.complete().typeid_with_size().type_id()._d() != TypeKind::TK_NONE)
     {
         const TypeIdentifier* local_id =
                 get_stored_type_identifier(&information.complete().typeid_with_size().type_id());

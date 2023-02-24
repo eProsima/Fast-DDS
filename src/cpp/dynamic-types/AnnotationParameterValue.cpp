@@ -111,7 +111,7 @@ void ExtendedAnnotationParameterValue::serializeKey(eprosima::fastcdr::Cdr &scdr
 }
 AnnotationParameterValue::AnnotationParameterValue()
 {
-    m__d = TK_NONE;
+    m__d = TypeKind::TK_NONE;
     m_boolean_value = false;
     m_byte_value = 0;
     m_int16_value = 0;
@@ -139,52 +139,52 @@ AnnotationParameterValue::AnnotationParameterValue(const AnnotationParameterValu
 
     switch(m__d)
     {
-        case TK_BOOLEAN:
+        case TypeKind::TK_BOOLEAN:
         m_boolean_value = x.m_boolean_value;
         break;
-        case TK_BYTE:
+        case TypeKind::TK_BYTE:
         m_byte_value = x.m_byte_value;
         break;
-        case TK_INT16:
+        case TypeKind::TK_INT16:
         m_int16_value = x.m_int16_value;
         break;
-        case TK_UINT16:
+        case TypeKind::TK_UINT16:
         m_uint_16_value = x.m_uint_16_value;
         break;
-        case TK_INT32:
+        case TypeKind::TK_INT32:
         m_int32_value = x.m_int32_value;
         break;
-        case TK_UINT32:
+        case TypeKind::TK_UINT32:
         m_uint32_value = x.m_uint32_value;
         break;
-        case TK_INT64:
+        case TypeKind::TK_INT64:
         m_int64_value = x.m_int64_value;
         break;
-        case TK_UINT64:
+        case TypeKind::TK_UINT64:
         m_uint64_value = x.m_uint64_value;
         break;
-        case TK_FLOAT32:
+        case TypeKind::TK_FLOAT32:
         m_float32_value = x.m_float32_value;
         break;
-        case TK_FLOAT64:
+        case TypeKind::TK_FLOAT64:
         m_float64_value = x.m_float64_value;
         break;
-        case TK_FLOAT128:
+        case TypeKind::TK_FLOAT128:
         m_float128_value = x.m_float128_value;
         break;
-        case TK_CHAR8:
+        case TypeKind::TK_CHAR8:
         m_char_value = x.m_char_value;
         break;
-        case TK_CHAR16:
+        case TypeKind::TK_CHAR16:
         m_wchar_value = x.m_wchar_value;
         break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
         m_enumerated_value = x.m_enumerated_value;
         break;
-        case TK_STRING8:
+        case TypeKind::TK_STRING8:
         m_string8_value = x.m_string8_value;
         break;
-        case TK_STRING16:
+        case TypeKind::TK_STRING16:
         m_string16_value = x.m_string16_value;
         break;
         default:
@@ -199,52 +199,52 @@ AnnotationParameterValue::AnnotationParameterValue(AnnotationParameterValue &&x)
 
     switch(m__d)
     {
-        case TK_BOOLEAN:
+        case TypeKind::TK_BOOLEAN:
         m_boolean_value = x.m_boolean_value;
         break;
-        case TK_BYTE:
+        case TypeKind::TK_BYTE:
         m_byte_value = x.m_byte_value;
         break;
-        case TK_INT16:
+        case TypeKind::TK_INT16:
         m_int16_value = x.m_int16_value;
         break;
-        case TK_UINT16:
+        case TypeKind::TK_UINT16:
         m_uint_16_value = x.m_uint_16_value;
         break;
-        case TK_INT32:
+        case TypeKind::TK_INT32:
         m_int32_value = x.m_int32_value;
         break;
-        case TK_UINT32:
+        case TypeKind::TK_UINT32:
         m_uint32_value = x.m_uint32_value;
         break;
-        case TK_INT64:
+        case TypeKind::TK_INT64:
         m_int64_value = x.m_int64_value;
         break;
-        case TK_UINT64:
+        case TypeKind::TK_UINT64:
         m_uint64_value = x.m_uint64_value;
         break;
-        case TK_FLOAT32:
+        case TypeKind::TK_FLOAT32:
         m_float32_value = x.m_float32_value;
         break;
-        case TK_FLOAT64:
+        case TypeKind::TK_FLOAT64:
         m_float64_value = x.m_float64_value;
         break;
-        case TK_FLOAT128:
+        case TypeKind::TK_FLOAT128:
         m_float128_value = x.m_float128_value;
         break;
-        case TK_CHAR8:
+        case TypeKind::TK_CHAR8:
         m_char_value = x.m_char_value;
         break;
-        case TK_CHAR16:
+        case TypeKind::TK_CHAR16:
         m_wchar_value = x.m_wchar_value;
         break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
         m_enumerated_value = x.m_enumerated_value;
         break;
-        case TK_STRING8:
+        case TypeKind::TK_STRING8:
         m_string8_value = std::move(x.m_string8_value);
         break;
-        case TK_STRING16:
+        case TypeKind::TK_STRING16:
         m_string16_value = std::move(x.m_string16_value);
         break;
         default:
@@ -259,52 +259,52 @@ AnnotationParameterValue& AnnotationParameterValue::operator=(const AnnotationPa
 
     switch(m__d)
     {
-        case TK_BOOLEAN:
+        case TypeKind::TK_BOOLEAN:
         m_boolean_value = x.m_boolean_value;
         break;
-        case TK_BYTE:
+        case TypeKind::TK_BYTE:
         m_byte_value = x.m_byte_value;
         break;
-        case TK_INT16:
+        case TypeKind::TK_INT16:
         m_int16_value = x.m_int16_value;
         break;
-        case TK_UINT16:
+        case TypeKind::TK_UINT16:
         m_uint_16_value = x.m_uint_16_value;
         break;
-        case TK_INT32:
+        case TypeKind::TK_INT32:
         m_int32_value = x.m_int32_value;
         break;
-        case TK_UINT32:
+        case TypeKind::TK_UINT32:
         m_uint32_value = x.m_uint32_value;
         break;
-        case TK_INT64:
+        case TypeKind::TK_INT64:
         m_int64_value = x.m_int64_value;
         break;
-        case TK_UINT64:
+        case TypeKind::TK_UINT64:
         m_uint64_value = x.m_uint64_value;
         break;
-        case TK_FLOAT32:
+        case TypeKind::TK_FLOAT32:
         m_float32_value = x.m_float32_value;
         break;
-        case TK_FLOAT64:
+        case TypeKind::TK_FLOAT64:
         m_float64_value = x.m_float64_value;
         break;
-        case TK_FLOAT128:
+        case TypeKind::TK_FLOAT128:
         m_float128_value = x.m_float128_value;
         break;
-        case TK_CHAR8:
+        case TypeKind::TK_CHAR8:
         m_char_value = x.m_char_value;
         break;
-        case TK_CHAR16:
+        case TypeKind::TK_CHAR16:
         m_wchar_value = x.m_wchar_value;
         break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
         m_enumerated_value = x.m_enumerated_value;
         break;
-        case TK_STRING8:
+        case TypeKind::TK_STRING8:
         m_string8_value = x.m_string8_value;
         break;
-        case TK_STRING16:
+        case TypeKind::TK_STRING16:
         m_string16_value = x.m_string16_value;
         break;
         default:
@@ -321,52 +321,52 @@ AnnotationParameterValue& AnnotationParameterValue::operator=(AnnotationParamete
 
     switch(m__d)
     {
-        case TK_BOOLEAN:
+        case TypeKind::TK_BOOLEAN:
         m_boolean_value = x.m_boolean_value;
         break;
-        case TK_BYTE:
+        case TypeKind::TK_BYTE:
         m_byte_value = x.m_byte_value;
         break;
-        case TK_INT16:
+        case TypeKind::TK_INT16:
         m_int16_value = x.m_int16_value;
         break;
-        case TK_UINT16:
+        case TypeKind::TK_UINT16:
         m_uint_16_value = x.m_uint_16_value;
         break;
-        case TK_INT32:
+        case TypeKind::TK_INT32:
         m_int32_value = x.m_int32_value;
         break;
-        case TK_UINT32:
+        case TypeKind::TK_UINT32:
         m_uint32_value = x.m_uint32_value;
         break;
-        case TK_INT64:
+        case TypeKind::TK_INT64:
         m_int64_value = x.m_int64_value;
         break;
-        case TK_UINT64:
+        case TypeKind::TK_UINT64:
         m_uint64_value = x.m_uint64_value;
         break;
-        case TK_FLOAT32:
+        case TypeKind::TK_FLOAT32:
         m_float32_value = x.m_float32_value;
         break;
-        case TK_FLOAT64:
+        case TypeKind::TK_FLOAT64:
         m_float64_value = x.m_float64_value;
         break;
-        case TK_FLOAT128:
+        case TypeKind::TK_FLOAT128:
         m_float128_value = x.m_float128_value;
         break;
-        case TK_CHAR8:
+        case TypeKind::TK_CHAR8:
         m_char_value = x.m_char_value;
         break;
-        case TK_CHAR16:
+        case TypeKind::TK_CHAR16:
         m_wchar_value = x.m_wchar_value;
         break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
         m_enumerated_value = x.m_enumerated_value;
         break;
-        case TK_STRING8:
+        case TypeKind::TK_STRING8:
         m_string8_value = std::move(x.m_string8_value);
         break;
-        case TK_STRING16:
+        case TypeKind::TK_STRING16:
         m_string16_value = std::move(x.m_string16_value);
         break;
         default:
@@ -377,17 +377,17 @@ AnnotationParameterValue& AnnotationParameterValue::operator=(AnnotationParamete
     return *this;
 }
 
-void AnnotationParameterValue::_d(char __d) // Special case to ease, sets the current active member.
+void AnnotationParameterValue::_d(TypeKind __d) // Special case to ease, sets the current active member.
 {
     m__d = __d;
 }
 
-char AnnotationParameterValue::_d() const
+TypeKind AnnotationParameterValue::_d() const
 {
     return m__d;
 }
 
-char& AnnotationParameterValue::_d()
+TypeKind& AnnotationParameterValue::_d()
 {
     return m__d;
 }
@@ -395,7 +395,7 @@ char& AnnotationParameterValue::_d()
 void AnnotationParameterValue::boolean_value(bool _boolean_value)
 {
     m_boolean_value = _boolean_value;
-    m__d = TK_BOOLEAN;
+    m__d = TypeKind::TK_BOOLEAN;
 }
 
 bool AnnotationParameterValue::boolean_value() const
@@ -404,7 +404,7 @@ bool AnnotationParameterValue::boolean_value() const
 
     switch(m__d)
     {
-        case TK_BOOLEAN:
+        case TypeKind::TK_BOOLEAN:
         b = true;
         break;
         default:
@@ -424,7 +424,7 @@ bool& AnnotationParameterValue::boolean_value()
 
     switch(m__d)
     {
-        case TK_BOOLEAN:
+        case TypeKind::TK_BOOLEAN:
         b = true;
         break;
         default:
@@ -440,7 +440,7 @@ bool& AnnotationParameterValue::boolean_value()
 void AnnotationParameterValue::byte_value(uint8_t _byte_value)
 {
     m_byte_value = _byte_value;
-    m__d = TK_BYTE;
+    m__d = TypeKind::TK_BYTE;
 }
 
 uint8_t AnnotationParameterValue::byte_value() const
@@ -449,7 +449,7 @@ uint8_t AnnotationParameterValue::byte_value() const
 
     switch(m__d)
     {
-        case TK_BYTE:
+        case TypeKind::TK_BYTE:
         b = true;
         break;
         default:
@@ -469,7 +469,7 @@ uint8_t& AnnotationParameterValue::byte_value()
 
     switch(m__d)
     {
-        case TK_BYTE:
+        case TypeKind::TK_BYTE:
         b = true;
         break;
         default:
@@ -485,7 +485,7 @@ uint8_t& AnnotationParameterValue::byte_value()
 void AnnotationParameterValue::int16_value(int16_t _int16_value)
 {
     m_int16_value = _int16_value;
-    m__d = TK_INT16;
+    m__d = TypeKind::TK_INT16;
 }
 
 int16_t AnnotationParameterValue::int16_value() const
@@ -494,7 +494,7 @@ int16_t AnnotationParameterValue::int16_value() const
 
     switch(m__d)
     {
-        case TK_INT16:
+        case TypeKind::TK_INT16:
         b = true;
         break;
         default:
@@ -514,7 +514,7 @@ int16_t& AnnotationParameterValue::int16_value()
 
     switch(m__d)
     {
-        case TK_INT16:
+        case TypeKind::TK_INT16:
         b = true;
         break;
         default:
@@ -530,7 +530,7 @@ int16_t& AnnotationParameterValue::int16_value()
 void AnnotationParameterValue::uint_16_value(uint16_t _uint_16_value)
 {
     m_uint_16_value = _uint_16_value;
-    m__d = TK_UINT16;
+    m__d = TypeKind::TK_UINT16;
 }
 
 uint16_t AnnotationParameterValue::uint_16_value() const
@@ -539,7 +539,7 @@ uint16_t AnnotationParameterValue::uint_16_value() const
 
     switch(m__d)
     {
-        case TK_UINT16:
+        case TypeKind::TK_UINT16:
         b = true;
         break;
         default:
@@ -559,7 +559,7 @@ uint16_t& AnnotationParameterValue::uint_16_value()
 
     switch(m__d)
     {
-        case TK_UINT16:
+        case TypeKind::TK_UINT16:
         b = true;
         break;
         default:
@@ -575,7 +575,7 @@ uint16_t& AnnotationParameterValue::uint_16_value()
 void AnnotationParameterValue::int32_value(int32_t _int32_value)
 {
     m_int32_value = _int32_value;
-    m__d = TK_INT32;
+    m__d = TypeKind::TK_INT32;
 }
 
 int32_t AnnotationParameterValue::int32_value() const
@@ -584,7 +584,7 @@ int32_t AnnotationParameterValue::int32_value() const
 
     switch(m__d)
     {
-        case TK_INT32:
+        case TypeKind::TK_INT32:
         b = true;
         break;
         default:
@@ -604,7 +604,7 @@ int32_t& AnnotationParameterValue::int32_value()
 
     switch(m__d)
     {
-        case TK_INT32:
+        case TypeKind::TK_INT32:
         b = true;
         break;
         default:
@@ -620,7 +620,7 @@ int32_t& AnnotationParameterValue::int32_value()
 void AnnotationParameterValue::uint32_value(uint32_t _uint32_value)
 {
     m_uint32_value = _uint32_value;
-    m__d = TK_UINT32;
+    m__d = TypeKind::TK_UINT32;
 }
 
 uint32_t AnnotationParameterValue::uint32_value() const
@@ -629,7 +629,7 @@ uint32_t AnnotationParameterValue::uint32_value() const
 
     switch(m__d)
     {
-        case TK_UINT32:
+        case TypeKind::TK_UINT32:
         b = true;
         break;
         default:
@@ -649,7 +649,7 @@ uint32_t& AnnotationParameterValue::uint32_value()
 
     switch(m__d)
     {
-        case TK_UINT32:
+        case TypeKind::TK_UINT32:
         b = true;
         break;
         default:
@@ -665,7 +665,7 @@ uint32_t& AnnotationParameterValue::uint32_value()
 void AnnotationParameterValue::int64_value(int64_t _int64_value)
 {
     m_int64_value = _int64_value;
-    m__d = TK_INT64;
+    m__d = TypeKind::TK_INT64;
 }
 
 int64_t AnnotationParameterValue::int64_value() const
@@ -674,7 +674,7 @@ int64_t AnnotationParameterValue::int64_value() const
 
     switch(m__d)
     {
-        case TK_INT64:
+        case TypeKind::TK_INT64:
         b = true;
         break;
         default:
@@ -694,7 +694,7 @@ int64_t& AnnotationParameterValue::int64_value()
 
     switch(m__d)
     {
-        case TK_INT64:
+        case TypeKind::TK_INT64:
         b = true;
         break;
         default:
@@ -710,7 +710,7 @@ int64_t& AnnotationParameterValue::int64_value()
 void AnnotationParameterValue::uint64_value(uint64_t _uint64_value)
 {
     m_uint64_value = _uint64_value;
-    m__d = TK_UINT64;
+    m__d = TypeKind::TK_UINT64;
 }
 
 uint64_t AnnotationParameterValue::uint64_value() const
@@ -719,7 +719,7 @@ uint64_t AnnotationParameterValue::uint64_value() const
 
     switch(m__d)
     {
-        case TK_UINT64:
+        case TypeKind::TK_UINT64:
         b = true;
         break;
         default:
@@ -739,7 +739,7 @@ uint64_t& AnnotationParameterValue::uint64_value()
 
     switch(m__d)
     {
-        case TK_UINT64:
+        case TypeKind::TK_UINT64:
         b = true;
         break;
         default:
@@ -755,7 +755,7 @@ uint64_t& AnnotationParameterValue::uint64_value()
 void AnnotationParameterValue::float32_value(float _float32_value)
 {
     m_float32_value = _float32_value;
-    m__d = TK_FLOAT32;
+    m__d = TypeKind::TK_FLOAT32;
 }
 
 float AnnotationParameterValue::float32_value() const
@@ -764,7 +764,7 @@ float AnnotationParameterValue::float32_value() const
 
     switch(m__d)
     {
-        case TK_FLOAT32:
+        case TypeKind::TK_FLOAT32:
         b = true;
         break;
         default:
@@ -784,7 +784,7 @@ float& AnnotationParameterValue::float32_value()
 
     switch(m__d)
     {
-        case TK_FLOAT32:
+        case TypeKind::TK_FLOAT32:
         b = true;
         break;
         default:
@@ -800,7 +800,7 @@ float& AnnotationParameterValue::float32_value()
 void AnnotationParameterValue::float64_value(double _float64_value)
 {
     m_float64_value = _float64_value;
-    m__d = TK_FLOAT64;
+    m__d = TypeKind::TK_FLOAT64;
 }
 
 double AnnotationParameterValue::float64_value() const
@@ -809,7 +809,7 @@ double AnnotationParameterValue::float64_value() const
 
     switch(m__d)
     {
-        case TK_FLOAT64:
+        case TypeKind::TK_FLOAT64:
         b = true;
         break;
         default:
@@ -829,7 +829,7 @@ double& AnnotationParameterValue::float64_value()
 
     switch(m__d)
     {
-        case TK_FLOAT64:
+        case TypeKind::TK_FLOAT64:
         b = true;
         break;
         default:
@@ -845,7 +845,7 @@ double& AnnotationParameterValue::float64_value()
 void AnnotationParameterValue::float128_value(long double _float128_value)
 {
     m_float128_value = _float128_value;
-    m__d = TK_FLOAT128;
+    m__d = TypeKind::TK_FLOAT128;
 }
 
 long double AnnotationParameterValue::float128_value() const
@@ -854,7 +854,7 @@ long double AnnotationParameterValue::float128_value() const
 
     switch(m__d)
     {
-        case TK_FLOAT128:
+        case TypeKind::TK_FLOAT128:
         b = true;
         break;
         default:
@@ -874,7 +874,7 @@ long double& AnnotationParameterValue::float128_value()
 
     switch(m__d)
     {
-        case TK_FLOAT128:
+        case TypeKind::TK_FLOAT128:
         b = true;
         break;
         default:
@@ -890,7 +890,7 @@ long double& AnnotationParameterValue::float128_value()
 void AnnotationParameterValue::char_value(char _char_value)
 {
     m_char_value = _char_value;
-    m__d = TK_CHAR8;
+    m__d = TypeKind::TK_CHAR8;
 }
 
 char AnnotationParameterValue::char_value() const
@@ -899,7 +899,7 @@ char AnnotationParameterValue::char_value() const
 
     switch(m__d)
     {
-        case TK_CHAR8:
+        case TypeKind::TK_CHAR8:
         b = true;
         break;
         default:
@@ -919,7 +919,7 @@ char& AnnotationParameterValue::char_value()
 
     switch(m__d)
     {
-        case TK_CHAR8:
+        case TypeKind::TK_CHAR8:
         b = true;
         break;
         default:
@@ -935,7 +935,7 @@ char& AnnotationParameterValue::char_value()
 void AnnotationParameterValue::wchar_value(wchar_t _wchar_value)
 {
     m_wchar_value = _wchar_value;
-    m__d = TK_CHAR16;
+    m__d = TypeKind::TK_CHAR16;
 }
 
 wchar_t AnnotationParameterValue::wchar_value() const
@@ -944,7 +944,7 @@ wchar_t AnnotationParameterValue::wchar_value() const
 
     switch(m__d)
     {
-        case TK_CHAR16:
+        case TypeKind::TK_CHAR16:
         b = true;
         break;
         default:
@@ -964,7 +964,7 @@ wchar_t& AnnotationParameterValue::wchar_value()
 
     switch(m__d)
     {
-        case TK_CHAR16:
+        case TypeKind::TK_CHAR16:
         b = true;
         break;
         default:
@@ -980,7 +980,7 @@ wchar_t& AnnotationParameterValue::wchar_value()
 void AnnotationParameterValue::enumerated_value(int32_t _enumerated_value)
 {
     m_enumerated_value = _enumerated_value;
-    m__d = TK_ENUM;
+    m__d = TypeKind::TK_ENUM;
 }
 
 int32_t AnnotationParameterValue::enumerated_value() const
@@ -989,7 +989,7 @@ int32_t AnnotationParameterValue::enumerated_value() const
 
     switch(m__d)
     {
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
         b = true;
         break;
         default:
@@ -1009,7 +1009,7 @@ int32_t& AnnotationParameterValue::enumerated_value()
 
     switch(m__d)
     {
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
         b = true;
         break;
         default:
@@ -1025,13 +1025,13 @@ int32_t& AnnotationParameterValue::enumerated_value()
 void AnnotationParameterValue::string8_value(const std::string &_string8_value)
 {
     m_string8_value = _string8_value;
-    m__d = TK_STRING8;
+    m__d = TypeKind::TK_STRING8;
 }
 
 void AnnotationParameterValue::string8_value(std::string &&_string8_value)
 {
     m_string8_value = std::move(_string8_value);
-    m__d = TK_STRING8;
+    m__d = TypeKind::TK_STRING8;
 }
 
 const std::string& AnnotationParameterValue::string8_value() const
@@ -1040,7 +1040,7 @@ const std::string& AnnotationParameterValue::string8_value() const
 
     switch(m__d)
     {
-        case TK_STRING8:
+        case TypeKind::TK_STRING8:
         b = true;
         break;
         default:
@@ -1060,7 +1060,7 @@ std::string& AnnotationParameterValue::string8_value()
 
     switch(m__d)
     {
-        case TK_STRING8:
+        case TypeKind::TK_STRING8:
         b = true;
         break;
         default:
@@ -1076,13 +1076,13 @@ std::string& AnnotationParameterValue::string8_value()
 void AnnotationParameterValue::string16_value(const std::wstring &_string16_value)
 {
     m_string16_value = _string16_value;
-    m__d = TK_STRING16;
+    m__d = TypeKind::TK_STRING16;
 }
 
 void AnnotationParameterValue::string16_value(std::wstring &&_string16_value)
 {
     m_string16_value = std::move(_string16_value);
-    m__d = TK_STRING16;
+    m__d = TypeKind::TK_STRING16;
 }
 
 const std::wstring& AnnotationParameterValue::string16_value() const
@@ -1091,7 +1091,7 @@ const std::wstring& AnnotationParameterValue::string16_value() const
 
     switch(m__d)
     {
-        case TK_STRING16:
+        case TypeKind::TK_STRING16:
         b = true;
         break;
         default:
@@ -1111,7 +1111,7 @@ std::wstring& AnnotationParameterValue::string16_value()
 
     switch(m__d)
     {
-        case TK_STRING16:
+        case TypeKind::TK_STRING16:
         b = true;
         break;
         default:
@@ -1127,13 +1127,13 @@ std::wstring& AnnotationParameterValue::string16_value()
 void AnnotationParameterValue::extended_value(const ExtendedAnnotationParameterValue &_extended_value)
 {
     m_extended_value = _extended_value;
-    m__d = TK_NONE;
+    m__d = TypeKind::TK_NONE;
 }
 
 void AnnotationParameterValue::extended_value(ExtendedAnnotationParameterValue &&_extended_value)
 {
     m_extended_value = std::move(_extended_value);
-    m__d = TK_NONE;
+    m__d = TypeKind::TK_NONE;
 }
 
 const ExtendedAnnotationParameterValue& AnnotationParameterValue::extended_value() const
@@ -1142,22 +1142,22 @@ const ExtendedAnnotationParameterValue& AnnotationParameterValue::extended_value
 
     switch(m__d)
     {
-        case TK_BOOLEAN:
-        case TK_BYTE:
-        case TK_INT16:
-        case TK_UINT16:
-        case TK_INT32:
-        case TK_UINT32:
-        case TK_INT64:
-        case TK_UINT64:
-        case TK_FLOAT32:
-        case TK_FLOAT64:
-        case TK_FLOAT128:
-        case TK_CHAR8:
-        case TK_CHAR16:
-        case TK_ENUM:
-        case TK_STRING16:
-        case TK_STRING8:
+        case TypeKind::TK_BOOLEAN:
+        case TypeKind::TK_BYTE:
+        case TypeKind::TK_INT16:
+        case TypeKind::TK_UINT16:
+        case TypeKind::TK_INT32:
+        case TypeKind::TK_UINT32:
+        case TypeKind::TK_INT64:
+        case TypeKind::TK_UINT64:
+        case TypeKind::TK_FLOAT32:
+        case TypeKind::TK_FLOAT64:
+        case TypeKind::TK_FLOAT128:
+        case TypeKind::TK_CHAR8:
+        case TypeKind::TK_CHAR16:
+        case TypeKind::TK_ENUM:
+        case TypeKind::TK_STRING16:
+        case TypeKind::TK_STRING8:
         break;
         default:
         b = true;
@@ -1177,22 +1177,22 @@ ExtendedAnnotationParameterValue& AnnotationParameterValue::extended_value()
 
     switch(m__d)
     {
-        case TK_BOOLEAN:
-        case TK_BYTE:
-        case TK_INT16:
-        case TK_UINT16:
-        case TK_INT32:
-        case TK_UINT32:
-        case TK_INT64:
-        case TK_UINT64:
-        case TK_FLOAT32:
-        case TK_FLOAT64:
-        case TK_FLOAT128:
-        case TK_CHAR8:
-        case TK_CHAR16:
-        case TK_ENUM:
-        case TK_STRING16:
-        case TK_STRING8:
+        case TypeKind::TK_BOOLEAN:
+        case TypeKind::TK_BYTE:
+        case TypeKind::TK_INT16:
+        case TypeKind::TK_UINT16:
+        case TypeKind::TK_INT32:
+        case TypeKind::TK_UINT32:
+        case TypeKind::TK_INT64:
+        case TypeKind::TK_UINT64:
+        case TypeKind::TK_FLOAT32:
+        case TypeKind::TK_FLOAT64:
+        case TypeKind::TK_FLOAT128:
+        case TypeKind::TK_CHAR8:
+        case TypeKind::TK_CHAR16:
+        case TypeKind::TK_ENUM:
+        case TypeKind::TK_STRING16:
+        case TypeKind::TK_STRING8:
         break;
         default:
         b = true;
@@ -1378,66 +1378,66 @@ size_t AnnotationParameterValue::getCdrSerializedSize(const AnnotationParameterV
 
     switch(data.m__d)
     {
-        case TK_BOOLEAN:
+        case TypeKind::TK_BOOLEAN:
         current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
         break;
-        case TK_BYTE:
+        case TypeKind::TK_BYTE:
         current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
         break;
-        case TK_INT16:
+        case TypeKind::TK_INT16:
         current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
         break;
-        case TK_UINT16:
+        case TypeKind::TK_UINT16:
         current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
         break;
-        case TK_INT32:
+        case TypeKind::TK_INT32:
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
         break;
-        case TK_UINT32:
+        case TypeKind::TK_UINT32:
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
         break;
-        case TK_INT64:
+        case TypeKind::TK_INT64:
         current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
 
         break;
-        case TK_UINT64:
+        case TypeKind::TK_UINT64:
         current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
 
         break;
-        case TK_FLOAT32:
+        case TypeKind::TK_FLOAT32:
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
         break;
-        case TK_FLOAT64:
+        case TypeKind::TK_FLOAT64:
         current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
 
         break;
-        case TK_FLOAT128:
+        case TypeKind::TK_FLOAT128:
         current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
 
         break;
-        case TK_CHAR8:
+        case TypeKind::TK_CHAR8:
         current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
         break;
-        case TK_CHAR16:
+        case TypeKind::TK_CHAR16:
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
         break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
         break;
-        case TK_STRING8:
+        case TypeKind::TK_STRING8:
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.string8_value().size() + 1;
         break;
-        case TK_STRING16:
+        case TypeKind::TK_STRING16:
         current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.string16_value().size() + 1;
         break;
         default:
@@ -1450,56 +1450,56 @@ size_t AnnotationParameterValue::getCdrSerializedSize(const AnnotationParameterV
 
 void AnnotationParameterValue::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
-    scdr << m__d;
+    scdr << static_cast<octet>(m__d);
 
     switch(m__d)
     {
-        case TK_BOOLEAN:
+        case TypeKind::TK_BOOLEAN:
         scdr << m_boolean_value;
         break;
-        case TK_BYTE:
+        case TypeKind::TK_BYTE:
         scdr << m_byte_value;
         break;
-        case TK_INT16:
+        case TypeKind::TK_INT16:
         scdr << m_int16_value;
         break;
-        case TK_UINT16:
+        case TypeKind::TK_UINT16:
         scdr << m_uint_16_value;
         break;
-        case TK_INT32:
+        case TypeKind::TK_INT32:
         scdr << m_int32_value;
         break;
-        case TK_UINT32:
+        case TypeKind::TK_UINT32:
         scdr << m_uint32_value;
         break;
-        case TK_INT64:
+        case TypeKind::TK_INT64:
         scdr << m_int64_value;
         break;
-        case TK_UINT64:
+        case TypeKind::TK_UINT64:
         scdr << m_uint64_value;
         break;
-        case TK_FLOAT32:
+        case TypeKind::TK_FLOAT32:
         scdr << m_float32_value;
         break;
-        case TK_FLOAT64:
+        case TypeKind::TK_FLOAT64:
         scdr << m_float64_value;
         break;
-        case TK_FLOAT128:
+        case TypeKind::TK_FLOAT128:
         scdr << m_float128_value;
         break;
-        case TK_CHAR8:
+        case TypeKind::TK_CHAR8:
         scdr << m_char_value;
         break;
-        case TK_CHAR16:
+        case TypeKind::TK_CHAR16:
         scdr << m_wchar_value;
         break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
         scdr << m_enumerated_value;
         break;
-        case TK_STRING8:
+        case TypeKind::TK_STRING8:
         scdr << m_string8_value;
         break;
-        case TK_STRING16:
+        case TypeKind::TK_STRING16:
         scdr << m_string16_value;
         break;
         default:
@@ -1510,56 +1510,56 @@ void AnnotationParameterValue::serialize(eprosima::fastcdr::Cdr &scdr) const
 
 void AnnotationParameterValue::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
-    dcdr >> m__d;
+    dcdr >> reinterpret_cast<octet&>(m__d);
 
     switch(m__d)
     {
-        case TK_BOOLEAN:
+        case TypeKind::TK_BOOLEAN:
         dcdr >> m_boolean_value;
         break;
-        case TK_BYTE:
+        case TypeKind::TK_BYTE:
         dcdr >> m_byte_value;
         break;
-        case TK_INT16:
+        case TypeKind::TK_INT16:
         dcdr >> m_int16_value;
         break;
-        case TK_UINT16:
+        case TypeKind::TK_UINT16:
         dcdr >> m_uint_16_value;
         break;
-        case TK_INT32:
+        case TypeKind::TK_INT32:
         dcdr >> m_int32_value;
         break;
-        case TK_UINT32:
+        case TypeKind::TK_UINT32:
         dcdr >> m_uint32_value;
         break;
-        case TK_INT64:
+        case TypeKind::TK_INT64:
         dcdr >> m_int64_value;
         break;
-        case TK_UINT64:
+        case TypeKind::TK_UINT64:
         dcdr >> m_uint64_value;
         break;
-        case TK_FLOAT32:
+        case TypeKind::TK_FLOAT32:
         dcdr >> m_float32_value;
         break;
-        case TK_FLOAT64:
+        case TypeKind::TK_FLOAT64:
         dcdr >> m_float64_value;
         break;
-        case TK_FLOAT128:
+        case TypeKind::TK_FLOAT128:
         dcdr >> m_float128_value;
         break;
-        case TK_CHAR8:
+        case TypeKind::TK_CHAR8:
         dcdr >> m_char_value;
         break;
-        case TK_CHAR16:
+        case TypeKind::TK_CHAR16:
         dcdr >> m_wchar_value;
         break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
         dcdr >> m_enumerated_value;
         break;
-        case TK_STRING8:
+        case TypeKind::TK_STRING8:
         dcdr >> m_string8_value;
         break;
-        case TK_STRING16:
+        case TypeKind::TK_STRING16:
         dcdr >> m_string16_value;
         break;
         default:
@@ -1577,52 +1577,52 @@ bool AnnotationParameterValue::operator==(const AnnotationParameterValue& other)
 
     switch(m__d)
     {
-        case TK_BOOLEAN:
+        case TypeKind::TK_BOOLEAN:
         return m_boolean_value == other.m_boolean_value;
         break;
-        case TK_BYTE:
+        case TypeKind::TK_BYTE:
         return m_byte_value == other.m_byte_value;
         break;
-        case TK_INT16:
+        case TypeKind::TK_INT16:
         return m_int16_value == other.m_int16_value;
         break;
-        case TK_UINT16:
+        case TypeKind::TK_UINT16:
         return m_uint_16_value == other.m_uint_16_value;
         break;
-        case TK_INT32:
+        case TypeKind::TK_INT32:
         return m_int32_value == other.m_int32_value;
         break;
-        case TK_UINT32:
+        case TypeKind::TK_UINT32:
         return m_uint32_value == other.m_uint32_value;
         break;
-        case TK_INT64:
+        case TypeKind::TK_INT64:
         return m_int64_value == other.m_int64_value;
         break;
-        case TK_UINT64:
+        case TypeKind::TK_UINT64:
         return m_uint64_value == other.m_uint64_value;
         break;
-        case TK_FLOAT32:
+        case TypeKind::TK_FLOAT32:
         return m_float32_value == other.m_float32_value;
         break;
-        case TK_FLOAT64:
+        case TypeKind::TK_FLOAT64:
         return m_float64_value == other.m_float64_value;
         break;
-        case TK_FLOAT128:
+        case TypeKind::TK_FLOAT128:
         return m_float128_value == other.m_float128_value;
         break;
-        case TK_CHAR8:
+        case TypeKind::TK_CHAR8:
         return m_char_value == other.m_char_value;
         break;
-        case TK_CHAR16:
+        case TypeKind::TK_CHAR16:
         return m_wchar_value == other.m_wchar_value;
         break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
         return m_enumerated_value == other.m_enumerated_value;
         break;
-        case TK_STRING8:
+        case TypeKind::TK_STRING8:
         return m_string8_value == other.m_string8_value;
         break;
-        case TK_STRING16:
+        case TypeKind::TK_STRING16:
         return m_string16_value == other.m_string16_value;
         break;
         default:

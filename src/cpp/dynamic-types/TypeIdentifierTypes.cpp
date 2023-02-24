@@ -195,7 +195,7 @@ bool StringLTypeDefn::consistent(const StringSTypeDefn &x,
 
 PlainCollectionHeader::PlainCollectionHeader()
 {
-    m_equiv_kind = 0;
+    m_equiv_kind = TypeKind::TK_NONE;
 }
 
 PlainCollectionHeader::~PlainCollectionHeader()
@@ -256,13 +256,13 @@ size_t PlainCollectionHeader::getCdrSerializedSize(const PlainCollectionHeader&,
 
 void PlainCollectionHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
-    scdr << m_equiv_kind;
+    scdr << static_cast<octet>(m_equiv_kind);
     scdr << m_element_flags;
 }
 
 void PlainCollectionHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
-    dcdr >> m_equiv_kind;
+    dcdr >> reinterpret_cast<octet&>(m_equiv_kind);
     dcdr >> m_element_flags;
 }
 

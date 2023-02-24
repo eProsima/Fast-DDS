@@ -94,7 +94,7 @@ void TypeLookupRequestListener::onNewCacheChangeAdded(
                     TypeObject obj;
                     const TypeIdentifier* obj_ident = factory_->typelookup_get_type(type_id, obj);
 
-                    if (obj_ident != nullptr && obj._d() != 0)
+                    if (obj_ident != nullptr && obj._d() != fastrtps::types::TypeKind::TK_NONE)
                     {
                         TypeIdentifierTypeObjectPair pair;
                         pair.type_identifier(type_id);

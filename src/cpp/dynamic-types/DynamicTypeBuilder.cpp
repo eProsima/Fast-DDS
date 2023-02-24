@@ -56,18 +56,18 @@ DynamicTypeBuilder::DynamicTypeBuilder(
                 *this);
 
         // notify the tracker
-        get_dynamic_tracker().add_primitive(instance_.get());
+        dynamic_tracker_interface::get_dynamic_tracker().add_primitive(instance_.get());
     }
 }
 
 void DynamicTypeBuilder::after_construction(DynamicType* type)
 {
-    get_dynamic_tracker().add(type);
+    dynamic_tracker_interface::get_dynamic_tracker().add(type);
 }
 
 void DynamicTypeBuilder::before_destruction(DynamicType* type)
 {
-    get_dynamic_tracker().remove(type);
+    dynamic_tracker_interface::get_dynamic_tracker().remove(type);
 }
 
 DynamicTypeBuilder::member_iterator DynamicTypeBuilder::add_empty_member(
@@ -89,14 +89,16 @@ DynamicTypeBuilder::member_iterator DynamicTypeBuilder::add_empty_member(
         std::advance(it, index);
         it = members_.emplace(it, index, name);
         // rename the others
-        for(auto i = index; it != members_.end(); ++it)
+        auto nit = it;
+        auto i = index;
+        for( ++nit, ++i; nit != members_.end(); ++nit)
         {
-            it->set_index(++i);
-            assert(it->get_index() == i);
+            nit->set_index(i);
+            assert(nit->get_index() == i);
         }
     }
 
-    if (get_kind() == TK_BITMASK)
+    if (get_kind() == TypeKind::TK_BITMASK)
     {
         if (index >= get_bounds(0))
         {
@@ -112,13 +114,6 @@ DynamicTypeBuilder::member_iterator DynamicTypeBuilder::add_empty_member(
 }
 
 ReturnCode_t DynamicTypeBuilder::add_member(
-        const MemberDescriptor& descriptor) noexcept
-{
-    // implementation on the rvalue argument version
-    return add_member(MemberDescriptor(descriptor));
-}
-
-ReturnCode_t DynamicTypeBuilder::add_member(
             MemberDescriptor&& descriptor) noexcept
 {
     try
@@ -130,12 +125,12 @@ ReturnCode_t DynamicTypeBuilder::add_member(
                     "Error adding member, The input descriptor isn't consistent.");
         }
 
-        if (get_kind() != TK_ANNOTATION && get_kind() != TK_BITMASK
-                && get_kind() != TK_ENUM && get_kind() != TK_STRUCTURE
-                && get_kind() != TK_UNION && get_kind() != TK_BITSET)
+        if (get_kind() != TypeKind::TK_ANNOTATION && get_kind() != TypeKind::TK_BITMASK
+                && get_kind() != TypeKind::TK_ENUM && get_kind() != TypeKind::TK_STRUCTURE
+                && get_kind() != TypeKind::TK_UNION && get_kind() != TypeKind::TK_BITSET)
         {
             std::ostringstream os;
-            os << "Error adding member, the current type " << get_kind() << " doesn't support members.";
+            os << "Error adding member, the current type " << (octet)get_kind() << " doesn't support members.";
 
             throw std::system_error(
                     ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
@@ -145,7 +140,7 @@ ReturnCode_t DynamicTypeBuilder::add_member(
         auto member_name = descriptor.get_name();
 
         // Bitsets allow multiple empty members.
-        if( get_kind() != TK_BITSET && descriptor.get_name().empty())
+        if( get_kind() != TypeKind::TK_BITSET && descriptor.get_name().empty())
         {
             throw std::system_error(
                     ReturnCode_t::RETCODE_BAD_PARAMETER,
@@ -178,8 +173,7 @@ ReturnCode_t DynamicTypeBuilder::add_member(
 
         DynamicTypeMember& newMember = *it;
         // Copy all elements but keep the index
-        assert(newMember.get_index() == descriptor.get_index()
-            || descriptor.get_index() >= members_.size() );
+        descriptor.index_ = newMember.index_;
         newMember = std::move(descriptor);
 
         if(member_id == MEMBER_ID_INVALID)
@@ -245,7 +239,7 @@ DynamicType_ptr DynamicTypeBuilder::build() const
 bool DynamicTypeBuilder::check_union_configuration(
         const MemberDescriptor& descriptor)
 {
-    if (get_kind() == TK_UNION)
+    if (get_kind() == TypeKind::TK_UNION)
     {
         bool default_union_value = descriptor.is_default_union_value();
         if (!default_union_value && descriptor.get_union_labels().size() == 0)
@@ -277,14 +271,16 @@ bool DynamicTypeBuilder::is_discriminator_type() const
     auto base = get_base_type();
     auto kind = get_kind();
 
-    if (kind == TK_ALIAS && base)
+    if (kind == TypeKind::TK_ALIAS && base)
     {
         return base->is_discriminator_type();
     }
-    return kind == TK_BOOLEAN || kind == TK_BYTE || kind == TK_INT16 || kind == TK_INT32 ||
-           kind == TK_INT64 || kind == TK_UINT16 || kind == TK_UINT32 || kind == TK_UINT64 ||
-           kind == TK_FLOAT32 || kind == TK_FLOAT64 || kind == TK_FLOAT128 || kind == TK_CHAR8 ||
-           kind == TK_CHAR16 || kind == TK_STRING8 || kind == TK_STRING16 || kind == TK_ENUM || kind == TK_BITMASK;
+    return kind == TypeKind::TK_BOOLEAN || kind == TypeKind::TK_BYTE || kind == TypeKind::TK_INT16 ||
+           kind == TypeKind::TK_INT32 || kind == TypeKind::TK_INT64 || kind == TypeKind::TK_UINT16 ||
+           kind == TypeKind::TK_UINT32 || kind == TypeKind::TK_UINT64 || kind == TypeKind::TK_FLOAT32 ||
+           kind == TypeKind::TK_FLOAT64 || kind == TypeKind::TK_FLOAT128 || kind == TypeKind::TK_CHAR8 ||
+           kind == TypeKind::TK_CHAR16 || kind == TypeKind::TK_STRING8 || kind == TypeKind::TK_STRING16 ||
+           kind == TypeKind::TK_ENUM || kind == TypeKind::TK_BITMASK;
 }
 
 bool DynamicTypeBuilder::equals(

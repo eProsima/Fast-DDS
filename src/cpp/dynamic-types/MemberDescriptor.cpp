@@ -19,6 +19,8 @@
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastdds/dds/log/Log.hpp>
 
+#include <iomanip>
+
 namespace eprosima {
 namespace fastrtps {
 namespace types {
@@ -50,8 +52,6 @@ MemberDescriptor::MemberDescriptor(
     , id_(id)
     , type_(type)
     , default_value_(defaultValue)
-    , index_(INDEX_INVALID)
-    , default_label_(false)
 {
 }
 
@@ -66,7 +66,6 @@ MemberDescriptor::MemberDescriptor(
     , id_(id)
     , type_(type)
     , default_value_(defaultValue)
-    , index_(INDEX_INVALID)
     , labels_{unionLabels.begin(), unionLabels.end()}
     , default_label_(isDefaultLabel)
 {
@@ -109,6 +108,11 @@ bool MemberDescriptor::operator==(const MemberDescriptor& other) const
            (type_ == other.type_ || (type_ && other.type_ && *type_ == *other.type_ ));
 }
 
+bool MemberDescriptor::operator!=(const MemberDescriptor& other) const
+{
+    return !operator==(other);
+}
+
 bool MemberDescriptor::equals(
         const MemberDescriptor& other) const
 {
@@ -127,7 +131,7 @@ uint32_t MemberDescriptor::get_index() const
 
 TypeKind MemberDescriptor::get_kind() const
 {
-    return type_ ? type_->get_kind() : TK_NONE;
+    return type_ ? type_->get_kind() : TypeKind::TK_NONE;
 }
 
 std::string MemberDescriptor::get_name() const
@@ -144,14 +148,14 @@ bool MemberDescriptor::is_consistent(
         TypeKind parentKind) const
 {
     // The type field is mandatory in every type except bitmasks and enums.
-    if ((parentKind != TK_BITMASK && parentKind != TK_ENUM) && !type_)
+    if ((parentKind != TypeKind::TK_BITMASK && parentKind != TypeKind::TK_ENUM) && !type_)
     {
         return false;
     }
 
     // Only aggregated types must use the ID value.
-    if (id_ != MEMBER_ID_INVALID && parentKind != TK_UNION && parentKind != TK_STRUCTURE &&
-            parentKind != TK_BITSET && parentKind != TK_ANNOTATION)
+    if (id_ != MEMBER_ID_INVALID && parentKind != TypeKind::TK_UNION && parentKind != TypeKind::TK_STRUCTURE &&
+            parentKind != TypeKind::TK_BITSET && parentKind != TypeKind::TK_ANNOTATION)
     {
         return false;
     }
@@ -167,12 +171,12 @@ bool MemberDescriptor::is_consistent(
     }
 
     // Only Unions need the field "label"
-    if (!labels_.empty() && parentKind != TK_UNION)
+    if (!labels_.empty() && parentKind != TypeKind::TK_UNION)
     {
         return false;
     }
     // If the field isn't the default value for the union, it must have a label value.
-    else if (parentKind == TK_UNION && default_label_ == false && labels_.empty())
+    else if (parentKind == TypeKind::TK_UNION && default_label_ == false && labels_.empty())
     {
         return false;
     }
@@ -201,79 +205,79 @@ bool MemberDescriptor::is_default_value_consistent(
             {
                 default:
                     return true;
-                case TK_INT32:
+                case TypeKind::TK_INT32:
                 {
                     int32_t value(0);
                     value = stoi(sDefaultValue);
                     (void)value;
                 }
                 break;
-                case TK_UINT32:
+                case TypeKind::TK_UINT32:
                 {
                     uint32_t value(0);
                     value = stoul(sDefaultValue);
                     (void)value;
                 }
                 break;
-                case TK_INT16:
+                case TypeKind::TK_INT16:
                 {
                     int16_t value(0);
                     value = static_cast<int16_t>(stoi(sDefaultValue));
                     (void)value;
                 }
                 break;
-                case TK_UINT16:
+                case TypeKind::TK_UINT16:
                 {
                     uint16_t value(0);
                     value = static_cast<uint16_t>(stoul(sDefaultValue));
                     (void)value;
                 }
                 break;
-                case TK_INT64:
+                case TypeKind::TK_INT64:
                 {
                     int64_t value(0);
                     value = stoll(sDefaultValue);
                     (void)value;
                 }
                 break;
-                case TK_UINT64:
+                case TypeKind::TK_UINT64:
                 {
                     uint64_t value(0);
                     value = stoul(sDefaultValue);
                     (void)value;
                 }
                 break;
-                case TK_FLOAT32:
+                case TypeKind::TK_FLOAT32:
                 {
                     float value(0.0f);
                     value = stof(sDefaultValue);
                     (void)value;
                 }
                 break;
-                case TK_FLOAT64:
+                case TypeKind::TK_FLOAT64:
                 {
                     double value(0.0f);
                     value = stod(sDefaultValue);
                     (void)value;
                 }
                 break;
-                case TK_FLOAT128:
+                case TypeKind::TK_FLOAT128:
                 {
                     long double value(0.0f);
                     value = stold(sDefaultValue);
                     (void)value;
                 }
                 break;
-                case TK_CHAR8:
-                case TK_BYTE:
+                case TypeKind::TK_CHAR8:
+                case TypeKind::TK_BYTE:
                     return sDefaultValue.length() >= 1;
-                case TK_CHAR16:
+                case TypeKind::TK_CHAR16:
                 {
                     std::wstring temp = std::wstring(sDefaultValue.begin(), sDefaultValue.end());
                     (void)temp;
                 }
                 break;
-                case TK_BOOLEAN:
+                case TypeKind::TK_BOOLEAN:
                 {
                     if (sDefaultValue == CONST_TRUE || sDefaultValue == CONST_FALSE)
                     {
@@ -284,26 +288,26 @@ bool MemberDescriptor::is_default_value_consistent(
                     (void)value;
                 }
                 break;
-                case TK_STRING16:
-                case TK_STRING8:
+                case TypeKind::TK_STRING16:
+                case TypeKind::TK_STRING8:
                     return true;
-                case TK_ENUM:
+                case TypeKind::TK_ENUM:
                 {
                     uint32_t value(0);
                     value = stoul(sDefaultValue);
                     (void)value;
                 }
                 break;
-                case TK_BITMASK:
+                case TypeKind::TK_BITMASK:
                 {
                     int value(0);
                     value = stoi(sDefaultValue);
                     (void)value;
                 }
                 break;
-                case TK_ARRAY:
-                case TK_SEQUENCE:
-                case TK_MAP:
+                case TypeKind::TK_ARRAY:
+                case TypeKind::TK_SEQUENCE:
+                case TypeKind::TK_MAP:
                     return true;
             }
         }
@@ -360,6 +364,24 @@ void MemberDescriptor::set_default_union_value(
         bool bDefault)
 {
     default_label_ = bDefault;
+}
+
+std::ostream& operator<<( std::ostream& os, const MemberDescriptor & md)
+{
+    using namespace std;
+
+    // TODO: Barro, add support Type details and labels
+
+    auto manips = [](ostream& os) -> ostream&
+    {
+        return os << setw(10) << left << '\t';
+    };
+
+    return os << endl
+              << manips << "index:" << md.get_index() << endl
+              << manips << "name:" << md.get_name() << endl
+              << manips << "id:" << md.get_id() << endl
+              << manips << "kind:" << md.get_kind();
 }
 
 } // namespace types
