@@ -147,45 +147,50 @@ public:
         writer_ = writer;
         segment_id_ = writer_->getGuid();
         segment_name_ = generate_segment_name(shared_dir, segment_id_);
-
-        // We need to reserve the whole segment at once, and the underlying classes use uint32_t as size type.
-        // In order to avoid overflows, we will calculate using uint64 and check the casting
-        bool overflow = false;
-        size_t per_allocation_extra_size = T::compute_per_allocation_extra_size(
-            alignof(PayloadNode), DataSharingPayloadPool::domain_name());
-        size_t payload_size = DataSharingPayloadPool::node_size(max_data_size_);
-
-        uint64_t estimated_size_for_payloads_pool = pool_size_ * payload_size;
-        overflow |= (estimated_size_for_payloads_pool != static_cast<uint32_t>(estimated_size_for_payloads_pool));
-        uint32_t size_for_payloads_pool = static_cast<uint32_t>(estimated_size_for_payloads_pool);
-
-        //Reserve one extra to avoid pointer overlapping
-        uint64_t estimated_size_for_history = (pool_size_ + 1) * sizeof(Segment::Offset);
-        overflow |= (estimated_size_for_history != static_cast<uint32_t>(estimated_size_for_history));
-        uint32_t size_for_history = static_cast<uint32_t>(estimated_size_for_history);
-
-        uint32_t descriptor_size = static_cast<uint32_t>(sizeof(PoolDescriptor));
-        uint64_t estimated_segment_size = size_for_payloads_pool + per_allocation_extra_size +
-                size_for_history + per_allocation_extra_size +
-                descriptor_size + per_allocation_extra_size;
-        overflow |= (estimated_segment_size != static_cast<uint32_t>(estimated_segment_size));
-        uint32_t segment_size = static_cast<uint32_t>(estimated_segment_size);
-
-        if (overflow)
-        {
-            EPROSIMA_LOG_ERROR(DATASHARING_PAYLOADPOOL, "Failed to create segment " << segment_name_
-                                                                                    << ": Segment size is too large: " << estimated_size_for_payloads_pool
-                                                                                    << " (max is " << std::numeric_limits<uint32_t>::max() << ")."
-                                                                                    << " Please reduce the maximum size of the history");
-            return false;
-        }
-
-        //Open the segment
-        T::remove(segment_name_);
         std::unique_ptr<T> local_segment;
+        size_t payload_size;
+        uint64_t estimated_size_for_payloads_pool;
+        uint64_t estimated_size_for_history;
+        uint32_t size_for_payloads_pool;
+
         try
         {
-            local_segment = std::unique_ptr<T>(
+            // We need to reserve the whole segment at once, and the underlying classes use uint32_t as size type.
+            // In order to avoid overflows, we will calculate using uint64 and check the casting
+            bool overflow = false;
+            size_t per_allocation_extra_size = T::compute_per_allocation_extra_size(
+                alignof(PayloadNode), DataSharingPayloadPool::domain_name());
+            payload_size = DataSharingPayloadPool::node_size(max_data_size_);
+
+            estimated_size_for_payloads_pool = pool_size_ * payload_size;
+            overflow |= (estimated_size_for_payloads_pool != static_cast<uint32_t>(estimated_size_for_payloads_pool));
+            size_for_payloads_pool = static_cast<uint32_t>(estimated_size_for_payloads_pool);
+
+            //Reserve one extra to avoid pointer overlapping
+            estimated_size_for_history = (pool_size_ + 1) * sizeof(Segment::Offset);
+            overflow |= (estimated_size_for_history != static_cast<uint32_t>(estimated_size_for_history));
+            uint32_t size_for_history = static_cast<uint32_t>(estimated_size_for_history);
+
+            uint32_t descriptor_size = static_cast<uint32_t>(sizeof(PoolDescriptor));
+            uint64_t estimated_segment_size = size_for_payloads_pool + per_allocation_extra_size +
+                    size_for_history + per_allocation_extra_size +
+                    descriptor_size + per_allocation_extra_size;
+            overflow |= (estimated_segment_size != static_cast<uint32_t>(estimated_segment_size));
+            uint32_t segment_size = static_cast<uint32_t>(estimated_segment_size);
+
+            if (overflow)
+            {
+                EPROSIMA_LOG_ERROR(DATASHARING_PAYLOADPOOL, "Failed to create segment " << segment_name_
+                                                                                        << ": Segment size is too large: " << estimated_size_for_payloads_pool
+                                                                                        << " (max is " << std::numeric_limits<uint32_t>::max() << ")."
+                                                                                        << " Please reduce the maximum size of the history");
+                return false;
+            }
+
+            //Open the segment
+            T::remove(segment_name_);
+
+            local_segment.reset(
                 new T(boost::interprocess::create_only,
                 segment_name_,
                 segment_size + T::EXTRA_SEGMENT_SIZE));

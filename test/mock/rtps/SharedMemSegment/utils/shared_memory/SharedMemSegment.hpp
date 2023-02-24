@@ -40,9 +40,9 @@
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/thread/thread_time.hpp>
 
-#include "BoostAtExitRegistry.hpp"
-#include "RobustInterprocessCondition.hpp"
-#include "SharedMemUUID.hpp"
+#include "../../../../../../src/cpp/utils/shared_memory/BoostAtExitRegistry.hpp"
+#include "../../../../../../src/cpp/utils/shared_memory/RobustInterprocessCondition.hpp"
+#include "../../../../../../src/cpp/utils/shared_memory/SharedMemUUID.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -85,6 +85,7 @@ public:
     explicit SharedSegmentBase(
             const std::string& name)
         : name_(name)
+        , boost_singleton_handler_(eprosima::detail::BoostAtExitRegistry::get_instance())
     {
     }
 
@@ -110,15 +111,11 @@ public:
     {
         deleted_unique_ptr<SharedSegmentBase::named_mutex> named_mutex;
 
-        boost::interprocess::permissions unrestricted_permissions;
-        unrestricted_permissions.set_unrestricted();
-	mode_t old_mask;
-	old_mask = umask(000);
-
         {
             std::lock_guard<std::mutex> lock(mtx_());
+
             named_mutex = deleted_unique_ptr<SharedSegmentBase::named_mutex>(
-                new SharedSegmentBase::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str(), unrestricted_permissions),
+                new SharedSegmentBase::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str()),
                 [](SharedSegmentBase::named_mutex* p)
                 {
                     std::lock_guard<std::mutex> lock(mtx_());
@@ -139,7 +136,7 @@ public:
                 std::lock_guard<std::mutex> lock(mtx_());
 
                 named_mutex = deleted_unique_ptr<SharedSegmentBase::named_mutex>(
-                    new SharedSegmentBase::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str(), unrestricted_permissions),
+                    new SharedSegmentBase::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str()),
                     [](SharedSegmentBase::named_mutex* p)
                     {
                         std::lock_guard<std::mutex> lock(mtx_());
@@ -153,7 +150,6 @@ public:
             }
         }
 
-	umask(old_mask);
         return named_mutex;
     }
 
@@ -195,21 +191,13 @@ public:
         {
             std::lock_guard<std::mutex> lock(mtx_());
 
-            boost::interprocess::permissions unrestricted_permissions;
-            unrestricted_permissions.set_unrestricted();
-
-            mode_t old_mask;
-	    old_mask = umask(000);
-
             named_mutex = deleted_unique_ptr<SharedSegmentBase::named_mutex>(
-                new SharedSegmentBase::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str(), unrestricted_permissions),
+                new SharedSegmentBase::named_mutex(boost::interprocess::open_or_create, mutex_name.c_str()),
                 [](SharedSegmentBase::named_mutex* p)
                 {
                     std::lock_guard<std::mutex> lock(mtx_());
                     delete p;
                 });
-
-	    umask(old_mask);
         }
 
         return named_mutex;
@@ -318,6 +306,8 @@ private:
 
     std::string name_;
 
+    std::shared_ptr<eprosima::detail::BoostAtExitRegistry> boost_singleton_handler_;
+
     static std::mutex& mtx_()
     {
         static std::mutex mtx_;
@@ -340,11 +330,9 @@ public:
             size_t size)
         : SharedSegmentBase(name)
     {
-        boost::interprocess::permissions unrestricted_permissions;
-        unrestricted_permissions.set_unrestricted();
         segment_ = std::unique_ptr<managed_shared_memory_type>(
             new managed_shared_memory_type(boost::interprocess::create_only, name.c_str(),
-            static_cast<Offset>(size + EXTRA_SEGMENT_SIZE), 0, unrestricted_permissions));
+            static_cast<Offset>(size + EXTRA_SEGMENT_SIZE)));
     }
 
     SharedSegment(
@@ -371,10 +359,8 @@ public:
             size_t size)
         : SharedSegmentBase(name)
     {
-        boost::interprocess::permissions unrestricted_permissions;
-        unrestricted_permissions.set_unrestricted();
         segment_ = std::unique_ptr<managed_shared_memory_type>(
-            new managed_shared_memory_type(boost::interprocess::create_only, name.c_str(), static_cast<Offset>(size), 0, unrestricted_permissions));
+            new managed_shared_memory_type(boost::interprocess::create_only, name.c_str(), static_cast<Offset>(size)));
     }
 
     ~SharedSegment()
@@ -412,7 +398,7 @@ public:
     }
 
     /**
-     * Estimates the extra segment space required for an allocation. This may throw
+     * Estimates the extra segment space required for an allocation
      */
     static uint32_t compute_per_allocation_extra_size(
             size_t allocation_alignment,
@@ -428,7 +414,8 @@ public:
             {
                 uuid.generate();
 
-                auto name = domain_name + "_" + uuid.to_string();
+                // Additional invalid path characters to trigger the exception
+                auto name = "///" + domain_name + "_" + uuid.to_string();
 
                 SharedMemEnvironment::get().init();
 
