@@ -13,6 +13,7 @@
 # limitations under the License.
 
 add_subdirectory(rtps/common)
+add_subdirectory(rtps/DataSharing)
 add_subdirectory(rtps/builtin)
 add_subdirectory(rtps/reader)
 add_subdirectory(rtps/writer)
