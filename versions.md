@@ -14,6 +14,7 @@ Version 2.9.0
 * Added new log macros `EPROSIMA_LOG_INFO`, `EPROSIMA_LOG_WARNING` and `EPROSIMA_LOG_ERROR`, and change all old macros `logInfo`, `logWarning`, and `logError` in the project.
 * Added `ENABLE_OLD_LOG_MACROS` CMake option to support disabling the compilation of old log macros `logInfo`, `logWarning`, and `logError`.
 * FASTDDS_STATISTICS build option set to ON by default
+* Added XML profile validation option as a CLI new verb task: `"fastdds xml validate <xml_file(s)_path>"`. Added tests due to this new feature.
 
 Version 2.8.0
 -------------

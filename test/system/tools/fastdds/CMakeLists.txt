@@ -25,6 +25,7 @@ if(PYTHONINTERP_FOUND)
         test_fastdds_discovery
         test_ros_discovery
         test_fastdds_shm
+        test_fastdds_xml_validate
     )
 
     foreach(TEST IN LISTS TESTS)
@@ -43,5 +44,43 @@ if(PYTHONINTERP_FOUND)
         )
 
     endforeach()
+
+endif()
+
+###############################################################################
+# XML validation
+###############################################################################
+message(STATUS "Configuring CLI xml validation...")
+
+# Copy the neccessary files over to the build directory
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../xmlvalidation/profileAll.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/profileAll.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../xmlvalidation/profileDataReader.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/profileDataReader.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../xmlvalidation/profileDataWriter.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/profileDataWriter.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../xmlvalidation/profileDomainParticipant.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/profileDomainParticipant.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../xmlvalidation/profileTransportDescriptor.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/profileTransportDescriptor.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../xmlvalidation/profileLog.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/profileLog.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../xmlvalidation/profileTypes.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/profileTypes.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../xmlvalidation/XMLTesterExample.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/XMLTesterExample.xml COPYONLY)
+
+
+# Check XML profile validation against schema
+
+if (MSVC)
+
+    # WINDOWS
+    add_test(NAME xml.validate COMMAND fastdds.bat xml validate xmldocuments)
+
+else()
+
+    # POSIX
+    add_test(NAME xml.validate COMMAND fastdds xml validate xmldocuments)
 
 endif()

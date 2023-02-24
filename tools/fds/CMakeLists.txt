@@ -110,6 +110,12 @@ install(EXPORT ${PROJECT_NAME}-targets
         COMPONENT cmake
         )
 
+# export xsd schema
+install(FILES ../../resources/xsd/fastRTPS_profiles.xsd
+        DESTINATION ${DATA_INSTALL_DIR}
+        COMPONENT cmake
+        )
+
 # symlink creation requires:
 #   - install( CODE using generator expressions (legacy code is provided for all cmake versions)
 #   - on windows privileges to create symlinks (a .bat file is provided on unprivileged installations)

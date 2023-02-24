@@ -13,21 +13,21 @@
 # limitations under the License.
 
 """
-    Tests for the fastdds tool.
+Tests for the fastdds tool.
 
-    Contains a package of system test for fastdds tool
+Contains a package of system test for fastdds tool
 
-    usage: test.py <install_path> <test_name>
+usage: test.py <install_path> <test_name>
 
-    install_path: Fast-DDS base path installation
+install_path: Fast-DDS base path installation
 
-    test_name: Test to run.
+test_name: Test to run.
 
-    Available tests:
+Available tests:
 
-        test_fastdds_installed
-        test_fastdds_discovery
-        test_fastdds_shm
+    test_fastdds_installed
+    test_fastdds_discovery
+    test_fastdds_shm
 
 """
 
@@ -120,6 +120,7 @@ def test_fastdds_discovery(install_path, setup_script_path):
         print('test_fastdds_discovery FAILED')
         sys.exit(ret)
 
+
 def test_ros_discovery(install_path, setup_script_path):
     """Test that discovery command runs."""
     ret = subprocess.call(
@@ -130,6 +131,17 @@ def test_ros_discovery(install_path, setup_script_path):
     if 0 != ret:
         print('test_fastdds_discovery FAILED')
         sys.exit(ret)
+
+
+def test_fastdds_xml_validate(install_path):
+    """Test that xml validate command runs."""
+    args = ' xml validate'
+    ret = subprocess.call(cmd(
+        install_path=install_path, args=args), shell=True)
+    if 0 != ret:
+        print('test_fastdds_xml_validate FAILED')
+        sys.exit(ret)
+
 
 def get_paths(install_path):
     """
@@ -155,7 +167,7 @@ def get_paths(install_path):
     if not os.path.exists(str(setup_script_path.resolve())):
         setup_script_path = install_path / '..' / setup_script_name()
         if not os.path.exists(str(setup_script_path.resolve())):
-            print(f'setup_script NOT FOUND')
+            print('setup_script NOT FOUND')
             sys.exit(1)
 
     return setup_script_path, tool_install_path
@@ -176,18 +188,21 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     setup_script_path, tool_path = get_paths(Path(args.install_path))
-    
+
     fastdds_tool_path = tool_path / 'fastdds'
     ros_disc_tool_path = tool_path / 'ros-discovery'
 
     # Tests dictionary
     tests = {
-        'test_fastdds_installed': lambda: test_fastdds_installed(fastdds_tool_path),
+        'test_fastdds_installed':
+        lambda: test_fastdds_installed(fastdds_tool_path),
         'test_fastdds_discovery': lambda: test_fastdds_discovery(
             fastdds_tool_path, setup_script_path),
-        'test_ros_discovery': lambda: test_ros_discovery(ros_disc_tool_path,
-            setup_script_path),
-        'test_fastdds_shm': lambda: test_fastdds_shm(fastdds_tool_path)
+        'test_ros_discovery':
+        lambda: test_ros_discovery(ros_disc_tool_path, setup_script_path),
+        'test_fastdds_shm': lambda: test_fastdds_shm(fastdds_tool_path),
+        'test_fastdds_xml_validate':
+        lambda: test_fastdds_xml_validate(fastdds_tool_path)
     }
 
     tests[args.test_name]()

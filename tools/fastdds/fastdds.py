@@ -15,27 +15,29 @@
 # limitations under the License.
 
 """
-    fastdds CLI tool.
+fastdds CLI tool.
 
-    This CLI tool provide a set commands and sub-commands to perform, Fast-DDS
-    related, maintenance / configuration tasks.
+This CLI tool provide a set commands and sub-commands to perform, Fast-DDS
+related, maintenance / configuration tasks.
 
-    usage: fastdds <command> [<command-args>]
+usage: fastdds <command> [<command-args>]
 
-        Commands:
+    Commands:
 
-            discovery     Server-Client discovery auxiliary generator
+        discovery     Server-Client discovery auxiliary generator
 
-            shm           Shared-memory commands
+        shm           Shared-memory commands
 
-        fastdds <command> [-h] shows command usage
+        xml           XML commands
+
+    fastdds <command> [-h] shows command usage
 
 
-    positional arguments:
-    command     Command to run
+positional arguments:
+command     Command to run
 
-    optional arguments:
-    -h, --help  show this help message and exit
+optional arguments:
+-h, --help  show this help message and exit
 
 """
 
@@ -45,6 +47,8 @@ import sys
 from discovery.parser import Parser as DiscoveryParser
 
 from shm.parser import Parser as ShmParser
+
+from xml_ci.parser import XMLParser
 
 
 class FastDDSParser:
@@ -56,6 +60,7 @@ class FastDDSParser:
     Commands:\n\n
     \tdiscovery     Server-Client discovery auxiliary generator\n
     \tshm           Shared-memory commands\n
+    \txml           XML commands\n
     fastdds <command> [-h] shows command usage
     """
 
@@ -105,6 +110,10 @@ class FastDDSParser:
     def discovery(self):
         """Discovery server command handler."""
         DiscoveryParser(sys.argv[2:])
+
+    def xml(self):
+        """Discovery server command handler."""
+        XMLParser(sys.argv[2:])
 
 
 if __name__ == '__main__':

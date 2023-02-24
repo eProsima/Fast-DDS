@@ -22,7 +22,7 @@ project(fastdds-tool LANGUAGES CXX)
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/
     DESTINATION ${CMAKE_INSTALL_PREFIX}/tools/fastdds
     USE_SOURCE_PERMISSIONS
-    FILES_MATCHING 
+    FILES_MATCHING
         PATTERN "*.py"
         PATTERN "__pycache__" EXCLUDE
 )

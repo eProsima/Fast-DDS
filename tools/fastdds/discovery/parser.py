@@ -13,10 +13,10 @@
 # limitations under the License.
 
 """
-    fastdds discovery verb parser.
+fastdds discovery verb parser.
 
-    The parser just forward the sub-commands to the fast-discovery-server
-    tool application.
+The parser just forward the sub-commands to the fast-discovery-server
+tool application.
 
 """
 
@@ -63,7 +63,7 @@ class Parser:
                 if result.returncode != 0:
                     sys.exit(result.returncode)
 
-        except KeyboardInterrupt as e:
+        except KeyboardInterrupt:
             # it lets the subprocess to handle the exception
             pass
 
