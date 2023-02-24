@@ -40,9 +40,9 @@
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/thread/thread_time.hpp>
 
-#include "BoostAtExitRegistry.hpp"
-#include "RobustInterprocessCondition.hpp"
-#include "SharedMemUUID.hpp"
+#include "../../../../../../src/cpp/utils/shared_memory/BoostAtExitRegistry.hpp"
+#include "../../../../../../src/cpp/utils/shared_memory/RobustInterprocessCondition.hpp"
+#include "../../../../../../src/cpp/utils/shared_memory/SharedMemUUID.hpp"
 
 namespace eprosima {
 namespace fastdds {
@@ -85,6 +85,7 @@ public:
     explicit SharedSegmentBase(
             const std::string& name)
         : name_(name)
+        , boost_singleton_handler_(eprosima::detail::BoostAtExitRegistry::get_instance())
     {
     }
 
@@ -305,6 +306,8 @@ private:
 
     std::string name_;
 
+    std::shared_ptr<eprosima::detail::BoostAtExitRegistry> boost_singleton_handler_;
+
     static std::mutex& mtx_()
     {
         static std::mutex mtx_;
@@ -395,7 +398,7 @@ public:
     }
 
     /**
-     * Estimates the extra segment space required for an allocation. This may throw
+     * Estimates the extra segment space required for an allocation
      */
     static uint32_t compute_per_allocation_extra_size(
             size_t allocation_alignment,
@@ -411,7 +414,8 @@ public:
             {
                 uuid.generate();
 
-                auto name = domain_name + "_" + uuid.to_string();
+                // Additional invalid path characters to trigger the exception
+                auto name = "///" + domain_name + "_" + uuid.to_string();
 
                 SharedMemEnvironment::get().init();
 
