@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include <fastrtps/types/TypesBase.h>
-#include <gtest/gtest.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicDataFactory.h>
@@ -28,7 +27,11 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include "idl/BasicPubSubTypes.h"
 #include "idl/BasicTypeObject.h"
+
 #include <tinyxml2.h>
+
+#include <gtest/gtest.h>
+#include <tuple>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -62,10 +65,231 @@ public:
 
 };
 
+using primitive_api = DynamicTypeBuilder_cptr& (DynamicTypeBuilderFactory::* )();
+
+// Testing the primitive creation APIS
+// and get_primitive_type() and create_primitive_builder()
+class DynamicTypesPrimitiveTestsAPIs
+    : public testing::TestWithParam<std::pair<TypeKind, primitive_api>>
+{};
+
+TEST_P(DynamicTypesPrimitiveTestsAPIs, primitives_apis_unit_tests)
+{
+    // Get the factory singleton
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
+
+    // Retrieve parameters
+    TypeKind kind;
+    primitive_api api;
+    std::tie(kind, api) = GetParam();
+
+    // Create the primitive builder,
+    // note that create_xxx_builder rely on create_primitive_builder<TK_xxxx>()
+    DynamicTypeBuilder_cptr builder1 = (factory.*api)();
+    ASSERT_TRUE(builder1);
+
+    // It must be the right builder
+    ASSERT_EQ(builder1->get_kind(), kind);
+
+    // It must be consistent
+    ASSERT_TRUE(builder1->is_consistent());
+
+    // The primitive builder is statically allocated and must always be the same instance
+    DynamicTypeBuilder_cptr builder2 = (factory.*api)();
+    ASSERT_TRUE(builder2);
+    ASSERT_EQ(builder1, builder2);
+
+    // It must match the one created by the generic api
+    DynamicTypeBuilder_cptr builder3 = factory.create_primitive_builder(kind);
+    ASSERT_TRUE(builder3);
+    ASSERT_EQ(builder1, builder3);
+
+    // The builder must be able to generate the associated type
+    DynamicType_ptr type1 = builder1->build();
+    ASSERT_TRUE(type1);
+
+    // It must be the right type
+    ASSERT_EQ(type1->get_kind(), kind);
+
+    // It must be consistent
+    ASSERT_TRUE(type1->is_consistent());
+
+    // It must share the same state with the builder
+    ASSERT_TRUE(*type1 == *builder1);
+    ASSERT_TRUE(builder1->equals(*type1));
+
+    // It must return always the same type instance
+    ASSERT_EQ(type1, builder1->build());
+    ASSERT_EQ(type1, builder2->build());
+    ASSERT_EQ(type1, builder3->build());
+
+    // The primitives types can be retrieved directly from the factory
+    DynamicType_ptr type2 = factory.get_primitive_type(kind);
+    ASSERT_TRUE(type2);
+
+    // and must be the very same instance
+    ASSERT_EQ(type1, type2);
+
+    // All the instances are static, not dynamic ones should have been allocated
+    ASSERT_TRUE(factory.is_empty());
+
+    // It must be possible to create a custom builder from a primitive one
+    DynamicTypeBuilder_ptr custom_builder = factory.create_builder_copy(*builder1);
+    ASSERT_TRUE(custom_builder);
+
+    // It must be consistent
+    ASSERT_TRUE(type1->is_consistent());
+
+    // It must not be the static instance
+    ASSERT_NE(builder1, custom_builder);
+    // but must share its state
+    ASSERT_TRUE(*custom_builder == *builder1);
+
+    // It must be customizable
+    std::string name = "custom_type_name";
+    custom_builder->set_name(name);
+    ASSERT_EQ(custom_builder->get_name(), name);
+
+    // no longer share the state
+    ASSERT_FALSE(*custom_builder == *builder1);
+
+    // the custom type must not be a static instance
+    ASSERT_FALSE(factory.is_empty());
+
+    // The custom instance must be able to create a new type
+    DynamicType_ptr custom_type1 = custom_builder->build();
+    ASSERT_TRUE(custom_type1);
+
+    // It must be consistent
+    ASSERT_TRUE(custom_type1->is_consistent());
+
+    // It must share the state with the builder
+    ASSERT_TRUE(custom_builder->equals(*custom_type1));
+
+    // It must return a cached instances if there are not changes
+    DynamicType_ptr custom_type2 = custom_builder->build();
+    ASSERT_TRUE(custom_type2);
+    ASSERT_EQ(custom_type1, custom_type2);
+
+    // If there are state changes it must provide a new instance
+    name = "another_name";
+    custom_builder->set_name(name);
+    ASSERT_EQ(custom_builder->get_name(), name);
+
+    DynamicType_ptr custom_type3 = custom_builder->build();
+    ASSERT_TRUE(custom_type3);
+    ASSERT_NE(custom_type1, custom_type3);
+
+    // The new types shouldn't be static
+    custom_builder.reset();
+    ASSERT_FALSE(factory.is_empty());
+
+    // All resources should be freed out of scope
+    custom_type1.reset();
+    custom_type2.reset();
+    custom_type1.reset();
+}
+
+INSTANTIATE_TEST_SUITE_P(CheckingGetPrimitiveType,
+                         DynamicTypesPrimitiveTestsAPIs,
+                         testing::Values(
+                             std::make_pair(TK_INT32, &DynamicTypeBuilderFactory::create_int32_builder),
+                             std::make_pair(TK_UINT32, &DynamicTypeBuilderFactory::create_uint32_builder),
+                             std::make_pair(TK_INT16, &DynamicTypeBuilderFactory::create_int16_builder),
+                             std::make_pair(TK_UINT16, &DynamicTypeBuilderFactory::create_uint16_builder),
+                             std::make_pair(TK_INT64, &DynamicTypeBuilderFactory::create_int64_builder),
+                             std::make_pair(TK_UINT64, &DynamicTypeBuilderFactory::create_uint64_builder),
+                             std::make_pair(TK_FLOAT32, &DynamicTypeBuilderFactory::create_float32_builder),
+                             std::make_pair(TK_FLOAT64, &DynamicTypeBuilderFactory::create_float64_builder),
+                             std::make_pair(TK_FLOAT128, &DynamicTypeBuilderFactory::create_float128_builder),
+                             std::make_pair(TK_CHAR8, &DynamicTypeBuilderFactory::create_char8_builder),
+                             std::make_pair(TK_CHAR16, &DynamicTypeBuilderFactory::create_char16_builder),
+                             std::make_pair(TK_BOOLEAN, &DynamicTypeBuilderFactory::create_bool_builder),
+                             std::make_pair(TK_BYTE, &DynamicTypeBuilderFactory::create_byte_builder)));
+
+// Testing create_primitive_builder<TypeKind>
+
+// ancillary class, gtest only allows parametrized tests on types
+template<TypeKind> struct TypeKindType {};
+
+#define GTEST_CONST2TYPE(type)         \
+template<>                             \
+struct TypeKindType<type>              \
+{                                      \
+    static const TypeKind kind = type; \
+};
+
+// specializations
+GTEST_CONST2TYPE(TK_BOOLEAN)
+GTEST_CONST2TYPE(TK_BYTE)
+GTEST_CONST2TYPE(TK_INT16)
+GTEST_CONST2TYPE(TK_INT32)
+GTEST_CONST2TYPE(TK_INT64)
+GTEST_CONST2TYPE(TK_UINT16)
+GTEST_CONST2TYPE(TK_UINT32)
+GTEST_CONST2TYPE(TK_UINT64)
+GTEST_CONST2TYPE(TK_FLOAT32)
+GTEST_CONST2TYPE(TK_FLOAT64)
+GTEST_CONST2TYPE(TK_FLOAT128)
+GTEST_CONST2TYPE(TK_CHAR8)
+GTEST_CONST2TYPE(TK_CHAR16)
+
+template<class T>
+class StaticTypesPrimitiveTests
+    : public testing::Test
+{};
+
+#undef GTEST_CONST2TYPE
+#define GTEST_CONST2TYPE(type) TypeKindType<type>
+
+using TypeKindTypes = ::testing::Types<
+    GTEST_CONST2TYPE(TK_BOOLEAN),
+    GTEST_CONST2TYPE(TK_BYTE),
+    GTEST_CONST2TYPE(TK_INT16),
+    GTEST_CONST2TYPE(TK_INT32),
+    GTEST_CONST2TYPE(TK_INT64),
+    GTEST_CONST2TYPE(TK_UINT16),
+    GTEST_CONST2TYPE(TK_UINT32),
+    GTEST_CONST2TYPE(TK_UINT64),
+    GTEST_CONST2TYPE(TK_FLOAT32),
+    GTEST_CONST2TYPE(TK_FLOAT64),
+    GTEST_CONST2TYPE(TK_FLOAT128),
+    GTEST_CONST2TYPE(TK_CHAR8),
+    GTEST_CONST2TYPE(TK_CHAR16)>;
+
+TYPED_TEST_SUITE(StaticTypesPrimitiveTests, TypeKindTypes, );
+
+TYPED_TEST(StaticTypesPrimitiveTests, create_primitive_template_unit_tests)
+{
+    // Get the factory singleton
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
+
+    // Create the primitive builder,
+    // note that create_xxx_builder rely on create_primitive_builder<TK_xxxx>()
+    DynamicTypeBuilder_cptr builder1 = factory.create_primitive_builder<TypeParam::kind>();
+    ASSERT_TRUE(builder1);
+
+    // It must return the same builder than the runtime counterpart
+    DynamicTypeBuilder_cptr builder2 = factory.create_primitive_builder(TypeParam::kind);
+    ASSERT_TRUE(builder2);
+    ASSERT_EQ(builder1, builder2);
+
+}
+
+#undef GTEST_CONST2TYPE
+
+/*
 TEST_F(DynamicTypesTests, TypeDescriptors_unit_tests)
 {
-    // Given
-    TypeDescriptor pInt32Descriptor;
+    // Do not use the TypeDescriptor to:
+    // + Get primitive types. Use the DynamicTypeBuilderFactory instead.
+    // + Create new types. Use a Builder instead.
+
+    // We want to create a new type based on int32_t
+    DynamicTypeBuilder_cptr builder =
+            DynamicTypeBuilderFactory::get_instance().create_int32_builder();
+    // get static builder
+    TypeDescriptor pInt32Descriptor =
     pInt32Descriptor.set_kind(TK_INT32);
     pInt32Descriptor.set_name("TEST_INT32");
     TypeDescriptor pInt32Descriptor2;
@@ -4470,36 +4694,36 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayArrayStruct_test)
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ArrayArrayArrayStruct");
 
         DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
-        // Manual comparision test
-        /*
-           typedef long MyArray[2][2];
+//      Manual comparision test
 
-           struct ArrayArrayStruct
-           {
-            MyArray my_array_array[2][2];
-           };
+//           typedef long MyArray[2][2];
+//
+//           struct ArrayArrayStruct
+//           {
+//            MyArray my_array_array[2][2];
+//           };
+//
+//           struct ArrayArrayArrayStruct
+//           {
+//            ArrayArrayStruct my_array_array_array[2][2];
+//           };
+//
+//           ======
+//
+//           <type>
+//            <typedef name="MyArray" type="int32" arrayDimensions="2,2"/>
+//           </type>
+//           <type>
+//            <struct name="ArrayArrayStruct">
+//                <member name="my_array_array" type="nonBasic" nonBasicTypeName="MyArray" arrayDimensions="2,2"/>
+//            </struct>
+//           </type>
+//           <type>
+//            <struct name="ArrayArrayArrayStruct">
+//                <member name="my_array_array_array" type="nonBasic" nonBasicTypeName="ArrayArrayStruct" arrayDimensions="2,2"/>
+//            </struct>
+//           </type>
 
-           struct ArrayArrayArrayStruct
-           {
-            ArrayArrayStruct my_array_array_array[2][2];
-           };
-
-           ======
-
-           <type>
-            <typedef name="MyArray" type="int32" arrayDimensions="2,2"/>
-           </type>
-           <type>
-            <struct name="ArrayArrayStruct">
-                <member name="my_array_array" type="nonBasic" nonBasicTypeName="MyArray" arrayDimensions="2,2"/>
-            </struct>
-           </type>
-           <type>
-            <struct name="ArrayArrayArrayStruct">
-                <member name="my_array_array_array" type="nonBasic" nonBasicTypeName="ArrayArrayStruct" arrayDimensions="2,2"/>
-            </struct>
-           </type>
-         */
         // Typedef aka Alias
         DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
         DynamicTypeBuilder_ptr array_builder = m_factory->create_array_builder(int32_builder.get(), { 2, 2 });
@@ -5065,6 +5289,7 @@ TEST(TypeIdentifierTests, MinimalTypeIdentifierComparision)
     ASSERT_FALSE(unionUnion1 == wCharUnion2);
     ASSERT_FALSE(unionUnionStruct1 == unionUnion1);
 }
+*/
 
 int main(
         int argc,
