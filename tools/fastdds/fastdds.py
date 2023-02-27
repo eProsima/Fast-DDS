@@ -48,8 +48,6 @@ from discovery.parser import Parser as DiscoveryParser
 
 from shm.parser import Parser as ShmParser
 
-from xml_ci.parser import XMLParser
-
 
 class FastDDSParser:
     """FastDDS tool parser."""
@@ -113,7 +111,11 @@ class FastDDSParser:
 
     def xml(self):
         """Discovery server command handler."""
-        XMLParser(sys.argv[2:])
+        try:
+            from xml_ci.parser import XMLParser
+            XMLParser(sys.argv[2:])
+        except ImportError:
+            sys.exit(1)
 
 
 if __name__ == '__main__':
