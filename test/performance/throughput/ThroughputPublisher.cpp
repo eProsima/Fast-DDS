@@ -828,7 +828,7 @@ bool ThroughputPublisher::test(
 
                 result.subscriber.recv_samples = command_sample.m_receivedsamples;
                 assert(samples >= command_sample.m_receivedsamples);
-                result.subscriber.lost_samples = samples - command_sample.m_receivedsamples;
+                result.subscriber.lost_samples = samples - (uint32_t)command_sample.m_receivedsamples;
                 result.subscriber.totaltime_us =
                         std::chrono::microseconds(command_sample.m_totaltime)
                         - test_start_ack_duration - clock_overhead;
