@@ -48,8 +48,6 @@ from discovery.parser import Parser as DiscoveryParser
 
 from shm.parser import Parser as ShmParser
 
-from xml_ci.parser import XMLParser
-
 
 class FastDDSParser:
     """FastDDS tool parser."""
@@ -112,8 +110,17 @@ class FastDDSParser:
         DiscoveryParser(sys.argv[2:])
 
     def xml(self):
-        """Discovery server command handler."""
-        XMLParser(sys.argv[2:])
+        """
+        XML validation command handler.
+
+        New python dependency (XMLSchema) included in 2.10.X
+        Check it is installed, and report installation command if it is not.
+        """
+        try:
+            from xml_ci.parser import XMLParser
+            XMLParser(sys.argv[2:])
+        except ImportError:
+            sys.exit(1)
 
 
 if __name__ == '__main__':

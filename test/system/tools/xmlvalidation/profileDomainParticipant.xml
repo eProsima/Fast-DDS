@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles" >
     <participant profile_name="domainparticipant_profile_name">
+        <domainId>11</domainId>
         <rtps>
             <name>DomainParticipant Name</name>
 
