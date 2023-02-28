@@ -40,7 +40,6 @@
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/thread/thread_time.hpp>
 
-#include "../../../../../../src/cpp/utils/shared_memory/BoostAtExitRegistry.hpp"
 #include "../../../../../../src/cpp/utils/shared_memory/RobustInterprocessCondition.hpp"
 #include "../../../../../../src/cpp/utils/shared_memory/SharedMemUUID.hpp"
 
@@ -85,7 +84,6 @@ public:
     explicit SharedSegmentBase(
             const std::string& name)
         : name_(name)
-        , boost_singleton_handler_(eprosima::detail::BoostAtExitRegistry::get_instance())
     {
     }
 
@@ -306,8 +304,6 @@ private:
 
     std::string name_;
 
-    std::shared_ptr<eprosima::detail::BoostAtExitRegistry> boost_singleton_handler_;
-
     static std::mutex& mtx_()
     {
         static std::mutex mtx_;
@@ -438,8 +434,8 @@ public:
         }
         catch (const std::exception& e)
         {
-            EPROSIMA_LOG_ERROR(RTPS_TRANSPORT_SHM, "Failed to create segment " << uuid.to_string()
-                                                                               << ": " << e.what());
+            logError(RTPS_TRANSPORT_SHM, "Failed to create segment " << uuid.to_string()
+                                                                     << ": " << e.what());
 
             throw;
         }
