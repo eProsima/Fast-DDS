@@ -9,6 +9,7 @@
             <transport_descriptor>
                 <transport_id>shm_transport</transport_id>
                 <type>SHM</type>
+                <segment_size>12582912</segment_size>
             </transport_descriptor>
             <transport_descriptor>
               <transport_id>udp_transport</transport_id>
