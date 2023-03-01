@@ -138,14 +138,14 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
         eprosima::fastrtps::types::DynamicType_ptr dyn_type)
 {
     std::cout << "Discovered type: " << dyn_type->get_name() << " from topic " << topic_name << std::endl;
-    received_type = dyn_type;
-    reception_flag.store(true);
-    types_cv.notify_one();
+    received_type_ = dyn_type;
+    reception_flag_.store(true);
+    types_cv_.notify_one();
 }
 
 void HelloWorldSubscriber::initialize_entities()
 {
-    auto type = m_listener.received_type;
+    auto type = m_listener.received_type_;
     std::cout << "Initializing DDS entities for type: " << type->get_name() << std::endl;
     TypeSupport m_type(new eprosima::fastrtps::types::DynamicPubSubType(type));
     m_type.register_type(mp_participant);
@@ -189,10 +189,10 @@ void HelloWorldSubscriber::initialize_entities()
 void HelloWorldSubscriber::run()
 {
     std::cout << "Subscriber running. Please press enter to stop the Subscriber" << std::endl;
-    std::unique_lock<std::mutex> lock(m_listener.types_mx);
-    m_listener.types_cv.wait(lock, [&]()
+    std::unique_lock<std::mutex> lock(m_listener.types_mx_);
+    m_listener.types_cv_.wait(lock, [&]()
             {
-                return m_listener.reception_flag.exchange(false);
+                return m_listener.reception_flag_.exchange(false);
             });
 
     initialize_entities();
@@ -204,10 +204,10 @@ void HelloWorldSubscriber::run(
         uint32_t number)
 {
     std::cout << "Subscriber running until " << number << "samples have been received" << std::endl;
-    std::unique_lock<std::mutex> lock(m_listener.types_mx);
-    m_listener.types_cv.wait(lock, [&]()
+    std::unique_lock<std::mutex> lock(m_listener.types_mx_);
+    m_listener.types_cv_.wait(lock, [&]()
             {
-                return m_listener.reception_flag.exchange(false);
+                return m_listener.reception_flag_.exchange(false);
             });
 
     initialize_entities();

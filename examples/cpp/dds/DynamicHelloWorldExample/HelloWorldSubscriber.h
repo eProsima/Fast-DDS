@@ -111,13 +111,13 @@ public:
 
         uint32_t n_samples;
 
-        std::mutex types_mx;
+        std::mutex types_mx_;
 
-        std::condition_variable types_cv;
+        std::condition_variable types_cv_;
 
-        eprosima::fastrtps::types::DynamicType_ptr received_type;
+        eprosima::fastrtps::types::DynamicType_ptr received_type_;
 
-        std::atomic<bool> reception_flag{false};
+        std::atomic<bool> reception_flag_{false};
 
         HelloWorldSubscriber* subscriber_;
 
