@@ -55,6 +55,9 @@ struct dynamic_tracker_interface
     virtual bool add(const DynamicType*) noexcept { return true; }
     //! remove type
     virtual bool remove(const DynamicType*) noexcept { return true; }
+
+    // singleton creation
+    static dynamic_tracker_interface& get_dynamic_tracker();
 };
 
 /**
@@ -82,7 +85,7 @@ class dtypes_memory_check
     bool remove(const DynamicType*) noexcept override;
 };
 
-inline dynamic_tracker_interface& get_dynamic_tracker()
+inline dynamic_tracker_interface& dynamic_tracker_interface::get_dynamic_tracker()
 {
 #ifdef ENABLE_DYNAMIC_MEMORY_CHECK
     static dtypes_memory_check dynamic_tracker;

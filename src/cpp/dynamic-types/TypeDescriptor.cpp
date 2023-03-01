@@ -283,7 +283,11 @@ bool TypeDescriptor::is_consistent() const
 
 bool TypeDescriptor::is_primitive() const
 {
-    return kind_ > TK_NONE && kind_ <= TK_CHAR16;
+    return kind_ > TK_NONE && kind_ <= TK_CHAR16 &&
+           annotation_.empty() &&
+           members_.empty() &&
+           !base_type_ && !discriminator_type_ &&
+           !element_type_ && !key_element_type_;
 }
 
 bool TypeDescriptor::is_type_name_consistent(

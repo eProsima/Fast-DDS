@@ -34,30 +34,15 @@ DynamicType::DynamicType(
 DynamicType::DynamicType(
         use_the_create_method,
         const TypeDescriptor& descriptor)
+    : TypeDescriptor(descriptor)
 {
-    // TODO BARR: refactor
-    (void)descriptor;
-//    descriptor_ = new TypeDescriptor(descriptor);
-//    try
-//    {
-//        name_ = descriptor->get_name();
-//        kind_ = descriptor->get_kind();
-//    }
-//    catch (...)
-//    {
-//        name_ = "";
-//        kind_ = TK_NONE;
-//    }
-//
-//    // Alias types use the same members than it's base class.
-//    if (kind_ == TK_ALIAS)
-//    {
-//        for (auto it = descriptor_->get_base_type()->member_by_id_.begin();
-//                it != descriptor_->get_base_type()->member_by_id_.end(); ++it)
-//        {
-//            member_by_name_.insert(std::make_pair(it->second->get_name(), it->second));
-//        }
-//    }
+}
+
+DynamicType::DynamicType(
+        use_the_create_method,
+        TypeDescriptor&& descriptor)
+    : TypeDescriptor(std::move(descriptor))
+{
 }
 
 DynamicType::~DynamicType()

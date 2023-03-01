@@ -159,6 +159,10 @@ static std::string GenerateTypeName(
 
 DynamicTypeBuilderFactory& DynamicTypeBuilderFactory::get_instance() noexcept
 {
+    // C++ standard requires preserve global construction order
+    // make sure the dynamic tracker lifespan is larger than the factory one
+    dynamic_tracker_interface::get_dynamic_tracker();
+
     // C++11 guarantees the construction to be atomic
     static DynamicTypeBuilderFactory instance;
     return instance;
@@ -172,7 +176,7 @@ ReturnCode_t DynamicTypeBuilderFactory::delete_instance() noexcept
 
 void DynamicTypeBuilderFactory::reset()
 {
-    get_dynamic_tracker().reset();
+    dynamic_tracker_interface::get_dynamic_tracker().reset();
 }
 
 DynamicTypeBuilderFactory::~DynamicTypeBuilderFactory()
@@ -183,12 +187,12 @@ DynamicTypeBuilderFactory::~DynamicTypeBuilderFactory()
 
 void DynamicTypeBuilderFactory::after_construction(DynamicTypeBuilder* pBuilder)
 {
-    get_dynamic_tracker().add(pBuilder);
+    dynamic_tracker_interface::get_dynamic_tracker().add(pBuilder);
 }
 
 void DynamicTypeBuilderFactory::before_destruction(DynamicTypeBuilder* builder)
 {
-    get_dynamic_tracker().remove(builder);
+    dynamic_tracker_interface::get_dynamic_tracker().remove(builder);
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_builder(const TypeDescriptor& td) noexcept
@@ -351,7 +355,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::new_primitive_builder(TypeKind
                 TypeDescriptor{GenerateTypeName(get_type_name(kind)), kind},
                 true); // will be a static object
     // notify the tracker
-    get_dynamic_tracker().add_primitive(builder.get());
+    dynamic_tracker_interface::get_dynamic_tracker().add_primitive(builder.get());
     return builder;
 }
 
@@ -616,13 +620,15 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_wstring_builder(
 ReturnCode_t DynamicTypeBuilderFactory::delete_builder(
         DynamicTypeBuilder* builder) noexcept
 {
-    return get_dynamic_tracker().remove(builder) ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_ALREADY_DELETED;
+    return dynamic_tracker_interface::get_dynamic_tracker().remove(builder)
+            ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_ALREADY_DELETED;
 }
 
 ReturnCode_t DynamicTypeBuilderFactory::delete_type(
         DynamicType* type) noexcept
 {
-    return get_dynamic_tracker().remove(type) ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_ALREADY_DELETED;
+    return dynamic_tracker_interface::get_dynamic_tracker().remove(type)
+            ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_ALREADY_DELETED;
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_primitive_builder(TypeKind kind)
@@ -675,7 +681,7 @@ DynamicType_ptr DynamicTypeBuilderFactory::get_primitive_type(TypeKind kind) noe
 
 bool DynamicTypeBuilderFactory::is_empty() const
 {
-    return get_dynamic_tracker().is_empty();
+    return dynamic_tracker_interface::get_dynamic_tracker().is_empty();
 }
 
 void DynamicTypeBuilderFactory::build_type_identifier(

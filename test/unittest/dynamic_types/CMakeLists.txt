@@ -135,7 +135,6 @@ target_link_libraries(DynamicTypesTests GTest::gtest
     )
 add_gtest(DynamicTypesTests SOURCES ${DYNAMIC_TYPES_TEST_SOURCE})
 
-
 add_executable(DynamicComplexTypesTests ${DYNAMIC_COMPLEX_TYPES_TEST_SOURCE})
 target_compile_definitions(DynamicComplexTypesTests PRIVATE FASTRTPS_NO_LIB
     BOOST_ASIO_STANDALONE

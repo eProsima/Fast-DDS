@@ -56,18 +56,18 @@ DynamicTypeBuilder::DynamicTypeBuilder(
                 *this);
 
         // notify the tracker
-        get_dynamic_tracker().add_primitive(instance_.get());
+        dynamic_tracker_interface::get_dynamic_tracker().add_primitive(instance_.get());
     }
 }
 
 void DynamicTypeBuilder::after_construction(DynamicType* type)
 {
-    get_dynamic_tracker().add(type);
+    dynamic_tracker_interface::get_dynamic_tracker().add(type);
 }
 
 void DynamicTypeBuilder::before_destruction(DynamicType* type)
 {
-    get_dynamic_tracker().remove(type);
+    dynamic_tracker_interface::get_dynamic_tracker().remove(type);
 }
 
 DynamicTypeBuilder::member_iterator DynamicTypeBuilder::add_empty_member(

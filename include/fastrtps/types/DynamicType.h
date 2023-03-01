@@ -54,6 +54,10 @@ public:
             use_the_create_method,
             const TypeDescriptor& descriptor);
 
+    DynamicType(
+            use_the_create_method,
+            TypeDescriptor&& descriptor);
+
     RTPS_DllAPI virtual ~DynamicType();
 
     const TypeDescriptor& get_type_descriptor() const

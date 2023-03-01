@@ -37,34 +37,6 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
 
-class DynamicTypesTests : public ::testing::Test
-{
-    const std::string config_file_ = "types.xml";
-
-public:
-
-    DynamicTypesTests()
-    {
-    }
-
-    ~DynamicTypesTests()
-    {
-        eprosima::fastdds::dds::Log::KillThread();
-    }
-
-    virtual void TearDown()
-    {
-        DynamicDataFactory::delete_instance();
-        DynamicTypeBuilderFactory::delete_instance();
-    }
-
-    const std::string& config_file()
-    {
-        return config_file_;
-    }
-
-};
-
 using primitive_api = DynamicTypeBuilder_cptr& (DynamicTypeBuilderFactory::* )();
 
 // Testing the primitive creation APIS
@@ -279,6 +251,35 @@ TYPED_TEST(StaticTypesPrimitiveTests, create_primitive_template_unit_tests)
 #undef GTEST_CONST2TYPE
 
 /*
+
+class DynamicTypesTests : public ::testing::Test
+{
+    const std::string config_file_ = "types.xml";
+
+public:
+
+    DynamicTypesTests()
+    {
+    }
+
+    ~DynamicTypesTests()
+    {
+        eprosima::fastdds::dds::Log::KillThread();
+    }
+
+    virtual void TearDown()
+    {
+        DynamicDataFactory::delete_instance();
+        DynamicTypeBuilderFactory::delete_instance();
+    }
+
+    const std::string& config_file()
+    {
+        return config_file_;
+    }
+
+};
+
 TEST_F(DynamicTypesTests, TypeDescriptors_unit_tests)
 {
     // Do not use the TypeDescriptor to:
