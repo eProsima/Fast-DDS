@@ -130,7 +130,7 @@ def _common_line_splitter(
             return line[(start_index
                         + len(text_to_split_start)):
                         end_index].strip()
-    return line[(start_index + len(text_to_split_start)):].strip()
+    return line[(start_index + len(text_to_split_start)):].split(None, 1)[0]
 
 
 def asan_line_splitter(
@@ -229,4 +229,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    exit(1 if main() else 0)

@@ -21,7 +21,7 @@ jobs:
     if: ${{ !(contains(github.event.pull_request.labels.*.name, 'no-test') ||
               contains(github.event.pull_request.labels.*.name, 'skip-ci')) }}
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Sync eProsima/Fast-DDS repository
@@ -32,14 +32,14 @@ jobs:
       - name: Install apt packages
         uses: ./src/Fast-DDS/.github/actions/install-apt-packages
 
-      - name: Install GTest
-        uses: ./src/Fast-DDS/.github/actions/install-gtest-linux
-
       - name: Install Python packages
         uses: ./src/Fast-DDS/.github/actions/install-python-packages
 
       - name: Fetch Fast DDS dependencies
         uses: ./src/Fast-DDS/.github/actions/fetch-fastdds-repos
+        with:
+          target_directory: src
+          googletest: true
 
       - name: Build workspace
         run: |
@@ -71,7 +71,7 @@ jobs:
         if: always()
         run: |
           bash src/Fast-DDS/.github/workflows/utils/specific_errors_filter.sh "==ERROR:" log/latest_test/fastrtps/stdout_stderr.log _tmp_specific_error_file.log
-          python3 src/Fast-DDS/.github/workflows/utils/log_parser.py --log-file log/latest_test/fastrtps/stdout_stderr.log --specific-error-file _tmp_specific_error_file.log --output-file $GITHUB_STEP_SUMMARY --sanitizer=asan
+          python3 src/Fast-DDS/.github/workflows/utils/log_parser.py --log-file log/latest_test/fastrtps/stdout_stderr.log --specific-error-file _tmp_specific_error_file.log --output-file $GITHUB_STEP_SUMMARY --sanitizer asan
 
 
   asan-discovery-server-test:
@@ -79,7 +79,7 @@ jobs:
     if: ${{ !(contains(github.event.pull_request.labels.*.name, 'no-test') ||
               contains(github.event.pull_request.labels.*.name, 'skip-ci')) }}
 
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Sync eProsima/Fast-DDS repository
@@ -90,23 +90,18 @@ jobs:
       - name: Install apt packages
         uses: ./src/Fast-DDS/.github/actions/install-apt-packages
 
-      - name: Install GTest
-        uses: ./src/Fast-DDS/.github/actions/install-gtest-linux
-
       - name: Install Python packages
         uses: ./src/Fast-DDS/.github/actions/install-python-packages
 
-      - name: Fetch repositories
+      - name: Fetch Fast DDS dependencies
+        uses: ./src/Fast-DDS/.github/actions/fetch-fastdds-repos
         env:
           DEFAULT_DISCOVERY_SERVER_BRANCH: 'master'
-        run: |
-          mkdir -p src
-          cd src
-          git clone https://github.com/eProsima/foonathan_memory_vendor.git
-          git clone https://github.com/eProsima/Fast-CDR.git
-          git clone https://github.com/eProsima/Discovery-Server.git --branch ${{ github.event.inputs.discovery_server_branch || env.DEFAULT_DISCOVERY_SERVER_BRANCH }}
-          git clone https://github.com/google/googletest.git --branch release-1.10.0
-          cd ..
+        with:
+          target_directory: src
+          googletest: true
+          discovery_server: true
+          discovery_server_branch: ${{ github.event.inputs.discovery_server_branch || env.DEFAULT_DISCOVERY_SERVER_BRANCH }}
 
       - name: Build workspace
         run: |
