@@ -59,6 +59,8 @@
 #include <rtps/persistence/PersistenceService.h>
 #include <statistics/rtps/GuidUtils.hpp>
 
+#include <utils/SystemInfo.hpp>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -680,6 +682,8 @@ bool RTPSParticipantImpl::create_writer(
         return false;
     }
 
+    if (!is_builtin) eprosima::log_memory_delta("flow controller prepared");
+
     // Check for unique_network_flows feature
     if (nullptr != PropertyPolicyHelper::find_property(param.endpoint.properties, "fastdds.unique_network_flows"))
     {
@@ -709,8 +713,11 @@ bool RTPSParticipantImpl::create_writer(
 
     normalize_endpoint_locators(param.endpoint);
 
+    if (!is_builtin) eprosima::log_memory_delta("RTPS writer properties processed");
+
     RTPSWriter* SWriter = nullptr;
     SWriter = callback(guid, param, flow_controller, persistence, param.endpoint.reliabilityKind == RELIABLE);
+    if (!is_builtin) eprosima::log_memory_delta("RTPS writer constructed");
 
     // restore attributes
     param.endpoint.persistence_guid = former_persistence_guid;
@@ -735,6 +742,7 @@ bool RTPSParticipantImpl::create_writer(
             delete(SWriter);
             return false;
         }
+        eprosima::log_memory_delta("RTPS writer registered in security");
     }
     else
     {
@@ -748,6 +756,8 @@ bool RTPSParticipantImpl::create_writer(
 #endif // if HAVE_SECURITY
 
     createSendResources(SWriter);
+    if (!is_builtin) eprosima::log_memory_delta("createSendResources called");
+
     if (param.endpoint.reliabilityKind == RELIABLE)
     {
         if (!createAndAssociateReceiverswithEndpoint(SWriter))
@@ -755,6 +765,7 @@ bool RTPSParticipantImpl::create_writer(
             delete(SWriter);
             return false;
         }
+        if (!is_builtin) eprosima::log_memory_delta("createAndAssociateReceiverswithEndpoint called");
     }
 
     {
@@ -767,6 +778,7 @@ bool RTPSParticipantImpl::create_writer(
         }
     }
     *writer_out = SWriter;
+    if (!is_builtin) eprosima::log_memory_delta("RTPS writer added to endpoints collection");
 
 #ifdef FASTDDS_STATISTICS
 
