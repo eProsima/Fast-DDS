@@ -53,6 +53,8 @@
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 
+#include <utils/SystemInfo.hpp>
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace std::chrono;
@@ -189,7 +191,11 @@ ReturnCode_t DataReaderImpl::enable()
         att.endpoint.set_data_sharing_configuration(datasharing);
     }
 
+    eprosima::log_memory_delta("RTPS reader properties prepared");
+
     std::shared_ptr<IPayloadPool> pool = get_payload_pool();
+    eprosima::log_memory_delta("payload_pool created");
+
     RTPSReader* reader = RTPSDomain::createRTPSReader(
         subscriber_->rtps_participant(),
         guid_.entityId,
@@ -203,12 +209,14 @@ ReturnCode_t DataReaderImpl::enable()
         logError(DATA_READER, "Problem creating associated Reader");
         return ReturnCode_t::RETCODE_ERROR;
     }
+    eprosima::log_memory_delta("RTPS reader created");
 
     auto content_topic = dynamic_cast<ContentFilteredTopicImpl*>(topic_->get_impl());
     if (nullptr != content_topic)
     {
         reader->set_content_filter(content_topic);
         content_topic->add_reader(this);
+        eprosima::log_memory_delta("content filter set up");
     }
 
     reader_ = reader;
@@ -226,6 +234,7 @@ ReturnCode_t DataReaderImpl::enable()
                         return lifespan_expired();
                     },
                     qos_.lifespan().duration.to_ns() * 1e-6);
+    eprosima::log_memory_delta("timers created");
 
     // Register the reader
     ReaderQos rqos = qos_.get_readerqos(subscriber_->get_qos());
@@ -250,6 +259,8 @@ ReturnCode_t DataReaderImpl::enable()
     {
         filter_property = &content_topic->filter_property;
     }
+    eprosima::log_memory_delta("ReaderQos prepared");
+
     if (!subscriber_->rtps_participant()->registerReader(reader_, topic_attributes(), rqos, filter_property))
     {
         logError(DATA_READER, "Could not register reader on discovery protocols");
@@ -259,6 +270,7 @@ ReturnCode_t DataReaderImpl::enable()
 
         return ReturnCode_t::RETCODE_ERROR;
     }
+    eprosima::log_memory_delta("RTPS reader registered");
 
     return ReturnCode_t::RETCODE_OK;
 }
