@@ -103,6 +103,7 @@ DomainParticipantFactory::DomainParticipantFactory()
     : default_xml_profiles_loaded(false)
     , default_participant_qos_(PARTICIPANT_QOS_DEFAULT)
 {
+    eprosima::log_memory_delta("DomainParticipantFactory", true);
 }
 
 DomainParticipantFactory::~DomainParticipantFactory()
@@ -216,17 +217,23 @@ DomainParticipant* DomainParticipantFactory::create_participant(
         DomainParticipantListener* listen,
         const StatusMask& mask)
 {
+    eprosima::log_memory_delta("create_participant", true);
+
     load_profiles();
+    eprosima::log_memory_delta("load_profiles called");
 
     const DomainParticipantQos& pqos = (&qos == &PARTICIPANT_QOS_DEFAULT) ? default_participant_qos_ : qos;
 
     DomainParticipant* dom_part = new DomainParticipant(mask);
+    eprosima::log_memory_delta("DomainParticipant created");
+
 #ifndef FASTDDS_STATISTICS
     DomainParticipantImpl* dom_part_impl = new DomainParticipantImpl(dom_part, did, pqos, listen);
 #else
     eprosima::fastdds::statistics::dds::DomainParticipantImpl* dom_part_impl =
             new eprosima::fastdds::statistics::dds::DomainParticipantImpl(dom_part, did, pqos, listen);
 #endif // FASTDDS_STATISTICS
+    eprosima::log_memory_delta("DomainParticipantImpl created");
 
     {
         std::lock_guard<std::mutex> guard(mtx_participants_);
@@ -243,6 +250,7 @@ DomainParticipant* DomainParticipantFactory::create_participant(
 
         vector_it->second.push_back(dom_part_impl);
     }
+    eprosima::log_memory_delta("added to participants map");
 
     if (factory_qos_.entity_factory().autoenable_created_entities)
     {
@@ -252,6 +260,7 @@ DomainParticipant* DomainParticipantFactory::create_participant(
             return nullptr;
         }
     }
+    eprosima::log_memory_delta("participant enabled", true);
 
     return dom_part;
 }
