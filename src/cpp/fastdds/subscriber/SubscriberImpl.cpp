@@ -38,6 +38,8 @@
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include <utils/SystemInfo.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -235,6 +237,8 @@ DataReader* SubscriberImpl::create_datareader(
         DataReaderListener* listener,
         const StatusMask& mask)
 {
+    eprosima::log_memory_delta("create_datareader", true);
+
     logInfo(SUBSCRIBER, "CREATING SUBSCRIBER IN TOPIC: " << topic->get_name());
     //Look for the correct type registration
     TypeSupport type_support = participant_->find_type(topic->get_type_name());
@@ -255,13 +259,17 @@ DataReader* SubscriberImpl::create_datareader(
     topic->get_impl()->reference();
 
     DataReaderImpl* impl = create_datareader_impl(type_support, topic, qos, listener);
+    eprosima::log_memory_delta("DataReaderImpl created");
+
     DataReader* reader = new DataReader(impl, mask);
     impl->user_datareader_ = reader;
+    eprosima::log_memory_delta("DataReader created");
 
     {
         std::lock_guard<std::mutex> lock(mtx_readers_);
         readers_[topic->get_name()].push_back(impl);
     }
+    eprosima::log_memory_delta("added to readers map");
 
     if (user_subscriber_->is_enabled() && qos_.entity_factory().autoenable_created_entities)
     {
@@ -271,6 +279,7 @@ DataReader* SubscriberImpl::create_datareader(
             return nullptr;
         }
     }
+    eprosima::log_memory_delta("DataReader enabled", true);
 
     return reader;
 }
