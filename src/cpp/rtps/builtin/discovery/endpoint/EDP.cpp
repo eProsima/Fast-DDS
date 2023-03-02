@@ -47,6 +47,7 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <utils/collections/node_size_helpers.hpp>
+#include <utils/SystemInfo.hpp>
 
 #include <mutex>
 
@@ -227,12 +228,19 @@ bool EDP::newLocalReaderProxyData(
     {
         return false;
     }
+    eprosima::log_memory_delta("ReaderProxyData created");
 
     //PAIRING
     pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
+    eprosima::log_memory_delta("pairing_reader_proxy_with_any_local_writer");
+
     pairingReader(reader, participant_guid, *reader_data);
+    eprosima::log_memory_delta("pairingReader");
+
     //DO SOME PROCESSING DEPENDING ON THE IMPLEMENTATION (SIMPLE OR STATIC)
     processLocalReaderProxyData(reader, reader_data);
+    eprosima::log_memory_delta("processLocalReaderProxyData");
+
     return true;
 }
 
@@ -356,12 +364,17 @@ bool EDP::newLocalWriterProxyData(
     {
         return false;
     }
+    eprosima::log_memory_delta("WriterProxyData created");
 
     //PAIRING
     pairing_writer_proxy_with_any_local_reader(participant_guid, writer_data);
+    eprosima::log_memory_delta("pairing_writer_proxy_with_any_local_reader");
+
     pairingWriter(writer, participant_guid, *writer_data);
+    eprosima::log_memory_delta("pairingWriter");
     //DO SOME PROCESSING DEPENDING ON THE IMPLEMENTATION (SIMPLE OR STATIC)
     processLocalWriterProxyData(writer, writer_data);
+    eprosima::log_memory_delta("processLocalWriterProxyData");
     return true;
 }
 
