@@ -55,6 +55,8 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/RTPSDomainImpl.hpp>
 
+#include <utils/SystemInfo.hpp>
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace std::chrono;
@@ -267,12 +269,15 @@ ReturnCode_t DataWriterImpl::enable()
         reader_filters_.reset(new ReaderFilterCollection(qos_.writer_resource_limits().reader_filters_allocation));
     }
 
+    eprosima::log_memory_delta("DataWriter properties prepared");
+
     auto change_pool = get_change_pool();
     if (!change_pool)
     {
         logError(DATA_WRITER, "Problem creating change pool for associated Writer");
         return ReturnCode_t::RETCODE_ERROR;
     }
+    eprosima::log_memory_delta("change_pool created");
 
     auto pool = get_payload_pool();
     if (!pool)
@@ -280,6 +285,7 @@ ReturnCode_t DataWriterImpl::enable()
         logError(DATA_WRITER, "Problem creating payload pool for associated Writer");
         return ReturnCode_t::RETCODE_ERROR;
     }
+    eprosima::log_memory_delta("payload_pool created");
 
     RTPSWriter* writer =  RTPSDomainImpl::create_rtps_writer(
         publisher_->rtps_participant(),
@@ -322,6 +328,7 @@ ReturnCode_t DataWriterImpl::enable()
         logError(DATA_WRITER, "Problem creating associated Writer");
         return ReturnCode_t::RETCODE_ERROR;
     }
+    eprosima::log_memory_delta("RTPSWriter created");
 
     writer_ = writer;
     if (filtering_enabled)
@@ -345,6 +352,8 @@ ReturnCode_t DataWriterImpl::enable()
                         return lifespan_expired();
                     },
                     qos_.lifespan().duration.to_ns() * 1e-6);
+
+    eprosima::log_memory_delta("timers created");
 
     // In case it has been loaded from the persistence DB, expire old samples.
     if (qos_.lifespan().duration != c_TimeInfinite)
@@ -372,7 +381,10 @@ ReturnCode_t DataWriterImpl::enable()
             wqos.m_partition.push_back(partition_name.c_str());
         }
     }
+    eprosima::log_memory_delta("WriterQos prepared");
+
     publisher_->rtps_participant()->registerWriter(writer_, get_topic_attributes(qos_, *topic_, type_), wqos);
+    eprosima::log_memory_delta("RTPSWriter registered");
 
     return ReturnCode_t::RETCODE_OK;
 }
