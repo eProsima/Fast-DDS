@@ -854,9 +854,12 @@ bool RTPSParticipantImpl::create_reader(
 
     normalize_endpoint_locators(param.endpoint);
 
+    if (!is_builtin) eprosima::log_memory_delta("RTPS reader properties processed");
+
     RTPSReader* SReader = nullptr;
     GUID_t guid(m_guid.guidPrefix, entId);
     SReader = callback(guid, param, persistence, param.endpoint.reliabilityKind == RELIABLE);
+    if (!is_builtin) eprosima::log_memory_delta("RTPS reader constructed");
 
     // restore attributes
     param.endpoint.persistence_guid = former_persistence_guid;
@@ -876,6 +879,7 @@ bool RTPSParticipantImpl::create_reader(
             delete(SReader);
             return false;
         }
+        eprosima::log_memory_delta("RTPS reader registered in security");
     }
     else
     {
@@ -891,6 +895,7 @@ bool RTPSParticipantImpl::create_reader(
     if (param.endpoint.reliabilityKind == RELIABLE)
     {
         createSendResources(SReader);
+        if (!is_builtin) eprosima::log_memory_delta("createSendResources called");
     }
 
     if (is_builtin)
@@ -905,6 +910,7 @@ bool RTPSParticipantImpl::create_reader(
             delete(SReader);
             return false;
         }
+        if (!is_builtin) eprosima::log_memory_delta("createAndAssociateReceiverswithEndpoint called");
     }
 
     {
@@ -918,6 +924,7 @@ bool RTPSParticipantImpl::create_reader(
         }
     }
     *reader_out = SReader;
+    if (!is_builtin) eprosima::log_memory_delta("RTPS reader added to endpoints collection");
 
 #ifdef FASTDDS_STATISTICS
 
