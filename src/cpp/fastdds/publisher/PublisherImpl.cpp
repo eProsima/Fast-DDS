@@ -39,6 +39,8 @@
 
 #include <functional>
 
+#include <utils/SystemInfo.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace dds {
@@ -268,6 +270,8 @@ DataWriter* PublisherImpl::create_datawriter(
         DataWriterListener* listener,
         const StatusMask& mask)
 {
+    eprosima::log_memory_delta("create_datawriter", true);
+
     logInfo(PUBLISHER, "CREATING WRITER IN TOPIC: " << topic->get_name());
     //Look for the correct type registration
     TypeSupport type_support = participant_->find_type(topic->get_type_name());
@@ -286,6 +290,8 @@ DataWriter* PublisherImpl::create_datawriter(
     }
 
     DataWriterImpl* impl = create_datawriter_impl(type_support, topic, qos, listener);
+    eprosima::log_memory_delta("DataWriterImpl created");
+
     return create_datawriter(topic, impl, mask);
 }
 
@@ -298,11 +304,13 @@ DataWriter* PublisherImpl::create_datawriter(
 
     DataWriter* writer = new DataWriter(impl, mask);
     impl->user_datawriter_ = writer;
+    eprosima::log_memory_delta("DataWriter created");
 
     {
         std::lock_guard<std::mutex> lock(mtx_writers_);
         writers_[topic->get_name()].push_back(impl);
     }
+    eprosima::log_memory_delta("added to writers map");
 
     if (user_publisher_->is_enabled() && qos_.entity_factory().autoenable_created_entities)
     {
@@ -312,6 +320,7 @@ DataWriter* PublisherImpl::create_datawriter(
             return nullptr;
         }
     }
+    eprosima::log_memory_delta("DataWriter enabled", true);
 
     return writer;
 }
