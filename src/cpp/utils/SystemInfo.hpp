@@ -215,6 +215,10 @@ private:
  */
 const char* const FASTDDS_ENVIRONMENT_FILE_ENV_VAR = "FASTDDS_ENVIRONMENT_FILE";
 
+void log_memory_delta(
+        const char* msg,
+        bool force = false);
+
 } // namespace eprosima
 
 #endif // UTILS_SYSTEMINFO_HPP_

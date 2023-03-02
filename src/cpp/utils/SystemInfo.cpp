@@ -20,6 +20,9 @@
 #else
 #include <pwd.h>
 #include <unistd.h>
+
+#include <sys/resource.h>
+#include <sys/types.h>
 #endif // _WIN32
 
 #include <fstream>
@@ -27,6 +30,8 @@
 
 #include <json.hpp>
 #include <fastrtps/types/TypesBase.h>
+
+#include <stdio.h>
 
 namespace eprosima {
 
@@ -175,6 +180,60 @@ void SystemInfo::stop_watching_file(
     handle.reset();
 #endif // if defined(_WIN32) || defined(__unix__)
     static_cast<void>(handle);
+}
+
+/**
+ * @brief Trivial class to measure memory allocations
+ */
+class MemoryMonitor
+{
+public:
+    MemoryMonitor() = default;
+
+    /**
+     * @brief Computes the amount of RSS memory allocated since the last call of this function.
+     */
+    uint64_t get_memory_delta()
+    {
+        uint64_t current_usage = get_memory_usage();
+        uint64_t delta = current_usage - m_rss_kb;
+        m_rss_kb = current_usage;
+        return delta;
+    }
+
+    /**
+     * @brief Computes the current RSS memory usage of this process.
+     */
+    uint64_t get_memory_usage()
+    {
+        // Sleep for a little bit to make sure that proc pages are updated
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+        // Get rss
+        struct rusage usage;
+        getrusage(RUSAGE_SELF, &usage);
+
+        return usage.ru_maxrss;
+    }
+
+    void log_memory_delta(const char* msg, bool force)
+    {
+        uint64_t delta = get_memory_delta();
+        if (delta > 0 || force) {
+          printf("[fast-dds.mem] %s --> %lu\n", msg, delta);
+        }
+    }
+
+private:
+    uint64_t m_rss_kb{ 0 };
+};
+
+void log_memory_delta(
+        const char* msg,
+        bool force)
+{
+    static MemoryMonitor the_monitor;
+    the_monitor.log_memory_delta(msg, force);
 }
 
 std::string SystemInfo::environment_file_;
