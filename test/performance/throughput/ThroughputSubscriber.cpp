@@ -45,6 +45,7 @@ void ThroughputSubscriber::DataReaderListener::reset()
 {
     last_seq_num_ = 0;
     lost_samples_ = 0;
+    received_samples_ = 0;
     matched_ = 0;
     enable_ = true;
 }
@@ -119,6 +120,7 @@ void ThroughputSubscriber::DataReaderListener::on_data_available(
                 }
             }
             last_seq_num = seq_num;
+            received_samples_ += 1;
         }
 
         if ((last_seq_num_ + size) < last_seq_num)
@@ -152,6 +154,7 @@ void ThroughputSubscriber::DataReaderListener::on_data_available(
                     lost_samples_ += seq_num - last_seq_num_ - 1;
                 }
                 last_seq_num_ = seq_num;
+                received_samples_ += 1;
             }
             else
             {
@@ -165,6 +168,7 @@ void ThroughputSubscriber::DataReaderListener::save_numbers()
 {
     saved_last_seq_num_ = last_seq_num_;
     saved_lost_samples_ = lost_samples_;
+    saved_received_samples_ = received_samples_;
 }
 
 // *******************************************************************************************
@@ -755,6 +759,7 @@ void ThroughputSubscriber::run()
             command_sample.m_size = data_size_ + (uint32_t)ThroughputType::overhead;
             command_sample.m_lastrecsample = data_reader_listener_.saved_last_seq_num_;
             command_sample.m_lostsamples = data_reader_listener_.saved_lost_samples_;
+            command_sample.m_receivedsamples = data_reader_listener_.saved_received_samples_;
 
             double total_time_count =
                     (std::chrono::duration<double, std::micro>(t_end_ - t_start_) - t_overhead_).count();
@@ -774,8 +779,9 @@ void ThroughputSubscriber::run()
 
             std::cout << "Last Received Sample: " << command_sample.m_lastrecsample << std::endl;
             std::cout << "Lost Samples: " << command_sample.m_lostsamples << std::endl;
+            std::cout << "Received Samples: " << command_sample.m_receivedsamples << std::endl;
             std::cout << "Samples per second: "
-                      << (double)(command_sample.m_lastrecsample - command_sample.m_lostsamples) * 1000000 /
+                      << (double)(command_sample.m_receivedsamples) * 1000000 /
                 command_sample.m_totaltime
                       << std::endl;
             std::cout << "Test of size " << command_sample.m_size << " and demand " << command_sample.m_demand <<

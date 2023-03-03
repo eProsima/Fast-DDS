@@ -148,6 +148,7 @@ private:
         ThroughputSubscriber& throughput_subscriber_;
         uint32_t last_seq_num_ = 0;
         uint32_t lost_samples_ = 0;
+        uint64_t received_samples_ = 0;
         eprosima::fastdds::dds::SampleInfo info_;
         std::atomic_int matched_;
         std::atomic_bool enable_;
@@ -181,6 +182,7 @@ private:
 
         uint32_t saved_last_seq_num_;
         uint32_t saved_lost_samples_;
+        uint64_t saved_received_samples_;
     }
     data_reader_listener_;
 
