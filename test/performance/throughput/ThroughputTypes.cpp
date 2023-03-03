@@ -111,6 +111,8 @@ bool ThroughputCommandDataType::serialize(
     p->length += sizeof(t->m_demand);
     memcpy(&p->data[p->length], &t->m_lostsamples, sizeof(t->m_lostsamples));
     p->length += sizeof(t->m_lostsamples);
+    memcpy(&p->data[p->length], &t->m_receivedsamples, sizeof(t->m_receivedsamples));
+    p->length += sizeof(t->m_receivedsamples);
     memcpy(&p->data[p->length], &t->m_lastrecsample, sizeof(t->m_lastrecsample));
     p->length += sizeof(t->m_lastrecsample);
     memcpy(&p->data[p->length], &t->m_totaltime, sizeof(t->m_totaltime));
@@ -134,6 +136,8 @@ bool ThroughputCommandDataType::deserialize(
     p->pos += sizeof(t->m_demand);
     memcpy(&t->m_lostsamples, &p->data[p->pos], sizeof(t->m_lostsamples));
     p->pos += sizeof(t->m_lostsamples);
+    memcpy(&t->m_receivedsamples, &p->data[p->pos], sizeof(t->m_receivedsamples));
+    p->pos += sizeof(t->m_receivedsamples);
     memcpy(&t->m_lastrecsample, &p->data[p->pos], sizeof(t->m_lastrecsample));
     p->pos += sizeof(t->m_lastrecsample);
     memcpy(&t->m_totaltime, &p->data[p->pos], sizeof(t->m_totaltime));
@@ -149,7 +153,7 @@ std::function<uint32_t()> ThroughputCommandDataType::getSerializedSizeProvider(
                uint32_t size = 0;
 
                size = (uint32_t)(sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t)  + sizeof(uint32_t) +
-                       sizeof(uint64_t) + sizeof(uint64_t));
+                       sizeof(uint64_t) + sizeof(uint64_t) + sizeof(uint64_t));
 
                return size;
            };
