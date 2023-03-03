@@ -826,9 +826,11 @@ bool ThroughputPublisher::test(
                 result.publisher.totaltime_us =
                         std::chrono::duration<double, std::micro>(t_end_ - t_start_) - clock_overhead;
 
-                if (samples < command_sample.m_receivedsamples) command_sample.m_receivedsamples = samples;
+                if (samples < command_sample.m_receivedsamples)
+                {
+                    command_sample.m_receivedsamples = samples;
+                }
                 result.subscriber.recv_samples = command_sample.m_receivedsamples;
-                assert(samples >= command_sample.m_receivedsamples);
                 result.subscriber.lost_samples = samples - (uint32_t)command_sample.m_receivedsamples;
                 result.subscriber.totaltime_us =
                         std::chrono::microseconds(command_sample.m_totaltime)
