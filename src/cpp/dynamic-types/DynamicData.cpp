@@ -148,22 +148,22 @@ void DynamicData::create_members(
         if (pType->is_complex_kind())
         {
             // Bitmasks and enums register their members but only manages one value.
-            if (pType->get_kind() == TK_BITMASK || pType->get_kind() == TK_ENUM)
+            if (pType->get_kind() == TypeKind::TK_BITMASK || pType->get_kind() == TypeKind::TK_ENUM)
             {
                 add_value(pType->get_kind(), MEMBER_ID_INVALID);
             }
 
             for (const auto& m : members)
             {
-                if (pType->get_kind() != TK_BITMASK && pType->get_kind() != TK_ENUM)
+                if (pType->get_kind() != TypeKind::TK_BITMASK && pType->get_kind() != TypeKind::TK_ENUM)
                 {
                     DynamicData* data = DynamicDataFactory::get_instance()->create_data(m.second->get_type());
-                    if (m.second->get_kind() != TK_BITSET &&
-                        m.second->get_kind() != TK_STRUCTURE &&
-                        m.second->get_kind() != TK_UNION &&
-                        m.second->get_kind() != TK_SEQUENCE &&
-                        m.second->get_kind() != TK_ARRAY &&
-                        m.second->get_kind() != TK_MAP)
+                    if (m.second->get_kind() != TypeKind::TK_BITSET &&
+                        m.second->get_kind() != TypeKind::TK_STRUCTURE &&
+                        m.second->get_kind() != TypeKind::TK_UNION &&
+                        m.second->get_kind() != TypeKind::TK_SEQUENCE &&
+                        m.second->get_kind() != TypeKind::TK_ARRAY &&
+                        m.second->get_kind() != TypeKind::TK_MAP)
                     {
                         std::string def_value = m.second->annotation_get_default();
                         if (!def_value.empty())
@@ -180,7 +180,7 @@ void DynamicData::create_members(
             }
 
             // Set the default value for unions.
-            if (pType->get_kind() == TK_UNION)
+            if (pType->get_kind() == TypeKind::TK_UNION)
             {
                 bool defaultValue = false;
                 // Search the default value.
@@ -228,7 +228,7 @@ bool DynamicData::equals(
         else if (type_ == other->type_ || type_->equals(*other->type_.get()))
         {
             // Optimization for unions, only check the selected element.
-            if (get_kind() == TK_UNION)
+            if (get_kind() == TypeKind::TK_UNION)
             {
                 if (union_id_ != other->union_id_)
                 {
@@ -284,23 +284,23 @@ bool DynamicData::equals(
                     return false;
                 }
 #else
-                if (get_kind() == TK_ENUM)
+                if (get_kind() == TypeKind::TK_ENUM)
                 {
-                    if (!compare_values(TK_UINT32, values_.begin()->second, other->values_.begin()->second))
+                    if (!compare_values(TypeKind::TK_UINT32, values_.begin()->second, other->values_.begin()->second))
                     {
                         return false;
                     }
                 }
-                else if (get_kind() == TK_BITMASK)
+                else if (get_kind() == TypeKind::TK_BITMASK)
                 {
-                    TypeKind bitmask_kind = TK_BYTE;
+                    TypeKind bitmask_kind = TypeKind::TK_BYTE;
                     size_t type_size = type_->get_size();
                     switch (type_size)
                     {
-                        case 1: bitmask_kind = TK_BYTE; break;
-                        case 2: bitmask_kind = TK_UINT16; break;
-                        case 4: bitmask_kind = TK_UINT32; break;
-                        case 8: bitmask_kind = TK_UINT64; break;
+                        case 1: bitmask_kind = TypeKind::TK_BYTE; break;
+                        case 2: bitmask_kind = TypeKind::TK_UINT16; break;
+                        case 4: bitmask_kind = TypeKind::TK_UINT32; break;
+                        case 8: bitmask_kind = TypeKind::TK_UINT64; break;
                     }
                     if (!compare_values(bitmask_kind, values_.begin()->second, other->values_.begin()->second))
                     {
@@ -357,7 +357,7 @@ TypeKind DynamicData::get_kind() const
 
 uint32_t DynamicData::get_item_count() const
 {
-    if (get_kind() == TK_MAP)
+    if (get_kind() == TypeKind::TK_MAP)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         return static_cast<uint32_t>(complex_values_.size() / 2);
@@ -365,7 +365,7 @@ uint32_t DynamicData::get_item_count() const
         return static_cast<uint32_t>(values_.size() / 2);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
     }
-    else if (get_kind() == TK_ARRAY)
+    else if (get_kind() == TypeKind::TK_ARRAY)
     {
         return type_->get_total_bounds();
     }
@@ -392,119 +392,119 @@ void DynamicData::add_value(
     {
         default:
             break;
-        case TK_INT32:
+        case TypeKind::TK_INT32:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new int32_t()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_UINT32:
+        case TypeKind::TK_UINT32:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new uint32_t()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_INT16:
+        case TypeKind::TK_INT16:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new int16_t()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_UINT16:
+        case TypeKind::TK_UINT16:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new uint16_t()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_INT64:
+        case TypeKind::TK_INT64:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new int64_t()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_UINT64:
+        case TypeKind::TK_UINT64:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new uint64_t()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_FLOAT32:
+        case TypeKind::TK_FLOAT32:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new float()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_FLOAT64:
+        case TypeKind::TK_FLOAT64:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new double()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_FLOAT128:
+        case TypeKind::TK_FLOAT128:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new long double()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_CHAR8:
+        case TypeKind::TK_CHAR8:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new char()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_CHAR16:
+        case TypeKind::TK_CHAR16:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new wchar_t()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_BOOLEAN:
+        case TypeKind::TK_BOOLEAN:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new bool()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_BYTE:
+        case TypeKind::TK_BYTE:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new octet()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_STRING8:
+        case TypeKind::TK_STRING8:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new std::string()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_STRING16:
+        case TypeKind::TK_STRING16:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new std::wstring()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new uint32_t()));
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
             values_.insert(std::make_pair(id, new uint64_t()));
@@ -537,7 +537,7 @@ ReturnCode_t DynamicData::clear_all_values()
 {
     if (type_->is_complex_kind())
     {
-        if (get_kind() == TK_SEQUENCE || get_kind() == TK_MAP || get_kind() == TK_ARRAY)
+        if (get_kind() == TypeKind::TK_SEQUENCE || get_kind() == TypeKind::TK_MAP || get_kind() == TypeKind::TK_ARRAY)
         {
             return clear_data();
         }
@@ -585,7 +585,7 @@ void DynamicData::clean_members()
         {
             default:
                 break;
-            case TK_INT32:
+            case TypeKind::TK_INT32:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -593,7 +593,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_UINT32:
+            case TypeKind::TK_UINT32:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -601,7 +601,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_INT16:
+            case TypeKind::TK_INT16:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -609,7 +609,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_UINT16:
+            case TypeKind::TK_UINT16:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -617,7 +617,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_INT64:
+            case TypeKind::TK_INT64:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -625,7 +625,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_UINT64:
+            case TypeKind::TK_UINT64:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -633,7 +633,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_FLOAT32:
+            case TypeKind::TK_FLOAT32:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -641,7 +641,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_FLOAT64:
+            case TypeKind::TK_FLOAT64:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -649,7 +649,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_FLOAT128:
+            case TypeKind::TK_FLOAT128:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -657,7 +657,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_CHAR8:
+            case TypeKind::TK_CHAR8:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -665,7 +665,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_CHAR16:
+            case TypeKind::TK_CHAR16:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -673,7 +673,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_BOOLEAN:
+            case TypeKind::TK_BOOLEAN:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -681,7 +681,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_BYTE:
+            case TypeKind::TK_BYTE:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -689,7 +689,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_STRING8:
+            case TypeKind::TK_STRING8:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -697,7 +697,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_STRING16:
+            case TypeKind::TK_STRING16:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -705,7 +705,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_ENUM:
+            case TypeKind::TK_ENUM:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -713,7 +713,7 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_BITMASK:
+            case TypeKind::TK_BITMASK:
             {
 #ifndef DYNAMIC_TYPES_CHECKING
                 auto it = values_.begin();
@@ -721,13 +721,13 @@ void DynamicData::clean_members()
 #endif // ifndef DYNAMIC_TYPES_CHECKING
                 break;
             }
-            case TK_UNION:
-            case TK_STRUCTURE:
-            case TK_ARRAY:
-            case TK_SEQUENCE:
-            case TK_MAP:
-            case TK_ALIAS:
-            case TK_BITSET:
+            case TypeKind::TK_UNION:
+            case TypeKind::TK_STRUCTURE:
+            case TypeKind::TK_ARRAY:
+            case TypeKind::TK_SEQUENCE:
+            case TypeKind::TK_MAP:
+            case TypeKind::TK_ALIAS:
+            case TypeKind::TK_BITSET:
             {
                 break;
             }
@@ -794,119 +794,119 @@ void* DynamicData::clone_value(
     {
         default:
             break;
-        case TK_INT32:
+        case TypeKind::TK_INT32:
         {
             int32_t* newInt32 = new int32_t();
             get_int32_value(*newInt32, id);
             return newInt32;
         }
         break;
-        case TK_UINT32:
+        case TypeKind::TK_UINT32:
         {
             uint32_t* newUInt32 = new uint32_t();
             get_uint32_value(*newUInt32, id);
             return newUInt32;
         }
         break;
-        case TK_INT16:
+        case TypeKind::TK_INT16:
         {
             int16_t* newInt16 = new int16_t();
             get_int16_value(*newInt16, id);
             return newInt16;
         }
         break;
-        case TK_UINT16:
+        case TypeKind::TK_UINT16:
         {
             uint16_t* newUInt16 = new uint16_t();
             get_uint16_value(*newUInt16, id);
             return newUInt16;
         }
         break;
-        case TK_INT64:
+        case TypeKind::TK_INT64:
         {
             int64_t* newInt64 = new int64_t();
             get_int64_value(*newInt64, id);
             return newInt64;
         }
         break;
-        case TK_UINT64:
+        case TypeKind::TK_UINT64:
         {
             uint64_t* newUInt64 = new uint64_t();
             get_uint64_value(*newUInt64, id);
             return newUInt64;
         }
         break;
-        case TK_FLOAT32:
+        case TypeKind::TK_FLOAT32:
         {
             float* newFloat32 = new float();
             get_float32_value(*newFloat32, id);
             return newFloat32;
         }
         break;
-        case TK_FLOAT64:
+        case TypeKind::TK_FLOAT64:
         {
             double* newFloat64 = new double();
             get_float64_value(*newFloat64, id);
             return newFloat64;
         }
         break;
-        case TK_FLOAT128:
+        case TypeKind::TK_FLOAT128:
         {
             long double* newFloat128 = new long double();
             get_float128_value(*newFloat128, id);
             return newFloat128;
         }
         break;
-        case TK_CHAR8:
+        case TypeKind::TK_CHAR8:
         {
             char* newChar8 = new char();
             get_char8_value(*newChar8, id);
             return newChar8;
         }
         break;
-        case TK_CHAR16:
+        case TypeKind::TK_CHAR16:
         {
             wchar_t* newChar16 = new wchar_t();
             get_char16_value(*newChar16, id);
             return newChar16;
         }
         break;
-        case TK_BOOLEAN:
+        case TypeKind::TK_BOOLEAN:
         {
             bool* newBool = new bool();
             get_bool_value(*newBool, id);
             return newBool;
         }
         break;
-        case TK_BYTE:
+        case TypeKind::TK_BYTE:
         {
             octet* newByte = new octet();
             get_byte_value(*newByte, id);
             return newByte;
         }
         break;
-        case TK_STRING8:
+        case TypeKind::TK_STRING8:
         {
             std::string* newString = new std::string();
             get_string_value(*newString, id);
             return newString;
         }
         break;
-        case TK_STRING16:
+        case TypeKind::TK_STRING16:
         {
             std::wstring* newString = new std::wstring();
             get_wstring_value(*newString, id);
             return newString;
         }
         break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
         {
             uint32_t* newUInt32 = new uint32_t();
             get_enum_value(*newUInt32, id);
             return newUInt32;
         }
         break;
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
         {
             uint64_t* newBitset = new uint64_t();
             get_uint64_value(*newBitset, id);
@@ -925,52 +925,52 @@ bool DynamicData::compare_values(
     {
         default:
             break;
-        case TK_INT32:      {
+        case TypeKind::TK_INT32:      {
             return *((int32_t*)left) == *((int32_t*)right);
         }
-        case TK_UINT32:     {
+        case TypeKind::TK_UINT32:     {
             return *((uint32_t*)left) == *((uint32_t*)right);
         }
-        case TK_INT16:      {
+        case TypeKind::TK_INT16:      {
             return *((int16_t*)left) == *((int16_t*)right);
         }
-        case TK_UINT16:     {
+        case TypeKind::TK_UINT16:     {
             return *((uint16_t*)left) == *((uint16_t*)right);
         }
-        case TK_INT64:      {
+        case TypeKind::TK_INT64:      {
             return *((int64_t*)left) == *((int64_t*)right);
         }
-        case TK_UINT64:     {
+        case TypeKind::TK_UINT64:     {
             return *((uint64_t*)left) == *((uint64_t*)right);
         }
-        case TK_FLOAT32:    {
+        case TypeKind::TK_FLOAT32:    {
             return *((float*)left) == *((float*)right);
         }
-        case TK_FLOAT64:    {
+        case TypeKind::TK_FLOAT64:    {
             return *((double*)left) == *((double*)right);
         }
-        case TK_FLOAT128:   {
+        case TypeKind::TK_FLOAT128:   {
             return *((long double*)left) == *((long double*)right);
         }
-        case TK_CHAR8:      {
+        case TypeKind::TK_CHAR8:      {
             return *((char*)left) == *((char*)right);
         }
-        case TK_CHAR16:     {
+        case TypeKind::TK_CHAR16:     {
             return *((wchar_t*)left) == *((wchar_t*)right);
         }
-        case TK_BOOLEAN:    {
+        case TypeKind::TK_BOOLEAN:    {
             return *((bool*)left) == *((bool*)right);
         }
-        case TK_BYTE:       {
+        case TypeKind::TK_BYTE:       {
             return *((octet*)left) == *((octet*)right);
         }
-        case TK_STRING8:    {
+        case TypeKind::TK_STRING8:    {
             return *((std::string*)left) == *((std::string*)right);
         }
-        case TK_STRING16:   {
+        case TypeKind::TK_STRING16:   {
             return *((std::wstring*)left) == *((std::wstring*)right);
         }
-        case TK_ENUM:       {
+        case TypeKind::TK_ENUM:       {
             return *((uint32_t*)left) == *((uint32_t*)right);
         }
     }
@@ -985,77 +985,77 @@ void DynamicData::get_value(
     {
         default:
             break;
-        case TK_INT32:
+        case TypeKind::TK_INT32:
         {
             int32_t value(0);
             get_int32_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_UINT32:
+        case TypeKind::TK_UINT32:
         {
             uint32_t value(0);
             get_uint32_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_INT16:
+        case TypeKind::TK_INT16:
         {
             int16_t value(0);
             get_int16_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_UINT16:
+        case TypeKind::TK_UINT16:
         {
             uint16_t value(0);
             get_uint16_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_INT64:
+        case TypeKind::TK_INT64:
         {
             int64_t value(0);
             get_int64_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_UINT64:
+        case TypeKind::TK_UINT64:
         {
             uint64_t value(0);
             get_uint64_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_FLOAT32:
+        case TypeKind::TK_FLOAT32:
         {
             float value(0.0f);
             get_float32_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_FLOAT64:
+        case TypeKind::TK_FLOAT64:
         {
             double value(0.0f);
             get_float64_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_FLOAT128:
+        case TypeKind::TK_FLOAT128:
         {
             long double value(0.0f);
             get_float128_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_CHAR8:
+        case TypeKind::TK_CHAR8:
         {
             char value = 0;
             get_char8_value(value, id);
             sOutValue = value;
         }
         break;
-        case TK_CHAR16:
+        case TypeKind::TK_CHAR16:
         {
             wchar_t value(0);
             get_char16_value(value, id);
@@ -1064,50 +1064,50 @@ void DynamicData::get_value(
             sOutValue = wstring_to_bytes(temp);
         }
         break;
-        case TK_BOOLEAN:
+        case TypeKind::TK_BOOLEAN:
         {
             bool value(false);
             get_bool_value(value, id);
             sOutValue = std::to_string(value ? 1 : 0);
         }
         break;
-        case TK_BYTE:
+        case TypeKind::TK_BYTE:
         {
             uint8_t value(0);
             get_byte_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_STRING8:
+        case TypeKind::TK_STRING8:
         {
             sOutValue = get_string_value(id);
         }
         break;
-        case TK_STRING16:
+        case TypeKind::TK_STRING16:
         {
             std::wstring value;
             get_wstring_value(value, id);
             sOutValue = wstring_to_bytes(value);
         }
         break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
         {
             uint32_t value;
             get_enum_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
         {
             uint64_t value(0);
             get_uint64_value(value, id);
             sOutValue = std::to_string(value);
         }
         break;
-        case TK_ARRAY:
-        case TK_SEQUENCE:
-        case TK_BITSET:
-        case TK_MAP:
+        case TypeKind::TK_ARRAY:
+        case TypeKind::TK_SEQUENCE:
+        case TypeKind::TK_BITSET:
+        case TypeKind::TK_MAP:
         {
             // THESE TYPES DON'T MANAGE VALUES
         }
@@ -1123,7 +1123,7 @@ void DynamicData::set_value(
     {
         default:
             break;
-        case TK_INT32:
+        case TypeKind::TK_INT32:
         {
             int32_t value(0);
             try
@@ -1136,7 +1136,7 @@ void DynamicData::set_value(
             set_int32_value(value, id);
         }
         break;
-        case TK_UINT32:
+        case TypeKind::TK_UINT32:
         {
             uint32_t value(0);
             try
@@ -1149,7 +1149,7 @@ void DynamicData::set_value(
             set_uint32_value(value, id);
         }
         break;
-        case TK_INT16:
+        case TypeKind::TK_INT16:
         {
             int16_t value(0);
             try
@@ -1162,7 +1162,7 @@ void DynamicData::set_value(
             set_int16_value(value, id);
         }
         break;
-        case TK_UINT16:
+        case TypeKind::TK_UINT16:
         {
             uint16_t value(0);
             try
@@ -1175,7 +1175,7 @@ void DynamicData::set_value(
             set_uint16_value(value, id);
         }
         break;
-        case TK_INT64:
+        case TypeKind::TK_INT64:
         {
             int64_t value(0);
             try
@@ -1188,7 +1188,7 @@ void DynamicData::set_value(
             set_int64_value(value, id);
         }
         break;
-        case TK_UINT64:
+        case TypeKind::TK_UINT64:
         {
             uint64_t value(0);
             try
@@ -1201,7 +1201,7 @@ void DynamicData::set_value(
             set_uint64_value(value, id);
         }
         break;
-        case TK_FLOAT32:
+        case TypeKind::TK_FLOAT32:
         {
             float value(0.0f);
             try
@@ -1214,7 +1214,7 @@ void DynamicData::set_value(
             set_float32_value(value, id);
         }
         break;
-        case TK_FLOAT64:
+        case TypeKind::TK_FLOAT64:
         {
             double value(0.0f);
             try
@@ -1227,7 +1227,7 @@ void DynamicData::set_value(
             set_float64_value(value, id);
         }
         break;
-        case TK_FLOAT128:
+        case TypeKind::TK_FLOAT128:
         {
             long double value(0.0f);
             try
@@ -1240,7 +1240,7 @@ void DynamicData::set_value(
             set_float128_value(value, id);
         }
         break;
-        case TK_CHAR8:
+        case TypeKind::TK_CHAR8:
         {
             if (sValue.length() >= 1)
             {
@@ -1248,7 +1248,7 @@ void DynamicData::set_value(
             }
         }
         break;
-        case TK_CHAR16:
+        case TypeKind::TK_CHAR16:
         {
             wchar_t value(0);
             try
@@ -1263,7 +1263,7 @@ void DynamicData::set_value(
             set_char16_value(value, id);
         }
         break;
-        case TK_BOOLEAN:
+        case TypeKind::TK_BOOLEAN:
         {
             int value(0);
             try
@@ -1276,7 +1276,7 @@ void DynamicData::set_value(
             set_bool_value(value == 1 ? true : false, id);
         }
         break;
-        case TK_BYTE:
+        case TypeKind::TK_BYTE:
         {
             if (sValue.length() >= 1)
             {
@@ -1292,17 +1292,17 @@ void DynamicData::set_value(
             }
         }
         break;
-        case TK_STRING8:
+        case TypeKind::TK_STRING8:
         {
             set_string_value(sValue, id);
         }
         break;
-        case TK_STRING16:
+        case TypeKind::TK_STRING16:
         {
             set_wstring_value(std::wstring(sValue.begin(), sValue.end()), id);
         }
         break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
         {
             uint32_t value(0);
             try
@@ -1315,7 +1315,7 @@ void DynamicData::set_value(
             set_enum_value(value, id);
         }
         break;
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
         {
             uint64_t value(0);
             try
@@ -1328,10 +1328,10 @@ void DynamicData::set_value(
             set_uint64_value(value, id);
         }
         break;
-        case TK_ARRAY:
-        case TK_SEQUENCE:
-        case TK_BITSET:
-        case TK_MAP:
+        case TypeKind::TK_ARRAY:
+        case TypeKind::TK_SEQUENCE:
+        case TypeKind::TK_BITSET:
+        case TypeKind::TK_MAP:
         {
             // THESE TYPES DON'T MANAGE VALUES
         }
@@ -1361,7 +1361,7 @@ void DynamicData::set_default_value(
     {
         default:
             break;
-        case TK_INT32:
+        case TypeKind::TK_INT32:
         {
             int32_t value(0);
             try
@@ -1374,7 +1374,7 @@ void DynamicData::set_default_value(
             set_int32_value(value, id);
         }
         break;
-        case TK_UINT32:
+        case TypeKind::TK_UINT32:
         {
             uint32_t value(0);
             try
@@ -1387,7 +1387,7 @@ void DynamicData::set_default_value(
             set_uint32_value(value, id);
         }
         break;
-        case TK_INT16:
+        case TypeKind::TK_INT16:
         {
             int16_t value(0);
             try
@@ -1400,7 +1400,7 @@ void DynamicData::set_default_value(
             set_int16_value(value, id);
         }
         break;
-        case TK_UINT16:
+        case TypeKind::TK_UINT16:
         {
             uint16_t value(0);
             try
@@ -1413,7 +1413,7 @@ void DynamicData::set_default_value(
             set_uint16_value(value, id);
         }
         break;
-        case TK_INT64:
+        case TypeKind::TK_INT64:
         {
             int64_t value(0);
             try
@@ -1426,7 +1426,7 @@ void DynamicData::set_default_value(
             set_int64_value(value, id);
         }
         break;
-        case TK_UINT64:
+        case TypeKind::TK_UINT64:
         {
             uint64_t value(0);
             try
@@ -1439,7 +1439,7 @@ void DynamicData::set_default_value(
             set_uint64_value(value, id);
         }
         break;
-        case TK_FLOAT32:
+        case TypeKind::TK_FLOAT32:
         {
             float value(0.0f);
             try
@@ -1452,7 +1452,7 @@ void DynamicData::set_default_value(
             set_float32_value(value, id);
         }
         break;
-        case TK_FLOAT64:
+        case TypeKind::TK_FLOAT64:
         {
             double value(0.0f);
             try
@@ -1465,7 +1465,7 @@ void DynamicData::set_default_value(
             set_float64_value(value, id);
         }
         break;
-        case TK_FLOAT128:
+        case TypeKind::TK_FLOAT128:
         {
             long double value(0.0f);
             try
@@ -1478,7 +1478,7 @@ void DynamicData::set_default_value(
             set_float128_value(value, id);
         }
         break;
-        case TK_CHAR8:
+        case TypeKind::TK_CHAR8:
         {
             if (defaultValue.length() >= 1)
             {
@@ -1486,7 +1486,7 @@ void DynamicData::set_default_value(
             }
         }
         break;
-        case TK_CHAR16:
+        case TypeKind::TK_CHAR16:
         {
             wchar_t value(0);
             try
@@ -1501,7 +1501,7 @@ void DynamicData::set_default_value(
             set_char16_value(value, id);
         }
         break;
-        case TK_BOOLEAN:
+        case TypeKind::TK_BOOLEAN:
         {
             int value(0);
             try
@@ -1514,7 +1514,7 @@ void DynamicData::set_default_value(
             set_bool_value(value == 1 ? true : false, id);
         }
         break;
-        case TK_BYTE:
+        case TypeKind::TK_BYTE:
         {
             if (defaultValue.length() >= 1)
             {
@@ -1530,17 +1530,17 @@ void DynamicData::set_default_value(
             }
         }
         break;
-        case TK_STRING8:
+        case TypeKind::TK_STRING8:
         {
             set_string_value(defaultValue, id);
         }
         break;
-        case TK_STRING16:
+        case TypeKind::TK_STRING16:
         {
             set_wstring_value(std::wstring(defaultValue.begin(), defaultValue.end()), id);
         }
         break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
         {
             uint32_t value(0);
             try
@@ -1553,7 +1553,7 @@ void DynamicData::set_default_value(
             set_enum_value(value, id);
         }
         break;
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
         {
             uint64_t value(0);
             try
@@ -1566,10 +1566,10 @@ void DynamicData::set_default_value(
             set_uint64_value(value, id);
         }
         break;
-        case TK_ARRAY:
-        case TK_SEQUENCE:
-        case TK_BITSET:
-        case TK_MAP:
+        case TypeKind::TK_ARRAY:
+        case TypeKind::TK_SEQUENCE:
+        case TypeKind::TK_BITSET:
+        case TypeKind::TK_MAP:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             auto itValue = complex_values_.find(id);
@@ -1606,14 +1606,14 @@ DynamicData* DynamicData::loan_value(
             auto it = complex_values_.find(id);
             if (it != complex_values_.end())
             {
-                if (get_kind() == TK_MAP && it->second->key_element_)
+                if (get_kind() == TypeKind::TK_MAP && it->second->key_element_)
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. Key values can't be loaned.");
                     return nullptr;
                 }
                 else
                 {
-                    if (get_kind() == TK_UNION && union_id_ != id)
+                    if (get_kind() == TypeKind::TK_UNION && union_id_ != id)
                     {
                         set_union_id(id);
                     }
@@ -1621,7 +1621,7 @@ DynamicData* DynamicData::loan_value(
                     return it->second;
                 }
             }
-            else if (get_kind() == TK_ARRAY)
+            else if (get_kind() == TypeKind::TK_ARRAY)
             {
                 if (insert_array_data(id) == ReturnCode_t::RETCODE_OK)
                 {
@@ -1633,14 +1633,14 @@ DynamicData* DynamicData::loan_value(
             auto it = values_.find(id);
             if (it != values_.end())
             {
-                if (get_kind() == TK_MAP && ((DynamicData*)it->second)->key_element_)
+                if (get_kind() == TypeKind::TK_MAP && ((DynamicData*)it->second)->key_element_)
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. Key values can't be loaned.");
                     return nullptr;
                 }
                 else
                 {
-                    if (get_kind() == TK_UNION && union_id_ != id)
+                    if (get_kind() == TypeKind::TK_UNION && union_id_ != id)
                     {
                         set_union_id(id);
                     }
@@ -1648,7 +1648,7 @@ DynamicData* DynamicData::loan_value(
                     return (DynamicData*)it->second;
                 }
             }
-            else if (get_kind() == TK_ARRAY)
+            else if (get_kind() == TypeKind::TK_ARRAY)
             {
                 if (insert_array_data(id) == ReturnCode_t::RETCODE_OK)
                 {
@@ -1706,7 +1706,7 @@ ReturnCode_t DynamicData::get_int32_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_INT32 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_INT32 && id == MEMBER_ID_INVALID)
     {
         value = int32_value_;
         return ReturnCode_t::RETCODE_OK;
@@ -1716,12 +1716,12 @@ ReturnCode_t DynamicData::get_int32_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return it->second->get_int32_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             return default_array_value_->get_int32_value(value, MEMBER_ID_INVALID);
         }
@@ -1731,20 +1731,20 @@ ReturnCode_t DynamicData::get_int32_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_INT32 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_INT32 && id == MEMBER_ID_INVALID)
         {
             value = *((int32_t*)it->second);
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_int32_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_int32_value(value, MEMBER_ID_INVALID);
     }
@@ -1757,7 +1757,7 @@ ReturnCode_t DynamicData::set_int32_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_INT32 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_INT32 && id == MEMBER_ID_INVALID)
     {
         int32_value_ = value;
         return ReturnCode_t::RETCODE_OK;
@@ -1768,7 +1768,7 @@ ReturnCode_t DynamicData::set_int32_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == TK_BITSET && data->type_->get_descriptor().annotation_get_bit_bound())
+            if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_get_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
                 int32_t mask = 0x00;
@@ -1780,13 +1780,13 @@ ReturnCode_t DynamicData::set_int32_value(
                 value &= mask;
             }
             ReturnCode_t result = it->second->set_int32_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -1801,14 +1801,14 @@ ReturnCode_t DynamicData::set_int32_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_INT32 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_INT32 && id == MEMBER_ID_INVALID)
         {
             *((int32_t*)it->second) = value;
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() == TK_BITSET)
+            if (get_kind() == TypeKind::TK_BITSET)
             {
                 const DynamicTypeMember* pM = nullptr;
                 bool found;
@@ -1830,14 +1830,14 @@ ReturnCode_t DynamicData::set_int32_value(
             }
 
             ReturnCode_t result = ((DynamicData*)it->second)->set_int32_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -1856,7 +1856,7 @@ ReturnCode_t DynamicData::get_uint32_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_UINT32 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_UINT32 && id == MEMBER_ID_INVALID)
     {
         value = uint32_value_;
         return ReturnCode_t::RETCODE_OK;
@@ -1866,12 +1866,12 @@ ReturnCode_t DynamicData::get_uint32_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return it->second->get_uint32_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             return default_array_value_->get_uint32_value(value, MEMBER_ID_INVALID);
         }
@@ -1881,20 +1881,20 @@ ReturnCode_t DynamicData::get_uint32_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_UINT32 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_UINT32 && id == MEMBER_ID_INVALID)
         {
             value = *((uint32_t*)it->second);
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_uint32_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_uint32_value(value, MEMBER_ID_INVALID);
     }
@@ -1907,7 +1907,7 @@ ReturnCode_t DynamicData::set_uint32_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_UINT32 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_UINT32 && id == MEMBER_ID_INVALID)
     {
         uint32_value_ = value;
         return ReturnCode_t::RETCODE_OK;
@@ -1918,7 +1918,7 @@ ReturnCode_t DynamicData::set_uint32_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
+            if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
                 uint32_t mask = 0x00;
@@ -1930,13 +1930,13 @@ ReturnCode_t DynamicData::set_uint32_value(
                 value &= mask;
             }
             ReturnCode_t result = it->second->set_uint32_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -1951,7 +1951,7 @@ ReturnCode_t DynamicData::set_uint32_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_UINT32 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_UINT32 && id == MEMBER_ID_INVALID)
         {
             *((uint32_t*)it->second) = value;
             return ReturnCode_t::RETCODE_OK;
@@ -1963,7 +1963,7 @@ ReturnCode_t DynamicData::set_uint32_value(
 
             std::tie(member, found) = type_->get_member(id);
 
-            if (get_kind() == TK_BITSET)
+            if (get_kind() == TypeKind::TK_BITSET)
             {
                 if (!found)
                 {
@@ -1979,14 +1979,14 @@ ReturnCode_t DynamicData::set_uint32_value(
                 value &= mask;
             }
             ReturnCode_t result = ((DynamicData*)it->second)->set_uint32_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -2005,7 +2005,7 @@ ReturnCode_t DynamicData::get_int16_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_INT16 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_INT16 && id == MEMBER_ID_INVALID)
     {
         value = int16_value_;
         return ReturnCode_t::RETCODE_OK;
@@ -2015,12 +2015,12 @@ ReturnCode_t DynamicData::get_int16_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return it->second->get_int16_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             return default_array_value_->get_int16_value(value, MEMBER_ID_INVALID);
         }
@@ -2030,20 +2030,20 @@ ReturnCode_t DynamicData::get_int16_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_INT16 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_INT16 && id == MEMBER_ID_INVALID)
         {
             value = *((int16_t*)it->second);
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_int16_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_int16_value(value, MEMBER_ID_INVALID);
     }
@@ -2056,7 +2056,7 @@ ReturnCode_t DynamicData::set_int16_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_INT16 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_INT16 && id == MEMBER_ID_INVALID)
     {
         int16_value_ = value;
         return ReturnCode_t::RETCODE_OK;
@@ -2067,7 +2067,7 @@ ReturnCode_t DynamicData::set_int16_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
+            if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
                 int16_t mask = 0x00;
@@ -2079,13 +2079,13 @@ ReturnCode_t DynamicData::set_int16_value(
                 value &= mask;
             }
             ReturnCode_t result = it->second->set_int16_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -2100,7 +2100,7 @@ ReturnCode_t DynamicData::set_int16_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_INT16 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_INT16 && id == MEMBER_ID_INVALID)
         {
             *((int16_t*)it->second) = value;
             return ReturnCode_t::RETCODE_OK;
@@ -2112,7 +2112,7 @@ ReturnCode_t DynamicData::set_int16_value(
 
             std::tie(member, found) = type_->get_member(id);
 
-            if (get_kind() == TK_BITSET)
+            if (get_kind() == TypeKind::TK_BITSET)
             {
                 if (!found)
                 {
@@ -2128,14 +2128,14 @@ ReturnCode_t DynamicData::set_int16_value(
                 value &= mask;
             }
             ReturnCode_t result = ((DynamicData*)it->second)->set_int16_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -2154,7 +2154,7 @@ ReturnCode_t DynamicData::get_uint16_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_UINT16 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_UINT16 && id == MEMBER_ID_INVALID)
     {
         value = uint16_value_;
         return ReturnCode_t::RETCODE_OK;
@@ -2164,12 +2164,12 @@ ReturnCode_t DynamicData::get_uint16_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return it->second->get_uint16_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             return default_array_value_->get_uint16_value(value, MEMBER_ID_INVALID);
         }
@@ -2179,20 +2179,20 @@ ReturnCode_t DynamicData::get_uint16_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_UINT16 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_UINT16 && id == MEMBER_ID_INVALID)
         {
             value = *((uint16_t*)it->second);
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_uint16_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_uint16_value(value, MEMBER_ID_INVALID);
     }
@@ -2205,7 +2205,7 @@ ReturnCode_t DynamicData::set_uint16_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_UINT16 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_UINT16 && id == MEMBER_ID_INVALID)
     {
         uint16_value_ = value;
         return ReturnCode_t::RETCODE_OK;
@@ -2216,7 +2216,7 @@ ReturnCode_t DynamicData::set_uint16_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
+            if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
                 uint16_t mask = 0x00;
@@ -2228,13 +2228,13 @@ ReturnCode_t DynamicData::set_uint16_value(
                 value &= mask;
             }
             ReturnCode_t result = it->second->set_uint16_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -2249,7 +2249,7 @@ ReturnCode_t DynamicData::set_uint16_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_UINT16 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_UINT16 && id == MEMBER_ID_INVALID)
         {
             *((uint16_t*)it->second) = value;
             return ReturnCode_t::RETCODE_OK;
@@ -2261,7 +2261,7 @@ ReturnCode_t DynamicData::set_uint16_value(
 
             std::tie(member, found) = type_->get_member(id);
 
-            if (get_kind() == TK_BITSET)
+            if (get_kind() == TypeKind::TK_BITSET)
             {
                 if (!found)
                 {
@@ -2277,14 +2277,14 @@ ReturnCode_t DynamicData::set_uint16_value(
                 value &= mask;
             }
             ReturnCode_t result = ((DynamicData*)it->second)->set_uint16_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -2302,7 +2302,7 @@ ReturnCode_t DynamicData::get_int64_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_INT64 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_INT64 && id == MEMBER_ID_INVALID)
     {
         value = int64_value_;
         return ReturnCode_t::RETCODE_OK;
@@ -2312,12 +2312,12 @@ ReturnCode_t DynamicData::get_int64_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return it->second->get_int64_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             return default_array_value_->get_int64_value(value, MEMBER_ID_INVALID);
         }
@@ -2327,20 +2327,20 @@ ReturnCode_t DynamicData::get_int64_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_INT64 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_INT64 && id == MEMBER_ID_INVALID)
         {
             value = *((int64_t*)it->second);
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_int64_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_int64_value(value, MEMBER_ID_INVALID);
     }
@@ -2353,7 +2353,7 @@ ReturnCode_t DynamicData::set_int64_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_INT64 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_INT64 && id == MEMBER_ID_INVALID)
     {
         int64_value_ = value;
         return ReturnCode_t::RETCODE_OK;
@@ -2364,7 +2364,7 @@ ReturnCode_t DynamicData::set_int64_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
+            if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
                 int64_t mask = 0x00;
@@ -2376,13 +2376,13 @@ ReturnCode_t DynamicData::set_int64_value(
                 value &= mask;
             }
             ReturnCode_t result = it->second->set_int64_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -2397,7 +2397,7 @@ ReturnCode_t DynamicData::set_int64_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_INT64 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_INT64 && id == MEMBER_ID_INVALID)
         {
             *((int64_t*)it->second) = value;
             return ReturnCode_t::RETCODE_OK;
@@ -2409,7 +2409,7 @@ ReturnCode_t DynamicData::set_int64_value(
 
             std::tie(member, found) = type_->get_member(id);
 
-            if (get_kind() == TK_BITSET)
+            if (get_kind() == TypeKind::TK_BITSET)
             {
                 if (!found)
                 {
@@ -2425,14 +2425,14 @@ ReturnCode_t DynamicData::set_int64_value(
                 value &= mask;
             }
             ReturnCode_t result = ((DynamicData*)it->second)->set_int64_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -2451,7 +2451,7 @@ ReturnCode_t DynamicData::get_uint64_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if ((get_kind() == TK_UINT64 || get_kind() == TK_BITMASK) && id == MEMBER_ID_INVALID)
+    if ((get_kind() == TypeKind::TK_UINT64 || get_kind() == TypeKind::TK_BITMASK) && id == MEMBER_ID_INVALID)
     {
         value = uint64_value_;
         return ReturnCode_t::RETCODE_OK;
@@ -2461,12 +2461,12 @@ ReturnCode_t DynamicData::get_uint64_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return it->second->get_uint64_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             return default_array_value_->get_uint64_value(value, MEMBER_ID_INVALID);
         }
@@ -2476,20 +2476,20 @@ ReturnCode_t DynamicData::get_uint64_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if ((get_kind() == TK_UINT64 || get_kind() == TK_BITMASK) && id == MEMBER_ID_INVALID)
+        if ((get_kind() == TypeKind::TK_UINT64 || get_kind() == TypeKind::TK_BITMASK) && id == MEMBER_ID_INVALID)
         {
             value = *((uint64_t*)it->second);
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_uint64_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_uint64_value(value, MEMBER_ID_INVALID);
     }
@@ -2502,7 +2502,7 @@ ReturnCode_t DynamicData::set_uint64_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if ((get_kind() == TK_UINT64 || get_kind() == TK_BITMASK) && id == MEMBER_ID_INVALID)
+    if ((get_kind() == TypeKind::TK_UINT64 || get_kind() == TypeKind::TK_BITMASK) && id == MEMBER_ID_INVALID)
     {
         uint64_value_ = value;
         return ReturnCode_t::RETCODE_OK;
@@ -2513,7 +2513,7 @@ ReturnCode_t DynamicData::set_uint64_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
+            if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
                 uint64_t mask = 0x00;
@@ -2525,13 +2525,13 @@ ReturnCode_t DynamicData::set_uint64_value(
                 value &= mask;
             }
             ReturnCode_t result = it->second->set_uint64_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -2546,7 +2546,7 @@ ReturnCode_t DynamicData::set_uint64_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if ((get_kind() == TK_UINT64 || get_kind() == TK_BITMASK) && id == MEMBER_ID_INVALID)
+        if ((get_kind() == TypeKind::TK_UINT64 || get_kind() == TypeKind::TK_BITMASK) && id == MEMBER_ID_INVALID)
         {
             *((uint64_t*)it->second) = value;
             return ReturnCode_t::RETCODE_OK;
@@ -2558,7 +2558,7 @@ ReturnCode_t DynamicData::set_uint64_value(
 
             std::tie(member, found) = type_->get_member(id);
 
-            if (get_kind() == TK_BITSET)
+            if (get_kind() == TypeKind::TK_BITSET)
             {
                 if (!found)
                 {
@@ -2574,14 +2574,14 @@ ReturnCode_t DynamicData::set_uint64_value(
                 value &= mask;
             }
             ReturnCode_t result = ((DynamicData*)it->second)->set_uint64_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -2600,7 +2600,7 @@ ReturnCode_t DynamicData::get_float32_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_FLOAT32 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_FLOAT32 && id == MEMBER_ID_INVALID)
     {
         value = float32_value_;
         return ReturnCode_t::RETCODE_OK;
@@ -2610,12 +2610,12 @@ ReturnCode_t DynamicData::get_float32_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return it->second->get_float32_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             return default_array_value_->get_float32_value(value, MEMBER_ID_INVALID);
         }
@@ -2625,20 +2625,20 @@ ReturnCode_t DynamicData::get_float32_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_FLOAT32 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_FLOAT32 && id == MEMBER_ID_INVALID)
         {
             value = *((float*)it->second);
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_float32_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_float32_value(value, MEMBER_ID_INVALID);
     }
@@ -2651,7 +2651,7 @@ ReturnCode_t DynamicData::set_float32_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_FLOAT32 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_FLOAT32 && id == MEMBER_ID_INVALID)
     {
         float32_value_ = value;
         return ReturnCode_t::RETCODE_OK;
@@ -2662,13 +2662,13 @@ ReturnCode_t DynamicData::set_float32_value(
         if (it != complex_values_.end())
         {
             ReturnCode_t result = it->second->set_float32_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -2684,7 +2684,7 @@ ReturnCode_t DynamicData::set_float32_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_FLOAT32 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_FLOAT32 && id == MEMBER_ID_INVALID)
         {
             *((float*)it->second) = value;
             return ReturnCode_t::RETCODE_OK;
@@ -2692,14 +2692,14 @@ ReturnCode_t DynamicData::set_float32_value(
         else if (id != MEMBER_ID_INVALID)
         {
             ReturnCode_t result = ((DynamicData*)it->second)->set_float32_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -2718,7 +2718,7 @@ ReturnCode_t DynamicData::get_float64_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_FLOAT64 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_FLOAT64 && id == MEMBER_ID_INVALID)
     {
         value = float64_value_;
         return ReturnCode_t::RETCODE_OK;
@@ -2728,12 +2728,12 @@ ReturnCode_t DynamicData::get_float64_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return it->second->get_float64_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             return default_array_value_->get_float64_value(value, MEMBER_ID_INVALID);
         }
@@ -2743,20 +2743,20 @@ ReturnCode_t DynamicData::get_float64_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_FLOAT64 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_FLOAT64 && id == MEMBER_ID_INVALID)
         {
             value = *((double*)it->second);
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_float64_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_float64_value(value, MEMBER_ID_INVALID);
     }
@@ -2769,7 +2769,7 @@ ReturnCode_t DynamicData::set_float64_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_FLOAT64 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_FLOAT64 && id == MEMBER_ID_INVALID)
     {
         float64_value_ = value;
         return ReturnCode_t::RETCODE_OK;
@@ -2780,13 +2780,13 @@ ReturnCode_t DynamicData::set_float64_value(
         if (it != complex_values_.end())
         {
             ReturnCode_t result = it->second->set_float64_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -2801,7 +2801,7 @@ ReturnCode_t DynamicData::set_float64_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_FLOAT64 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_FLOAT64 && id == MEMBER_ID_INVALID)
         {
             *((double*)it->second) = value;
             return ReturnCode_t::RETCODE_OK;
@@ -2809,14 +2809,14 @@ ReturnCode_t DynamicData::set_float64_value(
         else if (id != MEMBER_ID_INVALID)
         {
             ReturnCode_t result = ((DynamicData*)it->second)->set_float64_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -2835,7 +2835,7 @@ ReturnCode_t DynamicData::get_float128_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_FLOAT128 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_FLOAT128 && id == MEMBER_ID_INVALID)
     {
         value = float128_value_;
         return ReturnCode_t::RETCODE_OK;
@@ -2845,12 +2845,12 @@ ReturnCode_t DynamicData::get_float128_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return it->second->get_float128_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             return default_array_value_->get_float128_value(value, MEMBER_ID_INVALID);
         }
@@ -2860,20 +2860,20 @@ ReturnCode_t DynamicData::get_float128_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_FLOAT128 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_FLOAT128 && id == MEMBER_ID_INVALID)
         {
             value = *((long double*)it->second);
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_float128_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_float128_value(value, MEMBER_ID_INVALID);
     }
@@ -2886,7 +2886,7 @@ ReturnCode_t DynamicData::set_float128_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_FLOAT128 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_FLOAT128 && id == MEMBER_ID_INVALID)
     {
         float128_value_ = value;
         return ReturnCode_t::RETCODE_OK;
@@ -2897,13 +2897,13 @@ ReturnCode_t DynamicData::set_float128_value(
         if (it != complex_values_.end())
         {
             ReturnCode_t result = it->second->set_float128_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -2918,7 +2918,7 @@ ReturnCode_t DynamicData::set_float128_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_FLOAT128 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_FLOAT128 && id == MEMBER_ID_INVALID)
         {
             *((long double*)it->second) = value;
             return ReturnCode_t::RETCODE_OK;
@@ -2926,14 +2926,14 @@ ReturnCode_t DynamicData::set_float128_value(
         else if (id != MEMBER_ID_INVALID)
         {
             ReturnCode_t result = ((DynamicData*)it->second)->set_float128_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -2952,7 +2952,7 @@ ReturnCode_t DynamicData::get_char8_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_CHAR8 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_CHAR8 && id == MEMBER_ID_INVALID)
     {
         value = char8_value_;
         return ReturnCode_t::RETCODE_OK;
@@ -2962,12 +2962,12 @@ ReturnCode_t DynamicData::get_char8_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return it->second->get_char8_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             return default_array_value_->get_char8_value(value, MEMBER_ID_INVALID);
         }
@@ -2977,20 +2977,20 @@ ReturnCode_t DynamicData::get_char8_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_CHAR8 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_CHAR8 && id == MEMBER_ID_INVALID)
         {
             value = *((char*)it->second);
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_char8_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_char8_value(value, MEMBER_ID_INVALID);
     }
@@ -3003,7 +3003,7 @@ ReturnCode_t DynamicData::set_char8_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_CHAR8 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_CHAR8 && id == MEMBER_ID_INVALID)
     {
         char8_value_ = value;
         return ReturnCode_t::RETCODE_OK;
@@ -3014,13 +3014,13 @@ ReturnCode_t DynamicData::set_char8_value(
         if (it != complex_values_.end())
         {
             ReturnCode_t result = it->second->set_char8_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -3035,7 +3035,7 @@ ReturnCode_t DynamicData::set_char8_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_CHAR8 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_CHAR8 && id == MEMBER_ID_INVALID)
         {
             *((char*)it->second) = value;
             return ReturnCode_t::RETCODE_OK;
@@ -3043,14 +3043,14 @@ ReturnCode_t DynamicData::set_char8_value(
         else if (id != MEMBER_ID_INVALID)
         {
             ReturnCode_t result = ((DynamicData*)it->second)->set_char8_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -3069,7 +3069,7 @@ ReturnCode_t DynamicData::get_char16_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_CHAR16 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_CHAR16 && id == MEMBER_ID_INVALID)
     {
         value = char16_value_;
         return ReturnCode_t::RETCODE_OK;
@@ -3079,12 +3079,12 @@ ReturnCode_t DynamicData::get_char16_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return it->second->get_char16_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             return default_array_value_->get_char16_value(value, MEMBER_ID_INVALID);
         }
@@ -3094,20 +3094,20 @@ ReturnCode_t DynamicData::get_char16_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_CHAR16 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_CHAR16 && id == MEMBER_ID_INVALID)
         {
             value = *((wchar_t*)it->second);
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_char16_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_char16_value(value, MEMBER_ID_INVALID);
     }
@@ -3120,7 +3120,7 @@ ReturnCode_t DynamicData::set_char16_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_CHAR16 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_CHAR16 && id == MEMBER_ID_INVALID)
     {
         char16_value_ = value;
         return ReturnCode_t::RETCODE_OK;
@@ -3131,13 +3131,13 @@ ReturnCode_t DynamicData::set_char16_value(
         if (it != complex_values_.end())
         {
             ReturnCode_t result = it->second->set_char16_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -3153,7 +3153,7 @@ ReturnCode_t DynamicData::set_char16_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_CHAR16 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_CHAR16 && id == MEMBER_ID_INVALID)
         {
             *((wchar_t*)it->second) = value;
             return ReturnCode_t::RETCODE_OK;
@@ -3161,14 +3161,14 @@ ReturnCode_t DynamicData::set_char16_value(
         else if (id != MEMBER_ID_INVALID)
         {
             ReturnCode_t result = ((DynamicData*)it->second)->set_char16_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -3187,7 +3187,7 @@ ReturnCode_t DynamicData::get_byte_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_BYTE && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_BYTE && id == MEMBER_ID_INVALID)
     {
         value = byte_value_;
         return ReturnCode_t::RETCODE_OK;
@@ -3197,12 +3197,12 @@ ReturnCode_t DynamicData::get_byte_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return it->second->get_byte_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             return default_array_value_->get_byte_value(value, MEMBER_ID_INVALID);
         }
@@ -3212,20 +3212,20 @@ ReturnCode_t DynamicData::get_byte_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_BYTE && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_BYTE && id == MEMBER_ID_INVALID)
         {
             value = *((octet*)it->second);
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_byte_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_byte_value(value, MEMBER_ID_INVALID);
     }
@@ -3238,7 +3238,7 @@ ReturnCode_t DynamicData::set_byte_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_BYTE && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_BYTE && id == MEMBER_ID_INVALID)
     {
         byte_value_ = value;
         return ReturnCode_t::RETCODE_OK;
@@ -3249,7 +3249,7 @@ ReturnCode_t DynamicData::set_byte_value(
         if (it != complex_values_.end())
         {
             DynamicData* data = it->second;
-            if (get_kind() == TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
+            if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
                 octet mask = 0x00;
@@ -3261,13 +3261,13 @@ ReturnCode_t DynamicData::set_byte_value(
                 value &= mask;
             }
             ReturnCode_t result = it->second->set_byte_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -3282,7 +3282,7 @@ ReturnCode_t DynamicData::set_byte_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_BYTE && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_BYTE && id == MEMBER_ID_INVALID)
         {
             *((octet*)it->second) = value;
             return ReturnCode_t::RETCODE_OK;
@@ -3294,7 +3294,7 @@ ReturnCode_t DynamicData::set_byte_value(
 
             std::tie(member, found) = type_->get_member(id);
 
-            if (get_kind() == TK_BITSET)
+            if (get_kind() == TypeKind::TK_BITSET)
             {
                 if (!found)
                 {
@@ -3310,14 +3310,14 @@ ReturnCode_t DynamicData::set_byte_value(
                 value &= mask;
             }
             ReturnCode_t result = ((DynamicData*)it->second)->set_byte_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -3336,12 +3336,12 @@ ReturnCode_t DynamicData::get_bool_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_BOOLEAN && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_BOOLEAN && id == MEMBER_ID_INVALID)
     {
         value = bool_value_;
         return ReturnCode_t::RETCODE_OK;
     }
-    else if (get_kind() == TK_BITMASK && id < type_->get_bounds())
+    else if (get_kind() == TypeKind::TK_BITMASK && id < type_->get_bounds())
     {
         value = (uint64_value_ & ((uint64_t)1 << id)) != 0;
         return ReturnCode_t::RETCODE_OK;
@@ -3351,12 +3351,12 @@ ReturnCode_t DynamicData::get_bool_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return it->second->get_bool_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             return default_array_value_->get_bool_value(value, MEMBER_ID_INVALID);
         }
@@ -3364,7 +3364,7 @@ ReturnCode_t DynamicData::get_bool_value(
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.end();
-    if (get_kind() == TK_BITMASK)
+    if (get_kind() == TypeKind::TK_BITMASK)
     {
         it = values_.find(MEMBER_ID_INVALID);
     }
@@ -3374,12 +3374,12 @@ ReturnCode_t DynamicData::get_bool_value(
     }
     if (it != values_.end())
     {
-        if (get_kind() == TK_BOOLEAN && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_BOOLEAN && id == MEMBER_ID_INVALID)
         {
             value = *((bool*)it->second);
             return ReturnCode_t::RETCODE_OK;
         }
-        else if (get_kind() == TK_BITMASK && id < type_->get_bounds())
+        else if (get_kind() == TypeKind::TK_BITMASK && id < type_->get_bounds())
         {
             const DynamicTypeMember* member;
             bool found;
@@ -3392,13 +3392,13 @@ ReturnCode_t DynamicData::get_bool_value(
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_bool_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_bool_value(value, MEMBER_ID_INVALID);
     }
@@ -3411,12 +3411,12 @@ ReturnCode_t DynamicData::set_bool_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_BOOLEAN && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_BOOLEAN && id == MEMBER_ID_INVALID)
     {
         bool_value_ = value;
         return ReturnCode_t::RETCODE_OK;
     }
-    else if (get_kind() == TK_BITMASK)
+    else if (get_kind() == TypeKind::TK_BITMASK)
     {
         if (id == MEMBER_ID_INVALID)
         {
@@ -3453,13 +3453,13 @@ ReturnCode_t DynamicData::set_bool_value(
         if (it != complex_values_.end())
         {
             ReturnCode_t result = it->second->set_bool_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -3472,7 +3472,7 @@ ReturnCode_t DynamicData::set_bool_value(
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.end();
-    if (get_kind() == TK_BITMASK)
+    if (get_kind() == TypeKind::TK_BITMASK)
     {
         it = values_.find(MEMBER_ID_INVALID);
     }
@@ -3483,12 +3483,12 @@ ReturnCode_t DynamicData::set_bool_value(
 
     if (it != values_.end())
     {
-        if (get_kind() == TK_BOOLEAN && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_BOOLEAN && id == MEMBER_ID_INVALID)
         {
             *((bool*)it->second) = value;
             return ReturnCode_t::RETCODE_OK;
         }
-        else if (get_kind() == TK_BITMASK)
+        else if (get_kind() == TypeKind::TK_BITMASK)
         {
             if (id == MEMBER_ID_INVALID)
             {
@@ -3529,14 +3529,14 @@ ReturnCode_t DynamicData::set_bool_value(
         else if (id != MEMBER_ID_INVALID)
         {
             ReturnCode_t result = ((DynamicData*)it->second)->set_bool_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -3555,7 +3555,7 @@ ReturnCode_t DynamicData::get_string_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_STRING8 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_STRING8 && id == MEMBER_ID_INVALID)
     {
         value = string_value_;
         return ReturnCode_t::RETCODE_OK;
@@ -3565,12 +3565,12 @@ ReturnCode_t DynamicData::get_string_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return it->second->get_string_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             return default_array_value_->get_string_value(value, MEMBER_ID_INVALID);
         }
@@ -3580,20 +3580,20 @@ ReturnCode_t DynamicData::get_string_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_STRING8 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_STRING8 && id == MEMBER_ID_INVALID)
         {
             value = *((std::string*)it->second);
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_string_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_string_value(value, MEMBER_ID_INVALID);
     }
@@ -3606,7 +3606,7 @@ ReturnCode_t DynamicData::set_string_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_STRING8 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_STRING8 && id == MEMBER_ID_INVALID)
     {
         if (value.length() <= type_->get_bounds())
         {
@@ -3626,13 +3626,13 @@ ReturnCode_t DynamicData::set_string_value(
         if (it != complex_values_.end())
         {
             ReturnCode_t result = it->second->set_string_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -3647,7 +3647,7 @@ ReturnCode_t DynamicData::set_string_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_STRING8 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_STRING8 && id == MEMBER_ID_INVALID)
         {
             if (value.length() <= type_->get_bounds())
             {
@@ -3664,14 +3664,14 @@ ReturnCode_t DynamicData::set_string_value(
         else if (id != MEMBER_ID_INVALID)
         {
             ReturnCode_t result = ((DynamicData*)it->second)->set_string_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -3687,7 +3687,7 @@ ReturnCode_t DynamicData::set_string_value(
 
 void DynamicData::update_union_discriminator()
 {
-    if (get_kind() == TK_UNION)
+    if (get_kind() == TypeKind::TK_UNION)
     {
         uint64_t sUnionValue;
         const DynamicTypeMember* pM;
@@ -3736,7 +3736,7 @@ MemberId DynamicData::get_union_id() const
 ReturnCode_t DynamicData::set_union_id(
         MemberId id)
 {
-    if (get_kind() == TK_UNION)
+    if (get_kind() == TypeKind::TK_UNION)
     {
         const DynamicTypeMember* pM;
         bool found;
@@ -3774,7 +3774,7 @@ ReturnCode_t DynamicData::get_wstring_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_STRING16 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_STRING16 && id == MEMBER_ID_INVALID)
     {
         value = wstring_value_;
         return ReturnCode_t::RETCODE_OK;
@@ -3784,12 +3784,12 @@ ReturnCode_t DynamicData::get_wstring_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return it->second->get_wstring_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             return default_array_value_->get_wstring_value(value, MEMBER_ID_INVALID);
         }
@@ -3799,20 +3799,20 @@ ReturnCode_t DynamicData::get_wstring_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_STRING16 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_STRING16 && id == MEMBER_ID_INVALID)
         {
             value = *((std::wstring*)it->second);
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)it->second)->get_wstring_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_wstring_value(value, MEMBER_ID_INVALID);
     }
@@ -3825,7 +3825,7 @@ ReturnCode_t DynamicData::set_wstring_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_STRING16 && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_STRING16 && id == MEMBER_ID_INVALID)
     {
         if (value.length() <= type_->get_bounds())
         {
@@ -3845,13 +3845,13 @@ ReturnCode_t DynamicData::set_wstring_value(
         if (it != complex_values_.end())
         {
             ReturnCode_t result = it->second->set_wstring_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -3866,7 +3866,7 @@ ReturnCode_t DynamicData::set_wstring_value(
     auto it = values_.find(id);
     if (it != values_.end())
     {
-        if (get_kind() == TK_STRING16 && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_STRING16 && id == MEMBER_ID_INVALID)
         {
             if (value.length() <= type_->get_bounds())
             {
@@ -3883,14 +3883,14 @@ ReturnCode_t DynamicData::set_wstring_value(
         else if (id != MEMBER_ID_INVALID)
         {
             ReturnCode_t result = ((DynamicData*)it->second)->set_wstring_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -3909,7 +3909,7 @@ ReturnCode_t DynamicData::get_enum_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
     {
         value = uint32_value_;
         return ReturnCode_t::RETCODE_OK;
@@ -3919,12 +3919,12 @@ ReturnCode_t DynamicData::get_enum_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return it->second->get_enum_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             return default_array_value_->get_enum_value(value, MEMBER_ID_INVALID);
         }
@@ -3934,20 +3934,20 @@ ReturnCode_t DynamicData::get_enum_value(
     auto itValue = values_.find(id);
     if (itValue != values_.end())
     {
-        if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
         {
             value = *((uint32_t*)itValue->second);
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)itValue->second)->get_enum_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_enum_value(value, MEMBER_ID_INVALID);
     }
@@ -3960,7 +3960,7 @@ ReturnCode_t DynamicData::set_enum_value(
         MemberId id /*= MEMBER_ID_INVALID*/)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
     {
         bool found;
         std::tie(std::ignore, found) = type_->get_member(value);
@@ -3977,13 +3977,13 @@ ReturnCode_t DynamicData::set_enum_value(
         if (it != complex_values_.end())
         {
             ReturnCode_t result = it->second->set_enum_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -3997,7 +3997,7 @@ ReturnCode_t DynamicData::set_enum_value(
     auto itValue = values_.find(id);
     if (itValue != values_.end())
     {
-        if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
         {
             bool found;
             std::tie(std::ignore, found) = type_->get_member(value);
@@ -4011,14 +4011,14 @@ ReturnCode_t DynamicData::set_enum_value(
         else if (id != MEMBER_ID_INVALID)
         {
             ReturnCode_t result = ((DynamicData*)itValue->second)->set_enum_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -4037,7 +4037,7 @@ ReturnCode_t DynamicData::get_enum_value(
         MemberId id) const
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
     {
         const DynamicTypeMember* pM;
         bool found;
@@ -4057,12 +4057,12 @@ ReturnCode_t DynamicData::get_enum_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return it->second->get_enum_value(value, MEMBER_ID_INVALID);
             }
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             return default_array_value_->get_enum_value(value, MEMBER_ID_INVALID);
         }
@@ -4072,7 +4072,7 @@ ReturnCode_t DynamicData::get_enum_value(
     auto itValue = values_.find(id);
     if (itValue != values_.end())
     {
-        if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
         {
             const DynamicTypeMember* pM;
             bool found;
@@ -4089,13 +4089,13 @@ ReturnCode_t DynamicData::get_enum_value(
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            if (get_kind() != TK_UNION || id == union_id_)
+            if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
                 return ((DynamicData*)itValue->second)->get_enum_value(value, MEMBER_ID_INVALID);
             }
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         return default_array_value_->get_enum_value(value, MEMBER_ID_INVALID);
     }
@@ -4108,7 +4108,7 @@ ReturnCode_t DynamicData::set_enum_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
+    if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
     {
         MemberId eid = get_member_id_by_name(value);
         if (eid == MEMBER_ID_INVALID)
@@ -4125,13 +4125,13 @@ ReturnCode_t DynamicData::set_enum_value(
         if (it != complex_values_.end())
         {
             ReturnCode_t result = it->second->set_enum_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
-        else if (get_kind() == TK_ARRAY)
+        else if (get_kind() == TypeKind::TK_ARRAY)
         {
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -4146,7 +4146,7 @@ ReturnCode_t DynamicData::set_enum_value(
     auto itValue = values_.find(id);
     if (itValue != values_.end())
     {
-        if (get_kind() == TK_ENUM && id == MEMBER_ID_INVALID)
+        if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
         {
             MemberId eid = get_member_id_by_name(value);
             if(eid == MEMBER_ID_INVALID)
@@ -4160,14 +4160,14 @@ ReturnCode_t DynamicData::set_enum_value(
         else if (id != MEMBER_ID_INVALID)
         {
             ReturnCode_t result = ((DynamicData*)itValue->second)->set_enum_value(value, MEMBER_ID_INVALID);
-            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TK_UNION)
+            if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
             }
             return result;
         }
     }
-    else if (get_kind() == TK_ARRAY && id != MEMBER_ID_INVALID)
+    else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
@@ -4184,7 +4184,7 @@ ReturnCode_t DynamicData::set_enum_value(
 ReturnCode_t DynamicData::set_bitmask_value(
         uint64_t value)
 {
-    if (type_->get_kind() == TK_BITMASK)
+    if (type_->get_kind() == TypeKind::TK_BITMASK)
     {
         return set_uint64_value(value, MEMBER_ID_INVALID);
     }
@@ -4194,7 +4194,7 @@ ReturnCode_t DynamicData::set_bitmask_value(
 ReturnCode_t DynamicData::get_bitmask_value(
         uint64_t& value) const
 {
-    if (type_->get_kind() == TK_BITMASK)
+    if (type_->get_kind() == TypeKind::TK_BITMASK)
     {
         return get_uint64_value(value, MEMBER_ID_INVALID);
     }
@@ -4245,7 +4245,7 @@ void DynamicData::sort_member_ids(
 MemberId DynamicData::get_array_index(
         const std::vector<uint32_t>& position)
 {
-    if (get_kind() == TK_ARRAY)
+    if (get_kind() == TypeKind::TK_ARRAY)
     {
         MemberId outPosition(0);
         uint32_t offset(1);
@@ -4273,7 +4273,7 @@ MemberId DynamicData::get_array_index(
 ReturnCode_t DynamicData::insert_array_data(
         MemberId indexId)
 {
-    if (get_kind() == TK_ARRAY)
+    if (get_kind() == TypeKind::TK_ARRAY)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         if (indexId < type_->get_total_bounds())
@@ -4318,7 +4318,7 @@ ReturnCode_t DynamicData::insert_array_data(
 ReturnCode_t DynamicData::clear_array_data(
         MemberId indexId)
 {
-    if (get_kind() == TK_ARRAY)
+    if (get_kind() == TypeKind::TK_ARRAY)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         if (indexId < type_->get_total_bounds())
@@ -4359,7 +4359,7 @@ ReturnCode_t DynamicData::insert_int32_value(
         int32_t value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_INT32)
+    if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->get_kind() == TypeKind::TK_INT32)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == ReturnCode_t::RETCODE_OK)
@@ -4379,7 +4379,7 @@ ReturnCode_t DynamicData::insert_uint32_value(
         uint32_t value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_UINT32)
+    if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->get_kind() == TypeKind::TK_UINT32)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == ReturnCode_t::RETCODE_OK)
@@ -4399,7 +4399,7 @@ ReturnCode_t DynamicData::insert_int16_value(
         int16_t value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_INT16)
+    if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->get_kind() == TypeKind::TK_INT16)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == ReturnCode_t::RETCODE_OK)
@@ -4419,7 +4419,7 @@ ReturnCode_t DynamicData::insert_uint16_value(
         uint16_t value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_UINT16)
+    if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->get_kind() == TypeKind::TK_UINT16)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == ReturnCode_t::RETCODE_OK)
@@ -4439,7 +4439,7 @@ ReturnCode_t DynamicData::insert_int64_value(
         int64_t value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_INT64)
+    if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->get_kind() == TypeKind::TK_INT64)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == ReturnCode_t::RETCODE_OK)
@@ -4459,7 +4459,7 @@ ReturnCode_t DynamicData::insert_uint64_value(
         uint64_t value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_UINT64)
+    if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->get_kind() == TypeKind::TK_UINT64)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == ReturnCode_t::RETCODE_OK)
@@ -4479,7 +4479,7 @@ ReturnCode_t DynamicData::insert_float32_value(
         float value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_FLOAT32)
+    if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->get_kind() == TypeKind::TK_FLOAT32)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == ReturnCode_t::RETCODE_OK)
@@ -4499,7 +4499,7 @@ ReturnCode_t DynamicData::insert_float64_value(
         double value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_FLOAT64)
+    if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->get_kind() == TypeKind::TK_FLOAT64)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == ReturnCode_t::RETCODE_OK)
@@ -4519,7 +4519,7 @@ ReturnCode_t DynamicData::insert_float128_value(
         long double value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_FLOAT128)
+    if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->get_kind() == TypeKind::TK_FLOAT128)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == ReturnCode_t::RETCODE_OK)
@@ -4539,7 +4539,7 @@ ReturnCode_t DynamicData::insert_char8_value(
         char value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_CHAR8)
+    if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->get_kind() == TypeKind::TK_CHAR8)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == ReturnCode_t::RETCODE_OK)
@@ -4559,7 +4559,7 @@ ReturnCode_t DynamicData::insert_char16_value(
         wchar_t value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_CHAR16)
+    if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->get_kind() == TypeKind::TK_CHAR16)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == ReturnCode_t::RETCODE_OK)
@@ -4579,7 +4579,7 @@ ReturnCode_t DynamicData::insert_byte_value(
         octet value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_BYTE)
+    if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->get_kind() == TypeKind::TK_BYTE)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == ReturnCode_t::RETCODE_OK)
@@ -4599,7 +4599,7 @@ ReturnCode_t DynamicData::insert_bool_value(
         bool value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_BOOLEAN)
+    if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->get_kind() == TypeKind::TK_BOOLEAN)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == ReturnCode_t::RETCODE_OK)
@@ -4619,7 +4619,7 @@ ReturnCode_t DynamicData::insert_string_value(
         const std::string& value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_STRING8)
+    if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->get_kind() == TypeKind::TK_STRING8)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == ReturnCode_t::RETCODE_OK)
@@ -4639,7 +4639,7 @@ ReturnCode_t DynamicData::insert_wstring_value(
         const std::wstring& value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_STRING16)
+    if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->get_kind() == TypeKind::TK_STRING16)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == ReturnCode_t::RETCODE_OK)
@@ -4659,7 +4659,7 @@ ReturnCode_t DynamicData::insert_enum_value(
         const std::string& value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->get_kind() == TK_ENUM)
+    if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->get_kind() == TypeKind::TK_ENUM)
     {
         ReturnCode_t result = insert_sequence_data(outId);
         if (result == ReturnCode_t::RETCODE_OK)
@@ -4679,7 +4679,7 @@ ReturnCode_t DynamicData::insert_complex_value(
         const DynamicData* value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->equals(*value->type_.get()))
+    if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->equals(*value->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
@@ -4710,7 +4710,7 @@ ReturnCode_t DynamicData::insert_complex_value(
         DynamicData_ptr value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->equals(*value->type_.get()))
+    if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->equals(*value->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
@@ -4741,7 +4741,7 @@ ReturnCode_t DynamicData::insert_complex_value(
         DynamicData* value,
         MemberId& outId)
 {
-    if (get_kind() == TK_SEQUENCE && type_->get_element_type()->equals(*value->type_.get()))
+    if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->equals(*value->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
@@ -4772,7 +4772,7 @@ ReturnCode_t DynamicData::insert_sequence_data(
         MemberId& outId)
 {
     outId = MEMBER_ID_INVALID;
-    if (get_kind() == TK_SEQUENCE)
+    if (get_kind() == TypeKind::TK_SEQUENCE)
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
@@ -4805,7 +4805,7 @@ ReturnCode_t DynamicData::insert_sequence_data(
 ReturnCode_t DynamicData::remove_sequence_data(
         MemberId id)
 {
-    if (get_kind() == TK_SEQUENCE || get_kind() == TK_ARRAY)
+    if (get_kind() == TypeKind::TK_SEQUENCE || get_kind() == TypeKind::TK_ARRAY)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         auto it = complex_values_.find(id);
@@ -4841,7 +4841,7 @@ ReturnCode_t DynamicData::insert_map_data(
         MemberId& outKeyId,
         MemberId& outValueId)
 {
-    if (get_kind() == TK_MAP && type_->get_key_element_type()->equals(*key->type_.get()))
+    if (get_kind() == TypeKind::TK_MAP && type_->get_key_element_type()->equals(*key->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
@@ -4903,7 +4903,7 @@ ReturnCode_t DynamicData::insert_map_data(
         MemberId& outKey,
         MemberId& outValue)
 {
-    if (get_kind() == TK_MAP && type_->get_key_element_type()->equals(*key->type_.get()) &&
+    if (get_kind() == TypeKind::TK_MAP && type_->get_key_element_type()->equals(*key->type_.get()) &&
             type_->get_element_type()->equals(*value->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
@@ -4964,7 +4964,7 @@ ReturnCode_t DynamicData::insert_map_data(
         MemberId& outKey,
         MemberId& outValue)
 {
-    if (get_kind() == TK_MAP && type_->get_key_element_type()->equals(*key->type_.get()) &&
+    if (get_kind() == TypeKind::TK_MAP && type_->get_key_element_type()->equals(*key->type_.get()) &&
             type_->get_element_type()->equals(*value->type_.get()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
@@ -5033,7 +5033,7 @@ ReturnCode_t DynamicData::insert_map_data(
 ReturnCode_t DynamicData::remove_map_data(
         MemberId keyId)
 {
-    if (get_kind() == TK_MAP)
+    if (get_kind() == TypeKind::TK_MAP)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         auto itKey = complex_values_.find(keyId);
@@ -5076,7 +5076,7 @@ ReturnCode_t DynamicData::remove_map_data(
 
 ReturnCode_t DynamicData::clear_data()
 {
-    if (get_kind() == TK_SEQUENCE || get_kind() == TK_MAP || get_kind() == TK_ARRAY)
+    if (get_kind() == TypeKind::TK_SEQUENCE || get_kind() == TypeKind::TK_MAP || get_kind() == TypeKind::TK_ARRAY)
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         for (auto it = complex_values_.begin(); it != complex_values_.end(); ++it)
@@ -5105,8 +5105,8 @@ ReturnCode_t DynamicData::get_complex_value(
         MemberId id) const
 {
     // Check that the type is complex and in case of dynamic containers, check that the index is valid
-    if (id != MEMBER_ID_INVALID && (get_kind() == TK_STRUCTURE || get_kind() == TK_UNION ||
-            get_kind() == TK_SEQUENCE || get_kind() == TK_ARRAY || get_kind() == TK_MAP || get_kind() == TK_BITSET))
+    if (id != MEMBER_ID_INVALID && (get_kind() == TypeKind::TK_STRUCTURE || get_kind() == TypeKind::TK_UNION ||
+            get_kind() == TypeKind::TK_SEQUENCE || get_kind() == TypeKind::TK_ARRAY || get_kind() == TypeKind::TK_MAP || get_kind() == TypeKind::TK_BITSET))
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         auto it = complex_values_.find(id);
@@ -5138,18 +5138,18 @@ ReturnCode_t DynamicData::set_complex_value(
         MemberId id)
 {
     // Check that the type is complex and in case of dynamic containers, check that the index is valid
-    if (id != MEMBER_ID_INVALID && (get_kind() == TK_STRUCTURE || get_kind() == TK_UNION ||
-            get_kind() == TK_SEQUENCE || get_kind() == TK_ARRAY || get_kind() == TK_MAP || get_kind() == TK_BITSET))
+    if (id != MEMBER_ID_INVALID && (get_kind() == TypeKind::TK_STRUCTURE || get_kind() == TypeKind::TK_UNION ||
+            get_kind() == TypeKind::TK_SEQUENCE || get_kind() == TypeKind::TK_ARRAY || get_kind() == TypeKind::TK_MAP || get_kind() == TypeKind::TK_BITSET))
     {
         // With containers, check that the index is valid
-        if ((get_kind() == TK_SEQUENCE || get_kind() == TK_ARRAY || get_kind() == TK_MAP) &&
+        if ((get_kind() == TypeKind::TK_SEQUENCE || get_kind() == TypeKind::TK_ARRAY || get_kind() == TypeKind::TK_MAP) &&
                 id < type_->get_total_bounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             auto it = complex_values_.find(id);
             if (it != complex_values_.end())
             {
-                if (get_kind() == TK_MAP && it->second->key_element_)
+                if (get_kind() == TypeKind::TK_MAP && it->second->key_element_)
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting complex Value. They given id is a Key value.");
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
@@ -5163,13 +5163,13 @@ ReturnCode_t DynamicData::set_complex_value(
                     complex_values_.erase(it);
 
                     complex_values_.insert(std::make_pair(id, value));
-                    if (get_kind() == TK_UNION && union_id_ != id)
+                    if (get_kind() == TypeKind::TK_UNION && union_id_ != id)
                     {
                         set_union_id(id);
                     }
                 }
             }
-            else if (get_kind() == TK_ARRAY)
+            else if (get_kind() == TypeKind::TK_ARRAY)
             {
                 complex_values_.insert(std::make_pair(id, value));
                 return ReturnCode_t::RETCODE_OK;
@@ -5179,7 +5179,7 @@ ReturnCode_t DynamicData::set_complex_value(
             auto it = values_.find(id);
             if (it != values_.end())
             {
-                if (get_kind() == TK_MAP && ((DynamicData*)it->second)->key_element_)
+                if (get_kind() == TypeKind::TK_MAP && ((DynamicData*)it->second)->key_element_)
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting complex Value. They given id is a Key value.");
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
@@ -5192,13 +5192,13 @@ ReturnCode_t DynamicData::set_complex_value(
                     }
                     values_.erase(it);
                     values_.insert(std::make_pair(id, value));
-                    if (get_kind() == TK_UNION && union_id_ != id)
+                    if (get_kind() == TypeKind::TK_UNION && union_id_ != id)
                     {
                         set_union_id(id);
                     }
                 }
             }
-            else if (get_kind() == TK_ARRAY)
+            else if (get_kind() == TypeKind::TK_ARRAY)
             {
                 values_.insert(std::make_pair(id, value));
                 return ReturnCode_t::RETCODE_OK;
@@ -5222,7 +5222,7 @@ ReturnCode_t DynamicData::set_complex_value(
 ReturnCode_t DynamicData::get_union_label(
         uint64_t& value) const
 {
-    if (get_kind() == TK_UNION)
+    if (get_kind() == TypeKind::TK_UNION)
     {
         if (union_id_ != MEMBER_ID_INVALID)
         {

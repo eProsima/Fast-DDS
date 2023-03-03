@@ -39,7 +39,7 @@ namespace types {
 
 TypeIdentifier::TypeIdentifier()
 {
-    m__d = 0x00; // Default
+    m__d = TypeKind::TK_NONE; // Default
     memset(&m_equivalence_hash, 0, 14);
 }
 
@@ -55,37 +55,37 @@ TypeIdentifier::TypeIdentifier(
 
     switch (m__d)
     {
-        case TI_STRING8_SMALL:
-        case TI_STRING16_SMALL:
+        case TypeKind::TI_STRING8_SMALL:
+        case TypeKind::TI_STRING16_SMALL:
             m_string_sdefn = x.m_string_sdefn;
             break;
-        case TI_STRING8_LARGE:
-        case TI_STRING16_LARGE:
+        case TypeKind::TI_STRING8_LARGE:
+        case TypeKind::TI_STRING16_LARGE:
             m_string_ldefn = x.m_string_ldefn;
             break;
-        case TI_PLAIN_SEQUENCE_SMALL:
+        case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
             m_seq_sdefn = x.m_seq_sdefn;
             break;
-        case TI_PLAIN_SEQUENCE_LARGE:
+        case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
             m_seq_ldefn = x.m_seq_ldefn;
             break;
-        case TI_PLAIN_ARRAY_SMALL:
+        case TypeKind::TI_PLAIN_ARRAY_SMALL:
             m_array_sdefn = x.m_array_sdefn;
             break;
-        case TI_PLAIN_ARRAY_LARGE:
+        case TypeKind::TI_PLAIN_ARRAY_LARGE:
             m_array_ldefn = x.m_array_ldefn;
             break;
-        case TI_PLAIN_MAP_SMALL:
+        case TypeKind::TI_PLAIN_MAP_SMALL:
             m_map_sdefn = x.m_map_sdefn;
             break;
-        case TI_PLAIN_MAP_LARGE:
+        case TypeKind::TI_PLAIN_MAP_LARGE:
             m_map_ldefn = x.m_map_ldefn;
             break;
-        case TI_STRONGLY_CONNECTED_COMPONENT:
+        case TypeKind::TI_STRONGLY_CONNECTED_COMPONENT:
             m_sc_component_id = x.m_sc_component_id;
             break;
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             memcpy(&m_equivalence_hash, &x.m_equivalence_hash, 14);
             break;
         default:
@@ -102,37 +102,37 @@ TypeIdentifier::TypeIdentifier(
 
     switch (m__d)
     {
-        case TI_STRING8_SMALL:
-        case TI_STRING16_SMALL:
+        case TypeKind::TI_STRING8_SMALL:
+        case TypeKind::TI_STRING16_SMALL:
             m_string_sdefn = x.m_string_sdefn;
             break;
-        case TI_STRING8_LARGE:
-        case TI_STRING16_LARGE:
+        case TypeKind::TI_STRING8_LARGE:
+        case TypeKind::TI_STRING16_LARGE:
             m_string_ldefn = x.m_string_ldefn;
             break;
-        case TI_PLAIN_SEQUENCE_SMALL:
+        case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
             m_seq_sdefn = x.m_seq_sdefn;
             break;
-        case TI_PLAIN_SEQUENCE_LARGE:
+        case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
             m_seq_ldefn = x.m_seq_ldefn;
             break;
-        case TI_PLAIN_ARRAY_SMALL:
+        case TypeKind::TI_PLAIN_ARRAY_SMALL:
             m_array_sdefn = x.m_array_sdefn;
             break;
-        case TI_PLAIN_ARRAY_LARGE:
+        case TypeKind::TI_PLAIN_ARRAY_LARGE:
             m_array_ldefn = x.m_array_ldefn;
             break;
-        case TI_PLAIN_MAP_SMALL:
+        case TypeKind::TI_PLAIN_MAP_SMALL:
             m_map_sdefn = x.m_map_sdefn;
             break;
-        case TI_PLAIN_MAP_LARGE:
+        case TypeKind::TI_PLAIN_MAP_LARGE:
             m_map_ldefn = x.m_map_ldefn;
             break;
-        case TI_STRONGLY_CONNECTED_COMPONENT:
+        case TypeKind::TI_STRONGLY_CONNECTED_COMPONENT:
             m_sc_component_id = x.m_sc_component_id;
             break;
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             memcpy(&m_equivalence_hash, &x.m_equivalence_hash, 14);
             break;
         default:
@@ -148,37 +148,37 @@ TypeIdentifier& TypeIdentifier::operator =(
 
     switch (m__d)
     {
-        case TI_STRING8_SMALL:
-        case TI_STRING16_SMALL:
+        case TypeKind::TI_STRING8_SMALL:
+        case TypeKind::TI_STRING16_SMALL:
             m_string_sdefn = x.m_string_sdefn;
             break;
-        case TI_STRING8_LARGE:
-        case TI_STRING16_LARGE:
+        case TypeKind::TI_STRING8_LARGE:
+        case TypeKind::TI_STRING16_LARGE:
             m_string_ldefn = x.m_string_ldefn;
             break;
-        case TI_PLAIN_SEQUENCE_SMALL:
+        case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
             m_seq_sdefn = x.m_seq_sdefn;
             break;
-        case TI_PLAIN_SEQUENCE_LARGE:
+        case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
             m_seq_ldefn = x.m_seq_ldefn;
             break;
-        case TI_PLAIN_ARRAY_SMALL:
+        case TypeKind::TI_PLAIN_ARRAY_SMALL:
             m_array_sdefn = x.m_array_sdefn;
             break;
-        case TI_PLAIN_ARRAY_LARGE:
+        case TypeKind::TI_PLAIN_ARRAY_LARGE:
             m_array_ldefn = x.m_array_ldefn;
             break;
-        case TI_PLAIN_MAP_SMALL:
+        case TypeKind::TI_PLAIN_MAP_SMALL:
             m_map_sdefn = x.m_map_sdefn;
             break;
-        case TI_PLAIN_MAP_LARGE:
+        case TypeKind::TI_PLAIN_MAP_LARGE:
             m_map_ldefn = x.m_map_ldefn;
             break;
-        case TI_STRONGLY_CONNECTED_COMPONENT:
+        case TypeKind::TI_STRONGLY_CONNECTED_COMPONENT:
             m_sc_component_id = x.m_sc_component_id;
             break;
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             memcpy(&m_equivalence_hash, &x.m_equivalence_hash, 14);
             break;
         default:
@@ -196,37 +196,37 @@ TypeIdentifier& TypeIdentifier::operator =(
 
     switch (m__d)
     {
-        case TI_STRING8_SMALL:
-        case TI_STRING16_SMALL:
+        case TypeKind::TI_STRING8_SMALL:
+        case TypeKind::TI_STRING16_SMALL:
             m_string_sdefn = x.m_string_sdefn;
             break;
-        case TI_STRING8_LARGE:
-        case TI_STRING16_LARGE:
+        case TypeKind::TI_STRING8_LARGE:
+        case TypeKind::TI_STRING16_LARGE:
             m_string_ldefn = x.m_string_ldefn;
             break;
-        case TI_PLAIN_SEQUENCE_SMALL:
+        case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
             m_seq_sdefn = x.m_seq_sdefn;
             break;
-        case TI_PLAIN_SEQUENCE_LARGE:
+        case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
             m_seq_ldefn = x.m_seq_ldefn;
             break;
-        case TI_PLAIN_ARRAY_SMALL:
+        case TypeKind::TI_PLAIN_ARRAY_SMALL:
             m_array_sdefn = x.m_array_sdefn;
             break;
-        case TI_PLAIN_ARRAY_LARGE:
+        case TypeKind::TI_PLAIN_ARRAY_LARGE:
             m_array_ldefn = x.m_array_ldefn;
             break;
-        case TI_PLAIN_MAP_SMALL:
+        case TypeKind::TI_PLAIN_MAP_SMALL:
             m_map_sdefn = x.m_map_sdefn;
             break;
-        case TI_PLAIN_MAP_LARGE:
+        case TypeKind::TI_PLAIN_MAP_LARGE:
             m_map_ldefn = x.m_map_ldefn;
             break;
-        case TI_STRONGLY_CONNECTED_COMPONENT:
+        case TypeKind::TI_STRONGLY_CONNECTED_COMPONENT:
             m_sc_component_id = x.m_sc_component_id;
             break;
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             memcpy(&m_equivalence_hash, &x.m_equivalence_hash, 14);
             break;
         default:
@@ -238,113 +238,113 @@ TypeIdentifier& TypeIdentifier::operator =(
 }
 
 void TypeIdentifier::_d(
-        octet __d)                 // Special case to ease... sets the current active member
+        TypeKind __d)                 // Special case to ease... sets the current active member
 {
     bool b = false;
     m__d = __d;
 
     switch (m__d)
     {
-        case TI_STRING8_SMALL:
-        case TI_STRING16_SMALL:
+        case TypeKind::TI_STRING8_SMALL:
+        case TypeKind::TI_STRING16_SMALL:
             switch (__d)
             {
-                case TI_STRING8_SMALL:
-                case TI_STRING16_SMALL:
+                case TypeKind::TI_STRING8_SMALL:
+                case TypeKind::TI_STRING16_SMALL:
                     b = true;
                     break;
                 default:
                     break;
             }
             break;
-        case TI_STRING8_LARGE:
-        case TI_STRING16_LARGE:
+        case TypeKind::TI_STRING8_LARGE:
+        case TypeKind::TI_STRING16_LARGE:
             switch (__d)
             {
-                case TI_STRING8_LARGE:
-                case TI_STRING16_LARGE:
+                case TypeKind::TI_STRING8_LARGE:
+                case TypeKind::TI_STRING16_LARGE:
                     b = true;
                     break;
                 default:
                     break;
             }
             break;
-        case TI_PLAIN_SEQUENCE_SMALL:
+        case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
             switch (__d)
             {
-                case TI_PLAIN_SEQUENCE_SMALL:
+                case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
                     b = true;
                     break;
                 default:
                     break;
             }
             break;
-        case TI_PLAIN_SEQUENCE_LARGE:
+        case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
             switch (__d)
             {
-                case TI_PLAIN_SEQUENCE_LARGE:
+                case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
                     b = true;
                     break;
                 default:
                     break;
             }
             break;
-        case TI_PLAIN_ARRAY_SMALL:
+        case TypeKind::TI_PLAIN_ARRAY_SMALL:
             switch (__d)
             {
-                case TI_PLAIN_ARRAY_SMALL:
+                case TypeKind::TI_PLAIN_ARRAY_SMALL:
                     b = true;
                     break;
                 default:
                     break;
             }
             break;
-        case TI_PLAIN_ARRAY_LARGE:
+        case TypeKind::TI_PLAIN_ARRAY_LARGE:
             switch (__d)
             {
-                case TI_PLAIN_ARRAY_LARGE:
+                case TypeKind::TI_PLAIN_ARRAY_LARGE:
                     b = true;
                     break;
                 default:
                     break;
             }
             break;
-        case TI_PLAIN_MAP_SMALL:
+        case TypeKind::TI_PLAIN_MAP_SMALL:
             switch (__d)
             {
-                case TI_PLAIN_MAP_SMALL:
+                case TypeKind::TI_PLAIN_MAP_SMALL:
                     b = true;
                     break;
                 default:
                     break;
             }
             break;
-        case TI_PLAIN_MAP_LARGE:
+        case TypeKind::TI_PLAIN_MAP_LARGE:
             switch (__d)
             {
-                case TI_PLAIN_MAP_LARGE:
+                case TypeKind::TI_PLAIN_MAP_LARGE:
                     b = true;
                     break;
                 default:
                     break;
             }
             break;
-        case TI_STRONGLY_CONNECTED_COMPONENT:
+        case TypeKind::TI_STRONGLY_CONNECTED_COMPONENT:
             switch (__d)
             {
-                case TI_STRONGLY_CONNECTED_COMPONENT:
+                case TypeKind::TI_STRONGLY_CONNECTED_COMPONENT:
                     b = true;
                     break;
                 default:
                     break;
             }
             break;
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             switch (__d)
             {
-                case EK_COMPLETE:
-                case EK_MINIMAL:
+                case TypeKind::EK_COMPLETE:
+                case TypeKind::EK_MINIMAL:
                     b = true;
                     break;
                 default:
@@ -354,19 +354,19 @@ void TypeIdentifier::_d(
         default:
             switch (__d)
             {
-                case TI_PLAIN_ARRAY_SMALL:
-                case TI_PLAIN_SEQUENCE_LARGE:
-                case TI_PLAIN_SEQUENCE_SMALL:
-                case TI_STRING8_LARGE:
-                case TI_STRING16_LARGE:
-                case TI_STRING8_SMALL:
-                case TI_STRING16_SMALL:
-                case TI_PLAIN_ARRAY_LARGE:
-                case TI_PLAIN_MAP_SMALL:
-                case TI_PLAIN_MAP_LARGE:
-                case TI_STRONGLY_CONNECTED_COMPONENT:
-                case EK_COMPLETE:
-                case EK_MINIMAL:
+                case TypeKind::TI_PLAIN_ARRAY_SMALL:
+                case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
+                case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
+                case TypeKind::TI_STRING8_LARGE:
+                case TypeKind::TI_STRING16_LARGE:
+                case TypeKind::TI_STRING8_SMALL:
+                case TypeKind::TI_STRING16_SMALL:
+                case TypeKind::TI_PLAIN_ARRAY_LARGE:
+                case TypeKind::TI_PLAIN_MAP_SMALL:
+                case TypeKind::TI_PLAIN_MAP_LARGE:
+                case TypeKind::TI_STRONGLY_CONNECTED_COMPONENT:
+                case TypeKind::EK_COMPLETE:
+                case TypeKind::EK_MINIMAL:
                     break;
                 default:
                     b = true;
@@ -383,12 +383,12 @@ void TypeIdentifier::_d(
     m__d = __d;
 }
 
-octet TypeIdentifier::_d() const
+TypeKind TypeIdentifier::_d() const
 {
     return m__d;
 }
 
-octet& TypeIdentifier::_d()
+TypeKind& TypeIdentifier::_d()
 {
     return m__d;
 }
@@ -397,7 +397,7 @@ void TypeIdentifier::string_sdefn(
         StringSTypeDefn _string_sdefn)
 {
     m_string_sdefn = _string_sdefn;
-    m__d = TI_STRING8_SMALL;
+    m__d = TypeKind::TI_STRING8_SMALL;
 }
 
 const StringSTypeDefn& TypeIdentifier::string_sdefn() const
@@ -406,8 +406,8 @@ const StringSTypeDefn& TypeIdentifier::string_sdefn() const
 
     switch (m__d)
     {
-        case TI_STRING8_SMALL:
-        case TI_STRING16_SMALL:
+        case TypeKind::TI_STRING8_SMALL:
+        case TypeKind::TI_STRING16_SMALL:
             b = true;
             break;
         default:
@@ -428,8 +428,8 @@ StringSTypeDefn& TypeIdentifier::string_sdefn()
 
     switch (m__d)
     {
-        case TI_STRING8_SMALL:
-        case TI_STRING16_SMALL:
+        case TypeKind::TI_STRING8_SMALL:
+        case TypeKind::TI_STRING16_SMALL:
             b = true;
             break;
         default:
@@ -448,7 +448,7 @@ void TypeIdentifier::string_ldefn(
         StringLTypeDefn _string_ldefn)
 {
     m_string_ldefn = _string_ldefn;
-    m__d = TI_STRING8_LARGE;
+    m__d = TypeKind::TI_STRING8_LARGE;
 }
 
 const StringLTypeDefn& TypeIdentifier::string_ldefn() const
@@ -457,8 +457,8 @@ const StringLTypeDefn& TypeIdentifier::string_ldefn() const
 
     switch (m__d)
     {
-        case TI_STRING8_LARGE:
-        case TI_STRING16_LARGE:
+        case TypeKind::TI_STRING8_LARGE:
+        case TypeKind::TI_STRING16_LARGE:
             b = true;
             break;
         default:
@@ -479,8 +479,8 @@ StringLTypeDefn& TypeIdentifier::string_ldefn()
 
     switch (m__d)
     {
-        case TI_STRING8_LARGE:
-        case TI_STRING16_LARGE:
+        case TypeKind::TI_STRING8_LARGE:
+        case TypeKind::TI_STRING16_LARGE:
             b = true;
             break;
         default:
@@ -499,7 +499,7 @@ void TypeIdentifier::seq_sdefn(
         PlainSequenceSElemDefn _seq_sdefn)
 {
     m_seq_sdefn = _seq_sdefn;
-    m__d = TI_PLAIN_SEQUENCE_SMALL;
+    m__d = TypeKind::TI_PLAIN_SEQUENCE_SMALL;
 }
 
 const PlainSequenceSElemDefn& TypeIdentifier::seq_sdefn() const
@@ -508,7 +508,7 @@ const PlainSequenceSElemDefn& TypeIdentifier::seq_sdefn() const
 
     switch (m__d)
     {
-        case TI_PLAIN_SEQUENCE_SMALL:
+        case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
             b = true;
             break;
         default:
@@ -529,7 +529,7 @@ PlainSequenceSElemDefn& TypeIdentifier::seq_sdefn()
 
     switch (m__d)
     {
-        case TI_PLAIN_SEQUENCE_SMALL:
+        case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
             b = true;
             break;
         default:
@@ -548,7 +548,7 @@ void TypeIdentifier::seq_ldefn(
         PlainSequenceLElemDefn _seq_ldefn)
 {
     m_seq_ldefn = _seq_ldefn;
-    m__d = TI_PLAIN_SEQUENCE_LARGE;
+    m__d = TypeKind::TI_PLAIN_SEQUENCE_LARGE;
 }
 
 const PlainSequenceLElemDefn& TypeIdentifier::seq_ldefn() const
@@ -557,7 +557,7 @@ const PlainSequenceLElemDefn& TypeIdentifier::seq_ldefn() const
 
     switch (m__d)
     {
-        case TI_PLAIN_SEQUENCE_LARGE:
+        case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
             b = true;
             break;
         default:
@@ -578,7 +578,7 @@ PlainSequenceLElemDefn& TypeIdentifier::seq_ldefn()
 
     switch (m__d)
     {
-        case TI_PLAIN_SEQUENCE_LARGE:
+        case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
             b = true;
             break;
         default:
@@ -597,7 +597,7 @@ void TypeIdentifier::array_sdefn(
         PlainArraySElemDefn _array_sdefn)
 {
     m_array_sdefn = _array_sdefn;
-    m__d = TI_PLAIN_ARRAY_SMALL;
+    m__d = TypeKind::TI_PLAIN_ARRAY_SMALL;
 }
 
 const PlainArraySElemDefn& TypeIdentifier::array_sdefn() const
@@ -606,7 +606,7 @@ const PlainArraySElemDefn& TypeIdentifier::array_sdefn() const
 
     switch (m__d)
     {
-        case TI_PLAIN_ARRAY_SMALL:
+        case TypeKind::TI_PLAIN_ARRAY_SMALL:
             b = true;
             break;
         default:
@@ -627,7 +627,7 @@ PlainArraySElemDefn& TypeIdentifier::array_sdefn()
 
     switch (m__d)
     {
-        case TI_PLAIN_ARRAY_SMALL:
+        case TypeKind::TI_PLAIN_ARRAY_SMALL:
             b = true;
             break;
         default:
@@ -646,7 +646,7 @@ void TypeIdentifier::array_ldefn(
         PlainArrayLElemDefn _array_ldefn)
 {
     m_array_ldefn = _array_ldefn;
-    m__d = TI_PLAIN_ARRAY_LARGE;
+    m__d = TypeKind::TI_PLAIN_ARRAY_LARGE;
 }
 
 const PlainArrayLElemDefn& TypeIdentifier::array_ldefn() const
@@ -655,7 +655,7 @@ const PlainArrayLElemDefn& TypeIdentifier::array_ldefn() const
 
     switch (m__d)
     {
-        case TI_PLAIN_ARRAY_LARGE:
+        case TypeKind::TI_PLAIN_ARRAY_LARGE:
             b = true;
             break;
         default:
@@ -676,7 +676,7 @@ PlainArrayLElemDefn& TypeIdentifier::array_ldefn()
 
     switch (m__d)
     {
-        case TI_PLAIN_ARRAY_LARGE:
+        case TypeKind::TI_PLAIN_ARRAY_LARGE:
             b = true;
             break;
         default:
@@ -695,7 +695,7 @@ void TypeIdentifier::map_sdefn(
         PlainMapSTypeDefn _map_sdefn)
 {
     m_map_sdefn = _map_sdefn;
-    m__d = TI_PLAIN_MAP_SMALL;
+    m__d = TypeKind::TI_PLAIN_MAP_SMALL;
 }
 
 const PlainMapSTypeDefn& TypeIdentifier::map_sdefn() const
@@ -704,7 +704,7 @@ const PlainMapSTypeDefn& TypeIdentifier::map_sdefn() const
 
     switch (m__d)
     {
-        case TI_PLAIN_MAP_SMALL:
+        case TypeKind::TI_PLAIN_MAP_SMALL:
             b = true;
             break;
         default:
@@ -725,7 +725,7 @@ PlainMapSTypeDefn& TypeIdentifier::map_sdefn()
 
     switch (m__d)
     {
-        case TI_PLAIN_MAP_SMALL:
+        case TypeKind::TI_PLAIN_MAP_SMALL:
             b = true;
             break;
         default:
@@ -744,7 +744,7 @@ void TypeIdentifier::map_ldefn(
         PlainMapLTypeDefn _map_ldefn)
 {
     m_map_ldefn = _map_ldefn;
-    m__d = TI_PLAIN_MAP_LARGE;
+    m__d = TypeKind::TI_PLAIN_MAP_LARGE;
 }
 
 const PlainMapLTypeDefn& TypeIdentifier::map_ldefn() const
@@ -753,7 +753,7 @@ const PlainMapLTypeDefn& TypeIdentifier::map_ldefn() const
 
     switch (m__d)
     {
-        case TI_PLAIN_MAP_LARGE:
+        case TypeKind::TI_PLAIN_MAP_LARGE:
             b = true;
             break;
         default:
@@ -774,7 +774,7 @@ PlainMapLTypeDefn& TypeIdentifier::map_ldefn()
 
     switch (m__d)
     {
-        case TI_PLAIN_MAP_LARGE:
+        case TypeKind::TI_PLAIN_MAP_LARGE:
             b = true;
             break;
         default:
@@ -793,7 +793,7 @@ void TypeIdentifier::sc_component_id(
         StronglyConnectedComponentId _sc_component_id)
 {
     m_sc_component_id = _sc_component_id;
-    m__d = TI_STRONGLY_CONNECTED_COMPONENT;
+    m__d = TypeKind::TI_STRONGLY_CONNECTED_COMPONENT;
 }
 
 StronglyConnectedComponentId TypeIdentifier::sc_component_id() const
@@ -802,7 +802,7 @@ StronglyConnectedComponentId TypeIdentifier::sc_component_id() const
 
     switch (m__d)
     {
-        case TI_STRONGLY_CONNECTED_COMPONENT:
+        case TypeKind::TI_STRONGLY_CONNECTED_COMPONENT:
             b = true;
             break;
         default:
@@ -823,7 +823,7 @@ StronglyConnectedComponentId& TypeIdentifier::sc_component_id()
 
     switch (m__d)
     {
-        case TI_STRONGLY_CONNECTED_COMPONENT:
+        case TypeKind::TI_STRONGLY_CONNECTED_COMPONENT:
             b = true;
             break;
         default:
@@ -842,7 +842,7 @@ void TypeIdentifier::equivalence_hash(
         EquivalenceHash _equivalence_hash)
 {
     memcpy(m_equivalence_hash, _equivalence_hash, 14);
-    m__d = EK_COMPLETE;
+    m__d = TypeKind::EK_COMPLETE;
 }
 
 const octet* TypeIdentifier::equivalence_hash() const
@@ -851,8 +851,8 @@ const octet* TypeIdentifier::equivalence_hash() const
 
     switch (m__d)
     {
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             b = true;
             break;
         default:
@@ -873,8 +873,8 @@ octet* TypeIdentifier::equivalence_hash()
 
     switch (m__d)
     {
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             b = true;
             break;
         default:
@@ -892,7 +892,7 @@ octet* TypeIdentifier::equivalence_hash()
 std::string TypeIdentifier::equivalence_hash_to_string() const
 {
     std::stringstream ss;
-    if (m__d >= EK_MINIMAL)
+    if ((octet)m__d >= (octet)TypeKind::EK_MINIMAL)
     {
         ss << std::hex << m_equivalence_hash[0];
         for (uint8_t i = 1; i < 14; ++i)
@@ -907,7 +907,7 @@ void TypeIdentifier::extended_defn(
         ExtendedTypeDefn _extended_defn)
 {
     m_extended_defn = _extended_defn;
-    m__d = 0x00; // Default
+    m__d = TypeKind::TK_NONE; // Default
 }
 
 const ExtendedTypeDefn& TypeIdentifier::extended_defn() const
@@ -916,19 +916,19 @@ const ExtendedTypeDefn& TypeIdentifier::extended_defn() const
 
     switch (m__d)
     {
-        case TI_PLAIN_ARRAY_SMALL:
-        case TI_PLAIN_SEQUENCE_LARGE:
-        case TI_PLAIN_SEQUENCE_SMALL:
-        case TI_STRING8_LARGE:
-        case TI_STRING16_LARGE:
-        case TI_STRING8_SMALL:
-        case TI_STRING16_SMALL:
-        case TI_PLAIN_ARRAY_LARGE:
-        case TI_PLAIN_MAP_SMALL:
-        case TI_PLAIN_MAP_LARGE:
-        case TI_STRONGLY_CONNECTED_COMPONENT:
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::TI_PLAIN_ARRAY_SMALL:
+        case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
+        case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
+        case TypeKind::TI_STRING8_LARGE:
+        case TypeKind::TI_STRING16_LARGE:
+        case TypeKind::TI_STRING8_SMALL:
+        case TypeKind::TI_STRING16_SMALL:
+        case TypeKind::TI_PLAIN_ARRAY_LARGE:
+        case TypeKind::TI_PLAIN_MAP_SMALL:
+        case TypeKind::TI_PLAIN_MAP_LARGE:
+        case TypeKind::TI_STRONGLY_CONNECTED_COMPONENT:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             break;
         default:
             b = true;
@@ -949,19 +949,19 @@ ExtendedTypeDefn& TypeIdentifier::extended_defn()
 
     switch (m__d)
     {
-        case TI_PLAIN_ARRAY_SMALL:
-        case TI_PLAIN_SEQUENCE_LARGE:
-        case TI_PLAIN_SEQUENCE_SMALL:
-        case TI_STRING8_LARGE:
-        case TI_STRING16_LARGE:
-        case TI_STRING8_SMALL:
-        case TI_STRING16_SMALL:
-        case TI_PLAIN_ARRAY_LARGE:
-        case TI_PLAIN_MAP_SMALL:
-        case TI_PLAIN_MAP_LARGE:
-        case TI_STRONGLY_CONNECTED_COMPONENT:
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::TI_PLAIN_ARRAY_SMALL:
+        case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
+        case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
+        case TypeKind::TI_STRING8_LARGE:
+        case TypeKind::TI_STRING16_LARGE:
+        case TypeKind::TI_STRING8_SMALL:
+        case TypeKind::TI_STRING16_SMALL:
+        case TypeKind::TI_PLAIN_ARRAY_LARGE:
+        case TypeKind::TI_PLAIN_MAP_SMALL:
+        case TypeKind::TI_PLAIN_MAP_LARGE:
+        case TypeKind::TI_STRONGLY_CONNECTED_COMPONENT:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             break;
         default:
             b = true;
@@ -1098,47 +1098,47 @@ size_t TypeIdentifier::getCdrSerializedSize(
 
     switch (data.m__d)
     {
-        case TI_STRING8_SMALL:
-        case TI_STRING16_SMALL:
+        case TypeKind::TI_STRING8_SMALL:
+        case TypeKind::TI_STRING16_SMALL:
             current_alignment += StringSTypeDefn::getCdrSerializedSize(data.m_string_sdefn, current_alignment);
 
             break;
-        case TI_STRING8_LARGE:
-        case TI_STRING16_LARGE:
+        case TypeKind::TI_STRING8_LARGE:
+        case TypeKind::TI_STRING16_LARGE:
             current_alignment += StringLTypeDefn::getCdrSerializedSize(data.m_string_ldefn, current_alignment);
 
             break;
-        case TI_PLAIN_SEQUENCE_SMALL:
+        case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
             current_alignment += PlainSequenceSElemDefn::getCdrSerializedSize(data.m_seq_sdefn, current_alignment);
 
             break;
-        case TI_PLAIN_SEQUENCE_LARGE:
+        case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
             current_alignment += PlainSequenceLElemDefn::getCdrSerializedSize(data.m_seq_ldefn, current_alignment);
 
             break;
-        case TI_PLAIN_ARRAY_SMALL:
+        case TypeKind::TI_PLAIN_ARRAY_SMALL:
             current_alignment += PlainArraySElemDefn::getCdrSerializedSize(data.m_array_sdefn, current_alignment);
 
             break;
-        case TI_PLAIN_ARRAY_LARGE:
+        case TypeKind::TI_PLAIN_ARRAY_LARGE:
             current_alignment += PlainArrayLElemDefn::getCdrSerializedSize(data.m_array_ldefn, current_alignment);
 
             break;
-        case TI_PLAIN_MAP_SMALL:
+        case TypeKind::TI_PLAIN_MAP_SMALL:
             current_alignment += PlainMapSTypeDefn::getCdrSerializedSize(data.m_map_sdefn, current_alignment);
 
             break;
-        case TI_PLAIN_MAP_LARGE:
+        case TypeKind::TI_PLAIN_MAP_LARGE:
             current_alignment += PlainMapLTypeDefn::getCdrSerializedSize(data.m_map_ldefn, current_alignment);
 
             break;
-        case TI_STRONGLY_CONNECTED_COMPONENT:
+        case TypeKind::TI_STRONGLY_CONNECTED_COMPONENT:
             current_alignment += StronglyConnectedComponentId::getCdrSerializedSize(data.m_sc_component_id,
                             current_alignment);
 
             break;
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             current_alignment += 14 + eprosima::fastcdr::Cdr::alignment(current_alignment, 14);
 
             break;
@@ -1153,43 +1153,43 @@ size_t TypeIdentifier::getCdrSerializedSize(
 void TypeIdentifier::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m__d;
+    scdr << static_cast<octet>(m__d);
 
     switch (m__d)
     {
-        case TK_NONE:
+        case TypeKind::TK_NONE:
             break;
-        case TI_STRING8_SMALL:
-        case TI_STRING16_SMALL:
+        case TypeKind::TI_STRING8_SMALL:
+        case TypeKind::TI_STRING16_SMALL:
             scdr << m_string_sdefn;
             break;
-        case TI_STRING8_LARGE:
-        case TI_STRING16_LARGE:
+        case TypeKind::TI_STRING8_LARGE:
+        case TypeKind::TI_STRING16_LARGE:
             scdr << m_string_ldefn;
             break;
-        case TI_PLAIN_SEQUENCE_SMALL:
+        case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
             scdr << m_seq_sdefn;
             break;
-        case TI_PLAIN_SEQUENCE_LARGE:
+        case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
             scdr << m_seq_ldefn;
             break;
-        case TI_PLAIN_ARRAY_SMALL:
+        case TypeKind::TI_PLAIN_ARRAY_SMALL:
             scdr << m_array_sdefn;
             break;
-        case TI_PLAIN_ARRAY_LARGE:
+        case TypeKind::TI_PLAIN_ARRAY_LARGE:
             scdr << m_array_ldefn;
             break;
-        case TI_PLAIN_MAP_SMALL:
+        case TypeKind::TI_PLAIN_MAP_SMALL:
             scdr << m_map_sdefn;
             break;
-        case TI_PLAIN_MAP_LARGE:
+        case TypeKind::TI_PLAIN_MAP_LARGE:
             scdr << m_map_ldefn;
             break;
-        case TI_STRONGLY_CONNECTED_COMPONENT:
+        case TypeKind::TI_STRONGLY_CONNECTED_COMPONENT:
             scdr << m_sc_component_id;
             break;
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             for (int i = 0; i < 14; ++i)
             {
                 scdr << m_equivalence_hash[i];
@@ -1204,43 +1204,43 @@ void TypeIdentifier::serialize(
 void TypeIdentifier::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m__d;
+    dcdr >> reinterpret_cast<octet&>(m__d);
 
     switch (m__d)
     {
-        case TK_NONE:
+        case TypeKind::TK_NONE:
             break;
-        case TI_STRING8_SMALL:
-        case TI_STRING16_SMALL:
+        case TypeKind::TI_STRING8_SMALL:
+        case TypeKind::TI_STRING16_SMALL:
             dcdr >> m_string_sdefn;
             break;
-        case TI_STRING8_LARGE:
-        case TI_STRING16_LARGE:
+        case TypeKind::TI_STRING8_LARGE:
+        case TypeKind::TI_STRING16_LARGE:
             dcdr >> m_string_ldefn;
             break;
-        case TI_PLAIN_SEQUENCE_SMALL:
+        case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
             dcdr >> m_seq_sdefn;
             break;
-        case TI_PLAIN_SEQUENCE_LARGE:
+        case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
             dcdr >> m_seq_ldefn;
             break;
-        case TI_PLAIN_ARRAY_SMALL:
+        case TypeKind::TI_PLAIN_ARRAY_SMALL:
             dcdr >> m_array_sdefn;
             break;
-        case TI_PLAIN_ARRAY_LARGE:
+        case TypeKind::TI_PLAIN_ARRAY_LARGE:
             dcdr >> m_array_ldefn;
             break;
-        case TI_PLAIN_MAP_SMALL:
+        case TypeKind::TI_PLAIN_MAP_SMALL:
             dcdr >> m_map_sdefn;
             break;
-        case TI_PLAIN_MAP_LARGE:
+        case TypeKind::TI_PLAIN_MAP_LARGE:
             dcdr >> m_map_ldefn;
             break;
-        case TI_STRONGLY_CONNECTED_COMPONENT:
+        case TypeKind::TI_STRONGLY_CONNECTED_COMPONENT:
             dcdr >> m_sc_component_id;
             break;
-        case EK_COMPLETE:
-        case EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
             for (int i = 0; i < 14; ++i)
             {
                 dcdr >> m_equivalence_hash[i];
@@ -1267,38 +1267,38 @@ bool TypeIdentifier::operator ==(
 
     switch (this->_d())
     {
-        case TK_NONE:
-        case TK_BOOLEAN:
-        case TK_BYTE:
-        case TK_INT16:
-        case TK_INT32:
-        case TK_INT64:
-        case TK_UINT16:
-        case TK_UINT32:
-        case TK_UINT64:
-        case TK_FLOAT32:
-        case TK_FLOAT64:
-        case TK_FLOAT128:
-        case TK_CHAR8:
-        case TK_CHAR16:
+        case TypeKind::TK_NONE:
+        case TypeKind::TK_BOOLEAN:
+        case TypeKind::TK_BYTE:
+        case TypeKind::TK_INT16:
+        case TypeKind::TK_INT32:
+        case TypeKind::TK_INT64:
+        case TypeKind::TK_UINT16:
+        case TypeKind::TK_UINT32:
+        case TypeKind::TK_UINT64:
+        case TypeKind::TK_FLOAT32:
+        case TypeKind::TK_FLOAT64:
+        case TypeKind::TK_FLOAT128:
+        case TypeKind::TK_CHAR8:
+        case TypeKind::TK_CHAR16:
             return true;
-        case TI_STRING8_SMALL:
-        case TI_STRING16_SMALL:
+        case TypeKind::TI_STRING8_SMALL:
+        case TypeKind::TI_STRING16_SMALL:
             return this->string_sdefn().bound() == other.string_sdefn().bound();
 
-        case TI_STRING8_LARGE:
-        case TI_STRING16_LARGE:
+        case TypeKind::TI_STRING8_LARGE:
+        case TypeKind::TI_STRING16_LARGE:
             return this->string_ldefn().bound() == other.string_ldefn().bound();
 
-        case TI_PLAIN_SEQUENCE_SMALL:
+        case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
             return this->seq_sdefn().bound() == other.seq_sdefn().bound()
                    && *this->seq_sdefn().element_identifier() == *other.seq_sdefn().element_identifier();
 
-        case TI_PLAIN_SEQUENCE_LARGE:
+        case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
             return this->seq_ldefn().bound() == other.seq_ldefn().bound()
                    && *this->seq_ldefn().element_identifier() == *other.seq_ldefn().element_identifier();
 
-        case TI_PLAIN_ARRAY_SMALL:
+        case TypeKind::TI_PLAIN_ARRAY_SMALL:
         {
             if (this->array_sdefn().array_bound_seq().size() != other.array_sdefn().array_bound_seq().size())
             {
@@ -1314,7 +1314,7 @@ bool TypeIdentifier::operator ==(
             return *this->array_sdefn().element_identifier() == *other.array_sdefn().element_identifier();
         }
 
-        case TI_PLAIN_ARRAY_LARGE:
+        case TypeKind::TI_PLAIN_ARRAY_LARGE:
         {
             if (this->array_ldefn().array_bound_seq().size() != other.array_ldefn().array_bound_seq().size())
             {
@@ -1330,18 +1330,18 @@ bool TypeIdentifier::operator ==(
             return *this->array_ldefn().element_identifier() == *other.array_ldefn().element_identifier();
         }
 
-        case TI_PLAIN_MAP_SMALL:
+        case TypeKind::TI_PLAIN_MAP_SMALL:
             return this->map_sdefn().bound() == other.map_sdefn().bound()
                    && *this->map_sdefn().key_identifier() == *other.map_sdefn().key_identifier()
                    && *this->map_sdefn().element_identifier() == *other.map_sdefn().element_identifier();
 
-        case TI_PLAIN_MAP_LARGE:
+        case TypeKind::TI_PLAIN_MAP_LARGE:
             return this->map_ldefn().bound() == other.map_ldefn().bound()
                    && *this->map_ldefn().key_identifier() == *other.map_ldefn().key_identifier()
                    && *this->map_ldefn().element_identifier() == *other.map_ldefn().element_identifier();
 
-        case EK_MINIMAL:
-        case EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
         {
             //return memcmp(this->equivalence_hash(), other.equivalence_hash(), 14) == 0;
             for (int i = 0; i < 14; ++i)
@@ -1370,58 +1370,58 @@ bool TypeIdentifier::consistent(
     }
     switch (this->_d())
     {
-        case TK_NONE:
-        case TK_BOOLEAN:
-        case TK_BYTE:
-        case TK_INT16:
-        case TK_INT32:
-        case TK_INT64:
-        case TK_UINT16:
-        case TK_UINT32:
-        case TK_UINT64:
-        case TK_FLOAT32:
-        case TK_FLOAT64:
-        case TK_FLOAT128:
-        case TK_CHAR8:
-        case TK_CHAR16:
+        case TypeKind::TK_NONE:
+        case TypeKind::TK_BOOLEAN:
+        case TypeKind::TK_BYTE:
+        case TypeKind::TK_INT16:
+        case TypeKind::TK_INT32:
+        case TypeKind::TK_INT64:
+        case TypeKind::TK_UINT16:
+        case TypeKind::TK_UINT32:
+        case TypeKind::TK_UINT64:
+        case TypeKind::TK_FLOAT32:
+        case TypeKind::TK_FLOAT64:
+        case TypeKind::TK_FLOAT128:
+        case TypeKind::TK_CHAR8:
+        case TypeKind::TK_CHAR16:
             if (this->_d() != x._d())
             {
                 return false;
             }
             return true;
-        case TI_STRING8_SMALL:
-        case TI_STRING16_SMALL:
-        case TI_STRING8_LARGE:
-        case TI_STRING16_LARGE:
-            if (_d() == TI_STRING8_SMALL && x._d() == TI_STRING8_SMALL)
+        case TypeKind::TI_STRING8_SMALL:
+        case TypeKind::TI_STRING16_SMALL:
+        case TypeKind::TI_STRING8_LARGE:
+        case TypeKind::TI_STRING16_LARGE:
+            if (_d() == TypeKind::TI_STRING8_SMALL && x._d() == TypeKind::TI_STRING8_SMALL)
             {
                 return this->string_sdefn().consistent(x.string_sdefn(), consistency);
             }
-            else if (_d() == TI_STRING8_SMALL && x._d() == TI_STRING8_LARGE)
+            else if (_d() == TypeKind::TI_STRING8_SMALL && x._d() == TypeKind::TI_STRING8_LARGE)
             {
                 return this->string_sdefn().consistent(x.string_ldefn(), consistency);
             }
-            else if (_d() == TI_STRING16_SMALL && x._d() == TI_STRING16_SMALL)
+            else if (_d() == TypeKind::TI_STRING16_SMALL && x._d() == TypeKind::TI_STRING16_SMALL)
             {
                 return this->string_sdefn().consistent(x.string_sdefn(), consistency);
             }
-            else if (_d() == TI_STRING16_SMALL && x._d() == TI_STRING16_LARGE)
+            else if (_d() == TypeKind::TI_STRING16_SMALL && x._d() == TypeKind::TI_STRING16_LARGE)
             {
                 return this->string_sdefn().consistent(x.string_ldefn(), consistency);
             }
-            else if (_d() == TI_STRING8_LARGE && x._d() == TI_STRING8_SMALL)
+            else if (_d() == TypeKind::TI_STRING8_LARGE && x._d() == TypeKind::TI_STRING8_SMALL)
             {
                 return this->string_ldefn().consistent(x.string_sdefn(), consistency);
             }
-            else if (_d() == TI_STRING8_LARGE && x._d() == TI_STRING8_LARGE)
+            else if (_d() == TypeKind::TI_STRING8_LARGE && x._d() == TypeKind::TI_STRING8_LARGE)
             {
                 return this->string_ldefn().consistent(x.string_ldefn(), consistency);
             }
-            else if (_d() == TI_STRING16_LARGE && x._d() == TI_STRING16_SMALL)
+            else if (_d() == TypeKind::TI_STRING16_LARGE && x._d() == TypeKind::TI_STRING16_SMALL)
             {
                 return this->string_ldefn().consistent(x.string_sdefn(), consistency);
             }
-            else if (_d() == TI_STRING16_LARGE && x._d() == TI_STRING16_LARGE)
+            else if (_d() == TypeKind::TI_STRING16_LARGE && x._d() == TypeKind::TI_STRING16_LARGE)
             {
                 return this->string_ldefn().consistent(x.string_ldefn(), consistency);
             }
@@ -1430,26 +1430,26 @@ bool TypeIdentifier::consistent(
                 return false;
             }
 
-        case TI_PLAIN_SEQUENCE_SMALL:
+        case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
             return this->seq_sdefn().consistent(x.seq_sdefn(), consistency);
 
-        case TI_PLAIN_SEQUENCE_LARGE:
+        case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
             return this->seq_ldefn().consistent(x.seq_ldefn(), consistency);
 
-        case TI_PLAIN_ARRAY_SMALL:
+        case TypeKind::TI_PLAIN_ARRAY_SMALL:
             return this->array_sdefn().consistent(x.array_sdefn(), consistency);
 
-        case TI_PLAIN_ARRAY_LARGE:
+        case TypeKind::TI_PLAIN_ARRAY_LARGE:
             return this->array_ldefn().consistent(x.array_ldefn(), consistency);
 
-        case TI_PLAIN_MAP_SMALL:
+        case TypeKind::TI_PLAIN_MAP_SMALL:
             return this->map_sdefn().consistent(x.map_sdefn(), consistency);
 
-        case TI_PLAIN_MAP_LARGE:
+        case TypeKind::TI_PLAIN_MAP_LARGE:
             return this->map_ldefn().consistent(x.map_ldefn(), consistency);
 
-        case EK_MINIMAL:
-        case EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
         {
             if (this->_d() != x._d())
             {

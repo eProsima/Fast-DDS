@@ -111,36 +111,36 @@ static std::string get_type_name(
     switch (kind)
     {
         // Primitive types, already defined (never will be asked, but ok)
-        case TK_BOOLEAN: return TKNAME_BOOLEAN;
-        case TK_INT16: return TKNAME_INT16;
-        case TK_INT32: return TKNAME_INT32;
-        case TK_UINT16: return TKNAME_UINT16;
-        case TK_UINT32: return TKNAME_UINT32;
-        case TK_FLOAT32: return TKNAME_FLOAT32;
-        case TK_FLOAT64: return TKNAME_FLOAT64;
-        case TK_CHAR8: return TKNAME_CHAR8;
-        case TK_BYTE: return TKNAME_BYTE;
-        case TK_INT64: return TKNAME_INT64;
-        case TK_UINT64: return TKNAME_UINT64;
-        case TK_FLOAT128: return TKNAME_FLOAT128;
-        case TK_CHAR16: return TKNAME_CHAR16;
+        case TypeKind::TK_BOOLEAN: return TKNAME_BOOLEAN;
+        case TypeKind::TK_INT16: return TKNAME_INT16;
+        case TypeKind::TK_INT32: return TKNAME_INT32;
+        case TypeKind::TK_UINT16: return TKNAME_UINT16;
+        case TypeKind::TK_UINT32: return TKNAME_UINT32;
+        case TypeKind::TK_FLOAT32: return TKNAME_FLOAT32;
+        case TypeKind::TK_FLOAT64: return TKNAME_FLOAT64;
+        case TypeKind::TK_CHAR8: return TKNAME_CHAR8;
+        case TypeKind::TK_BYTE: return TKNAME_BYTE;
+        case TypeKind::TK_INT64: return TKNAME_INT64;
+        case TypeKind::TK_UINT64: return TKNAME_UINT64;
+        case TypeKind::TK_FLOAT128: return TKNAME_FLOAT128;
+        case TypeKind::TK_CHAR16: return TKNAME_CHAR16;
         /*
-           case TK_STRING8: return TKNAME_STRING8;
-           case TK_STRING16: return TKNAME_STRING16;
-           case TK_ALIAS: return TKNAME_ALIAS;
-           case TK_ENUM: return TKNAME_ENUM;
+           case TypeKind::TK_STRING8: return TKNAME_STRING8;
+           case TypeKind::TK_STRING16: return TKNAME_STRING16;
+           case TypeKind::TK_ALIAS: return TKNAME_ALIAS;
+           case TypeKind::TK_ENUM: return TKNAME_ENUM;
          */
-        case TK_BITMASK: return TKNAME_BITMASK;
+        case TypeKind::TK_BITMASK: return TKNAME_BITMASK;
         /*
-           case TK_ANNOTATION: return TKNAME_ANNOTATION;
-           case TK_STRUCTURE: return TKNAME_STRUCTURE;
-           case TK_UNION: return TKNAME_UNION;
+           case TypeKind::TK_ANNOTATION: return TKNAME_ANNOTATION;
+           case TypeKind::TK_STRUCTURE: return TKNAME_STRUCTURE;
+           case TypeKind::TK_UNION: return TKNAME_UNION;
          */
-        case TK_BITSET: return TKNAME_BITSET;
+        case TypeKind::TK_BITSET: return TKNAME_BITSET;
         /*
-           case TK_SEQUENCE: return TKNAME_SEQUENCE;
-           case TK_ARRAY: return TKNAME_ARRAY;
-           case TK_MAP: return TKNAME_MAP;
+           case TypeKind::TK_SEQUENCE: return TKNAME_SEQUENCE;
+           case TypeKind::TK_ARRAY: return TKNAME_ARRAY;
+           case TypeKind::TK_MAP: return TKNAME_MAP;
          */
         default:
             break;
@@ -250,7 +250,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_alias_builder(
 
     if(builder)
     {
-        builder->set_kind(TK_ALIAS);
+        builder->set_kind(TypeKind::TK_ALIAS);
         builder->set_base_type(base_type.shared_from_this());
 
         if (sName.length() > 0)
@@ -288,7 +288,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_array_builder(
         const std::vector<uint32_t>& bounds) noexcept
 {
     TypeDescriptor descriptor;
-    descriptor.set_kind(TK_ARRAY);
+    descriptor.set_kind(TypeKind::TK_ARRAY);
     descriptor.set_name(TypeNamesGenerator::get_array_type_name(type.get_name(), bounds, false));
     descriptor.element_type_ = type.shared_from_this();
     descriptor.bound_ = bounds;
@@ -310,9 +310,9 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_bitmask_builder(
     if (bound <= MAX_BITMASK_LENGTH)
     {
         TypeDescriptor descriptor;
-        descriptor.set_kind(TK_BITMASK);
+        descriptor.set_kind(TypeKind::TK_BITMASK);
         // TODO review on implementation for IDL
-        descriptor.set_name(GenerateTypeName(get_type_name(TK_BITMASK)));
+        descriptor.set_name(GenerateTypeName(get_type_name(TypeKind::TK_BITMASK)));
         descriptor.element_type_ = create_bool_type();
         descriptor.bound_.push_back(bound);
 
@@ -331,9 +331,9 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_bitset_builder(uint32_t
     if (bound <= MAX_BITMASK_LENGTH)
     {
         TypeDescriptor descriptor;
-        descriptor.set_kind(TK_BITSET);
+        descriptor.set_kind(TypeKind::TK_BITSET);
         // TODO Review on implementation for IDL
-        descriptor.set_name(GenerateTypeName(get_type_name(TK_BITSET)));
+        descriptor.set_name(GenerateTypeName(get_type_name(TypeKind::TK_BITSET)));
         descriptor.bound_.push_back(bound);
         return create_builder(descriptor);
     }
@@ -361,29 +361,29 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::new_primitive_builder(TypeKind
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_bool_builder()
 {
-    return create_primitive_builder<TK_BOOLEAN>();
+    return create_primitive_builder<TypeKind::TK_BOOLEAN>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_byte_builder()
 {
-    return create_primitive_builder<TK_BYTE>();
+    return create_primitive_builder<TypeKind::TK_BYTE>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_char8_builder()
 {
-    return create_primitive_builder<TK_CHAR8>();
+    return create_primitive_builder<TypeKind::TK_CHAR8>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_char16_builder()
 {
-    return create_primitive_builder<TK_CHAR16>();
+    return create_primitive_builder<TypeKind::TK_CHAR16>();
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_annotation_primitive(
         const std::string& name)
 {
     TypeDescriptor descriptor;
-    descriptor.set_kind(TK_ANNOTATION);
+    descriptor.set_kind(TypeKind::TK_ANNOTATION);
     descriptor.set_name(name);
     return create_builder(descriptor)->build();
 }
@@ -391,40 +391,40 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_annotation_primitive(
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_enum_builder()
 {
     TypeDescriptor pEnumDescriptor;
-    pEnumDescriptor.set_kind(TK_ENUM);
+    pEnumDescriptor.set_kind(TypeKind::TK_ENUM);
     // Enum currently is an alias for uint32_t
-    pEnumDescriptor.set_name(GenerateTypeName(get_type_name(TK_UINT32)));
+    pEnumDescriptor.set_name(GenerateTypeName(get_type_name(TypeKind::TK_UINT32)));
     return create_builder(pEnumDescriptor);
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_float32_builder()
 {
-    return create_primitive_builder<TK_FLOAT32>();
+    return create_primitive_builder<TypeKind::TK_FLOAT32>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_float64_builder()
 {
-    return create_primitive_builder<TK_FLOAT64>();
+    return create_primitive_builder<TypeKind::TK_FLOAT64>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_float128_builder()
 {
-    return create_primitive_builder<TK_FLOAT128>();
+    return create_primitive_builder<TypeKind::TK_FLOAT128>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_int16_builder()
 {
-    return create_primitive_builder<TK_INT16>();
+    return create_primitive_builder<TypeKind::TK_INT16>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_int32_builder()
 {
-    return create_primitive_builder<TK_INT32>();
+    return create_primitive_builder<TypeKind::TK_INT32>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_int64_builder()
 {
-    return create_primitive_builder<TK_INT64>();
+    return create_primitive_builder<TypeKind::TK_INT64>();
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_map_builder(
@@ -457,7 +457,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_map_builder(
     }
 
     TypeDescriptor descriptor;
-    descriptor.set_kind(TK_MAP);
+    descriptor.set_kind(TypeKind::TK_MAP);
     descriptor.bound_.push_back(bound);
     descriptor.key_element_type_ = key_type.shared_from_this();
     descriptor.element_type_ = value_type.shared_from_this();
@@ -493,7 +493,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_sequence_builder(
     }
 
     TypeDescriptor descriptor;
-    descriptor.set_kind(TK_SEQUENCE);
+    descriptor.set_kind(TypeKind::TK_SEQUENCE);
     descriptor.set_name(TypeNamesGenerator::get_sequence_type_name(type.get_name(), bound, false));
     descriptor.bound_.push_back(bound);
     descriptor.element_type_ = type.shared_from_this();
@@ -510,7 +510,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_string_builder(
     }
 
     TypeDescriptor descriptor;
-    descriptor.set_kind(TK_STRING8);
+    descriptor.set_kind(TypeKind::TK_STRING8);
     descriptor.set_name(TypeNamesGenerator::get_string_type_name(bound, false, true));
     descriptor.element_type_ = create_char8_type();
     descriptor.bound_.push_back(bound);
@@ -522,7 +522,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_child_struct_builder(
         const DynamicTypeBuilder& parent_type)
 {
     auto kind = parent_type.get_kind();
-    if (kind == TK_STRUCTURE || kind == TK_BITSET)
+    if (kind == TypeKind::TK_STRUCTURE || kind == TypeKind::TK_BITSET)
     {
         TypeDescriptor descriptor;
         descriptor.set_kind(kind);
@@ -541,25 +541,25 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_child_struct_builder(
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_struct_builder()
 {
     TypeDescriptor descriptor;
-    descriptor.set_kind(TK_STRUCTURE);
-    descriptor.set_name(GenerateTypeName(get_type_name(TK_STRUCTURE)));
+    descriptor.set_kind(TypeKind::TK_STRUCTURE);
+    descriptor.set_name(GenerateTypeName(get_type_name(TypeKind::TK_STRUCTURE)));
 
     return create_builder(descriptor);
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_uint16_builder()
 {
-    return create_primitive_builder<TK_UINT16>();
+    return create_primitive_builder<TypeKind::TK_UINT16>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_uint32_builder()
 {
-    return create_primitive_builder<TK_UINT32>();
+    return create_primitive_builder<TypeKind::TK_UINT32>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_uint64_builder()
 {
-    return create_primitive_builder<TK_UINT64>();
+    return create_primitive_builder<TypeKind::TK_UINT64>();
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_union_builder(
@@ -589,8 +589,8 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_union_builder(
     if (discriminator_type.is_discriminator_type())
     {
         TypeDescriptor descriptor;
-        descriptor.set_kind(TK_UNION);
-        descriptor.set_name(GenerateTypeName(get_type_name(TK_UNION)));
+        descriptor.set_kind(TypeKind::TK_UNION);
+        descriptor.set_name(GenerateTypeName(get_type_name(TypeKind::TK_UNION)));
         descriptor.discriminator_type_ = discriminator_type.shared_from_this();
 
         return create_builder(descriptor);
@@ -609,7 +609,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_wstring_builder(
     }
 
     TypeDescriptor descriptor;
-    descriptor.kind_ = TK_STRING16;
+    descriptor.kind_ = TypeKind::TK_STRING16;
     descriptor.name_ = TypeNamesGenerator::get_string_type_name(bound, true, true);
     descriptor.element_type_ = create_char16_type();
     descriptor.bound_.push_back(bound);
@@ -637,34 +637,34 @@ DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_primitive_builder(Typ
 
     switch(kind)
     {
-        case TK_BOOLEAN:
+        case TypeKind::TK_BOOLEAN:
             return create_bool_builder();
-        case TK_BYTE:
+        case TypeKind::TK_BYTE:
             return create_byte_builder();
-        case TK_INT16:
+        case TypeKind::TK_INT16:
             return create_int16_builder();
-        case TK_INT32:
+        case TypeKind::TK_INT32:
             return create_int32_builder();
-        case TK_INT64:
+        case TypeKind::TK_INT64:
             return create_int64_builder();
-        case TK_UINT16:
+        case TypeKind::TK_UINT16:
             return create_uint16_builder();
-        case TK_UINT32:
+        case TypeKind::TK_UINT32:
             return create_uint32_builder();
-        case TK_UINT64:
+        case TypeKind::TK_UINT64:
             return create_uint64_builder();
-        case TK_FLOAT32:
+        case TypeKind::TK_FLOAT32:
             return create_float32_builder();
-        case TK_FLOAT64:
+        case TypeKind::TK_FLOAT64:
             return create_float64_builder();
-        case TK_FLOAT128:
+        case TypeKind::TK_FLOAT128:
             return create_float128_builder();
-        case TK_CHAR8:
+        case TypeKind::TK_CHAR8:
             return create_char8_builder();
-        case TK_CHAR16:
+        case TypeKind::TK_CHAR16:
             return create_char16_builder();
         default:
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "The type provided " << kind << " is not primitive");
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "The type provided " << int(kind) << " is not primitive");
             return empty_means_failure;
     }
 }
@@ -701,59 +701,59 @@ void DynamicTypeBuilderFactory::build_type_identifier(
         switch (descriptor.kind_)
         {
             // Basic types
-            case TK_NONE:
-            case TK_BOOLEAN:
-            case TK_BYTE:
-            case TK_INT16:
-            case TK_INT32:
-            case TK_INT64:
-            case TK_UINT16:
-            case TK_UINT32:
-            case TK_UINT64:
-            case TK_FLOAT32:
-            case TK_FLOAT64:
-            case TK_FLOAT128:
-            case TK_CHAR8:
-            case TK_CHAR16:
+            case TypeKind::TK_NONE:
+            case TypeKind::TK_BOOLEAN:
+            case TypeKind::TK_BYTE:
+            case TypeKind::TK_INT16:
+            case TypeKind::TK_INT32:
+            case TypeKind::TK_INT64:
+            case TypeKind::TK_UINT16:
+            case TypeKind::TK_UINT32:
+            case TypeKind::TK_UINT64:
+            case TypeKind::TK_FLOAT32:
+            case TypeKind::TK_FLOAT64:
+            case TypeKind::TK_FLOAT128:
+            case TypeKind::TK_CHAR8:
+            case TypeKind::TK_CHAR16:
             {
                 identifier._d(descriptor.kind_);
             }
             break;
             // String TKs
-            case TK_STRING8:
+            case TypeKind::TK_STRING8:
             {
                 if (descriptor.bound_[0] < 256)
                 {
-                    identifier._d(TI_STRING8_SMALL);
+                    identifier._d(TypeKind::TI_STRING8_SMALL);
                     identifier.string_sdefn().bound(static_cast<SBound>(descriptor.bound_[0]));
                 }
                 else
                 {
-                    identifier._d(TI_STRING8_LARGE);
+                    identifier._d(TypeKind::TI_STRING8_LARGE);
                     identifier.string_ldefn().bound(descriptor.bound_[0]);
                 }
             }
             break;
-            case TK_STRING16:
+            case TypeKind::TK_STRING16:
             {
                 if (descriptor.bound_[0] < 256)
                 {
-                    identifier._d(TI_STRING16_SMALL);
+                    identifier._d(TypeKind::TI_STRING16_SMALL);
                     identifier.string_sdefn().bound(static_cast<SBound>(descriptor.bound_[0]));
                 }
                 else
                 {
-                    identifier._d(TI_STRING16_LARGE);
+                    identifier._d(TypeKind::TI_STRING16_LARGE);
                     identifier.string_ldefn().bound(descriptor.bound_[0]);
                 }
             }
             break;
             // Collection TKs
-            case TK_SEQUENCE:
+            case TypeKind::TK_SEQUENCE:
             {
                 if (descriptor.bound_[0] < 256)
                 {
-                    identifier._d(TI_PLAIN_SEQUENCE_SMALL);
+                    identifier._d(TypeKind::TI_PLAIN_SEQUENCE_SMALL);
                     identifier.seq_sdefn().bound(static_cast<SBound>(descriptor.bound_[0]));
                     TypeIdentifier elem_id;
                     build_type_identifier(*descriptor.get_element_type(), elem_id, complete);
@@ -761,7 +761,7 @@ void DynamicTypeBuilderFactory::build_type_identifier(
                 }
                 else
                 {
-                    identifier._d(TI_PLAIN_SEQUENCE_LARGE);
+                    identifier._d(TypeKind::TI_PLAIN_SEQUENCE_LARGE);
                     identifier.seq_ldefn().bound(descriptor.bound_[0]);
                     TypeIdentifier elem_id;
                     build_type_identifier(*descriptor.get_element_type(), elem_id, complete);
@@ -769,7 +769,7 @@ void DynamicTypeBuilderFactory::build_type_identifier(
                 }
             }
             break;
-            case TK_ARRAY:
+            case TypeKind::TK_ARRAY:
             {
                 uint32_t size = 0;
                 for (uint32_t s : descriptor.bound_)
@@ -779,7 +779,7 @@ void DynamicTypeBuilderFactory::build_type_identifier(
 
                 if (size < 256)
                 {
-                    identifier._d(TI_PLAIN_ARRAY_SMALL);
+                    identifier._d(TypeKind::TI_PLAIN_ARRAY_SMALL);
                     for (uint32_t b : descriptor.bound_)
                     {
                         identifier.array_sdefn().array_bound_seq().emplace_back(static_cast<SBound>(b));
@@ -790,7 +790,7 @@ void DynamicTypeBuilderFactory::build_type_identifier(
                 }
                 else
                 {
-                    identifier._d(TI_PLAIN_ARRAY_LARGE);
+                    identifier._d(TypeKind::TI_PLAIN_ARRAY_LARGE);
                     identifier.array_ldefn().array_bound_seq(descriptor.bound_);
                     TypeIdentifier elem_id;
                     build_type_identifier(*descriptor.get_element_type(), elem_id, complete);
@@ -798,11 +798,11 @@ void DynamicTypeBuilderFactory::build_type_identifier(
                 }
             }
             break;
-            case TK_MAP:
+            case TypeKind::TK_MAP:
             {
                 if (descriptor.bound_[0] < 256)
                 {
-                    identifier._d(TI_PLAIN_MAP_SMALL);
+                    identifier._d(TypeKind::TI_PLAIN_MAP_SMALL);
                     identifier.map_sdefn().bound(static_cast<SBound>(descriptor.bound_[0]));
                     TypeIdentifier elem_id;
                     build_type_identifier(*descriptor.get_element_type(), elem_id, complete);
@@ -813,7 +813,7 @@ void DynamicTypeBuilderFactory::build_type_identifier(
                 }
                 else
                 {
-                    identifier._d(TI_PLAIN_MAP_LARGE);
+                    identifier._d(TypeKind::TI_PLAIN_MAP_LARGE);
                     identifier.map_ldefn().bound(static_cast<SBound>(descriptor.bound_[0]));
                     TypeIdentifier elem_id;
                     build_type_identifier(*descriptor.get_element_type(), elem_id, complete);
@@ -825,18 +825,18 @@ void DynamicTypeBuilderFactory::build_type_identifier(
             }
             break;
             // Constructed/Named types
-            case TK_ALIAS:
+            case TypeKind::TK_ALIAS:
             // Enumerated TKs
-            case TK_ENUM:
-            case TK_BITMASK:
+            case TypeKind::TK_ENUM:
+            case TypeKind::TK_BITMASK:
             // Structured TKs
-            case TK_ANNOTATION:
-            case TK_STRUCTURE:
-            case TK_UNION:
-            case TK_BITSET:
+            case TypeKind::TK_ANNOTATION:
+            case TypeKind::TK_STRUCTURE:
+            case TypeKind::TK_UNION:
+            case TypeKind::TK_BITSET:
             {
                 // Need to be registered as TypeObject first
-                // and return them as EK_MINIMAL or EK_COMPLETE
+                // and return them as EK_MINIMAL or TypeKind::EK_COMPLETE
                 EPROSIMA_LOG_INFO(DYN_TYPE_FACTORY, "Complex types must be built from CompleteTypeObjects.");
             }
             break;
@@ -866,85 +866,85 @@ void DynamicTypeBuilderFactory::build_type_object(
     switch (descriptor.kind_)
     {
         // Basic types
-        case TK_NONE:
-        case TK_BOOLEAN:
-        case TK_BYTE:
-        case TK_INT16:
-        case TK_INT32:
-        case TK_INT64:
-        case TK_UINT16:
-        case TK_UINT32:
-        case TK_UINT64:
-        case TK_FLOAT32:
-        case TK_FLOAT64:
-        case TK_FLOAT128:
-        case TK_CHAR8:
-        case TK_CHAR16:
+        case TypeKind::TK_NONE:
+        case TypeKind::TK_BOOLEAN:
+        case TypeKind::TK_BYTE:
+        case TypeKind::TK_INT16:
+        case TypeKind::TK_INT32:
+        case TypeKind::TK_INT64:
+        case TypeKind::TK_UINT16:
+        case TypeKind::TK_UINT32:
+        case TypeKind::TK_UINT64:
+        case TypeKind::TK_FLOAT32:
+        case TypeKind::TK_FLOAT64:
+        case TypeKind::TK_FLOAT128:
+        case TypeKind::TK_CHAR8:
+        case TypeKind::TK_CHAR16:
         {
             break;
         }
         // String TKs
-        case TK_STRING8:
+        case TypeKind::TK_STRING8:
         {
             build_string8_type_code(descriptor);
             break;
         }
-        case TK_STRING16:
+        case TypeKind::TK_STRING16:
         {
             build_string16_type_code(descriptor);
             break;
         }
         // Collection TKs
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
         {
             build_sequence_type_code(descriptor, object, complete);
             break;
         }
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
         {
             build_array_type_code(descriptor, object, complete);
             break;
         }
-        case TK_MAP:
+        case TypeKind::TK_MAP:
         {
             build_map_type_code(descriptor, object, complete);
             break;
         }
 
         // Constructed/Named types
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
         {
             build_alias_type_code(descriptor, object, complete);
         }
         break;
         // Enumerated TKs
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
         {
             build_enum_type_code(descriptor, object, complete);
         }
         break;
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
         {
             build_bitmask_type_code(descriptor, object, complete);
         }
         break;
         // Structured TKs
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
         {
             build_annotation_type_code(descriptor, object, complete);
         }
         break;
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
         {
             build_struct_type_code(descriptor, object, complete);
         }
         break;
-        case TK_UNION:
+        case TypeKind::TK_UNION:
         {
             build_union_type_code(descriptor, object, complete);
         }
         break;
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
         {
             build_bitset_type_code(descriptor, object, complete);
         }
@@ -981,8 +981,8 @@ void DynamicTypeBuilderFactory::build_sequence_type_code(
 {
     if (complete)
     {
-        object._d(EK_COMPLETE);
-        object.complete()._d(TK_SEQUENCE);
+        object._d(TypeKind::EK_COMPLETE);
+        object.complete()._d(TypeKind::TK_SEQUENCE);
         object.complete().sequence_type().collection_flag().IS_FINAL(false);
         object.complete().sequence_type().collection_flag().IS_APPENDABLE(false);
         object.complete().sequence_type().collection_flag().IS_MUTABLE(false);
@@ -1021,8 +1021,8 @@ void DynamicTypeBuilderFactory::build_sequence_type_code(
     }
     else
     {
-        object._d(EK_MINIMAL);
-        object.minimal()._d(TK_SEQUENCE);
+        object._d(TypeKind::EK_MINIMAL);
+        object.minimal()._d(TypeKind::TK_SEQUENCE);
         object.minimal().sequence_type().collection_flag().IS_FINAL(false);
         object.minimal().sequence_type().collection_flag().IS_APPENDABLE(false);
         object.minimal().sequence_type().collection_flag().IS_MUTABLE(false);
@@ -1065,8 +1065,8 @@ void DynamicTypeBuilderFactory::build_array_type_code(
 {
     if (complete)
     {
-        object._d(EK_COMPLETE);
-        object.complete()._d(TK_ARRAY);
+        object._d(TypeKind::EK_COMPLETE);
+        object.complete()._d(TypeKind::TK_ARRAY);
         object.complete().array_type().collection_flag().IS_FINAL(false);
         object.complete().array_type().collection_flag().IS_APPENDABLE(false);
         object.complete().array_type().collection_flag().IS_MUTABLE(false);
@@ -1108,8 +1108,8 @@ void DynamicTypeBuilderFactory::build_array_type_code(
     }
     else
     {
-        object._d(EK_MINIMAL);
-        object.minimal()._d(TK_ARRAY);
+        object._d(TypeKind::EK_MINIMAL);
+        object.minimal()._d(TypeKind::TK_ARRAY);
         object.minimal().array_type().collection_flag().IS_FINAL(false);
         object.minimal().array_type().collection_flag().IS_APPENDABLE(false);
         object.minimal().array_type().collection_flag().IS_MUTABLE(false);
@@ -1155,8 +1155,8 @@ void DynamicTypeBuilderFactory::build_map_type_code(
 {
     if (complete)
     {
-        object._d(EK_COMPLETE);
-        object.complete()._d(TK_MAP);
+        object._d(TypeKind::EK_COMPLETE);
+        object.complete()._d(TypeKind::TK_MAP);
         object.complete().map_type().collection_flag().IS_FINAL(false);
         object.complete().map_type().collection_flag().IS_APPENDABLE(false);
         object.complete().map_type().collection_flag().IS_MUTABLE(false);
@@ -1208,8 +1208,8 @@ void DynamicTypeBuilderFactory::build_map_type_code(
     }
     else
     {
-        object._d(EK_MINIMAL);
-        object.minimal()._d(TK_MAP);
+        object._d(TypeKind::EK_MINIMAL);
+        object.minimal()._d(TypeKind::TK_MAP);
         object.minimal().map_type().collection_flag().IS_FINAL(false);
         object.minimal().map_type().collection_flag().IS_APPENDABLE(false);
         object.minimal().map_type().collection_flag().IS_MUTABLE(false);
@@ -1258,8 +1258,8 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
 {
     if (complete)
     {
-        object._d(EK_COMPLETE);
-        object.complete()._d(TK_ALIAS);
+        object._d(TypeKind::EK_COMPLETE);
+        object.complete()._d(TypeKind::TK_ALIAS);
         object.complete().alias_type().alias_flags().IS_FINAL(false);
         object.complete().alias_type().alias_flags().IS_APPENDABLE(false);
         object.complete().alias_type().alias_flags().IS_MUTABLE(false);
@@ -1288,7 +1288,7 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
         object.complete().alias_type().body().common().related_type(ident);
 
         TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(TypeKind::EK_COMPLETE);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     CompleteAliasType::getCdrSerializedSize(object.complete().alias_type()) + 4));
@@ -1316,8 +1316,8 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
     }
     else
     {
-        object._d(EK_MINIMAL);
-        object.minimal()._d(TK_ALIAS);
+        object._d(TypeKind::EK_MINIMAL);
+        object.minimal()._d(TypeKind::TK_ALIAS);
         object.minimal().alias_type().alias_flags().IS_FINAL(false);
         object.minimal().alias_type().alias_flags().IS_APPENDABLE(false);
         object.minimal().alias_type().alias_flags().IS_MUTABLE(false);
@@ -1342,7 +1342,7 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
         object.minimal().alias_type().body().common().related_type(ident);
 
         TypeIdentifier identifier;
-        identifier._d(EK_MINIMAL);
+        identifier._d(TypeKind::EK_MINIMAL);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     MinimalAliasType::getCdrSerializedSize(object.minimal().alias_type()) + 4));
@@ -1377,8 +1377,8 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
 {
     if (complete)
     {
-        object._d(EK_COMPLETE);
-        object.complete()._d(TK_ENUM);
+        object._d(TypeKind::EK_COMPLETE);
+        object.complete()._d(TypeKind::TK_ENUM);
         object.complete().enumerated_type().header().common().bit_bound(descriptor.annotation_get_bit_bound());
         object.complete().enumerated_type().header().detail().type_name(descriptor.get_name());
 
@@ -1401,7 +1401,7 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
         }
 
         TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(TypeKind::EK_COMPLETE);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     CompleteEnumeratedType::getCdrSerializedSize(object.complete().enumerated_type()) + 4));
@@ -1426,8 +1426,8 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
     }
     else
     {
-        object._d(EK_MINIMAL);
-        object.minimal()._d(TK_ENUM);
+        object._d(TypeKind::EK_MINIMAL);
+        object.minimal()._d(TypeKind::TK_ENUM);
         object.minimal().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
 
         for (const DynamicTypeMember& member : descriptor.get_all_members())
@@ -1444,7 +1444,7 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
         }
 
         TypeIdentifier identifier;
-        identifier._d(EK_MINIMAL);
+        identifier._d(TypeKind::EK_MINIMAL);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     MinimalEnumeratedType::getCdrSerializedSize(object.minimal().enumerated_type()) + 4));
@@ -1476,8 +1476,8 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
 {
     if (complete)
     {
-        object._d(EK_COMPLETE);
-        object.complete()._d(TK_STRUCTURE);
+        object._d(TypeKind::EK_COMPLETE);
+        object.complete()._d(TypeKind::TK_STRUCTURE);
 
         object.complete().struct_type().struct_flags().IS_FINAL(descriptor.annotation_is_final());
         object.complete().struct_type().struct_flags().IS_APPENDABLE(descriptor.annotation_is_appendable());
@@ -1538,7 +1538,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         //object.complete().struct_type().header().base_type().equivalence_hash()[0..13];
 
         TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(TypeKind::EK_COMPLETE);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     CompleteStructType::getCdrSerializedSize(object.complete().struct_type()) + 4));
@@ -1567,8 +1567,8 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
     }
     else
     {
-        object._d(EK_MINIMAL);
-        object.minimal()._d(TK_STRUCTURE);
+        object._d(TypeKind::EK_MINIMAL);
+        object.minimal()._d(TypeKind::TK_STRUCTURE);
 
         object.minimal().struct_type().struct_flags().IS_FINAL(descriptor.annotation_is_final());
         object.minimal().struct_type().struct_flags().IS_APPENDABLE(descriptor.annotation_is_appendable());
@@ -1621,7 +1621,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         }
 
         TypeIdentifier identifier;
-        identifier._d(EK_MINIMAL);
+        identifier._d(TypeKind::EK_MINIMAL);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     MinimalStructType::getCdrSerializedSize(object.minimal().struct_type()) + 4));
@@ -1657,8 +1657,8 @@ void DynamicTypeBuilderFactory::build_union_type_code(
 {
     if (complete)
     {
-        object._d(EK_COMPLETE);
-        object.complete()._d(TK_UNION);
+        object._d(TypeKind::EK_COMPLETE);
+        object.complete()._d(TypeKind::TK_UNION);
 
         object.complete().union_type().union_flags().IS_FINAL(descriptor.annotation_is_final());
         object.complete().union_type().union_flags().IS_APPENDABLE(descriptor.annotation_is_appendable());
@@ -1727,7 +1727,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         object.complete().union_type().header().detail().type_name(descriptor.get_name());
 
         TypeIdentifier identifier;
-        identifier._d(EK_MINIMAL);
+        identifier._d(TypeKind::EK_MINIMAL);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     CompleteUnionType::getCdrSerializedSize(object.complete().union_type()) + 4));
@@ -1752,8 +1752,8 @@ void DynamicTypeBuilderFactory::build_union_type_code(
     }
     else
     {
-        object._d(EK_MINIMAL);
-        object.minimal()._d(TK_UNION);
+        object._d(TypeKind::EK_MINIMAL);
+        object.minimal()._d(TypeKind::TK_UNION);
 
         object.minimal().union_type().union_flags().IS_FINAL(descriptor.annotation_is_final());
         object.minimal().union_type().union_flags().IS_APPENDABLE(descriptor.annotation_is_appendable());
@@ -1820,7 +1820,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         }
 
         TypeIdentifier identifier;
-        identifier._d(EK_MINIMAL);
+        identifier._d(TypeKind::EK_MINIMAL);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     MinimalUnionType::getCdrSerializedSize(object.minimal().union_type()) + 4));
@@ -1852,8 +1852,8 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
 {
     if (complete)
     {
-        object._d(EK_COMPLETE);
-        object.complete()._d(TK_BITSET);
+        object._d(TypeKind::EK_COMPLETE);
+        object.complete()._d(TypeKind::TK_BITSET);
 
         object.complete().bitset_type().bitset_flags().IS_FINAL(false);
         object.complete().bitset_type().bitset_flags().IS_APPENDABLE(false);
@@ -1894,7 +1894,7 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         //object.complete().bitset_type().header().base_type().equivalence_hash()[0..13];
 
         TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(TypeKind::EK_COMPLETE);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     CompleteBitsetType::getCdrSerializedSize(object.complete().bitset_type()) + 4));
@@ -1923,8 +1923,8 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
     }
     else
     {
-        object._d(EK_COMPLETE);
-        object.minimal()._d(TK_BITSET);
+        object._d(TypeKind::EK_COMPLETE);
+        object.minimal()._d(TypeKind::TK_BITSET);
 
         object.minimal().bitset_type().bitset_flags().IS_FINAL(false);
         object.minimal().bitset_type().bitset_flags().IS_APPENDABLE(false);
@@ -1959,7 +1959,7 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         //object.minimal().bitset_type().header().base_type().equivalence_hash()[0..13];
 
         TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(TypeKind::EK_COMPLETE);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     MinimalBitsetType::getCdrSerializedSize(object.minimal().bitset_type()) + 4));
@@ -1995,8 +1995,8 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
 {
     if (complete)
     {
-        object._d(EK_COMPLETE);
-        object.complete()._d(TK_BITMASK);
+        object._d(TypeKind::EK_COMPLETE);
+        object.complete()._d(TypeKind::TK_BITMASK);
 
         object.complete().bitmask_type().bitmask_flags().IS_FINAL(false);
         object.complete().bitmask_type().bitmask_flags().IS_APPENDABLE(false);
@@ -2024,7 +2024,7 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
         object.complete().bitmask_type().header().detail().type_name(descriptor.get_name());
 
         TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(TypeKind::EK_COMPLETE);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     CompleteBitmaskType::getCdrSerializedSize(object.complete().bitmask_type()) + 4));
@@ -2053,8 +2053,8 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
     }
     else
     {
-        object._d(EK_COMPLETE);
-        object.minimal()._d(TK_BITMASK);
+        object._d(TypeKind::EK_COMPLETE);
+        object.minimal()._d(TypeKind::TK_BITMASK);
 
         object.minimal().bitmask_type().bitmask_flags().IS_FINAL(false);
         object.minimal().bitmask_type().bitmask_flags().IS_APPENDABLE(false);
@@ -2075,7 +2075,7 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
         }
 
         TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(TypeKind::EK_COMPLETE);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     MinimalBitmaskType::getCdrSerializedSize(object.minimal().bitmask_type()) + 4));
@@ -2111,8 +2111,8 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
 {
     if (complete)
     {
-        object._d(EK_COMPLETE);
-        object.complete()._d(TK_ANNOTATION);
+        object._d(TypeKind::EK_COMPLETE);
+        object.complete()._d(TypeKind::TK_ANNOTATION);
 
         for (const DynamicTypeMember& member : descriptor.get_all_members())
         {
@@ -2147,7 +2147,7 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
         object.complete().annotation_type().header().annotation_name(descriptor.get_name());
 
         TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(TypeKind::EK_COMPLETE);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     CompleteAnnotationType::getCdrSerializedSize(object.complete().annotation_type()) + 4));
@@ -2176,8 +2176,8 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
     }
     else
     {
-        object._d(EK_COMPLETE);
-        object.minimal()._d(TK_ANNOTATION);
+        object._d(TypeKind::EK_COMPLETE);
+        object.minimal()._d(TypeKind::TK_ANNOTATION);
 
         for (const DynamicTypeMember& member : descriptor.get_all_members())
         {
@@ -2210,7 +2210,7 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
         }
 
         TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(TypeKind::EK_COMPLETE);
 
         eprosima::fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(
                     MinimalAnnotationType::getCdrSerializedSize(object.minimal().annotation_type()) + 4));
@@ -2245,7 +2245,7 @@ void DynamicTypeBuilderFactory::set_annotation_default_value(
 {
     switch (member.get_kind())
     {
-        case TK_BOOLEAN:
+        case TypeKind::TK_BOOLEAN:
         {
             std::string value = member.get_default_value();
             std::transform(value.begin(), value.end(), value.begin(),
@@ -2256,77 +2256,77 @@ void DynamicTypeBuilderFactory::set_annotation_default_value(
             apv.boolean_value(value.compare("0") != 0 || value.compare(CONST_TRUE) == 0);
         }
         break;
-        case TK_BYTE:
+        case TypeKind::TK_BYTE:
         {
             apv.byte_value(static_cast<uint8_t>(std::stoul(member.get_default_value())));
         }
         break;
-        case TK_INT16:
+        case TypeKind::TK_INT16:
         {
             apv.int16_value(static_cast<int16_t>(std::stoi(member.get_default_value())));
         }
         break;
-        case TK_INT32:
+        case TypeKind::TK_INT32:
         {
             apv.int32_value(static_cast<int32_t>(std::stoi(member.get_default_value())));
         }
         break;
-        case TK_INT64:
+        case TypeKind::TK_INT64:
         {
             apv.int64_value(static_cast<int64_t>(std::stoll(member.get_default_value())));
         }
         break;
-        case TK_UINT16:
+        case TypeKind::TK_UINT16:
         {
             apv.uint_16_value(static_cast<uint16_t>(std::stoul(member.get_default_value())));
         }
         break;
-        case TK_UINT32:
+        case TypeKind::TK_UINT32:
         {
             apv.uint32_value(static_cast<uint32_t>(std::stoul(member.get_default_value())));
         }
         break;
-        case TK_UINT64:
+        case TypeKind::TK_UINT64:
         {
             apv.uint64_value(static_cast<uint64_t>(std::stoull(member.get_default_value())));
         }
         break;
-        case TK_FLOAT32:
+        case TypeKind::TK_FLOAT32:
         {
             apv.float32_value(std::stof(member.get_default_value()));
         }
         break;
-        case TK_FLOAT64:
+        case TypeKind::TK_FLOAT64:
         {
             apv.float64_value(std::stod(member.get_default_value()));
         }
         break;
-        case TK_FLOAT128:
+        case TypeKind::TK_FLOAT128:
         {
             apv.float128_value(std::stold(member.get_default_value()));
         }
         break;
-        case TK_CHAR8:
+        case TypeKind::TK_CHAR8:
         {
             apv.char_value(member.get_default_value().c_str()[0]);
         }
         break;
-        case TK_CHAR16:
+        case TypeKind::TK_CHAR16:
         {
             apv.wchar_value(wstring_from_bytes(member.get_default_value()).c_str()[0]);
         }
         break;
-        case TK_STRING8:
+        case TypeKind::TK_STRING8:
         {
             apv.string8_value(member.get_default_value());
         }
         break;
-        case TK_STRING16:
+        case TypeKind::TK_STRING16:
         {
             apv.string16_value(wstring_from_bytes(member.get_default_value()));
         }
         break;
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
         {
             // TODO Translate from enum value name to integer value
             apv.enumerated_value(static_cast<int32_t>(std::stoul(member.get_default_value())));
@@ -2468,6 +2468,52 @@ void DynamicTypeBuilderFactory::apply_type_annotations(
     }
 }
 
+namespace typekind_detail {
+
+#define XTYPENAME(type)                                                                            \
+const char* TypeKindName<TypeKind::type, char, std::char_traits<char>>::name = #type;              \
+const wchar_t* TypeKindName<TypeKind::type, wchar_t, std::char_traits<wchar_t>>::name = L"" #type; \
+
+XTYPENAME(TK_BOOLEAN)
+XTYPENAME(TK_BYTE)
+XTYPENAME(TK_INT16)
+XTYPENAME(TK_INT32)
+XTYPENAME(TK_INT64)
+XTYPENAME(TK_UINT16)
+XTYPENAME(TK_UINT32)
+XTYPENAME(TK_UINT64)
+XTYPENAME(TK_FLOAT32)
+XTYPENAME(TK_FLOAT64)
+XTYPENAME(TK_FLOAT128)
+XTYPENAME(TK_CHAR8)
+XTYPENAME(TK_CHAR16)
+XTYPENAME(TK_STRING8)
+XTYPENAME(TK_STRING16)
+XTYPENAME(TK_ALIAS)
+XTYPENAME(TK_ENUM)
+XTYPENAME(TK_BITMASK)
+XTYPENAME(TK_ANNOTATION)
+XTYPENAME(TK_STRUCTURE)
+XTYPENAME(TK_UNION)
+XTYPENAME(TK_BITSET)
+XTYPENAME(TK_SEQUENCE)
+XTYPENAME(TK_ARRAY)
+XTYPENAME(TK_MAP)
+XTYPENAME(TI_STRING8_SMALL)
+XTYPENAME(TI_STRING8_LARGE)
+XTYPENAME(TI_STRING16_SMALL)
+XTYPENAME(TI_STRING16_LARGE)
+XTYPENAME(TI_PLAIN_SEQUENCE_SMALL)
+XTYPENAME(TI_PLAIN_SEQUENCE_LARGE)
+XTYPENAME(TI_PLAIN_ARRAY_SMALL)
+XTYPENAME(TI_PLAIN_ARRAY_LARGE)
+XTYPENAME(TI_PLAIN_MAP_SMALL)
+XTYPENAME(TI_PLAIN_MAP_LARGE)
+XTYPENAME(TI_STRONGLY_CONNECTED_COMPONENT)
+
+#undef XTYPENAME
+
+} // namespace typekind_detail
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima

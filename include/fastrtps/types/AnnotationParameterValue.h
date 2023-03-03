@@ -210,19 +210,19 @@ public:
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
      */
     RTPS_DllAPI void _d(
-            char __d);
+            TypeKind __d);
 
     /*!
      * @brief This function returns the value of the discriminator.
      * @return Value of the discriminator
      */
-    RTPS_DllAPI char _d() const;
+    RTPS_DllAPI TypeKind _d() const;
 
     /*!
      * @brief This function returns a reference to the discriminator.
      * @return Reference to the discriminator.
      */
-    RTPS_DllAPI char& _d();
+    RTPS_DllAPI TypeKind& _d();
 
     /*!
      * @brief This function sets a value in member boolean_value
@@ -647,40 +647,40 @@ public:
     {
         switch (m__d)
         {
-            case TK_BOOLEAN:
+            case TypeKind::TK_BOOLEAN:
                 return (m_boolean_value) ? "true" : "false";
-            case TK_BYTE:
+            case TypeKind::TK_BYTE:
                 return std::to_string(m_byte_value);
-            case TK_INT16:
+            case TypeKind::TK_INT16:
                 return std::to_string(m_int16_value);
-            case TK_UINT16:
+            case TypeKind::TK_UINT16:
                 return std::to_string(m_uint_16_value);
-            case TK_INT32:
+            case TypeKind::TK_INT32:
                 return std::to_string(m_int32_value);
-            case TK_UINT32:
+            case TypeKind::TK_UINT32:
                 return std::to_string(m_uint32_value);
-            case TK_INT64:
+            case TypeKind::TK_INT64:
                 return std::to_string(m_int64_value);
-            case TK_UINT64:
+            case TypeKind::TK_UINT64:
                 return std::to_string(m_uint64_value);
-            case TK_FLOAT32:
+            case TypeKind::TK_FLOAT32:
                 return std::to_string(m_float32_value);
-            case TK_FLOAT64:
+            case TypeKind::TK_FLOAT64:
                 return std::to_string(m_float64_value);
-            case TK_FLOAT128:
+            case TypeKind::TK_FLOAT128:
                 return std::to_string(m_float128_value);
-            case TK_CHAR8:
+            case TypeKind::TK_CHAR8:
                 return std::to_string(m_char_value);
-            case TK_CHAR16:
+            case TypeKind::TK_CHAR16:
                 return std::to_string(m_wchar_value);
-            case TK_ENUM:
+            case TypeKind::TK_ENUM:
                 return std::to_string(m_enumerated_value);
-            case TK_STRING16:
+            case TypeKind::TK_STRING16:
             {
                 return wstring_to_bytes(m_string16_value);
             }
-            case TK_STRING8:
-            case TK_NONE: // Cheat!
+            case TypeKind::TK_STRING8:
+            case TypeKind::TK_NONE: // Cheat!
                 return m_string8_value;
             default:
                 return "";
@@ -695,7 +695,7 @@ public:
     {
         switch (m__d)
         {
-            case TK_BOOLEAN:
+            case TypeKind::TK_BOOLEAN:
             {
                 std::string val_ = value;
                 std::transform(val_.begin(), val_.end(), val_.begin(),
@@ -706,78 +706,78 @@ public:
                 boolean_value(val_.compare("0") != 0 || val_.compare(CONST_TRUE) == 0);
             }
             break;
-            case TK_BYTE:
+            case TypeKind::TK_BYTE:
             {
                 byte_value(static_cast<uint8_t>(std::stoul(value)));
             }
             break;
-            case TK_INT16:
+            case TypeKind::TK_INT16:
             {
                 int16_value(static_cast<int16_t>(std::stoi(value)));
             }
             break;
-            case TK_INT32:
+            case TypeKind::TK_INT32:
             {
                 int32_value(static_cast<int32_t>(std::stoi(value)));
             }
             break;
-            case TK_INT64:
+            case TypeKind::TK_INT64:
             {
                 int64_value(static_cast<int64_t>(std::stoll(value)));
             }
             break;
-            case TK_UINT16:
+            case TypeKind::TK_UINT16:
             {
                 uint_16_value(static_cast<uint16_t>(std::stoul(value)));
             }
             break;
-            case TK_UINT32:
+            case TypeKind::TK_UINT32:
             {
                 uint32_value(static_cast<uint32_t>(std::stoul(value)));
             }
             break;
-            case TK_UINT64:
+            case TypeKind::TK_UINT64:
             {
                 uint64_value(static_cast<uint64_t>(std::stoull(value)));
             }
             break;
-            case TK_FLOAT32:
+            case TypeKind::TK_FLOAT32:
             {
                 float32_value(std::stof(value));
             }
             break;
-            case TK_FLOAT64:
+            case TypeKind::TK_FLOAT64:
             {
                 float64_value(std::stod(value));
             }
             break;
-            case TK_FLOAT128:
+            case TypeKind::TK_FLOAT128:
             {
                 float128_value(std::stold(value));
             }
             break;
-            case TK_CHAR8:
+            case TypeKind::TK_CHAR8:
             {
                 char_value(value.c_str()[0]);
             }
             break;
-            case TK_CHAR16:
+            case TypeKind::TK_CHAR16:
             {
                 wchar_value(wstring_from_bytes(value).c_str()[0]);
             }
             break;
-            case TK_STRING8:
-            case TK_NONE: // Cheat!
+            case TypeKind::TK_STRING8:
+            case TypeKind::TK_NONE: // Cheat!
             {
                 string8_value(value);
             }
             break;
-            case TK_STRING16:
+            case TypeKind::TK_STRING16:
             {
                 string16_value(wstring_from_bytes(value));
             }
             break;
-            case TK_ENUM:
+            case TypeKind::TK_ENUM:
             {
                 // TODO Translate from enum value name to integer value
                 enumerated_value(static_cast<int32_t>(std::stoul(value)));
@@ -790,7 +790,7 @@ public:
 
 private:
 
-    char m__d;
+    TypeKind m__d;
 
     bool m_boolean_value;
     uint8_t m_byte_value;

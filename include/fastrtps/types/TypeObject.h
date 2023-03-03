@@ -4229,9 +4229,9 @@ public:
     RTPS_DllAPI CompleteTypeObject& operator=(
             CompleteTypeObject&& x);
     RTPS_DllAPI void _d(
-            octet __d);
-    RTPS_DllAPI octet _d() const;
-    RTPS_DllAPI octet& _d();
+            TypeKind __d);
+    RTPS_DllAPI TypeKind _d() const;
+    RTPS_DllAPI TypeKind& _d();
 
     RTPS_DllAPI void alias_type(
             CompleteAliasType _alias_type);
@@ -4305,7 +4305,7 @@ public:
 
 private:
 
-    octet m__d;
+    TypeKind m__d;
 
     CompleteAliasType m_alias_type;
     CompleteAnnotationType m_annotation_type;
@@ -4335,9 +4335,9 @@ public:
     RTPS_DllAPI MinimalTypeObject& operator=(
             MinimalTypeObject&& x);
     RTPS_DllAPI void _d(
-            octet __d);
-    RTPS_DllAPI octet _d() const;
-    RTPS_DllAPI octet& _d();
+            TypeKind __d);
+    RTPS_DllAPI TypeKind _d() const;
+    RTPS_DllAPI TypeKind& _d();
 
     RTPS_DllAPI void alias_type(
             MinimalAliasType _alias_type);
@@ -4411,7 +4411,7 @@ public:
 
 private:
 
-    octet m__d;
+    TypeKind m__d;
 
     MinimalAliasType m_alias_type;
     MinimalAnnotationType m_annotation_type;
@@ -4473,19 +4473,19 @@ public:
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
      */
     RTPS_DllAPI void _d(
-            uint8_t __d);
+            TypeKind __d);
 
     /*!
      * @brief This function returns the value of the discriminator.
      * @return Value of the discriminator
      */
-    RTPS_DllAPI uint8_t _d() const;
+    RTPS_DllAPI TypeKind _d() const;
 
     /*!
      * @brief This function returns a reference to the discriminator.
      * @return Reference to the discriminator.
      */
-    RTPS_DllAPI uint8_t& _d();
+    RTPS_DllAPI TypeKind& _d();
 
     /*!
      * @brief This function copies the value in member complete
@@ -4579,7 +4579,7 @@ public:
 
 private:
 
-    uint8_t m__d;
+    TypeKind m__d;
 
     CompleteTypeObject m_complete;
     MinimalTypeObject m_minimal;

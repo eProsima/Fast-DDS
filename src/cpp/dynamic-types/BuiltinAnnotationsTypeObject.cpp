@@ -148,7 +148,7 @@ const TypeIdentifier* GetidIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("id", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -182,8 +182,8 @@ const TypeObject* GetMinimalidObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint32_t", false));
@@ -193,7 +193,7 @@ const TypeObject* GetMinimalidObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -222,14 +222,14 @@ const TypeObject* GetMinimalidObject()
 const TypeObject* GetCompleteidObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("id", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -250,7 +250,7 @@ const TypeObject* GetCompleteidObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -280,7 +280,7 @@ const TypeIdentifier* GetautoidIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("autoid", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -315,8 +315,8 @@ const TypeObject* GetMinimalautoidObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*GetAutoidKindIdentifier(false));
@@ -330,7 +330,7 @@ const TypeObject* GetMinimalautoidObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -360,14 +360,14 @@ const TypeObject* GetCompleteautoidObject()
 {
     using namespace autoid;
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("autoid", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -392,7 +392,7 @@ const TypeObject* GetCompleteautoidObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -423,7 +423,7 @@ const TypeIdentifier* GetAutoidKindIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("AutoidKind", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -457,8 +457,8 @@ const TypeObject* GetMinimalAutoidKindObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ENUM);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ENUM);
 
     // No flags apply
     //type_object->minimal().enumerated_type().enum_flags().IS_FINAL(false);
@@ -504,7 +504,7 @@ const TypeObject* GetMinimalAutoidKindObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalEnumeratedType::getCdrSerializedSize(type_object->minimal().enumerated_type()) + 4));
@@ -533,14 +533,14 @@ const TypeObject* GetMinimalAutoidKindObject()
 const TypeObject* GetCompleteAutoidKindObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("AutoidKind", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ENUM);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ENUM);
 
     // No flags apply
     //type_object->complete().enumerated_type().enum_flags().IS_FINAL(false);
@@ -585,7 +585,7 @@ const TypeObject* GetCompleteAutoidKindObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteEnumeratedType::getCdrSerializedSize(type_object->complete().enumerated_type()) + 4));
@@ -616,7 +616,7 @@ const TypeIdentifier* GetoptionalIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("optional", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -650,8 +650,8 @@ const TypeObject* GetMinimaloptionalObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
@@ -665,7 +665,7 @@ const TypeObject* GetMinimaloptionalObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -694,14 +694,14 @@ const TypeObject* GetMinimaloptionalObject()
 const TypeObject* GetCompleteoptionalObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("optional", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -726,7 +726,7 @@ const TypeObject* GetCompleteoptionalObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -756,7 +756,7 @@ const TypeIdentifier* GetpositionIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("position", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -790,8 +790,8 @@ const TypeObject* GetMinimalpositionObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
@@ -801,7 +801,7 @@ const TypeObject* GetMinimalpositionObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -830,14 +830,14 @@ const TypeObject* GetMinimalpositionObject()
 const TypeObject* GetCompletepositionObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("position", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -858,7 +858,7 @@ const TypeObject* GetCompletepositionObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -888,7 +888,7 @@ const TypeIdentifier* GetvalueIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("value", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -922,8 +922,8 @@ const TypeObject* GetMinimalvalueObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
@@ -933,7 +933,7 @@ const TypeObject* GetMinimalvalueObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -962,14 +962,14 @@ const TypeObject* GetMinimalvalueObject()
 const TypeObject* GetCompletevalueObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("value", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -990,7 +990,7 @@ const TypeObject* GetCompletevalueObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -1021,7 +1021,7 @@ const TypeIdentifier* GetextensibilityIdentifier(
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("extensibility",
                     complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -1056,8 +1056,8 @@ const TypeObject* GetMinimalextensibilityObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*GetExtensibilityKindIdentifier(false));
@@ -1067,7 +1067,7 @@ const TypeObject* GetMinimalextensibilityObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -1097,14 +1097,14 @@ const TypeObject* GetCompleteextensibilityObject()
 {
     using namespace extensibility;
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("extensibility", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -1125,7 +1125,7 @@ const TypeObject* GetCompleteextensibilityObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -1157,7 +1157,7 @@ const TypeIdentifier* GetExtensibilityKindIdentifier(
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ExtensibilityKind",
                     complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -1191,8 +1191,8 @@ const TypeObject* GetMinimalExtensibilityKindObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ENUM);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ENUM);
 
     // No flags apply
     //type_object->minimal().enumerated_type().enum_flags().IS_FINAL(false);
@@ -1254,7 +1254,7 @@ const TypeObject* GetMinimalExtensibilityKindObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalEnumeratedType::getCdrSerializedSize(type_object->minimal().enumerated_type()) + 4));
@@ -1283,14 +1283,14 @@ const TypeObject* GetMinimalExtensibilityKindObject()
 const TypeObject* GetCompleteExtensibilityKindObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ExtensibilityKind", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ENUM);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ENUM);
 
     // No flags apply
     //type_object->complete().enumerated_type().enum_flags().IS_FINAL(false);
@@ -1349,7 +1349,7 @@ const TypeObject* GetCompleteExtensibilityKindObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteEnumeratedType::getCdrSerializedSize(type_object->complete().enumerated_type()) + 4));
@@ -1380,7 +1380,7 @@ const TypeIdentifier* GetfinalIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("final", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -1414,12 +1414,12 @@ const TypeObject* GetMinimalfinalObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -1448,14 +1448,14 @@ const TypeObject* GetMinimalfinalObject()
 const TypeObject* GetCompletefinalObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("final", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -1470,7 +1470,7 @@ const TypeObject* GetCompletefinalObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -1500,7 +1500,7 @@ const TypeIdentifier* GetappendableIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("appendable", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -1534,12 +1534,12 @@ const TypeObject* GetMinimalappendableObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -1568,14 +1568,14 @@ const TypeObject* GetMinimalappendableObject()
 const TypeObject* GetCompleteappendableObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("appendable", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -1590,7 +1590,7 @@ const TypeObject* GetCompleteappendableObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -1620,7 +1620,7 @@ const TypeIdentifier* GetmutableIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("mutable", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -1654,12 +1654,12 @@ const TypeObject* GetMinimalmutableObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -1688,14 +1688,14 @@ const TypeObject* GetMinimalmutableObject()
 const TypeObject* GetCompletemutableObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("mutable", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -1710,7 +1710,7 @@ const TypeObject* GetCompletemutableObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -1740,7 +1740,7 @@ const TypeIdentifier* GetkeyIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("key", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -1774,8 +1774,8 @@ const TypeObject* GetMinimalkeyObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
@@ -1789,7 +1789,7 @@ const TypeObject* GetMinimalkeyObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -1818,14 +1818,14 @@ const TypeObject* GetMinimalkeyObject()
 const TypeObject* GetCompletekeyObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("key", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -1850,7 +1850,7 @@ const TypeObject* GetCompletekeyObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -1881,7 +1881,7 @@ const TypeIdentifier* Getmust_understandIdentifier(
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("must_understand",
                     complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -1915,8 +1915,8 @@ const TypeObject* GetMinimalmust_understandObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
@@ -1930,7 +1930,7 @@ const TypeObject* GetMinimalmust_understandObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -1959,14 +1959,14 @@ const TypeObject* GetMinimalmust_understandObject()
 const TypeObject* GetCompletemust_understandObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("must_understand", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -1991,7 +1991,7 @@ const TypeObject* GetCompletemust_understandObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -2022,7 +2022,7 @@ const TypeIdentifier* Getdefault_literalIdentifier(
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("default_literal",
                     complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -2056,12 +2056,12 @@ const TypeObject* GetMinimaldefault_literalObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -2090,14 +2090,14 @@ const TypeObject* GetMinimaldefault_literalObject()
 const TypeObject* GetCompletedefault_literalObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("default_literal", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -2112,7 +2112,7 @@ const TypeObject* GetCompletedefault_literalObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -2142,7 +2142,7 @@ const TypeIdentifier* GetdefaultIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("default", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -2176,8 +2176,8 @@ const TypeObject* GetMinimaldefaultObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
@@ -2187,7 +2187,7 @@ const TypeObject* GetMinimaldefaultObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -2216,14 +2216,14 @@ const TypeObject* GetMinimaldefaultObject()
 const TypeObject* GetCompletedefaultObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("default", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -2244,7 +2244,7 @@ const TypeObject* GetCompletedefaultObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -2274,7 +2274,7 @@ const TypeIdentifier* GetrangeIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("range", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -2308,8 +2308,8 @@ const TypeObject* GetMinimalrangeObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_min;
     mam_min.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
@@ -2325,7 +2325,7 @@ const TypeObject* GetMinimalrangeObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -2354,14 +2354,14 @@ const TypeObject* GetMinimalrangeObject()
 const TypeObject* GetCompleterangeObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("range", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -2388,7 +2388,7 @@ const TypeObject* GetCompleterangeObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -2418,7 +2418,7 @@ const TypeIdentifier* GetminIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("min", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -2452,8 +2452,8 @@ const TypeObject* GetMinimalminObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
@@ -2463,7 +2463,7 @@ const TypeObject* GetMinimalminObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -2492,14 +2492,14 @@ const TypeObject* GetMinimalminObject()
 const TypeObject* GetCompleteminObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("min", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -2520,7 +2520,7 @@ const TypeObject* GetCompleteminObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -2550,7 +2550,7 @@ const TypeIdentifier* GetmaxIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("max", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -2584,8 +2584,8 @@ const TypeObject* GetMinimalmaxObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
@@ -2595,7 +2595,7 @@ const TypeObject* GetMinimalmaxObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -2624,14 +2624,14 @@ const TypeObject* GetMinimalmaxObject()
 const TypeObject* GetCompletemaxObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("max", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -2652,7 +2652,7 @@ const TypeObject* GetCompletemaxObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -2682,7 +2682,7 @@ const TypeIdentifier* GetunitIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("unit", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -2716,8 +2716,8 @@ const TypeObject* GetMinimalunitObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
@@ -2727,7 +2727,7 @@ const TypeObject* GetMinimalunitObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -2756,14 +2756,14 @@ const TypeObject* GetMinimalunitObject()
 const TypeObject* GetCompleteunitObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("unit", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -2784,7 +2784,7 @@ const TypeObject* GetCompleteunitObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -2814,7 +2814,7 @@ const TypeIdentifier* Getbit_boundIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("bit_bound", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -2848,8 +2848,8 @@ const TypeObject* GetMinimalbit_boundObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
@@ -2859,7 +2859,7 @@ const TypeObject* GetMinimalbit_boundObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -2888,14 +2888,14 @@ const TypeObject* GetMinimalbit_boundObject()
 const TypeObject* GetCompletebit_boundObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("bit_bound", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -2916,7 +2916,7 @@ const TypeObject* GetCompletebit_boundObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -2946,7 +2946,7 @@ const TypeIdentifier* GetexternalIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("external", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -2980,8 +2980,8 @@ const TypeObject* GetMinimalexternalObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
@@ -2995,7 +2995,7 @@ const TypeObject* GetMinimalexternalObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -3024,14 +3024,14 @@ const TypeObject* GetMinimalexternalObject()
 const TypeObject* GetCompleteexternalObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("external", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -3056,7 +3056,7 @@ const TypeObject* GetCompleteexternalObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -3086,7 +3086,7 @@ const TypeIdentifier* GetnestedIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("nested", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -3120,8 +3120,8 @@ const TypeObject* GetMinimalnestedObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
@@ -3135,7 +3135,7 @@ const TypeObject* GetMinimalnestedObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -3164,14 +3164,14 @@ const TypeObject* GetMinimalnestedObject()
 const TypeObject* GetCompletenestedObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("nested", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -3196,7 +3196,7 @@ const TypeObject* GetCompletenestedObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -3226,7 +3226,7 @@ const TypeIdentifier* GetverbatimIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("verbatim", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -3261,8 +3261,8 @@ const TypeObject* GetMinimalverbatimObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_language;
     mam_language.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
@@ -3292,7 +3292,7 @@ const TypeObject* GetMinimalverbatimObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -3322,14 +3322,14 @@ const TypeObject* GetCompleteverbatimObject()
 {
     using namespace verbatim;
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("verbatim", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -3370,7 +3370,7 @@ const TypeObject* GetCompleteverbatimObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -3402,7 +3402,7 @@ const TypeIdentifier* GetPlacementKindIdentifier(
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("PlacementKind",
                     complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -3436,8 +3436,8 @@ const TypeObject* GetMinimalPlacementKindObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ENUM);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ENUM);
 
     // No flags apply
     //type_object->minimal().enumerated_type().enum_flags().IS_FINAL(false);
@@ -3547,7 +3547,7 @@ const TypeObject* GetMinimalPlacementKindObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalEnumeratedType::getCdrSerializedSize(type_object->minimal().enumerated_type()) + 4));
@@ -3576,14 +3576,14 @@ const TypeObject* GetMinimalPlacementKindObject()
 const TypeObject* GetCompletePlacementKindObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("PlacementKind", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ENUM);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ENUM);
 
     // No flags apply
     //type_object->complete().enumerated_type().enum_flags().IS_FINAL(false);
@@ -3684,7 +3684,7 @@ const TypeObject* GetCompletePlacementKindObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteEnumeratedType::getCdrSerializedSize(type_object->complete().enumerated_type()) + 4));
@@ -3715,7 +3715,7 @@ const TypeIdentifier* GetserviceIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("service", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -3749,8 +3749,8 @@ const TypeObject* GetMinimalserviceObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_platform;
     mam_platform.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
@@ -3764,7 +3764,7 @@ const TypeObject* GetMinimalserviceObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -3793,14 +3793,14 @@ const TypeObject* GetMinimalserviceObject()
 const TypeObject* GetCompleteserviceObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("service", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -3825,7 +3825,7 @@ const TypeObject* GetCompleteserviceObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -3855,7 +3855,7 @@ const TypeIdentifier* GetonewayIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("oneway", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -3889,8 +3889,8 @@ const TypeObject* GetMinimalonewayObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
@@ -3904,7 +3904,7 @@ const TypeObject* GetMinimalonewayObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -3933,14 +3933,14 @@ const TypeObject* GetMinimalonewayObject()
 const TypeObject* GetCompleteonewayObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("oneway", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -3965,7 +3965,7 @@ const TypeObject* GetCompleteonewayObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -3995,7 +3995,7 @@ const TypeIdentifier* GetamiIdentifier(
         bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ami", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -4029,8 +4029,8 @@ const TypeObject* GetMinimalamiObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
@@ -4044,7 +4044,7 @@ const TypeObject* GetMinimalamiObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -4073,14 +4073,14 @@ const TypeObject* GetMinimalamiObject()
 const TypeObject* GetCompleteamiObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ami", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -4105,7 +4105,7 @@ const TypeObject* GetCompleteamiObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
@@ -4136,7 +4136,7 @@ const TypeIdentifier* Getnon_serializedIdentifier(
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("non_serialized",
                     complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -4170,8 +4170,8 @@ const TypeObject* GetMinimalnon_serializedObject()
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
@@ -4185,7 +4185,7 @@ const TypeObject* GetMinimalnon_serializedObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
@@ -4214,14 +4214,14 @@ const TypeObject* GetMinimalnon_serializedObject()
 const TypeObject* GetCompletenon_serializedObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("non_serialized", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject* type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ANNOTATION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ANNOTATION);
 
     // No flags apply
     //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
@@ -4246,7 +4246,7 @@ const TypeObject* GetCompletenon_serializedObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));

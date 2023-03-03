@@ -228,7 +228,7 @@ public:
     create_primitive_builder() noexcept
     {
         // C++11 compiler uses double-checked locking pattern to avoid concurrency issues
-        static DynamicTypeBuilder_cptr builder = new_primitive_builder(kind);
+        static DynamicTypeBuilder_cptr builder = { new_primitive_builder(kind) };
         return builder;
     }
 

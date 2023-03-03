@@ -165,30 +165,30 @@ TEST_P(DynamicTypesPrimitiveTestsAPIs, primitives_apis_unit_tests)
 INSTANTIATE_TEST_SUITE_P(CheckingGetPrimitiveType,
                          DynamicTypesPrimitiveTestsAPIs,
                          testing::Values(
-                             std::make_pair(TK_INT32, &DynamicTypeBuilderFactory::create_int32_builder),
-                             std::make_pair(TK_UINT32, &DynamicTypeBuilderFactory::create_uint32_builder),
-                             std::make_pair(TK_INT16, &DynamicTypeBuilderFactory::create_int16_builder),
-                             std::make_pair(TK_UINT16, &DynamicTypeBuilderFactory::create_uint16_builder),
-                             std::make_pair(TK_INT64, &DynamicTypeBuilderFactory::create_int64_builder),
-                             std::make_pair(TK_UINT64, &DynamicTypeBuilderFactory::create_uint64_builder),
-                             std::make_pair(TK_FLOAT32, &DynamicTypeBuilderFactory::create_float32_builder),
-                             std::make_pair(TK_FLOAT64, &DynamicTypeBuilderFactory::create_float64_builder),
-                             std::make_pair(TK_FLOAT128, &DynamicTypeBuilderFactory::create_float128_builder),
-                             std::make_pair(TK_CHAR8, &DynamicTypeBuilderFactory::create_char8_builder),
-                             std::make_pair(TK_CHAR16, &DynamicTypeBuilderFactory::create_char16_builder),
-                             std::make_pair(TK_BOOLEAN, &DynamicTypeBuilderFactory::create_bool_builder),
-                             std::make_pair(TK_BYTE, &DynamicTypeBuilderFactory::create_byte_builder)));
+                             std::make_pair(TypeKind::TK_INT32, &DynamicTypeBuilderFactory::create_int32_builder),
+                             std::make_pair(TypeKind::TK_UINT32, &DynamicTypeBuilderFactory::create_uint32_builder),
+                             std::make_pair(TypeKind::TK_INT16, &DynamicTypeBuilderFactory::create_int16_builder),
+                             std::make_pair(TypeKind::TK_UINT16, &DynamicTypeBuilderFactory::create_uint16_builder),
+                             std::make_pair(TypeKind::TK_INT64, &DynamicTypeBuilderFactory::create_int64_builder),
+                             std::make_pair(TypeKind::TK_UINT64, &DynamicTypeBuilderFactory::create_uint64_builder),
+                             std::make_pair(TypeKind::TK_FLOAT32, &DynamicTypeBuilderFactory::create_float32_builder),
+                             std::make_pair(TypeKind::TK_FLOAT64, &DynamicTypeBuilderFactory::create_float64_builder),
+                             std::make_pair(TypeKind::TK_FLOAT128, &DynamicTypeBuilderFactory::create_float128_builder),
+                             std::make_pair(TypeKind::TK_CHAR8, &DynamicTypeBuilderFactory::create_char8_builder),
+                             std::make_pair(TypeKind::TK_CHAR16, &DynamicTypeBuilderFactory::create_char16_builder),
+                             std::make_pair(TypeKind::TK_BOOLEAN, &DynamicTypeBuilderFactory::create_bool_builder),
+                             std::make_pair(TypeKind::TK_BYTE, &DynamicTypeBuilderFactory::create_byte_builder)));
 
 // Testing create_primitive_builder<TypeKind>
 
 // ancillary class, gtest only allows parametrized tests on types
 template<TypeKind> struct TypeKindType {};
 
-#define GTEST_CONST2TYPE(type)         \
-template<>                             \
-struct TypeKindType<type>              \
-{                                      \
-    static const TypeKind kind = type; \
+#define GTEST_CONST2TYPE(type)                   \
+template<>                                       \
+struct TypeKindType<TypeKind::type>              \
+{                                                \
+    static const TypeKind kind = TypeKind::type; \
 };
 
 // specializations
@@ -212,7 +212,7 @@ class StaticTypesPrimitiveTests
 {};
 
 #undef GTEST_CONST2TYPE
-#define GTEST_CONST2TYPE(type) TypeKindType<type>
+#define GTEST_CONST2TYPE(type) TypeKindType<TypeKind::type>
 
 using TypeKindTypes = ::testing::Types<
     GTEST_CONST2TYPE(TK_BOOLEAN),
@@ -245,7 +245,6 @@ TYPED_TEST(StaticTypesPrimitiveTests, create_primitive_template_unit_tests)
     DynamicTypeBuilder_cptr builder2 = factory.create_primitive_builder(TypeParam::kind);
     ASSERT_TRUE(builder2);
     ASSERT_EQ(builder1, builder2);
-
 }
 
 #undef GTEST_CONST2TYPE

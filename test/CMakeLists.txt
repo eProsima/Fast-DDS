@@ -38,7 +38,9 @@ endif(WIN32)
 # Testing
 ###############################################################################
 if(EPROSIMA_BUILD_TESTS)
+
     find_package(GTest CONFIG REQUIRED)
+
     include(${PROJECT_SOURCE_DIR}/cmake/common/gtest.cmake)
 
     add_subdirectory(blackbox)

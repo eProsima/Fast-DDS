@@ -206,10 +206,10 @@ static DynamicTypeBuilder_cptr getDiscriminatorTypeBuilder(
         uint32_t bound = 0)
 {
     /*
-       mKind == TK_BOOLEAN || mKind == TK_BYTE || mKind == TK_INT16 || mKind == TK_INT32 ||
-        mKind == TK_INT64 || mKind == TK_UINT16 || mKind == TK_UINT32 || mKind == TK_UINT64 ||
-        mKind == TK_FLOAT32 || mKind == TK_FLOAT64 || mKind == TK_FLOAT128 || mKind == TK_CHAR8 ||
-        mKind == TK_CHAR16 || mKind == TK_STRING8 || mKind == TK_STRING16 || mKind == TK_ENUM || mKind == TK_BITMASK
+       mKind == TK_BOOLEAN || mKind == TK_BYTE || mKind == TK_INT16 || mKind == TypeKind::TK_INT32 ||
+        mKind == TK_INT64 || mKind == TK_UINT16 || mKind == TK_UINT32 || mKind == TypeKind::TK_UINT64 ||
+        mKind == TK_FLOAT32 || mKind == TK_FLOAT64 || mKind == TK_FLOAT128 || mKind == TypeKind::TK_CHAR8 ||
+        mKind == TK_CHAR16 || mKind == TK_STRING8 || mKind == TK_STRING16 || mKind == TK_ENUM || mKind == TypeKind::TK_BITMASK
      */
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
     if (disc.compare(BOOLEAN) == 0)
@@ -400,7 +400,7 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
     if (baseType != nullptr)
     {
         p_dynamictypebuilder_t parentType = XMLProfileManager::getDynamicTypeByName(baseType);
-        if (parentType != nullptr && parentType->get_kind() == TK_BITSET)
+        if (parentType != nullptr && parentType->get_kind() == TypeKind::TK_BITSET)
         {
             typeBuilder = DynamicTypeBuilderFactory::get_instance().create_child_struct_builder(*parentType);
         }
@@ -722,7 +722,7 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
     if (baseType != nullptr)
     {
         p_dynamictypebuilder_t parentType = XMLProfileManager::getDynamicTypeByName(baseType);
-        if (parentType != nullptr && parentType->get_kind() == TK_STRUCTURE)
+        if (parentType != nullptr && parentType->get_kind() == TypeKind::TK_STRUCTURE)
         {
             typeBuilder = DynamicTypeBuilderFactory::get_instance().create_child_struct_builder(*parentType);
         }

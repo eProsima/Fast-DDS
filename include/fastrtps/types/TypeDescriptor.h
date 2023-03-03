@@ -32,7 +32,7 @@ class DynamicType;
 struct TypeDescriptorData
 {
     std::string name_;                      //!< Type Name.
-    TypeKind kind_ = TK_NONE;               //!< Type Kind.
+    TypeKind kind_ = TypeKind::TK_NONE;     //!< Type Kind.
     DynamicType_ptr base_type_;             //!< SuperType of an structure or base type of an alias type.
     DynamicType_ptr discriminator_type_;    //!< Discrimination type for a union.
     std::vector<uint32_t> bound_;           //!< Length for strings, arrays, sequences, maps and bitmasks.

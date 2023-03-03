@@ -44,19 +44,6 @@ class TypeConsistencyEnforcementQosPolicy;
 namespace fastrtps {
 namespace types {
 
-typedef octet TypeIdentiferKind;
-const octet TI_STRING8_SMALL = 0x70;
-const octet TI_STRING8_LARGE = 0x71;
-const octet TI_STRING16_SMALL = 0x72;
-const octet TI_STRING16_LARGE = 0x73;
-const octet TI_PLAIN_SEQUENCE_SMALL = 0x80;
-const octet TI_PLAIN_SEQUENCE_LARGE = 0x81;
-const octet TI_PLAIN_ARRAY_SMALL = 0x90;
-const octet TI_PLAIN_ARRAY_LARGE = 0x91;
-const octet TI_PLAIN_MAP_SMALL = 0xA0;
-const octet TI_PLAIN_MAP_LARGE = 0xA1;
-const octet TI_STRONGLY_CONNECTED_COMPONENT = 0xB0;
-
 // The TypeIdentifier uniquely identifies a type (a set of equivalent
 // types according to an equivalence relationship:  COMPLETE, MNIMAL).
 //
@@ -125,19 +112,19 @@ public:
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
      */
     RTPS_DllAPI void _d(
-            octet __d);
+            TypeKind __d);
 
     /*!
      * @brief This function returns the value of the discriminator.
      * @return Value of the discriminator
      */
-    RTPS_DllAPI octet _d() const;
+    RTPS_DllAPI TypeKind _d() const;
 
     /*!
      * @brief This function returns a reference to the discriminator.
      * @return Reference to the discriminator.
      */
-    RTPS_DllAPI octet& _d();
+    RTPS_DllAPI TypeKind& _d();
 
     /*!
      * @brief This function sets a value in member string_sdefn
@@ -403,7 +390,7 @@ public:
 
 private:
 
-    octet m__d;
+    TypeKind m__d;
 
     StringSTypeDefn m_string_sdefn;
     StringLTypeDefn m_string_ldefn;

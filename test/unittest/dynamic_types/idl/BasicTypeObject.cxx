@@ -246,7 +246,7 @@ void registerBasicTypes()
 const TypeIdentifier* GetMyEnumIdentifier(bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("MyEnum", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -279,8 +279,8 @@ const TypeObject* GetMinimalMyEnumObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ENUM);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ENUM);
 
     // No flags apply
     //type_object->minimal().enumerated_type().enum_flags().IS_FINAL(false);
@@ -342,7 +342,7 @@ const TypeObject* GetMinimalMyEnumObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalEnumeratedType::getCdrSerializedSize(type_object->minimal().enumerated_type()) + 4));
@@ -371,14 +371,14 @@ const TypeObject* GetMinimalMyEnumObject()
 const TypeObject* GetCompleteMyEnumObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyEnum", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ENUM);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ENUM);
 
     // No flags apply
     //type_object->complete().enumerated_type().enum_flags().IS_FINAL(false);
@@ -433,7 +433,7 @@ const TypeObject* GetCompleteMyEnumObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteEnumeratedType::getCdrSerializedSize(type_object->complete().enumerated_type()) + 4));
@@ -462,7 +462,7 @@ const TypeObject* GetCompleteMyEnumObject()
 const TypeIdentifier* GetMyAliasEnumIdentifier(bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("MyAliasEnum", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -497,8 +497,8 @@ const TypeObject* GetMinimalMyAliasEnumObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ALIAS);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ALIAS);
 
     // No flags apply
     //type_object->minimal().alias_type().alias_flags().IS_FINAL(false);
@@ -534,7 +534,7 @@ const TypeObject* GetMinimalMyAliasEnumObject()
     }
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
@@ -566,14 +566,14 @@ const TypeObject* GetMinimalMyAliasEnumObject()
 const TypeObject* GetCompleteMyAliasEnumObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyAliasEnum", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ALIAS);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ALIAS);
 
     // No flags apply
     //type_object->complete().alias_type().alias_flags().IS_FINAL(false);
@@ -616,7 +616,7 @@ const TypeObject* GetCompleteMyAliasEnumObject()
     }
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
@@ -648,7 +648,7 @@ const TypeObject* GetCompleteMyAliasEnumObject()
 const TypeIdentifier* GetMyAliasAliasEnumIdentifier(bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("MyAliasAliasEnum", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -683,8 +683,8 @@ const TypeObject* GetMinimalMyAliasAliasEnumObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ALIAS);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ALIAS);
 
     // No flags apply
     //type_object->minimal().alias_type().alias_flags().IS_FINAL(false);
@@ -720,7 +720,7 @@ const TypeObject* GetMinimalMyAliasAliasEnumObject()
     }
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
@@ -752,14 +752,14 @@ const TypeObject* GetMinimalMyAliasAliasEnumObject()
 const TypeObject* GetCompleteMyAliasAliasEnumObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyAliasAliasEnum", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ALIAS);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ALIAS);
 
     // No flags apply
     //type_object->complete().alias_type().alias_flags().IS_FINAL(false);
@@ -802,7 +802,7 @@ const TypeObject* GetCompleteMyAliasAliasEnumObject()
     }
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
@@ -834,7 +834,7 @@ const TypeObject* GetCompleteMyAliasAliasEnumObject()
 const TypeIdentifier* GetEnumStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("EnumStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -867,8 +867,8 @@ const TypeObject* GetMinimalEnumStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -897,11 +897,11 @@ const TypeObject* GetMinimalEnumStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -930,14 +930,14 @@ const TypeObject* GetMinimalEnumStructObject()
 const TypeObject* GetCompleteEnumStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("EnumStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -967,7 +967,7 @@ const TypeObject* GetCompleteEnumStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -996,7 +996,7 @@ const TypeObject* GetCompleteEnumStructObject()
 const TypeIdentifier* GetAliasStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("AliasStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -1029,8 +1029,8 @@ const TypeObject* GetMinimalAliasStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -1059,11 +1059,11 @@ const TypeObject* GetMinimalAliasStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -1092,14 +1092,14 @@ const TypeObject* GetMinimalAliasStructObject()
 const TypeObject* GetCompleteAliasStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("AliasStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -1129,7 +1129,7 @@ const TypeObject* GetCompleteAliasStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -1158,7 +1158,7 @@ const TypeObject* GetCompleteAliasStructObject()
 const TypeIdentifier* GetAliasAliasStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("AliasAliasStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -1191,8 +1191,8 @@ const TypeObject* GetMinimalAliasAliasStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -1221,11 +1221,11 @@ const TypeObject* GetMinimalAliasAliasStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -1254,14 +1254,14 @@ const TypeObject* GetMinimalAliasAliasStructObject()
 const TypeObject* GetCompleteAliasAliasStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("AliasAliasStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -1291,7 +1291,7 @@ const TypeObject* GetCompleteAliasAliasStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -1320,7 +1320,7 @@ const TypeObject* GetCompleteAliasAliasStructObject()
 const TypeIdentifier* GetBoolStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("BoolStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -1353,8 +1353,8 @@ const TypeObject* GetMinimalBoolStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -1384,11 +1384,11 @@ const TypeObject* GetMinimalBoolStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -1417,14 +1417,14 @@ const TypeObject* GetMinimalBoolStructObject()
 const TypeObject* GetCompleteBoolStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BoolStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -1455,7 +1455,7 @@ const TypeObject* GetCompleteBoolStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -1484,7 +1484,7 @@ const TypeObject* GetCompleteBoolStructObject()
 const TypeIdentifier* GetOctetStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("OctetStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -1517,8 +1517,8 @@ const TypeObject* GetMinimalOctetStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -1548,11 +1548,11 @@ const TypeObject* GetMinimalOctetStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -1581,14 +1581,14 @@ const TypeObject* GetMinimalOctetStructObject()
 const TypeObject* GetCompleteOctetStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("OctetStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -1619,7 +1619,7 @@ const TypeObject* GetCompleteOctetStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -1648,7 +1648,7 @@ const TypeObject* GetCompleteOctetStructObject()
 const TypeIdentifier* GetShortStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ShortStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -1681,8 +1681,8 @@ const TypeObject* GetMinimalShortStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -1712,11 +1712,11 @@ const TypeObject* GetMinimalShortStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -1745,14 +1745,14 @@ const TypeObject* GetMinimalShortStructObject()
 const TypeObject* GetCompleteShortStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ShortStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -1783,7 +1783,7 @@ const TypeObject* GetCompleteShortStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -1812,7 +1812,7 @@ const TypeObject* GetCompleteShortStructObject()
 const TypeIdentifier* GetLongStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("LongStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -1845,8 +1845,8 @@ const TypeObject* GetMinimalLongStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -1876,11 +1876,11 @@ const TypeObject* GetMinimalLongStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -1909,14 +1909,14 @@ const TypeObject* GetMinimalLongStructObject()
 const TypeObject* GetCompleteLongStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -1947,7 +1947,7 @@ const TypeObject* GetCompleteLongStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -1976,7 +1976,7 @@ const TypeObject* GetCompleteLongStructObject()
 const TypeIdentifier* GetLongLongStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("LongLongStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -2009,8 +2009,8 @@ const TypeObject* GetMinimalLongLongStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -2040,11 +2040,11 @@ const TypeObject* GetMinimalLongLongStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -2073,14 +2073,14 @@ const TypeObject* GetMinimalLongLongStructObject()
 const TypeObject* GetCompleteLongLongStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongLongStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -2111,7 +2111,7 @@ const TypeObject* GetCompleteLongLongStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -2140,7 +2140,7 @@ const TypeObject* GetCompleteLongLongStructObject()
 const TypeIdentifier* GetUShortStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("UShortStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -2173,8 +2173,8 @@ const TypeObject* GetMinimalUShortStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -2204,11 +2204,11 @@ const TypeObject* GetMinimalUShortStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -2237,14 +2237,14 @@ const TypeObject* GetMinimalUShortStructObject()
 const TypeObject* GetCompleteUShortStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UShortStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -2275,7 +2275,7 @@ const TypeObject* GetCompleteUShortStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -2304,7 +2304,7 @@ const TypeObject* GetCompleteUShortStructObject()
 const TypeIdentifier* GetULongStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ULongStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -2337,8 +2337,8 @@ const TypeObject* GetMinimalULongStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -2368,11 +2368,11 @@ const TypeObject* GetMinimalULongStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -2401,14 +2401,14 @@ const TypeObject* GetMinimalULongStructObject()
 const TypeObject* GetCompleteULongStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ULongStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -2439,7 +2439,7 @@ const TypeObject* GetCompleteULongStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -2468,7 +2468,7 @@ const TypeObject* GetCompleteULongStructObject()
 const TypeIdentifier* GetULongLongStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ULongLongStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -2501,8 +2501,8 @@ const TypeObject* GetMinimalULongLongStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -2532,11 +2532,11 @@ const TypeObject* GetMinimalULongLongStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -2565,14 +2565,14 @@ const TypeObject* GetMinimalULongLongStructObject()
 const TypeObject* GetCompleteULongLongStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ULongLongStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -2603,7 +2603,7 @@ const TypeObject* GetCompleteULongLongStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -2632,7 +2632,7 @@ const TypeObject* GetCompleteULongLongStructObject()
 const TypeIdentifier* GetFloatStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("FloatStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -2665,8 +2665,8 @@ const TypeObject* GetMinimalFloatStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -2696,11 +2696,11 @@ const TypeObject* GetMinimalFloatStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -2729,14 +2729,14 @@ const TypeObject* GetMinimalFloatStructObject()
 const TypeObject* GetCompleteFloatStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("FloatStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -2767,7 +2767,7 @@ const TypeObject* GetCompleteFloatStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -2796,7 +2796,7 @@ const TypeObject* GetCompleteFloatStructObject()
 const TypeIdentifier* GetDoubleStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("DoubleStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -2829,8 +2829,8 @@ const TypeObject* GetMinimalDoubleStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -2860,11 +2860,11 @@ const TypeObject* GetMinimalDoubleStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -2893,14 +2893,14 @@ const TypeObject* GetMinimalDoubleStructObject()
 const TypeObject* GetCompleteDoubleStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("DoubleStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -2931,7 +2931,7 @@ const TypeObject* GetCompleteDoubleStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -2960,7 +2960,7 @@ const TypeObject* GetCompleteDoubleStructObject()
 const TypeIdentifier* GetLongDoubleStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("LongDoubleStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -2993,8 +2993,8 @@ const TypeObject* GetMinimalLongDoubleStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -3024,11 +3024,11 @@ const TypeObject* GetMinimalLongDoubleStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -3057,14 +3057,14 @@ const TypeObject* GetMinimalLongDoubleStructObject()
 const TypeObject* GetCompleteLongDoubleStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongDoubleStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -3095,7 +3095,7 @@ const TypeObject* GetCompleteLongDoubleStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -3124,7 +3124,7 @@ const TypeObject* GetCompleteLongDoubleStructObject()
 const TypeIdentifier* GetCharStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("CharStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -3157,8 +3157,8 @@ const TypeObject* GetMinimalCharStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -3188,11 +3188,11 @@ const TypeObject* GetMinimalCharStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -3221,14 +3221,14 @@ const TypeObject* GetMinimalCharStructObject()
 const TypeObject* GetCompleteCharStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("CharStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -3259,7 +3259,7 @@ const TypeObject* GetCompleteCharStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -3288,7 +3288,7 @@ const TypeObject* GetCompleteCharStructObject()
 const TypeIdentifier* GetWCharStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("WCharStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -3321,8 +3321,8 @@ const TypeObject* GetMinimalWCharStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -3352,11 +3352,11 @@ const TypeObject* GetMinimalWCharStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -3385,14 +3385,14 @@ const TypeObject* GetMinimalWCharStructObject()
 const TypeObject* GetCompleteWCharStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("WCharStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -3423,7 +3423,7 @@ const TypeObject* GetCompleteWCharStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -3452,7 +3452,7 @@ const TypeObject* GetCompleteWCharStructObject()
 const TypeIdentifier* GetStringStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StringStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -3485,8 +3485,8 @@ const TypeObject* GetMinimalStringStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -3517,11 +3517,11 @@ const TypeObject* GetMinimalStringStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -3550,14 +3550,14 @@ const TypeObject* GetMinimalStringStructObject()
 const TypeObject* GetCompleteStringStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StringStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -3589,7 +3589,7 @@ const TypeObject* GetCompleteStringStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -3618,7 +3618,7 @@ const TypeObject* GetCompleteStringStructObject()
 const TypeIdentifier* GetWStringStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("WStringStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -3651,8 +3651,8 @@ const TypeObject* GetMinimalWStringStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -3683,11 +3683,11 @@ const TypeObject* GetMinimalWStringStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -3716,14 +3716,14 @@ const TypeObject* GetMinimalWStringStructObject()
 const TypeObject* GetCompleteWStringStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("WStringStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -3755,7 +3755,7 @@ const TypeObject* GetCompleteWStringStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -3784,7 +3784,7 @@ const TypeObject* GetCompleteWStringStructObject()
 const TypeIdentifier* GetLargeStringStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("LargeStringStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -3817,8 +3817,8 @@ const TypeObject* GetMinimalLargeStringStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -3849,11 +3849,11 @@ const TypeObject* GetMinimalLargeStringStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -3882,14 +3882,14 @@ const TypeObject* GetMinimalLargeStringStructObject()
 const TypeObject* GetCompleteLargeStringStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LargeStringStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -3921,7 +3921,7 @@ const TypeObject* GetCompleteLargeStringStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -3950,7 +3950,7 @@ const TypeObject* GetCompleteLargeStringStructObject()
 const TypeIdentifier* GetLargeWStringStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("LargeWStringStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -3983,8 +3983,8 @@ const TypeObject* GetMinimalLargeWStringStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -4015,11 +4015,11 @@ const TypeObject* GetMinimalLargeWStringStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -4048,14 +4048,14 @@ const TypeObject* GetMinimalLargeWStringStructObject()
 const TypeObject* GetCompleteLargeWStringStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LargeWStringStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -4087,7 +4087,7 @@ const TypeObject* GetCompleteLargeWStringStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -4116,7 +4116,7 @@ const TypeObject* GetCompleteLargeWStringStructObject()
 const TypeIdentifier* GetArraytStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ArraytStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -4149,8 +4149,8 @@ const TypeObject* GetMinimalArraytStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -4181,11 +4181,11 @@ const TypeObject* GetMinimalArraytStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -4214,14 +4214,14 @@ const TypeObject* GetMinimalArraytStructObject()
 const TypeObject* GetCompleteArraytStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ArraytStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -4253,7 +4253,7 @@ const TypeObject* GetCompleteArraytStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -4282,7 +4282,7 @@ const TypeObject* GetCompleteArraytStructObject()
 const TypeIdentifier* GetMyArrayIdentifier(bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("MyArray", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -4317,8 +4317,8 @@ const TypeObject* GetMinimalMyArrayObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ALIAS);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_ALIAS);
 
     // No flags apply
     //type_object->minimal().alias_type().alias_flags().IS_FINAL(false);
@@ -4354,7 +4354,7 @@ const TypeObject* GetMinimalMyArrayObject()
     }
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
@@ -4386,14 +4386,14 @@ const TypeObject* GetMinimalMyArrayObject()
 const TypeObject* GetCompleteMyArrayObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyArray", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ALIAS);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_ALIAS);
 
     // No flags apply
     //type_object->complete().alias_type().alias_flags().IS_FINAL(false);
@@ -4436,7 +4436,7 @@ const TypeObject* GetCompleteMyArrayObject()
     }
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
@@ -4468,7 +4468,7 @@ const TypeObject* GetCompleteMyArrayObject()
 const TypeIdentifier* GetArrayArrayStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ArrayArrayStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -4501,8 +4501,8 @@ const TypeObject* GetMinimalArrayArrayStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -4533,11 +4533,11 @@ const TypeObject* GetMinimalArrayArrayStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -4566,14 +4566,14 @@ const TypeObject* GetMinimalArrayArrayStructObject()
 const TypeObject* GetCompleteArrayArrayStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ArrayArrayStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -4605,7 +4605,7 @@ const TypeObject* GetCompleteArrayArrayStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -4634,7 +4634,7 @@ const TypeObject* GetCompleteArrayArrayStructObject()
 const TypeIdentifier* GetSequenceStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("SequenceStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -4667,8 +4667,8 @@ const TypeObject* GetMinimalSequenceStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -4699,11 +4699,11 @@ const TypeObject* GetMinimalSequenceStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -4732,14 +4732,14 @@ const TypeObject* GetMinimalSequenceStructObject()
 const TypeObject* GetCompleteSequenceStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SequenceStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -4771,7 +4771,7 @@ const TypeObject* GetCompleteSequenceStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -4800,7 +4800,7 @@ const TypeObject* GetCompleteSequenceStructObject()
 const TypeIdentifier* GetSequenceSequenceStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("SequenceSequenceStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -4833,8 +4833,8 @@ const TypeObject* GetMinimalSequenceSequenceStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -4865,11 +4865,11 @@ const TypeObject* GetMinimalSequenceSequenceStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -4898,14 +4898,14 @@ const TypeObject* GetMinimalSequenceSequenceStructObject()
 const TypeObject* GetCompleteSequenceSequenceStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SequenceSequenceStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -4937,7 +4937,7 @@ const TypeObject* GetCompleteSequenceSequenceStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -4966,7 +4966,7 @@ const TypeObject* GetCompleteSequenceSequenceStructObject()
 const TypeIdentifier* GetMapStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("MapStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -4999,8 +4999,8 @@ const TypeObject* GetMinimalMapStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -5031,11 +5031,11 @@ const TypeObject* GetMinimalMapStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -5064,14 +5064,14 @@ const TypeObject* GetMinimalMapStructObject()
 const TypeObject* GetCompleteMapStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MapStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -5103,7 +5103,7 @@ const TypeObject* GetCompleteMapStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -5132,7 +5132,7 @@ const TypeObject* GetCompleteMapStructObject()
 const TypeIdentifier* GetMapMapStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("MapMapStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -5165,8 +5165,8 @@ const TypeObject* GetMinimalMapMapStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -5197,11 +5197,11 @@ const TypeObject* GetMinimalMapMapStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -5230,14 +5230,14 @@ const TypeObject* GetMinimalMapMapStructObject()
 const TypeObject* GetCompleteMapMapStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MapMapStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -5269,7 +5269,7 @@ const TypeObject* GetCompleteMapMapStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -5298,7 +5298,7 @@ const TypeObject* GetCompleteMapMapStructObject()
 const TypeIdentifier* GetMyBitsetIdentifier(bool complete)
 {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("MyBitset", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -5331,8 +5331,8 @@ const TypeObject* GetMinimalMyBitsetObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_BITSET);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_BITSET);
 
     MinimalBitfield mbf_a;
     mbf_a.common().flags().TRY_CONSTRUCT1(false);
@@ -5344,7 +5344,7 @@ const TypeObject* GetMinimalMyBitsetObject()
     mbf_a.common().flags().IS_DEFAULT(false);
     mbf_a.common().position(0);
     mbf_a.common().bitcount(2);
-    mbf_a.common().holder_type(TK_CHAR8);
+    mbf_a.common().holder_type(TypeKind::TK_CHAR8);
     MD5 a_hash("a");
     for(int i = 0; i < 4; ++i)
     {
@@ -5362,7 +5362,7 @@ const TypeObject* GetMinimalMyBitsetObject()
     mbf_b.common().flags().IS_DEFAULT(false);
     mbf_b.common().position(10);
     mbf_b.common().bitcount(20);
-    mbf_b.common().holder_type(TK_UINT32);
+    mbf_b.common().holder_type(TypeKind::TK_UINT32);
     MD5 b_hash("b");
     for(int i = 0; i < 4; ++i)
     {
@@ -5372,7 +5372,7 @@ const TypeObject* GetMinimalMyBitsetObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalBitsetType::getCdrSerializedSize(type_object->minimal().bitset_type()) + 4));
@@ -5401,14 +5401,14 @@ const TypeObject* GetMinimalMyBitsetObject()
 const TypeObject* GetCompleteMyBitsetObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyBitset", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_BITSET);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_BITSET);
 
     // No flags apply
     //type_object->complete().bitset_type().bitset_flags().IS_FINAL(false);
@@ -5430,7 +5430,7 @@ const TypeObject* GetCompleteMyBitsetObject()
     cbf_a.common().flags().IS_DEFAULT(false);
     cbf_a.common().position(0);
     cbf_a.common().bitcount(2);
-    cbf_a.common().holder_type(TK_CHAR8);
+    cbf_a.common().holder_type(TypeKind::TK_CHAR8);
     cbf_a.detail().name("a");
 
     // Position annotation always present
@@ -5445,7 +5445,7 @@ const TypeObject* GetCompleteMyBitsetObject()
             annParam.paramname_hash()[i] = message_hash.digest[i];
         }
         AnnotationParameterValue paramValue;
-        paramValue._d(TK_UINT16);
+        paramValue._d(TypeKind::TK_UINT16);
         paramValue.uint_16_value(0);
         annParam.value(paramValue);
         ann.param_seq().push_back(annParam);
@@ -5465,7 +5465,7 @@ const TypeObject* GetCompleteMyBitsetObject()
             annParam.paramname_hash()[i] = message_hash.digest[i];
         }
         AnnotationParameterValue paramValue;
-        paramValue._d(TK_UINT16);
+        paramValue._d(TypeKind::TK_UINT16);
         paramValue.uint_16_value(2);
         annParam.value(paramValue);
         ann.param_seq().push_back(annParam);
@@ -5485,7 +5485,7 @@ const TypeObject* GetCompleteMyBitsetObject()
     cbf_b.common().flags().IS_DEFAULT(false);
     cbf_b.common().position(10);
     cbf_b.common().bitcount(20);
-    cbf_b.common().holder_type(TK_UINT32);
+    cbf_b.common().holder_type(TypeKind::TK_UINT32);
     cbf_b.detail().name("b");
 
     // Position annotation always present
@@ -5500,7 +5500,7 @@ const TypeObject* GetCompleteMyBitsetObject()
             annParam.paramname_hash()[i] = message_hash.digest[i];
         }
         AnnotationParameterValue paramValue;
-        paramValue._d(TK_UINT16);
+        paramValue._d(TypeKind::TK_UINT16);
         paramValue.uint_16_value(10);
         annParam.value(paramValue);
         ann.param_seq().push_back(annParam);
@@ -5520,7 +5520,7 @@ const TypeObject* GetCompleteMyBitsetObject()
             annParam.paramname_hash()[i] = message_hash.digest[i];
         }
         AnnotationParameterValue paramValue;
-        paramValue._d(TK_UINT16);
+        paramValue._d(TypeKind::TK_UINT16);
         paramValue.uint_16_value(20);
         annParam.value(paramValue);
         ann.param_seq().push_back(annParam);
@@ -5532,7 +5532,7 @@ const TypeObject* GetCompleteMyBitsetObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteBitsetType::getCdrSerializedSize(type_object->complete().bitset_type()) + 4));
@@ -5561,7 +5561,7 @@ const TypeObject* GetCompleteMyBitsetObject()
 const TypeIdentifier* GetBitsetStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("BitsetStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -5594,8 +5594,8 @@ const TypeObject* GetMinimalBitsetStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -5624,11 +5624,11 @@ const TypeObject* GetMinimalBitsetStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -5657,14 +5657,14 @@ const TypeObject* GetMinimalBitsetStructObject()
 const TypeObject* GetCompleteBitsetStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BitsetStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -5694,7 +5694,7 @@ const TypeObject* GetCompleteBitsetStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -5723,7 +5723,7 @@ const TypeObject* GetCompleteBitsetStructObject()
 const TypeIdentifier* GetStructStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -5756,8 +5756,8 @@ const TypeObject* GetMinimalStructStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -5805,11 +5805,11 @@ const TypeObject* GetMinimalStructStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -5838,14 +5838,14 @@ const TypeObject* GetMinimalStructStructObject()
 const TypeObject* GetCompleteStructStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -5891,7 +5891,7 @@ const TypeObject* GetCompleteStructStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -5920,7 +5920,7 @@ const TypeObject* GetCompleteStructStructObject()
 const TypeIdentifier* GetStructStructStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructStructStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -5953,8 +5953,8 @@ const TypeObject* GetMinimalStructStructStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -6001,11 +6001,11 @@ const TypeObject* GetMinimalStructStructStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -6034,14 +6034,14 @@ const TypeObject* GetMinimalStructStructStructObject()
 const TypeObject* GetCompleteStructStructStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructStructStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -6086,7 +6086,7 @@ const TypeObject* GetCompleteStructStructStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -6115,7 +6115,7 @@ const TypeObject* GetCompleteStructStructStructObject()
 const TypeIdentifier* GetSimpleUnionIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("SimpleUnion", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -6148,8 +6148,8 @@ const TypeObject* GetMinimalSimpleUnionObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_UNION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_UNION);
 
     type_object->minimal().union_type().union_flags().IS_FINAL(false);
     type_object->minimal().union_type().union_flags().IS_APPENDABLE(false);
@@ -6211,7 +6211,7 @@ const TypeObject* GetMinimalSimpleUnionObject()
     //type_object->minimal().union_type().header().detail()... // Empty
 
     TypeIdentifier* identifier = new TypeIdentifier();
-    identifier->_d(EK_MINIMAL);
+    identifier->_d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalUnionType::getCdrSerializedSize(type_object->minimal().union_type()) + 4));
@@ -6241,14 +6241,14 @@ const TypeObject* GetMinimalSimpleUnionObject()
 const TypeObject* GetCompleteSimpleUnionObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SimpleUnion", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_UNION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_UNION);
 
     type_object->complete().union_type().union_flags().IS_FINAL(false);
     type_object->complete().union_type().union_flags().IS_APPENDABLE(false);
@@ -6306,7 +6306,7 @@ const TypeObject* GetCompleteSimpleUnionObject()
 
 
     TypeIdentifier* identifier = new TypeIdentifier();
-    identifier->_d(EK_COMPLETE);
+    identifier->_d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteUnionType::getCdrSerializedSize(type_object->complete().union_type()) + 4));
@@ -6336,7 +6336,7 @@ const TypeObject* GetCompleteSimpleUnionObject()
 const TypeIdentifier* GetUnionUnionIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("UnionUnion", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -6369,8 +6369,8 @@ const TypeObject* GetMinimalUnionUnionObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_UNION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_UNION);
 
     type_object->minimal().union_type().union_flags().IS_FINAL(false);
     type_object->minimal().union_type().union_flags().IS_APPENDABLE(false);
@@ -6431,7 +6431,7 @@ const TypeObject* GetMinimalUnionUnionObject()
     //type_object->minimal().union_type().header().detail()... // Empty
 
     TypeIdentifier* identifier = new TypeIdentifier();
-    identifier->_d(EK_MINIMAL);
+    identifier->_d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalUnionType::getCdrSerializedSize(type_object->minimal().union_type()) + 4));
@@ -6461,14 +6461,14 @@ const TypeObject* GetMinimalUnionUnionObject()
 const TypeObject* GetCompleteUnionUnionObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UnionUnion", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_UNION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_UNION);
 
     type_object->complete().union_type().union_flags().IS_FINAL(false);
     type_object->complete().union_type().union_flags().IS_APPENDABLE(false);
@@ -6525,7 +6525,7 @@ const TypeObject* GetCompleteUnionUnionObject()
 
 
     TypeIdentifier* identifier = new TypeIdentifier();
-    identifier->_d(EK_COMPLETE);
+    identifier->_d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteUnionType::getCdrSerializedSize(type_object->complete().union_type()) + 4));
@@ -6555,7 +6555,7 @@ const TypeObject* GetCompleteUnionUnionObject()
 const TypeIdentifier* GetWCharUnionIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("WCharUnion", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -6588,8 +6588,8 @@ const TypeObject* GetMinimalWCharUnionObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_UNION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_UNION);
 
     type_object->minimal().union_type().union_flags().IS_FINAL(false);
     type_object->minimal().union_type().union_flags().IS_APPENDABLE(false);
@@ -6651,7 +6651,7 @@ const TypeObject* GetMinimalWCharUnionObject()
     //type_object->minimal().union_type().header().detail()... // Empty
 
     TypeIdentifier* identifier = new TypeIdentifier();
-    identifier->_d(EK_MINIMAL);
+    identifier->_d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalUnionType::getCdrSerializedSize(type_object->minimal().union_type()) + 4));
@@ -6681,14 +6681,14 @@ const TypeObject* GetMinimalWCharUnionObject()
 const TypeObject* GetCompleteWCharUnionObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("WCharUnion", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_UNION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_UNION);
 
     type_object->complete().union_type().union_flags().IS_FINAL(false);
     type_object->complete().union_type().union_flags().IS_APPENDABLE(false);
@@ -6746,7 +6746,7 @@ const TypeObject* GetCompleteWCharUnionObject()
 
 
     TypeIdentifier* identifier = new TypeIdentifier();
-    identifier->_d(EK_COMPLETE);
+    identifier->_d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteUnionType::getCdrSerializedSize(type_object->complete().union_type()) + 4));
@@ -6776,7 +6776,7 @@ const TypeObject* GetCompleteWCharUnionObject()
 const TypeIdentifier* GetSimpleUnionStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("SimpleUnionStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -6809,8 +6809,8 @@ const TypeObject* GetMinimalSimpleUnionStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -6839,11 +6839,11 @@ const TypeObject* GetMinimalSimpleUnionStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -6872,14 +6872,14 @@ const TypeObject* GetMinimalSimpleUnionStructObject()
 const TypeObject* GetCompleteSimpleUnionStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SimpleUnionStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -6909,7 +6909,7 @@ const TypeObject* GetCompleteSimpleUnionStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -6938,7 +6938,7 @@ const TypeObject* GetCompleteSimpleUnionStructObject()
 const TypeIdentifier* GetUnionUnionUnionStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("UnionUnionUnionStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -6971,8 +6971,8 @@ const TypeObject* GetMinimalUnionUnionUnionStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -7001,11 +7001,11 @@ const TypeObject* GetMinimalUnionUnionUnionStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -7034,14 +7034,14 @@ const TypeObject* GetMinimalUnionUnionUnionStructObject()
 const TypeObject* GetCompleteUnionUnionUnionStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UnionUnionUnionStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -7071,7 +7071,7 @@ const TypeObject* GetCompleteUnionUnionUnionStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -7100,7 +7100,7 @@ const TypeObject* GetCompleteUnionUnionUnionStructObject()
 const TypeIdentifier* GetWCharUnionStructIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("WCharUnionStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -7133,8 +7133,8 @@ const TypeObject* GetMinimalWCharUnionStructObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -7163,11 +7163,11 @@ const TypeObject* GetMinimalWCharUnionStructObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -7196,14 +7196,14 @@ const TypeObject* GetMinimalWCharUnionStructObject()
 const TypeObject* GetCompleteWCharUnionStructObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("WCharUnionStruct", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -7233,7 +7233,7 @@ const TypeObject* GetCompleteWCharUnionStructObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));

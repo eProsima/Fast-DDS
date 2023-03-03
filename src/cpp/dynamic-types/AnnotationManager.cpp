@@ -28,7 +28,7 @@ AnnotationManager::get_annotation(
     for(; it != annotation_.end(); ++it)
     {
         const AnnotationDescriptor& d = *it;
-        if ( d.type() && d.type()->get_kind() > 0
+        if ( d.type() && d.type()->get_kind() != TypeKind::TK_NONE
              && !d.type()->get_name().empty()
              && d.type()->get_name().compare(name) == 0)
         {
