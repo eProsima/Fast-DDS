@@ -1620,8 +1620,8 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_information_recei
     Sentry sentinel(this);
     if (sentinel)
     {
-        if (type_information.complete().typeid_with_size().type_id()._d() > 0
-                || type_information.minimal().typeid_with_size().type_id()._d() > 0)
+        if (type_information.complete().typeid_with_size().type_id()._d() > fastrtps::types::TypeKind::TK_NONE
+                || type_information.minimal().typeid_with_size().type_id()._d() > fastrtps::types::TypeKind::TK_NONE)
         {
             participant_->listener_->on_type_information_received(
                 participant_->participant_, topic_name, type_name, type_information);
@@ -1687,7 +1687,7 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
 
     TypeObjectFactory* factory = TypeObjectFactory::get_instance();
     // Check if plain
-    if (type_information.complete().typeid_with_size().type_id()._d() < EK_MINIMAL)
+    if (type_information.complete().typeid_with_size().type_id()._d() < fastrtps::types::TypeKind::EK_MINIMAL)
     {
         DynamicType_ptr dyn = factory->build_dynamic_type(
             type_name,
@@ -1708,7 +1708,7 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
         type_information.complete().typeid_with_size().type_id(),
         obj);
 
-    if (obj._d() != 0)
+    if (obj._d() != fastrtps::types::TypeKind::TK_NONE)
     {
         DynamicType_ptr dyn = factory->build_dynamic_type(
             type_name,
@@ -1860,7 +1860,7 @@ void DomainParticipantImpl::fill_pending_dependencies(
             pending_identifiers.push_back(tiws.type_id());
         }
         // Check if we need to retrieve the TypeObject
-        if (tiws.type_id()._d() >= EK_MINIMAL)
+        if (tiws.type_id()._d() >= fastrtps::types::TypeKind::EK_MINIMAL)
         {
             TypeObject obj;
             TypeObjectFactory::get_instance()->typelookup_get_type(tiws.type_id(), obj);
@@ -1907,7 +1907,7 @@ bool DomainParticipantImpl::check_get_dependencies_request(
             // Add received dependencies to the factory
             for (const TypeIdentifierWithSize& tiws : dependencies)
             {
-                if (tiws.type_id()._d() >= EK_MINIMAL)
+                if (tiws.type_id()._d() >= fastrtps::types::TypeKind::EK_MINIMAL)
                 {
                     // This dependency needs a TypeObject
                     retrieve_objects.push_back(tiws.type_id());
@@ -1959,7 +1959,7 @@ bool DomainParticipantImpl::check_get_dependencies_request(
             // Add received dependencies to the factory
             for (const TypeIdentifierWithSize& tiws : dependencies)
             {
-                if (tiws.type_id()._d() >= EK_MINIMAL)
+                if (tiws.type_id()._d() >= fastrtps::types::TypeKind::EK_MINIMAL)
                 {
                     // This dependency needs a TypeObject
                     retrieve_objects.push_back(tiws.type_id());

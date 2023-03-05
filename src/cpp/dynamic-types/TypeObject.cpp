@@ -9325,39 +9325,15 @@ TypeObject& TypeObject::operator =(
 void TypeObject::_d(
         TypeKind __d)             // Special case to ease... sets the current active member
 {
-    bool b = false;
-    m__d = __d;
-
-    switch (m__d)
+    switch (__d)
     {
         case TypeKind::EK_COMPLETE:
-            switch (__d)
-            {
-                case TypeKind::EK_COMPLETE:
-                    b = true;
-                    break;
-                default:
-                    break;
-            }
-            break;
         case TypeKind::EK_MINIMAL:
-            switch (__d)
-            {
-                case TypeKind::EK_MINIMAL:
-                    b = true;
-                    break;
-                default:
-                    break;
-            }
-            break;
+            m__d = __d;
+            return;
+        default:
+            throw BadParamException("Discriminator doesn't correspond with the selected union member");
     }
-
-    if (!b)
-    {
-        throw BadParamException("Discriminator doesn't correspond with the selected union member");
-    }
-
-    m__d = __d;
 }
 
 TypeKind TypeObject::_d() const

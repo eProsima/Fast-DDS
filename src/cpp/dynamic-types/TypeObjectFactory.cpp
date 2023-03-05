@@ -486,10 +486,17 @@ void TypeObjectFactory::fill_minimal_information(
                 case TypeKind::TK_ANNOTATION:
                     // TODO To implement
                     break;
+                default:
+                    // TODO:BARRO check the missing cases
+                    break;
             }
             break;
         case TypeKind::EK_COMPLETE:
             // Cannot happen
+            break;
+        default:
+            // TODO:BARRO check the missing cases
+            assert(0);
             break;
     }
     std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);
@@ -756,6 +763,10 @@ void TypeObjectFactory::fill_complete_information(
                 case TypeKind::TK_ANNOTATION:
                     // TODO To implement (already fully defined? Fields are primitives.)
                     break;
+                default:
+                    // TODO:BARRO check the missing cases
+                    assert(0);
+                    break;
             }
             break;
         case TypeKind::EK_COMPLETE:
@@ -846,7 +857,16 @@ void TypeObjectFactory::fill_complete_information(
                 case TypeKind::TK_ANNOTATION:
                     // TODO To implement (already fully defined? Fields are primitives.)
                     break;
+                default:
+                    // TODO:BARRO check the missing cases
+                    assert(0);
+                    break;
             }
+            break;
+
+        default:
+            // TODO:BARRO check the missing cases
+            assert(0);
             break;
     }
     std::lock_guard<std::recursive_mutex> lock(m_MutexInformations);

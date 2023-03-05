@@ -288,11 +288,11 @@ uint32_t WriterProxyData::get_serialized_size(
     {
         ret_val += fastdds::dds::QosPoliciesSerializer<GroupDataQosPolicy>::cdr_serialized_size(m_qos.m_groupData);
     }
-    if (m_type_id && m_type_id->m_type_identifier._d() != 0)
+    if (m_type_id && m_type_id->m_type_identifier._d() != types::TypeKind::TK_NONE)
     {
         ret_val += fastdds::dds::QosPoliciesSerializer<TypeIdV1>::cdr_serialized_size(*m_type_id);
     }
-    if (m_type && m_type->m_type_object._d() != 0)
+    if (m_type && m_type->m_type_object._d() != types::TypeKind::TK_NONE)
     {
         ret_val += fastdds::dds::QosPoliciesSerializer<TypeObjectV1>::cdr_serialized_size(*m_type);
     }
@@ -546,7 +546,7 @@ bool WriterProxyData::writeToCDRMessage(
         }
     }
 
-    if (m_type_id && m_type_id->m_type_identifier._d() != 0)
+    if (m_type_id && m_type_id->m_type_identifier._d() != types::TypeKind::TK_NONE)
     {
         if (!fastdds::dds::QosPoliciesSerializer<TypeIdV1>::add_to_cdr_message(*m_type_id, msg))
         {
@@ -554,7 +554,7 @@ bool WriterProxyData::writeToCDRMessage(
         }
     }
 
-    if (m_type && m_type->m_type_object._d() != 0)
+    if (m_type && m_type->m_type_object._d() != types::TypeKind::TK_NONE)
     {
         if (!fastdds::dds::QosPoliciesSerializer<TypeObjectV1>::add_to_cdr_message(*m_type, msg))
         {

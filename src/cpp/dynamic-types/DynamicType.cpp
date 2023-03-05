@@ -121,8 +121,9 @@ size_t DynamicType::get_size() const
                 return (bits / 8) + 1;
             }
         }
+        default:
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Called get_size() within a non primitive type! This is a program's logic error.");
     }
-    EPROSIMA_LOG_ERROR(DYN_TYPES, "Called get_size() within a non primitive type! This is a program's logic error.");
     return 0;
 }
 

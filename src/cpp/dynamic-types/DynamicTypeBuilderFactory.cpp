@@ -840,6 +840,22 @@ void DynamicTypeBuilderFactory::build_type_identifier(
                 EPROSIMA_LOG_INFO(DYN_TYPE_FACTORY, "Complex types must be built from CompleteTypeObjects.");
             }
             break;
+            // TODO:BARRO handle this specific cases
+            case TypeKind::TI_STRING8_SMALL:
+            case TypeKind::TI_STRING8_LARGE:
+            case TypeKind::TI_STRING16_SMALL:
+            case TypeKind::TI_STRING16_LARGE:
+            case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
+            case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
+            case TypeKind::TI_PLAIN_ARRAY_SMALL:
+            case TypeKind::TI_PLAIN_ARRAY_LARGE:
+            case TypeKind::TI_PLAIN_MAP_SMALL:
+            case TypeKind::TI_PLAIN_MAP_LARGE:
+            case TypeKind::TI_STRONGLY_CONNECTED_COMPONENT:
+            case TypeKind::EK_MINIMAL:
+            case TypeKind::EK_COMPLETE:
+            case TypeKind::EK_BOTH:
+                assert(0);
         }
 
         TypeObjectFactory::get_instance()->add_type_identifier(descriptor.get_name(), &identifier);
@@ -949,6 +965,22 @@ void DynamicTypeBuilderFactory::build_type_object(
             build_bitset_type_code(descriptor, object, complete);
         }
         break;
+        // TODO:BARRO handle this specific cases
+        case TypeKind::TI_STRING8_SMALL:
+        case TypeKind::TI_STRING8_LARGE:
+        case TypeKind::TI_STRING16_SMALL:
+        case TypeKind::TI_STRING16_LARGE:
+        case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
+        case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
+        case TypeKind::TI_PLAIN_ARRAY_LARGE:
+        case TypeKind::TI_PLAIN_ARRAY_SMALL:
+        case TypeKind::TI_PLAIN_MAP_SMALL:
+        case TypeKind::TI_PLAIN_MAP_LARGE:
+        case TypeKind::TI_STRONGLY_CONNECTED_COMPONENT:
+        case TypeKind::EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_BOTH:
+            assert(0);
     }
 }
 

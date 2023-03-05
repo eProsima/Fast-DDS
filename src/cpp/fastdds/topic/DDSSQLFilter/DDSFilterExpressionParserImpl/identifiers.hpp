@@ -19,6 +19,18 @@
  * DDSFilterExpressionParser.hpp file of the parent folder.
  */
 
+#if defined(__has_include) && __has_include(<version>)
+#   include <version>
+#endif // if defined(__has_include) && __has_include(<version>)
+
+#if defined(__has_cpp_attribute) && __has_cpp_attribute(fallthrough)
+#    define eprosima_fallthrough [[fallthrough]];
+#elif defined(__GNUC__) || defined(__clang__)
+#    define eprosima_fallthrough __attribute__((fallthrough));
+#else
+#    define eprosima_fallthrough
+#endif
+
 struct CurrentIdentifierState
 {
     const TypeObject* type_object;
@@ -57,28 +69,30 @@ struct identifier_processor
 
         switch (ti._d())
         {
-            case TI_PLAIN_ARRAY_SMALL:
+            case TypeKind::TI_PLAIN_ARRAY_SMALL:
                 out_type = ti.array_sdefn().element_identifier();
                 max_size = process_bounds(ti.array_sdefn().array_bound_seq());
                 return true;
 
-            case TI_PLAIN_ARRAY_LARGE:
+            case TypeKind::TI_PLAIN_ARRAY_LARGE:
                 out_type = ti.array_ldefn().element_identifier();
                 max_size = process_bounds(ti.array_ldefn().array_bound_seq());
                 return true;
 
-            case TI_PLAIN_SEQUENCE_SMALL:
+            case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
                 out_type = ti.seq_sdefn().element_identifier();
                 max_size = process_bound(ti.seq_sdefn().bound());
                 return true;
 
-            case TI_PLAIN_SEQUENCE_LARGE:
+            case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
                 out_type = ti.seq_ldefn().element_identifier();
                 max_size = process_bound(ti.seq_ldefn().bound());
                 return true;
+
+            default:
+                out_type = &ti;
         }
 
-        out_type = &ti;
         return false;
     }
 
@@ -87,7 +101,7 @@ struct identifier_processor
             CurrentIdentifierState& identifier_state,
             const CompleteTypeObject& complete)
     {
-        if (TK_STRUCTURE != complete._d())
+        if (TypeKind::TK_STRUCTURE != complete._d())
         {
             throw parse_error("trying to access field on a non-struct type", n->begin());
         }
@@ -141,50 +155,64 @@ struct identifier_processor
             const TypeIdentifier& ti,
             const position& pos)
     {
+        DDSFilterValue::ValueKind res;
+
         switch (ti._d())
         {
-            case TK_BOOLEAN:
-                return DDSFilterValue::ValueKind::BOOLEAN;
-
-            case TK_CHAR8:
-                return DDSFilterValue::ValueKind::CHAR;
-
-            case TK_STRING8:
-            case TI_STRING8_SMALL:
-            case TI_STRING8_LARGE:
-                return DDSFilterValue::ValueKind::STRING;
-
-            case TK_INT16:
-            case TK_INT32:
-            case TK_INT64:
-                return DDSFilterValue::ValueKind::SIGNED_INTEGER;
-
-            case TK_BYTE:
-            case TK_UINT16:
-            case TK_UINT32:
-            case TK_UINT64:
-                return DDSFilterValue::ValueKind::UNSIGNED_INTEGER;
-
-            case TK_FLOAT32:
-                return DDSFilterValue::ValueKind::FLOAT_FIELD;
-
-            case TK_FLOAT64:
-                return DDSFilterValue::ValueKind::DOUBLE_FIELD;
-
-            case TK_FLOAT128:
-                return DDSFilterValue::ValueKind::LONG_DOUBLE_FIELD;
-
-            case EK_COMPLETE:
-                const TypeObject* type_object = TypeObjectFactory::get_instance()->get_type_object(&ti);
-                if (TK_ENUM == type_object->complete()._d())
-                {
-                    return DDSFilterValue::ValueKind::ENUM;
-                }
+            case TypeKind::TK_BOOLEAN:
+                res = DDSFilterValue::ValueKind::BOOLEAN;
                 break;
 
+            case TypeKind::TK_CHAR8:
+                res = DDSFilterValue::ValueKind::CHAR;
+                break;
+
+            case TypeKind::TK_STRING8:
+            case TypeKind::TI_STRING8_SMALL:
+            case TypeKind::TI_STRING8_LARGE:
+                res = DDSFilterValue::ValueKind::STRING;
+                break;
+
+            case TypeKind::TK_INT16:
+            case TypeKind::TK_INT32:
+            case TypeKind::TK_INT64:
+                res = DDSFilterValue::ValueKind::SIGNED_INTEGER;
+                break;
+
+            case TypeKind::TK_BYTE:
+            case TypeKind::TK_UINT16:
+            case TypeKind::TK_UINT32:
+            case TypeKind::TK_UINT64:
+                res = DDSFilterValue::ValueKind::UNSIGNED_INTEGER;
+                break;
+
+            case TypeKind::TK_FLOAT32:
+                res = DDSFilterValue::ValueKind::FLOAT_FIELD;
+                break;
+
+            case TypeKind::TK_FLOAT64:
+                res = DDSFilterValue::ValueKind::DOUBLE_FIELD;
+                break;
+
+            case TypeKind::TK_FLOAT128:
+                res = DDSFilterValue::ValueKind::LONG_DOUBLE_FIELD;
+                break;
+
+            case TypeKind::EK_COMPLETE:
+                {
+                    const TypeObject* type_object = TypeObjectFactory::get_instance()->get_type_object(&ti);
+                    if (TypeKind::TK_ENUM == type_object->complete()._d())
+                    {
+                        res = DDSFilterValue::ValueKind::ENUM;
+                        break;
+                    }
+                }
+            eprosima_fallthrough
+            default:
+                throw parse_error("type is not primitive", pos);
         }
 
-        throw parse_error("type is not primitive", pos);
+        return res;
     }
 
     template< typename ... States >
@@ -212,7 +240,7 @@ struct identifier_processor
             }
             else
             {
-                if (EK_COMPLETE != state.current_type->_d())
+                if (TypeKind::EK_COMPLETE != state.current_type->_d())
                 {
                     throw parse_error("trying to access field on a non-complete type", n->begin());
                 }
