@@ -90,18 +90,20 @@ public:
 
     bool operator==(const MemberDescriptor& other) const;
 
+    bool operator!=(const MemberDescriptor& other) const;
+
     // TODO: doxygen
     RTPS_DllAPI bool equals(const MemberDescriptor& other) const;
 
     RTPS_DllAPI TypeKind get_kind() const;
 
-    // TODO: doxygen
+    //! provides the @ref MemberId of this member
     RTPS_DllAPI MemberId get_id() const;
 
     // TODO: doxygen
     RTPS_DllAPI  uint32_t get_index() const;
 
-    // TODO: doxygen
+    //! provides the name of this member
     RTPS_DllAPI std::string get_name() const;
 
     RTPS_DllAPI std::vector<uint64_t> get_union_labels() const;
@@ -129,7 +131,7 @@ public:
     RTPS_DllAPI void set_type(DynamicType_ptr&& type);
     RTPS_DllAPI void set_type(const DynamicType_ptr& type);
 
-    // TODO: doxygen
+    //! provides the @ref DynamicType object associated with this member
     RTPS_DllAPI DynamicType_ptr get_type() const;
 
     RTPS_DllAPI void set_default_union_value(bool bDefault);
@@ -141,8 +143,9 @@ public:
     }
 
     // TODO: getters and setters for labels & default_label
-
 };
+
+std::ostream& operator<<( std::ostream& os, const MemberDescriptor & md);
 
 } // namespace types
 } // namespace fastrtps

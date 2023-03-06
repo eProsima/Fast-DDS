@@ -55,19 +55,6 @@ void DynamicType::clear()
     TypeDescriptor::clean();
 }
 
-bool DynamicType::exists_member_by_name(
-        const std::string& name) const
-{
-    if (get_base_type() != nullptr)
-    {
-        if (get_base_type()->exists_member_by_name(name))
-        {
-            return true;
-        }
-    }
-    return member_by_name_.find(name) != member_by_name_.end();
-}
-
 bool DynamicType::equals(
         const DynamicType& other) const
 {

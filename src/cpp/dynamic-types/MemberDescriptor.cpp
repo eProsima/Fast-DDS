@@ -19,6 +19,8 @@
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastdds/dds/log/Log.hpp>
 
+#include <iomanip>
+
 namespace eprosima {
 namespace fastrtps {
 namespace types {
@@ -50,8 +52,6 @@ MemberDescriptor::MemberDescriptor(
     , id_(id)
     , type_(type)
     , default_value_(defaultValue)
-    , index_(INDEX_INVALID)
-    , default_label_(false)
 {
 }
 
@@ -66,7 +66,6 @@ MemberDescriptor::MemberDescriptor(
     , id_(id)
     , type_(type)
     , default_value_(defaultValue)
-    , index_(INDEX_INVALID)
     , labels_{unionLabels.begin(), unionLabels.end()}
     , default_label_(isDefaultLabel)
 {
@@ -107,6 +106,11 @@ bool MemberDescriptor::operator==(const MemberDescriptor& other) const
            labels_ == other.labels_ &&
            default_label_ == other.default_label_ &&
            (type_ == other.type_ || (type_ && other.type_ && *type_ == *other.type_ ));
+}
+
+bool MemberDescriptor::operator!=(const MemberDescriptor& other) const
+{
+    return !operator==(other);
 }
 
 bool MemberDescriptor::equals(
@@ -360,6 +364,24 @@ void MemberDescriptor::set_default_union_value(
         bool bDefault)
 {
     default_label_ = bDefault;
+}
+
+std::ostream& operator<<( std::ostream& os, const MemberDescriptor & md)
+{
+    using namespace std;
+
+    // TODO: Barro, add support Type details and labels
+
+    auto manips = [](ostream& os) -> ostream&
+    {
+        return os << setw(10) << left << '\t';
+    };
+
+    return os << endl
+              << manips << "index:" << md.get_index() << endl
+              << manips << "name:" << md.get_name() << endl
+              << manips << "id:" << md.get_id() << endl
+              << manips << "kind:" << md.get_kind();
 }
 
 } // namespace types

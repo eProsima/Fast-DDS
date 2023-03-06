@@ -89,10 +89,12 @@ DynamicTypeBuilder::member_iterator DynamicTypeBuilder::add_empty_member(
         std::advance(it, index);
         it = members_.emplace(it, index, name);
         // rename the others
-        for(auto i = index; it != members_.end(); ++it)
+        auto nit = it;
+        auto i = index;
+        for( ++nit, ++i; nit != members_.end(); ++nit)
         {
-            it->set_index(++i);
-            assert(it->get_index() == i);
+            nit->set_index(i);
+            assert(nit->get_index() == i);
         }
     }
 
@@ -109,13 +111,6 @@ DynamicTypeBuilder::member_iterator DynamicTypeBuilder::add_empty_member(
     }
 
     return it;
-}
-
-ReturnCode_t DynamicTypeBuilder::add_member(
-        const MemberDescriptor& descriptor) noexcept
-{
-    // implementation on the rvalue argument version
-    return add_member(MemberDescriptor(descriptor));
 }
 
 ReturnCode_t DynamicTypeBuilder::add_member(
@@ -178,8 +173,7 @@ ReturnCode_t DynamicTypeBuilder::add_member(
 
         DynamicTypeMember& newMember = *it;
         // Copy all elements but keep the index
-        assert(newMember.get_index() == descriptor.get_index()
-            || descriptor.get_index() >= members_.size() );
+        descriptor.index_ = newMember.index_;
         newMember = std::move(descriptor);
 
         if(member_id == MEMBER_ID_INVALID)

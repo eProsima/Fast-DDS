@@ -104,13 +104,15 @@ public:
 
     using TypeDescriptor::get_descriptor;
 
-    // TODO: doxygen
-    RTPS_DllAPI ReturnCode_t add_member(
-            const MemberDescriptor& descriptor) noexcept;
-
+    /**
+     * Add a new \a member to the underlying @ref DynamicType by move
+     * @param[in] descriptor r-value to @ref MemberDescriptor
+     * @return standard @ref ReturnCode_t
+     */
     RTPS_DllAPI ReturnCode_t add_member(
             MemberDescriptor&& descriptor) noexcept;
 
+    //! Ancillary template to build inline the @ref MemberDescriptor argument
     template<typename... Ts>
     ReturnCode_t add_member(Ts&&... Args) noexcept
     {
@@ -143,15 +145,7 @@ public:
     RTPS_DllAPI ReturnCode_t copy_from(
             const DynamicTypeBuilder* other);
 
-    using TypeDescriptor::get_all_members;
-
-    using TypeDescriptor::get_all_members_by_name;
-
-    using TypeDescriptor::get_name;
-
-    using TypeDescriptor::get_member_id_by_name;
-
-    using TypeDescriptor::is_consistent;
+    using TypeDescriptor::get_member_count;
 
     bool is_discriminator_type() const;
 

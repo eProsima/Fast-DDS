@@ -372,9 +372,26 @@ ReturnCode_t TypeDescriptor::get_all_members(
     return ReturnCode_t::RETCODE_OK;
 }
 
+ReturnCode_t TypeDescriptor::get_member_by_index(
+            MemberDescriptor& member,
+            uint32_t index) const noexcept
+{
+    if(index >=  members_.size())
+    {
+        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting member by index, member not found.");
+        return ReturnCode_t::RETCODE_ERROR;
+    }
+
+    auto it = members_.begin();
+    std::advance(it, index);
+    member = *it;
+
+    return ReturnCode_t::RETCODE_OK;
+}
+
 ReturnCode_t TypeDescriptor::get_member_by_name(
         MemberDescriptor& member,
-        const std::string& name) const
+        const std::string& name) const noexcept
 {
     auto it = member_by_name_.find(name);
     if (it != member_by_name_.end())
@@ -406,7 +423,7 @@ TypeDescriptor::get_member(
 
 ReturnCode_t TypeDescriptor::get_member(
         MemberDescriptor& member,
-        MemberId id) const
+        MemberId id) const noexcept
 {
     const DynamicTypeMember* pM;
     bool found;
@@ -424,7 +441,7 @@ ReturnCode_t TypeDescriptor::get_member(
     }
 }
 
-uint32_t TypeDescriptor::get_members_count() const
+uint32_t TypeDescriptor::get_member_count() const
 {
     return static_cast<uint32_t>(members_.size());
 }
@@ -483,4 +500,3 @@ bool TypeDescriptor::exists_member_by_id(
     }
     return member_by_id_.find(id) != member_by_id_.end();
 }
-

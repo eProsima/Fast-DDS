@@ -37,6 +37,15 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
 
+// Ancillary gtest formatters
+
+void PrintTo(const MemberDescriptor& md, std::ostream* os) {
+    if (os)
+    {
+        *os << md;
+    }
+}
+
 using primitive_builder_api = DynamicTypeBuilder_cptr& (DynamicTypeBuilderFactory::* )();
 using primitive_type_api = DynamicType_ptr (DynamicTypeBuilderFactory::* )();
 
@@ -63,106 +72,106 @@ TEST_P(DynamicTypesPrimitiveTestsAPIs, primitives_apis_unit_tests)
     ASSERT_TRUE(builder1);
 
     // It must be the right builder
-    ASSERT_EQ(builder1->get_kind(), kind);
+    EXPECT_EQ(builder1->get_kind(), kind);
 
     // It must be consistent
-    ASSERT_TRUE(builder1->is_consistent());
+    EXPECT_TRUE(builder1->is_consistent());
 
     // The primitive builder is statically allocated and must always be the same instance
     DynamicTypeBuilder_cptr builder2 = (factory.*bapi)();
     ASSERT_TRUE(builder2);
-    ASSERT_EQ(builder1, builder2);
+    EXPECT_EQ(builder1, builder2);
 
     // It must match the one created by the generic api
     DynamicTypeBuilder_cptr builder3 = factory.create_primitive_builder(kind);
     ASSERT_TRUE(builder3);
-    ASSERT_EQ(builder1, builder3);
+    EXPECT_EQ(builder1, builder3);
 
     // The builder must be able to generate the associated type
     DynamicType_ptr type1 = builder1->build();
     ASSERT_TRUE(type1);
 
     // It must be the right type
-    ASSERT_EQ(type1->get_kind(), kind);
+    EXPECT_EQ(type1->get_kind(), kind);
 
     // It must be consistent
-    ASSERT_TRUE(type1->is_consistent());
+    EXPECT_TRUE(type1->is_consistent());
 
     // It must share the same state with the builder
-    ASSERT_TRUE(*type1 == *builder1);
-    ASSERT_TRUE(builder1->equals(*type1));
+    EXPECT_TRUE(*type1 == *builder1);
+    EXPECT_TRUE(builder1->equals(*type1));
 
     // It must return always the same type instance
-    ASSERT_EQ(type1, builder1->build());
-    ASSERT_EQ(type1, builder2->build());
-    ASSERT_EQ(type1, builder3->build());
+    EXPECT_EQ(type1, builder1->build());
+    EXPECT_EQ(type1, builder2->build());
+    EXPECT_EQ(type1, builder3->build());
 
     // The primitives types can be retrieved directly from the factory
     DynamicType_ptr type2 = factory.get_primitive_type(kind);
     ASSERT_TRUE(type2);
 
     // and must be the very same instance
-    ASSERT_EQ(type1, type2);
+    EXPECT_EQ(type1, type2);
 
     // It must match the ones return by the factory primitive api calls
     DynamicType_ptr type3 = (factory.*tapi)();
     ASSERT_TRUE(type3);
-    ASSERT_EQ(type1, type3);
-    ASSERT_EQ(type2, type3);
+    EXPECT_EQ(type1, type3);
+    EXPECT_EQ(type2, type3);
 
     // All the instances are static, not dynamic ones should have been allocated
-    ASSERT_TRUE(factory.is_empty());
+    EXPECT_TRUE(factory.is_empty());
 
     // It must be possible to create a custom builder from a primitive one
     DynamicTypeBuilder_ptr custom_builder = factory.create_builder_copy(*builder1);
     ASSERT_TRUE(custom_builder);
 
     // It must be consistent
-    ASSERT_TRUE(type1->is_consistent());
+    EXPECT_TRUE(type1->is_consistent());
 
     // It must not be the static instance
-    ASSERT_NE(builder1, custom_builder);
+    EXPECT_NE(builder1, custom_builder);
     // but must share its state
-    ASSERT_TRUE(*custom_builder == *builder1);
+    EXPECT_TRUE(*custom_builder == *builder1);
 
     // It must be customizable
     std::string name = "custom_type_name";
     custom_builder->set_name(name);
-    ASSERT_EQ(custom_builder->get_name(), name);
+    EXPECT_EQ(custom_builder->get_name(), name);
 
     // no longer share the state
-    ASSERT_FALSE(*custom_builder == *builder1);
+    EXPECT_FALSE(*custom_builder == *builder1);
 
     // the custom type must not be a static instance
-    ASSERT_FALSE(factory.is_empty());
+    EXPECT_FALSE(factory.is_empty());
 
     // The custom instance must be able to create a new type
     DynamicType_ptr custom_type1 = custom_builder->build();
     ASSERT_TRUE(custom_type1);
 
     // It must be consistent
-    ASSERT_TRUE(custom_type1->is_consistent());
+    EXPECT_TRUE(custom_type1->is_consistent());
 
     // It must share the state with the builder
-    ASSERT_TRUE(custom_builder->equals(*custom_type1));
+    EXPECT_TRUE(custom_builder->equals(*custom_type1));
 
     // It must return a cached instances if there are not changes
     DynamicType_ptr custom_type2 = custom_builder->build();
     ASSERT_TRUE(custom_type2);
-    ASSERT_EQ(custom_type1, custom_type2);
+    EXPECT_EQ(custom_type1, custom_type2);
 
     // If there are state changes it must provide a new instance
     name = "another_name";
     custom_builder->set_name(name);
-    ASSERT_EQ(custom_builder->get_name(), name);
+    EXPECT_EQ(custom_builder->get_name(), name);
 
     DynamicType_ptr custom_type3 = custom_builder->build();
     ASSERT_TRUE(custom_type3);
-    ASSERT_NE(custom_type1, custom_type3);
+    EXPECT_NE(custom_type1, custom_type3);
 
     // The new types shouldn't be static
     custom_builder.reset();
-    ASSERT_FALSE(factory.is_empty());
+    EXPECT_FALSE(factory.is_empty());
 
     // All resources should be freed out of scope
     custom_type1.reset();
@@ -278,7 +287,7 @@ TYPED_TEST(StaticTypesPrimitiveTests, create_primitive_template_unit_tests)
     // It must return the same builder than the runtime counterpart
     DynamicTypeBuilder_cptr builder2 = factory.create_primitive_builder(TypeParam::kind);
     ASSERT_TRUE(builder2);
-    ASSERT_EQ(builder1, builder2);
+    EXPECT_EQ(builder1, builder2);
 }
 
 #undef GTEST_CONST2TYPE
@@ -300,7 +309,7 @@ public:
 
     virtual void TearDown()
     {
-        ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance().is_empty());
+        EXPECT_TRUE(DynamicTypeBuilderFactory::get_instance().is_empty());
 
         DynamicDataFactory::delete_instance();
         DynamicTypeBuilderFactory::delete_instance();
@@ -323,88 +332,178 @@ TEST_F(DynamicTypesTests, TypeDescriptors_unit_tests)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
     // get static builder
     DynamicTypeBuilder_cptr primitive = factory.create_int32_builder();
+    ASSERT_TRUE(primitive);
     // Create a modifiable builder copy
     DynamicTypeBuilder_ptr builder = factory.create_builder_copy(*primitive);
-    ASSERT_EQ(builder->get_kind(), TypeKind::TK_INT32);
+    ASSERT_TRUE(builder);
+    EXPECT_EQ(builder->get_kind(), TypeKind::TK_INT32);
 
     // Use TypeDescriptor to capture the state
     TypeDescriptor state = *primitive;
     DynamicTypeBuilder_ptr builder2 = factory.create_builder(state);
 
-    ASSERT_TRUE(builder->equals(*builder2));
-    ASSERT_EQ(*primitive, *builder2);
-    ASSERT_EQ(*builder, *builder2);
-    ASSERT_EQ(*builder, state);
-    ASSERT_EQ(state, *builder2);
+    ASSERT_TRUE(builder2);
+    EXPECT_TRUE(builder->equals(*builder2));
+    EXPECT_EQ(*primitive, *builder2);
+    EXPECT_EQ(*builder, *builder2);
+    EXPECT_EQ(*builder, state);
+    EXPECT_EQ(state, *builder2);
 
     // Copy state
     TypeDescriptor state2;
-    ASSERT_EQ(state2.copy_from(state), ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(state2.equals(state));
-    ASSERT_EQ(state, state2);
+    EXPECT_EQ(state2.copy_from(state), ReturnCode_t::RETCODE_OK);
+    EXPECT_TRUE(state2.equals(state));
+    EXPECT_EQ(state, state2);
 
     state2 = state;
-    ASSERT_TRUE(state2.equals(state));
-    ASSERT_EQ(state, state2);
+    EXPECT_TRUE(state2.equals(state));
+    EXPECT_EQ(state, state2);
 
-    ASSERT_EQ(state2.copy_from(*builder), ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(state2.equals(*builder));
-    ASSERT_TRUE(builder->equals(state2));
-    ASSERT_EQ(state, *builder);
+    EXPECT_EQ(state2.copy_from(*builder), ReturnCode_t::RETCODE_OK);
+    EXPECT_TRUE(state2.equals(*builder));
+    EXPECT_TRUE(builder->equals(state2));
+    EXPECT_EQ(state, *builder);
 
     state2 = *builder;
-    ASSERT_TRUE(state2.equals(*builder));
-    ASSERT_TRUE(builder->equals(state2));
-    ASSERT_EQ(state, *builder);
+    EXPECT_TRUE(state2.equals(*builder));
+    EXPECT_TRUE(builder->equals(state2));
+    EXPECT_EQ(state, *builder);
 
     // Check state doesn't match the default descriptor
     TypeDescriptor defaultDescriptor;
-    ASSERT_NE(state, defaultDescriptor);
-    ASSERT_FALSE(state.equals(defaultDescriptor));
+    EXPECT_NE(state, defaultDescriptor);
+    EXPECT_FALSE(state.equals(defaultDescriptor));
 
     // Compare with builder
-    ASSERT_FALSE(builder->equals(defaultDescriptor));
-    ASSERT_NE(*builder, defaultDescriptor);
-    ASSERT_NE(defaultDescriptor, *builder);
+    EXPECT_FALSE(builder->equals(defaultDescriptor));
+    EXPECT_NE(*builder, defaultDescriptor);
+    EXPECT_NE(defaultDescriptor, *builder);
 
     // Modify the builder state
     builder->set_name("TEST_INT32");
 
-    ASSERT_FALSE(builder->equals(state));
-    ASSERT_FALSE(builder->equals(*primitive));
-    ASSERT_NE(*builder, state);
-    ASSERT_NE(*builder, *primitive);
+    EXPECT_FALSE(builder->equals(state));
+    EXPECT_FALSE(builder->equals(*primitive));
+    EXPECT_NE(*builder, state);
+    EXPECT_NE(*builder, *primitive);
+}
+
+TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
+{
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
+
+    // Create basic types
+    DynamicTypeBuilder_ptr struct_type_builder = factory.create_struct_builder();
+    ASSERT_TRUE(struct_type_builder);
+    EXPECT_TRUE(struct_type_builder->is_consistent());
+    EXPECT_EQ(struct_type_builder->get_kind(), TypeKind::TK_STRUCTURE);
+    EXPECT_EQ(struct_type_builder->get_member_count(), 0u);
+
+    // Add members to the struct.
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->add_member(3, "int32", factory.create_int32_type()));
+    EXPECT_TRUE(struct_type_builder->is_consistent());
+    EXPECT_EQ(struct_type_builder->get_member_count(), 1u);
+
+    DynamicType_ptr struct_type = struct_type_builder->build();
+    ASSERT_TRUE(struct_type);
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->add_member(1, "int64", factory.create_int64_type()));
+    EXPECT_TRUE(struct_type_builder->is_consistent());
+    EXPECT_EQ(struct_type_builder->get_member_count(), 2u);
+
+    DynamicType_ptr struct_type2 = struct_type_builder->build();
+    ASSERT_TRUE(struct_type2);
+    EXPECT_FALSE(struct_type->equals(*struct_type2));
+
+    // Check members are properly added
+    // • checking invalid id
+    MemberDescriptor md;
+    {
+        eprosima::fastdds::dds::Log::DisableLogs _;
+        ASSERT_NE(ReturnCode_t::RETCODE_OK, struct_type_builder->get_member(md, 0));
+    }
+
+    // • checking MemberDescriptor getters
+    MemberDescriptor md1{3, "int32", factory.create_int32_type()};
+    md1.set_index(0); // first addition
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->get_member(md, 3));
+
+    EXPECT_TRUE(md.is_consistent(struct_type_builder->get_kind()));
+    EXPECT_EQ(md.get_index(), 0u);
+    EXPECT_EQ(md.get_id(), md1.get_id());
+    EXPECT_EQ(md.get_name(), md1.get_name());
+    EXPECT_EQ(md.get_type(), md1.get_type());
+
+    // • checking MemberDescriptor comparisson and construction
+    MemberDescriptor md2{1, "int64", factory.create_int64_type()};
+    md2.set_index(1); // second addition
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->get_member(md, 1));
+    EXPECT_TRUE(md.is_consistent(struct_type_builder->get_kind()));
+    EXPECT_EQ(md.get_index(), 1u);
+
+    //    + checking operators ==, != and method equals
+    EXPECT_TRUE(md.equals(md2));
+    EXPECT_EQ(md, md2);
+
+    EXPECT_FALSE(md1.equals(md2));
+    EXPECT_NE(md1, md2);
+
+    //    + checking copy_from
+    EXPECT_EQ(ReturnCode_t::RETCODE_OK, md.copy_from(md1));
+    EXPECT_TRUE(md.equals(md1));
+    EXPECT_EQ(md, md1);
+
+    // • checking by index retrieval
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->get_member_by_index(md, 0));
+    EXPECT_EQ(md, md1);
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->get_member_by_index(md, 1));
+    EXPECT_EQ(md, md2);
+
+    // • checking by name retrieval
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->get_member_by_name(md, "int32"));
+    EXPECT_EQ(md, md1);
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->get_member_by_name(md, "int64"));
+    EXPECT_EQ(md, md2);
+
+    // • checking map indexes retrieval
+    //    + indexing by id
+    std::map<MemberId, const DynamicTypeMember*> members_by_id;
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->get_all_members(members_by_id));
+    EXPECT_EQ(members_by_id.size(), 2);
+    EXPECT_EQ(*members_by_id[3], md1);
+    EXPECT_EQ(*members_by_id[1], md2);
+
+    //    + indexing by name
+    std::map<std::string, const DynamicTypeMember*> members_by_name;
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->get_all_members_by_name(members_by_name));
+    EXPECT_EQ(members_by_name.size(), 2);
+    EXPECT_EQ(*members_by_name["int32"], md1);
+    EXPECT_EQ(*members_by_name["int64"], md2);
+
+    //    + indexing by index (actual sequence)
+    const std::list<DynamicTypeMember>& members = struct_type_builder->get_all_members();
+    ASSERT_EQ(members.size(), 2);
+    auto it = members.begin();
+    EXPECT_EQ(*it++, md1);
+    EXPECT_EQ(*it, md2);
+
+    // • checking indexes work according with OMG standard 1.3 section 7.5.2.7.6
+    md = MemberDescriptor(7, "bool", factory.create_bool_type());
+    md.set_index(1); // insert int the middle
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->add_member(md));
+
+    ASSERT_EQ(members.size(), 3);
+    md2.set_index(2); // new expected position of the last element
+
+    it = members.begin();
+    EXPECT_EQ(*it++, md1);
+    EXPECT_EQ(*it++, md);
+    EXPECT_EQ(*it, md2);
 }
 
 /*
-TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
-{
-    // Create basic types
-    DynamicTypeBuilder_ptr int32_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
-    ASSERT_TRUE(int32_builder != nullptr);
-    ASSERT_FALSE(int32_builder == nullptr);
-    DynamicType_ptr int32_type = DynamicTypeBuilderFactory::get_instance()->create_type(int32_builder.get());
-    ASSERT_TRUE(int32_type != nullptr);
-    ASSERT_FALSE(int32_type == nullptr);
-    DynamicType_ptr type2 = DynamicTypeBuilderFactory::get_instance()->create_type(int32_builder.get());
-    ASSERT_TRUE(type2 != nullptr);
-    ASSERT_TRUE(type2->equals(int32_type.get()));
-
-    DynamicTypeBuilder_ptr struct_type_builder = DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
-    ASSERT_TRUE(struct_type_builder != nullptr);
-
-    // Add members to the struct.
-    ASSERT_TRUE(struct_type_builder->add_member(0, "int32", int32_type) == ReturnCode_t::RETCODE_OK);
-    auto struct_type = struct_type_builder->build();
-    ASSERT_TRUE(struct_type != nullptr);
-
-    ASSERT_TRUE(struct_type_builder->add_member(1, "int64",
-            DynamicTypeBuilderFactory::get_instance()->create_int64_type()) == ReturnCode_t::RETCODE_OK);
-    auto struct_type2 = struct_type_builder->build();
-    ASSERT_TRUE(struct_type2 != nullptr);
-    ASSERT_FALSE(struct_type->equals(struct_type2.get()));
-}
-
 TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
 {
     // Try to create with invalid values

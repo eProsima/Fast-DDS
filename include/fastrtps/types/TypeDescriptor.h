@@ -113,8 +113,6 @@ protected:
 
     RTPS_DllAPI void clean();
 
-    RTPS_DllAPI uint32_t get_members_count() const;
-
     friend class DynamicTypeBuilderFactory;
     friend class TypeObjectFactory;
     friend class DynamicDataHelper;
@@ -241,14 +239,22 @@ public:
             std::map<std::string, const DynamicTypeMember*>& members) const;
 
     // TODO: doxygen
+    RTPS_DllAPI uint32_t get_member_count() const;
+
+    // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_member(
             MemberDescriptor& member,
-            MemberId id) const;
+            MemberId id) const noexcept;
+
+    // TODO: doxygen
+    RTPS_DllAPI ReturnCode_t get_member_by_index(
+            MemberDescriptor& member,
+            uint32_t index) const noexcept;
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_member_by_name(
             MemberDescriptor& member,
-            const std::string& name) const;
+            const std::string& name) const noexcept;
 };
 
 } // namespace types

@@ -113,42 +113,12 @@ public:
             size_t current_alignment = 0) const;
 
 public:
-    // ancillary for DynamicData interfaces
-    using TypeDescriptor::get_member_id_by_name;
-    using TypeDescriptor::get_member_id_at_index;
-    using TypeDescriptor::get_descriptor;
-
-    // Checks if there is a member with the given name.
-    bool exists_member_by_name(
-            const std::string& name) const;
-
-public:
 
     // TODO: doxigen
     RTPS_DllAPI bool equals(
             const DynamicType& other) const;
 
-    using TypeDescriptor::get_base_type;
-    using TypeDescriptor::get_discriminator_type;
-    using TypeDescriptor::get_element_type;
-    using TypeDescriptor::get_key_element_type;
-
-    using TypeDescriptor::get_all_members;
-    using TypeDescriptor::get_all_members_by_name;
-    using TypeDescriptor::get_member;
-    using TypeDescriptor::get_member_by_name;
-    using TypeDescriptor::get_bounds;
-    using TypeDescriptor::get_bounds_size;
-    using TypeDescriptor::get_kind;
-    using TypeDescriptor::get_name;
-    using TypeDescriptor::get_members_count;
-    using TypeDescriptor::get_total_bounds;
-    using TypeDescriptor::get_annotation;
-    using TypeDescriptor::get_annotation_count;
-
     RTPS_DllAPI bool has_children() const;
-
-    using TypeDescriptor::is_consistent;
 
     RTPS_DllAPI bool is_complex_kind() const;
 

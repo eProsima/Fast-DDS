@@ -3695,7 +3695,7 @@ void DynamicData::update_union_discriminator()
 
         union_discriminator_->get_discriminator_value(sUnionValue);
 
-        for (uint32_t index = 0; index < type_->get_members_count(); ++index)
+        for (uint32_t index = 0; index < type_->get_member_count(); ++index)
         {
             auto id = get_member_id_at_index(index);
             assert(id != MEMBER_ID_INVALID);

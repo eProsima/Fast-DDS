@@ -390,8 +390,11 @@ public:
     // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_enum_builder();
 
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_struct_builder();
+    /**
+     * Returns a @ref DynamicTypeBuilder associated with a `TypeKind::TK_STRUCTURE`
+     * @return @ref DynamicTypeBuilder object
+     */
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_struct_builder() noexcept;
 
     // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_child_struct_builder(

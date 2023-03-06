@@ -538,7 +538,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_child_struct_builder(
     }
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_struct_builder()
+DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_struct_builder() noexcept
 {
     TypeDescriptor descriptor;
     descriptor.set_kind(TypeKind::TK_STRUCTURE);
