@@ -101,6 +101,10 @@ class MemberDescriptor;
 class TypeObject;
 class AnnotationParameterValue;
 
+/**
+ * This class is conceived as a singleton charged of creation of @ref DynamicTypeBuild objects.
+ * For simplicity direct primitive types instantiation is also posible.
+ */
 class DynamicTypeBuilderFactory
 {
     using builder_allocator = detail::BuilderAllocator<DynamicTypeBuilder, DynamicTypeBuilderFactory, true>;
@@ -196,20 +200,56 @@ public:
 
     ~DynamicTypeBuilderFactory();
 
-    // TODO: doxygen
+    /**
+     * Returns the singleton factory object
+     * @remark This method is thread-safe.
+     * @remark The singleton is allocated using C++11 builtin double-checked locking lazy initialization.
+     * @return @ref DynamicTypeBuilderFactory &
+     */
     RTPS_DllAPI static DynamicTypeBuilderFactory& get_instance() noexcept;
 
-    // TODO: doxygen
+    /**
+     * Resets the state of the factory
+     * @remark This method is thread-safe.
+     * @remark On \b DEBUG builds or if explicitly specified using preprocessor macro \b ENABLE_DYNAMIC_MEMORY_CHECK
+     *         the factory will track object allocation/deallocation. This method will reset this tracking.
+     * @param[out] descriptor object state
+     * @return standard @ref ReturnCode_t
+     */
     RTPS_DllAPI static ReturnCode_t delete_instance() noexcept;
 
-    // TODO: doxygen
-    // in the standard is called create_type
+    /**
+     * Create a new @ref DynamicTypeBuilder object based on the given @ref TypeDescriptor state.
+     * @remark This method is thread-safe.
+     * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.6 this method is
+     *         called `create_type` which is misguiding. It was renamed to simplify interface usage.
+     * @remark This method will always create a new builder object. In order to access primitive static allocated
+     *         ones and avoid heap overhead use the `create_xxxx_builder()` methods.
+     * @param[in] descriptor object state to copy
+     * @return new @ref DynamicTypeBuilder object
+     */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_builder(const TypeDescriptor& td) noexcept;
 
-    // TODO: doxygen
-    // in the standard is called create_type_copy
+    /**
+     * Create a new @ref DynamicTypeBuilder object based on the given @ref DynamicType object.
+     * @remark This method is thread-safe.
+     * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.7 this method is
+     *         called `create_type_copy` which is misguiding. It was renamed to simplify interface usage.
+     * @remark This method will always create a new builder object. In order to access primitive static allocated
+     *         ones and avoid heap overhead use the `create_xxxx_builder()` methods.
+     * @param[in] type @ref DynamicType object
+     * @return new @ref DynamicTypeBuilder object
+     */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_builder_copy(const DynamicType& type) noexcept;
 
+    /**
+     * Create a new @ref DynamicTypeBuilder object based on the given @ref DynamicTypeBuilder object.
+     * @remark This method is thread-safe.
+     * @remark This method will always create a new builder object. In order to access primitive static allocated
+     *         ones and avoid heap overhead use the `create_xxxx_builder()` methods.
+     * @param[in] type @ref DynamicTypeBuilder object
+     * @return new @ref DynamicTypeBuilder object
+     */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_builder_copy(const DynamicTypeBuilder& builder) noexcept;
 
     // TODO: doxygen
@@ -223,6 +263,14 @@ public:
     RTPS_DllAPI ReturnCode_t delete_type(
             DynamicType* type) noexcept;
 
+    /**
+     * Returns a singleton @ref DynamicTypeBuilder object
+     * @tparam kind @ref TypeKind that identifies the singleton to return
+     * @remark This method is thread-safe.
+     * @remark The singleton is allocated using C++11 builtin double-checked locking lazy initialization.
+     * @remark The singleton cannot be modified. In order to get a modifiable builder use @ref create_builder_copy().
+     * @return singleton @ref DynamicTypeBuilder object
+     */
     template<TypeKind kind>
     typename std::enable_if<is_primitive_t<kind>::value, DynamicTypeBuilder_cptr&>::type
     create_primitive_builder() noexcept
@@ -232,47 +280,54 @@ public:
         return builder;
     }
 
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_primitive_builder(TypeKind kind);
+    /**
+     * Returns a singleton @ref DynamicTypeBuilder object
+     * @remark This method is thread-safe.
+     * @remark The singleton is allocated using C++11 builtin double-checked locking lazy initialization.
+     * @remark The singleton cannot be modified. In order to get a modifiable builder use @ref create_builder_copy().
+     * @param kind @ref TypeKind that identifies the singleton to return
+     * @return singleton @ref DynamicTypeBuilder object
+     */
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_primitive_builder(TypeKind kind) noexcept;
 
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_int32_builder();
+    //! alias of `create_primitive_builder<TypeKind::TK_INT32>()`
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_int32_builder() noexcept;
 
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_uint32_builder();
+    //! alias of `create_primitive_builder<TypeKind::TK_UINT32>()`
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_uint32_builder() noexcept;
 
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_int16_builder();
+    //! alias of `create_primitive_builder<TypeKind::TK_INT16>()`
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_int16_builder() noexcept;
 
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_uint16_builder();
+    //! alias of `create_primitive_builder<TypeKind::TK_UINT16>()`
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_uint16_builder() noexcept;
 
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_int64_builder();
+    //! alias of `create_primitive_builder<TypeKind::TK_INT64>()`
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_int64_builder() noexcept;
 
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_uint64_builder();
+    //! alias of `create_primitive_builder<TypeKind::TK_UINT64>()`
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_uint64_builder() noexcept;
 
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_float32_builder();
+    //! alias of `create_primitive_builder<TypeKind::TK_FLOAT32>()`
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_float32_builder() noexcept;
 
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_float64_builder();
+    //! alias of `create_primitive_builder<TypeKind::TK_FLOAT64>()`
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_float64_builder() noexcept;
 
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_float128_builder();
+    //! alias of `create_primitive_builder<TypeKind::TK_FLOAT128>()`
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_float128_builder() noexcept;
 
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_char8_builder();
+    //! alias of `create_primitive_builder<TypeKind::TK_CHAR8>()`
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_char8_builder() noexcept;
 
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_char16_builder();
+    //! alias of `create_primitive_builder<TypeKind::TK_CHAR16>()`
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_char16_builder() noexcept;
 
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_bool_builder();
+    //! alias of `create_primitive_builder<TypeKind::TK_BOOLEAN>()`
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_bool_builder() noexcept;
 
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_byte_builder();
+    //! alias of `create_primitive_builder<TypeKind::TK_BYTE>()`
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_byte_builder() noexcept;
 
     // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_string_builder(

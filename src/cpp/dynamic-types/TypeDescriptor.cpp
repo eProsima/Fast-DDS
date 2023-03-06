@@ -74,21 +74,21 @@ TypeDescriptor::TypeDescriptor(
 
 
 TypeDescriptor::TypeDescriptor(
-        const TypeDescriptor& other)
+        const TypeDescriptor& other) noexcept
         : TypeDescriptorData(other)
 {
     refresh_indexes();
 }
 
 TypeDescriptor& TypeDescriptor::operator=(
-        const TypeDescriptor& descriptor)
+        const TypeDescriptor& descriptor) noexcept
 {
     TypeDescriptorData::operator=(descriptor);
     refresh_indexes();
     return *this;
 }
 
-TypeDescriptor::~TypeDescriptor()
+TypeDescriptor::~TypeDescriptor() noexcept
 {
     clean();
 }
@@ -121,7 +121,7 @@ void TypeDescriptor::clean()
 }
 
 ReturnCode_t TypeDescriptor::copy_from(
-        const TypeDescriptor& descriptor)
+        const TypeDescriptor& descriptor) noexcept
 {
     *this = descriptor;
     return ReturnCode_t::RETCODE_OK;
@@ -140,8 +140,13 @@ bool TypeDescriptor::operator==(const TypeDescriptor& descriptor) const
            members_ == descriptor.members_;
 }
 
+bool TypeDescriptor::operator!=(const TypeDescriptor& descriptor) const
+{
+    return !operator==(descriptor);
+}
+
 bool TypeDescriptor::equals(
-        const TypeDescriptor& descriptor) const
+        const TypeDescriptor& descriptor) const noexcept
 {
     return *this == descriptor;
 }
@@ -197,7 +202,7 @@ DynamicType_ptr TypeDescriptor::get_key_element_type() const
     return key_element_type_;
 }
 
-TypeKind TypeDescriptor::get_kind() const
+TypeKind TypeDescriptor::get_kind() const noexcept
 {
     return kind_;
 }

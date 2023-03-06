@@ -457,7 +457,7 @@ bool AnnotationManager::key_annotation() const
 }
 
 ReturnCode_t TypeDescriptor::get_descriptor(
-        TypeDescriptor& descriptor) const
+        TypeDescriptor& descriptor) const noexcept
 {
     descriptor = *this;
     return ReturnCode_t::RETCODE_OK;

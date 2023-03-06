@@ -87,6 +87,14 @@ public:
 
     friend class DynamicTypeBuilderFactory;
 
+    using TypeDescriptor::equals;
+
+    /**
+     * Underlying state comparisson
+     * @remarks using `==` and `!=` operators is more convenient
+     * @param[in] other @ref DynamicType object to compare to
+     * @return \b bool `true` on equality
+     */
     RTPS_DllAPI bool equals(
             const DynamicType& other) const;
 

@@ -37,12 +37,13 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
 
-using primitive_api = DynamicTypeBuilder_cptr& (DynamicTypeBuilderFactory::* )();
+using primitive_builder_api = DynamicTypeBuilder_cptr& (DynamicTypeBuilderFactory::* )();
+using primitive_type_api = DynamicType_ptr (DynamicTypeBuilderFactory::* )();
 
 // Testing the primitive creation APIS
 // and get_primitive_type() and create_primitive_builder()
 class DynamicTypesPrimitiveTestsAPIs
-    : public testing::TestWithParam<std::pair<TypeKind, primitive_api>>
+    : public testing::TestWithParam<std::tuple<TypeKind, primitive_builder_api, primitive_type_api>>
 {};
 
 TEST_P(DynamicTypesPrimitiveTestsAPIs, primitives_apis_unit_tests)
@@ -52,12 +53,13 @@ TEST_P(DynamicTypesPrimitiveTestsAPIs, primitives_apis_unit_tests)
 
     // Retrieve parameters
     TypeKind kind;
-    primitive_api api;
-    std::tie(kind, api) = GetParam();
+    primitive_builder_api bapi;
+    primitive_type_api tapi;
+    std::tie(kind, bapi, tapi) = GetParam();
 
     // Create the primitive builder,
     // note that create_xxx_builder rely on create_primitive_builder<TK_xxxx>()
-    DynamicTypeBuilder_cptr builder1 = (factory.*api)();
+    DynamicTypeBuilder_cptr builder1 = (factory.*bapi)();
     ASSERT_TRUE(builder1);
 
     // It must be the right builder
@@ -67,7 +69,7 @@ TEST_P(DynamicTypesPrimitiveTestsAPIs, primitives_apis_unit_tests)
     ASSERT_TRUE(builder1->is_consistent());
 
     // The primitive builder is statically allocated and must always be the same instance
-    DynamicTypeBuilder_cptr builder2 = (factory.*api)();
+    DynamicTypeBuilder_cptr builder2 = (factory.*bapi)();
     ASSERT_TRUE(builder2);
     ASSERT_EQ(builder1, builder2);
 
@@ -101,6 +103,12 @@ TEST_P(DynamicTypesPrimitiveTestsAPIs, primitives_apis_unit_tests)
 
     // and must be the very same instance
     ASSERT_EQ(type1, type2);
+
+    // It must match the ones return by the factory primitive api calls
+    DynamicType_ptr type3 = (factory.*tapi)();
+    ASSERT_TRUE(type3);
+    ASSERT_EQ(type1, type3);
+    ASSERT_EQ(type2, type3);
 
     // All the instances are static, not dynamic ones should have been allocated
     ASSERT_TRUE(factory.is_empty());
@@ -165,19 +173,45 @@ TEST_P(DynamicTypesPrimitiveTestsAPIs, primitives_apis_unit_tests)
 INSTANTIATE_TEST_SUITE_P(CheckingGetPrimitiveType,
                          DynamicTypesPrimitiveTestsAPIs,
                          testing::Values(
-                             std::make_pair(TypeKind::TK_INT32, &DynamicTypeBuilderFactory::create_int32_builder),
-                             std::make_pair(TypeKind::TK_UINT32, &DynamicTypeBuilderFactory::create_uint32_builder),
-                             std::make_pair(TypeKind::TK_INT16, &DynamicTypeBuilderFactory::create_int16_builder),
-                             std::make_pair(TypeKind::TK_UINT16, &DynamicTypeBuilderFactory::create_uint16_builder),
-                             std::make_pair(TypeKind::TK_INT64, &DynamicTypeBuilderFactory::create_int64_builder),
-                             std::make_pair(TypeKind::TK_UINT64, &DynamicTypeBuilderFactory::create_uint64_builder),
-                             std::make_pair(TypeKind::TK_FLOAT32, &DynamicTypeBuilderFactory::create_float32_builder),
-                             std::make_pair(TypeKind::TK_FLOAT64, &DynamicTypeBuilderFactory::create_float64_builder),
-                             std::make_pair(TypeKind::TK_FLOAT128, &DynamicTypeBuilderFactory::create_float128_builder),
-                             std::make_pair(TypeKind::TK_CHAR8, &DynamicTypeBuilderFactory::create_char8_builder),
-                             std::make_pair(TypeKind::TK_CHAR16, &DynamicTypeBuilderFactory::create_char16_builder),
-                             std::make_pair(TypeKind::TK_BOOLEAN, &DynamicTypeBuilderFactory::create_bool_builder),
-                             std::make_pair(TypeKind::TK_BYTE, &DynamicTypeBuilderFactory::create_byte_builder)));
+                             std::make_tuple(TypeKind::TK_INT32,
+                                    &DynamicTypeBuilderFactory::create_int32_builder,
+                                    &DynamicTypeBuilderFactory::create_int32_type),
+                             std::make_tuple(TypeKind::TK_UINT32,
+                                    &DynamicTypeBuilderFactory::create_uint32_builder,
+                                    &DynamicTypeBuilderFactory::create_uint32_type),
+                             std::make_tuple(TypeKind::TK_INT16,
+                                    &DynamicTypeBuilderFactory::create_int16_builder,
+                                    &DynamicTypeBuilderFactory::create_int16_type),
+                             std::make_tuple(TypeKind::TK_UINT16,
+                                    &DynamicTypeBuilderFactory::create_uint16_builder,
+                                    &DynamicTypeBuilderFactory::create_uint16_type),
+                             std::make_tuple(TypeKind::TK_INT64,
+                                    &DynamicTypeBuilderFactory::create_int64_builder,
+                                    &DynamicTypeBuilderFactory::create_int64_type),
+                             std::make_tuple(TypeKind::TK_UINT64,
+                                    &DynamicTypeBuilderFactory::create_uint64_builder,
+                                    &DynamicTypeBuilderFactory::create_uint64_type),
+                             std::make_tuple(TypeKind::TK_FLOAT32,
+                                    &DynamicTypeBuilderFactory::create_float32_builder,
+                                    &DynamicTypeBuilderFactory::create_float32_type),
+                             std::make_tuple(TypeKind::TK_FLOAT64,
+                                    &DynamicTypeBuilderFactory::create_float64_builder,
+                                    &DynamicTypeBuilderFactory::create_float64_type),
+                             std::make_tuple(TypeKind::TK_FLOAT128,
+                                    &DynamicTypeBuilderFactory::create_float128_builder,
+                                    &DynamicTypeBuilderFactory::create_float128_type),
+                             std::make_tuple(TypeKind::TK_CHAR8,
+                                    &DynamicTypeBuilderFactory::create_char8_builder,
+                                    &DynamicTypeBuilderFactory::create_char8_type),
+                             std::make_tuple(TypeKind::TK_CHAR16,
+                                    &DynamicTypeBuilderFactory::create_char16_builder,
+                                    &DynamicTypeBuilderFactory::create_char16_type),
+                             std::make_tuple(TypeKind::TK_BOOLEAN,
+                                    &DynamicTypeBuilderFactory::create_bool_builder,
+                                    &DynamicTypeBuilderFactory::create_bool_type),
+                             std::make_tuple(TypeKind::TK_BYTE,
+                                    &DynamicTypeBuilderFactory::create_byte_builder,
+                                    &DynamicTypeBuilderFactory::create_byte_type)));
 
 // Testing create_primitive_builder<TypeKind>
 
@@ -249,8 +283,6 @@ TYPED_TEST(StaticTypesPrimitiveTests, create_primitive_template_unit_tests)
 
 #undef GTEST_CONST2TYPE
 
-/*
-
 class DynamicTypesTests : public ::testing::Test
 {
     const std::string config_file_ = "types.xml";
@@ -263,11 +295,13 @@ public:
 
     ~DynamicTypesTests()
     {
-        eprosima::fastdds::dds::Log::KillThread();
+        eprosima::fastdds::dds::Log::Flush();
     }
 
     virtual void TearDown()
     {
+        ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance().is_empty());
+
         DynamicDataFactory::delete_instance();
         DynamicTypeBuilderFactory::delete_instance();
     }
@@ -286,27 +320,63 @@ TEST_F(DynamicTypesTests, TypeDescriptors_unit_tests)
     // + Create new types. Use a Builder instead.
 
     // We want to create a new type based on int32_t
-    DynamicTypeBuilder_cptr builder =
-            DynamicTypeBuilderFactory::get_instance().create_int32_builder();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
     // get static builder
-    TypeDescriptor pInt32Descriptor =
-    pInt32Descriptor.set_kind(TK_INT32);
-    pInt32Descriptor.set_name("TEST_INT32");
-    TypeDescriptor pInt32Descriptor2;
+    DynamicTypeBuilder_cptr primitive = factory.create_int32_builder();
+    // Create a modifiable builder copy
+    DynamicTypeBuilder_ptr builder = factory.create_builder_copy(*primitive);
+    ASSERT_EQ(builder->get_kind(), TypeKind::TK_INT32);
 
-    // Then
-    ASSERT_FALSE(pInt32Descriptor.equals(&pInt32Descriptor2));
-    ASSERT_FALSE(pInt32Descriptor2.copy_from(nullptr) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(pInt32Descriptor2.copy_from(&pInt32Descriptor) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(pInt32Descriptor.equals(&pInt32Descriptor2));
-    pInt32Descriptor2.set_name("TEST_2");
-    ASSERT_FALSE(pInt32Descriptor.equals(&pInt32Descriptor2));
-    pInt32Descriptor2.set_name(pInt32Descriptor.get_name());
-    ASSERT_TRUE(pInt32Descriptor.equals(&pInt32Descriptor2));
-    pInt32Descriptor2.set_kind(TK_NONE);
-    ASSERT_FALSE(pInt32Descriptor.equals(&pInt32Descriptor2));
+    // Use TypeDescriptor to capture the state
+    TypeDescriptor state = *primitive;
+    DynamicTypeBuilder_ptr builder2 = factory.create_builder(state);
+
+    ASSERT_TRUE(builder->equals(*builder2));
+    ASSERT_EQ(*primitive, *builder2);
+    ASSERT_EQ(*builder, *builder2);
+    ASSERT_EQ(*builder, state);
+    ASSERT_EQ(state, *builder2);
+
+    // Copy state
+    TypeDescriptor state2;
+    ASSERT_EQ(state2.copy_from(state), ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(state2.equals(state));
+    ASSERT_EQ(state, state2);
+
+    state2 = state;
+    ASSERT_TRUE(state2.equals(state));
+    ASSERT_EQ(state, state2);
+
+    ASSERT_EQ(state2.copy_from(*builder), ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(state2.equals(*builder));
+    ASSERT_TRUE(builder->equals(state2));
+    ASSERT_EQ(state, *builder);
+
+    state2 = *builder;
+    ASSERT_TRUE(state2.equals(*builder));
+    ASSERT_TRUE(builder->equals(state2));
+    ASSERT_EQ(state, *builder);
+
+    // Check state doesn't match the default descriptor
+    TypeDescriptor defaultDescriptor;
+    ASSERT_NE(state, defaultDescriptor);
+    ASSERT_FALSE(state.equals(defaultDescriptor));
+
+    // Compare with builder
+    ASSERT_FALSE(builder->equals(defaultDescriptor));
+    ASSERT_NE(*builder, defaultDescriptor);
+    ASSERT_NE(defaultDescriptor, *builder);
+
+    // Modify the builder state
+    builder->set_name("TEST_INT32");
+
+    ASSERT_FALSE(builder->equals(state));
+    ASSERT_FALSE(builder->equals(*primitive));
+    ASSERT_NE(*builder, state);
+    ASSERT_NE(*builder, *primitive);
 }
 
+/*
 TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
 {
     // Create basic types
