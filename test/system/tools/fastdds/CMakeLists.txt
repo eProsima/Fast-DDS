@@ -60,7 +60,7 @@ else()
 endif()
 
 # Copy the examples validation files over to the build directory
-file(GLOB_RECURSE XML_EXAMPLE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../../examples/*.xml)
+file(GLOB_RECURSE XML_EXAMPLE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../../examples/*_profile.xml)
 # for each xml file detected
 foreach(XML_EXAMPLE_FILE_COMPLETE_PATH ${XML_EXAMPLE_FILES})
     # obtain the file name
@@ -73,7 +73,7 @@ foreach(XML_EXAMPLE_FILE_COMPLETE_PATH ${XML_EXAMPLE_FILES})
 endforeach()
 
 # Copy the blackbox tests validation files over to the build directory
-file(GLOB_RECURSE XML_BLACKBOX_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../blackbox/*.xml)
+file(GLOB_RECURSE XML_BLACKBOX_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../blackbox/*_profile.xml)
 # for each xml file detected
 foreach(XML_BLACKBOX_FILE_COMPLETE_PATH ${XML_BLACKBOX_FILES})
     # obtain the file name
@@ -86,7 +86,7 @@ foreach(XML_BLACKBOX_FILE_COMPLETE_PATH ${XML_BLACKBOX_FILES})
 endforeach()
 
 # Copy the unit tests validation files over to the build directory
-file(GLOB_RECURSE XML_UNITTEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../unittest/*.xml)
+file(GLOB_RECURSE XML_UNITTEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../unittest/*_profile.xml)
 # for each xml file detected
 foreach(XML_UNITTEST_FILE_COMPLETE_PATH ${XML_UNITTEST_FILES})
     # obtain the file name
@@ -99,7 +99,7 @@ foreach(XML_UNITTEST_FILE_COMPLETE_PATH ${XML_UNITTEST_FILES})
 endforeach()
 
 # Copy the system tests validation files over to the build directory
-file(GLOB_RECURSE XML_SYSTEM_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../*.xml)
+file(GLOB_RECURSE XML_SYSTEM_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../*_profile.xml)
 # for each xml file detected
 foreach(XML_SYSTEM_FILE_COMPLETE_PATH ${XML_SYSTEM_FILES})
     # obtain the file name
@@ -112,7 +112,7 @@ foreach(XML_SYSTEM_FILE_COMPLETE_PATH ${XML_SYSTEM_FILES})
 endforeach()
 
 # Copy the comunication tests validation files over to the build directory
-file(GLOB_RECURSE XML_COMMUNICATION_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../communication/*.xml)
+file(GLOB_RECURSE XML_COMMUNICATION_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../communication/*_profile.xml)
 # for each xml file detected
 foreach(XML_COMMUNICATION_FILE_COMPLETE_PATH ${XML_COMMUNICATION_FILES})
     # obtain the file name
@@ -125,7 +125,7 @@ foreach(XML_COMMUNICATION_FILE_COMPLETE_PATH ${XML_COMMUNICATION_FILES})
 endforeach()
 
 # Copy the dds tests validation files over to the build directory
-file(GLOB_RECURSE XML_DDS_TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../dds/*.xml)
+file(GLOB_RECURSE XML_DDS_TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../dds/*_profile.xml)
 # for each xml file detected
 foreach(XML_DDS_TEST_FILE_COMPLETE_PATH ${XML_DDS_TEST_FILES})
     # obtain the file name
@@ -139,7 +139,7 @@ endforeach()
 
 if(PERFORMANCE_TESTS)
     # Copy the performance tests validation files over to the build directory
-    file(GLOB_RECURSE XML_PERFORMANCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../performance/*.xml)
+    file(GLOB_RECURSE XML_PERFORMANCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../performance/*_profile.xml)
     # for each xml file detected
     foreach(XML_PERFORMANCE_FILE_COMPLETE_PATH ${XML_PERFORMANCE_FILES})
         # obtain the file name
@@ -154,7 +154,7 @@ endif()
 
 if(PROFILING_TESTS)
     # Copy the profiling tests validation files over to the build directory
-    file(GLOB_RECURSE XML_PROFILING_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../profiling/*.xml)
+    file(GLOB_RECURSE XML_PROFILING_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../profiling/*_profile.xml)
     # for each xml file detected
     foreach(XML_PROFILING_FILE_COMPLETE_PATH ${XML_PROFILING_FILES})
         # obtain the file name

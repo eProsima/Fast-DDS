@@ -5,7 +5,7 @@ In the first one launch: ./TypeLookupExample publisher
 In the second one: ./TypeLookupExample subscriber
 (or TypeLookupExample.exe subscriber on windows).
 
-In this example, the publisher loads a type from the XML file "example_type.xml".
+In this example, the publisher loads a type from the XML file "example_type_profile.xml".
 The publisher shares the TypeInformation so other participants can discover it.
 
 After retrieving the type using the TypeLookup service,

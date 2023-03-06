@@ -47,7 +47,7 @@ target_compile_definitions(TypeLookupExample PRIVATE
 target_link_libraries(TypeLookupExample fastrtps fastcdr)
 install(TARGETS TypeLookupExample
     RUNTIME DESTINATION examples/cpp/dds/TypeLookupService/${BIN_INSTALL_DIR})
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/example_type.xml
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/example_type_profile.xml
     DESTINATION examples/cpp/dds/TypeLookupService/${BIN_INSTALL_DIR})
 
-file(COPY example_type.xml DESTINATION ${PROJECT_BINARY_DIR})
+file(COPY example_type_profile.xml DESTINATION ${PROJECT_BINARY_DIR})

@@ -45,9 +45,9 @@ TypeLookupPublisher::TypeLookupPublisher()
 bool TypeLookupPublisher::init()
 {
     if (xmlparser::XMLP_ret::XML_OK !=
-            xmlparser::XMLProfileManager::loadXMLFile("example_type.xml"))
+            xmlparser::XMLProfileManager::loadXMLFile("example_type_profile.xml"))
     {
-        std::cout << "Cannot open XML file \"example_type.xml\". Please, run the publisher from the folder "
+        std::cout << "Cannot open XML file \"example_type_profile.xml\". Please, run the publisher from the folder "
                   << "that contatins this XML file." << std::endl;
         return false;
     }
