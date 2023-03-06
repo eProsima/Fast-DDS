@@ -21,6 +21,7 @@
 
         <!-- PARTICIPANTS -->
         <participant profile_name="pub_participant_profile">
+            <domainId>222</domainId>
             <rtps>
                 <userTransports>
                     <transport_id>shm_transport</transport_id>
@@ -32,6 +33,7 @@
         </participant>
 
         <participant profile_name="sub_participant_profile">
+            <domainId>222</domainId>
             <rtps>
                 <userTransports>
                     <transport_id>shm_transport</transport_id>

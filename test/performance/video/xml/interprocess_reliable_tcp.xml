@@ -29,6 +29,7 @@
 
         <!-- PARTICIPANTS -->
         <participant profile_name="pub_participant_profile">
+            <domainId>229</domainId>
             <rtps>
                 <userTransports>
                     <transport_id>video_publisher_tcp_transport</transport_id>
@@ -39,6 +40,7 @@
         </participant>
 
         <participant profile_name="sub_participant_profile">
+            <domainId>229</domainId>
             <rtps>
                 <builtin>
                     <initialPeersList>

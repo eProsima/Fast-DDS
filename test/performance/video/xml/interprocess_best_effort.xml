@@ -3,12 +3,14 @@
     <profiles>
         <!-- PARTICIPANTS -->
         <participant profile_name="pub_participant_profile">
+            <domainId>229</domainId>
             <rtps>
                 <name>video_test_publisher</name>
             </rtps>
         </participant>
 
         <participant profile_name="sub_participant_profile">
+            <domainId>229</domainId>
             <rtps>
                 <name>video_test_subscriber</name>
             </rtps>

@@ -3,6 +3,7 @@
     <profiles>
         <!-- PUBLISHER -->
         <participant profile_name="pub_participant_profile">
+            <domainId>231</domainId>
             <rtps>
                 <builtin>
                     <discovery_config>
@@ -50,6 +51,7 @@
 
         <!-- SUBSCRIBER -->
         <participant profile_name="sub_participant_profile">
+            <domainId>231</domainId>
             <rtps>
                 <builtin>
                     <discovery_config>

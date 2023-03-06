@@ -5,6 +5,7 @@
     </library_settings>
     <profiles>
         <participant profile_name="test_participant_profile_string">
+            <domainId>2042</domainId>
             <rtps>
                 <allocation>
                     <remote_locators>
@@ -125,6 +126,7 @@
         </participant>
 
         <participant profile_name="test_default_participant_profile_string" is_default_profile="true">
+            <domainId>2019102</domainId>
             <rtps>
                 <allocation>
                     <remote_locators>
