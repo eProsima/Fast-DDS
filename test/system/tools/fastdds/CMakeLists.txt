@@ -48,93 +48,124 @@ if(PYTHONINTERP_FOUND)
 endif()
 
 ###############################################################################
-# XML validation
+# XML GENERAL validation
 ###############################################################################
 message(STATUS "Configuring CLI xml validation...")
 
-# Copy the neccessary files over to the build directory
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../xmlvalidation/profileAll.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/profileAll.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../xmlvalidation/profileDataReader.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/profileDataReader.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../xmlvalidation/profileDataWriter.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/profileDataWriter.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../xmlvalidation/profileDomainParticipant.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/profileDomainParticipant.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../xmlvalidation/profileTransportDescriptor.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/profileTransportDescriptor.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../xmlvalidation/profileLog.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/profileLog.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../xmlvalidation/profileTypes.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/profileTypes.xml COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../xmlvalidation/XMLTesterExample.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/XMLTesterExample.xml COPYONLY)
-
-
-# Check XML profile validation against schema
-
+# Configure command based on the OS running
 if (MSVC)
-
-    # WINDOWS
-    set(env_fast_command "fastdds.bat")
-
+    set(env_fast_command "fastdds.bat") # WINDOWS
 else()
-
-    # POSIX
-    set(env_fast_command "fastdds")
-
+    set(env_fast_command "fastdds")     # POSIX
 endif()
 
-# Main validator
-add_test(NAME xml.validate COMMAND ${env_fast_command} xml validate xmldocuments)
+# Copy the examples validation files over to the build directory
+file(GLOB_RECURSE XML_EXAMPLE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../../examples/*.xml)
+# for each xml file detected
+foreach(XML_EXAMPLE_FILE_COMPLETE_PATH ${XML_EXAMPLE_FILES})
+    # obtain the file name
+    get_filename_component(XML_EXAMPLE_FILE ${XML_EXAMPLE_FILE_COMPLETE_PATH} NAME_WE)
+    # copy the file from src to build folders
+    configure_file(
+        ${XML_EXAMPLE_FILE_COMPLETE_PATH}                                          # from full src path
+        ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/examples/${XML_EXAMPLE_FILE}.xml  # to relative build path
+        COPYONLY)
+endforeach()
 
-# Check the XML from examples (that follows the xsd schema, avoid static discovery xmls)
-add_test(NAME xml.validate_examples_1 COMMAND ${env_fast_command} xml validate ../../../../examples/cpp/dds/DynamicHelloWorldExample)
-add_test(NAME xml.validate_examples_2 COMMAND ${env_fast_command} xml validate ../../../../examples/cpp/dds/TypeLookupService)
+# Copy the blackbox tests validation files over to the build directory
+file(GLOB_RECURSE XML_BLACKBOX_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../blackbox/*.xml)
+# for each xml file detected
+foreach(XML_BLACKBOX_FILE_COMPLETE_PATH ${XML_BLACKBOX_FILES})
+    # obtain the file name
+    get_filename_component(XML_BLACKBOX_FILE ${XML_BLACKBOX_FILE_COMPLETE_PATH} NAME_WE)
+    # copy the file from src to build folders
+    configure_file(
+        ${XML_BLACKBOX_FILE_COMPLETE_PATH}                                               # from full src path
+        ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/test/blackbox/${XML_BLACKBOX_FILE}.xml  # to relative build path
+        COPYONLY)
+endforeach()
 
-# Check the XML from tests (that follows the xsd schema, avoid static discovery xmls or bad structured on purpose xmls)
-#Blackbox tests
-add_test(NAME xml.validate_tests_blackbox_1 COMMAND ${env_fast_command} xml validate ../../../blackbox/discovery_participant_flags.xml)
-add_test(NAME xml.validate_tests_blackbox_2 COMMAND ${env_fast_command} xml validate ../../../blackbox/partitions.xml)
-add_test(NAME xml.validate_tests_blackbox_3 COMMAND ${env_fast_command} xml validate ../../../blackbox/persistence.xml)
-add_test(NAME xml.validate_tests_blackbox_4 COMMAND ${env_fast_command} xml validate ../../../blackbox/StatisticsDomainParticipant.xml)
+# Copy the unit tests validation files over to the build directory
+file(GLOB_RECURSE XML_UNITTEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../unittest/*.xml)
+# for each xml file detected
+foreach(XML_UNITTEST_FILE_COMPLETE_PATH ${XML_UNITTEST_FILES})
+    # obtain the file name
+    get_filename_component(XML_UNITTEST_FILE ${XML_UNITTEST_FILE_COMPLETE_PATH} NAME_WE)
+    # copy the file from src to build folders
+    configure_file(
+        ${XML_UNITTEST_FILE_COMPLETE_PATH}                                              # from full src path
+        ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/test/unittest/${XML_UNITTEST_FILE}.xml # to relative build path
+        COPYONLY)
+endforeach()
 
-# Unit tests
-add_test(NAME xml.validate_tests_unittest_1 COMMAND ${env_fast_command} xml validate ../../../unittest/dds)
-add_test(NAME xml.validate_tests_unittest_2 COMMAND ${env_fast_command} xml validate ../../../unittest/dynamic_types)
-add_test(NAME xml.validate_tests_unittest_3 COMMAND ${env_fast_command} xml validate ../../../unittest/xmlparser/log_inactive.xml)
-add_test(NAME xml.validate_tests_unittest_4 COMMAND ${env_fast_command} xml validate ../../../unittest/xmlparser/test_xml_profiles.xml)
-add_test(NAME xml.validate_tests_unittest_5 COMMAND ${env_fast_command} xml validate ../../../unittest/xmlparser/tls_config.xml)
-add_test(NAME xml.validate_tests_unittest_6 COMMAND ${env_fast_command} xml validate ../../../unittest/xmlparser/log_node_file_append.xml)
-add_test(NAME xml.validate_tests_unittest_7 COMMAND ${env_fast_command} xml validate ../../../unittest/xmlparser/UDP_transport_descriptors_config.xml)
-add_test(NAME xml.validate_tests_unittest_8 COMMAND ${env_fast_command} xml validate ../../../unittest/xmlparser/log_def_file.xml)
-add_test(NAME xml.validate_tests_unittest_9 COMMAND ${env_fast_command} xml validate ../../../unittest/xmlparser/log_stdouterr_two_thresholds.xml)
-add_test(NAME xml.validate_tests_unittest_10 COMMAND ${env_fast_command} xml validate ../../../unittest/xmlparser/test_xml_profiles_rooted.xml)
-add_test(NAME xml.validate_tests_unittest_11 COMMAND ${env_fast_command} xml validate ../../../unittest/xmlparser/test_xml_root_library_settings.xml)
-add_test(NAME xml.validate_tests_unittest_12 COMMAND ${env_fast_command} xml validate ../../../unittest/xmlparser/test_xml_duration.xml)
-add_test(NAME xml.validate_tests_unittest_13 COMMAND ${env_fast_command} xml validate ../../../unittest/xmlparser/SHM_transport_descriptors_config.xml)
-add_test(NAME xml.validate_tests_unittest_14 COMMAND ${env_fast_command} xml validate ../../../unittest/xmlparser/log_stdouterr.xml)
-add_test(NAME xml.validate_tests_unittest_15 COMMAND ${env_fast_command} xml validate ../../../unittest/xmlparser/test_xml_security_profiles.xml)
+# Copy the system tests validation files over to the build directory
+file(GLOB_RECURSE XML_SYSTEM_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../*.xml)
+# for each xml file detected
+foreach(XML_SYSTEM_FILE_COMPLETE_PATH ${XML_SYSTEM_FILES})
+    # obtain the file name
+    get_filename_component(XML_SYSTEM_FILE ${XML_SYSTEM_FILE_COMPLETE_PATH} NAME_WE)
+    # copy the file from src to build folders
+    configure_file(
+        ${XML_SYSTEM_FILE_COMPLETE_PATH}                                            # from full src path
+        ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/test/system/${XML_SYSTEM_FILE}.xml # to relative build path
+        COPYONLY)
+endforeach()
 
-# System tests
-add_test(NAME xml.validate_tests_system COMMAND ${env_fast_command} xml validate ../.)
+# Copy the comunication tests validation files over to the build directory
+file(GLOB_RECURSE XML_COMMUNICATION_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../communication/*.xml)
+# for each xml file detected
+foreach(XML_COMMUNICATION_FILE_COMPLETE_PATH ${XML_COMMUNICATION_FILES})
+    # obtain the file name
+    get_filename_component(XML_COMMUNICATION_FILE ${XML_COMMUNICATION_FILE_COMPLETE_PATH} NAME_WE)
+    # copy the file from src to build folders
+    configure_file(
+        ${XML_COMMUNICATION_FILE_COMPLETE_PATH}                                                   # from full src path
+        ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/test/communication/${XML_COMMUNICATION_FILE}.xml # to relative build path
+        COPYONLY)
+endforeach()
 
-# Other tests
-add_test(NAME xml.validate_tests_communication COMMAND ${env_fast_command} xml validate ../../../communication)
-add_test(NAME xml.validate_tests_dds COMMAND ${env_fast_command} xml validate ../../../dds)
+# Copy the dds tests validation files over to the build directory
+file(GLOB_RECURSE XML_DDS_TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../dds/*.xml)
+# for each xml file detected
+foreach(XML_DDS_TEST_FILE_COMPLETE_PATH ${XML_DDS_TEST_FILES})
+    # obtain the file name
+    get_filename_component(XML_DDS_TEST_FILE ${XML_DDS_TEST_FILE_COMPLETE_PATH} NAME_WE)
+    # copy the file from src to build folders
+    configure_file(
+        ${XML_DDS_TEST_FILE_COMPLETE_PATH}                                         # from full src path
+        ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/test/dds/${XML_DDS_TEST_FILE}.xml # to relative build path
+        COPYONLY)
+endforeach()
 
-# Performance tests
 if(PERFORMANCE_TESTS)
-    add_test(NAME xml.validate_tests_performance COMMAND ${env_fast_command} xml validate ../../../performance)
+    # Copy the performance tests validation files over to the build directory
+    file(GLOB_RECURSE XML_PERFORMANCE_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../performance/*.xml)
+    # for each xml file detected
+    foreach(XML_PERFORMANCE_FILE_COMPLETE_PATH ${XML_PERFORMANCE_FILES})
+        # obtain the file name
+        get_filename_component(XML_PERFORMANCE_FILE ${XML_PERFORMANCE_FILE_COMPLETE_PATH} NAME_WE)
+        # copy the file from src to build folders
+        configure_file(
+            ${XML_PERFORMANCE_FILE_COMPLETE_PATH}                                                 # from full src path
+            ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/test/performance/${XML_PERFORMANCE_FILE}.xml # to relative build path
+            COPYONLY)
+    endforeach()
 endif()
 
-# Profiling tests
 if(PROFILING_TESTS)
-    add_test(NAME xml.validate_tests_profiling COMMAND ${env_fast_command} xml validate ../../../profiling)
+    # Copy the profiling tests validation files over to the build directory
+    file(GLOB_RECURSE XML_PROFILING_FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../profiling/*.xml)
+    # for each xml file detected
+    foreach(XML_PROFILING_FILE_COMPLETE_PATH ${XML_PROFILING_FILES})
+        # obtain the file name
+        get_filename_component(XML_PROFILING_FILE ${XML_PROFILING_FILE_COMPLETE_PATH} NAME_WE)
+        # copy the file from src to build folders
+        configure_file(
+            ${XML_PROFILING_FILE_COMPLETE_PATH}                                               # from full src path
+            ${CMAKE_CURRENT_BINARY_DIR}/xmldocuments/test/profiling/${XML_PROFILING_FILE}.xml # to relative build path
+            COPYONLY)
+    endforeach()
 endif()
 
-
-
-
-
-
+# Define test
+add_test(NAME xml.validate COMMAND ${env_fast_command} xml validate xmldocuments)
