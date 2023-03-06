@@ -359,7 +359,7 @@ TEST_F(XMLParserTests, Data)
     }
 
     ASSERT_TRUE(participant_profile);
-    EXPECT_EQ(participant_atts.domainId, 2019102u);
+    EXPECT_EQ(participant_atts.domainId, 123u);
     RTPSParticipantAttributes& rtps_atts = participant_atts.rtps;
     BuiltinAttributes& builtin           = rtps_atts.builtin;
     Locator_t locator;
@@ -453,7 +453,7 @@ TEST_F(XMLParserTests, DataBuffer)
     }
 
     ASSERT_TRUE(participant_profile);
-    EXPECT_EQ(participant_atts.domainId, 2019102u);
+    EXPECT_EQ(participant_atts.domainId, 123u);
     RTPSParticipantAttributes& rtps_atts = participant_atts.rtps;
     BuiltinAttributes& builtin           = rtps_atts.builtin;
     Locator_t locator;
@@ -528,19 +528,19 @@ TEST_F(XMLParserTests, loadXMLProfiles)
     const char* xml =
             "\
             <profiles>\
-                <publisher profile_name=\"test_publisher_profile\"\
+                <data_writer profile_name=\"test_publisher_profile\"\
                 is_default_profile=\"true\">\
                     <qos>\
                         <durability>\
                             <kind>TRANSIENT_LOCAL</kind>\
                         </durability>\
                     </qos>\
-                </publisher>\
-                <subscriber profile_name=\"test_subscriber_profile\" is_default_profile=\"true\">\
+                </data_writer>\
+                <data_reader profile_name=\"test_subscriber_profile\" is_default_profile=\"true\">\
                     <historyMemoryPolicy>PREALLOCATED_WITH_REALLOC</historyMemoryPolicy>\
                     <userDefinedID>13</userDefinedID>\
                     <entityID>31</entityID>\
-                </subscriber>\
+                </data_reader>\
             </profiles>\
             ";
 
