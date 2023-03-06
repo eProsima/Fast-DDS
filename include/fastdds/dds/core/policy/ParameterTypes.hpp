@@ -148,9 +148,15 @@ enum ParameterId_t : uint16_t
     /* From table 14 of DDS-SEC 1.1 */
     PID_DATA_TAGS                           = 0x1003,
 
+    /* From Remote Procedure Call over DDS, document "ptc/2016-03-19" V1.0 */
+    PID_SERVICE_INSTANCE_NAME               = 0x0080,
+    PID_RELATED_ENTITY_GUID                 = 0x0081,
+    PID_TOPIC_ALIASES                       = 0x0082,
+    PID_RELATED_SAMPLE_IDENTITY             = 0x0083,
+
     /* eProsima Fast DDS extensions */
     PID_PERSISTENCE_GUID                    = 0x8002,
-    PID_RELATED_SAMPLE_IDENTITY             = 0x800f,
+    PID_CUSTOM_RELATED_SAMPLE_IDENTITY      = 0x800f,
     PID_DISABLE_POSITIVE_ACKS               = 0x8005,
     PID_DATASHARING                         = 0x8006,
 };
