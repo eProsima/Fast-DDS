@@ -851,7 +851,7 @@ bool StatefulReader::processGapMsg(
     WriterProxy* pWP = nullptr;
 
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
-    if (!is_alive_)
+    if (!is_alive_ || gapStart < SequenceNumber_t(0, 1) || gapList.base() <= gapStart)
     {
         return false;
     }
