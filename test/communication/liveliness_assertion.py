@@ -30,7 +30,7 @@ xml_file = os.environ.get("XML_FILE")
 if xml_file:
     real_xml_file = os.path.join(script_dir, xml_file)
 else:
-    real_xml_file = os.path.join(script_dir, "liveliness_assertion.xml")
+    real_xml_file = os.path.join(script_dir, "liveliness_assertion_profile.xml")
 
 subscriber_proc = subprocess.Popen([subscriber_command, "--seed", str(os.getpid()), "--notexit",
     "--xmlfile", real_xml_file])
