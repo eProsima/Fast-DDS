@@ -381,6 +381,7 @@ TEST_F(DynamicTypesTests, TypeDescriptors_unit_tests)
 
     // Modify the builder state
     builder->set_name("TEST_INT32");
+    EXPECT_EQ("TEST_INT32", builder->get_name());
 
     EXPECT_FALSE(builder->equals(state));
     EXPECT_FALSE(builder->equals(*primitive));

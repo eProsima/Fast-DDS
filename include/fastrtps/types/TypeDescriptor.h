@@ -176,7 +176,7 @@ public:
 
     /**
      * Returns the state of the @ref DynamicType or @ref DynamicTypeBuilder object
-     * @param[out] descriptor object state
+     * @param[in] descriptor object state
      * @return standard @ref ReturnCode_t
      */
     RTPS_DllAPI ReturnCode_t copy_from(
@@ -195,7 +195,11 @@ public:
     RTPS_DllAPI bool equals(
             const TypeDescriptor& descriptor) const noexcept;
 
-    // TODO: doxygen
+
+    /**
+     * Indicates whether the states of all of this descriptor's properties are consistent.
+     * @return \b bool `true` if consistent
+     */
     RTPS_DllAPI bool is_consistent() const;
 
     RTPS_DllAPI bool is_primitive() const;
@@ -221,37 +225,74 @@ public:
      */
     RTPS_DllAPI TypeKind get_kind() const noexcept;
 
-    // TODO: doxygen
+    /**
+     * Returns the fully qualified name of this type
+     * @return std::string type name
+     */
     RTPS_DllAPI std::string get_name() const;
 
     // TODO: doxygen
     RTPS_DllAPI uint32_t get_total_bounds() const;
 
-    // TODO: doxygen
+    /**
+     * Returns a member sequence collection
+     * @attention This method is not thread safe.
+     *            The returned collection may be modified afterwards.
+     *            The collection use should not outlive this Dynamic object.
+     * @return list<@ref DynamicTypeMember>
+     */
     RTPS_DllAPI const std::list<DynamicTypeMember>& get_all_members() const;
 
-    // TODO: doxygen
+    /**
+     * Populates an associative collection of member references indexed by @ref MemberId
+     * @attention This method is not thread safe. The returned collection use should not outlive this Dynamic object.
+     * @param[in, out] members map<@ref MemberId, @ref DynamicTypeMember> collection to populate
+     * @return standard @ref ReturnCode_t
+     */
     RTPS_DllAPI ReturnCode_t get_all_members(
             std::map<MemberId, const DynamicTypeMember*>& members) const;
 
-    // TODO: doxygen
+    /**
+     * Populates an associative collection of member references indexed by name
+     * @attention This method is not thread safe. The returned collection use should not outlive this Dynamic object.
+     * @param[in, out] members map<@ref std::string, @ref DynamicTypeMember> collection to populate
+     * @return standard @ref ReturnCode_t
+     */
     RTPS_DllAPI ReturnCode_t get_all_members_by_name(
             std::map<std::string, const DynamicTypeMember*>& members) const;
 
-    // TODO: doxygen
+    /**
+     * Queries current number of members
+     * @return uint32_t number of members
+     */
     RTPS_DllAPI uint32_t get_member_count() const;
 
-    // TODO: doxygen
+    /**
+     * This operation returns the member that corresponds to the specified member ID
+     * @param[in, out] member MemberDescriptor to fill in
+     * @param[in] id MemberId identifier to query
+     * @return standard @ref ReturnCode_t
+     */
     RTPS_DllAPI ReturnCode_t get_member(
             MemberDescriptor& member,
             MemberId id) const noexcept;
 
-    // TODO: doxygen
+    /**
+     * This operation returns the member that corresponds to the specified index
+     * @param[in, out] member MemberDescriptor to fill in
+     * @param[in] index uint32_t collection position to query
+     * @return standard @ref ReturnCode_t
+     */
     RTPS_DllAPI ReturnCode_t get_member_by_index(
             MemberDescriptor& member,
             uint32_t index) const noexcept;
 
-    // TODO: doxygen
+    /**
+     * This operation returns the member that corresponds to the specified name
+     * @param[in, out] member MemberDescriptor to fill in
+     * @param[in] name std::string collection member name to query
+     * @return standard @ref ReturnCode_t
+     */
     RTPS_DllAPI ReturnCode_t get_member_by_name(
             MemberDescriptor& member,
             const std::string& name) const noexcept;

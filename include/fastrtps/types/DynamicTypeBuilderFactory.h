@@ -213,7 +213,6 @@ public:
      * @remark This method is thread-safe.
      * @remark On \b DEBUG builds or if explicitly specified using preprocessor macro \b ENABLE_DYNAMIC_MEMORY_CHECK
      *         the factory will track object allocation/deallocation. This method will reset this tracking.
-     * @param[out] descriptor object state
      * @return standard @ref ReturnCode_t
      */
     RTPS_DllAPI static ReturnCode_t delete_instance() noexcept;

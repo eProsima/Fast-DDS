@@ -114,7 +114,12 @@ public:
 
 public:
 
-    // TODO: doxigen
+    /**
+     * State comparisson
+     * @remarks using `==` and `!=` operators is more convenient
+     * @param[in] other @ref DynamicType object whose state to compare to
+     * @return \b bool `true` on equality
+     */
     RTPS_DllAPI bool equals(
             const DynamicType& other) const;
 
