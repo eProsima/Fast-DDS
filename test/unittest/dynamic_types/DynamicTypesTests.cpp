@@ -420,7 +420,7 @@ TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
     // • checking invalid id
     MemberDescriptor md;
     {
-        eprosima::fastdds::dds::Log::DisableLogs _;
+        eprosima::fastdds::dds::Log::ScopeLogs _;
         ASSERT_NE(ReturnCode_t::RETCODE_OK, struct_type_builder->get_member(md, 0));
     }
 
@@ -502,6 +502,18 @@ TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
     EXPECT_EQ(*it++, md1);
     EXPECT_EQ(*it++, md);
     EXPECT_EQ(*it, md2);
+
+    // • checking adding duplicates
+    {
+        eprosima::fastdds::dds::Log::ScopeLogs _("disable");
+    //    + duplicate name
+        md = MemberDescriptor(0u, "int32");
+        EXPECT_NE(ReturnCode_t::RETCODE_OK, struct_type_builder->add_member(md));
+
+    //    + duplicate id
+        md = MemberDescriptor(7, "dup_bool", factory.create_bool_type(), "true");
+        EXPECT_NE(ReturnCode_t::RETCODE_OK, struct_type_builder->add_member(md));
+    }
 }
 
 /*
