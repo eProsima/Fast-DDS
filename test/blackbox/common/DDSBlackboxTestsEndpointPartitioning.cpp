@@ -32,12 +32,12 @@ TEST(EndpointPartitioning, SinglePartition)
 
     // Positive test. Same partition. Match
 
-    writer_a.set_xml_filename("partitions.xml");
+    writer_a.set_xml_filename("partitions_profile.xml");
     writer_a.set_datawriter_profile("partition_a_writer");
     writer_a.init();
     EXPECT_TRUE(writer_a.isInitialized());
 
-    reader_a.set_xml_filename("partitions.xml");
+    reader_a.set_xml_filename("partitions_profile.xml");
     reader_a.set_datareader_profile("partition_a_reader");
     reader_a.init();
     EXPECT_TRUE(reader_a.isInitialized());
@@ -51,7 +51,7 @@ TEST(EndpointPartitioning, SinglePartition)
     // Negative test. Partition differs. No match.
 
     PubSubReader<HelloWorldPubSubType> reader_b(TEST_TOPIC_NAME);
-    reader_b.set_xml_filename("partitions.xml");
+    reader_b.set_xml_filename("partitions_profile.xml");
     reader_b.set_datareader_profile("partition_b_reader");
     reader_b.init();
     EXPECT_TRUE(reader_b.isInitialized());
@@ -100,7 +100,7 @@ TEST(EndpointPartitioning, QosOverride)
     PubSubWriter<HelloWorldPubSubType> writer_a_qos_override(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldPubSubType> reader_b_qos_override(TEST_TOPIC_NAME);
 
-    writer_a_qos_override.set_xml_filename("partitions.xml");
+    writer_a_qos_override.set_xml_filename("partitions_profile.xml");
     writer_a_qos_override.set_datawriter_profile("partition_a_writer");
 
     // We change the PublisherQos so the partition matches. DataWriter partition stays the same (partition_a)
@@ -108,7 +108,7 @@ TEST(EndpointPartitioning, QosOverride)
     writer_a_qos_override.init();
     EXPECT_TRUE(writer_a_qos_override.isInitialized());
 
-    reader_b_qos_override.set_xml_filename("partitions.xml");
+    reader_b_qos_override.set_xml_filename("partitions_profile.xml");
     reader_b_qos_override.set_datareader_profile("partition_b_reader");
     reader_b_qos_override.init();
     EXPECT_TRUE(reader_b_qos_override.isInitialized());
@@ -126,13 +126,13 @@ TEST(EndpointPartitioning, QosOverride)
     PubSubWriter<HelloWorldPubSubType> writer_b_qos_override(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldPubSubType> reader_a_qos_override(TEST_TOPIC_NAME);
 
-    writer_b_qos_override.set_xml_filename("partitions.xml");
+    writer_b_qos_override.set_xml_filename("partitions_profile.xml");
     writer_b_qos_override.set_datawriter_profile("partition_b_writer");
     writer_b_qos_override.partition("partition_a");
     writer_b_qos_override.init();
     EXPECT_TRUE(writer_b_qos_override.isInitialized());
 
-    reader_a_qos_override.set_xml_filename("partitions.xml");
+    reader_a_qos_override.set_xml_filename("partitions_profile.xml");
     reader_a_qos_override.set_datareader_profile("partition_a_reader");
     reader_a_qos_override.init();
     EXPECT_TRUE(reader_a_qos_override.isInitialized());
@@ -158,17 +158,17 @@ TEST(EndpointPartitioning, MultiplePartitions)
     PubSubReader<HelloWorldPubSubType> reader_b(TEST_TOPIC_NAME);
     PubSubWriter<HelloWorldPubSubType> writer_a_b(TEST_TOPIC_NAME);
 
-    writer_a_b.set_xml_filename("partitions.xml");
+    writer_a_b.set_xml_filename("partitions_profile.xml");
     writer_a_b.set_datawriter_profile("partition_a_b_writer");
     writer_a_b.init();
     EXPECT_TRUE(writer_a_b.isInitialized());
 
-    reader_a.set_xml_filename("partitions.xml");
+    reader_a.set_xml_filename("partitions_profile.xml");
     reader_a.set_datareader_profile("partition_a_reader");
     reader_a.init();
     EXPECT_TRUE(reader_a.isInitialized());
 
-    reader_b.set_xml_filename("partitions.xml");
+    reader_b.set_xml_filename("partitions_profile.xml");
     reader_b.set_datareader_profile("partition_b_reader");
     reader_b.init();
     EXPECT_TRUE(reader_b.isInitialized());
@@ -189,17 +189,17 @@ TEST(EndpointPartitioning, MultiplePartitions)
     PubSubWriter<HelloWorldPubSubType> writer_b(TEST_TOPIC_NAME);
     PubSubReader<HelloWorldPubSubType> reader_a_b(TEST_TOPIC_NAME);
 
-    writer_a.set_xml_filename("partitions.xml");
+    writer_a.set_xml_filename("partitions_profile.xml");
     writer_a.set_datawriter_profile("partition_a_writer");
     writer_a.init();
     EXPECT_TRUE(writer_a.isInitialized());
 
-    writer_b.set_xml_filename("partitions.xml");
+    writer_b.set_xml_filename("partitions_profile.xml");
     writer_b.set_datawriter_profile("partition_b_writer");
     writer_b.init();
     EXPECT_TRUE(writer_b.isInitialized());
 
-    reader_a_b.set_xml_filename("partitions.xml");
+    reader_a_b.set_xml_filename("partitions_profile.xml");
     reader_a_b.set_datareader_profile("partition_a_b_reader");
     reader_a_b.init();
     EXPECT_TRUE(reader_a_b.isInitialized());
@@ -228,12 +228,12 @@ TEST(EndpointPartitioning, PropertyQos)
     writer_a.init();
     EXPECT_TRUE(writer_a.isInitialized());
 
-    reader_a.set_xml_filename("partitions.xml");
+    reader_a.set_xml_filename("partitions_profile.xml");
     reader_a.set_datareader_profile("partition_a_reader");
     reader_a.init();
     EXPECT_TRUE(reader_a.isInitialized());
 
-    reader_b.set_xml_filename("partitions.xml");
+    reader_b.set_xml_filename("partitions_profile.xml");
     reader_b.set_datareader_profile("partition_b_reader");
     reader_b.init();
     EXPECT_TRUE(reader_b.isInitialized());
