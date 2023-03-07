@@ -16,10 +16,10 @@
 #define _FASTDDS_DDS_LOG_LOG_HPP_
 
 #include <fastrtps/fastrtps_dll.h>
-#include <thread>
-#include <sstream>
-#include <atomic>
+#include <memory>
 #include <regex>
+#include <sstream>
+#include <thread>
 
 /**
  * eProsima log layer. Logging categories and verbosity can be specified dynamically at runtime.
@@ -123,13 +123,22 @@ public:
     RTPS_DllAPI static void SetCategoryFilter(
             const std::regex&);
 
+    //! Returns a copy of the current category filter or an empty object otherwise
+    RTPS_DllAPI static std::regex GetCategoryFilter();
+
     //! Sets a filter that will pattern-match against filenames, dropping any unmatched categories.
     RTPS_DllAPI static void SetFilenameFilter(
             const std::regex&);
 
+    //! Returns a copy of the current filename filter or an empty object otherwise
+    RTPS_DllAPI static std::regex GetFilenameFilter();
+
     //! Sets a filter that will pattern-match against the provided error string, dropping any unmatched categories.
     RTPS_DllAPI static void SetErrorStringFilter(
             const std::regex&);
+
+        //! Returns a copy of the current error string filter or an empty object otherwise
+    RTPS_DllAPI static std::regex GetErrorStringFilter();
 
     //! Returns the logging engine to configuration defaults.
     RTPS_DllAPI static void Reset();
@@ -173,21 +182,41 @@ public:
             const Log::Context&,
             Log::Kind);
 
-    //! RAII to disable Logging
-    struct DisableLogs
+    //! RAII to setup Logging
+    struct ScopeLogs
     {
-        DisableLogs(Log::Kind new_verbosity = Log::Error)
+        //! Set a specific category filter
+        ScopeLogs(std::string category_filter)
+        {
+#ifdef __cpp_lib_make_unique
+            filter_ = std::make_unique<std::regex>(Log::GetCategoryFilter());
+#else
+            filter_ = std::unique_ptr<std::regex>(new std::regex(Log::GetCategoryFilter()));
+#endif
+            Log::SetCategoryFilter(std::regex{category_filter});
+        }
+
+        //! Set a specified level
+        ScopeLogs(Log::Kind new_verbosity = Log::Error)
         {
             old_ = Log::GetVerbosity();
             Log::SetVerbosity(new_verbosity);
         }
 
-        ~DisableLogs()
+        ~ScopeLogs()
         {
-            Log::SetVerbosity(old_);
+            if (filter_)
+            {
+                Log::SetCategoryFilter(*filter_);
+            }
+            else
+            {
+                Log::SetVerbosity(old_);
+            }
         }
 
         Log::Kind old_;
+        std::unique_ptr<std::regex> filter_;
     };
 };
 

@@ -57,13 +57,17 @@ public:
     //! Default constructor
     RTPS_DllAPI MemberDescriptor() = default;
 
-    // TODO:Barro doxygen
+    //! Default copy constructor
     RTPS_DllAPI MemberDescriptor(const MemberDescriptor& descriptor) = default;
 
-    // TODO:Barro doxygen
+    //! Default move constructor
     RTPS_DllAPI MemberDescriptor(MemberDescriptor&& descriptor) = default;
 
-    // TODO:Barro doxygen
+    /**
+     * convenience constructor
+     * @param[in] index desired position in the collection (zero based)
+     * @param[in] name std::string new member's name
+     */
     RTPS_DllAPI MemberDescriptor(
             uint32_t index,
             const std::string& name);
@@ -74,14 +78,20 @@ public:
      * @param[in] id @ref MemberId new member's identifier
      * @param[in] name std::string new member's name
      * @param[in] type @ref DynamicType new member's type
-     * @return \b bool `true` on equality
      */
     RTPS_DllAPI MemberDescriptor(
             MemberId id,
             const std::string& name,
             DynamicType_ptr type);
 
-    // TODO:Barro doxygen
+    /**
+     * convenience constructor
+     * @remark Default index value assures it is appended to the collection.
+     * @param[in] id @ref MemberId new member's identifier
+     * @param[in] name std::string new member's name
+     * @param[in] type @ref DynamicType new member's type
+     * @param[in] defaultValue std::string member default value as a string representation
+     */
     RTPS_DllAPI MemberDescriptor(
             MemberId id,
             const std::string& name,

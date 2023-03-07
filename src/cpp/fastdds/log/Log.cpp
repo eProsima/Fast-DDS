@@ -113,6 +113,13 @@ struct LogResources
         category_filter_.reset(new std::regex(filter));
     }
 
+    //! Returns a copy of the current category filter or an empty object otherwise
+    std::regex GetCategoryFilter()
+    {
+        std::unique_lock<std::mutex> configGuard(config_mutex_);
+        return category_filter_ ? *category_filter_ : std::regex{};
+    }
+
     //! Sets a filter that will pattern-match against filenames_, dropping any unmatched categories.
     void SetFilenameFilter(
             const std::regex& filter)
@@ -121,12 +128,26 @@ struct LogResources
         filename_filter_.reset(new std::regex(filter));
     }
 
+    //! Returns a copy of the current filename filter or an empty object otherwise
+    std::regex GetFilenameFilter()
+    {
+        std::unique_lock<std::mutex> configGuard(config_mutex_);
+        return filename_filter_ ? *filename_filter_: std::regex{};
+    }
+
     //! Sets a filter that will pattern-match against the provided error string, dropping any unmatched categories.
     void SetErrorStringFilter(
             const std::regex& filter)
     {
         std::unique_lock<std::mutex> configGuard(config_mutex_);
         error_string_filter_.reset(new std::regex(filter));
+    }
+
+    //! Returns a copy of the current filename filter or an empty object otherwise
+    std::regex GetErrorStringFilter()
+    {
+        std::unique_lock<std::mutex> configGuard(config_mutex_);
+        return error_string_filter_ ? *error_string_filter_: std::regex{};
     }
 
     //! Returns the logging_ engine to configuration defaults.
@@ -426,6 +447,21 @@ void Log::SetErrorStringFilter(
         const std::regex& filter)
 {
     detail::get_log_resources()->SetErrorStringFilter(filter);
+}
+
+std::regex Log::GetCategoryFilter()
+{
+    return detail::get_log_resources()->GetCategoryFilter();
+}
+
+std::regex Log::GetFilenameFilter()
+{
+    return detail::get_log_resources()->GetFilenameFilter();
+}
+
+std::regex Log::GetErrorStringFilter()
+{
+    return detail::get_log_resources()->GetErrorStringFilter();
 }
 
 void LogConsumer::print_timestamp(
