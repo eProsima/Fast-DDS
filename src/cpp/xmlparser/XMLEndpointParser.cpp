@@ -153,6 +153,8 @@ void XMLEndpointParser::loadXMLParticipantEndpoint(
 {
     tinyxml2::XMLNode* xml_RTPSParticipant_child = xml_endpoint;
     tinyxml2::XMLElement* element = xml_RTPSParticipant_child->FirstChildElement();
+    m_endpointIds.clear();
+    m_entityIds.clear();
 
     while (element != nullptr)
     {
