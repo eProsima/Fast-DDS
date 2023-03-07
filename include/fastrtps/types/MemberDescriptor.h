@@ -26,6 +26,11 @@ namespace types{
 class DynamicType;
 class AnnotationDescriptor;
 
+
+/**
+ * This class packages together the state of a @ref DynamicTypeMember.
+ * @remark This class has value semantics, allowing it to be deeply copied and compared.
+ */
 class MemberDescriptor
 {
 protected:
@@ -48,62 +53,98 @@ protected:
     bool is_type_name_consistent(const std::string& sName) const;
 
 public:
+
+    //! Default constructor
     RTPS_DllAPI MemberDescriptor() = default;
 
+    // TODO:Barro doxygen
     RTPS_DllAPI MemberDescriptor(const MemberDescriptor& descriptor) = default;
 
+    // TODO:Barro doxygen
     RTPS_DllAPI MemberDescriptor(MemberDescriptor&& descriptor) = default;
 
+    // TODO:Barro doxygen
     RTPS_DllAPI MemberDescriptor(
             uint32_t index,
             const std::string& name);
 
+    /**
+     * convenience constructor
+     * @remark Default index value assures it is appended to the collection.
+     * @param[in] id @ref MemberId new member's identifier
+     * @param[in] name std::string new member's name
+     * @param[in] type @ref DynamicType new member's type
+     * @return \b bool `true` on equality
+     */
     RTPS_DllAPI MemberDescriptor(
             MemberId id,
             const std::string& name,
-            DynamicType_ptr type_);
+            DynamicType_ptr type);
 
+    // TODO:Barro doxygen
     RTPS_DllAPI MemberDescriptor(
             MemberId id,
             const std::string& name,
-            DynamicType_ptr type_,
+            DynamicType_ptr type,
             const std::string& defaultValue);
 
+    // TODO:Barro doxygen
     RTPS_DllAPI MemberDescriptor(
             MemberId id,
             const std::string& name,
-            DynamicType_ptr type_,
+            DynamicType_ptr type,
             const std::string& defaultValue,
             const std::vector<uint64_t>& unionLabels,
             bool isDefaultLabel);
 
+    // TODO:Barro doxygen
     RTPS_DllAPI MemberDescriptor& operator=(const MemberDescriptor& descriptor) = default;
 
+    // TODO:Barro doxygen
     RTPS_DllAPI MemberDescriptor& operator=(MemberDescriptor&& descriptor) = default;
 
     RTPS_DllAPI ~MemberDescriptor() = default;
 
     bool check_union_labels(const std::vector<uint64_t>& labels) const;
 
-    // TODO: doxygen
+    /**
+     * Overwrite the contents of this descriptor with those of another descriptor
+     * @remark subsequent calls to equals, passing the same argument as to this method, return true
+     * @remark The other descriptor shall not be changed by this operation
+     * @return standard @ref ReturnCode_t
+     */
     RTPS_DllAPI ReturnCode_t copy_from(const MemberDescriptor& other);
 
     bool operator==(const MemberDescriptor& other) const;
 
     bool operator!=(const MemberDescriptor& other) const;
 
-    // TODO: doxygen
+    /**
+     * State comparisson
+     * @remarks using `==` and `!=` operators is more convenient
+     * @param[in] other @ref MemberDescriptor object whose state to compare to
+     * @return \b bool `true` on equality
+     */
     RTPS_DllAPI bool equals(const MemberDescriptor& other) const;
 
     RTPS_DllAPI TypeKind get_kind() const;
 
-    //! provides the @ref MemberId of this member
+    /**
+     * Queries the desired or actual member id
+     * @return MemberId id
+     */
     RTPS_DllAPI MemberId get_id() const;
 
-    // TODO: doxygen
+    /**
+     * Queries the desired or actual member position in the collection.
+     * @return uint32_t position
+     */
     RTPS_DllAPI  uint32_t get_index() const;
 
-    //! provides the name of this member
+    /**
+     * Queries the desired or actual member name
+     * @return std::string name
+     */
     RTPS_DllAPI std::string get_name() const;
 
     RTPS_DllAPI std::vector<uint64_t> get_union_labels() const;
@@ -113,7 +154,13 @@ public:
 
     RTPS_DllAPI bool is_default_union_value() const;
 
-    // TODO: doxygen
+    /**
+     * Tests state consistency
+     * @remark A MemberDescriptor shall be considered consistent if and only if all of the values
+     *         of its properties are considered consistent with its collection owner
+     * @param[in] parentKind @ref TypeKind collection's owner kind
+     * @return bool `true` if consistent
+     */
     RTPS_DllAPI bool is_consistent(TypeKind parentKind) const;
 
     RTPS_DllAPI void add_union_case_index(uint64_t value);
@@ -121,7 +168,14 @@ public:
     // TODO: doxygen
     RTPS_DllAPI void set_id(MemberId id);
 
-    // TODO: doxygen
+    /**
+     * Set member index
+     * @remark Only modifiable for elements detach from any collection
+     * @remark `DynamicTypeBuilder::add_member(...)` methods will query it in order
+     *         to position this element in their member collection. According with
+     *         [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.7.6
+     * @param[in] index uint32_t desired position
+     */
     RTPS_DllAPI void set_index(uint32_t index);
 
     // TODO: doxygen
@@ -131,7 +185,10 @@ public:
     RTPS_DllAPI void set_type(DynamicType_ptr&& type);
     RTPS_DllAPI void set_type(const DynamicType_ptr& type);
 
-    //! provides the @ref DynamicType object associated with this member
+    /**
+     * Queries the desired or actual member type
+     * @return @ref DynamicType
+     */
     RTPS_DllAPI DynamicType_ptr get_type() const;
 
     RTPS_DllAPI void set_default_union_value(bool bDefault);

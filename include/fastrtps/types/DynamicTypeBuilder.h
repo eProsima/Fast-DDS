@@ -140,6 +140,13 @@ public:
         }
     }
 
+    /**
+     * Creates an immutable @ref DynamicType object containing a snapshot of this
+     * builder's current state.
+     * @remark Subsequent changes to this builder, if any, shall have no observable effect on the states
+     *         of any previously created @ref DynamicType objects
+     * @return new @ref DynamicType object reference
+     */
     RTPS_DllAPI DynamicType_ptr build() const;
 
     RTPS_DllAPI ReturnCode_t copy_from(
