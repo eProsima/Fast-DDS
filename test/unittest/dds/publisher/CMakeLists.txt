@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profiles.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profiles.xml
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profile.xml
     COPYONLY)
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profiles_for_string.xml
-        ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profiles_for_string.xml
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_for_string_profile.xml
+        ${CMAKE_CURRENT_BINARY_DIR}/test_xml_for_string_profile.xml
         COPYONLY)
 
 set(PUBLISHERTESTS_SOURCE PublisherTests.cpp)

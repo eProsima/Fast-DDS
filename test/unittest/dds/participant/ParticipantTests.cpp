@@ -438,7 +438,7 @@ TEST(ParticipantTests, DomainParticipantQosPhysicalProperties)
 
 TEST(ParticipantTests, CreateDomainParticipantWithProfile)
 {
-    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
 
     //participant using the default profile
     DomainParticipant* default_participant =
@@ -460,7 +460,7 @@ TEST(ParticipantTests, CreateDomainParticipantWithProfile)
 
 TEST(ParticipantTests, GetParticipantProfileQos)
 {
-    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
     DomainParticipantQos qos;
     EXPECT_EQ(
         DomainParticipantFactory::get_instance()->get_participant_qos_from_profile("test_participant_profile", qos),
@@ -1638,7 +1638,7 @@ void check_publisher_with_profile (
 
 TEST(ParticipantTests, CreatePublisherWithProfile)
 {
-    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
@@ -1740,7 +1740,7 @@ void check_subscriber_with_profile (
 
 TEST(ParticipantTests, GetSubscriberProfileQos)
 {
-    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
@@ -1768,7 +1768,7 @@ TEST(ParticipantTests, GetSubscriberProfileQos)
 
 TEST(ParticipantTests, CreateSubscriberWithProfile)
 {
-    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
@@ -1789,7 +1789,7 @@ TEST(ParticipantTests, CreateSubscriberWithProfile)
 
 TEST(ParticipantTests, GetPublisherProfileQos)
 {
-    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
@@ -1951,7 +1951,7 @@ void check_topic_with_profile (
 
 TEST(ParticipantTests, GetTopicProfileQos)
 {
-    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
@@ -1982,7 +1982,7 @@ TEST(ParticipantTests, GetTopicProfileQos)
 
 TEST(ParticipantTests, CreateTopic)
 {
-    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
@@ -2474,7 +2474,7 @@ TEST(ParticipantTests, CreateEntitiesWithProfileNegativeClauses)
  */
 TEST(ParticipantTests, RegisterTypeNegativeClauses)
 {
-    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 

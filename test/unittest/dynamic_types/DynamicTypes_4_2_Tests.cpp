@@ -38,7 +38,7 @@ using namespace eprosima::fastcdr::exception;
 
 class DynamicTypes_4_2_Tests: public ::testing::Test
 {
-    const std::string config_file_ = "types.xml";
+    const std::string config_file_ = "types_profile.xml";
 
     public:
         DynamicTypes_4_2_Tests()

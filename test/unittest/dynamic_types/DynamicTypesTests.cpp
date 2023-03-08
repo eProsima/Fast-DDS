@@ -38,7 +38,7 @@ using namespace eprosima::fastrtps::types;
 
 class DynamicTypesTests : public ::testing::Test
 {
-    const std::string config_file_ = "types.xml";
+    const std::string config_file_ = "types_profile.xml";
 
 public:
 

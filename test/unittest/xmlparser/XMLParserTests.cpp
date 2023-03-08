@@ -54,12 +54,12 @@ TEST_F(XMLParserTests, regressions)
 {
     std::unique_ptr<BaseNode> root;
 
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/12736.xml", root));
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13418.xml", root));
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13454.xml", root));
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13513.xml", root));
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/14456.xml", root));
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/15344.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/12736_profile_bin.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13418_profile_bin.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13454_profile_bin.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13513_profile_bin.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/14456_profile_bin.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/15344_profile_bin.xml", root));
 }
 
 TEST_F(XMLParserTests, NoFile)
@@ -89,7 +89,7 @@ TEST_F(XMLParserTests, EmptyString)
 TEST_F(XMLParserTests, WrongName)
 {
     std::unique_ptr<BaseNode> root;
-    ASSERT_EQ(XMLParser::loadXML("test_xml_profiles.xml", root), XMLP_ret::XML_OK);
+    ASSERT_EQ(XMLParser::loadXML("test_xml_profile.xml", root), XMLP_ret::XML_OK);
     ParticipantAttributes participant_atts;
     ASSERT_FALSE(get_participant_attributes(root, participant_atts));
 }
@@ -97,7 +97,7 @@ TEST_F(XMLParserTests, WrongName)
 TEST_F(XMLParserTests, WrongNameBuffer)
 {
     std::ifstream inFile;
-    inFile.open("test_xml_profiles.xml");
+    inFile.open("test_xml_profile.xml");
     std::stringstream strStream;
     strStream << inFile.rdbuf();
     std::unique_ptr<BaseNode> root;
@@ -109,7 +109,7 @@ TEST_F(XMLParserTests, WrongNameBuffer)
 TEST_F(XMLParserTests, TypesRooted)
 {
     std::unique_ptr<BaseNode> root;
-    ASSERT_EQ(XMLParser::loadXML("test_xml_profiles_rooted.xml", root), XMLP_ret::XML_OK);
+    ASSERT_EQ(XMLParser::loadXML("test_xml_rooted_profile.xml", root), XMLP_ret::XML_OK);
 
     ParticipantAttributes participant_atts;
     bool participant_profile = false;
@@ -150,7 +150,7 @@ TEST_F(XMLParserTests, TypesRooted)
 TEST_F(XMLParserTests, TypesRootedBuffer)
 {
     std::ifstream inFile;
-    inFile.open("test_xml_profiles_rooted.xml");
+    inFile.open("test_xml_rooted_profile.xml");
     std::stringstream strStream;
     strStream << inFile.rdbuf();
     std::unique_ptr<BaseNode> root;
@@ -194,7 +194,7 @@ TEST_F(XMLParserTests, TypesRootedBuffer)
 TEST_F(XMLParserTests, Types)
 {
     std::unique_ptr<BaseNode> root;
-    ASSERT_EQ(XMLParser::loadXML("test_xml_profiles.xml", root), XMLP_ret::XML_OK);
+    ASSERT_EQ(XMLParser::loadXML("test_xml_profile.xml", root), XMLP_ret::XML_OK);
 
     BaseNode* profiles(root->getChild(0));
     ASSERT_TRUE(profiles);
@@ -227,7 +227,7 @@ TEST_F(XMLParserTests, Types)
 TEST_F(XMLParserTests, TypesBuffer)
 {
     std::ifstream inFile;
-    inFile.open("test_xml_profiles.xml");
+    inFile.open("test_xml_profile.xml");
     std::stringstream strStream;
     strStream << inFile.rdbuf();
     std::unique_ptr<BaseNode> root;
@@ -269,7 +269,7 @@ TEST_F(XMLParserTests, DurationCheck)
     const std::string profile_name2{"test_publisher_profile"};
     const std::string profile_name3{"test_subscriber_profile"};
 
-    ASSERT_EQ(XMLParser::loadXML("test_xml_duration.xml", root), XMLP_ret::XML_OK);
+    ASSERT_EQ(XMLParser::loadXML("test_xml_duration_profile.xml", root), XMLP_ret::XML_OK);
 
     ParticipantAttributes participant_atts;
     bool participant_profile = false;
@@ -336,7 +336,7 @@ TEST_F(XMLParserTests, Data)
     const std::string name_attribute{"profile_name"};
     const std::string profile_name{"test_participant_profile"};
 
-    ASSERT_EQ(XMLParser::loadXML("test_xml_profiles.xml", root), XMLP_ret::XML_OK);
+    ASSERT_EQ(XMLParser::loadXML("test_xml_profile.xml", root), XMLP_ret::XML_OK);
 
     BaseNode* profiles(root->getChild(0));
     ASSERT_TRUE(profiles);
@@ -426,7 +426,7 @@ TEST_F(XMLParserTests, DataBuffer)
     const std::string name_attribute{"profile_name"};
     const std::string profile_name{"test_participant_profile"};
     std::ifstream inFile;
-    inFile.open("test_xml_profiles.xml");
+    inFile.open("test_xml_profile.xml");
     std::stringstream strStream;
     strStream << inFile.rdbuf();
     std::unique_ptr<BaseNode> root;

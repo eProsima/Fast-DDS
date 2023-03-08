@@ -106,7 +106,7 @@ static void check_external_locator(
 TEST_F(XMLProfileParserTests, XMLParserRootLibrarySettings)
 {
     ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
-            xmlparser::XMLProfileManager::loadXMLFile("test_xml_root_library_settings.xml"));
+            xmlparser::XMLProfileManager::loadXMLFile("test_xml_root_library_settings_profile.xml"));
 
     const LibrarySettingsAttributes& library_settings = xmlparser::XMLProfileManager::library_settings();
     EXPECT_EQ(library_settings.intraprocess_delivery, IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY);
@@ -115,9 +115,9 @@ TEST_F(XMLProfileParserTests, XMLParserRootLibrarySettings)
 TEST_F(XMLProfileParserTests, XMLoadProfiles)
 {
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-            xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+            xmlparser::XMLProfileManager::loadXMLFile("test_xml_profile.xml"));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-            xmlparser::XMLProfileManager::loadXMLFile("test_xml_security_profiles.xml"));
+            xmlparser::XMLProfileManager::loadXMLFile("test_xml_security_profile.xml"));
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_ERROR,
             xmlparser::XMLProfileManager::loadXMLFile("missing_file.xml"));
 
@@ -232,7 +232,7 @@ TEST_F(XMLProfileParserTests, loadXMLDynamicTypes)
 TEST_F(XMLProfileParserTests, XMLParserLibrarySettings)
 {
     ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
-            xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+            xmlparser::XMLProfileManager::loadXMLFile("test_xml_profile.xml"));
 
     const LibrarySettingsAttributes& library_settings = xmlparser::XMLProfileManager::library_settings();
     EXPECT_EQ(library_settings.intraprocess_delivery, IntraprocessDeliveryType::INTRAPROCESS_FULL);
@@ -244,7 +244,7 @@ TEST_F(XMLProfileParserTests, XMLParserParticipant)
     ParticipantAttributes participant_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-            xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+            xmlparser::XMLProfileManager::loadXMLFile("test_xml_profile.xml"));
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile, participant_atts));
 
@@ -339,7 +339,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParticipantProfile)
     ParticipantAttributes participant_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-            xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+            xmlparser::XMLProfileManager::loadXMLFile("test_xml_profile.xml"));
     xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts);
 
     EXPECT_EQ(participant_atts.domainId, 2019102u);
@@ -420,7 +420,7 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
     PublisherAttributes publisher_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-            xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+            xmlparser::XMLProfileManager::loadXMLFile("test_xml_profile.xml"));
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::fillPublisherAttributes(publisher_profile, publisher_atts));
 
@@ -491,7 +491,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
     PublisherAttributes publisher_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-            xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+            xmlparser::XMLProfileManager::loadXMLFile("test_xml_profile.xml"));
     xmlparser::XMLProfileManager::getDefaultPublisherAttributes(publisher_atts);
 
     TopicAttributes& pub_topic = publisher_atts.topic;
@@ -562,7 +562,7 @@ TEST_F(XMLProfileParserTests, XMLParserSubscriber)
     SubscriberAttributes subscriber_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-            xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+            xmlparser::XMLProfileManager::loadXMLFile("test_xml_profile.xml"));
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::fillSubscriberAttributes(subscriber_profile, subscriber_atts));
 
@@ -630,7 +630,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultSubscriberProfile)
     SubscriberAttributes subscriber_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-            xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+            xmlparser::XMLProfileManager::loadXMLFile("test_xml_profile.xml"));
     xmlparser::XMLProfileManager::getDefaultSubscriberAttributes(subscriber_atts);
 
     TopicAttributes& sub_topic = subscriber_atts.topic;
@@ -704,7 +704,7 @@ TEST_F(XMLProfileParserTests, XMLParserRequesterProfile)
 
     ASSERT_EQ(
         xmlparser::XMLP_ret::XML_OK,
-        xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+        xmlparser::XMLProfileManager::loadXMLFile("test_xml_profile.xml"));
 
     ASSERT_EQ(
         xmlparser::XMLP_ret::XML_OK,
@@ -741,7 +741,7 @@ TEST_F(XMLProfileParserTests, XMLParserReplierProfile)
 
     ASSERT_EQ(
         xmlparser::XMLP_ret::XML_OK,
-        xmlparser::XMLProfileManager::loadXMLFile("test_xml_profiles.xml"));
+        xmlparser::XMLProfileManager::loadXMLFile("test_xml_profile.xml"));
 
     ASSERT_EQ(
         xmlparser::XMLP_ret::XML_OK,
@@ -774,7 +774,7 @@ TEST_F(XMLProfileParserTests, XMLParserSecurity)
     ParticipantAttributes participant_atts;
 
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-            xmlparser::XMLProfileManager::loadXMLFile("test_xml_security_profiles.xml"));
+            xmlparser::XMLProfileManager::loadXMLFile("test_xml_security_profile.xml"));
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile, participant_atts));
 
@@ -842,13 +842,13 @@ TEST_F(XMLProfileParserTests, file_xml_consumer_append)
 
     EXPECT_CALL(*log_mock, ClearConsumers()).Times(1);
     EXPECT_CALL(*log_mock, RegisterConsumer(IsFileConsumer())).Times(1);
-    xmlparser::XMLProfileManager::loadXMLFile("log_node_file_append.xml");
+    xmlparser::XMLProfileManager::loadXMLFile("log_node_file_append_profile.xml");
 }
 
 TEST_F(XMLProfileParserTests, log_inactive)
 {
     EXPECT_CALL(*log_mock, ClearConsumers()).Times(1);
-    xmlparser::XMLProfileManager::loadXMLFile("log_inactive.xml");
+    xmlparser::XMLProfileManager::loadXMLFile("log_inactive_profile.xml");
 }
 
 /*
@@ -864,7 +864,7 @@ TEST_F(XMLProfileParserTests, log_register_stdouterr)
 
     EXPECT_CALL(*log_mock, ClearConsumers()).Times(1);
     EXPECT_CALL(*log_mock, RegisterConsumer(IsStdoutErrConsumer())).Times(1);
-    eprosima::fastrtps::xmlparser::XMLP_ret ret = xmlparser::XMLProfileManager::loadXMLFile("log_stdouterr.xml");
+    eprosima::fastrtps::xmlparser::XMLP_ret ret = xmlparser::XMLProfileManager::loadXMLFile("log_stdouterr_profile.xml");
     ASSERT_EQ(eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK, ret);
 }
 
@@ -883,7 +883,7 @@ TEST_F(XMLProfileParserTests, log_register_stdouterr_wrong_property_name)
     EXPECT_CALL(*log_mock, ClearConsumers()).Times(1);
     EXPECT_CALL(*log_mock, RegisterConsumer(IsStdoutErrConsumer())).Times(1);
     eprosima::fastrtps::xmlparser::XMLP_ret ret = xmlparser::XMLProfileManager::loadXMLFile(
-        "log_stdouterr_wrong_property_name.xml");
+        "log_stdouterr_wrong_property_name_profile_invalid.xml");
     ASSERT_EQ(eprosima::fastrtps::xmlparser::XMLP_ret::XML_ERROR, ret);
 }
 
@@ -902,7 +902,7 @@ TEST_F(XMLProfileParserTests, log_register_stdouterr_wrong_property_value)
     EXPECT_CALL(*log_mock, ClearConsumers()).Times(1);
     EXPECT_CALL(*log_mock, RegisterConsumer(IsStdoutErrConsumer())).Times(1);
     eprosima::fastrtps::xmlparser::XMLP_ret ret = xmlparser::XMLProfileManager::loadXMLFile(
-        "log_stdouterr_wrong_property_value.xml");
+        "log_stdouterr_wrong_property_value_profile_invalid.xml");
     ASSERT_EQ(eprosima::fastrtps::xmlparser::XMLP_ret::XML_ERROR, ret);
 }
 
@@ -924,7 +924,7 @@ TEST_F(XMLProfileParserTests, log_register_stdouterr_two_thresholds)
     EXPECT_CALL(*log_mock, ClearConsumers()).Times(1);
     EXPECT_CALL(*log_mock, RegisterConsumer(IsStdoutErrConsumer())).Times(1);
     eprosima::fastrtps::xmlparser::XMLP_ret ret = xmlparser::XMLProfileManager::loadXMLFile(
-        "log_stdouterr_two_thresholds.xml");
+        "log_stdouterr_two_thresholds_profile.xml");
     ASSERT_EQ(eprosima::fastrtps::xmlparser::XMLP_ret::XML_ERROR, ret);
 }
 
@@ -933,13 +933,13 @@ TEST_F(XMLProfileParserTests, file_and_default)
     using namespace eprosima::fastdds::dds;
 
     EXPECT_CALL(*log_mock, RegisterConsumer(IsFileConsumer())).Times(1);
-    xmlparser::XMLProfileManager::loadXMLFile("log_def_file.xml");
+    xmlparser::XMLProfileManager::loadXMLFile("log_def_file_profile.xml");
 }
 
 TEST_F(XMLProfileParserTests, tls_config)
 {
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-            xmlparser::XMLProfileManager::loadXMLFile("tls_config.xml"));
+            xmlparser::XMLProfileManager::loadXMLFile("tls_config_profile.xml"));
 
     xmlparser::sp_transport_t transport = xmlparser::XMLProfileManager::getTransportById("Test");
 
@@ -992,7 +992,7 @@ TEST_F(XMLProfileParserTests, tls_config)
 TEST_F(XMLProfileParserTests, UDP_transport_descriptors_config)
 {
     ASSERT_EQ(  xmlparser::XMLP_ret::XML_OK,
-            xmlparser::XMLProfileManager::loadXMLFile("UDP_transport_descriptors_config.xml"));
+            xmlparser::XMLProfileManager::loadXMLFile("UDP_transport_descriptors_config_profile.xml"));
 
     xmlparser::sp_transport_t transport = xmlparser::XMLProfileManager::getTransportById("Test");
 
@@ -1015,7 +1015,7 @@ TEST_F(XMLProfileParserTests, UDP_transport_descriptors_config)
 TEST_F(XMLProfileParserTests, SHM_transport_descriptors_config)
 {
     ASSERT_EQ(xmlparser::XMLP_ret::XML_OK,
-            xmlparser::XMLProfileManager::loadXMLFile("SHM_transport_descriptors_config.xml"));
+            xmlparser::XMLProfileManager::loadXMLFile("SHM_transport_descriptors_config_profile.xml"));
 
     xmlparser::sp_transport_t transport = xmlparser::XMLProfileManager::getTransportById("Test");
 

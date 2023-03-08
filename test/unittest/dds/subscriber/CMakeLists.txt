@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profiles.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profiles.xml
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profile.xml
     COPYONLY)
 
 set(SUBSCRIBERTESTS_SOURCE SubscriberTests.cpp)
