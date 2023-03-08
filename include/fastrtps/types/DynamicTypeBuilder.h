@@ -54,9 +54,6 @@ class DynamicTypeBuilder
     bool check_union_configuration(
             const MemberDescriptor& descriptor);
 
-    using TypeDescriptor::exists_member_by_name;
-    using TypeDescriptor::exists_member_by_id;
-
     void clear();
 
     DynamicTypeBuilder(const DynamicTypeBuilder&) = default;
@@ -145,6 +142,10 @@ public:
      * builder's current state.
      * @remark Subsequent changes to this builder, if any, shall have no observable effect on the states
      *         of any previously created @ref DynamicType objects
+     * @remark Once a @ref DynamicType object is created it is cached, thus the same object will be returned
+     *         until the builder state is modified
+     * @attention This class is not thread safe. The only guarantee is that concurrency is safe once avoided
+     *            non-const method usage.
      * @return new @ref DynamicType object reference
      */
     RTPS_DllAPI DynamicType_ptr build() const;

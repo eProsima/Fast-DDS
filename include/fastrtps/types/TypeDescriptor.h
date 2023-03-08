@@ -72,7 +72,13 @@ public:
     RTPS_DllAPI TypeDescriptor(
             TypeDescriptor&& other) noexcept = default;
 
-    //! Copy assignment
+    /**
+     * Default copy assignment
+     * @remark Note that the no member uses mutable references, thus the default
+     *         copy operator provides an actual deep copy.
+     * @param[in] descriptor l-value @ref TypeDescriptor reference to copy from
+     * @result own @ref TypeDescriptor reference
+     */
     RTPS_DllAPI TypeDescriptor& operator=(
             const TypeDescriptor& descriptor) noexcept;
 
@@ -111,7 +117,7 @@ protected:
 
     using member_iterator = std::list<DynamicTypeMember>::iterator;
 
-    RTPS_DllAPI void clean();
+    void clean();
 
     friend class DynamicTypeBuilderFactory;
     friend class TypeObjectFactory;

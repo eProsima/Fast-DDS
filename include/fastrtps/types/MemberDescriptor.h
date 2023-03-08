@@ -107,10 +107,16 @@ public:
             const std::vector<uint64_t>& unionLabels,
             bool isDefaultLabel);
 
-    // TODO:Barro doxygen
+    /**
+     * Default copy assignment
+     * @remark Note that the no member uses mutable references, thus the default
+     *         copy operator provides an actual deep copy.
+     * @param[in] descriptor l-value @ref MemberDescriptor reference to copy from
+     * @result own @ref MemberDescriptor reference
+     */
     RTPS_DllAPI MemberDescriptor& operator=(const MemberDescriptor& descriptor) = default;
 
-    // TODO:Barro doxygen
+    //! Default move assignment
     RTPS_DllAPI MemberDescriptor& operator=(MemberDescriptor&& descriptor) = default;
 
     RTPS_DllAPI ~MemberDescriptor() = default;
@@ -175,7 +181,10 @@ public:
 
     RTPS_DllAPI void add_union_case_index(uint64_t value);
 
-    // TODO: doxygen
+    /**
+     * Set member @ref MemberId
+     * @param[in] id desired MemberId
+     */
     RTPS_DllAPI void set_id(MemberId id);
 
     /**
@@ -188,11 +197,22 @@ public:
      */
     RTPS_DllAPI void set_index(uint32_t index);
 
-    // TODO: doxygen
+    /**
+     * Set member name
+     * @param[in] name std::string desired name
+     */
     RTPS_DllAPI void set_name(const std::string& name);
 
-    // TODO: doxygen
+    /**
+     * Set member type by move
+     * @param[in] type @ref DynamicType r-value
+     */
     RTPS_DllAPI void set_type(DynamicType_ptr&& type);
+
+    /**
+     * Set member type by copy
+     * @param[in] type @ref DynamicType l-value
+     */
     RTPS_DllAPI void set_type(const DynamicType_ptr& type);
 
     /**
