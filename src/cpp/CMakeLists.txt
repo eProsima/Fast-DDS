@@ -13,6 +13,7 @@
 # limitations under the License.
 
 include(CheckCXXSourceCompiles)
+include(CheckIncludeFileCXX)
 
 # Set source files
 
@@ -383,6 +384,9 @@ if(APPLE)
     set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 endif()
+
+# Detect support of dlopen()
+check_include_file_cxx(dlfcn.h HAVE_DLOPEN)
 
 # Find out if libatomic link is required in this platform
 find_package(Atomic MODULE)
