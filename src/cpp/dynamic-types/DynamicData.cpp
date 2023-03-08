@@ -350,13 +350,6 @@ MemberId DynamicData::get_member_id_at_index(
     return type_->get_member_id_at_index(index);
 }
 
-uint32_t DynamicData::get_member_index_by_name(
-        const std::string& name) const
-{
-    assert(type_);
-    return type_->get_member_index_by_name(name);
-}
-
 TypeKind DynamicData::get_kind() const
 {
     return type_->get_kind();
@@ -3388,7 +3381,7 @@ ReturnCode_t DynamicData::get_bool_value(
         }
         else if (get_kind() == TypeKind::TK_BITMASK && id < type_->get_bounds())
         {
-            // for bitmask the id is interpret as an index
+            // Note that is not required for all bits in the mask to have an associated member
             value = (*((uint64_t*)it->second) & ((uint64_t)1 << id)) != 0;
             return ReturnCode_t::RETCODE_OK;
         }
@@ -3506,7 +3499,7 @@ ReturnCode_t DynamicData::set_bool_value(
             }
             else if (type_->get_bounds() == BOUND_UNLIMITED || id < type_->get_bounds())
             {
-                // for bitmask the id is interpret as an index
+                // Note that is not required for all bits in the mask to have an associated member
                 if (value)
                 {
                     *((uint64_t*)it->second) |= ((uint64_t)1 << id);
@@ -3970,7 +3963,11 @@ ReturnCode_t DynamicData::set_enum_value(
 #ifdef DYNAMIC_TYPES_CHECKING
     if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
     {
-        if (value >= type_->get_member_count())
+        std::map<MemberId, const DynamicTypeMember*> col;
+        type_->get_all_members(col);
+        auto it = col.find(value);
+
+        if(it == col.end())
         {
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
@@ -4006,7 +4003,11 @@ ReturnCode_t DynamicData::set_enum_value(
     {
         if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
         {
-            if (value >= type_->get_member_count())
+            std::map<MemberId, const DynamicTypeMember*> col;
+            type_->get_all_members(col);
+            auto it = col.find(value);
+
+            if(it == col.end())
             {
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }

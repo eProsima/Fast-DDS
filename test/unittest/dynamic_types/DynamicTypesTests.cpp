@@ -2405,11 +2405,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
 
         EXPECT_NE(created_builder->add_member(1u, "TEST"), ReturnCode_t::RETCODE_OK);
         ASSERT_EQ(created_builder->add_member(1u, "TEST2"), ReturnCode_t::RETCODE_OK);
-
-        // Note that the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.7.6
-        // requires indexes to be consecutive
-        ASSERT_EQ(created_builder->add_member(3u, "TEST4"), ReturnCode_t::RETCODE_OK);
-        EXPECT_EQ(2u, created_builder->get_member_index_by_name("TEST4")); // index hint was dismiss according to standard
+        ASSERT_EQ(created_builder->add_member(4u, "TEST4"), ReturnCode_t::RETCODE_OK);
         EXPECT_NE(created_builder->add_member(5u, "TEST5"), ReturnCode_t::RETCODE_OK); // Out of bounds
     }
 
@@ -2418,21 +2414,21 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
     DynamicData* data = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(data != nullptr);
 
-    uint32_t testindex = data->get_member_index_by_name("TEST");
-    EXPECT_NE(testindex, INDEX_INVALID);
-    EXPECT_EQ(testindex, 0u);
-    uint32_t test2index = data->get_member_index_by_name("TEST2");
-    EXPECT_NE(test2index, INDEX_INVALID);
-    EXPECT_EQ(test2index, 1u);
-    uint32_t test4index = data->get_member_index_by_name("TEST4");
-    EXPECT_NE(test4index, INDEX_INVALID);
-    EXPECT_EQ(test4index, 2u); // override
-    uint32_t test5index = data->get_member_index_by_name("TEST5");
-    EXPECT_EQ(test5index, INDEX_INVALID);
+    MemberId testId = data->get_member_id_by_name("TEST");
+    EXPECT_NE(testId, MEMBER_ID_INVALID);
+    EXPECT_EQ(testId, 0u);
+    MemberId test2Id = data->get_member_id_by_name("TEST2");
+    EXPECT_NE(test2Id, MEMBER_ID_INVALID);
+    EXPECT_EQ(test2Id, 1u);
+    MemberId test4Id = data->get_member_id_by_name("TEST4");
+    EXPECT_NE(test4Id, MEMBER_ID_INVALID);
+    EXPECT_EQ(test4Id, 4u);
+    MemberId test5Id = data->get_member_id_by_name("TEST5");
+    EXPECT_EQ(test5Id, MEMBER_ID_INVALID);
 
     bool test1 = true;
     ASSERT_FALSE(data->set_int32_value(1, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(data->set_bool_value(test1, testindex) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(data->set_bool_value(test1, testId) == ReturnCode_t::RETCODE_OK);
 
     // Over the limit
     ASSERT_FALSE(data->set_bool_value(test1, limit + 1) == ReturnCode_t::RETCODE_OK);
@@ -2440,9 +2436,9 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
     bool test2 = false;
     ASSERT_TRUE(data->get_bool_value(test2, 2) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(test2 == false);
-    ASSERT_TRUE(data->get_bool_value(test2, testindex) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(data->get_bool_value(test2, testId) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
-    ASSERT_TRUE(data->get_bool_value(test2, testindex) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(data->get_bool_value(test2, testId) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
     bool test3 = data->get_bool_value("TEST");
     ASSERT_TRUE(test1 == test3);
@@ -2451,9 +2447,9 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
     ASSERT_TRUE(test4 == true);
 
     test1 = false;
-    ASSERT_TRUE(data->set_bool_value(test1, testindex) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(data->get_bool_value(test2, test2index) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(data->get_bool_value(test2, testindex) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(data->set_bool_value(test1, testId) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(data->get_bool_value(test2, test2Id) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(data->get_bool_value(test2, testId) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(test1 == test2);
     data->set_bitmask_value(55); // 00110111
     uint64_t value = data->get_bitmask_value();
@@ -2464,7 +2460,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
     data->set_bitmask_value(37); // 00100101
     ASSERT_TRUE(data->get_bool_value("TEST"));
     ASSERT_FALSE(data->get_bool_value("TEST2"));
-    ASSERT_TRUE(data->get_bool_value("TEST4"));
+    ASSERT_FALSE(data->get_bool_value("TEST4"));
 
     ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
     ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
@@ -2532,142 +2528,139 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
 }
 
-/*
 TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
 {
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
+
     uint32_t length = 2;
-    {
-        // Then
-        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
-        ASSERT_TRUE(base_type_builder != nullptr);
-        DynamicTypeBuilder_ptr seq_type_builder = DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-            base_type_builder.get(), length);
-        ASSERT_TRUE(seq_type_builder != nullptr);
-        auto seq_type = seq_type_builder->build();
-        ASSERT_TRUE(seq_type != nullptr);
 
-        auto data = DynamicDataFactory::get_instance()->create_data(seq_type);
-        ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    // Then
+    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_builder();
+    ASSERT_TRUE(base_type_builder);
+    DynamicTypeBuilder_ptr seq_type_builder = factory.create_sequence_builder(*base_type_builder, length);
+    ASSERT_TRUE(seq_type_builder);
+    auto seq_type = seq_type_builder->build();
+    ASSERT_TRUE(seq_type);
 
-        // Try to write on an empty position
-        ASSERT_FALSE(data->set_int32_value(234, 1) == ReturnCode_t::RETCODE_OK);
+    auto data = DynamicDataFactory::get_instance()->create_data(seq_type);
+    ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
 
-        MemberId newId;
-        ASSERT_TRUE(data->insert_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
-        MemberId newId2;
-        ASSERT_TRUE(data->insert_sequence_data(newId2) == ReturnCode_t::RETCODE_OK);
+    // Try to write on an empty position
+    ASSERT_FALSE(data->set_int32_value(234, 1) == ReturnCode_t::RETCODE_OK);
 
-        // Try to insert more than the limit.
-        MemberId newId3;
-        ASSERT_FALSE(data->insert_sequence_data(newId3) == ReturnCode_t::RETCODE_OK);
+    MemberId newId;
+    ASSERT_TRUE(data->insert_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+    MemberId newId2;
+    ASSERT_TRUE(data->insert_sequence_data(newId2) == ReturnCode_t::RETCODE_OK);
 
-        // Set and get a value.
-        int32_t test1(234);
-        ASSERT_TRUE(data->set_int32_value(test1, newId2) == ReturnCode_t::RETCODE_OK);
-        int32_t test2(0);
-        ASSERT_TRUE(data->get_int32_value(test2, newId2) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(test1 == test2);
+    // Try to insert more than the limit.
+    MemberId newId3;
+    ASSERT_FALSE(data->insert_sequence_data(newId3) == ReturnCode_t::RETCODE_OK);
 
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(seq_type);
-        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(data, &payload));
-        ASSERT_TRUE(payload.length == payloadSize);
+    // Set and get a value.
+    int32_t test1(234);
+    ASSERT_TRUE(data->set_int32_value(test1, newId2) == ReturnCode_t::RETCODE_OK);
+    int32_t test2(0);
+    ASSERT_TRUE(data->get_int32_value(test2, newId2) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
 
-        types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(seq_type);
-        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
-        ASSERT_TRUE(data2->equals(data));
+    // Serialize <-> Deserialize Test
+    DynamicPubSubType pubsubType(seq_type);
+    uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
+    ASSERT_TRUE(pubsubType.serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
-        // Remove the elements.
-        ASSERT_TRUE(data->remove_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(seq_type);
+    ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+    ASSERT_TRUE(data2->equals(data));
 
-        // New Insert Methods
-        ASSERT_TRUE(data->insert_int32_value(test1, newId) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(data->get_int32_value(test2, newId) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(test1 == test2);
-        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+    // Remove the elements.
+    ASSERT_TRUE(data->remove_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
 
-        // Check that the sequence is empty.
-        ASSERT_FALSE(data->get_int32_value(test2, 0) == ReturnCode_t::RETCODE_OK);
+    // New Insert Methods
+    ASSERT_TRUE(data->insert_int32_value(test1, newId) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(data->get_int32_value(test2, newId) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+    ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    // Check that the sequence is empty.
+    ASSERT_FALSE(data->get_int32_value(test2, 0) == ReturnCode_t::RETCODE_OK);
 
-        int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
 
+    int32_t iTest32;
+    ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
 
-        // SERIALIZATION TEST
-        SequenceStruct seq;
-        SequenceStructPubSubType seqpb;
+    // SERIALIZATION TEST
+    SequenceStruct seq;
+    SequenceStructPubSubType seqpb;
 
-        SerializedPayload_t dynamic_payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
-        ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
+    SerializedPayload_t dynamic_payload(payloadSize);
+    ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+    ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
 
-        uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
-        SerializedPayload_t static_payload(static_payloadSize);
-        ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
-        ASSERT_TRUE(static_payload.length == static_payloadSize);
-        types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(seq_type);
-        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
-        ASSERT_TRUE(data3->equals(data));
+    uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
+    SerializedPayload_t static_payload(static_payloadSize);
+    ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
+    ASSERT_TRUE(static_payload.length == static_payloadSize);
+    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(seq_type);
+    ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+    ASSERT_TRUE(data3->equals(data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
-    }
-    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
-    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
 }
 
+/*
 TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
 {
     uint32_t sequence_length = 2;
