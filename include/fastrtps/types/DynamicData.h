@@ -172,6 +172,9 @@ public:
     RTPS_DllAPI MemberId get_member_id_at_index(
             uint32_t index) const;
 
+    RTPS_DllAPI uint32_t get_member_index_by_name(
+            const std::string& name) const;
+
     // TODO: doxygen
     RTPS_DllAPI DynamicData* loan_value(
             MemberId id);
@@ -455,21 +458,26 @@ public:
     }
 
     // TODO: doxygen
+    // @remark is valid for bitmask but id should be interpret as index in this case.
     RTPS_DllAPI ReturnCode_t get_bool_value(
             bool& value,
             MemberId id) const;
 
     // TODO: doxygen
+    // @remark is valid for bitmask but id should be interpret as index in this case
+    //         if MEMBER_ID_INVALID is passed all bits are set or reset according to value
     RTPS_DllAPI ReturnCode_t set_bool_value(
             bool value,
             MemberId id = MEMBER_ID_INVALID);
 
     // TODO: doxygen
+    // @remark is valid for bitmask but id should be interpret as index in this case
+    //         if MEMBER_ID_INVALID is passed all bits are set or reset according to value
     RTPS_DllAPI ReturnCode_t set_bool_value(
             bool value,
             const std::string& name)
     {
-        MemberId id = get_member_id_by_name(name);
+        MemberId id = get_member_index_by_name(name);
         if (id != MEMBER_ID_INVALID)
         {
             return set_bool_value(value, id);
@@ -727,7 +735,7 @@ public:
     RTPS_DllAPI bool get_bool_value(
             const std::string& name) const
     {
-        MemberId id = get_member_id_by_name(name);
+        MemberId id = get_member_index_by_name(name);
         bool value;
         if (get_bool_value(value, id) != ReturnCode_t::RETCODE_OK)
         {

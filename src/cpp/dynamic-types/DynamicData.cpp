@@ -350,6 +350,13 @@ MemberId DynamicData::get_member_id_at_index(
     return type_->get_member_id_at_index(index);
 }
 
+uint32_t DynamicData::get_member_index_by_name(
+        const std::string& name) const
+{
+    assert(type_);
+    return type_->get_member_index_by_name(name);
+}
+
 TypeKind DynamicData::get_kind() const
 {
     return type_->get_kind();
@@ -3381,13 +3388,8 @@ ReturnCode_t DynamicData::get_bool_value(
         }
         else if (get_kind() == TypeKind::TK_BITMASK && id < type_->get_bounds())
         {
-            const DynamicTypeMember* member;
-            bool found;
-
-            std::tie(member, found) = type_->get_member(id);
-            assert(found);
-            uint16_t position = member->annotation_get_position();
-            value = (*((uint64_t*)it->second) & ((uint64_t)1 << position)) != 0;
+            // for bitmask the id is interpret as an index
+            value = (*((uint64_t*)it->second) & ((uint64_t)1 << id)) != 0;
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
@@ -3504,19 +3506,14 @@ ReturnCode_t DynamicData::set_bool_value(
             }
             else if (type_->get_bounds() == BOUND_UNLIMITED || id < type_->get_bounds())
             {
-                const DynamicTypeMember* member;
-                bool found;
-
-                std::tie(member, found) = type_->get_member(id);
-                assert(found);
-                uint16_t position = member->annotation_get_position();
+                // for bitmask the id is interpret as an index
                 if (value)
                 {
-                    *((uint64_t*)it->second) |= ((uint64_t)1 << position);
+                    *((uint64_t*)it->second) |= ((uint64_t)1 << id);
                 }
                 else
                 {
-                    *((uint64_t*)it->second) &= ~((uint64_t)1 << position);
+                    *((uint64_t*)it->second) &= ~((uint64_t)1 << id);
                 }
                 return ReturnCode_t::RETCODE_OK;
             }
