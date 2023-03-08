@@ -3911,6 +3911,11 @@ ReturnCode_t DynamicData::get_enum_value(
 #ifdef DYNAMIC_TYPES_CHECKING
     if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
     {
+        if (uint32_value_ >= type_->get_member_count())
+        {
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        }
+
         value = uint32_value_;
         return ReturnCode_t::RETCODE_OK;
     }
@@ -3929,14 +3934,20 @@ ReturnCode_t DynamicData::get_enum_value(
             return default_array_value_->get_enum_value(value, MEMBER_ID_INVALID);
         }
     }
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 #else
     auto itValue = values_.find(id);
     if (itValue != values_.end())
     {
         if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
         {
-            value = *((uint32_t*)itValue->second);
+            uint32_t inner_value = *((uint32_t*)itValue->second);
+
+            if (inner_value >= type_->get_member_count())
+            {
+                return ReturnCode_t::RETCODE_BAD_PARAMETER;
+            }
+
+            value = inner_value;
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
@@ -3951,8 +3962,8 @@ ReturnCode_t DynamicData::get_enum_value(
     {
         return default_array_value_->get_enum_value(value, MEMBER_ID_INVALID);
     }
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DynamicData::set_enum_value(
@@ -3962,14 +3973,13 @@ ReturnCode_t DynamicData::set_enum_value(
 #ifdef DYNAMIC_TYPES_CHECKING
     if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
     {
-        bool found;
-        std::tie(std::ignore, found) = type_->get_member(value);
-        if (!found)
+        if (value >= type_->get_member_count())
         {
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
 
         uint32_value_ = value;
+        return ReturnCode_t::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
     {
@@ -3999,14 +4009,13 @@ ReturnCode_t DynamicData::set_enum_value(
     {
         if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
         {
-            bool found;
-            std::tie(std::ignore, found) = type_->get_member(value);
-            if (!found)
+            if (value >= type_->get_member_count())
             {
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
 
             *((uint32_t*)itValue->second) = value;
+            return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
         {
@@ -4029,7 +4038,7 @@ ReturnCode_t DynamicData::set_enum_value(
     }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 
-    return ReturnCode_t::RETCODE_OK;
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DynamicData::get_enum_value(
@@ -4039,17 +4048,15 @@ ReturnCode_t DynamicData::get_enum_value(
 #ifdef DYNAMIC_TYPES_CHECKING
     if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
     {
-        const DynamicTypeMember* pM;
-        bool found;
-
-        std::tie(pM, found) = type_->get_member(uint32_value_);
-
-        if(!found)
+        if(uint32_value_ >= type_->get_member_count())
         {
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
 
-        value = pM->get_name();
+        auto it = type_->get_all_members().begin();
+        std::advance(it, uint32_value_);
+        value = it->get_name();
+
         return ReturnCode_t::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
@@ -4067,24 +4074,23 @@ ReturnCode_t DynamicData::get_enum_value(
             return default_array_value_->get_enum_value(value, MEMBER_ID_INVALID);
         }
     }
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 #else
     auto itValue = values_.find(id);
     if (itValue != values_.end())
     {
         if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
         {
-            const DynamicTypeMember* pM;
-            bool found;
+            uint32_t inner_value = *((uint32_t*)itValue->second);
 
-            std::tie(pM, found) = type_->get_member(*((uint32_t*)itValue->second));
-
-            if(!found)
+            if(inner_value >= type_->get_member_count())
             {
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
 
-            value = pM->get_name();
+            auto it = type_->get_all_members().begin();
+            std::advance(it, inner_value);
+            value = it->get_name();
+
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
@@ -4099,8 +4105,8 @@ ReturnCode_t DynamicData::get_enum_value(
     {
         return default_array_value_->get_enum_value(value, MEMBER_ID_INVALID);
     }
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DynamicData::set_enum_value(
@@ -4110,13 +4116,16 @@ ReturnCode_t DynamicData::set_enum_value(
 #ifdef DYNAMIC_TYPES_CHECKING
     if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
     {
-        MemberId eid = get_member_id_by_name(value);
-        if (eid == MEMBER_ID_INVALID)
+        std::map<std::string, const DynamicTypeMember*> col;
+        type_->get_all_members_by_name(col);
+        auto it = col.find(value);
+
+        if(it == col.end())
         {
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
 
-        uint32_value_ = eid;
+        uint32_value_ = it->get_index();
         return ReturnCode_t::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
@@ -4141,20 +4150,22 @@ ReturnCode_t DynamicData::set_enum_value(
             return insertResult;
         }
     }
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 #else
     auto itValue = values_.find(id);
     if (itValue != values_.end())
     {
         if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
         {
-            MemberId eid = get_member_id_by_name(value);
-            if(eid == MEMBER_ID_INVALID)
+            std::map<std::string, const DynamicTypeMember*> col;
+            type_->get_all_members_by_name(col);
+            auto it = col.find(value);
+
+            if(it == col.end())
             {
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
 
-            *((uint32_t*)itValue->second) = eid;
+            *((uint32_t*)itValue->second) = it->second->get_index();
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
@@ -4176,9 +4187,8 @@ ReturnCode_t DynamicData::set_enum_value(
         }
         return insertResult;
     }
-
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DynamicData::set_bitmask_value(

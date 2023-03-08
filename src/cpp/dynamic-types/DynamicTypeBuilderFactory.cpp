@@ -359,6 +359,25 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::new_primitive_builder(TypeKind
     return builder;
 }
 
+// Beware! this method doesn't return a static object but creates it
+DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::new_unlimited_string_builder(bool large) noexcept
+{
+    TypeDescriptor descriptor;
+    descriptor.set_kind(large ? TypeKind::TK_STRING16 : TypeKind::TK_STRING8);
+    descriptor.set_name(TypeNamesGenerator::get_string_type_name(MAX_STRING_LENGTH, false, true));
+    descriptor.element_type_ = large ? create_char16_type() : create_char8_type();
+    descriptor.bound_.push_back(MAX_STRING_LENGTH);
+
+    // create on heap
+    DynamicTypeBuilder_ptr builder = std::make_shared<DynamicTypeBuilder>(
+                DynamicTypeBuilder::use_the_create_method{},
+                descriptor,
+                true); // will be a static object
+    // notify the tracker
+    dynamic_tracker_interface::get_dynamic_tracker().add_primitive(builder.get());
+    return builder;
+}
+
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_bool_builder() noexcept
 {
     return create_primitive_builder<TypeKind::TK_BOOLEAN>();
@@ -501,20 +520,44 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_sequence_builder(
     return create_builder(descriptor);
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_string_builder(
+DynamicTypeBuilder_cptr DynamicTypeBuilderFactory::create_string_builder(
         uint32_t bound)
 {
+    // C++11 compiler uses double-checked locking pattern to avoid concurrency issues
+    static DynamicTypeBuilder_cptr unlimited_builder = { new_unlimited_string_builder(false) };
+
     if (bound == BOUND_UNLIMITED)
     {
+        // if unlimited return the cached one
+        // TODO:Barro refactor unbounded to be unbounded and not 256
         bound = MAX_STRING_LENGTH;
+        return unlimited_builder;
     }
 
-    TypeDescriptor descriptor;
-    descriptor.set_kind(TypeKind::TK_STRING8);
+    // otherwise allocate one on the heap
+    TypeDescriptor descriptor(*unlimited_builder);
     descriptor.set_name(TypeNamesGenerator::get_string_type_name(bound, false, true));
-    descriptor.element_type_ = create_char8_type();
-    descriptor.bound_.push_back(bound);
+    descriptor.bound_[0] = bound;
+    return create_builder(descriptor);
+}
 
+DynamicTypeBuilder_cptr DynamicTypeBuilderFactory::create_wstring_builder(
+        uint32_t bound)
+{
+    // C++11 compiler uses double-checked locking pattern to avoid concurrency issues
+    static DynamicTypeBuilder_cptr unlimited_builder = { new_unlimited_string_builder(true) };
+
+    if (bound == BOUND_UNLIMITED)
+    {
+        // if unlimited return the cached one
+        bound = MAX_STRING_LENGTH;
+        return unlimited_builder;
+    }
+
+    // otherwise allocate one on the heap
+    TypeDescriptor descriptor(*unlimited_builder);
+    descriptor.set_name(TypeNamesGenerator::get_string_type_name(bound, true, true));
+    descriptor.bound_[0] = bound;
     return create_builder(descriptor);
 }
 
@@ -598,23 +641,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_union_builder(
 
     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building Union, invalid discriminator type");
     return {};
-}
-
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_wstring_builder(
-        uint32_t bound)
-{
-    if (bound == BOUND_UNLIMITED)
-    {
-        bound = MAX_STRING_LENGTH;
-    }
-
-    TypeDescriptor descriptor;
-    descriptor.kind_ = TypeKind::TK_STRING16;
-    descriptor.name_ = TypeNamesGenerator::get_string_type_name(bound, true, true);
-    descriptor.element_type_ = create_char16_type();
-    descriptor.bound_.push_back(bound);
-
-    return create_builder(descriptor);
 }
 
 ReturnCode_t DynamicTypeBuilderFactory::delete_builder(
@@ -2453,14 +2479,14 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_byte_type()
 DynamicType_ptr DynamicTypeBuilderFactory::create_string_type(
         uint32_t bound /*= MAX_STRING_LENGTH*/) noexcept
 {
-    DynamicTypeBuilder_ptr builder = create_string_builder(bound);
+    DynamicTypeBuilder_cptr builder = create_string_builder(bound);
     return builder ? builder->build() : DynamicType_ptr{};
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_wstring_type(
         uint32_t bound /*= MAX_STRING_LENGTH*/) noexcept
 {
-    DynamicTypeBuilder_ptr builder = create_wstring_builder(bound);
+    DynamicTypeBuilder_cptr builder = create_wstring_builder(bound);
     return builder ? builder->build() : DynamicType_ptr{};
 }
 

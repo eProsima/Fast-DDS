@@ -1299,7 +1299,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
         }
         else
         {
-            DynamicTypeBuilder_ptr innerBuilder = factory.create_string_builder(bound);
+            DynamicTypeBuilder_cptr innerBuilder = factory.create_string_builder(bound);
             std::vector<uint32_t> boundsArray;
             dimensionsToArrayBounds(memberArray, boundsArray);
             memberBuilder = factory.create_array_builder(*innerBuilder, boundsArray);
@@ -1319,7 +1319,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
         }
         else
         {
-            DynamicTypeBuilder_ptr innerBuilder = factory.create_wstring_builder(bound);
+            DynamicTypeBuilder_cptr innerBuilder = factory.create_wstring_builder(bound);
             std::vector<uint32_t> boundsArray;
             dimensionsToArrayBounds(memberArray, boundsArray);
             memberBuilder = factory.create_array_builder(*innerBuilder, boundsArray);

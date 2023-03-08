@@ -130,8 +130,11 @@ class DynamicTypeBuilderFactory
 
     DynamicTypeBuilderFactory() = default;
 
-    //! auxiliary method that atomically modifies the dynamic_tracker
+    //! auxiliary method for primitive creation that atomically modifies the dynamic_tracker
     DynamicTypeBuilder_ptr new_primitive_builder(TypeKind kind) noexcept;
+
+    //! auxiliary method for string creation that atomically modifies the dynamic_tracker
+    DynamicTypeBuilder_ptr new_unlimited_string_builder(bool large) noexcept;
 
     void build_alias_type_code(
             const TypeDescriptor& descriptor,
@@ -328,13 +331,27 @@ public:
     //! alias of `create_primitive_builder<TypeKind::TK_BYTE>()`
     RTPS_DllAPI DynamicTypeBuilder_cptr& create_byte_builder() noexcept;
 
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_string_builder(
-            uint32_t bound = MAX_STRING_LENGTH);
+    /**
+     * Creates a new @ref DynamicTypeBuilder object representing a string type.
+     * @remark The element type of the typed returned is a char8
+     * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.5 this method is
+     *         called `create_string_type` which is misguiding. It was renamed to simplify interface usage.
+     * @param[in] bound `uint32_t` representing the maximun number of elements that may be stored.
+     * @return new @ref DynamicTypeBuilder object
+     */
+    RTPS_DllAPI DynamicTypeBuilder_cptr create_string_builder(
+            uint32_t bound = BOUND_UNLIMITED);
 
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_wstring_builder(
-            uint32_t bound = MAX_STRING_LENGTH);
+    /**
+     * Creates a new @ref DynamicTypeBuilder object representing a wstring type.
+     * @remark The element type of the typed returned is a char16
+     * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.5 this method is
+     *         called `create_wstring_type` which is misguiding. It was renamed to simplify interface usage.
+     * @param[in] bound `uint32_t` representing the maximun number of elements that may be stored.
+     * @return new @ref DynamicTypeBuilder object
+     */
+    RTPS_DllAPI DynamicTypeBuilder_cptr create_wstring_builder(
+            uint32_t bound = BOUND_UNLIMITED);
 
     // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_sequence_builder(
@@ -421,50 +438,50 @@ public:
             const DynamicType& base_type,
             const std::string& sName);
 
-    // TODO: doxygen
-    RTPS_DllAPI DynamicType_ptr create_int32_type();
-
-    // TODO: doxygen
-    RTPS_DllAPI DynamicType_ptr create_uint32_type();
-
-    // TODO: doxygen
+    //! returns the cache type associated to create_int16_builder()
     RTPS_DllAPI DynamicType_ptr create_int16_type();
 
-    // TODO: doxygen
+    //! returns the cache type associated to create_uint16_builder()
     RTPS_DllAPI DynamicType_ptr create_uint16_type();
 
-    // TODO: doxygen
+    //! returns the cache type associated to create_int32_builder()
+    RTPS_DllAPI DynamicType_ptr create_int32_type();
+
+    //! returns the cache type associated to create_uint32_builder()
+    RTPS_DllAPI DynamicType_ptr create_uint32_type();
+
+    //! returns the cache type associated to create_int64_builder()
     RTPS_DllAPI DynamicType_ptr create_int64_type();
 
-    // TODO: doxygen
+    //! returns the cache type associated to create_uint64_builder()
     RTPS_DllAPI DynamicType_ptr create_uint64_type();
 
-    // TODO: doxygen
+    //! returns the cache type associated to create_float32_builder()
     RTPS_DllAPI DynamicType_ptr create_float32_type();
 
-    // TODO: doxygen
+    //! returns the cache type associated to create_float64_builder()
     RTPS_DllAPI DynamicType_ptr create_float64_type();
 
-    // TODO: doxygen
+    //! returns the cache type associated to create_float128_builder()
     RTPS_DllAPI DynamicType_ptr create_float128_type();
 
-    // TODO: doxygen
+    //! returns the cache type associated to create_char8_builder()
     RTPS_DllAPI DynamicType_ptr create_char8_type();
 
-    // TODO: doxygen
+    //! returns the cache type associated to create_char16_builder()
     RTPS_DllAPI DynamicType_ptr create_char16_type();
 
-    // TODO: doxygen
+    //! returns the cache type associated to create_bool_builder()
     RTPS_DllAPI DynamicType_ptr create_bool_type();
 
-    // TODO: doxygen
+    //! returns the cache type associated to create_byte_type()
     RTPS_DllAPI DynamicType_ptr create_byte_type();
 
-    // TODO: doxygen
+    //! returns the cache type associated to create_string_builder()
     RTPS_DllAPI DynamicType_ptr create_string_type(
             uint32_t bound = MAX_STRING_LENGTH) noexcept;
 
-    // TODO: doxygen
+    //! returns the cache type associated to create_wstring_builder()
     RTPS_DllAPI DynamicType_ptr create_wstring_type(
             uint32_t bound = MAX_STRING_LENGTH) noexcept;
 
