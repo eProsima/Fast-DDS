@@ -100,13 +100,8 @@ DynamicTypeBuilder::member_iterator DynamicTypeBuilder::add_empty_member(
 
     if (get_kind() == TypeKind::TK_BITMASK)
     {
-        if (index >= get_bounds(0))
-        {
-            throw std::system_error(
-                    ReturnCode_t::RETCODE_BAD_PARAMETER,
-                    "Error adding member, out of bounds.");
-        }
-
+        // preconditions check on add_member() public API
+        assert(index < get_bounds(0));
         it->annotation_set_position(static_cast<uint16_t>(index));
     }
 
@@ -167,6 +162,14 @@ ReturnCode_t DynamicTypeBuilder::add_member(
             throw std::system_error(
                     ReturnCode_t::RETCODE_BAD_PARAMETER,
                     "Error adding member, invalid union parameters.");
+        }
+
+        if (get_kind() == TypeKind::TK_BITMASK &&
+                descriptor.get_index() >= get_bounds(0))
+        {
+            throw std::system_error(
+                    ReturnCode_t::RETCODE_BAD_PARAMETER,
+                    "Error adding member, out of bounds.");
         }
 
         auto it = add_empty_member(descriptor.get_index(), member_name);

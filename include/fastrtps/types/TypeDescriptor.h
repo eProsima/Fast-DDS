@@ -175,6 +175,9 @@ public:
     RTPS_DllAPI MemberId get_member_id_at_index(
             uint32_t index) const;
 
+    RTPS_DllAPI uint32_t get_member_index_by_name(
+            const std::string& name) const;
+
     RTPS_DllAPI std::pair<const DynamicTypeMember*, bool> get_member(
             MemberId id) const;
 
