@@ -2933,6 +2933,7 @@ TEST(DDSStatus, keyed_best_effort_on_unack_sample_removed)
         EXPECT_EQ(instance, (index % 2) == 0 ? handle_even : handle_odd);
         index++;
     }
+    delete dummy_data;
 }
 
 // Auxiliary method to initialize Reliable DataWriter configuring sample drops in the transport
@@ -3061,6 +3062,7 @@ TEST(DDSStatus, keyed_reliable_on_unack_sample_removed)
     {
         EXPECT_EQ(instance, handle);
     }
+    delete dummy_data;
 }
 
 class CustomDataWriterListener : public eprosima::fastdds::dds::DataWriterListener
@@ -3255,6 +3257,7 @@ TEST(DDSStatus, keyed_reliable_positive_acks_disabled_on_unack_sample_removed)
     EXPECT_EQ(reader.getReceivedCount(), 10u);
     EXPECT_EQ(listener.times_unack_sample_removed(), 8u);
     EXPECT_EQ(listener.notified_writer(), &(writer_1.get_native_writer()));
+    delete dummy_data;
 }
 
 /*!
