@@ -81,6 +81,10 @@ extern const char* DISCARD;
 extern const char* FAIL;
 extern const char* RTPS_DUMP_FILE;
 extern const char* ON;
+extern const char* CHAINING_LIBRARY;
+extern const char* CHAINING_SYMBOL;
+extern const char* CHAINING_LOW_LEVEL_TRANSPORT;
+
 
 // IntraprocessDeliveryType
 extern const char* OFF;
@@ -175,6 +179,7 @@ extern const char* UDPv6;
 extern const char* TCPv4;
 extern const char* TCPv6;
 extern const char* SHM;
+extern const char* ChainingTransport;
 extern const char* INIT_ACKNACK_DELAY;
 extern const char* HEARTB_RESP_DELAY;
 extern const char* INIT_HEARTB_DELAY;
