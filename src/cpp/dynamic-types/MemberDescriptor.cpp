@@ -26,9 +26,19 @@ namespace fastrtps {
 namespace types {
 
 MemberDescriptor::MemberDescriptor(
-        uint32_t index,
+        MemberId id,
         const std::string& name)
     : name_(name)
+    , id_(id)
+{
+}
+
+MemberDescriptor::MemberDescriptor(
+        uint32_t index,
+        MemberId id,
+        const std::string& name)
+    : name_(name)
+    , id_(id)
     , index_(index)
 {
 }
@@ -153,9 +163,11 @@ bool MemberDescriptor::is_consistent(
         return false;
     }
 
-    // Only aggregated types must use the ID value.
-    if (id_ != MEMBER_ID_INVALID && parentKind != TypeKind::TK_UNION && parentKind != TypeKind::TK_STRUCTURE &&
-            parentKind != TypeKind::TK_BITSET && parentKind != TypeKind::TK_ANNOTATION)
+    // Only enums, bitmaks and aggregated types must use the ID value.
+    if (id_ != MEMBER_ID_INVALID && parentKind != TypeKind::TK_UNION &&
+            parentKind != TypeKind::TK_STRUCTURE && parentKind != TypeKind::TK_BITSET &&
+            parentKind != TypeKind::TK_ANNOTATION && parentKind != TypeKind::TK_ENUM &&
+            parentKind != TypeKind::TK_BITMASK)
     {
         return false;
     }

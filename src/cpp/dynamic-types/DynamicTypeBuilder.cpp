@@ -76,11 +76,11 @@ DynamicTypeBuilder::member_iterator DynamicTypeBuilder::add_empty_member(
 {
     // insert the new member
     member_iterator it;
-    if( index >=  members_.size() )
+    if (index >= members_.size())
     {
         // at the end
         index = uint32_t(members_.size());
-        it = members_.emplace(members_.end(), index, name);
+        it = members_.emplace(members_.end(), index, MEMBER_ID_INVALID, name);
     }
     else
     {
@@ -90,8 +90,7 @@ DynamicTypeBuilder::member_iterator DynamicTypeBuilder::add_empty_member(
         it = members_.emplace(it, index, name);
         // rename the others
         auto nit = it;
-        auto i = index;
-        for( ++nit, ++i; nit != members_.end(); ++nit)
+        for (auto i = index; nit != members_.end(); ++nit, ++i)
         {
             nit->set_index(i);
             assert(nit->get_index() == i);
@@ -165,7 +164,7 @@ ReturnCode_t DynamicTypeBuilder::add_member(
         }
 
         if (get_kind() == TypeKind::TK_BITMASK &&
-                descriptor.get_index() >= get_bounds(0))
+                descriptor.get_id() >= get_bounds(0))
         {
             throw std::system_error(
                     ReturnCode_t::RETCODE_BAD_PARAMETER,
@@ -181,11 +180,11 @@ ReturnCode_t DynamicTypeBuilder::add_member(
 
         if(member_id == MEMBER_ID_INVALID)
         {
-            // assing a new one
-            while(exists_member_by_id(current_member_id_))
-            {
-                member_id = ++current_member_id_;
-            }
+            do
+            { // assing a new one
+                member_id = current_member_id_;
+            } // check and advance
+            while(exists_member_by_id(current_member_id_++));
 
             newMember.set_id(member_id);
         }
@@ -196,9 +195,6 @@ ReturnCode_t DynamicTypeBuilder::add_member(
             member_by_id_.insert(std::make_pair(member_id, &newMember));
             member_by_name_.insert(std::make_pair(member_name, &newMember));
         }
-
-        // advance
-        ++current_member_id_;
 
         // invalidate type object
         instance_.reset();

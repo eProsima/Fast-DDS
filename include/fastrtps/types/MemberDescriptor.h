@@ -65,11 +65,21 @@ public:
 
     /**
      * convenience constructor
+     * @param[in] name std::string new member's name
+     */
+    RTPS_DllAPI MemberDescriptor(
+            MemberId id,
+            const std::string& name);
+
+    /**
+     * convenience constructor
      * @param[in] index desired position in the collection (zero based)
+     * @param[in] id @ref MemberId new member's identifier
      * @param[in] name std::string new member's name
      */
     RTPS_DllAPI MemberDescriptor(
             uint32_t index,
+            MemberId id,
             const std::string& name);
 
     /**

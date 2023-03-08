@@ -473,19 +473,6 @@ MemberId TypeDescriptor::get_member_id_at_index(
     return it->get_id();
 }
 
-uint32_t TypeDescriptor::get_member_index_by_name(
-        const std::string& name) const
-{
-    auto it = member_by_name_.find(name);
-
-    if (it != member_by_name_.end())
-    {
-        return it->second->get_index();
-    }
-
-    return INDEX_INVALID;
-}
-
 bool TypeDescriptor::exists_member_by_name(
         const std::string& name) const
 {
