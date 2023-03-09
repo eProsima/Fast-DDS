@@ -277,4 +277,8 @@ std::string SystemInfo::environment_file_;
 } // eprosima
 
 // threading.hpp implementations
+#if defined(_POSIX_SOURCE)
+#include "threading/threading_pthread.ipp"
+#else
 #include "threading/threading_empty.ipp"
+#endif // Platform selection
