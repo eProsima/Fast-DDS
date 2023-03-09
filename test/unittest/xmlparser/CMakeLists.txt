@@ -150,6 +150,7 @@ target_include_directories(XMLProfileParserTests PRIVATE
     )
 
 target_link_libraries(XMLProfileParserTests GTest::gmock
+    ${CMAKE_DL_LIBS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
@@ -248,6 +249,7 @@ target_include_directories(XMLParserTests PRIVATE
     )
 
 target_link_libraries(XMLParserTests GTest::gtest
+    ${CMAKE_DL_LIBS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
