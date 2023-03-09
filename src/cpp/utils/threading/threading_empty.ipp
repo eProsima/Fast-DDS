@@ -15,13 +15,20 @@
 namespace eprosima {
 
 void set_name_to_current_thread(
+        const char* /* name */)
+{
+}
+
+void set_name_to_current_thread(
         const char* /* fmt */,
         uint32_t /* arg */)
 {
 }
 
 void set_name_to_current_thread(
-        const char* /* name */)
+        const char* /* fmt */,
+        uint32_t /* arg1 */,
+        uint32_t /* arg2 */)
 {
 }
 

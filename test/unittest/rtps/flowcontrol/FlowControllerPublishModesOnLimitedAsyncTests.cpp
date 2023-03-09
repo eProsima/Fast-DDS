@@ -28,7 +28,7 @@ TYPED_TEST(FlowControllerPublishModes, limited_async_publish_mode)
     flow_controller_descr.max_bytes_per_period = 10200;
     flow_controller_descr.period_ms = 10;
     FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock, TypeParam> async(nullptr,
-            &flow_controller_descr);
+            &flow_controller_descr, 0);
     async.init();
 
     // Instantiate writers.

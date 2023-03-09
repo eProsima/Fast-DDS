@@ -66,6 +66,9 @@ private:
     //! Stores the created flow controllers.
     std::map<std::string, std::unique_ptr<FlowController>> flow_controllers_;
 
+    //! Counter used for thread identification
+    uint32_t async_controller_index_ = 0;
+
 };
 
 } // namespace rtps
