@@ -121,7 +121,7 @@ void DynamicData::create_members(
                     DynamicDataFactory::get_instance()->create_copy((DynamicData*)it->second)));
         }
     }
-    else if (pData->values_.size() > 0)
+    else if (type_->get_member_count() > 0)
     {
         std::map<MemberId,const DynamicTypeMember*> members;
         auto res = type_->get_all_members(members);
