@@ -26,16 +26,9 @@ namespace eprosima {
 namespace fastrtps {
 namespace types {
 
-DynamicPubSubType::DynamicPubSubType()
-    : dynamic_type_(nullptr)
-    , m_keyBuffer(nullptr)
-{
-}
-
 DynamicPubSubType::DynamicPubSubType(
         DynamicType_ptr pType)
     : dynamic_type_(pType)
-    , m_keyBuffer(nullptr)
 {
     UpdateDynamicTypeInfo();
 }
@@ -50,7 +43,7 @@ DynamicPubSubType::~DynamicPubSubType()
 
 void DynamicPubSubType::CleanDynamicType()
 {
-    dynamic_type_ = nullptr;
+    dynamic_type_.reset();
 }
 
 DynamicType_ptr DynamicPubSubType::GetDynamicType() const
@@ -61,7 +54,7 @@ DynamicType_ptr DynamicPubSubType::GetDynamicType() const
 ReturnCode_t DynamicPubSubType::SetDynamicType(
         DynamicData_ptr pData)
 {
-    if (dynamic_type_ == nullptr)
+    if (!dynamic_type_)
     {
         dynamic_type_ = pData->type_;
         UpdateDynamicTypeInfo();
@@ -77,7 +70,7 @@ ReturnCode_t DynamicPubSubType::SetDynamicType(
 ReturnCode_t DynamicPubSubType::SetDynamicType(
         DynamicType_ptr pType)
 {
-    if (dynamic_type_ == nullptr)
+    if (!dynamic_type_)
     {
         dynamic_type_ = pType;
         UpdateDynamicTypeInfo();

@@ -32,11 +32,11 @@ protected:
 
     DynamicType_ptr dynamic_type_;
     MD5 m_md5;
-    unsigned char* m_keyBuffer;
+    unsigned char* m_keyBuffer = nullptr;
 
 public:
 
-    RTPS_DllAPI DynamicPubSubType();
+    RTPS_DllAPI DynamicPubSubType() = default;
 
     RTPS_DllAPI DynamicPubSubType(
             DynamicType_ptr pDynamicType);

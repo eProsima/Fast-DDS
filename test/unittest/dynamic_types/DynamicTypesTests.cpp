@@ -2555,8 +2555,12 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
     ASSERT_TRUE(data->insert_sequence_data(newId2) == ReturnCode_t::RETCODE_OK);
 
     // Try to insert more than the limit.
-    MemberId newId3;
-    ASSERT_FALSE(data->insert_sequence_data(newId3) == ReturnCode_t::RETCODE_OK);
+    {
+        eprosima::fastdds::dds::Log::ScopeLogs _("disable");
+
+        MemberId newId3;
+        ASSERT_FALSE(data->insert_sequence_data(newId3) == ReturnCode_t::RETCODE_OK);
+    }
 
     // Set and get a value.
     int32_t test1(234);
