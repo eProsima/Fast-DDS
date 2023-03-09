@@ -680,14 +680,15 @@ size_t DynamicType::getCdrSerializedSize(
         const DynamicData& data,
         size_t current_alignment /*= 0*/) const
 {
-    if (data.type_ != nullptr && annotation_is_non_serialized())
+    if (data.type_ && annotation_is_non_serialized())
     {
         return 0;
     }
 
     size_t initial_alignment = current_alignment;
+    assert(kind_ == data.get_kind());
 
-    switch (data.get_kind())
+    switch (kind_)
     {
         default:
             break;
@@ -762,7 +763,10 @@ size_t DynamicType::getCdrSerializedSize(
         case TypeKind::TK_UNION:
         {
             // Union discriminator
-            current_alignment += getCdrSerializedSize(data.union_discriminator_, current_alignment);
+            assert(discriminator_type_);
+            assert(element_type_);
+
+            current_alignment += discriminator_type_->getCdrSerializedSize(*data.union_discriminator_, current_alignment);
 
             if (data.union_id_ != MEMBER_ID_INVALID)
             {
@@ -771,13 +775,14 @@ size_t DynamicType::getCdrSerializedSize(
 #else
                 auto it = (DynamicData*)data.values_.at(data.union_id_);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
-                current_alignment += getCdrSerializedSize(it, current_alignment);
+                current_alignment += element_type_->getCdrSerializedSize(*it, current_alignment);
             }
             break;
         }
         case TypeKind::TK_STRUCTURE:
         case TypeKind::TK_BITSET:
         {
+            assert(element_type_);
 #ifdef DYNAMIC_TYPES_CHECKING
             //for (auto it = data.complex_values_.begin(); it != data.complex_values_.end(); ++it)
             //{
@@ -798,7 +803,7 @@ size_t DynamicType::getCdrSerializedSize(
                         auto it = data.complex_values_.find(i);
                         if (it != data.complex_values_.end())
                         {
-                            current_alignment += getCdrSerializedSize(it->second, current_alignment);
+                            current_alignment += element_type_->getCdrSerializedSize(it->second, current_alignment);
                         }
                     }
                 }
@@ -828,7 +833,7 @@ size_t DynamicType::getCdrSerializedSize(
                         auto it = data.values_.find(i);
                         if (it != data.values_.end())
                         {
-                            current_alignment += getCdrSerializedSize((DynamicData*)it->second, current_alignment);
+                            current_alignment += element_type_->getCdrSerializedSize(*(DynamicData*)it->second, current_alignment);
                         }
                     }
                 }
@@ -842,6 +847,8 @@ size_t DynamicType::getCdrSerializedSize(
         }
         case TypeKind::TK_ARRAY:
         {
+            assert(element_type_);
+
             uint32_t arraySize = get_total_bounds();
             size_t emptyElementSize =
                     get_element_type()->getEmptyCdrSerializedSize(current_alignment);
@@ -856,7 +863,7 @@ size_t DynamicType::getCdrSerializedSize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
                 {
                     // Element Size
-                    current_alignment += getCdrSerializedSize((DynamicData*)it->second, current_alignment);
+                    current_alignment += element_type_->getCdrSerializedSize(*(DynamicData*)it->second, current_alignment);
                 }
                 else
                 {
@@ -869,18 +876,19 @@ size_t DynamicType::getCdrSerializedSize(
         case TypeKind::TK_MAP:
         {
             // Elements count
+            assert(element_type_);
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 #ifdef DYNAMIC_TYPES_CHECKING
             for (auto it = data.complex_values_.begin(); it != data.complex_values_.end(); ++it)
             {
                 // Element Size
-                current_alignment += getCdrSerializedSize(it->second, current_alignment);
+                current_alignment += element_type_->getCdrSerializedSize(it->second, current_alignment);
             }
 #else
             for (auto it = data.values_.begin(); it != data.values_.end(); ++it)
             {
                 // Element Size
-                current_alignment += getCdrSerializedSize((DynamicData*)it->second, current_alignment);
+                current_alignment += element_type_->getCdrSerializedSize(*(DynamicData*)it->second, current_alignment);
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;

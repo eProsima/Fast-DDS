@@ -44,7 +44,7 @@ class DynamicData
     friend class DynamicType;
 protected:
 
-    DynamicData(
+    explicit DynamicData(
             const DynamicData* pData);
     DynamicData(
             DynamicType_ptr pType);

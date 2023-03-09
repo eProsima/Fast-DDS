@@ -310,7 +310,7 @@ bool DynamicData::equals(
                 else if (type_->is_complex_kind())
                 {
                     // array, map, sequence, structure, bitset, anotation
-                    return values_.size() != other->values_.size() &&
+                    return values_.size() == other->values_.size() &&
                            std::equal(
                                 values_.begin(),
                                 values_.end(),
