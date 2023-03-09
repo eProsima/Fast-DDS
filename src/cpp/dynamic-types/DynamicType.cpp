@@ -58,20 +58,43 @@ void DynamicType::clear()
 bool DynamicType::equals(
         const DynamicType& other) const
 {
-    return get_type_descriptor() == other.get_type_descriptor();
+    return operator==(other);
 }
 
 bool DynamicType::has_children() const
 {
-    return kind_ == TypeKind::TK_ANNOTATION || kind_ == TypeKind::TK_ARRAY || kind_ == TypeKind::TK_MAP || kind_ == TypeKind::TK_SEQUENCE
-           || kind_ == TypeKind::TK_STRUCTURE || kind_ == TypeKind::TK_UNION || kind_ == TypeKind::TK_BITSET;
+    switch(kind_)
+    {
+        case TypeKind::TK_ANNOTATION:
+        case TypeKind::TK_ARRAY:
+        case TypeKind::TK_MAP:
+        case TypeKind::TK_SEQUENCE:
+        case TypeKind::TK_STRUCTURE:
+        case TypeKind::TK_UNION:
+        case TypeKind::TK_BITSET:
+            return true;
+        default:
+            return false;
+    };
 }
 
 bool DynamicType::is_complex_kind() const
 {
-    return kind_ == TypeKind::TK_ANNOTATION || kind_ == TypeKind::TK_ARRAY || kind_ == TypeKind::TK_BITMASK || kind_ == TypeKind::TK_ENUM
-           || kind_ == TypeKind::TK_MAP || kind_ == TypeKind::TK_SEQUENCE || kind_ == TypeKind::TK_STRUCTURE || kind_ == TypeKind::TK_UNION ||
-           kind_ == TypeKind::TK_BITSET;
+    switch(kind_)
+    {
+        case TypeKind::TK_ANNOTATION:
+        case TypeKind::TK_ARRAY:
+        case TypeKind::TK_BITMASK:
+        case TypeKind::TK_ENUM:
+        case TypeKind::TK_MAP:
+        case TypeKind::TK_SEQUENCE:
+        case TypeKind::TK_STRUCTURE:
+        case TypeKind::TK_UNION:
+        case TypeKind::TK_BITSET:
+            return true;
+        default:
+            return false;
+    };
 }
 
 bool DynamicType::is_discriminator_type() const
@@ -80,22 +103,56 @@ bool DynamicType::is_discriminator_type() const
     {
         return get_base_type()->is_discriminator_type();
     }
-    return kind_ == TypeKind::TK_BOOLEAN || kind_ == TypeKind::TK_BYTE || kind_ == TypeKind::TK_INT16 || kind_ == TypeKind::TK_INT32 ||
-           kind_ == TypeKind::TK_INT64 || kind_ == TypeKind::TK_UINT16 || kind_ == TypeKind::TK_UINT32 || kind_ == TypeKind::TK_UINT64 ||
-           kind_ == TypeKind::TK_FLOAT32 || kind_ == TypeKind::TK_FLOAT64 || kind_ == TypeKind::TK_FLOAT128 || kind_ == TypeKind::TK_CHAR8 ||
-           kind_ == TypeKind::TK_CHAR16 || kind_ == TypeKind::TK_STRING8 || kind_ == TypeKind::TK_STRING16 || kind_ == TypeKind::TK_ENUM || kind_ == TypeKind::TK_BITMASK;
+
+    switch (kind_)
+    {
+        case TypeKind::TK_BOOLEAN:
+        case TypeKind::TK_BYTE:
+        case TypeKind::TK_CHAR8:
+        case TypeKind::TK_INT16:
+        case TypeKind::TK_UINT16:
+        case TypeKind::TK_CHAR16:
+        case TypeKind::TK_INT32:
+        case TypeKind::TK_UINT32:
+        case TypeKind::TK_FLOAT32:
+        case TypeKind::TK_INT64:
+        case TypeKind::TK_UINT64:
+        case TypeKind::TK_FLOAT64:
+        case TypeKind::TK_FLOAT128:
+        case TypeKind::TK_STRING8:
+        case TypeKind::TK_STRING16:
+        case TypeKind::TK_BITMASK:
+        case TypeKind::TK_ENUM:
+            return true;
+        default:
+            return false;
+    }
 }
 
 size_t DynamicType::get_size() const
 {
     switch (kind_)
     {
-        case TypeKind::TK_BOOLEAN: case TypeKind::TK_BYTE: case TypeKind::TK_CHAR8: return 1;
-        case TypeKind::TK_INT16: case TypeKind::TK_UINT16: case TypeKind::TK_CHAR16:  return 2;
-        case TypeKind::TK_INT32: case TypeKind::TK_UINT32: case TypeKind::TK_FLOAT32: return 4;
-        case TypeKind::TK_INT64: case TypeKind::TK_UINT64: case TypeKind::TK_FLOAT64: return 8;
-        case TypeKind::TK_FLOAT128: return 16;
-        case TypeKind::TK_BITMASK: case TypeKind::TK_ENUM:
+        case TypeKind::TK_BOOLEAN:
+        case TypeKind::TK_BYTE:
+        case TypeKind::TK_CHAR8:
+            return 1;
+        case TypeKind::TK_INT16:
+        case TypeKind::TK_UINT16:
+        case TypeKind::TK_CHAR16:
+            return 2;
+        case TypeKind::TK_INT32:
+        case TypeKind::TK_UINT32:
+        case TypeKind::TK_FLOAT32:
+            return 4;
+        case TypeKind::TK_INT64:
+        case TypeKind::TK_UINT64:
+        case TypeKind::TK_FLOAT64:
+            return 8;
+        case TypeKind::TK_FLOAT128:
+            return 16;
+        case TypeKind::TK_BITMASK:
+        case TypeKind::TK_ENUM:
         {
             size_t bits = get_bounds(0);
 
