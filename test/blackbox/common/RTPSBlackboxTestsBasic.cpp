@@ -867,9 +867,9 @@ TEST(RTPS, MultithreadedWriterCreation)
 }
 
 /* Regression Test for improving gaps processing
-*  https://github.com/eProsima/Fast-DDS/pull/3343
-*/
-TEST(RTPS,RTPSCorrectGAPProcessing)
+ *  https://github.com/eProsima/Fast-DDS/pull/3343
+ */
+TEST(RTPS, RTPSCorrectGAPProcessing)
 {
     RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
     RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
@@ -891,7 +891,7 @@ TEST(RTPS,RTPSCorrectGAPProcessing)
 
     //! GAP Message check
     RTPSReader& native_reader = reader.get_native_reader();
-    ASSERT_NO_FATAL_FAILURE(native_reader.processGapMsg(writer.guid(), {0,0}, seq_set));
+    ASSERT_NO_FATAL_FAILURE(native_reader.processGapMsg(writer.guid(), {0, 0}, seq_set));
 }
 
 
