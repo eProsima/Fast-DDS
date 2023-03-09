@@ -369,7 +369,7 @@ XMLP_ret XMLParser::parseXMLTransportData(
                 return ret;
             }
         }
-        else if (sType == ChainingTransport)
+        else if (sType == CHAINING_TRANSPORT)
         {
             ret = parseXMLCommonChainingTransportData(p_root, pDescriptor);
             if (ret != XMLP_ret::XML_OK)
@@ -383,7 +383,7 @@ XMLP_ret XMLParser::parseXMLTransportData(
             return XMLP_ret::XML_ERROR;
         }
 
-        if (sType != SHM && sType != ChainingTransport)
+        if (sType != SHM && sType != CHAINING_TRANSPORT)
         {
             ret = parseXMLCommonTransportData(p_root, pDescriptor);
             if (ret != XMLP_ret::XML_OK)

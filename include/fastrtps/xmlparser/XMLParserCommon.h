@@ -179,7 +179,7 @@ extern const char* UDPv6;
 extern const char* TCPv4;
 extern const char* TCPv6;
 extern const char* SHM;
-extern const char* ChainingTransport;
+extern const char* CHAINING_TRANSPORT;
 extern const char* INIT_ACKNACK_DELAY;
 extern const char* HEARTB_RESP_DELAY;
 extern const char* INIT_HEARTB_DELAY;
