@@ -19,18 +19,6 @@
  * DDSFilterExpressionParser.hpp file of the parent folder.
  */
 
-#if defined(__has_include) && __has_include(<version>)
-#   include <version>
-#endif // if defined(__has_include) && __has_include(<version>)
-
-#if defined(__has_cpp_attribute) && __has_cpp_attribute(fallthrough)
-#    define eprosima_fallthrough [[fallthrough]];
-#elif defined(__GNUC__) || defined(__clang__)
-#    define eprosima_fallthrough __attribute__((fallthrough));
-#else
-#    define eprosima_fallthrough
-#endif
-
 struct CurrentIdentifierState
 {
     const TypeObject* type_object;

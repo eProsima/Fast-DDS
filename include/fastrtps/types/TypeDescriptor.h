@@ -23,6 +23,14 @@
 #include <string>
 #include <vector>
 
+#if defined(__has_cpp_attribute) && __has_cpp_attribute(fallthrough)
+#    define eprosima_fallthrough [[fallthrough]];
+#elif defined(__GNUC__) || defined(__clang__)
+#    define eprosima_fallthrough __attribute__((fallthrough));
+#else
+#    define eprosima_fallthrough
+#endif
+
 namespace eprosima {
 namespace fastrtps {
 namespace types {

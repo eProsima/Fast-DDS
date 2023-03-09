@@ -836,10 +836,11 @@ size_t DynamicType::getCdrSerializedSize(
             }
             break;
         }
-        case TypeKind::TK_STRUCTURE:
         case TypeKind::TK_BITSET:
-        {
             assert(element_type_);
+            eprosima_fallthrough
+        case TypeKind::TK_STRUCTURE:
+        {
 #ifdef DYNAMIC_TYPES_CHECKING
             //for (auto it = data.complex_values_.begin(); it != data.complex_values_.end(); ++it)
             //{
@@ -860,7 +861,7 @@ size_t DynamicType::getCdrSerializedSize(
                         auto it = data.complex_values_.find(i);
                         if (it != data.complex_values_.end())
                         {
-                            current_alignment += element_type_->getCdrSerializedSize(it->second, current_alignment);
+                            current_alignment += member_desc->get_type()->getCdrSerializedSize(it->second, current_alignment);
                         }
                     }
                 }
@@ -890,7 +891,7 @@ size_t DynamicType::getCdrSerializedSize(
                         auto it = data.values_.find(i);
                         if (it != data.values_.end())
                         {
-                            current_alignment += element_type_->getCdrSerializedSize(*(DynamicData*)it->second, current_alignment);
+                            current_alignment += member_desc->get_type()->getCdrSerializedSize(*(DynamicData*)it->second, current_alignment);
                         }
                     }
                 }
@@ -929,7 +930,7 @@ size_t DynamicType::getCdrSerializedSize(
             }
             break;
         }
-        case TypeKind::TK_SEQUENCE: 
+        case TypeKind::TK_SEQUENCE:
         {
             assert(element_type_);
             // Elements count
