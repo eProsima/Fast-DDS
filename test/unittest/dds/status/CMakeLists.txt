@@ -195,6 +195,9 @@ target_link_libraries(ListenerTests fastcdr foonathan_memory
     ${CMAKE_DL_LIBS}
     ${THIRDPARTY_BOOST_LINK_LIBS}
     )
+if(QNX)
+    target_link_libraries(ListenerTests socket)
+endif()
 if(MSVC OR MSVC_IDE)
     target_link_libraries(ListenerTests iphlpapi Shlwapi ws2_32)
 endif()

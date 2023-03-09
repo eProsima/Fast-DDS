@@ -91,7 +91,7 @@ if (FASTDDS_STATISTICS)
 endif()
 
 ## StatisticsDomainParticipantMockTests
-if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS)
+if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
     # this test includes C sources
     enable_language(C)
 

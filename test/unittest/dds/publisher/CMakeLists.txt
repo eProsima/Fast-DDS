@@ -323,6 +323,9 @@ target_include_directories(PublisherTests PRIVATE
 target_link_libraries(PublisherTests fastrtps fastcdr foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
+if(QNX)
+    target_link_libraries(PublisherTests socket)
+endif()
 add_gtest(PublisherTests SOURCES ${PUBLISHERTESTS_SOURCE})
 
 add_executable(DataWriterTests ${DATAWRITERTESTS_SOURCE})
@@ -361,6 +364,9 @@ target_link_libraries(DataWriterTests fastcdr foonathan_memory
     $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
     eProsima_atomic
     )
+if(QNX)
+    target_link_libraries(DataWriterTests socket)
+endif()
 if(MSVC OR MSVC_IDE)
     target_link_libraries(DataWriterTests ${PRIVACY}
         iphlpapi Shlwapi

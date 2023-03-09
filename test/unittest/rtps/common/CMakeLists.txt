@@ -71,6 +71,9 @@ target_include_directories(GuidUtilsTests PRIVATE
     ${Asio_INCLUDE_DIR}
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>)
 target_link_libraries(GuidUtilsTests GTest::gtest)
+if(QNX)
+    target_link_libraries(GuidUtilsTests socket)
+endif()
 if(MSVC OR MSVC_IDE)
     target_link_libraries(GuidUtilsTests ws2_32)
 endif()

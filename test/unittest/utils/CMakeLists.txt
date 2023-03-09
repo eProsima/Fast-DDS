@@ -111,6 +111,9 @@ target_include_directories(LocatorTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(LocatorTests GTest::gtest ${MOCKS})
+if(QNX)
+    target_link_libraries(LocatorTests socket)
+endif()
 if(EPROSIMA_TEST_DNS_NOT_SET_UP)
     set(IGNORE_COMMAND LocatorDNSTests)
 endif()

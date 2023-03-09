@@ -96,6 +96,9 @@ target_link_libraries(NetworkFactoryTests fastcdr foonathan_memory
     $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
     ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
+if(QNX)
+    target_link_libraries(NetworkFactoryTests socket)
+endif()
 add_executable(ExternalLocatorsProcessorTests
     ExternalLocatorsProcessorTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/ExternalLocatorsProcessor.cpp
@@ -157,6 +160,9 @@ target_link_libraries(ExternalLocatorsProcessorTests fastcdr
     GTest::gtest ${MOCKS}
     ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
+if(QNX)
+    target_link_libraries(ExternalLocatorsProcessorTests socket)
+endif()
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
     target_link_libraries(NetworkFactoryTests IPHLPAPI shlwapi) # Later so mocks have precedence

@@ -43,8 +43,12 @@ public:
         boost::interprocess::ipcdetail::get_shared_dir(shared_dir);
 
 #else
+#ifdef __QNXNTO__
+        static const char defaultdir[] = "/dev/shmem";
+#else
         // Default value from: glibc-2.29/sysdeps/unix/sysv/linux/shm-directory.c
         static const char defaultdir[] = "/dev/shm";
+#endif // __QNXNTO__
 
         std::string filepath;
         #if defined(BOOST_INTERPROCESS_FILESYSTEM_BASED_POSIX_SHARED_MEMORY)

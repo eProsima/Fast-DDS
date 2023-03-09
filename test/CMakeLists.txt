@@ -78,6 +78,27 @@ if(SYSTEM_TESTS)
     add_subdirectory(system/tools/fds)
 endif()
 
+if(EPROSIMA_BUILD_TESTS AND QNX)
+    install(DIRECTORY ${PROJECT_BINARY_DIR}/test/
+      DESTINATION bin/Fast-DDS_test
+      PATTERN "*.cmake" EXCLUDE
+      PATTERN "*.d" EXCLUDE
+      PATTERN "*.dir" EXCLUDE
+      PATTERN "*.internal" EXCLUDE
+      PATTERN "*.make" EXCLUDE
+      PATTERN "*.marks" EXCLUDE
+      PATTERN "*.o" EXCLUDE
+      PATTERN "*.ts" EXCLUDE
+      PATTERN "*.txt" EXCLUDE
+      PATTERN "CMakeFiles" EXCLUDE
+      PATTERN "Makefile" EXCLUDE
+      PATTERN "cmake" EXCLUDE
+      )
+    install(DIRECTORY ${PROJECT_SOURCE_DIR}/test/certs
+      DESTINATION bin/Fast-DDS_test
+      )
+endif()
+
 if (ANDROID)
     option(INSTALL_ANDROID_TESTS "Install Built Tests to Device" OFF)
     if (INSTALL_ANDROID_TESTS)

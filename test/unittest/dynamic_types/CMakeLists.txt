@@ -133,6 +133,9 @@ target_link_libraries(DynamicTypesTests GTest::gtest
     ${TINYXML2_LIBRARY}
     fastcdr
     )
+if(QNX)
+    target_link_libraries(DynamicTypesTests socket)
+endif()
 add_gtest(DynamicTypesTests SOURCES ${DYNAMIC_TYPES_TEST_SOURCE})
 
 
@@ -154,6 +157,9 @@ target_link_libraries(DynamicComplexTypesTests GTest::gtest
     ${TINYXML2_LIBRARY}
     fastcdr
     )
+if(QNX)
+    target_link_libraries(DynamicComplexTypesTests socket)
+endif()
 add_gtest(DynamicComplexTypesTests SOURCES ${DYNAMIC_COMPLEX_TYPES_TEST_SOURCE})
 
 
@@ -175,6 +181,9 @@ target_include_directories(DynamicTypes_4_2_Tests PRIVATE
     fastcdr
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
+if(QNX)
+    target_link_libraries(DynamicTypes_4_2_Tests socket)
+endif()
 add_gtest(DynamicTypes_4_2_Tests SOURCES ${DYNAMIC_TYPES_4_2_TEST_SOURCE})
 
 configure_file("types.xml" "types.xml" COPYONLY)

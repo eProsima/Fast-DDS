@@ -11,6 +11,7 @@ Forthcoming
 * Overload RTPS discovery callbacks in RTPSParticipantListener (ABI break on RTPS layer).
 * Overload DDS discovery callbacks in DomainParticipantListener (ABI break on DDS layer). 
 * Added on_incompatible_type to RTPS listeners (ABI break on RTPS layer).
+* Added support for QNX 7.1 build.
 
 Version 2.9.0
 -------------

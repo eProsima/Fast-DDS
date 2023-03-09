@@ -91,6 +91,9 @@ target_include_directories(BuiltinDataSerializationTests PRIVATE
 target_link_libraries(BuiltinDataSerializationTests foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
+if(QNX)
+    target_link_libraries(BuiltinDataSerializationTests socket)
+endif()
 if(MSVC OR MSVC_IDE)
     target_link_libraries(BuiltinDataSerializationTests ${PRIVACY} fastcdr iphlpapi Shlwapi ws2_32)
 else()
