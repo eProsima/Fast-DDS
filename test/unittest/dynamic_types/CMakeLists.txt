@@ -129,6 +129,7 @@ target_include_directories(DynamicTypesTests PRIVATE
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
 target_link_libraries(DynamicTypesTests GTest::gtest
+    ${CMAKE_DL_LIBS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
