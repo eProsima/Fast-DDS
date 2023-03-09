@@ -86,6 +86,7 @@ set(DYNAMIC_TYPES_TEST_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/qos/ReaderQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowControllerConsts.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/dlopen.cpp
     )
 
 set(DYNAMIC_COMPLEX_TYPES_TEST_SOURCE

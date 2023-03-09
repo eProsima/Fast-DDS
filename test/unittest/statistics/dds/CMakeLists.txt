@@ -269,6 +269,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS)
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/writer/StatisticsWriterImpl.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
         ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
+        ${PROJECT_SOURCE_DIR}/src/cpp/utils/dlopen.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/StringMatching.cpp
