@@ -3254,159 +3254,160 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
 }
 
-/*
 TEST_F(DynamicTypesTests, DynamicType_map_of_maps_unit_tests)
 {
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
+
     uint32_t map_length = 2;
-    {
-        // Then
-        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
-        ASSERT_TRUE(base_type_builder != nullptr);
-        auto base_type = base_type_builder->build();
 
-        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(
-            base_type_builder.get(), base_type_builder.get(), map_length);
-        ASSERT_TRUE(map_type_builder != nullptr);
-        auto map_type = map_type_builder->build();
-        ASSERT_TRUE(map_type != nullptr);
+    // Then
+    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_builder();
+    ASSERT_TRUE(base_type_builder);
+    auto base_type = base_type_builder->build();
 
-        DynamicTypeBuilder_ptr map_map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(
-            base_type_builder.get(), map_type_builder.get(), map_length);
-        ASSERT_TRUE(map_map_type_builder != nullptr);
-        auto map_map_type = map_map_type_builder->build();
-        ASSERT_TRUE(map_map_type != nullptr);
+    DynamicTypeBuilder_ptr map_type_builder =
+        factory.create_map_builder(*base_type, *base_type, map_length);
+    ASSERT_TRUE(map_type_builder);
+    auto map_type = map_type_builder->build();
+    ASSERT_TRUE(map_type);
 
-        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_map_type);
+    DynamicTypeBuilder_ptr map_map_type_builder =
+            factory.create_map_builder(*base_type,*map_type, map_length);
+    ASSERT_TRUE(map_map_type_builder);
+    auto map_map_type = map_map_type_builder->build();
+    ASSERT_TRUE(map_map_type);
 
-        ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    eprosima::fastdds::dds::Log::ScopeLogs _("disable"); // avoid expected errors logging
 
-        MemberId keyId;
-        MemberId valueId;
-        auto key_data = DynamicDataFactory::get_instance()->create_data(base_type);
-        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+    DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_map_type);
 
-        // Try to Add the same key twice.
-        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_int32_value(10, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
 
-        MemberId keyId2;
-        MemberId valueId2;
-        key_data = DynamicDataFactory::get_instance()->create_data(base_type);
-        key_data->set_int32_value(2, MEMBER_ID_INVALID);
-        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+    MemberId keyId;
+    MemberId valueId;
+    auto key_data = DynamicDataFactory::get_instance()->create_data(base_type);
+    ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
 
-        // Try to Add one more than the limit
-        auto key_data2 = DynamicDataFactory::get_instance()->create_data(base_type);
-        key_data2->set_int32_value(3, MEMBER_ID_INVALID);
-        ASSERT_FALSE(data->insert_map_data(key_data2, keyId, valueId) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data2) == ReturnCode_t::RETCODE_OK);
+    // Try to Add the same key twice.
+    ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        auto seq_data = data->loan_value(valueId);
-        ASSERT_TRUE(seq_data != nullptr);
+    MemberId keyId2;
+    MemberId valueId2;
+    key_data = DynamicDataFactory::get_instance()->create_data(base_type);
+    key_data->set_int32_value(2);
+    ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        auto key_data3 = DynamicDataFactory::get_instance()->create_data(base_type);
-        ASSERT_TRUE(seq_data->insert_map_data(key_data3, keyId, valueId) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data3) == ReturnCode_t::RETCODE_OK);
+    // Try to Add one more than the limit
+    auto key_data2 = DynamicDataFactory::get_instance()->create_data(base_type);
+    key_data2->set_int32_value(3, MEMBER_ID_INVALID);
+    ASSERT_FALSE(data->insert_map_data(key_data2, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data2) == ReturnCode_t::RETCODE_OK);
 
-        // Set and get a value.
-        int32_t test1(234);
-        ASSERT_TRUE(seq_data->set_int32_value(test1, valueId) == ReturnCode_t::RETCODE_OK);
-        int32_t test2(0);
-        ASSERT_TRUE(seq_data->get_int32_value(test2, valueId) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(test1 == test2);
+    auto seq_data = data->loan_value(valueId);
+    ASSERT_TRUE(seq_data != nullptr);
 
-        ASSERT_TRUE(data->return_loaned_value(seq_data) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->return_loaned_value(seq_data) == ReturnCode_t::RETCODE_OK);
+    auto key_data3 = DynamicDataFactory::get_instance()->create_data(base_type);
+    ASSERT_TRUE(seq_data->insert_map_data(key_data3, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data3) == ReturnCode_t::RETCODE_OK);
 
-        ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    // Set and get a value.
+    int32_t test1(234);
+    ASSERT_TRUE(seq_data->set_int32_value(test1, valueId) == ReturnCode_t::RETCODE_OK);
+    int32_t test2(0);
+    ASSERT_TRUE(seq_data->get_int32_value(test2, valueId) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
 
-        int32_t iTest32;
-        ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        uint32_t uTest32;
-        ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        int16_t iTest16;
-        ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        uint16_t uTest16;
-        ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        int64_t iTest64;
-        ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        uint64_t uTest64;
-        ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        float fTest32;
-        ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        double fTest64;
-        ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        long double fTest128;
-        ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        char cTest8;
-        ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        wchar_t cTest16;
-        ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        octet oTest;
-        ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        bool bTest;
-        ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        std::string sTest;
-        ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        std::wstring wsTest;
-        ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        std::string sEnumTest;
-        ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(data->return_loaned_value(seq_data) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->return_loaned_value(seq_data) == ReturnCode_t::RETCODE_OK);
 
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(map_map_type);
-        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(data, &payload));
-        ASSERT_TRUE(payload.length == payloadSize);
+    ASSERT_FALSE(data->set_int32_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_uint32_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_int16_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_uint16_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_int64_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_uint64_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_float32_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_float64_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_float128_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_char8_value('a', MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_char16_value(L'a', MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_byte_value(0, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_bool_value(false, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_string_value("", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_wstring_value(L"", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(data->set_enum_value("", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
 
-        types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_map_type);
-        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
-        ASSERT_TRUE(data2->equals(data));
+    int32_t iTest32;
+    ASSERT_FALSE(data->get_int32_value(iTest32, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    uint32_t uTest32;
+    ASSERT_FALSE(data->get_uint32_value(uTest32, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    int16_t iTest16;
+    ASSERT_FALSE(data->get_int16_value(iTest16, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    uint16_t uTest16;
+    ASSERT_FALSE(data->get_uint16_value(uTest16, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    int64_t iTest64;
+    ASSERT_FALSE(data->get_int64_value(iTest64, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    uint64_t uTest64;
+    ASSERT_FALSE(data->get_uint64_value(uTest64, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    float fTest32;
+    ASSERT_FALSE(data->get_float32_value(fTest32, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    double fTest64;
+    ASSERT_FALSE(data->get_float64_value(fTest64, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    long double fTest128;
+    ASSERT_FALSE(data->get_float128_value(fTest128, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    char cTest8;
+    ASSERT_FALSE(data->get_char8_value(cTest8, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    wchar_t cTest16;
+    ASSERT_FALSE(data->get_char16_value(cTest16, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    octet oTest;
+    ASSERT_FALSE(data->get_byte_value(oTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    bool bTest;
+    ASSERT_FALSE(data->get_bool_value(bTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    std::string sTest;
+    ASSERT_FALSE(data->get_string_value(sTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    std::wstring wsTest;
+    ASSERT_FALSE(data->get_wstring_value(wsTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    std::string sEnumTest;
+    ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
 
-        //// SERIALIZATION TEST
-        //MapMapStruct seq;
-        //MapMapStructPubSubType seqpb;
+    // Serialize <-> Deserialize Test
+    DynamicPubSubType pubsubType(map_map_type);
+    uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
+    ASSERT_TRUE(pubsubType.serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
-        //uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
-        //SerializedPayload_t dynamic_payload(payloadSize3);
-        //ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
-        //ASSERT_TRUE(dynamic_payload.length == payloadSize3);
-        //ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
+    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_map_type);
+    ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+    ASSERT_TRUE(data2->equals(data));
 
-        //uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
-        //SerializedPayload_t static_payload(static_payloadSize);
-        //ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
-        //ASSERT_TRUE(static_payload.length == static_payloadSize);
-        //types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_map_type);
-        //ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
-        //ASSERT_TRUE(data3->equals(data));
+    //// SERIALIZATION TEST
+    //MapMapStruct seq;
+    //MapMapStructPubSubType seqpb;
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
-        //ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
-    }
-    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
-    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
+    //uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+    //SerializedPayload_t dynamic_payload(payloadSize3);
+    //ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+    //ASSERT_TRUE(dynamic_payload.length == payloadSize3);
+    //ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
+
+    //uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
+    //SerializedPayload_t static_payload(static_payloadSize);
+    //ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
+    //ASSERT_TRUE(static_payload.length == static_payloadSize);
+    //types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_map_type);
+    //ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+    //ASSERT_TRUE(data3->equals(data));
+
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+    //ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
 }
 
+/*
 TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
 {
     {

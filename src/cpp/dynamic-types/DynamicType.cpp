@@ -929,12 +929,12 @@ size_t DynamicType::getCdrSerializedSize(
             }
             break;
         }
-        case TypeKind::TK_SEQUENCE:
-        case TypeKind::TK_MAP:
+        case TypeKind::TK_SEQUENCE: 
         {
-            // Elements count
             assert(element_type_);
+            // Elements count
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            // on sequences there is no need of keys serialization
 #ifdef DYNAMIC_TYPES_CHECKING
             for (auto it = data.complex_values_.begin(); it != data.complex_values_.end(); ++it)
             {
@@ -944,6 +944,31 @@ size_t DynamicType::getCdrSerializedSize(
 #else
             for (auto it = data.values_.begin(); it != data.values_.end(); ++it)
             {
+                // Element Size
+                current_alignment += element_type_->getCdrSerializedSize(*(DynamicData*)it->second, current_alignment);
+            }
+#endif // ifdef DYNAMIC_TYPES_CHECKING
+            break;
+        }
+        case TypeKind::TK_MAP:
+        {
+            assert(element_type_);
+            // Elements count
+            current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            // on maps some nodes are keys and other values, that that into account
+#ifdef DYNAMIC_TYPES_CHECKING
+            for (auto it = data.complex_values_.begin(); it != data.complex_values_.end(); ++it)
+            {
+                // Key Size
+                current_alignment += key_element_type_->getCdrSerializedSize(it->second, current_alignment);
+                // Element Size
+                current_alignment += element_type_->getCdrSerializedSize(++it->second, current_alignment);
+            }
+#else
+            for (auto it = data.values_.begin(); it != data.values_.end(); ++it)
+            {
+                // Key Size
+                current_alignment += key_element_type_->getCdrSerializedSize(*(DynamicData*)it++->second, current_alignment);
                 // Element Size
                 current_alignment += element_type_->getCdrSerializedSize(*(DynamicData*)it->second, current_alignment);
             }

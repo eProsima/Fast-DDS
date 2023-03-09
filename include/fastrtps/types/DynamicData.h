@@ -95,9 +95,6 @@ protected:
 
     void update_union_discriminator();
 
-    void sort_member_ids(
-            MemberId startId);
-
     void set_union_discriminator(
             DynamicData* pData);
 
