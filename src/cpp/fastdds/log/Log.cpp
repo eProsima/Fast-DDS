@@ -26,6 +26,7 @@
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include <fastdds/dds/log/Colors.hpp>
 #include <utils/SystemInfo.hpp>
+#include <utils/threading.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -258,6 +259,8 @@ private:
 
     void run()
     {
+        set_name_to_current_thread("dds.log");
+
         std::unique_lock<std::mutex> guard(cv_mutex_);
 
         while (logging_)
