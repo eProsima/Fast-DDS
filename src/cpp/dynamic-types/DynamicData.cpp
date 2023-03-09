@@ -4209,47 +4209,6 @@ ReturnCode_t DynamicData::get_bitmask_value(
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-void DynamicData::sort_member_ids(
-        MemberId startId)
-{
-    MemberId index = startId;
-    MemberId curID = startId + 1;
-    uint32_t distance = 1;
-#ifdef DYNAMIC_TYPES_CHECKING
-    while (index <= complex_values_.size())
-    {
-        auto it = complex_values_.find(curID);
-        if (it != complex_values_.end())
-        {
-            complex_values_[curID - distance] = it->second;
-            complex_values_.erase(it);
-        }
-        else
-        {
-            ++distance;
-        }
-        ++index;
-        ++curID;
-    }
-#else
-    while (curID <= values_.size())
-    {
-        auto it = values_.find(curID);
-        if (it != values_.end())
-        {
-            values_[curID - distance] = it->second;
-            values_.erase(it);
-        }
-        else
-        {
-            ++distance;
-        }
-        ++index;
-        ++curID;
-    }
-#endif // ifdef DYNAMIC_TYPES_CHECKING
-}
-
 MemberId DynamicData::get_array_index(
         const std::vector<uint32_t>& position)
 {
@@ -4821,7 +4780,6 @@ ReturnCode_t DynamicData::remove_sequence_data(
         {
             DynamicDataFactory::get_instance()->delete_data(it->second);
             complex_values_.erase(it);
-            sort_member_ids(id);
             return ReturnCode_t::RETCODE_OK;
         }
 #else
@@ -4830,7 +4788,6 @@ ReturnCode_t DynamicData::remove_sequence_data(
         {
             DynamicDataFactory::get_instance()->delete_data((DynamicData*)it->second);
             values_.erase(it);
-            sort_member_ids(id);
             return ReturnCode_t::RETCODE_OK;
         }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
@@ -4862,13 +4819,18 @@ ReturnCode_t DynamicData::insert_map_data(
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
             }
-            outKeyId = static_cast<MemberId>(complex_values_.size());
+
+            outKeyId = 0u;
+            if (complex_values_.size())
+            { // get largest key available
+                outKeyId = complex_values_.rbegin()->first + 1u;
+            }
             DynamicData* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
             keyCopy->key_element_ = true;
             complex_values_.insert(std::make_pair(outKeyId, keyCopy));
 
             DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
-            outValueId = static_cast<MemberId>(complex_values_.size());
+            outValueId = outKeyId + 1u;
             complex_values_.insert(std::make_pair(outValueId, new_element));
             return ReturnCode_t::RETCODE_OK;
 #else
@@ -4880,13 +4842,18 @@ ReturnCode_t DynamicData::insert_map_data(
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
             }
-            outKeyId = static_cast<MemberId>(values_.size());
+
+            outKeyId = 0u;
+            if (values_.size())
+            { // get largest key available
+                outKeyId = values_.rbegin()->first + 1u;
+            }
             DynamicData* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
             keyCopy->key_element_ = true;
             values_.insert(std::make_pair(outKeyId, keyCopy));
 
             DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
-            outValueId = static_cast<MemberId>(values_.size());
+            outValueId = outKeyId + 1u;
             values_.insert(std::make_pair(outValueId, new_element));
             return ReturnCode_t::RETCODE_OK;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
@@ -4925,12 +4892,17 @@ ReturnCode_t DynamicData::insert_map_data(
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
             }
-            outKey = static_cast<MemberId>(complex_values_.size());
+
+            outKeyId = 0u;
+            if (complex_values_.size())
+            { // get largest key available
+                outKeyId = complex_values_.rbegin()->first + 1u;
+            }
             DynamicData* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
             keyCopy->key_element_ = true;
             complex_values_.insert(std::make_pair(outKey, keyCopy));
 
-            outValue = static_cast<MemberId>(complex_values_.size());
+            outValueId = outKeyId + 1u;
             complex_values_.insert(std::make_pair(outValue, value));
             return ReturnCode_t::RETCODE_OK;
 #else
@@ -4942,12 +4914,17 @@ ReturnCode_t DynamicData::insert_map_data(
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
             }
-            outKey = static_cast<MemberId>(values_.size());
+
+            outKey = 0u;
+            if (values_.size())
+            { // get largest key available
+                outKey = values_.rbegin()->first + 1u;
+            }
             DynamicData* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
             keyCopy->key_element_ = true;
             values_.insert(std::make_pair(outKey, keyCopy));
 
-            outValue = static_cast<MemberId>(values_.size());
+            outValue = outKey + 1u;
             values_.insert(std::make_pair(outValue, value));
             return ReturnCode_t::RETCODE_OK;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
@@ -4986,12 +4963,17 @@ ReturnCode_t DynamicData::insert_map_data(
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
             }
-            outKey = static_cast<MemberId>(complex_values_.size());
+
+            outKeyId = 0u;
+            if (complex_values_.size())
+            { // get largest key available
+                outKeyId = complex_values_.rbegin()->first + 1u;
+            }
             DynamicData* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
             keyCopy->key_element_ = true;
             complex_values_.insert(std::make_pair(outKey, keyCopy));
 
-            outValue = static_cast<MemberId>(complex_values_.size());
+            outValueId = outKeyId + 1u;
             DynamicData* valueCopy = DynamicDataFactory::get_instance()->create_copy(value);
             complex_values_.insert(std::make_pair(outValue, valueCopy));
             return ReturnCode_t::RETCODE_OK;
@@ -5004,12 +4986,17 @@ ReturnCode_t DynamicData::insert_map_data(
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
                 }
             }
-            outKey = static_cast<MemberId>(values_.size());
+
+            outKey = 0u;
+            if (values_.size())
+            { // get largest key available
+                outKey = values_.rbegin()->first + 1u;
+            }
             DynamicData* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
             keyCopy->key_element_ = true;
             values_.insert(std::make_pair(outKey, keyCopy));
 
-            outValue = static_cast<MemberId>(values_.size());
+            outValue = outKey + 1u;
             DynamicData* valueCopy = DynamicDataFactory::get_instance()->create_copy(value);
             values_.insert(std::make_pair(outValue, valueCopy));
             return ReturnCode_t::RETCODE_OK;
@@ -5052,7 +5039,6 @@ ReturnCode_t DynamicData::remove_map_data(
             DynamicDataFactory::get_instance()->delete_data(itValue->second);
             complex_values_.erase(itKey);
             complex_values_.erase(itValue);
-            sort_member_ids(keyId);
             return ReturnCode_t::RETCODE_OK;
         }
 #else
@@ -5064,7 +5050,6 @@ ReturnCode_t DynamicData::remove_map_data(
             DynamicDataFactory::get_instance()->delete_data(((DynamicData*)itValue->second));
             values_.erase(itKey);
             values_.erase(itValue);
-            sort_member_ids(keyId);
             return ReturnCode_t::RETCODE_OK;
         }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
