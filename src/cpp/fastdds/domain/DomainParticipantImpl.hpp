@@ -328,7 +328,7 @@ public:
 
     // TODO Subscriber* get_builtin_subscriber();
 
-       bool ignore_participant(
+    bool ignore_participant(
             const InstanceHandle_t& handle);
 
     /* TODO
@@ -336,10 +336,10 @@ public:
             const InstanceHandle_t& handle);
      */
 
-       bool ignore_publication(
+    bool ignore_publication(
             const InstanceHandle_t& handle);
 
-       bool ignore_subscription(
+    bool ignore_subscription(
             const InstanceHandle_t& handle);
 
     DomainId_t get_domain_id() const;

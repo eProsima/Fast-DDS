@@ -197,9 +197,9 @@ public:
         static_cast<void>(participant);
         static_cast<void>(request_sample_id);
         static_cast<void>(topic);
-        static_cast<void>(identifier)
-        ;static_cast<void>(object)
-        ;static_cast<void>(dyn_type);
+        static_cast<void>(identifier);
+        static_cast<void>(object);
+        static_cast<void>(dyn_type);
     }
 
     /*!
@@ -212,9 +212,9 @@ public:
             const fastrtps::rtps::SampleIdentity& request_sample_id,
             const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies)
     {
-        static_cast<void>(participant)
-        ;static_cast<void>(request_sample_id)
-        ;static_cast<void>(dependencies);
+        static_cast<void>(participant);
+        static_cast<void>(request_sample_id);
+        static_cast<void>(dependencies);
     }
 
     /*!

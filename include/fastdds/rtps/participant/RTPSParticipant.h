@@ -258,7 +258,7 @@ public:
 
     /**
      * @brief Ignore all messages coming from the RTPSParticipant
-     * 
+     *
      * @param participant_guid RTPSParticipant GUID to be ignored
      */
     bool ignore_participant(
@@ -266,7 +266,7 @@ public:
 
     /**
      * @brief Ignore all messages coming from the RTPSWriter
-     * 
+     *
      * @param writer_guid RTPSWriter GUID to be ignored
      */
     bool ignore_writer(
@@ -274,7 +274,7 @@ public:
 
     /**
      * @brief Ignore all messages coming from the RTPSReader
-     * 
+     *
      * @param reader_guid RTPSReader GUID to be ignored
      */
     bool ignore_reader(

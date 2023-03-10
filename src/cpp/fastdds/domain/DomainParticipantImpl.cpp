@@ -827,13 +827,13 @@ PublisherImpl* DomainParticipantImpl::create_publisher_impl(
    }
  */
 
-    bool DomainParticipantImpl::ignore_participant(
-            const InstanceHandle_t& handle)
-    {
-        static_cast<void>(handle);
-        EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
-        return false;
-    }
+bool DomainParticipantImpl::ignore_participant(
+        const InstanceHandle_t& handle)
+{
+    static_cast<void>(handle);
+    EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
+    return false;
+}
 
 /* TODO
    bool DomainParticipantImpl::ignore_topic(
@@ -845,21 +845,21 @@ PublisherImpl* DomainParticipantImpl::create_publisher_impl(
    }
  */
 
-    bool DomainParticipantImpl::ignore_publication(
-            const InstanceHandle_t& handle)
-    {
-        static_cast<void>(handle);
-        EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
-        return false;
-    }
+bool DomainParticipantImpl::ignore_publication(
+        const InstanceHandle_t& handle)
+{
+    static_cast<void>(handle);
+    EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
+    return false;
+}
 
-    bool DomainParticipantImpl::ignore_subscription(
-            const InstanceHandle_t& handle)
-    {
-        static_cast<void>(handle);
-        EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
-        return false;
-    }
+bool DomainParticipantImpl::ignore_subscription(
+        const InstanceHandle_t& handle)
+{
+    static_cast<void>(handle);
+    EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
+    return false;
+}
 
 DomainId_t DomainParticipantImpl::get_domain_id() const
 {
