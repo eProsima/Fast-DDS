@@ -277,6 +277,10 @@ protected:
             tinyxml2::XMLElement* p_root,
             sp_transport_t p_transport);
 
+    RTPS_DllAPI static XMLP_ret parseXMLCommonChainingTransportData(
+            tinyxml2::XMLElement* p_root,
+            sp_transport_t& p_transport);
+
     RTPS_DllAPI static XMLP_ret parse_tls_config(
             tinyxml2::XMLElement* p_root,
             sp_transport_t tcp_transport);

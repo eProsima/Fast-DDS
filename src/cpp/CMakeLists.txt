@@ -13,6 +13,7 @@
 # limitations under the License.
 
 include(CheckCXXSourceCompiles)
+include(CheckIncludeFileCXX)
 
 # Set source files
 
@@ -248,6 +249,7 @@ set(${PROJECT_NAME}_source_files
     utils/TimedConditionVariable.cpp
     utils/string_convert.cpp
     utils/UnitsParser.cpp
+    utils/dlopen.cpp
 
     dds/core/types.cpp
     dds/core/Exception.cpp
@@ -404,6 +406,13 @@ if(APPLE)
     set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 endif()
+
+# Detect support of dlopen()
+if(WIN32)
+    set(HAVE_DLOPEN 1)
+else()
+    check_include_file_cxx(dlfcn.h HAVE_DLOPEN)
+endif(WIN32)
 
 # Find out if libatomic link is required in this platform
 find_package(Atomic MODULE)
