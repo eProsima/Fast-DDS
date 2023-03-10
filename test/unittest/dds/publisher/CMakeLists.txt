@@ -190,6 +190,7 @@ set(DATAWRITERTESTS_SOURCE DataWriterTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/StatefulWriter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/StatelessPersistentWriter.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/writer/StatelessWriter.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/dlopen.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/Host.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp

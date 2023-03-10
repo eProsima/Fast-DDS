@@ -13,6 +13,7 @@
 # limitations under the License.
 
 include(CheckCXXSourceCompiles)
+include(CheckIncludeFileCXX)
 
 add_subdirectory(fastdds/log)
 add_subdirectory(fastdds/xtypes)
@@ -236,6 +237,7 @@ set(${PROJECT_NAME}_source_files
     statistics/fastdds/domain/DomainParticipant.cpp
     statistics/fastdds/publisher/qos/DataWriterQos.cpp
     statistics/fastdds/subscriber/qos/DataReaderQos.cpp
+    utils/dlopen.cpp
     utils/Host.cpp
     utils/IPFinder.cpp
     utils/IPLocator.cpp
@@ -392,6 +394,13 @@ if(APPLE)
     set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 endif()
+
+# Detect support of dlopen()
+if(WIN32)
+    set(HAVE_DLOPEN 1)
+else()
+    check_include_file_cxx(dlfcn.h HAVE_DLOPEN)
+endif(WIN32)
 
 # Find out if libatomic link is required in this platform
 find_package(Atomic MODULE)
