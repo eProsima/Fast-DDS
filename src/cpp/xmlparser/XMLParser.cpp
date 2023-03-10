@@ -31,12 +31,14 @@
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
 #include <fastdds/LibrarySettings.hpp>
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
+#include <fastdds/rtps/transport/ChainingTransport.hpp>
 #include <fastdds/rtps/transport/network/NetmaskFilterKind.hpp>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/TCPv6TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.hpp>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.hpp>
+#include <fastdds/utils/dlopen.hpp>
 
 #include <rtps/network/utils/netmask_filter.hpp>
 #include <xmlparser/XMLParserUtils.hpp>
@@ -400,6 +402,14 @@ XMLP_ret XMLParser::parseXMLTransportData(
             return ret;
         }
     }
+    else if (sType == CHAINING_TRANSPORT)
+    {
+        ret = parseXMLCommonChainingTransportData(p_root, pDescriptor);
+        if (ret != XMLP_ret::XML_OK)
+        {
+            return ret;
+        }
+    }
     else
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid transport type: '" << sType << "'");
@@ -420,7 +430,7 @@ XMLP_ret XMLParser::parseXMLTransportData(
         return ret;
     }
 
-    if (sType != SHM)
+    if (sType != SHM && sType != CHAINING_TRANSPORT)
     {
         std::shared_ptr<fastdds::rtps::SocketTransportDescriptor> temp_2 =
                 std::dynamic_pointer_cast<fastdds::rtps::SocketTransportDescriptor>(pDescriptor);
@@ -1113,6 +1123,109 @@ XMLP_ret XMLParser::parseXMLCommonSharedMemTransportData(
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing SharedMem Transport data");
         ret = XMLP_ret::XML_ERROR;
+    }
+
+    return ret;
+}
+
+XMLP_ret XMLParser::parseXMLCommonChainingTransportData(
+        tinyxml2::XMLElement* p_root,
+        sp_transport_t& p_transport)
+{
+    /*
+        <xs:complexType name="rtpsTransportDescriptorType">
+            <xs:all minOccurs="0">
+                <xs:element name="library" type="stringType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="create_function" type="stringType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="low_level_transport" type="stringType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="maxMessageSize" type="uint32Type" minOccurs="0" maxOccurs="1"/>
+            </xs:all>
+        </xs:complexType>
+     */
+
+    XMLP_ret ret = XMLP_ret::XML_OK;
+    std::string library;
+    std::string create_function;
+    std::string low_level_transport;
+    tinyxml2::XMLElement* p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = p_root->FirstChildElement(); p_aux0 != nullptr; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, CHAINING_LIBRARY) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &library, 0))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, CHAINING_SYMBOL) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &create_function, 0))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, CHAINING_LOW_LEVEL_TRANSPORT) == 0)
+        {
+            if (XMLP_ret::XML_OK != getXMLString(p_aux0, &low_level_transport, 0))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if ( strcmp(name, TRANSPORT_ID) == 0 || strcmp(name, TYPE) == 0)
+        {
+            // Parsed outside of this method
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER,
+                    "Invalid element found into 'rtpsTransportDescriptorType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+
+    if (library.empty())
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Expected tag <library> in ChainingTransport");
+        return XMLP_ret::XML_ERROR;
+    }
+    if (create_function.empty())
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Expected tag <create_function> in ChainingTransport");
+        return XMLP_ret::XML_ERROR;
+    }
+    if (low_level_transport.empty())
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Expected tag <low_level_transport> in ChainingTransport");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    void* dl_library = dlopen::open_library(library);
+    if (!dl_library)
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Cannot load library: '" << library << "'");
+        return XMLP_ret::XML_ERROR;
+    }
+    using create_transport_t =  rtps::TransportDescriptorInterface *
+            (std::shared_ptr<eprosima::fastdds::rtps::TransportDescriptorInterface>);
+    create_transport_t* creating_func = (create_transport_t*)dlopen::open_symbol(dl_library, create_function);
+    if (!creating_func)
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Cannot load creating function: '" << create_function << "'");
+        return XMLP_ret::XML_ERROR;
+    }
+
+    auto low_transport = XMLProfileManager::getTransportById(low_level_transport);
+    if (low_transport)
+    {
+        rtps::TransportDescriptorInterface* chaining_transport = creating_func(low_transport);
+        p_transport.reset(chaining_transport);
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(XMLPARSER, "Cannot find transport: '" << low_level_transport << "'");
+        return XMLP_ret::XML_ERROR;
     }
 
     return ret;
