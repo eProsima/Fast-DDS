@@ -86,6 +86,7 @@ set(DYNAMIC_TYPES_TEST_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/qos/ReaderQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowControllerConsts.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/dlopen.cpp
     )
 
 set(DYNAMIC_COMPLEX_TYPES_TEST_SOURCE
@@ -128,6 +129,7 @@ target_include_directories(DynamicTypesTests PRIVATE
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
 target_link_libraries(DynamicTypesTests GTest::gtest
+    ${CMAKE_DL_LIBS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}

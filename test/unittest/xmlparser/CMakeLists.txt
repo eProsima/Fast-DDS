@@ -84,6 +84,7 @@ set(XMLPROFILEPARSER_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/subscriber/qos/ReaderQos.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowControllerConsts.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/dlopen.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/string_convert.cpp
@@ -155,6 +156,7 @@ target_include_directories(XMLProfileParserTests PRIVATE
     )
 
 target_link_libraries(XMLProfileParserTests GTest::gmock
+    ${CMAKE_DL_LIBS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
@@ -186,6 +188,7 @@ set(XMLPARSER_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/FileConsumer.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/dlopen.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/string_convert.cpp
@@ -255,6 +258,7 @@ target_include_directories(XMLParserTests PRIVATE
     )
 
 target_link_libraries(XMLParserTests GTest::gtest
+    ${CMAKE_DL_LIBS}
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
