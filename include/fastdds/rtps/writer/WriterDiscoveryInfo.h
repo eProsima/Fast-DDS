@@ -43,7 +43,8 @@ struct WriterDiscoveryInfo
         {
             DISCOVERED_WRITER,
             CHANGED_QOS_WRITER,
-            REMOVED_WRITER
+            REMOVED_WRITER,
+            IGNORED_WRITER
         };
 
         WriterDiscoveryInfo(const WriterProxyData& data)

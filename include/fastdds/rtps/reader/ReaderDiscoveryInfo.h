@@ -45,7 +45,8 @@ struct ReaderDiscoveryInfo
         {
             DISCOVERED_READER,
             CHANGED_QOS_READER,
-            REMOVED_READER
+            REMOVED_READER,
+            IGNORED_READER
         };
 
         ReaderDiscoveryInfo(const ReaderProxyData& data)

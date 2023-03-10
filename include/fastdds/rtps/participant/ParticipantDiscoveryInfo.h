@@ -44,7 +44,8 @@ struct ParticipantDiscoveryInfo
         DISCOVERED_PARTICIPANT,
         CHANGED_QOS_PARTICIPANT,
         REMOVED_PARTICIPANT,
-        DROPPED_PARTICIPANT
+        DROPPED_PARTICIPANT,
+        IGNORED_PARTICIPANT
     };
 
     ParticipantDiscoveryInfo(
