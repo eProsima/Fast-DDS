@@ -295,6 +295,15 @@ bool TypeDescriptor::is_primitive() const
            !element_type_ && !key_element_type_;
 }
 
+bool TypeDescriptor::is_subclass(const TypeDescriptor& descriptor) const
+{
+    return descriptor.kind_ == TypeKind::TK_STRUCTURE &&
+           kind_ == TypeKind::TK_STRUCTURE &&
+           base_type_ && (
+               *base_type_ == descriptor ||
+               base_type_->is_subclass(descriptor));
+}
+
 bool TypeDescriptor::is_type_name_consistent(
         const std::string& sName)
 {

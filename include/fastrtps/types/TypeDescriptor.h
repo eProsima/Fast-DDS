@@ -218,6 +218,8 @@ public:
 
     RTPS_DllAPI bool is_primitive() const;
 
+    RTPS_DllAPI bool is_subclass(const TypeDescriptor& descriptor) const;
+
     // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr get_base_type() const;
 
