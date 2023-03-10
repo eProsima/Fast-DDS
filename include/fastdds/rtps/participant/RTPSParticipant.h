@@ -256,6 +256,30 @@ public:
      */
     void enable();
 
+    /**
+     * @brief Ignore all messages coming from the RTPSParticipant
+     * 
+     * @param participant_guid RTPSParticipant GUID to be ignored
+     */
+    void ignore_participant(
+            const GuidPrefix_t& participant_guid);
+
+    /**
+     * @brief Ignore all messages coming from the RTPSWriter
+     * 
+     * @param writer_guid RTPSWriter GUID to be ignored
+     */
+    void ignore_writer(
+            const GUID_t& writer_guid);
+
+    /**
+     * @brief Ignore all messages coming from the RTPSReader
+     * 
+     * @param reader_guid RTPSReader GUID to be ignored
+     */
+    void ignore_reader(
+            const GuidPrefix_t& reader_guid);
+
 #if HAVE_SECURITY
 
     /**
