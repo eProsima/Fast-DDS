@@ -74,7 +74,8 @@ public:
             DomainParticipant* participant,
             fastrtps::rtps::ParticipantDiscoveryInfo&& info)
     {
-        (void)participant, (void)info;
+        static_cast<void>(participant);
+        static_cast<void>(info);
     }
 
 #if HAVE_SECURITY
@@ -88,7 +89,8 @@ public:
             DomainParticipant* participant,
             fastrtps::rtps::ParticipantAuthenticationInfo&& info)
     {
-        (void)participant, (void)info;
+        static_cast<void>(participant);
+        static_cast<void>(info);
     }
 
 #endif // if HAVE_SECURITY
@@ -104,7 +106,8 @@ public:
             DomainParticipant* participant,
             fastrtps::rtps::ReaderDiscoveryInfo&& info)
     {
-        (void)participant, (void)info;
+        static_cast<void>(participant);
+        static_cast<void>(info);
     }
 
     /*!
@@ -118,7 +121,8 @@ public:
             DomainParticipant* participant,
             fastrtps::rtps::WriterDiscoveryInfo&& info)
     {
-        (void)participant, (void)info;
+        static_cast<void>(participant);
+        static_cast<void>(info);
     }
 
     /*!
@@ -136,7 +140,12 @@ public:
             const fastrtps::types::TypeObject* object,
             fastrtps::types::DynamicType_ptr dyn_type)
     {
-        (void)participant, (void)request_sample_id, (void)topic, (void)identifier, (void)object, (void)dyn_type;
+        static_cast<void>(participant);
+        static_cast<void>(request_sample_id);
+        static_cast<void>(topic);
+        static_cast<void>(identifier)
+        ;static_cast<void>(object)
+        ;static_cast<void>(dyn_type);
     }
 
     /*!
@@ -149,7 +158,9 @@ public:
             const fastrtps::rtps::SampleIdentity& request_sample_id,
             const fastrtps::types::TypeIdentifierWithSizeSeq& dependencies)
     {
-        (void)participant, (void)request_sample_id, (void)dependencies;
+        static_cast<void>(participant)
+        ;static_cast<void>(request_sample_id)
+        ;static_cast<void>(dependencies);
     }
 
     /*!
@@ -161,7 +172,10 @@ public:
             const fastrtps::string_255 type_name,
             const fastrtps::types::TypeInformation& type_information)
     {
-        (void)participant, (void)topic_name, (void)type_name, (void)type_information;
+        static_cast<void>(participant);
+        static_cast<void>(topic_name);
+        static_cast<void>(type_name);
+        static_cast<void>(type_information);
     }
 
     // TODO: Methods in DomainParticipantListener (p.33 - DDS)
