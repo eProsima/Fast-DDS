@@ -2527,17 +2527,17 @@ bool RTPSParticipantImpl::is_reader_ignored(
     return false;
 }
 
-void RTPSParticipantImpl::ignore_participant(
+bool RTPSParticipantImpl::ignore_participant(
         const GuidPrefix_t& /*participant_guid*/)
 {
 }
 
-void RTPSParticipantImpl::ignore_writer(
+bool RTPSParticipantImpl::ignore_writer(
         const GUID_t& /*writer_guid*/)
 {
 }
 
-void RTPSParticipantImpl::ignore_reader(
+bool RTPSParticipantImpl::ignore_reader(
         const GUID_t& /*reader_guid*/)
 {
 }

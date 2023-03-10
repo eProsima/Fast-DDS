@@ -1026,26 +1026,29 @@ public:
 
     /**
      * @brief Add a Participant into the corresponding ignore collection.
-     * 
+     *
      * @param participant_guid Participant that is to be ignored.
+     * @return True if correctly included into the ignore collection. False otherwise.
      */
-    void ignore_participant(
+    bool ignore_participant(
             const GuidPrefix_t& participant_guid);
 
     /**
      * @brief Add a Writer into the corresponding ignore collection.
-     * 
+     *
      * @param writer_guid Writer that is to be ignored.
+     * @return True if correctly included into the ignore collection. False otherwise.
      */
-    void ignore_writer(
+    bool ignore_writer(
             const GUID_t& writer_guid);
 
     /**
      * @brief Add a Reader into the corresponding ignore collection.
-     * 
+     *
      * @param reader_guid Reader that is to be ignored.
+     * @return True if correctly included into the ignore collection. False otherwise.
      */
-    void ignore_reader(
+    bool ignore_reader(
             const GUID_t& reader_guid);
 
     template <EndpointKind_t kind, octet no_key, octet with_key>
