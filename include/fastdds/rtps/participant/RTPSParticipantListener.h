@@ -71,7 +71,7 @@ public:
      *
      * @param participant Pointer to the Participant which discovered the remote participant.
      * @param info Remote participant information. User can take ownership of the object.
-     * @param should_be_ignored Flag to indicate the library to automatically ignored the discovered Participant.
+     * @param should_be_ignored Flag to indicate the library to automatically ignore the discovered Participant.
      */
     virtual void onParticipantDiscovery(
             RTPSParticipant* participant,
@@ -115,7 +115,7 @@ public:
      *
      * @param participant Pointer to the Participant which discovered the remote reader.
      * @param info Remote reader information. User can take ownership of the object.
-     * @param should_be_ignored Flag to indicate the library to automatically ignored the discovered Reader.
+     * @param should_be_ignored Flag to indicate the library to automatically ignore the discovered Reader.
      */
     virtual void onReaderDiscovery(
             RTPSParticipant* participant,
@@ -148,7 +148,7 @@ public:
      *
      * @param participant Pointer to the Participant which discovered the remote writer.
      * @param info Remote writer information. User can take ownership of the object.
-     * @param should_be_ignored Flag to indicate the library to automatically ignored the discovered Writer.
+     * @param should_be_ignored Flag to indicate the library to automatically ignore the discovered Writer.
      */
     virtual void onWriterDiscovery(
             RTPSParticipant* participant,
