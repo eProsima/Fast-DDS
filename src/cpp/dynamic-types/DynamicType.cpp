@@ -180,6 +180,10 @@ bool DynamicType::deserialize(
         return true;
     }
 
+    // check data and type are related
+    assert(kind_ == data.get_kind()
+        || data.type_->is_subclass(*this));
+
     switch (get_kind())
     {
         default:
@@ -426,9 +430,18 @@ bool DynamicType::deserialize(
             }
             break;
         }
-        case TypeKind::TK_STRUCTURE:
         case TypeKind::TK_BITSET:
+            assert(element_type_);
+            eprosima_fallthrough
+
+        case TypeKind::TK_STRUCTURE:
         {
+            // delegate in base clases if any
+            if (base_type_ && !base_type_->deserialize(data, cdr))
+            {
+                return false;
+            }
+
 #ifdef DYNAMIC_TYPES_CHECKING
             //uint32_t size(static_cast<uint32_t>(data.complex_values_.size())), memberId(MEMBER_ID_INVALID);
             for (uint32_t i = 0; i < data.complex_values_.size(); ++i)
@@ -443,7 +456,8 @@ bool DynamicType::deserialize(
                 {
                     if (!member_desc->annotation_is_non_serialized())
                     {
-                        auto it = data.complex_values_.find(i);
+                        MemberId id = member_desc->get_id();
+                        auto it = data.complex_values_.find(id);
                         if (it != data.complex_values_.end())
                         {
                             it->second->deserialize(cdr);
@@ -453,13 +467,9 @@ bool DynamicType::deserialize(
                             DynamicData* pData = DynamicDataFactory::get_instance()->create_data(
                                 get_element_type());
                             pData->deserialize(cdr);
-                            data.complex_values_.insert(std::make_pair(i, pData));
+                            data.complex_values_.insert(std::make_pair(id, pData));
                         }
                     }
-                }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Missing MemberDescriptor " << i);
                 }
             }
 #else
@@ -476,7 +486,8 @@ bool DynamicType::deserialize(
                 {
                     if (!member_desc->annotation_is_non_serialized())
                     {
-                        auto it = data.values_.find(i);
+                        MemberId id = member_desc->get_id();
+                        auto it = data.values_.find(id);
                         if (it != data.values_.end())
                         {
                             ((DynamicData*)it->second)->deserialize(cdr);
@@ -486,13 +497,9 @@ bool DynamicType::deserialize(
                             DynamicData* pData = DynamicDataFactory::get_instance()->create_data(
                                 get_element_type());
                             pData->deserialize(cdr);
-                            data.values_.insert(std::make_pair(i, pData));
+                            data.values_.insert(std::make_pair(id, pData));
                         }
                     }
-                }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Missing MemberDescriptor " << i);
                 }
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
@@ -743,7 +750,10 @@ size_t DynamicType::getCdrSerializedSize(
     }
 
     size_t initial_alignment = current_alignment;
-    assert(kind_ == data.get_kind());
+
+    // check data and type are related
+    assert(kind_ == data.get_kind()
+        || data.type_->is_subclass(*this));
 
     switch (kind_)
     {
@@ -837,15 +847,18 @@ size_t DynamicType::getCdrSerializedSize(
             break;
         }
         case TypeKind::TK_BITSET:
-            assert(element_type_);
+            assert(element_type_ && !base_type_);
             eprosima_fallthrough
+
         case TypeKind::TK_STRUCTURE:
         {
+            // calculate inheritance overhead
+            if (base_type_)
+            {
+                current_alignment += base_type_->getCdrSerializedSize(data, current_alignment);
+            }
+
 #ifdef DYNAMIC_TYPES_CHECKING
-            //for (auto it = data.complex_values_.begin(); it != data.complex_values_.end(); ++it)
-            //{
-            //    current_alignment += getCdrSerializedSize(it->second, current_alignment);
-            //}
             for (uint32_t i = 0; i < data.complex_values_.size(); ++i)
             {
                 //cdr >> memberId;
@@ -865,17 +878,9 @@ size_t DynamicType::getCdrSerializedSize(
                         }
                     }
                 }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Missing MemberDescriptor " << i);
-                }
             }
 
 #else
-            //for (auto it = data.values_.begin(); it != data.values_.end(); ++it)
-            //{
-            //    current_alignment += getCdrSerializedSize((DynamicData*)it->second, current_alignment);
-            //}
             for (uint32_t i = 0; i < data.values_.size(); ++i)
             {
                 //cdr >> memberId;
@@ -894,10 +899,6 @@ size_t DynamicType::getCdrSerializedSize(
                             current_alignment += member_desc->get_type()->getCdrSerializedSize(*(DynamicData*)it->second, current_alignment);
                         }
                     }
-                }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Missing MemberDescriptor " << i);
                 }
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
@@ -1055,9 +1056,18 @@ size_t DynamicType::getEmptyCdrSerializedSize(
             current_alignment += get_discriminator_type()->getEmptyCdrSerializedSize(current_alignment);
             break;
         }
-        case TypeKind::TK_STRUCTURE:
         case TypeKind::TK_BITSET:
+            assert(element_type_ && !base_type_);
+            eprosima_fallthrough
+
+        case TypeKind::TK_STRUCTURE:
         {
+            // calculate inheritance overhead
+            if (base_type_)
+            {
+                current_alignment += base_type_->getEmptyCdrSerializedSize(current_alignment);
+            }
+
             for (const DynamicTypeMember& m : members_)
             {
                 if (!m.annotation_is_non_serialized())
@@ -1102,6 +1112,12 @@ size_t DynamicType::getKeyMaxCdrSerializedSize(
     // Structures check the the size of the key for their children
     if (get_kind() == TypeKind::TK_STRUCTURE || get_kind() == TypeKind::TK_BITSET)
     {
+        // calculate inheritance overhead
+        if (base_type_)
+        {
+            current_alignment += base_type_->getKeyMaxCdrSerializedSize(current_alignment);
+        }
+
         for (const DynamicTypeMember& m : members_)
         {
             if (m.key_annotation())
@@ -1203,9 +1219,18 @@ size_t DynamicType::getMaxCdrSerializedSize(
             current_alignment += max_element_size;
             break;
         }
-        case TypeKind::TK_STRUCTURE:
         case TypeKind::TK_BITSET:
+            assert(element_type_ && !base_type_);
+            eprosima_fallthrough
+
+        case TypeKind::TK_STRUCTURE:
         {
+            // calculate inheritance overhead
+            if (base_type_)
+            {
+                current_alignment += base_type_->getMaxCdrSerializedSize(current_alignment);
+            }
+
             for (const DynamicTypeMember& m : members_)
             {
                 if (!m.annotation_is_non_serialized())
@@ -1265,6 +1290,10 @@ void DynamicType::serialize(
     {
         return;
     }
+
+    // check data and type are related
+    assert(kind_ == data.get_kind()
+        || data.type_->is_subclass(*this));
 
     switch (get_kind())
     {
@@ -1489,9 +1518,18 @@ void DynamicType::serialize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
-        case TypeKind::TK_STRUCTURE:
         case TypeKind::TK_BITSET:
+            assert(element_type_);
+            eprosima_fallthrough
+
+        case TypeKind::TK_STRUCTURE:
         {
+            // delegate in base clases if any
+            if (base_type_)
+            {
+                base_type_->serialize(data, cdr);
+            }
+
 #ifdef DYNAMIC_TYPES_CHECKING
             for (uint32_t idx = 0; idx < static_cast<uint32_t>(data.complex_values_.size()); ++idx)
             {
@@ -1504,13 +1542,9 @@ void DynamicType::serialize(
                 {
                     if (!member_desc->annotation_is_non_serialized())
                     {
-                        auto it = data.complex_values_.at(idx);
+                        auto it = data.complex_values_.at(member_desc->get_id());
                         it->serialize(cdr);
                     }
-                }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Missing MemberDescriptor " << idx);
                 }
             }
 #else
@@ -1525,13 +1559,9 @@ void DynamicType::serialize(
                 {
                     if (!member_desc->annotation_is_non_serialized())
                     {
-                        auto it = data.values_.at(idx);
+                        auto it = data.values_.at(member_desc->get_id());
                         ((DynamicData*)it)->serialize(cdr);
                     }
-                }
-                else
-                {
-                    EPROSIMA_LOG_ERROR(DYN_TYPES, "Missing MemberDescriptor " << idx);
                 }
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
@@ -1818,9 +1848,18 @@ void DynamicType::serialize_empty_data(
             cdr << static_cast<uint32_t>(0);
             break;
         }
-        case TypeKind::TK_STRUCTURE:
         case TypeKind::TK_BITSET:
+            assert(element_type_);
+            eprosima_fallthrough
+
+        case TypeKind::TK_STRUCTURE:
         {
+            // delegate in base clases if any
+            if (base_type_)
+            {
+                base_type_->serialize_empty_data(cdr);
+            }
+
             for (const DynamicTypeMember& m : members_)
             {
                 if (!m.annotation_is_non_serialized())

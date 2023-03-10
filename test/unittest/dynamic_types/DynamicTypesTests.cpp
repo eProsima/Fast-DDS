@@ -3482,90 +3482,85 @@ TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(struct_data) == ReturnCode_t::RETCODE_OK);
 }
 
-/*
 TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
 {
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
+
+    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_builder();
+    ASSERT_TRUE(base_type_builder);
+    auto base_type = base_type_builder->build();
+
+    DynamicTypeBuilder_cptr base_type_builder2 = factory.create_int64_builder();
+    ASSERT_TRUE(base_type_builder2);
+    auto base_type2 = base_type_builder2->build();
+
+    DynamicTypeBuilder_ptr struct_type_builder = factory.create_struct_builder();
+    ASSERT_TRUE(struct_type_builder);
+
+    // Add members to the struct.
+    ASSERT_TRUE(struct_type_builder->add_member(0, "int32", base_type) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(struct_type_builder->add_member(1, "int64", base_type2) == ReturnCode_t::RETCODE_OK);
+
+    auto struct_type = struct_type_builder->build();
+    ASSERT_TRUE(struct_type);
+
+    // Create the child struct.
+    DynamicTypeBuilder_ptr child_struct_type_builder = factory.create_child_struct_builder(*struct_type_builder);
+    ASSERT_TRUE(child_struct_type_builder);
+
+    // Add a new member to the child struct.
+    ASSERT_TRUE(child_struct_type_builder->add_member(2, "child_int32", base_type) == ReturnCode_t::RETCODE_OK);
+
     {
-        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
-        ASSERT_TRUE(base_type_builder != nullptr);
-        auto base_type = base_type_builder->build();
-
-        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
-        ASSERT_TRUE(base_type_builder2 != nullptr);
-        auto base_type2 = base_type_builder2->build();
-
-        DynamicTypeBuilder_ptr struct_type_builder = DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
-        ASSERT_TRUE(struct_type_builder != nullptr);
-
-        // Add members to the struct.
-        ASSERT_TRUE(struct_type_builder->add_member(0, "int32", base_type) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(struct_type_builder->add_member(1, "int64", base_type2) == ReturnCode_t::RETCODE_OK);
-
-        auto struct_type = struct_type_builder->build();
-        ASSERT_TRUE(struct_type != nullptr);
-
-        // Try to create the child struct without parent
-        DynamicTypeBuilder_ptr child_struct_type_builder =
-                DynamicTypeBuilderFactory::get_instance()->create_child_struct_builder(nullptr);
-        ASSERT_FALSE(child_struct_type_builder != nullptr);
-
-        // Create the child struct.
-        child_struct_type_builder = DynamicTypeBuilderFactory::get_instance()->create_child_struct_builder(
-            struct_type_builder.get());
-        ASSERT_TRUE(child_struct_type_builder != nullptr);
-
-        // Add a new member to the child struct.
-        ASSERT_TRUE(child_struct_type_builder->add_member(2, "child_int32", base_type) == ReturnCode_t::RETCODE_OK);
-
+        eprosima::fastdds::dds::Log::ScopeLogs _("disable"); // avoid expected errors logging
         // try to add a member to override one of the parent struct.
         ASSERT_FALSE(child_struct_type_builder->add_member(3, "int32", base_type) == ReturnCode_t::RETCODE_OK);
-
-        auto child_struct_type = child_struct_type_builder->build();
-        ASSERT_TRUE(child_struct_type != nullptr);
-        auto struct_data = DynamicDataFactory::get_instance()->create_data(child_struct_type);
-        ASSERT_TRUE(struct_data != nullptr);
-
-        ASSERT_FALSE(struct_data->set_int32_value(10, 1) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(struct_data->set_string_value("", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-
-        // Set and get the parent values.
-        int32_t test1(234);
-        ASSERT_TRUE(struct_data->set_int32_value(test1, 0) == ReturnCode_t::RETCODE_OK);
-        int32_t test2(0);
-        ASSERT_TRUE(struct_data->get_int32_value(test2, 0) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(test1 == test2);
-        int64_t test3(234);
-        ASSERT_TRUE(struct_data->set_int64_value(test3, 1) == ReturnCode_t::RETCODE_OK);
-        int64_t test4(0);
-        ASSERT_TRUE(struct_data->get_int64_value(test4, 1) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(test3 == test4);
-        // Set and get the child value.
-        int32_t test5(234);
-        ASSERT_TRUE(struct_data->set_int32_value(test5, 2) == ReturnCode_t::RETCODE_OK);
-        int32_t test6(0);
-        ASSERT_TRUE(struct_data->get_int32_value(test6, 2) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(test5 == test6);
-
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(child_struct_type);
-        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(struct_data)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(struct_data, &payload));
-        ASSERT_TRUE(payload.length == payloadSize);
-
-        types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(child_struct_type);
-        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
-        ASSERT_TRUE(data2->equals(struct_data));
-
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
-
-        // Delete the structure
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(struct_data) == ReturnCode_t::RETCODE_OK);
     }
-    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
-    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
+
+    auto child_struct_type = child_struct_type_builder->build();
+    ASSERT_TRUE(child_struct_type);
+    auto struct_data = DynamicDataFactory::get_instance()->create_data(child_struct_type);
+    ASSERT_TRUE(struct_data != nullptr);
+
+    ASSERT_FALSE(struct_data->set_int32_value(10, 1) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(struct_data->set_string_value("", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+
+    // Set and get the parent values.
+    int32_t test1(234);
+    ASSERT_TRUE(struct_data->set_int32_value(test1, 0) == ReturnCode_t::RETCODE_OK);
+    int32_t test2(0);
+    ASSERT_TRUE(struct_data->get_int32_value(test2, 0) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+    int64_t test3(234);
+    ASSERT_TRUE(struct_data->set_int64_value(test3, 1) == ReturnCode_t::RETCODE_OK);
+    int64_t test4(0);
+    ASSERT_TRUE(struct_data->get_int64_value(test4, 1) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(test3 == test4);
+    // Set and get the child value.
+    int32_t test5(234);
+    ASSERT_TRUE(struct_data->set_int32_value(test5, 2) == ReturnCode_t::RETCODE_OK);
+    int32_t test6(0);
+    ASSERT_TRUE(struct_data->get_int32_value(test6, 2) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(test5 == test6);
+
+    // Serialize <-> Deserialize Test
+    DynamicPubSubType pubsubType(child_struct_type);
+    uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(struct_data)());
+    SerializedPayload_t payload(payloadSize);
+    ASSERT_TRUE(pubsubType.serialize(struct_data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
+
+    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(child_struct_type);
+    ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+    ASSERT_TRUE(data2->equals(struct_data));
+
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+
+    // Delete the structure
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(struct_data) == ReturnCode_t::RETCODE_OK);
 }
 
+/*
 TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
 {
     {
