@@ -87,6 +87,9 @@ const char* SCHEDULING_POLICY = "scheduling_policy";
 const char* PRIORITY = "priority";
 const char* AFFINITY = "affinity";
 const char* STACK_SIZE = "stack_size";
+const char* CHAINING_LIBRARY = "library";
+const char* CHAINING_SYMBOL = "create_function";
+const char* CHAINING_LOW_LEVEL_TRANSPORT = "low_level_transport";
 
 const char* OFF = "OFF";
 const char* USER_DATA_ONLY = "USER_DATA_ONLY";
@@ -201,6 +204,7 @@ const char* DEFAULTv6 = "DEFAULTv6";
 const char* LARGE_DATA = "LARGE_DATA";
 const char* LARGE_DATAv6 = "LARGE_DATAv6";
 const char* P2P = "P2P";
+const char* CHAINING_TRANSPORT = "ChainingTransport";
 const char* INIT_ACKNACK_DELAY = "initial_acknack_delay";
 const char* HEARTB_RESP_DELAY = "heartbeat_response_delay";
 const char* INIT_HEARTB_DELAY = "initial_heartbeat_delay";
