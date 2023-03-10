@@ -1264,6 +1264,8 @@ void DataWriterImpl::InnerDataWriterListener::on_reader_discovery(
             case fastrtps::rtps::ReaderDiscoveryInfo::DISCOVERY_STATUS::CHANGED_QOS_READER:
                 data_writer_->process_reader_filter_info(reader_guid, *reader_info);
                 break;
+            default:
+                break;
         }
     }
 }
