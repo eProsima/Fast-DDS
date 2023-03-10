@@ -328,25 +328,19 @@ public:
 
     // TODO Subscriber* get_builtin_subscriber();
 
-    /* TODO
        bool ignore_participant(
             const InstanceHandle_t& handle);
-     */
 
     /* TODO
        bool ignore_topic(
             const InstanceHandle_t& handle);
      */
 
-    /* TODO
        bool ignore_publication(
             const InstanceHandle_t& handle);
-     */
 
-    /* TODO
        bool ignore_subscription(
             const InstanceHandle_t& handle);
-     */
 
     DomainId_t get_domain_id() const;
 
