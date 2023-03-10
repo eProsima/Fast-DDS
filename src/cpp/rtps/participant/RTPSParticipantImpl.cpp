@@ -2530,16 +2530,19 @@ bool RTPSParticipantImpl::is_reader_ignored(
 bool RTPSParticipantImpl::ignore_participant(
         const GuidPrefix_t& /*participant_guid*/)
 {
+    return false;
 }
 
 bool RTPSParticipantImpl::ignore_writer(
         const GUID_t& /*writer_guid*/)
 {
+    return false;
 }
 
 bool RTPSParticipantImpl::ignore_reader(
         const GUID_t& /*reader_guid*/)
 {
+    return false;
 }
 
 #ifdef FASTDDS_STATISTICS
