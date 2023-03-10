@@ -31,6 +31,8 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
+#include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
+#include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/utils/ProxyPool.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
@@ -223,6 +225,7 @@ public:
 
     /**
      * This method removes and deletes a ReaderProxyData object from its corresponding RTPSParticipant.
+     *
      * @param reader_guid GUID_t of the reader to remove.
      * @return true if found and deleted.
      */
@@ -230,12 +233,35 @@ public:
             const GUID_t& reader_guid);
 
     /**
+     * This method removes and deletes a ReaderProxyData object from its corresponding RTPSParticipant.
+     *
+     * @param reader_guid GUID_t of the reader to remove.
+     * @param reason Why the reader is being removed (dropped, removed, or ignored)
+     * @return true if found and deleted.
+     */
+    bool removeReaderProxyData(
+            const GUID_t& reader_guid,
+            ReaderDiscoveryInfo::DISCOVERY_STATUS reason);
+
+    /**
      * This method removes and deletes a WriterProxyData object from its corresponding RTPSParticipant.
+     *
      * @param writer_guid GUID_t of the wtiter to remove.
      * @return true if found and deleted.
      */
     bool removeWriterProxyData(
             const GUID_t& writer_guid);
+
+    /**
+     * This method removes and deletes a WriterProxyData object from its corresponding RTPSParticipant.
+     *
+     * @param writer_guid GUID_t of the wtiter to remove.
+     * @param reason Why the writer is being removed (dropped, removed, or ignored)
+     * @return true if found and deleted.
+     */
+    bool removeWriterProxyData(
+            const GUID_t& reader_guid,
+            WriterDiscoveryInfo::DISCOVERY_STATUS reason);
 
     /**
      * Create the SPDP Writer and Reader
@@ -276,7 +302,7 @@ public:
     /**
      * This method removes a remote RTPSParticipant and all its writers and readers.
      * @param participant_guid GUID_t of the remote RTPSParticipant.
-     * @param reason Why the participant is being removed (dropped vs removed)
+     * @param reason Why the participant is being removed (dropped, removed, or ignored)
      * @return true if correct.
      */
     virtual bool remove_remote_participant(
