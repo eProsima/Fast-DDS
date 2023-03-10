@@ -261,7 +261,7 @@ public:
      * 
      * @param participant_guid RTPSParticipant GUID to be ignored
      */
-    void ignore_participant(
+    bool ignore_participant(
             const GuidPrefix_t& participant_guid);
 
     /**
@@ -269,7 +269,7 @@ public:
      * 
      * @param writer_guid RTPSWriter GUID to be ignored
      */
-    void ignore_writer(
+    bool ignore_writer(
             const GUID_t& writer_guid);
 
     /**
@@ -277,8 +277,8 @@ public:
      * 
      * @param reader_guid RTPSReader GUID to be ignored
      */
-    void ignore_reader(
-            const GuidPrefix_t& reader_guid);
+    bool ignore_reader(
+            const GUID_t& reader_guid);
 
 #if HAVE_SECURITY
 
