@@ -85,7 +85,7 @@
 // Log Info
 #ifndef FASTDDS_ENFORCE_LOG_INFO
 #cmakedefine FASTDDS_ENFORCE_LOG_INFO
-#endif
+#endif // ifndef FASTDDS_ENFORCE_LOG_INFO
 #ifndef HAVE_LOG_NO_INFO
 #define HAVE_LOG_NO_INFO @HAVE_LOG_NO_INFO@
 #endif /* ifndef HAVE_LOG_NO_INFO */
@@ -102,6 +102,11 @@
 
 // Statistics
 #cmakedefine FASTDDS_STATISTICS
+
+// dlopen support
+#ifndef HAVE_DLOPEN
+#define HAVE_DLOPEN @HAVE_DLOPEN@
+#endif // ifndef HAVE_DLOPEN
 
 // Deprecated macro
 #if __cplusplus >= 201402L
@@ -128,6 +133,6 @@
 #define FASTDDS_SER_METHOD_DEPRECATED(major, entity_name, msg) FASTDDS_DEPRECATED_UNTIL(major, entity_name, msg)
 #else
 #define FASTDDS_SER_METHOD_DEPRECATED(major, entity_name, msg)
-#endif
+#endif // if FASTCDR_VERSION_MAJOR > 1
 
 #endif // _FASTRTPS_CONFIG_H_
