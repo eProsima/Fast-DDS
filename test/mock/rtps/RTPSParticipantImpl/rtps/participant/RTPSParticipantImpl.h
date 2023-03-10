@@ -69,10 +69,10 @@ public:
             RTPSParticipant* participant,
             ParticipantDiscoveryInfo&& info) override
     {
-        onParticipantDiscovery(participant, info);
+        onParticipantDiscovery_mock(participant, info);
     }
 
-    MOCK_METHOD2(onParticipantDiscovery, void (RTPSParticipant*, const ParticipantDiscoveryInfo&));
+    MOCK_METHOD2(onParticipantDiscovery_mock, void (RTPSParticipant*, const ParticipantDiscoveryInfo&));
 
 #if HAVE_SECURITY
     void onParticipantAuthentication(
