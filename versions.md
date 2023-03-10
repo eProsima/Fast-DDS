@@ -6,6 +6,10 @@ Forthcoming
 * Added `RTPSWriter::has_been_delivered` virtual method (ABI break on RTPS layer).
 * Refactor `StatefulWriter::get_disable_positive_acks` as virtual method of `RTPSWriter` (ABI break on RTPS layer).
 * Network headers made private (ABI break on RTPS layer).
+* Added ignore RTPS entity API in RTPSParticipant (ABI break on RTPS layer).
+* Overload `PDP::removeWriterProxyData` and `PDP::removeReaderProxyData` (ABI break on RTPS layer).
+* Overload RTPS discovery callbacks in RTPSParticipantListener (ABI break on RTPS layer).
+* Overload DDS discovery callbacks in DomainParticipantListener (ABI break on DDS layer). 
 
 Version 2.9.0
 -------------
