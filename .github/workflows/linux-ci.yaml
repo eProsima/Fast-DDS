@@ -43,18 +43,7 @@ jobs:
           path: src/Fast-DDS
 
       - name: Install apt packages
-        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@feature/uncrustify
-        with:
-          update: "true"
-          upgrade: "false"
-          packages: curl grep libasio-dev libtinyxml2-dev python3 python3-pip libssl-dev software-properties-common wget
-
-      - name: Install python packages by default
-        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@feature/uncrustify
-        with:
-          custom_packages: colcon-common-extensions vcstool
-          eprosima_default_packages: "false"
-
+        uses: eProsima/eProsima-CI/ubuntu/install_fast_dependencies@feature/build_dependencies
 
       - name: Fetch Fast DDS dependencies
         uses: ./src/Fast-DDS/.github/actions/fetch-fastdds-repos
@@ -66,7 +55,8 @@ jobs:
         run: |
           colcon build \
             --event-handlers=console_direct+ \
-            --cmake-args -DSECURITY=ON \
+            --cmake-args -DCMAKE_BUILD_ARGS=RelWithDebInfo \
+            -DSECURITY=ON \
             -DFASTDDS_STATISTICS=ON ${{ github.event.inputs.cmake-args }}
 
       - name: Run tests Fast DDS
