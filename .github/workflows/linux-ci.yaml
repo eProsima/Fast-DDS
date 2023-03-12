@@ -46,7 +46,7 @@ jobs:
       - name: Install python packages by default
         uses: eProsima/eProsima-CI/ubuntu/install_python_packages@feature/uncrustify
         with:
-          packages: colcon-common-extensions vcstool
+          custom_packages: colcon-common-extensions vcstool
 
       - name: Fetch Fast DDS dependencies
         uses: ./src/Fast-DDS/.github/actions/fetch-fastdds-repos
