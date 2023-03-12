@@ -1,0 +1,83 @@
+name: Linux CI
+
+on:
+  workflow_dispatch:
+    inputs:
+      cmake-args:
+        description: 'Optional arguments to pass to CMake'
+        required: false
+      ctest-args:
+        description: 'Optional arguments to pass to CTest'
+        required: false
+  pull_request:
+  push:
+    branches:
+      - master
+      - 2.10.x
+      - 2.1.x
+      - 2.9.x
+      - 2.8.x
+  schedule:
+    - cron: '0 1 * * *'
+
+jobs:
+
+  linux-ci:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner-os:
+          - 'ubuntu-22.04'
+          - 'ubuntu-20.04'
+
+    runs-on: ${{ matrix.runner-os }}
+    
+    steps:
+      - name: Sync eProsima/Fast-DDS repository
+        uses: actions/checkout@v3
+        with:
+          path: src/Fast-DDS
+
+      - name: Install apt packages
+        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@feature/uncrustify
+        with:
+          packages: curl grep libasio-dev libtinyxml2-dev python3 python3-pip libssl-dev software-properties-common wget
+
+      - name: Install python packages by default
+        uses: eProsima/eProsima-CI/ubuntu/install_python_packages@feature/uncrustify
+        with:
+          packages: colcon-common-extensions vcstool
+
+      - name: Fetch Fast DDS dependencies
+        uses: ./src/Fast-DDS/.github/actions/fetch-fastdds-repos
+        with:
+          target_directory: src
+          googletest: true
+
+      - name: Build workspace
+        run: |
+          colcon build \
+            --event-handlers=console_direct+ \
+            --cmake-args -DSECURITY=ON \
+            -DFASTDDS_STATISTICS=ON ${{ github.event.inputs.cmake-args }}
+
+      - name: Run tests Fast DDS
+        run: |
+          source install/setup.bash && \
+          colcon test \
+            --packages-select fastrtps \
+            --event-handlers=console_direct+ \
+            --return-code-on-test-failure \
+            --ctest-args \
+              --label-exclude xfail \
+              --timeout 300 ${{ github.event.inputs.ctest-args }}
+
+        continue-on-error: true
+
+      - name: Upload Logs
+        uses: actions/upload-artifact@v1
+
+        with:
+          name: ctest-logs
+          path: log/
+        if: always()
