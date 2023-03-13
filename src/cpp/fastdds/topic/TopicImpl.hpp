@@ -114,6 +114,9 @@ public:
             const StatusMask& status,
             const Topic* topic);
 
+    void inconsistent_topic_found(
+            Topic* topic);
+
 protected:
 
     TopicProxyFactory* factory_;

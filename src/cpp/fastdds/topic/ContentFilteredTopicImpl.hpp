@@ -48,6 +48,11 @@ public:
         return related_topic->get_name();
     }
 
+    void inconsistent_topic_found() override
+    {
+        related_topic->get_impl()->inconsistent_topic_found();
+    }
+
     bool is_relevant(
             const fastrtps::rtps::CacheChange_t& change,
             const fastrtps::rtps::GUID_t& reader_guid) const final;

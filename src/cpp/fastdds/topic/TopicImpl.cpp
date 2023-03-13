@@ -206,6 +206,13 @@ TopicListener* TopicImpl::get_listener_for(
     return participant_->get_listener_for(status);
 }
 
+void TopicImpl::inconsistent_topic_found(
+        Topic* topic)
+{
+    // TODO(Miguel C): Implement this
+    static_cast<void>(topic);
+}
+
 } // dds
 } // fastdds
 } // eprosima

@@ -104,6 +104,11 @@ public:
         return user_topic_->get_name();
     }
 
+    void inconsistent_topic_found() override
+    {
+        impl_->inconsistent_topic_found(user_topic_.get());
+    }
+
 private:
 
     TopicImpl* impl_ = nullptr;
