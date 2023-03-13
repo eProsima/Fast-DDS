@@ -94,9 +94,7 @@ DomainParticipant* Topic::get_participant() const
 ReturnCode_t Topic::get_inconsistent_topic_status(
         InconsistentTopicStatus& status)
 {
-    // TODO: return impl_->get_inconsistent_topic_status(status);
-    (void)status;
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return impl_->get_inconsistent_topic_status(status);
 }
 
 TopicDescriptionImpl* Topic::get_impl() const

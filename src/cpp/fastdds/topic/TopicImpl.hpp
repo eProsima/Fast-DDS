@@ -124,7 +124,6 @@ protected:
     TypeSupport type_support_;
     TopicQos qos_;
     TopicListener* listener_;
-
 };
 
 } // dds

@@ -22,6 +22,7 @@
 #include <memory>
 #include <string>
 
+#include <fastdds/dds/core/status/BaseStatus.hpp>
 #include <fastdds/dds/core/status/StatusMask.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
@@ -86,6 +87,13 @@ public:
     const TypeSupport& get_type() const
     {
         return impl_->get_type();
+    }
+
+    ReturnCode_t get_inconsistent_topic_status(
+            InconsistentTopicStatus& status)
+    {
+        // TODO(Miguel C): Implement this
+        return ReturnCode_t::RETCODE_UNSUPPORTED;
     }
 
     TopicListener* get_listener_for(
