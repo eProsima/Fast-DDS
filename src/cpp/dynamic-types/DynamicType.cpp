@@ -831,7 +831,6 @@ size_t DynamicType::getCdrSerializedSize(
         {
             // Union discriminator
             assert(discriminator_type_);
-            assert(element_type_);
 
             current_alignment += discriminator_type_->getCdrSerializedSize(*data.union_discriminator_, current_alignment);
 
@@ -842,7 +841,14 @@ size_t DynamicType::getCdrSerializedSize(
 #else
                 auto it = (DynamicData*)data.values_.at(data.union_id_);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
-                current_alignment += element_type_->getCdrSerializedSize(*it, current_alignment);
+
+                const DynamicTypeMember* member_desc;
+                bool found;
+
+                std::tie(member_desc, found) = get_member(data.union_id_);
+                assert(found);
+
+                current_alignment += member_desc->type_->getCdrSerializedSize(*it, current_alignment);
             }
             break;
         }

@@ -2226,7 +2226,7 @@ TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
     std::string name = "ALIAS";
     DynamicTypeBuilder_cptr base_builder = factory.create_uint32_builder();
     ASSERT_TRUE(base_builder);
-    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_builder(*base_builder, name);
+    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_builder(*base_builder->build(), name);
     ASSERT_TRUE(alias_builder);
     DynamicType_ptr created_type = alias_builder->build();
     ASSERT_TRUE(created_type);
@@ -2284,12 +2284,12 @@ TEST_F(DynamicTypesTests, DynamicType_multi_alias_unit_tests)
     std::string name2 = "ALIAS2";
     DynamicTypeBuilder_cptr base_builder = factory.create_string_builder(length);
     ASSERT_TRUE(base_builder);
-    DynamicTypeBuilder_ptr base_alias_builder = factory.create_alias_builder(*base_builder, name);
+    DynamicTypeBuilder_ptr base_alias_builder = factory.create_alias_builder(*base_builder->build(), name);
     ASSERT_TRUE(base_alias_builder);
     DynamicType_ptr base_type = base_alias_builder->build();
     ASSERT_TRUE(base_type);
     EXPECT_EQ(base_type->get_name(), name);
-    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_builder(*base_alias_builder, name2);
+    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_builder(*base_alias_builder->build(), name2);
     ASSERT_TRUE(alias_builder);
     DynamicType_ptr created_type = alias_builder->build();
     ASSERT_TRUE(created_type);
@@ -2537,7 +2537,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
     // Then
     DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_builder();
     ASSERT_TRUE(base_type_builder);
-    DynamicTypeBuilder_ptr seq_type_builder = factory.create_sequence_builder(*base_type_builder, length);
+    DynamicTypeBuilder_ptr seq_type_builder = factory.create_sequence_builder(*base_type_builder->build(), length);
     ASSERT_TRUE(seq_type_builder);
     auto seq_type = seq_type_builder->build();
     ASSERT_TRUE(seq_type);
@@ -2675,12 +2675,12 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
     DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_builder();
     ASSERT_TRUE(base_type_builder);
 
-    DynamicTypeBuilder_ptr seq_type_builder = factory.create_sequence_builder(*base_type_builder, sequence_length);
+    DynamicTypeBuilder_ptr seq_type_builder = factory.create_sequence_builder(*base_type_builder->build(), sequence_length);
     ASSERT_TRUE(seq_type_builder);
     auto seq_type = seq_type_builder->build();
     ASSERT_TRUE(seq_type);
 
-    DynamicTypeBuilder_ptr seq_seq_type_builder = factory.create_sequence_builder(*seq_type_builder, sup_sequence_length);
+    DynamicTypeBuilder_ptr seq_seq_type_builder = factory.create_sequence_builder(*seq_type_builder->build(), sup_sequence_length);
     ASSERT_TRUE(seq_seq_type_builder);
     auto seq_seq_type = seq_seq_type_builder->build();
     ASSERT_TRUE(seq_seq_type);
@@ -2821,7 +2821,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
     ASSERT_TRUE(base_type_builder);
     auto base_type = base_type_builder->build();
 
-    DynamicTypeBuilder_ptr array_type_builder = factory.create_array_builder(*base_type_builder, sequence_lengths);
+    DynamicTypeBuilder_ptr array_type_builder = factory.create_array_builder(*base_type_builder->build(), sequence_lengths);
     ASSERT_TRUE(array_type_builder);
     auto array_type = array_type_builder->build();
     ASSERT_TRUE(array_type);
@@ -2960,12 +2960,12 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
     ASSERT_TRUE(base_type_builder);
     auto base_type = base_type_builder->build();
 
-    DynamicTypeBuilder_ptr array_type_builder = factory.create_array_builder(*base_type_builder, sequence_lengths);
+    DynamicTypeBuilder_ptr array_type_builder = factory.create_array_builder(*base_type_builder->build(), sequence_lengths);
     ASSERT_TRUE(array_type_builder);
     auto array_type = array_type_builder->build();
     ASSERT_TRUE(array_type);
 
-    DynamicTypeBuilder_ptr parent_array_type_builder = factory.create_array_builder(*array_type_builder, sequence_lengths);
+    DynamicTypeBuilder_ptr parent_array_type_builder = factory.create_array_builder(*array_type_builder->build(), sequence_lengths);
     ASSERT_TRUE(parent_array_type_builder);
     auto parent_array_type = parent_array_type_builder->build();
     ASSERT_TRUE(parent_array_type);
@@ -3505,7 +3505,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
     ASSERT_TRUE(struct_type);
 
     // Create the child struct.
-    DynamicTypeBuilder_ptr child_struct_type_builder = factory.create_child_struct_builder(*struct_type_builder);
+    DynamicTypeBuilder_ptr child_struct_type_builder = factory.create_child_struct_builder(*struct_type_builder->build());
     ASSERT_TRUE(child_struct_type_builder);
 
     // Add a new member to the child struct.
@@ -3560,212 +3560,209 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
     ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(struct_data) == ReturnCode_t::RETCODE_OK);
 }
 
-/*
 TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
 {
-    {
-        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
-        ASSERT_TRUE(base_type_builder != nullptr);
-        auto base_type = base_type_builder->build();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
-        ASSERT_TRUE(base_type_builder2 != nullptr);
-        auto base_type2 = base_type_builder2->build();
+    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_builder();
+    ASSERT_TRUE(base_type_builder);
+    auto base_type = base_type_builder->build();
 
-        DynamicTypeBuilder_ptr struct_type_builder = DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
-        ASSERT_TRUE(struct_type_builder != nullptr);
+    DynamicTypeBuilder_cptr base_type_builder2 = factory.create_int64_builder();
+    ASSERT_TRUE(base_type_builder2);
+    auto base_type2 = base_type_builder2->build();
 
-        // Add members to the struct.
-        ASSERT_TRUE(struct_type_builder->add_member(0, "int32", base_type) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(struct_type_builder->add_member(1, "int64", base_type2) == ReturnCode_t::RETCODE_OK);
+    DynamicTypeBuilder_ptr struct_type_builder = factory.create_struct_builder();
+    ASSERT_TRUE(struct_type_builder);
 
-        auto struct_type = struct_type_builder->build();
-        ASSERT_TRUE(struct_type != nullptr);
+    // Add members to the struct.
+    ASSERT_TRUE(struct_type_builder->add_member(0, "int32", base_type) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(struct_type_builder->add_member(1, "int64", base_type2) == ReturnCode_t::RETCODE_OK);
 
-        // Create the parent struct.
-        DynamicTypeBuilder_ptr parent_struct_type_builder =
-                DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
-        ASSERT_TRUE(parent_struct_type_builder != nullptr);
+    auto struct_type = struct_type_builder->build();
+    ASSERT_TRUE(struct_type);
 
-        // Add members to the parent struct.
-        ASSERT_TRUE(parent_struct_type_builder->add_member(0, "child_struct", struct_type) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(parent_struct_type_builder->add_member(1, "child_int64", base_type2) == ReturnCode_t::RETCODE_OK);
+    // Create the parent struct.
+    DynamicTypeBuilder_ptr parent_struct_type_builder = factory.create_struct_builder();
+    ASSERT_TRUE(parent_struct_type_builder);
 
-        auto parent_struct_type = parent_struct_type_builder->build();
-        ASSERT_TRUE(parent_struct_type != nullptr);
+    // Add members to the parent struct.
+    ASSERT_TRUE(parent_struct_type_builder->add_member(0, "child_struct", struct_type) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(parent_struct_type_builder->add_member(1, "child_int64", base_type2) == ReturnCode_t::RETCODE_OK);
 
-        auto struct_data = DynamicDataFactory::get_instance()->create_data(parent_struct_type);
-        ASSERT_TRUE(struct_data != nullptr);
+    auto parent_struct_type = parent_struct_type_builder->build();
+    ASSERT_TRUE(parent_struct_type);
 
-        ASSERT_FALSE(struct_data->set_int32_value(10, 1) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(struct_data->set_string_value("", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    auto struct_data = DynamicDataFactory::get_instance()->create_data(parent_struct_type);
+    ASSERT_TRUE(struct_data != nullptr);
 
-        // Set and get the child values.
-        int64_t test1(234);
-        ASSERT_TRUE(struct_data->set_int64_value(test1, 1) == ReturnCode_t::RETCODE_OK);
-        int64_t test2(0);
-        ASSERT_TRUE(struct_data->get_int64_value(test2, 1) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(test1 == test2);
+    ASSERT_FALSE(struct_data->set_int32_value(10, 1) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(struct_data->set_string_value("", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
 
-        auto child_struct_data = struct_data->loan_value(0);
-        ASSERT_TRUE(child_struct_data != nullptr);
+    // Set and get the child values.
+    int64_t test1(234);
+    ASSERT_TRUE(struct_data->set_int64_value(test1, 1) == ReturnCode_t::RETCODE_OK);
+    int64_t test2(0);
+    ASSERT_TRUE(struct_data->get_int64_value(test2, 1) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
 
-        // Set and get the child values.
-        int32_t test3(234);
-        ASSERT_TRUE(child_struct_data->set_int32_value(test3, 0) == ReturnCode_t::RETCODE_OK);
-        int32_t test4(0);
-        ASSERT_TRUE(child_struct_data->get_int32_value(test4, 0) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(test3 == test4);
-        int64_t test5(234);
-        ASSERT_TRUE(child_struct_data->set_int64_value(test5, 1) == ReturnCode_t::RETCODE_OK);
-        int64_t test6(0);
-        ASSERT_TRUE(child_struct_data->get_int64_value(test6, 1) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(test5 == test6);
+    auto child_struct_data = struct_data->loan_value(0);
+    ASSERT_TRUE(child_struct_data != nullptr);
 
-        ASSERT_TRUE(struct_data->return_loaned_value(child_struct_data) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(struct_data->return_loaned_value(child_struct_data) == ReturnCode_t::RETCODE_OK);
+    // Set and get the child values.
+    int32_t test3(234);
+    ASSERT_TRUE(child_struct_data->set_int32_value(test3, 0) == ReturnCode_t::RETCODE_OK);
+    int32_t test4(0);
+    ASSERT_TRUE(child_struct_data->get_int32_value(test4, 0) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(test3 == test4);
+    int64_t test5(234);
+    ASSERT_TRUE(child_struct_data->set_int64_value(test5, 1) == ReturnCode_t::RETCODE_OK);
+    int64_t test6(0);
+    ASSERT_TRUE(child_struct_data->get_int64_value(test6, 1) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(test5 == test6);
 
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(parent_struct_type);
-        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(struct_data)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(struct_data, &payload));
-        ASSERT_TRUE(payload.length == payloadSize);
+    ASSERT_TRUE(struct_data->return_loaned_value(child_struct_data) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(struct_data->return_loaned_value(child_struct_data) == ReturnCode_t::RETCODE_OK);
 
-        types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(parent_struct_type);
-        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
-        ASSERT_TRUE(data2->equals(struct_data));
+    // Serialize <-> Deserialize Test
+    DynamicPubSubType pubsubType(parent_struct_type);
+    uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(struct_data)());
+    SerializedPayload_t payload(payloadSize);
+    ASSERT_TRUE(pubsubType.serialize(struct_data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
-        // SERIALIZATION TEST
-        StructStructStruct seq;
-        StructStructStructPubSubType seqpb;
+    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(parent_struct_type);
+    ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+    ASSERT_TRUE(data2->equals(struct_data));
 
-        uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(struct_data)());
-        SerializedPayload_t dynamic_payload(payloadSize3);
-        ASSERT_TRUE(pubsubType.serialize(struct_data, &dynamic_payload));
-        ASSERT_TRUE(dynamic_payload.length == payloadSize3);
-        ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
+    // SERIALIZATION TEST
+    StructStructStruct seq;
+    StructStructStructPubSubType seqpb;
 
-        uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
-        SerializedPayload_t static_payload(static_payloadSize);
-        ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
-        ASSERT_TRUE(static_payload.length == static_payloadSize);
-        types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(parent_struct_type);
-        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
-        ASSERT_TRUE(data3->equals(struct_data));
+    uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(struct_data)());
+    SerializedPayload_t dynamic_payload(payloadSize3);
+    ASSERT_TRUE(pubsubType.serialize(struct_data, &dynamic_payload));
+    ASSERT_TRUE(dynamic_payload.length == payloadSize3);
+    ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
+    SerializedPayload_t static_payload(static_payloadSize);
+    ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
+    ASSERT_TRUE(static_payload.length == static_payloadSize);
+    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(parent_struct_type);
+    ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+    ASSERT_TRUE(data3->equals(struct_data));
 
-        // Delete the map
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(struct_data) == ReturnCode_t::RETCODE_OK);
-    }
-    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
-    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+
+    // Delete the map
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(struct_data) == ReturnCode_t::RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
 {
-    {
-        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
-        ASSERT_TRUE(base_type_builder != nullptr);
-        auto base_type = base_type_builder->build();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
-        ASSERT_TRUE(base_type_builder2 != nullptr);
-        auto base_type2 = base_type_builder2->build();
+    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_builder();
+    ASSERT_TRUE(base_type_builder);
+    auto base_type = base_type_builder->build();
 
-        DynamicTypeBuilder_ptr union_type_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(
-            base_type_builder.get());
-        ASSERT_TRUE(union_type_builder != nullptr);
+    DynamicTypeBuilder_cptr base_type_builder2 = factory.create_int64_builder();
+    ASSERT_TRUE(base_type_builder2);
+    auto base_type2 = base_type_builder2->build();
 
-        // Add members to the union.
-        ASSERT_TRUE(union_type_builder->add_member(0, "first", base_type, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(union_type_builder->add_member(1, "second", base_type2, "", { 1 },
-                false) == ReturnCode_t::RETCODE_OK);
+    DynamicTypeBuilder_ptr union_type_builder = factory.create_union_builder(*base_type_builder->build());
+    ASSERT_TRUE(union_type_builder);
 
-        // Try to add a second "DEFAULT" value to the union
-        ASSERT_FALSE(union_type_builder->add_member(0, "third", base_type, "", { 0 },
+    // Add members to the union.
+    // A plain braced-init-list cannot be used for the labels because that would inhibit
+    // template argument deduction, see § 14.8.2.5/5 of the C++11 standard
+    ASSERT_EQ(union_type_builder->add_member(0, "first", base_type, "", std::vector<uint64_t>{ 0 }, true),
+              ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(union_type_builder->add_member(1, "second", base_type2, "", std::vector<uint64_t>{ 1 }, false),
+              ReturnCode_t::RETCODE_OK);
+
+    // Try to add a second "DEFAULT" value to the union
+    ASSERT_FALSE(union_type_builder->add_member(0, "third", base_type, "", std::vector<uint64_t>{ 0 },
                 true) == ReturnCode_t::RETCODE_OK);
 
-        // Try to add a second value to the same case label
-        ASSERT_FALSE(union_type_builder->add_member(0, "third", base_type, "", { 1 },
+    // Try to add a second value to the same case label
+    ASSERT_FALSE(union_type_builder->add_member(0, "third", base_type, "", std::vector<uint64_t>{ 1 },
                 false) == ReturnCode_t::RETCODE_OK);
 
-        // Create a data of this union
-        auto union_type = union_type_builder->build();
-        ASSERT_TRUE(union_type != nullptr);
-        auto union_data = DynamicDataFactory::get_instance()->create_data(union_type);
-        ASSERT_TRUE(union_data != nullptr);
+    // Create a data of this union
+    auto union_type = union_type_builder->build();
+    ASSERT_TRUE(union_type);
+    auto union_data = DynamicDataFactory::get_instance()->create_data(union_type);
+    ASSERT_TRUE(union_data != nullptr);
 
-        // Set and get the child values.
-        ASSERT_FALSE(union_data->set_int32_value(10, 1) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(union_data->set_string_value("", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    // Set and get the child values.
+    ASSERT_FALSE(union_data->set_int32_value(10, 1) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(union_data->set_string_value("", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
 
-        uint64_t label;
-        ASSERT_TRUE(union_data->get_union_label(label) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(label == 0);
+    uint64_t label;
+    ASSERT_TRUE(union_data->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(label == 0);
 
-        int32_t test1(234);
-        ASSERT_TRUE(union_data->set_int32_value(test1, 0) == ReturnCode_t::RETCODE_OK);
-        int32_t test2(0);
-        ASSERT_TRUE(union_data->get_int32_value(test2, 0) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(test1 == test2);
-        ASSERT_TRUE(union_data->get_union_label(label) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(label == 0);
+    int32_t test1(234);
+    ASSERT_TRUE(union_data->set_int32_value(test1, 0) == ReturnCode_t::RETCODE_OK);
+    int32_t test2(0);
+    ASSERT_TRUE(union_data->get_int32_value(test2, 0) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(test1 == test2);
+    ASSERT_TRUE(union_data->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(label == 0);
 
-        int64_t test3(234);
-        int64_t test4(0);
+    int64_t test3(234);
+    int64_t test4(0);
 
-        // Try to get values from invalid indexes and from an invalid element ( not the current one )
-        ASSERT_FALSE(union_data->get_int32_value(test2, 1) == ReturnCode_t::RETCODE_OK);
-        ASSERT_FALSE(union_data->get_int64_value(test4, 1) == ReturnCode_t::RETCODE_OK);
+    // Try to get values from invalid indexes and from an invalid element ( not the current one )
+    ASSERT_FALSE(union_data->get_int32_value(test2, 1) == ReturnCode_t::RETCODE_OK);
+    ASSERT_FALSE(union_data->get_int64_value(test4, 1) == ReturnCode_t::RETCODE_OK);
 
-        ASSERT_TRUE(union_data->set_int64_value(test3, 1) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(union_data->get_int64_value(test4, 1) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(test3 == test4);
-        ASSERT_TRUE(union_data->get_union_label(label) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(label == 1);
+    ASSERT_TRUE(union_data->set_int64_value(test3, 1) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(union_data->get_int64_value(test4, 1) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(test3 == test4);
+    ASSERT_TRUE(union_data->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(label == 1);
 
-        // Serialize <-> Deserialize Test
-        DynamicPubSubType pubsubType(union_type);
-        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(union_data)());
-        SerializedPayload_t payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(union_data, &payload));
-        ASSERT_TRUE(payload.length == payloadSize);
+    // Serialize <-> Deserialize Test
+    DynamicPubSubType pubsubType(union_type);
+    uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(union_data)());
+    SerializedPayload_t payload(payloadSize);
+    ASSERT_TRUE(pubsubType.serialize(union_data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
 
-        types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(union_type);
-        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
-        ASSERT_TRUE(data2->equals(union_data));
+    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(union_type);
+    ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+    ASSERT_TRUE(data2->equals(union_data));
 
-        // SERIALIZATION TEST
-        SimpleUnionStruct seq;
-        SimpleUnionStructPubSubType seqpb;
+    // SERIALIZATION TEST
+    SimpleUnionStruct seq;
+    SimpleUnionStructPubSubType seqpb;
 
-        uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(union_data)());
-        SerializedPayload_t dynamic_payload(payloadSize3);
-        ASSERT_TRUE(pubsubType.serialize(union_data, &dynamic_payload));
-        ASSERT_TRUE(dynamic_payload.length == payloadSize3);
-        ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
+    uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(union_data)());
+    SerializedPayload_t dynamic_payload(payloadSize3);
+    ASSERT_TRUE(pubsubType.serialize(union_data, &dynamic_payload));
+    ASSERT_TRUE(dynamic_payload.length == payloadSize3);
+    ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
 
-        uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
-        SerializedPayload_t static_payload(static_payloadSize);
-        ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
-        ASSERT_TRUE(static_payload.length == static_payloadSize);
-        types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(union_type);
-        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
-        ASSERT_TRUE(data3->equals(union_data));
+    uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
+    SerializedPayload_t static_payload(static_payloadSize);
+    ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
+    ASSERT_TRUE(static_payload.length == static_payloadSize);
+    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(union_type);
+    ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+    ASSERT_TRUE(data3->equals(union_data));
 
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
 
-        // Delete the map
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(union_data) == ReturnCode_t::RETCODE_OK);
-    }
-    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
-    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
+    // Delete the map
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(union_data) == ReturnCode_t::RETCODE_OK);
 }
 
+/*
 TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
 {
     {
