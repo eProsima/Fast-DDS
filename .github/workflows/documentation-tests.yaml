@@ -6,7 +6,6 @@ on:
         description: 'Optional Documentation branch name'
         required: false
         type: string
-        default: 'master'
 
   push:
     branches:
@@ -29,7 +28,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  ACTION_BRANCH_NAME: ${{ github.head_ref || github.base_ref }}
+  ACTION_BRANCH_NAME: ${{ github.head_ref }}
 
 jobs:
   ubuntu-build-and-test-documentation:
@@ -55,30 +54,36 @@ jobs:
       - name: Download FastDDS dependencies
         run: |
           pip3 install vcstool
-          vcs import --skip-existing src  < ./src/fastrtps/fastrtps.repos
+          vcs import --skip-existing src < ./src/fastrtps/fastrtps.repos
 
       - name: Determine the Fast DDS Documentation branch to be used
         run: |
-          BASE_QUERY_URL=https://api.github.com/repos/eprosima/fast-dds-docs/git/trees
-          if ! [ -z "${{ inputs.optional_documentation_branch }}" ]
+          TEMP_BRANCH=${{ inputs.optional_documentation_branch }}
+          DOC_REPO=https://github.com/eProsima/fast-dds-docs.git
+          RESPONSE_CODE=$(git ls-remote --heads $DOC_REPO $TEMP_BRANCH | wc -l)
+          if [[ -z "$TEMP_BRANCH" || ${RESPONSE_CODE} == "0" ]]
           then
-            echo "ACTION_BRANCH_NAME=${{ inputs.optional_documentation_branch }}" >> $GITHUB_ENV
-            RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" ${BASE_QUERY_URL}/${{ env.ACTION_BRANCH_NAME }} )
-            if [[ ${RESPONSE_CODE} != "200" ]]
+            TEMP_BRANCH=${{ github.head_ref }}
+            echo "$given '${{ inputs.optional_documentation_branch }}' branch DOES NOT exist, using head '${{ github.head_ref }}'"
+            RESPONSE_CODE=$(git ls-remote --heads $DOC_REPO $TEMP_BRANCH | wc -l)
+            if [[ ${RESPONSE_CODE} == "0" ]]
             then
+              TEMP_BRANCH=${{ github.base_ref }}
+              echo "head '${{ github.head_ref }}' branch DOES NOT exist, using base '${{ github.base_ref }}'"
+              RESPONSE_CODE=$(git ls-remote --heads $DOC_REPO $TEMP_BRANCH | wc -l)
+              if [[ ${RESPONSE_CODE} == "0" ]]
+              then
+                echo "ACTION_BRANCH_NAME=master" >> $GITHUB_ENV
+                echo "base '${{ github.base_ref }}' branch DOES NOT exist, using 'MASTER'"
+              else
+                echo "ACTION_BRANCH_NAME=${{ github.base_ref }}" >> $GITHUB_ENV
+              fi
+            else
               echo "ACTION_BRANCH_NAME=${{ github.head_ref }}" >> $GITHUB_ENV
             fi
-          fi
-
-          RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" ${BASE_QUERY_URL}/${{ env.ACTION_BRANCH_NAME }} )
-          if [[ ${RESPONSE_CODE} != "200" ]]
-          then
-            echo "ACTION_BRANCH_NAME=${{ github.base_ref }}" >> $GITHUB_ENV
-            RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" ${BASE_QUERY_URL}/${{ env.ACTION_BRANCH_NAME }} )
-            if [[ ${RESPONSE_CODE} != "200" ]]
-            then
-              echo "ACTION_BRANCH_NAME=master" >> $GITHUB_ENV
-            fi
+          else
+            echo "ACTION_BRANCH_NAME=${{ inputs.optional_documentation_branch }}" >> $GITHUB_ENV
+            echo "using given '${{ inputs.optional_documentation_branch }}' branch"
           fi
 
       - name: Download FastDDS documentation repo
@@ -92,7 +97,10 @@ jobs:
         run: |
           pip3 install -r src/fastdds-docs/docs/requirements.txt
 
-      - name: Build and test documentation
+      - name: Build documentation
         run: |
           colcon build --event-handlers=console_direct+ --metas
-          colcon test --event-handlers=console_direct+ --packages-select fastdds-docs
+
+      - name: Run documentation tests
+        run: |
+          colcon test --event-handlers=console_direct+ --packages-select fastdds-docs --return-code-on-test-failure
