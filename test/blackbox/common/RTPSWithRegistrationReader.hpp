@@ -527,6 +527,11 @@ public:
         return reader_->getGuid();
     }
 
+    eprosima::fastrtps::rtps::RTPSReader& get_native_reader() const
+    {
+        return *reader_;
+    }
+
 private:
 
     void receive_one(
