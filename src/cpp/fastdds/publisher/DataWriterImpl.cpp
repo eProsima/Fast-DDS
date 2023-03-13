@@ -1198,6 +1198,14 @@ void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
         RTPSWriter* /*writer*/,
         fastdds::dds::PolicyMask qos)
 {
+    if (qos.none())
+    {
+        // RTPS layer notifies on_offered_incompatible_qos with an empty PolicyMask when
+        // the type of the writer does not match with the type of the reader.
+        data_writer_->topic_->get_impl()->inconsistent_topic_found();
+        return;
+    }
+
     data_writer_->update_offered_incompatible_qos(qos);
     StatusMask notify_status = StatusMask::offered_incompatible_qos();
     DataWriterListener* listener = data_writer_->get_listener_for(notify_status);

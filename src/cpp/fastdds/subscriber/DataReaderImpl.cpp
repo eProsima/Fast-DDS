@@ -937,6 +937,14 @@ void DataReaderImpl::InnerDataReaderListener::on_requested_incompatible_qos(
         RTPSReader* /*reader*/,
         PolicyMask qos)
 {
+    if (qos.none())
+    {
+        // RTPS layer notifies on_requested_incompatible_qos with an empty PolicyMask when
+        // the type of the writer does not match with the type of the reader.
+        data_reader_->get_topicdescription()->get_impl()->inconsistent_topic_found();
+        return;
+    }
+
     data_reader_->update_requested_incompatible_qos(qos);
     StatusMask notify_status = StatusMask::requested_incompatible_qos();
     DataReaderListener* listener = data_reader_->get_listener_for(notify_status);
