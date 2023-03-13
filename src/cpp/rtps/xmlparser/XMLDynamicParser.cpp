@@ -1039,11 +1039,12 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
         // Parse key
 
         //const char* keyType = p_root->Attribute(KEY);
-        DynamicTypeBuilder_ptr keyTypeBuilder;
+        DynamicTypeBuilder_cptr keyTypeBuilder;
         const char* memberMapKeyType = p_root->Attribute(MAP_KEY_TYPE);
         if (memberMapKeyType != nullptr)
         {
-            if (!getDiscriminatorTypeBuilder(memberMapKeyType))
+            keyTypeBuilder = getDiscriminatorTypeBuilder(memberMapKeyType);
+            if (!keyTypeBuilder)
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing map's key element type: Cannot be recognized.");
                 return nullptr;
@@ -1056,10 +1057,11 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
         }
 
         // Parse value
-        DynamicTypeBuilder_ptr valueTypeBuilder;
+        DynamicTypeBuilder_cptr valueTypeBuilder;
         if (memberType != nullptr)
         {
-            if (!getDiscriminatorTypeBuilder(memberType))
+            valueTypeBuilder = getDiscriminatorTypeBuilder(memberType);
+            if (!valueTypeBuilder)
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Error parsing map's value element type: Cannot be recognized.");
                 return nullptr;
@@ -1086,6 +1088,8 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
                 return nullptr;
             }
         }
+
+        assert(keyTypeBuilder && valueTypeBuilder);
 
         if (!isArray)
         {

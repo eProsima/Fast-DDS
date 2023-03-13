@@ -23,6 +23,8 @@
 #   include <version>
 #endif // if defined(__has_include) && __has_include(<version>)
 
+#include <iomanip>
+
 using namespace eprosima::fastrtps::types;
 
 enum FSM_INPUTS
@@ -508,4 +510,72 @@ bool TypeDescriptor::exists_member_by_id(
         }
     }
     return member_by_id_.find(id) != member_by_id_.end();
+}
+
+std::ostream& eprosima::fastrtps::types::operator<<(std::ostream& os, const TypeDescriptor& td)
+{
+    using namespace std;
+
+    // indentation increment
+    ++os.iword(DynamicTypeBuilderFactory::indentation_index);
+
+    auto manips = [](ostream& os) -> ostream&
+    {
+        long indent = os.iword(DynamicTypeBuilderFactory::indentation_index);
+        return os << setw(10) << left << string(indent, '\t');
+    };
+
+    // TODO: Barro, add support for bounds & annotations
+
+    os << endl
+       << manips << "name:" << td.get_name() << endl
+       << manips << "kind:" << td.get_kind() << endl
+       << manips << "bounds:" << td.get_bounds_size() << endl;
+
+    // Show base type
+    auto bt = td.get_base_type();
+    if (bt)
+    {
+        os << manips << "base type: ";
+        os << *bt << endl;
+    }
+
+    // Show element type
+    auto et = td.get_element_type();
+    if (et)
+    {
+        os << manips << "element type: ";
+        os << *et << endl;
+    }
+
+    // Show key type type
+    auto kt = td.get_key_element_type();
+    if (kt)
+    {
+        os << manips << "key element type: ";
+        os << *kt << endl;
+    }
+
+    // Show discriminator type
+    auto dt = td.get_discriminator_type();
+    if (dt)
+    {
+        os << manips << "discriminator type: ";
+        os << *dt << endl;
+    }
+
+    // Show members
+    if (td.get_member_count())
+    {
+        os << manips << "members:";
+        for(const auto& m : td.get_all_members())
+        {
+            os << m;
+        }
+    }
+
+    // indentation decrement
+    --os.iword(DynamicTypeBuilderFactory::indentation_index);
+
+    return os;
 }

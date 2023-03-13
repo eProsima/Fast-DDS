@@ -235,6 +235,7 @@ public:
         topic_profiles_.clear();
         xml_files_.clear();
         transport_profiles_.clear();
+        dynamic_types_.clear();
     }
 
     /**

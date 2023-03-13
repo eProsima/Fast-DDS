@@ -30,9 +30,9 @@
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>
 
-namespace eprosima {
-namespace fastrtps {
-namespace types {
+#include <ios>
+
+using namespace eprosima::fastrtps::types;
 
 void dtypes_memory_check::reset() noexcept
 {
@@ -2430,7 +2430,9 @@ void DynamicTypeBuilderFactory::apply_type_annotations(
     }
 }
 
-namespace typekind_detail {
+const int DynamicTypeBuilderFactory::indentation_index = std::ios_base::xalloc();
+
+using namespace typekind_detail;
 
 #define XTYPENAME(type)                                                                            \
 const char* TypeKindName<TypeKind::type, char, std::char_traits<char>>::name = #type;              \
@@ -2474,8 +2476,3 @@ XTYPENAME(TI_PLAIN_MAP_LARGE)
 XTYPENAME(TI_STRONGLY_CONNECTED_COMPONENT)
 
 #undef XTYPENAME
-
-} // namespace typekind_detail
-} // namespace types
-} // namespace fastrtps
-} // namespace eprosima

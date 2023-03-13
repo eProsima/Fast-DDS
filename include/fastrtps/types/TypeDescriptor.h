@@ -315,6 +315,8 @@ public:
             const std::string& name) const noexcept;
 };
 
+std::ostream& operator<<(std::ostream& os, const TypeDescriptor& md);
+
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
