@@ -340,7 +340,7 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(
             if (name != nullptr)
             {
                 DynamicTypeBuilder_ptr typeBuilder =
-                        DynamicTypeBuilderFactory::get_instance().create_alias_builder(*valueBuilder, name);
+                        DynamicTypeBuilderFactory::get_instance().create_alias_builder(*valueBuilder->build(), name);
                 XMLProfileManager::insertDynamicTypeByName(name, std::move(typeBuilder));
             }
             else
@@ -402,7 +402,7 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
         p_dynamictypebuilder_t parentType = XMLProfileManager::getDynamicTypeByName(baseType);
         if (parentType != nullptr && parentType->get_kind() == TypeKind::TK_BITSET)
         {
-            typeBuilder = DynamicTypeBuilderFactory::get_instance().create_child_struct_builder(*parentType);
+            typeBuilder = DynamicTypeBuilderFactory::get_instance().create_child_struct_builder(*parentType->build());
         }
         else
         {
@@ -724,7 +724,7 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
         p_dynamictypebuilder_t parentType = XMLProfileManager::getDynamicTypeByName(baseType);
         if (parentType != nullptr && parentType->get_kind() == TypeKind::TK_STRUCTURE)
         {
-            typeBuilder = DynamicTypeBuilderFactory::get_instance().create_child_struct_builder(*parentType);
+            typeBuilder = DynamicTypeBuilderFactory::get_instance().create_child_struct_builder(*parentType->build());
         }
         else
         {
@@ -802,7 +802,7 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(
         else
         {
             DynamicTypeBuilder_ptr typeBuilder = DynamicTypeBuilderFactory::get_instance().create_union_builder(
-                *discriminator);
+                *discriminator->build());
             typeBuilder->set_name(name);
 
             uint32_t mId = 0;
@@ -1007,14 +1007,14 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
 
         if (!isArray)
         {
-            memberBuilder = factory.create_sequence_builder(*contentType, length);
+            memberBuilder = factory.create_sequence_builder(*contentType->build(), length);
         }
         else
         {
-            DynamicTypeBuilder_ptr innerBuilder = factory.create_sequence_builder(*contentType, length);
+            DynamicTypeBuilder_ptr innerBuilder = factory.create_sequence_builder(*contentType->build(), length);
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            memberBuilder = factory.create_array_builder(*innerBuilder, bounds);
+            memberBuilder = factory.create_array_builder(*innerBuilder->build(), bounds);
         }
     }
     else if (p_root->Attribute(MAP_MAXLENGTH) != nullptr)
@@ -1089,15 +1089,15 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
 
         if (!isArray)
         {
-            memberBuilder = factory.create_map_builder(*keyTypeBuilder, *valueTypeBuilder, length);
+            memberBuilder = factory.create_map_builder(*keyTypeBuilder->build(), *valueTypeBuilder->build(), length);
         }
         else
         {
             DynamicTypeBuilder_ptr innerBuilder =
-                    factory.create_map_builder(*keyTypeBuilder, *valueTypeBuilder, length);
+                    factory.create_map_builder(*keyTypeBuilder->build(), *valueTypeBuilder->build(), length);
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            memberBuilder = factory.create_array_builder(*innerBuilder, bounds);
+            memberBuilder = factory.create_array_builder(*innerBuilder->build(), bounds);
         }
     }
     else if (strncmp(memberType, BOOLEAN, 8) == 0)
@@ -1111,7 +1111,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
             DynamicTypeBuilder_cptr innerBuilder = factory.create_bool_builder();
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            memberBuilder = factory.create_array_builder(*innerBuilder, bounds);
+            memberBuilder = factory.create_array_builder(*innerBuilder->build(), bounds);
         }
     }
     else if (strncmp(memberType, CHAR, 5) == 0)
@@ -1125,7 +1125,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
             DynamicTypeBuilder_cptr innerBuilder = factory.create_char8_builder();
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            memberBuilder = factory.create_array_builder(*innerBuilder, bounds);
+            memberBuilder = factory.create_array_builder(*innerBuilder->build(), bounds);
         }
     }
     else if (strncmp(memberType, WCHAR, 6) == 0)
@@ -1139,7 +1139,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
             DynamicTypeBuilder_cptr innerBuilder = factory.create_char16_builder();
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            memberBuilder = factory.create_array_builder(*innerBuilder, bounds);
+            memberBuilder = factory.create_array_builder(*innerBuilder->build(), bounds);
         }
     }
     else if (strncmp(memberType, TBYTE, 6) == 0
@@ -1156,7 +1156,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
             DynamicTypeBuilder_cptr innerBuilder = factory.create_byte_builder();
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            memberBuilder = factory.create_array_builder(*innerBuilder, bounds);
+            memberBuilder = factory.create_array_builder(*innerBuilder->build(), bounds);
         }
     }
     else if (strncmp(memberType, SHORT, 6) == 0)
@@ -1170,7 +1170,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
             DynamicTypeBuilder_cptr innerBuilder = factory.create_int16_builder();
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            memberBuilder = factory.create_array_builder(*innerBuilder, bounds);
+            memberBuilder = factory.create_array_builder(*innerBuilder->build(), bounds);
         }
     }
     else if (strncmp(memberType, LONG, 5) == 0)
@@ -1184,7 +1184,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
             DynamicTypeBuilder_cptr innerBuilder = factory.create_int32_builder();
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            memberBuilder = factory.create_array_builder(*innerBuilder, bounds);
+            memberBuilder = factory.create_array_builder(*innerBuilder->build(), bounds);
         }
     }
     else if (strncmp(memberType, ULONG, 13) == 0)
@@ -1198,7 +1198,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
             DynamicTypeBuilder_cptr innerBuilder = factory.create_uint32_builder();
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            memberBuilder = factory.create_array_builder(*innerBuilder, bounds);
+            memberBuilder = factory.create_array_builder(*innerBuilder->build(), bounds);
         }
     }
     else if (strncmp(memberType, USHORT, 14) == 0)
@@ -1212,7 +1212,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
             DynamicTypeBuilder_cptr innerBuilder = factory.create_uint16_builder();
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            memberBuilder = factory.create_array_builder(*innerBuilder, bounds);
+            memberBuilder = factory.create_array_builder(*innerBuilder->build(), bounds);
         }
     }
     else if (strncmp(memberType, LONGLONG, 9) == 0)
@@ -1226,7 +1226,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
             DynamicTypeBuilder_cptr innerBuilder = factory.create_int64_builder();
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            memberBuilder = factory.create_array_builder(*innerBuilder, bounds);
+            memberBuilder = factory.create_array_builder(*innerBuilder->build(), bounds);
         }
     }
     else if (strncmp(memberType, ULONGLONG, 17) == 0)
@@ -1240,7 +1240,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
             DynamicTypeBuilder_cptr innerBuilder = factory.create_uint64_builder();
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            memberBuilder = factory.create_array_builder(*innerBuilder, bounds);
+            memberBuilder = factory.create_array_builder(*innerBuilder->build(), bounds);
         }
     }
     else if (strncmp(memberType, FLOAT, 6) == 0)
@@ -1254,7 +1254,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
             DynamicTypeBuilder_cptr innerBuilder = factory.create_float32_builder();
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            memberBuilder = factory.create_array_builder(*innerBuilder, bounds);
+            memberBuilder = factory.create_array_builder(*innerBuilder->build(), bounds);
         }
     }
     else if (strncmp(memberType, DOUBLE, 7) == 0)
@@ -1268,7 +1268,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
             DynamicTypeBuilder_cptr innerBuilder = factory.create_float64_builder();
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            memberBuilder = factory.create_array_builder(*innerBuilder, bounds);
+            memberBuilder = factory.create_array_builder(*innerBuilder->build(), bounds);
         }
     }
     else if (strncmp(memberType, LONGDOUBLE, 11) == 0)
@@ -1282,7 +1282,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
             DynamicTypeBuilder_cptr innerBuilder = factory.create_float128_builder();
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            memberBuilder = factory.create_array_builder(*innerBuilder, bounds);
+            memberBuilder = factory.create_array_builder(*innerBuilder->build(), bounds);
         }
     }
     else if (strncmp(memberType, STRING, 7) == 0)
@@ -1302,7 +1302,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
             DynamicTypeBuilder_cptr innerBuilder = factory.create_string_builder(bound);
             std::vector<uint32_t> boundsArray;
             dimensionsToArrayBounds(memberArray, boundsArray);
-            memberBuilder = factory.create_array_builder(*innerBuilder, boundsArray);
+            memberBuilder = factory.create_array_builder(*innerBuilder->build(), boundsArray);
         }
     }
     else if (strncmp(memberType, WSTRING, 8) == 0)
@@ -1322,7 +1322,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
             DynamicTypeBuilder_cptr innerBuilder = factory.create_wstring_builder(bound);
             std::vector<uint32_t> boundsArray;
             dimensionsToArrayBounds(memberArray, boundsArray);
-            memberBuilder = factory.create_array_builder(*innerBuilder, boundsArray);
+            memberBuilder = factory.create_array_builder(*innerBuilder->build(), boundsArray);
         }
     }
     else // Complex type?
@@ -1336,7 +1336,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
         {
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
-            memberBuilder = factory.create_array_builder(*typePtr, bounds);
+            memberBuilder = factory.create_array_builder(*typePtr->build(), bounds);
         }
     }
 

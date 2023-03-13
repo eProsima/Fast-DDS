@@ -355,29 +355,13 @@ public:
 
     // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_sequence_builder(
-            const DynamicTypeBuilder& element_type,
-            uint32_t bound = MAX_ELEMENTS_COUNT);
-
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_sequence_builder(
             const DynamicType& type,
             uint32_t bound = MAX_ELEMENTS_COUNT) noexcept;
 
     // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_array_builder(
-            const DynamicTypeBuilder& element_type,
-            const std::vector<uint32_t>& bounds);
-
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_array_builder(
             const DynamicType& type,
             const std::vector<uint32_t>& bounds) noexcept;
-
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_map_builder(
-            const DynamicTypeBuilder& key_element_type,
-            const DynamicTypeBuilder& element_type,
-            uint32_t bound = MAX_ELEMENTS_COUNT);
 
     // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_map_builder(
@@ -395,11 +379,6 @@ public:
 
     // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_alias_builder(
-            const DynamicTypeBuilder& base_type,
-            const std::string& sName);
-
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_alias_builder(
             const DynamicType& base_type,
             const std::string& sName);
 
@@ -414,11 +393,7 @@ public:
 
     // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_child_struct_builder(
-            const DynamicTypeBuilder& parent_type);
-
-    // TODO: doxygen
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_union_builder(
-            const DynamicTypeBuilder& discriminator_type);
+            const DynamicType& parent_type);
 
     // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_union_builder(
@@ -427,11 +402,6 @@ public:
     // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr create_annotation_primitive(
             const std::string& name);
-
-    // TODO: doxygen
-    RTPS_DllAPI DynamicType_ptr create_alias_type(
-            const DynamicTypeBuilder& base_type,
-            const std::string& sName);
 
     // TODO: doxygen
     RTPS_DllAPI DynamicType_ptr create_alias_type(

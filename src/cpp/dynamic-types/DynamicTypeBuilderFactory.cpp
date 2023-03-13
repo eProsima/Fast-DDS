@@ -225,23 +225,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_builder_copy(const Dyna
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_alias_builder(
-        const DynamicTypeBuilder& base_type,
-        const std::string& sName)
-{
-    DynamicType_ptr pType = base_type.build();
-    if (pType)
-    {
-        return create_alias_builder(*pType, sName);
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating alias type, Error creating dynamic type");
-    }
-
-    return {};
-}
-
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_alias_builder(
         const DynamicType& base_type,
         const std::string& sName)
 {
@@ -262,23 +245,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_alias_builder(
     }
 
     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating alias type, Error creating dynamic type builder");
-
-    return {};
-}
-
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_array_builder(
-        const DynamicTypeBuilder& element_type,
-        const std::vector<uint32_t>& bounds)
-{
-    DynamicType_ptr pType = element_type.build();
-    if (pType)
-    {
-        return create_array_builder(*pType, bounds);
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating array, error creating dynamic type");
-    }
 
     return {};
 }
@@ -447,25 +413,6 @@ DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_int64_builder() noexc
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_map_builder(
-        const DynamicTypeBuilder& key_element_type,
-        const DynamicTypeBuilder& element_type,
-        uint32_t bound)
-{
-    DynamicType_ptr pKeyType = key_element_type.build();
-    DynamicType_ptr pValueType = element_type.build();
-    if (pKeyType && pValueType)
-    {
-        return create_map_builder(*pKeyType, *pValueType, bound);
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating map, Error creating dynamic types.");
-    }
-
-    return {};
-}
-
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_map_builder(
         const DynamicType& key_type,
         const DynamicType& value_type,
         uint32_t bound) noexcept
@@ -486,20 +433,6 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_map_builder(
                     value_type.get_name(),
             bound, false));
     return create_builder(descriptor);
-}
-
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_sequence_builder(
-        const DynamicTypeBuilder& element_type,
-        uint32_t bound)
-{
-    DynamicType_ptr pType = element_type.build();
-    if (pType)
-    {
-        return create_sequence_builder(*pType, bound);
-    }
-
-    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating sequence, error creating dynamic type.");
-    return {};
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_sequence_builder(
@@ -562,7 +495,7 @@ DynamicTypeBuilder_cptr DynamicTypeBuilderFactory::create_wstring_builder(
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_child_struct_builder(
-        const DynamicTypeBuilder& parent_type)
+        const DynamicType& parent_type)
 {
     auto kind = parent_type.get_kind();
     if (kind == TypeKind::TK_STRUCTURE || kind == TypeKind::TK_BITSET)
@@ -570,7 +503,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_child_struct_builder(
         TypeDescriptor descriptor;
         descriptor.set_kind(kind);
         descriptor.set_name(GenerateTypeName(get_type_name(kind)));
-        descriptor.base_type_ = parent_type.build();
+        descriptor.base_type_ = parent_type.shared_from_this();
 
         return create_builder(descriptor);
     }
@@ -603,27 +536,6 @@ DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_uint32_builder() noex
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_uint64_builder() noexcept
 {
     return create_primitive_builder<TypeKind::TK_UINT64>();
-}
-
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_union_builder(
-        const DynamicTypeBuilder& discriminator_type)
-{
-    if (discriminator_type.is_discriminator_type())
-    {
-        DynamicType_ptr pType = discriminator_type.build();
-        if (pType)
-        {
-            return create_union_builder(*pType);
-        }
-
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building Union, Error creating discriminator type");
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building Union, invalid discriminator type");
-    }
-
-    return {};
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_union_builder(
@@ -2393,14 +2305,6 @@ void DynamicTypeBuilderFactory::set_annotation_default_value(
         default:
             break;
     }
-}
-
-DynamicType_ptr DynamicTypeBuilderFactory::create_alias_type(
-        const DynamicTypeBuilder& base_type,
-        const std::string& sName)
-{
-    DynamicTypeBuilder_ptr builder = create_alias_builder(base_type, sName);
-    return builder ? builder->build() : DynamicType_ptr{};
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_alias_type(
