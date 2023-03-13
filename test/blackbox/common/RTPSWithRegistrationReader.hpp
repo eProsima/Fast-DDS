@@ -433,6 +433,47 @@ public:
 
 #endif // if HAVE_SQLITE3
 
+<<<<<<< HEAD
+=======
+    RTPSWithRegistrationReader& user_data(
+            const std::vector<eprosima::fastrtps::rtps::octet>& user_data)
+    {
+        reader_qos_.m_userData = user_data;
+        return *this;
+    }
+
+    RTPSWithRegistrationReader& set_on_writer_discovery(
+            const OnWriterDiscoveryFunctor& functor)
+    {
+        on_writer_discovery_functor = functor;
+        return *this;
+    }
+
+    RTPSWithRegistrationReader& partitions(
+            std::vector<std::string>& partitions)
+    {
+        reader_qos_.m_partition.setNames(partitions);
+        return *this;
+    }
+
+    RTPSWithRegistrationReader& content_filter_property(
+            const eprosima::fastdds::rtps::ContentFilterProperty& content_filter_property)
+    {
+        content_filter_property_ = &content_filter_property;
+        return *this;
+    }
+
+    const eprosima::fastrtps::rtps::GUID_t& guid() const
+    {
+        return reader_->getGuid();
+    }
+
+    eprosima::fastrtps::rtps::RTPSReader& get_native_reader() const
+    {
+        return *reader_;
+    }
+
+>>>>>>> 2674fdd93 (Improve auto gaps in data sharing (#3343))
 private:
 
     void receive_one(

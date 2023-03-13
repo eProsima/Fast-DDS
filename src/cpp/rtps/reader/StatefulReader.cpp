@@ -587,7 +587,7 @@ bool StatefulReader::processGapMsg(
     WriterProxy* pWP = nullptr;
 
     std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
-    if (!is_alive_)
+    if (!is_alive_ || gapStart < SequenceNumber_t(0, 1) || gapList.base() <= gapStart)
     {
         return false;
     }
@@ -596,9 +596,9 @@ bool StatefulReader::processGapMsg(
     {
         // TODO (Miguel C): Refactor this inside WriterProxy
         SequenceNumber_t auxSN;
-        SequenceNumber_t finalSN = gapList.base() - 1;
+        SequenceNumber_t finalSN = gapList.base();
         History::const_iterator history_iterator = mp_history->changesBegin();
-        for (auxSN = gapStart; auxSN <= finalSN; auxSN++)
+        for (auxSN = gapStart; auxSN < finalSN; auxSN++)
         {
             if (pWP->irrelevant_change_set(auxSN))
             {
