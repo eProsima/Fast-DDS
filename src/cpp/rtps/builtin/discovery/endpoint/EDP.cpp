@@ -1108,7 +1108,11 @@ bool EDP::pairingReader(
             }
             else
             {
-                if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && R->getListener() != nullptr)
+                bool should_trigger_incompatible = 
+                    no_match_reason.test(MatchingFailureMask::incompatible_qos) |
+                    no_match_reason.test(MatchingFailureMask::inconsistent_topic);
+
+                if (should_trigger_incompatible && R->getListener() != nullptr)
                 {
                     R->getListener()->on_requested_incompatible_qos(R, incompatible_qos);
                 }
@@ -1200,7 +1204,11 @@ bool EDP::pairingWriter(
             }
             else
             {
-                if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && W->getListener() != nullptr)
+                bool should_trigger_incompatible =
+                    no_match_reason.test(MatchingFailureMask::incompatible_qos) |
+                    no_match_reason.test(MatchingFailureMask::inconsistent_topic);
+
+                if (should_trigger_incompatible && W->getListener() != nullptr)
                 {
                     W->getListener()->on_offered_incompatible_qos(W, incompatible_qos);
                 }
@@ -1286,7 +1294,11 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                     }
                     else
                     {
-                        if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && w.getListener() != nullptr)
+                        bool should_trigger_incompatible =
+                            no_match_reason.test(MatchingFailureMask::incompatible_qos) |
+                            no_match_reason.test(MatchingFailureMask::inconsistent_topic);
+
+                        if (should_trigger_incompatible && w.getListener() != nullptr)
                         {
                             w.getListener()->on_offered_incompatible_qos(&w, incompatible_qos);
                         }
@@ -1357,8 +1369,11 @@ bool EDP::pairing_reader_proxy_with_local_writer(
                         }
                         else
                         {
-                            if (no_match_reason.test(MatchingFailureMask::incompatible_qos) &&
-                            w.getListener() != nullptr)
+                            bool should_trigger_incompatible =
+                                no_match_reason.test(MatchingFailureMask::incompatible_qos) |
+                                no_match_reason.test(MatchingFailureMask::inconsistent_topic);
+
+                            if (should_trigger_incompatible && w.getListener() != nullptr)
                             {
                                 w.getListener()->on_offered_incompatible_qos(&w, incompatible_qos);
                             }
@@ -1494,7 +1509,11 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
                     }
                     else
                     {
-                        if (no_match_reason.test(MatchingFailureMask::incompatible_qos) && r.getListener() != nullptr)
+                        bool should_trigger_incompatible =
+                            no_match_reason.test(MatchingFailureMask::incompatible_qos) |
+                            no_match_reason.test(MatchingFailureMask::inconsistent_topic);
+
+                        if (should_trigger_incompatible && r.getListener() != nullptr)
                         {
                             r.getListener()->on_requested_incompatible_qos(&r, incompatible_qos);
                         }
@@ -1565,8 +1584,11 @@ bool EDP::pairing_writer_proxy_with_local_reader(
                         }
                         else
                         {
-                            if (no_match_reason.test(MatchingFailureMask::incompatible_qos) &&
-                            r.getListener() != nullptr)
+                            bool should_trigger_incompatible =
+                                no_match_reason.test(MatchingFailureMask::incompatible_qos) |
+                                no_match_reason.test(MatchingFailureMask::inconsistent_topic);
+
+                            if (should_trigger_incompatible && r.getListener() != nullptr)
                             {
                                 r.getListener()->on_requested_incompatible_qos(&r, incompatible_qos);
                             }
