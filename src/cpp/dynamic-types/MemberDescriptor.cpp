@@ -21,9 +21,7 @@
 
 #include <iomanip>
 
-namespace eprosima {
-namespace fastrtps {
-namespace types {
+using namespace eprosima::fastrtps::types;
 
 MemberDescriptor::MemberDescriptor(
         MemberId id,
@@ -378,24 +376,36 @@ void MemberDescriptor::set_default_union_value(
     default_label_ = bDefault;
 }
 
-std::ostream& operator<<( std::ostream& os, const MemberDescriptor & md)
+std::ostream& eprosima::fastrtps::types::operator<<( std::ostream& os, const MemberDescriptor& md)
 {
     using namespace std;
 
-    // TODO: Barro, add support Type details and labels
+    // indentation increment
+    ++os.iword(DynamicTypeBuilderFactory::indentation_index);
 
     auto manips = [](ostream& os) -> ostream&
     {
-        return os << setw(10) << left << '\t';
+        long indent = os.iword(DynamicTypeBuilderFactory::indentation_index);
+        return os << setw(10) << left << string(indent, '\t');
     };
 
-    return os << endl
-              << manips << "index:" << md.get_index() << endl
-              << manips << "name:" << md.get_name() << endl
-              << manips << "id:" << md.get_id() << endl
-              << manips << "kind:" << md.get_kind();
-}
+    // TODO: Barro, add support Type details and labels
 
-} // namespace types
-} // namespace fastrtps
-} // namespace eprosima
+    os << endl
+       << manips << "index:" << md.get_index() << endl
+       << manips << "name:" << md.get_name() << endl
+       << manips << "id:" << md.get_id() << endl;
+
+    // Show type
+    auto bt =md.get_type();
+    if (bt)
+    {
+        os << manips << "type: ";
+        os << *bt << endl;
+    }
+
+    // indentation decrement
+    --os.iword(DynamicTypeBuilderFactory::indentation_index);
+
+    return os;
+}

@@ -471,6 +471,9 @@ public:
             bool force = false) const;
 
     RTPS_DllAPI bool is_empty() const;
+
+    //! ostream indentation ancillary
+    static const int indentation_index;
 };
 
 } // namespace types
