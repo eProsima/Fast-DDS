@@ -171,6 +171,171 @@ size_t DynamicType::get_size() const
     return 0;
 }
 
+bool DynamicType::deserialize_discriminator(
+        DynamicData& data,
+        eprosima::fastcdr::Cdr& cdr) const
+{
+    assert(discriminator_type_);
+
+    switch(discriminator_type_->get_kind())
+    {
+        case TypeKind::TK_BOOLEAN:
+        {
+            bool id;
+            cdr >> id;
+            data.union_id_ = MemberId(id);
+            break;
+        }
+        case TypeKind::TK_BYTE:
+        {
+            octet id;
+            cdr >> id;
+            data.union_id_ = MemberId(id);
+            break;
+        }
+        case TypeKind::TK_CHAR8:
+        {
+            char id;
+            cdr >> id;
+            data.union_id_ = MemberId(id);
+            break;
+        }
+        case TypeKind::TK_INT16:
+        {
+            int16_t id;
+            cdr >> id;
+            data.union_id_ = MemberId(id);
+            break;
+        }
+        case TypeKind::TK_UINT16:
+        {
+            uint16_t id;
+            cdr >> id;
+            data.union_id_ = MemberId(id);
+            break;
+        }
+        case TypeKind::TK_CHAR16:
+        {
+            wchar_t id;
+            cdr >> id;
+            data.union_id_ = MemberId(id);
+            break;
+        }
+        case TypeKind::TK_INT32:
+        {
+            int32_t id;
+            cdr >> id;
+            data.union_id_ = MemberId(id);
+            break;
+        }
+        case TypeKind::TK_UINT32:
+        case TypeKind::TK_ENUM:
+        {
+            uint32_t id;
+            cdr >> id;
+            data.union_id_ = MemberId(id);
+            break;
+        }
+        case TypeKind::TK_FLOAT32:
+        {
+            float id;
+            cdr >> id;
+            data.union_id_ = MemberId(id);
+            break;
+        }
+        case TypeKind::TK_INT64:
+        {
+            EPROSIMA_LOG_WARNING(DYN_TYPES, "Possible loss of precision on discriminator deserialization");
+
+            int64_t id;
+            cdr >> id;
+            data.union_id_ = MemberId(id);
+            break;
+        }
+        case TypeKind::TK_UINT64:
+        {
+            EPROSIMA_LOG_WARNING(DYN_TYPES, "Possible loss of precision on discriminator deserialization");
+
+            uint64_t id;
+            cdr >> id;
+            data.union_id_ = MemberId(id);
+            break;
+        }
+        case TypeKind::TK_FLOAT64:
+        {
+            double id;
+            cdr >> id;
+            data.union_id_ = MemberId(id);
+            break;
+        }
+        case TypeKind::TK_FLOAT128:
+        {
+            long double id;
+            cdr >> id;
+            data.union_id_ = MemberId(id);
+            break;
+        }
+        case TypeKind::TK_STRING8:
+        {
+            std::string id;
+            cdr >> id;
+            data.union_id_ = stoul(id);
+            break;
+        }
+        case TypeKind::TK_STRING16:
+        {
+            std::wstring id;
+            cdr >> id;
+            data.union_id_ = stoul(id);
+            break;
+        }
+        case TypeKind::TK_BITMASK:
+        {
+            size_t type_size = get_size();
+            switch (type_size)
+            {
+                case 1:
+                {
+                    uint8_t id;
+                    cdr >> id;
+                    data.union_id_ = id;
+                    break;
+                }
+                case 2:
+                {
+                    uint16_t id;
+                    cdr >> id;
+                    data.union_id_ = id;
+                    break;
+                }
+                case 3:
+                {
+                    uint32_t id;
+                    cdr >> id;
+                    data.union_id_ = id;
+                    break;
+                }
+                case 4:
+                {
+                    EPROSIMA_LOG_WARNING(DYN_TYPES, "Possible loss of precision on discriminator deserialization");
+
+                    uint64_t id;
+                    cdr >> id;
+                    data.union_id_ = MemberId(id);
+                    break;
+                }
+            }
+        }
+        eprosima_fallthrough;
+        default:
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "DynamicData with wrong discriminator type: "
+                << discriminator_type_->get_kind());
+            return false;
+    }
+
+    return true;
+}
+
 bool DynamicType::deserialize(
         DynamicData& data,
         eprosima::fastcdr::Cdr& cdr) const
@@ -408,9 +573,10 @@ bool DynamicType::deserialize(
         }
         case TypeKind::TK_UNION:
         {
-            deserialize_discriminator(data.discriminator_value_, cdr);
-            data.update_union_discriminator();
-            data.set_union_id(data.union_id_);
+            // The union_id_ must be deserialized as a discriminator_type_
+            // cdr >> data.union_id_;
+            deserialize_discriminator(data, cdr);
+
             if (data.union_id_ != MEMBER_ID_INVALID)
             {
 
@@ -637,109 +803,6 @@ bool DynamicType::deserialize(
 
 }
 
-bool DynamicType::deserialize_discriminator(
-        uint64_t& discriminator_value,
-        eprosima::fastcdr::Cdr& cdr) const
-{
-    switch (get_kind())
-    {
-        case TypeKind::TK_INT32:
-        {
-            int32_t aux;
-            cdr >> aux;
-            discriminator_value = static_cast<int32_t>(aux);
-            break;
-        }
-        case TypeKind::TK_UINT32:
-        {
-            uint32_t aux;
-            cdr >> aux;
-            discriminator_value = static_cast<uint32_t>(aux);
-            break;
-        }
-        case TypeKind::TK_INT16:
-        {
-            int16_t aux;
-            cdr >> aux;
-            discriminator_value = static_cast<int16_t>(aux);
-            break;
-        }
-        case TypeKind::TK_UINT16:
-        {
-            uint16_t aux;
-            cdr >> aux;
-            discriminator_value = static_cast<uint16_t>(aux);
-            break;
-        }
-        case TypeKind::TK_INT64:
-        {
-            int64_t aux;
-            cdr >> aux;
-            discriminator_value = static_cast<int64_t>(aux);
-            break;
-        }
-        case TypeKind::TK_UINT64:
-        {
-            uint64_t aux;
-            cdr >> aux;
-            discriminator_value = static_cast<uint64_t>(aux);
-            break;
-        }
-        case TypeKind::TK_CHAR8:
-        {
-            char aux;
-            cdr >> aux;
-            discriminator_value = static_cast<char>(aux);
-            break;
-        }
-        case TypeKind::TK_CHAR16:
-        {
-            wchar_t aux;
-            cdr >> aux;
-            discriminator_value = static_cast<wchar_t>(aux);
-            break;
-        }
-        case TypeKind::TK_BOOLEAN:
-        {
-            bool aux;
-            cdr >> aux;
-            discriminator_value = static_cast<bool>(aux);
-            break;
-        }
-        case TypeKind::TK_BYTE:
-        {
-            octet aux;
-            cdr >> aux;
-            discriminator_value = static_cast<octet>(aux);
-            break;
-        }
-        case TypeKind::TK_ENUM:
-        {
-            uint32_t aux;
-            cdr >> aux;
-            discriminator_value = static_cast<uint32_t>(aux);
-            break;
-        }
-        case TypeKind::TK_FLOAT32:
-        case TypeKind::TK_FLOAT64:
-        case TypeKind::TK_FLOAT128:
-        case TypeKind::TK_STRING8:
-        case TypeKind::TK_STRING16:
-        case TypeKind::TK_BITMASK:
-        case TypeKind::TK_UNION:
-        case TypeKind::TK_STRUCTURE:
-        case TypeKind::TK_BITSET:
-        case TypeKind::TK_ARRAY:
-        case TypeKind::TK_SEQUENCE:
-        case TypeKind::TK_MAP:
-        case TypeKind::TK_ALIAS:
-        default:
-            break;
-    }
-    return true;
-
-}
-
 size_t DynamicType::getCdrSerializedSize(
         const DynamicData& data,
         size_t current_alignment /*= 0*/) const
@@ -830,9 +893,7 @@ size_t DynamicType::getCdrSerializedSize(
         case TypeKind::TK_UNION:
         {
             // Union discriminator
-            assert(discriminator_type_);
-
-            current_alignment += discriminator_type_->getCdrSerializedSize(*data.union_discriminator_, current_alignment);
+            current_alignment += sizeof(MemberId) + eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(MemberId));
 
             if (data.union_id_ != MEMBER_ID_INVALID)
             {
@@ -1288,6 +1349,110 @@ size_t DynamicType::getMaxCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
+void DynamicType::serialize_discriminator(
+        const DynamicData& data,
+        eprosima::fastcdr::Cdr& cdr) const
+{
+    assert(discriminator_type_);
+    MemberId id = data.union_id_;
+
+    switch(discriminator_type_->get_kind())
+    {
+        case TypeKind::TK_BOOLEAN:
+        {
+            cdr << (bool)id;
+            break;
+        }
+        case TypeKind::TK_BYTE:
+        {
+            cdr << (octet)id;
+            break;
+        }
+        case TypeKind::TK_CHAR8:
+        {
+            cdr << (char)id;
+            break;
+        }
+        case TypeKind::TK_INT16:
+        {
+            cdr << (int16_t)id;
+            break;
+        }
+        case TypeKind::TK_UINT16:
+        {
+            cdr << (uint16_t)id;
+            break;
+        }
+        case TypeKind::TK_CHAR16:
+        {
+            cdr << (wchar_t)id;
+            break;
+        }
+        case TypeKind::TK_INT32:
+        {
+            cdr << (int32_t)id;
+            break;
+        }
+        case TypeKind::TK_UINT32:
+        case TypeKind::TK_ENUM:
+        {
+            cdr << (uint32_t)id;
+            break;
+        }
+        case TypeKind::TK_FLOAT32:
+        {
+            cdr << (float)id;
+            break;
+        }
+        case TypeKind::TK_INT64:
+        {
+            cdr << (int64_t)id;
+            break;
+        }
+        case TypeKind::TK_UINT64:
+        {
+            cdr << (uint64_t)id;
+            break;
+        }
+        case TypeKind::TK_FLOAT64:
+        {
+            cdr << (double)id;
+            break;
+        }
+        case TypeKind::TK_FLOAT128:
+        {
+            cdr << (long double)id;
+            break;
+        }
+        case TypeKind::TK_STRING8:
+        {
+            cdr << std::to_string(id);
+            break;
+        }
+        case TypeKind::TK_STRING16:
+        {
+            cdr << std::to_wstring(id);
+            break;
+        }
+        case TypeKind::TK_BITMASK:
+        {
+            size_t type_size = get_size();
+            switch (type_size)
+            {
+                case 1: cdr << (uint8_t)id; break;
+                case 2: cdr << (uint16_t)id; break;
+                case 3: cdr << (uint32_t)id; break;
+                case 4: cdr << (uint64_t)id; break;
+            }
+        }
+        eprosima_fallthrough;
+        default:
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "DynamicData with wrong discriminator type: "
+                << discriminator_type_->get_kind());
+            break;
+    }
+}
+
 void DynamicType::serialize(
         const DynamicData& data,
         eprosima::fastcdr::Cdr& cdr) const
@@ -1492,8 +1657,10 @@ void DynamicType::serialize(
         }
         case TypeKind::TK_UNION:
         {
-            serialize_discriminator(*data.union_discriminator_, cdr);
-            //cdr << data.union_id_;
+            // The union_id_ must be serialized as a discriminator_type_
+            // cdr << data.union_id_;
+            serialize_discriminator(data, cdr);
+
             if (data.union_id_ != MEMBER_ID_INVALID)
             {
 #ifdef DYNAMIC_TYPES_CHECKING
@@ -1613,96 +1780,6 @@ void DynamicType::serialize(
             break;
         }
         case TypeKind::TK_ALIAS:
-            break;
-    }
-}
-
-void DynamicType::serialize_discriminator(
-        DynamicData& data,
-        eprosima::fastcdr::Cdr& cdr) const
-{
-    switch (get_kind())
-    {
-        case TypeKind::TK_INT32:
-        {
-            int32_t aux = static_cast<int32_t>(data.discriminator_value_);
-            cdr << aux;
-            break;
-        }
-        case TypeKind::TK_UINT32:
-        {
-            uint32_t aux = static_cast<uint32_t>(data.discriminator_value_);
-            cdr << aux;
-            break;
-        }
-        case TypeKind::TK_INT16:
-        {
-            int16_t aux = static_cast<int16_t>(data.discriminator_value_);
-            cdr << aux;
-            break;
-        }
-        case TypeKind::TK_UINT16:
-        {
-            uint16_t aux = static_cast<uint16_t>(data.discriminator_value_);
-            cdr << aux;
-            break;
-        }
-        case TypeKind::TK_INT64:
-        {
-            int64_t aux = static_cast<int64_t>(data.discriminator_value_);
-            cdr << aux;
-            break;
-        }
-        case TypeKind::TK_UINT64:
-        {
-            uint64_t aux = static_cast<uint64_t>(data.discriminator_value_);
-            cdr << aux;
-            break;
-        }
-        case TypeKind::TK_CHAR8:
-        {
-            char aux = static_cast<char>(data.discriminator_value_);
-            cdr << aux;
-            break;
-        }
-        case TypeKind::TK_CHAR16:
-        {
-            wchar_t aux = static_cast<wchar_t>(data.discriminator_value_);
-            cdr << aux;
-            break;
-        }
-        case TypeKind::TK_BOOLEAN:
-        {
-            bool aux = !!(data.discriminator_value_);
-            cdr << aux;
-            break;
-        }
-        case TypeKind::TK_BYTE:
-        {
-            octet aux = static_cast<octet>(data.discriminator_value_);
-            cdr << aux;
-            break;
-        }
-        case TypeKind::TK_ENUM:
-        {
-            uint32_t aux = static_cast<uint32_t>(data.discriminator_value_);
-            cdr << aux;
-            break;
-        }
-        case TypeKind::TK_FLOAT32:
-        case TypeKind::TK_FLOAT64:
-        case TypeKind::TK_FLOAT128:
-        case TypeKind::TK_STRING8:
-        case TypeKind::TK_STRING16:
-        case TypeKind::TK_BITMASK:
-        case TypeKind::TK_UNION:
-        case TypeKind::TK_SEQUENCE:
-        case TypeKind::TK_STRUCTURE:
-        case TypeKind::TK_BITSET:
-        case TypeKind::TK_ARRAY:
-        case TypeKind::TK_MAP:
-        case TypeKind::TK_ALIAS:
-        default:
             break;
     }
 }

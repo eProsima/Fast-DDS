@@ -131,14 +131,6 @@ protected:
     friend class TypeObjectFactory;
     friend class DynamicDataHelper;
 
-    // Checks if there is a member with the given name.
-    bool exists_member_by_name(
-            const std::string& name) const;
-
-    // Checks if there is a member with the given id.
-    bool exists_member_by_id(
-            MemberId id) const;
-
     /**
      * Modifies the underlying type name by copy
      * @param[in] name \b string l-value reference
@@ -176,6 +168,15 @@ public:
     using AnnotationManager::key_annotation;
 
 public:
+
+    // Checks if there is a member with the given name.
+    RTPS_DllAPI bool exists_member_by_name(
+            const std::string& name) const;
+
+    // Checks if there is a member with the given id.
+    RTPS_DllAPI bool exists_member_by_id(
+            MemberId id) const;
+
     // ancillary for DynamicData interfaces
     RTPS_DllAPI MemberId get_member_id_by_name(
             const std::string& name) const;

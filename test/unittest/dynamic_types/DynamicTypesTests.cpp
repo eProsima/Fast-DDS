@@ -3664,32 +3664,40 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_builder();
-    ASSERT_TRUE(base_type_builder);
-    auto base_type = base_type_builder->build();
+    DynamicTypeBuilder_cptr discriminant_builder = factory.create_int32_builder();
+    ASSERT_TRUE(discriminant_builder);
+    auto discriminant_type = discriminant_builder->build();
+    ASSERT_TRUE(discriminant_type);
 
-    DynamicTypeBuilder_cptr base_type_builder2 = factory.create_int64_builder();
-    ASSERT_TRUE(base_type_builder2);
-    auto base_type2 = base_type_builder2->build();
+    auto member_type = discriminant_type;
+    ASSERT_TRUE(member_type);
 
-    DynamicTypeBuilder_ptr union_type_builder = factory.create_union_builder(*base_type_builder->build());
+    DynamicTypeBuilder_cptr another_member_builder = factory.create_int64_builder();
+    auto another_member_type = another_member_builder->build();
+    ASSERT_TRUE(another_member_type);
+
+    DynamicTypeBuilder_ptr union_type_builder = factory.create_union_builder(*discriminant_type);
     ASSERT_TRUE(union_type_builder);
 
     // Add members to the union.
     // A plain braced-init-list cannot be used for the labels because that would inhibit
     // template argument deduction, see § 14.8.2.5/5 of the C++11 standard
-    ASSERT_EQ(union_type_builder->add_member(0, "first", base_type, "", std::vector<uint64_t>{ 0 }, true),
+    ASSERT_EQ(union_type_builder->add_member(0, "first", member_type, "", std::vector<uint64_t>{ 0 }, true),
               ReturnCode_t::RETCODE_OK);
-    ASSERT_EQ(union_type_builder->add_member(1, "second", base_type2, "", std::vector<uint64_t>{ 1 }, false),
+    ASSERT_EQ(union_type_builder->add_member(1, "second", another_member_type, "", std::vector<uint64_t>{ 1 }, false),
               ReturnCode_t::RETCODE_OK);
 
-    // Try to add a second "DEFAULT" value to the union
-    ASSERT_FALSE(union_type_builder->add_member(0, "third", base_type, "", std::vector<uint64_t>{ 0 },
-                true) == ReturnCode_t::RETCODE_OK);
+    {
+        eprosima::fastdds::dds::Log::ScopeLogs _("disable"); // avoid expected errors logging
 
-    // Try to add a second value to the same case label
-    ASSERT_FALSE(union_type_builder->add_member(0, "third", base_type, "", std::vector<uint64_t>{ 1 },
-                false) == ReturnCode_t::RETCODE_OK);
+        // Try to add a second "DEFAULT" value to the union
+        ASSERT_FALSE(union_type_builder->add_member(0, "third", member_type, "", std::vector<uint64_t>{ 0 },
+                    true) == ReturnCode_t::RETCODE_OK);
+
+        // Try to add a second value to the same case label
+        ASSERT_FALSE(union_type_builder->add_member(0, "third", member_type, "", std::vector<uint64_t>{ 1 },
+                    false) == ReturnCode_t::RETCODE_OK);
+    }
 
     // Create a data of this union
     auto union_type = union_type_builder->build();
@@ -3741,10 +3749,9 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
     SimpleUnionStruct seq;
     SimpleUnionStructPubSubType seqpb;
 
-    uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(union_data)());
-    SerializedPayload_t dynamic_payload(payloadSize3);
+    SerializedPayload_t dynamic_payload(payloadSize);
     ASSERT_TRUE(pubsubType.serialize(union_data, &dynamic_payload));
-    ASSERT_TRUE(dynamic_payload.length == payloadSize3);
+    ASSERT_TRUE(dynamic_payload.length == payloadSize);
     ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
 
     uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
