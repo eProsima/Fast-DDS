@@ -191,6 +191,12 @@ public:
                 continue;
             }
 
+            if (last_sn_ != c_SequenceNumber_Unknown && last_sn_ >= cache_change.sequenceNumber)
+            {
+                // Sequence number went backwards, it was most probably overriden.
+                continue;
+            }
+
             if (!ensure_reading_reference_is_in_bounds())
             {
                 // We may have been taken over and read a payload that is too far forward. Discard and continue
