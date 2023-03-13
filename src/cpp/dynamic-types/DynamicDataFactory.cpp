@@ -151,18 +151,6 @@ DynamicData* DynamicDataFactory::create_data(
 #endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
                     newData->default_array_value_ = defaultArrayData;
                 }
-                // Unions need a discriminator data
-                else if (pType->get_kind() == TypeKind::TK_UNION)
-                {
-                    DynamicData* discriminatorData = new DynamicData(pType->get_discriminator_type());
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-                    {
-                        std::unique_lock<std::recursive_mutex> scoped(mutex_);
-                        dynamic_datas_.push_back(discriminatorData);
-                    }
-#endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-                    newData->set_union_discriminator(discriminatorData);
-                }
             }
             return newData;
         }

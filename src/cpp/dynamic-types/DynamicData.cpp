@@ -85,9 +85,7 @@ DynamicData::DynamicData(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
     , key_element_(pData->key_element_)
     , default_array_value_(pData->default_array_value_)
-    , union_label_(pData->union_label_)
     , union_id_(pData->union_id_)
-    , union_discriminator_(pData->union_discriminator_)
 {
     create_members(pData);
 }
@@ -520,12 +518,6 @@ void DynamicData::clean()
     {
         DynamicDataFactory::get_instance()->delete_data(default_array_value_);
         default_array_value_ = nullptr;
-    }
-
-    if (union_discriminator_ != nullptr)
-    {
-        DynamicDataFactory::get_instance()->delete_data(union_discriminator_);
-        union_discriminator_ = nullptr;
     }
 
     clean_members();
@@ -3675,49 +3667,6 @@ ReturnCode_t DynamicData::set_string_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-void DynamicData::update_union_discriminator()
-{
-    if (get_kind() == TypeKind::TK_UNION)
-    {
-        uint64_t sUnionValue;
-        const DynamicTypeMember* pM;
-        bool found;
-
-        union_discriminator_->get_discriminator_value(sUnionValue);
-
-        for (uint32_t index = 0; index < type_->get_member_count(); ++index)
-        {
-            auto id = get_member_id_at_index(index);
-            assert(id != MEMBER_ID_INVALID);
-            std::tie(pM, found) = type_->get_member(id);
-            assert(found);
-            for (uint64_t label : pM->get_union_labels())
-            {
-                if (sUnionValue == label)
-                {
-                    union_id_ = id;
-                    union_label_ = label;
-                    break;
-                }
-            }
-        }
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error updating union id. The kind: " << get_kind() << " doesn't support it.");
-    }
-}
-
-void DynamicData::set_union_discriminator(
-        DynamicData* pData)
-{
-    union_discriminator_ = pData;
-    if (union_discriminator_ != nullptr)
-    {
-        union_discriminator_->set_discriminator_value(union_label_);
-    }
-}
-
 MemberId DynamicData::get_union_id() const
 {
     return union_id_;
@@ -3728,28 +3677,14 @@ ReturnCode_t DynamicData::set_union_id(
 {
     if (get_kind() == TypeKind::TK_UNION)
     {
-        const DynamicTypeMember* pM;
-        bool found;
-
-        std::tie(pM, found) = type_->get_member(id);
-
-        if (found || id == MEMBER_ID_INVALID)
+        if (id == MEMBER_ID_INVALID || type_->exists_member_by_id(id))
         {
             union_id_ = id;
-
-            if (found)
-            {
-                std::vector<uint64_t> unionLabels = pM->get_union_labels();
-                if (unionLabels.size() > 0)
-                {
-                    union_label_ = unionLabels[0];
-                    if (union_discriminator_ != nullptr)
-                    {
-                        union_discriminator_->set_discriminator_value(union_label_);
-                    }
-                }
-            }
             return ReturnCode_t::RETCODE_OK;
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting union id. The id: " << id << " is unknown.");
         }
     }
     else
@@ -5215,24 +5150,86 @@ ReturnCode_t DynamicData::set_complex_value(
 ReturnCode_t DynamicData::get_union_label(
         uint64_t& value) const
 {
-    if (get_kind() == TypeKind::TK_UNION)
+    try
     {
-        if (union_id_ != MEMBER_ID_INVALID)
-        {
-            value = union_label_;
-            return ReturnCode_t::RETCODE_OK;
-        }
-        else
-        {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting union label. There isn't any label selected");
-            return ReturnCode_t::RETCODE_ERROR;
-        }
+        value = get_union_label();
     }
-    else
+    catch(std::system_error& e)
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error getting union label. The kind " << get_kind() << "doesn't support it");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        EPROSIMA_LOG_ERROR(DYN_TYPES, e.what());
+        return e.code().value();
     }
+
+    return ReturnCode_t::RETCODE_OK;
+}
+
+uint64_t DynamicData::get_union_label() const
+{
+    assert(type_);
+    if(type_->get_kind() != TypeKind::TK_UNION)
+    {
+        throw std::system_error(
+                ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                "Error retrieving union label, underlying type is not an union.");
+    }
+
+    const DynamicTypeMember* member;
+    bool found;
+
+    std::tie(member, found) = type_->get_member(union_id_);
+
+    // set_union cannot be inconsistent
+    assert(found);
+
+    // return label if available
+    auto it = member->labels_.cbegin();
+    if (it != member->labels_.cend())
+    {
+        return *it;
+    }
+
+    throw std::system_error(
+            ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+            "Error retrieving union label, no label associated.");
+}
+
+MemberId DynamicData::get_discriminator_value() const
+{
+    if(type_->get_kind() != TypeKind::TK_UNION)
+    {
+        throw std::system_error(
+                ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                "Error retrieving discriminator, underlying type is not an union.");
+    }
+
+    return union_id_;
+}
+
+ReturnCode_t DynamicData::get_discriminator_value(MemberId& id) const noexcept
+{
+    try
+    {
+        id = get_discriminator_value();
+    }
+    catch(std::system_error& e)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, e.what());
+        return e.code().value();
+    }
+
+    return ReturnCode_t::RETCODE_OK;
+}
+
+ReturnCode_t DynamicData::set_discriminator_value(
+        MemberId value) noexcept
+{
+    if(type_->get_kind() != TypeKind::TK_UNION)
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    union_id_ = value;
+    return ReturnCode_t::RETCODE_OK;
 }
 
 bool DynamicData::deserialize(

@@ -93,11 +93,6 @@ protected:
     ReturnCode_t set_union_id(
             MemberId id);
 
-    void update_union_discriminator();
-
-    void set_union_discriminator(
-            DynamicData* pData);
-
     DynamicType_ptr type_;
 
 #ifdef DYNAMIC_TYPES_CHECKING
@@ -123,10 +118,7 @@ protected:
     std::vector<MemberId> loaned_values_;
     bool key_element_ = false;
     DynamicData* default_array_value_ = nullptr;
-    uint64_t union_label_ = UINT64_MAX; // keeps disc label
     MemberId union_id_ = MEMBER_ID_INVALID;
-    DynamicData* union_discriminator_ = nullptr; // keeps disc label too
-    uint64_t discriminator_value_ = UINT64_MAX; // keeps disc label just in case
 
     friend class DynamicDataFactory;
     friend class DynamicPubSubType;
@@ -536,9 +528,6 @@ public:
             DynamicData* value,
             MemberId id = MEMBER_ID_INVALID);
 
-    RTPS_DllAPI ReturnCode_t get_union_label(
-            uint64_t& value) const;
-
     // Basic types returns (copy)
     // TODO: doxygen
     RTPS_DllAPI int32_t get_int32_value(
@@ -768,32 +757,17 @@ public:
         return value;
     }
 
-    RTPS_DllAPI uint64_t get_union_label() const
-    {
-        uint64_t value;
-        if (get_union_label(value) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+    RTPS_DllAPI ReturnCode_t get_union_label(
+            uint64_t& value) const;
 
-    RTPS_DllAPI uint64_t get_discriminator_value() const
-    {
-        return discriminator_value_;
-    }
+    RTPS_DllAPI uint64_t get_union_label() const;
 
-    RTPS_DllAPI void get_discriminator_value(
-            uint64_t& outValue) const
-    {
-        outValue = discriminator_value_;
-    }
+    RTPS_DllAPI MemberId get_discriminator_value() const;
 
-    RTPS_DllAPI void set_discriminator_value(
-            uint64_t value)
-    {
-        discriminator_value_ = value;
-    }
+    RTPS_DllAPI ReturnCode_t get_discriminator_value(MemberId& id) const noexcept;
+
+    RTPS_DllAPI ReturnCode_t set_discriminator_value(
+            MemberId value) noexcept;
 
     // Serializes and deserializes the Dynamic Data.
     RTPS_DllAPI void serialize(

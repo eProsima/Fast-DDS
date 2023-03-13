@@ -77,11 +77,11 @@ protected:
             eprosima::fastcdr::Cdr& cdr) const;
 
     bool deserialize_discriminator(
-            uint64_t& discriminator_value,
+            DynamicData& data,
             eprosima::fastcdr::Cdr& cdr) const;
 
     void serialize_discriminator(
-            DynamicData& data,
+            const DynamicData& data,
             eprosima::fastcdr::Cdr& cdr) const;
 
 public:
