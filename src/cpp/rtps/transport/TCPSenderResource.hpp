@@ -16,7 +16,7 @@
 #define __TRANSPORT_TCPSENDERRESOURCE_HPP__
 
 #include <fastdds/rtps/common/LocatorsIterator.hpp>
-#include <rtps/network/SenderResource.h>
+#include <fastdds/rtps/transport/SenderResource.h>
 
 #include <rtps/transport/TCPTransportInterface.h>
 #include <rtps/transport/TCPChannelResource.h>

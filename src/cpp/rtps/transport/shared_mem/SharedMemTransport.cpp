@@ -23,13 +23,13 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/Locator.h>
-#include <rtps/network/ReceiverResource.h>
-#include <rtps/network/SenderResource.h>
+#include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
 
 #include <fastrtps/rtps/messages/CDRMessage.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
 
+#include <rtps/network/ReceiverResource.h>
 #include <rtps/transport/shared_mem/SHMLocator.hpp>
 #include <rtps/transport/shared_mem/SharedMemTransport.h>
 #include <rtps/transport/shared_mem/SharedMemSenderResource.hpp>

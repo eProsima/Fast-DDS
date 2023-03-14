@@ -430,7 +430,7 @@ public:
             bool write_encapsulation) const;
 
     //!Read a parameter list from a CDRMessage_t.
-    RTPS_DllAPI bool readFromCDRMessage(
+    bool readFromCDRMessage(
             CDRMessage_t* msg,
             const NetworkFactory& network,
             bool is_shm_transport_possible);

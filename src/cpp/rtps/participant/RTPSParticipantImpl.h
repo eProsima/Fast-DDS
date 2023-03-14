@@ -50,9 +50,9 @@
 
 #include <rtps/network/NetworkFactory.h>
 #include <rtps/network/ReceiverResource.h>
-#include <rtps/network/SenderResource.h>
 
 #include <fastdds/rtps/messages/MessageReceiver.h>
+#include <fastdds/rtps/transport/SenderResource.h>
 
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include "../flowcontrol/FlowControllerFactory.hpp"

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_RTPS_SENDER_RESOURCE_H
-#define _FASTDDS_RTPS_SENDER_RESOURCE_H
+#ifndef _FASTDDS_RTPS_TRANSPORT_SENDERRESOURCE_H_
+#define _FASTDDS_RTPS_TRANSPORT_SENDERRESOURCE_H_
 
 #include <fastdds/rtps/common/Types.h>
 
@@ -129,4 +129,4 @@ private:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_SENDER_RESOURCE_H */
+#endif /* _FASTDDS_RTPS_TRANSPORT_SENDERRESOURCE_H_ */

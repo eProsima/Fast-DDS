@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_RTPS_NETWORK_FACTORY_HPP
-#define _FASTDDS_RTPS_NETWORK_FACTORY_HPP
+#ifndef _RTPS_NETWORK_NETWORKFACTORY_H_
+#define _RTPS_NETWORK_NETWORKFACTORY_H_
 
 #include <vector>
 #include <memory>
@@ -22,9 +22,9 @@
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/messages/MessageReceiver.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
+#include <fastdds/rtps/transport/SenderResource.h>
 
 #include <rtps/network/ReceiverResource.h>
-#include <rtps/network/SenderResource.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -237,4 +237,4 @@ private:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_NETWORK_FACTORY_HPP */
+#endif /* _RTPS_NETWORK_NETWORKFACTORY_H_ */

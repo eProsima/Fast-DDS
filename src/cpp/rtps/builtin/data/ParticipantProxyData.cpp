@@ -25,7 +25,6 @@
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
-#include <rtps/network/NetworkFactory.h>
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastrtps/utils/TimeConversion.h>
 
@@ -33,6 +32,7 @@
 #include <fastdds/core/policy/QosPoliciesSerializer.hpp>
 #include <fastrtps_deprecated/participant/ParticipantImpl.h>
 #include <rtps/transport/shared_mem/SHMLocator.hpp>
+#include <rtps/network/NetworkFactory.h>
 
 #include "ProxyDataFilters.hpp"
 #include "ProxyHashTables.hpp"

@@ -135,7 +135,6 @@ target_compile_definitions(XMLProfileParserTests PRIVATE FASTRTPS_NO_LIB
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
 target_include_directories(XMLProfileParserTests PRIVATE
-    ${PROJECT_SOURCE_DIR}/src/cpp
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/Log
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/SharedMemTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/TCPTransportDescriptor

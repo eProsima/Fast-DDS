@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "NetworkFactory.h"
-
 #include <limits>
 #include <utility>
 
@@ -24,6 +22,7 @@
 #include <fastrtps/utils/IPLocator.h>
 
 #include <rtps/transport/UDPv4Transport.h>
+#include <rtps/network/NetworkFactory.h>
 
 using namespace std;
 using namespace eprosima::fastdds::rtps;

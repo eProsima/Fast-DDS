@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
-#include <rtps/network/NetworkFactory.h>
+
 
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
