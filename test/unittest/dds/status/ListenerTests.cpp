@@ -744,6 +744,7 @@ void verify_expectations_on_offered_incompatible_qos (
         StrictMock<CustomDataWriterListener>& datawriter_listener_)
 {
     PolicyMask status;
+    status.set(fastdds::dds::RELIABILITY_QOS_POLICY_ID);
 
     RTPSDomain::writer_->listener_->on_offered_incompatible_qos(nullptr, status);
     Mock::VerifyAndClearExpectations(&datawriter_listener_);
@@ -1210,6 +1211,7 @@ void verify_expectations_on_requested_incompatible_qos (
         StrictMock<CustomDataReaderListener>& datareader_listener_)
 {
     PolicyMask status;
+    status.set(fastdds::dds::RELIABILITY_QOS_POLICY_ID);
 
     RTPSDomain::reader_->listener_->on_requested_incompatible_qos(nullptr, status);
     Mock::VerifyAndClearExpectations(&datareader_listener_);
