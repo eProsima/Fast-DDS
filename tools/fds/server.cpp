@@ -395,6 +395,7 @@ int fastdds_discovery_server(
 
         // Handle signal SIGINT for every thread
         signal(SIGINT, sigint_handler);
+        signal(SIGTERM, sigint_handler);
 
         bool has_security = false;
         if (guid_prefix != pServer->guid().guidPrefix)
