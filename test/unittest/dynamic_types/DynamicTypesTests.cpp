@@ -488,38 +488,37 @@ TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
 
     // • checking map indexes retrieval
     //    + indexing by id
-    std::map<MemberId, const DynamicTypeMember*> members_by_id;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->get_all_members(members_by_id));
+    auto members_by_id = struct_type_builder->get_all_members_by_id();
     EXPECT_EQ(members_by_id.size(), 2);
     EXPECT_EQ(*members_by_id[3], md1);
     EXPECT_EQ(*members_by_id[1], md2);
 
     //    + indexing by name
-    std::map<std::string, const DynamicTypeMember*> members_by_name;
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->get_all_members_by_name(members_by_name));
+    auto members_by_name = struct_type_builder->get_all_members_by_name();
     EXPECT_EQ(members_by_name.size(), 2);
     EXPECT_EQ(*members_by_name["int32"], md1);
     EXPECT_EQ(*members_by_name["int64"], md2);
 
     //    + indexing by index (actual sequence)
-    const std::list<DynamicTypeMember>& members = struct_type_builder->get_all_members();
+    auto members = struct_type_builder->get_all_members();
     ASSERT_EQ(members.size(), 2);
     auto it = members.begin();
-    EXPECT_EQ(*it++, md1);
-    EXPECT_EQ(*it, md2);
+    EXPECT_EQ(**it++, md1);
+    EXPECT_EQ(**it, md2);
 
     // • checking indexes work according with OMG standard 1.3 section 7.5.2.7.6
     md = MemberDescriptor(7, "bool", factory.create_bool_type());
     md.set_index(1); // insert int the middle
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->add_member(md));
 
+    members = struct_type_builder->get_all_members();
     ASSERT_EQ(members.size(), 3);
     md2.set_index(2); // new expected position of the last element
 
     it = members.begin();
-    EXPECT_EQ(*it++, md1);
-    EXPECT_EQ(*it++, md);
-    EXPECT_EQ(*it, md2);
+    EXPECT_EQ(**it++, md1);
+    EXPECT_EQ(**it++, md);
+    EXPECT_EQ(**it, md2);
 
     // • checking adding duplicates
     {
@@ -2235,8 +2234,14 @@ TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
     ASSERT_TRUE(base_builder);
     DynamicTypeBuilder_ptr alias_builder = factory.create_alias_builder(*base_builder->build(), name);
     ASSERT_TRUE(alias_builder);
+
     DynamicType_ptr created_type = alias_builder->build();
     ASSERT_TRUE(created_type);
+    DynamicType_ptr base_type = base_builder->build();
+    ASSERT_TRUE(base_type);
+    ASSERT_EQ(*created_type, *base_type);
+    ASSERT_TRUE(created_type->equals(*base_type));
+
     EXPECT_EQ(created_type->get_name(), "ALIAS");
     DynamicData* aliasData = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(aliasData != nullptr);
@@ -2278,8 +2283,113 @@ TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
     ASSERT_TRUE(data3->equals(aliasData));
 
     ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(aliasData) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+}
+
+TEST_F(DynamicTypesTests, DynamicType_nested_alias_unit_tests)
+{
+    // Check alias comparisson in dependent types
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
+
+    // • Simple struct with nested aliases
+    DynamicTypeBuilder_ptr plain_struct = factory.create_struct_builder(),
+                           alias_struct = factory.create_struct_builder();
+    EXPECT_TRUE(plain_struct && alias_struct);
+
+    for (auto& build : { plain_struct, alias_struct })
+    {
+        build->set_name("base_struct");
+    }
+
+    //   Add members to the plain struct
+    EXPECT_EQ(plain_struct->add_member(0, "int32", factory.create_int32_type()), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(plain_struct->add_member(1, "int64", factory.create_int64_type()), ReturnCode_t::RETCODE_OK);
+
+    //   Add members to the alias struct
+    EXPECT_EQ(alias_struct->add_member(0, "int32", factory.create_alias_builder(*factory.create_int32_type(), "int32_alias")->build()), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(alias_struct->add_member(1, "int64", factory.create_alias_builder(*factory.create_int64_type(), "int64_alias")->build()), ReturnCode_t::RETCODE_OK);
+
+    //   Compare
+    EXPECT_EQ(*plain_struct, *alias_struct);
+    EXPECT_TRUE(plain_struct->equals(*alias_struct));
+    EXPECT_TRUE(alias_struct->equals(*plain_struct));
+
+    // • Inheritance from an alias
+    DynamicTypeBuilder_ptr child_struct = factory.create_child_struct_builder(*plain_struct->build()),
+                           child_alias_struct = factory.create_child_struct_builder(*alias_struct->build());
+
+    for (auto& build : { child_struct, child_alias_struct })
+    {
+        build->set_name("child_struct");
+    }
+
+    //   Compare
+    EXPECT_EQ(*child_struct, *child_alias_struct);
+    EXPECT_TRUE(child_struct->equals(*child_alias_struct));
+    EXPECT_TRUE(child_alias_struct->equals(*child_struct));
+
+    // • Checking nesting at various levels
+    int levels = 1;
+    DynamicTypeBuilder_ptr nested_struct = child_struct,
+                           nested_alias_struct = child_alias_struct;
+
+    do
+    {
+        MemberId id = levels + 1;
+
+        std::string member_name{"member"};
+        member_name += std::to_string(id);
+
+        std::string alias_name{"alias"};
+        alias_name += std::to_string(id);
+
+        std::string struct_name{"nested"};
+        struct_name += std::to_string(id);
+
+        auto aux = nested_struct->build();
+        nested_struct = factory.create_child_struct_builder(*aux);
+        ASSERT_TRUE(nested_struct);
+        EXPECT_EQ(nested_struct->add_member(id, member_name, aux), ReturnCode_t::RETCODE_OK);
+
+        aux = factory.create_alias_builder(*nested_alias_struct->build(), alias_name)->build();
+        nested_alias_struct = factory.create_child_struct_builder(*aux);
+        ASSERT_TRUE(nested_alias_struct);
+        EXPECT_EQ(nested_alias_struct->add_member(id, member_name, aux), ReturnCode_t::RETCODE_OK);
+
+        for (auto& build : { nested_struct, nested_alias_struct })
+        {
+            build->set_name(struct_name);
+        }
+    }
+    while(--levels);
+
+    EXPECT_EQ(*nested_struct, *nested_alias_struct);
+    EXPECT_TRUE(nested_struct->equals(*nested_alias_struct));
+    EXPECT_TRUE(nested_alias_struct->equals(*nested_struct));
+
+    std::cout << *nested_struct << std::endl;
+    std::cout << *nested_alias_struct << std::endl;
+
+    // • Checking serialization of nested aliases
+
+    auto nested_type = nested_struct->build();
+    DynamicData* data = DynamicDataFactory::get_instance()->create_data(nested_type),
+               * data2 = DynamicDataFactory::get_instance()->create_data(nested_type);
+    ASSERT_NE(data, nullptr);
+    ASSERT_NE(data2, nullptr);
+
+    DynamicPubSubType pubsubType(nested_type);
+    uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
+    ASSERT_TRUE(pubsubType.serialize(data, &payload));
+    ASSERT_TRUE(payload.length == payloadSize);
+    ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+    ASSERT_TRUE(data2->equals(data));
+
+    ASSERT_EQ(DynamicDataFactory::get_instance()->delete_data(data), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), ReturnCode_t::RETCODE_OK);
+
 }
 
 TEST_F(DynamicTypesTests, DynamicType_multi_alias_unit_tests)
@@ -2321,18 +2431,6 @@ TEST_F(DynamicTypesTests, DynamicType_multi_alias_unit_tests)
         ASSERT_NE(aliasData->set_string_value("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID), ReturnCode_t::RETCODE_OK);
     }
 
-    // Serialize <-> Deserialize Test
-    DynamicPubSubType pubsubType(created_type);
-    uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(aliasData)());
-    SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(pubsubType.serialize(aliasData, &payload));
-    ASSERT_TRUE(payload.length == payloadSize);
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
-    ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
-    ASSERT_TRUE(data2->equals(aliasData));
-
-    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(aliasData) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
@@ -3561,10 +3659,8 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(struct_data));
 
-    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
-
-    // Delete the structure
     ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(struct_data) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)

@@ -397,7 +397,7 @@ std::ostream& eprosima::fastrtps::types::operator<<( std::ostream& os, const Mem
        << manips << "id:" << md.get_id() << endl;
 
     // Show type
-    auto bt =md.get_type();
+    auto bt = md.get_type();
     if (bt)
     {
         os << manips << "type: ";

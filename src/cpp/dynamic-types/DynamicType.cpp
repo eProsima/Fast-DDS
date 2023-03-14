@@ -609,52 +609,27 @@ bool DynamicType::deserialize(
             }
 
 #ifdef DYNAMIC_TYPES_CHECKING
-            //uint32_t size(static_cast<uint32_t>(data.complex_values_.size())), memberId(MEMBER_ID_INVALID);
-            for (uint32_t i = 0; i < data.complex_values_.size(); ++i)
-            {
-                //cdr >> memberId;
-                const DynamicTypeMember* member_desc;
-                bool found;
-
-                std::tie(member_desc, found) = get_member(get_member_id_at_index(i));
-
-                if (found)
-                {
-                    if (!member_desc->annotation_is_non_serialized())
-                    {
-                        MemberId id = member_desc->get_id();
-                        auto it = data.complex_values_.find(id);
-                        if (it != data.complex_values_.end())
-                        {
-                            it->second->deserialize(cdr);
-                        }
-                        else
-                        {
-                            DynamicData* pData = DynamicDataFactory::get_instance()->create_data(
-                                get_element_type());
-                            pData->deserialize(cdr);
-                            data.complex_values_.insert(std::make_pair(id, pData));
-                        }
-                    }
-                }
-            }
+            auto& value_col = data.complex_values_;
 #else
+            auto& value_col = data.values_;
+#endif // ifdef DYNAMIC_TYPES_CHECKING
+
             //uint32_t size(static_cast<uint32_t>(data.values_.size())), memberId(MEMBER_ID_INVALID);
-            for (uint32_t i = 0; i < data.values_.size(); ++i)
+            for (uint32_t i = 0; i < value_col.size(); ++i)
             {
                 //cdr >> memberId;
                 const DynamicTypeMember* member_desc;
                 bool found;
 
-                std::tie(member_desc, found) = get_member(get_member_id_at_index(i));
+                MemberId id = get_member_id_at_index(i);
+                std::tie(member_desc, found) = get_member(id);
 
                 if (found)
                 {
                     if (!member_desc->annotation_is_non_serialized())
                     {
-                        MemberId id = member_desc->get_id();
-                        auto it = data.values_.find(id);
-                        if (it != data.values_.end())
+                        auto it = value_col.find(id);
+                        if (it != value_col.end())
                         {
                             ((DynamicData*)it->second)->deserialize(cdr);
                         }
@@ -663,12 +638,11 @@ bool DynamicType::deserialize(
                             DynamicData* pData = DynamicDataFactory::get_instance()->create_data(
                                 get_element_type());
                             pData->deserialize(cdr);
-                            data.values_.insert(std::make_pair(id, pData));
+                            value_col.insert(std::make_pair(id, pData));
                         }
                     }
                 }
             }
-#endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TypeKind::TK_ARRAY:
@@ -926,49 +900,32 @@ size_t DynamicType::getCdrSerializedSize(
             }
 
 #ifdef DYNAMIC_TYPES_CHECKING
-            for (uint32_t i = 0; i < data.complex_values_.size(); ++i)
-            {
-                //cdr >> memberId;
-                const DynamicTypeMember* member_desc;
-                bool found;
-
-                std::tie(member_desc, found) = get_member(get_member_id_at_index(i));
-
-                if (found)
-                {
-                    if (!member_desc->annotation_is_non_serialized())
-                    {
-                        auto it = data.complex_values_.find(i);
-                        if (it != data.complex_values_.end())
-                        {
-                            current_alignment += member_desc->get_type()->getCdrSerializedSize(it->second, current_alignment);
-                        }
-                    }
-                }
-            }
-
+            auto& value_col = data.complex_values_;
 #else
-            for (uint32_t i = 0; i < data.values_.size(); ++i)
+            auto& value_col = data.values_;
+#endif // ifdef DYNAMIC_TYPES_CHECKING
+
+            for (uint32_t i = 0; i < value_col.size(); ++i)
             {
                 //cdr >> memberId;
                 const DynamicTypeMember* member_desc;
                 bool found;
 
-                std::tie(member_desc, found) = get_member(get_member_id_at_index(i));
+                MemberId id = get_member_id_at_index(i);
+                std::tie(member_desc, found) = get_member(id);
 
                 if (found)
                 {
                     if (!member_desc->annotation_is_non_serialized())
                     {
-                        auto it = data.values_.find(i);
-                        if (it != data.values_.end())
+                        auto it = value_col.find(id);
+                        if (it != value_col.end())
                         {
                             current_alignment += member_desc->get_type()->getCdrSerializedSize(*(DynamicData*)it->second, current_alignment);
                         }
                     }
                 }
             }
-#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TypeKind::TK_ARRAY:
@@ -1704,40 +1661,28 @@ void DynamicType::serialize(
             }
 
 #ifdef DYNAMIC_TYPES_CHECKING
-            for (uint32_t idx = 0; idx < static_cast<uint32_t>(data.complex_values_.size()); ++idx)
-            {
-                const DynamicTypeMember* member_desc;
-                bool found;
-
-                std::tie(member_desc, found) = get_member(get_member_id_at_index(i));
-
-                if (found)
-                {
-                    if (!member_desc->annotation_is_non_serialized())
-                    {
-                        auto it = data.complex_values_.at(member_desc->get_id());
-                        it->serialize(cdr);
-                    }
-                }
-            }
+            auto& value_col = data.complex_values_;
 #else
-            for (uint32_t idx = 0; idx < static_cast<uint32_t>(data.values_.size()); ++idx)
+            auto& value_col = data.values_;
+#endif // ifdef DYNAMIC_TYPES_CHECKING
+
+            for (uint32_t i = 0; i < value_col.size(); ++i)
             {
                 const DynamicTypeMember* member_desc;
                 bool found;
 
-                std::tie(member_desc, found) = get_member(get_member_id_at_index(idx));
+                MemberId id = get_member_id_at_index(i);
+                std::tie(member_desc, found) = get_member(id);
 
                 if (found)
                 {
                     if (!member_desc->annotation_is_non_serialized())
                     {
-                        auto it = data.values_.at(member_desc->get_id());
+                        auto it = value_col.at(id);
                         ((DynamicData*)it)->serialize(cdr);
                     }
                 }
             }
-#endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TypeKind::TK_ARRAY:
