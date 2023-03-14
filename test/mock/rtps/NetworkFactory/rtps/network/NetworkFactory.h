@@ -15,14 +15,15 @@
 #ifndef _RTPS_NETWORK_NETWORKFACTORY_H_
 #define _RTPS_NETWORK_NETWORKFACTORY_H_
 
-#include <fastrtps/transport/TransportInterface.h>
-#include <fastrtps/rtps/common/LocatorSelector.hpp>
+#include <memory>
+#include <vector>
+
 #include <fastdds/rtps/transport/SenderResource.h>
+#include <fastrtps/rtps/common/LocatorSelector.hpp>
+#include <fastrtps/rtps/messages/MessageReceiver.h>
+#include <fastrtps/transport/TransportInterface.h>
 
 #include <rtps/network/ReceiverResource.h>
-#include <fastrtps/rtps/messages/MessageReceiver.h>
-#include <vector>
-#include <memory>
 
 namespace eprosima {
 namespace fastrtps {

@@ -17,6 +17,7 @@
 
 #include <memory>
 #include <vector>
+
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/LocatorSelector.hpp>

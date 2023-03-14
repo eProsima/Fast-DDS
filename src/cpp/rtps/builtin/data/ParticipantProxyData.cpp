@@ -19,8 +19,10 @@
 
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 
-#include <fastdds/dds/log/Log.hpp>
+#include <mutex>
+#include <chrono>
 
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
@@ -35,9 +37,6 @@
 
 #include "ProxyDataFilters.hpp"
 #include "ProxyHashTables.hpp"
-
-#include <mutex>
-#include <chrono>
 
 using namespace eprosima::fastrtps;
 using ParameterList = eprosima::fastdds::dds::ParameterList;

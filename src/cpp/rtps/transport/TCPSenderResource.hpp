@@ -18,8 +18,8 @@
 #include <fastdds/rtps/common/LocatorsIterator.hpp>
 #include <fastdds/rtps/transport/SenderResource.h>
 
-#include <rtps/transport/TCPTransportInterface.h>
 #include <rtps/transport/TCPChannelResource.h>
+#include <rtps/transport/TCPTransportInterface.h>
 
 namespace eprosima {
 namespace fastdds {

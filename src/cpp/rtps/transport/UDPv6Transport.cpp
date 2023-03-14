@@ -14,9 +14,9 @@
 
 #include <rtps/transport/UDPv6Transport.h>
 
-#include <utility>
-#include <cstring>
 #include <algorithm>
+#include <cstring>
+#include <utility>
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/messages/MessageReceiver.h>

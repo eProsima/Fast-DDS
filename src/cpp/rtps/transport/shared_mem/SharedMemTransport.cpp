@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <utility>
-#include <cstring>
 #include <algorithm>
+#include <cstring>
+#include <utility>
 
 #ifdef ANDROID
 #include <boostconfig.hpp>
@@ -25,7 +25,6 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/transport/SenderResource.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
-
 #include <fastrtps/rtps/messages/CDRMessage.h>
 #include <fastrtps/rtps/messages/MessageReceiver.h>
 

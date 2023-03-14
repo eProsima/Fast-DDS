@@ -17,9 +17,8 @@
  *
  */
 
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
-
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
 
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/core/policy/QosPoliciesSerializer.hpp>

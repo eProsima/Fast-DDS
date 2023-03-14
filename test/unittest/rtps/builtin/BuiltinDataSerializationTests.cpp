@@ -15,11 +15,12 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <fastrtps/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
+
 #include <rtps/network/NetworkFactory.h>
-#include <fastdds/core/policy/ParameterSerializer.hpp>
 
 namespace eprosima {
 namespace fastrtps {
