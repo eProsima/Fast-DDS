@@ -38,7 +38,8 @@
         ├ participant           [0~*],
         ├ data_writer           [0~*],
         ├ data_reader           [0~*],
-        └ transport_descriptors [0~1] -->
+        ├ transport_descriptors [0~1],
+        └ topic                 [0~*] -->
     <xs:complexType name="profilesType">
         <xs:sequence minOccurs="1" maxOccurs="unbounded">   <!-- multiple instances of the elements -->
             <xs:choice minOccurs="1"> <!-- each instance can be one of the elements below -->
@@ -46,6 +47,7 @@
                 <xs:element name="data_writer" type="publisherProfileType" maxOccurs="unbounded"/>
                 <xs:element name="data_reader" type="subscriberProfileType" maxOccurs="unbounded"/>
                 <xs:element name="transport_descriptors" type="TransportDescriptorListType" maxOccurs="1"/>
+                <xs:element name="topic" type="topicProfileType" maxOccurs="unbounded"/>
             </xs:choice>
         </xs:sequence>
     </xs:complexType>
@@ -169,7 +171,7 @@
         └ matchedSubscribersAllocation [0~1]-->
     <xs:complexType name="publisherProfileType">
         <xs:all>
-            <xs:element name="topic" type="topicAttributesType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="topic" type="topicElementType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="qos" type="QosPoliciesType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="times" type="writerTimesType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
@@ -205,7 +207,7 @@
         └ matchedPublishersAllocation  [0~1]-->
     <xs:complexType name="subscriberProfileType">
         <xs:all minOccurs="0">
-            <xs:element name="topic" type="topicAttributesType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="topic" type="topicElementType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="qos" type="QosPoliciesType" minOccurs="0"/>
             <xs:element name="times" type="readerTimesType" minOccurs="0"/>
             <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
@@ -231,6 +233,36 @@
       </xs:sequence>
     </xs:complexType>
 
+    <!--Topic (profile):
+        | ╠ att. profile_name       [string] REQ,
+        | ╚ att. is_default_profile [bool],
+        |
+        ├ historyQoS        [0~1],
+        └ resourceLimitsQos [0~1],
+            ├ max_samples              [uint32],
+            ├ max_instances            [uint32],
+            ├ max_samples_per_instance [uint32],
+            ├ allocated_samples        [uint32],
+            └ extra_samples            [uint32] -->
+    <xs:complexType name="topicProfileType">
+        <xs:all>
+            <xs:element name="historyQos" type="historyQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="resourceLimitsQos" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:all>
+                        <xs:element name="max_samples" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="max_instances" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="max_samples_per_instance" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="allocated_samples" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="extra_samples" type="uint32" minOccurs="0" maxOccurs="1"/>
+                    </xs:all>
+                </xs:complexType>
+            </xs:element>
+        </xs:all>
+        <xs:attribute name="profile_name" type="string" use="required"/>
+        <xs:attribute name="is_default_profile" type="boolean" use="optional"/>
+    </xs:complexType>
+
     <!--Topic:
         ├ historyQoS        [0~1],
         └ resourceLimitsQos [0~1],
@@ -239,7 +271,7 @@
             ├ max_samples_per_instance [uint32],
             ├ allocated_samples        [uint32],
             └ extra_samples            [uint32] -->
-    <xs:complexType name="topicAttributesType">
+    <xs:complexType name="topicElementType">
         <xs:all>
             <xs:element name="historyQos" type="historyQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="resourceLimitsQos" minOccurs="0" maxOccurs="1">
