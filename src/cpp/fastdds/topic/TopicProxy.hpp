@@ -20,6 +20,7 @@
 #define _FASTDDS_TOPICPROXY_HPP_
 
 #include <memory>
+#include <mutex>
 #include <string>
 
 #include <fastdds/dds/core/status/BaseStatus.hpp>
@@ -31,6 +32,7 @@
 
 #include <fastrtps/types/TypesBase.h>
 
+#include <fastdds/core/condition/StatusConditionImpl.hpp>
 #include <fastdds/topic/TopicDescriptionImpl.hpp>
 #include <fastdds/topic/TopicImpl.hpp>
 
@@ -92,8 +94,15 @@ public:
     ReturnCode_t get_inconsistent_topic_status(
             InconsistentTopicStatus& status)
     {
-        // TODO(Miguel C): Implement this
-        return ReturnCode_t::RETCODE_UNSUPPORTED;
+        {
+            std::lock_guard<std::mutex> _(insonsistent_topic_mtx_);
+            status = insonsistent_topic_status_;
+            insonsistent_topic_status_.total_count_change = 0;
+        }
+
+        user_topic_->get_statuscondition().get_impl()->set_status(StatusMask::inconsistent_topic(), false);
+
+        return ReturnCode_t::RETCODE_OK;
     }
 
     TopicListener* get_listener_for(
@@ -121,6 +130,9 @@ private:
 
     TopicImpl* impl_ = nullptr;
     std::unique_ptr<Topic> user_topic_;
+
+    InconsistentTopicStatus insonsistent_topic_status_;
+    std::mutex insonsistent_topic_mtx_;
 };
 
 }  // namespace dds
