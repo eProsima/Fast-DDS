@@ -314,6 +314,11 @@ public:
     {
     }
 
+    void inconsistent_topic_found(
+            const TopicProxyFactory* /*factory*/)
+    {
+    }
+
     ReturnCode_t delete_topic(
             const Topic* topic)
     {
