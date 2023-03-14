@@ -7,14 +7,16 @@
 
     <!--| MAIN DOCUMENT HIERARCHY |-->
     <!--__ROOT__:
-        ├ dds      [0~1],
-        |   ├ profiles [0~1],
-        |   ├ log      [0~1],
-        |   └ types    [0~1], (rooted definition)
+        ├ dds [0~1],
+        |   ├ profiles         [0~1],
+        |   ├ log              [0~1],
+        |   ├ types            [0~1],
+        |   └ library_settings [0~1] (rooted definition)
         |
-        ├ profiles [0~1],
-        ├ log      [0~1],
-        └ types    [0~1] (standalone definition) -->
+        ├ profiles         [0~1],
+        ├ log              [0~1],
+        ├ types            [0~1],
+        └ library_settings [0~1] (standalone definition) -->
     <!-- dds, profiles, log or types can be the ROOT element of the profile -->
     <xs:element name="dds">
         <xs:complexType>
@@ -22,16 +24,17 @@
                 <xs:element name="profiles" type="profilesType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="types" type="typesType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="log" type="logType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="library_settings" type="LibrarySettingsType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
     </xs:element>
     <xs:element name="profiles" type="profilesType"/>
     <xs:element name="types" type="typesType"/>
     <xs:element name="log" type="logType"/>
+    <xs:element name="library_settings" type="LibrarySettingsType"/>
 
 
     <!--PROFILES:
-        ├ library_settings      [0~1],
         ├ participant           [0~*],
         ├ data_writer           [0~*],
         ├ data_reader           [0~*],
@@ -39,7 +42,6 @@
     <xs:complexType name="profilesType">
         <xs:sequence minOccurs="1" maxOccurs="unbounded">   <!-- multiple instances of the elements -->
             <xs:choice minOccurs="1"> <!-- each instance can be one of the elements below -->
-                <xs:element name="library_settings" type="LibrarySettingsType" maxOccurs="1"/>
                 <xs:element name="participant" type="participantProfileType" maxOccurs="unbounded"/>
                 <xs:element name="data_writer" type="publisherProfileType" maxOccurs="unbounded"/>
                 <xs:element name="data_reader" type="subscriberProfileType" maxOccurs="unbounded"/>
@@ -68,10 +70,6 @@
         </xs:sequence>
     </xs:complexType>
 
-
-
-
-    <!--| PROFILES ELEMENTS |-->
     <!--Library settings:
         └ intraprocess_delivery [string] ("OFF", "USER_DATA_ONLY", "FULL") -->
     <xs:complexType name="LibrarySettingsType">
@@ -91,6 +89,8 @@
         </xs:all>
     </xs:complexType>
 
+
+    <!--| PROFILES ELEMENTS |-->
     <!--Participant:
         | ╠ att. profile_name       [string] REQ,
         | ╚ att. is_default_profile [bool],
