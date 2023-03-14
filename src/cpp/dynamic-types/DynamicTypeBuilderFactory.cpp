@@ -498,6 +498,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_child_struct_builder(
         const DynamicType& parent_type)
 {
     auto kind = parent_type.get_kind();
+
     if (kind == TypeKind::TK_STRUCTURE || kind == TypeKind::TK_BITSET)
     {
         TypeDescriptor descriptor;
@@ -506,6 +507,20 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_child_struct_builder(
         descriptor.base_type_ = parent_type.shared_from_this();
 
         return create_builder(descriptor);
+    }
+    else if(kind == TypeKind::TK_ALIAS)
+    {
+        // Resolve aliases
+        const DynamicType* p = &parent_type;
+
+        do
+        {
+            p = p->base_type_.get();
+            assert(p);
+        }
+        while ( p->kind_ == TypeKind::TK_ALIAS );
+
+        return create_child_struct_builder(*p);
     }
     else
     {
@@ -1355,8 +1370,10 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
         // Apply annotations
         apply_type_annotations(object.complete().enumerated_type().header().detail().ann_custom(), descriptor);
 
-        for (const DynamicTypeMember& member : descriptor.get_all_members())
+        for (auto pm : descriptor.get_all_members())
         {
+            assert(pm);
+            const DynamicTypeMember& member = *pm;
             CompleteEnumeratedLiteral mel;
             mel.common().flags().IS_DEFAULT(member.annotation_is_default_literal());
             mel.common().value(member.get_index());
@@ -1400,8 +1417,10 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
         object.minimal()._d(TypeKind::TK_ENUM);
         object.minimal().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
 
-        for (const DynamicTypeMember& member : descriptor.get_all_members())
+        for (const DynamicTypeMember* pm : descriptor.get_all_members())
         {
+            assert(pm);
+            const DynamicTypeMember& member = *pm;
             MinimalEnumeratedLiteral mel;
             mel.common().flags().IS_DEFAULT(member.annotation_is_default_literal());
             mel.common().value(member.get_index());
@@ -1458,8 +1477,11 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         // Apply annotations
         apply_type_annotations(object.complete().struct_type().header().detail().ann_custom(), descriptor);
 
-        for (const DynamicTypeMember& member : descriptor.get_all_members())
+        for (auto pm : descriptor.get_all_members())
         {
+            assert(pm);
+            const DynamicTypeMember& member = *pm;
+
             CompleteStructMember msm;
             msm.common().member_id(member.get_index());
             msm.common().member_flags().TRY_CONSTRUCT1(false);
@@ -1546,8 +1568,11 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         object.minimal().struct_type().struct_flags().IS_NESTED(descriptor.annotation_is_nested());
         object.minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
 
-        for (const DynamicTypeMember& member : descriptor.get_all_members())
+        for (auto pm : descriptor.get_all_members())
         {
+            assert(pm);
+            const DynamicTypeMember& member = *pm;
+
             MinimalStructMember msm;
             msm.common().member_id(member.get_index());
             msm.common().member_flags().TRY_CONSTRUCT1(false);
@@ -1654,8 +1679,11 @@ void DynamicTypeBuilderFactory::build_union_type_code(
                 *TypeObjectFactory::get_instance()->get_type_identifier(descriptor.discriminator_type_->get_name());
         object.complete().union_type().discriminator().common().type_id(discIdent);
 
-        for (const DynamicTypeMember& member : descriptor.get_all_members())
+        for (auto pm : descriptor.get_all_members())
         {
+            assert(pm);
+            const DynamicTypeMember& member = *pm;
+
             CompleteUnionMember mum;
             mum.common().member_id(member.get_index());
             mum.common().member_flags().TRY_CONSTRUCT1(false);
@@ -1747,8 +1775,11 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         object.minimal().union_type().discriminator().common().type_id(discIdent);
         //*TypeObjectFactory::get_instance().get_type_identifier(descriptor.discriminator_type_->get_name()));
 
-        for (const DynamicTypeMember& member : descriptor.get_all_members())
+        for (auto pm : descriptor.get_all_members())
         {
+            assert(pm);
+            const DynamicTypeMember& member = *pm;
+
             MinimalUnionMember mum;
             mum.common().member_id(member.get_index());
             mum.common().member_flags().TRY_CONSTRUCT1(false);
@@ -1834,8 +1865,11 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         // Apply annotations
         apply_type_annotations(object.complete().bitset_type().header().detail().ann_custom(), descriptor);
 
-        for (const DynamicTypeMember& member : descriptor.get_all_members())
+        for (auto pm : descriptor.get_all_members())
         {
+            assert(pm);
+            const DynamicTypeMember& member = *pm;
+
             CompleteBitfield msm;
             msm.common().position(member.annotation_get_position()); // Position stored as annotation
             // Bitcount stored as bit_bound annotation
@@ -1902,8 +1936,11 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         object.minimal().bitset_type().bitset_flags().IS_NESTED(false);
         object.minimal().bitset_type().bitset_flags().IS_AUTOID_HASH(false);
 
-        for (const DynamicTypeMember& member : descriptor.get_all_members())
+        for (auto pm : descriptor.get_all_members())
         {
+            assert(pm);
+            const DynamicTypeMember& member = *pm;
+
             MinimalBitfield msm;
             msm.common().position(member.annotation_get_position()); // Position stored as annotation
             // Bitcount stored as bit_bound annotation
@@ -1977,8 +2014,11 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
         // Apply annotations
         apply_type_annotations(object.complete().bitmask_type().header().detail().ann_custom(), descriptor);
 
-        for (const DynamicTypeMember& member : descriptor.get_all_members())
+        for (auto pm : descriptor.get_all_members())
         {
+            assert(pm);
+            const DynamicTypeMember& member = *pm;
+
             CompleteBitflag msm;
             msm.common().position(member.annotation_get_position()); // Position stored as annotation
             msm.detail().name(member.get_name());
@@ -2032,8 +2072,11 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
         object.minimal().bitmask_type().bitmask_flags().IS_NESTED(false);
         object.minimal().bitmask_type().bitmask_flags().IS_AUTOID_HASH(false);
 
-        for (const DynamicTypeMember& member : descriptor.get_all_members())
+        for (auto pm : descriptor.get_all_members())
         {
+            assert(pm);
+            const DynamicTypeMember& member = *pm;
+
             MinimalBitflag msm;
             msm.common().position(member.annotation_get_position()); // Position stored as annotation
             MD5 parent_bitfield_hash(member.get_name());
@@ -2084,8 +2127,11 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
         object._d(TypeKind::EK_COMPLETE);
         object.complete()._d(TypeKind::TK_ANNOTATION);
 
-        for (const DynamicTypeMember& member : descriptor.get_all_members())
+        for (auto pm : descriptor.get_all_members())
         {
+            assert(pm);
+            const DynamicTypeMember& member = *pm;
+
             CompleteAnnotationParameter msm;
             msm.name(member.get_name());
 
@@ -2149,8 +2195,11 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
         object._d(TypeKind::EK_COMPLETE);
         object.minimal()._d(TypeKind::TK_ANNOTATION);
 
-        for (const DynamicTypeMember& member : descriptor.get_all_members())
+        for (auto pm : descriptor.get_all_members())
         {
+            assert(pm);
+            const DynamicTypeMember& member = *pm;
+
             MinimalAnnotationParameter msm;
             msm.name(member.get_name());
 

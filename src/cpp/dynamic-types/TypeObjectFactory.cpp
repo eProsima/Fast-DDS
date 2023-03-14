@@ -2186,9 +2186,7 @@ std::string TypeObjectFactory::get_key_from_hash(
         const DynamicType_ptr annotation_descriptor_type,
         const NameHash& hash) const
 {
-    std::map<MemberId, const DynamicTypeMember*> members;
-    annotation_descriptor_type->get_all_members(members);
-    for (auto it : members)
+    for (auto it : annotation_descriptor_type->get_all_members_by_id())
     {
         std::string name = it.second->get_name();
         NameHash memberHash;

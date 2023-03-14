@@ -195,19 +195,28 @@ bool DynamicPubSubType::serialize(
 
 void DynamicPubSubType::UpdateDynamicTypeInfo()
 {
-    if (dynamic_type_)
+    m_isGetKeyDefined = false;
+
+    if (!dynamic_type_)
     {
-        m_isGetKeyDefined = dynamic_type_->key_annotation();
+        return;
+    }
 
-        std::map<MemberId, const DynamicTypeMember*> membersMap;
-        dynamic_type_->get_all_members(membersMap);
-        for (auto it = membersMap.begin(); it != membersMap.end(); ++it)
+    m_typeSize = static_cast<uint32_t>(DynamicData::getMaxCdrSerializedSize(dynamic_type_) + 4);
+    setName(dynamic_type_->get_name().c_str());
+
+    if(m_isGetKeyDefined = dynamic_type_->key_annotation())
+    {
+        return;
+    }
+
+    for (const DynamicTypeMember* pm : dynamic_type_->get_all_members())
+    {
+        assert(pm);
+        if(pm->key_annotation())
         {
-            m_isGetKeyDefined |= it->second->key_annotation();
+            return;
         }
-
-        m_typeSize = static_cast<uint32_t>(DynamicData::getMaxCdrSerializedSize(dynamic_type_) + 4);
-        setName(dynamic_type_->get_name().c_str());
     }
 }
 

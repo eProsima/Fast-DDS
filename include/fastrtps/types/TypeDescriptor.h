@@ -258,25 +258,22 @@ public:
      *            The collection use should not outlive this Dynamic object.
      * @return list<@ref DynamicTypeMember>
      */
-    RTPS_DllAPI const std::list<DynamicTypeMember>& get_all_members() const;
+    RTPS_DllAPI const std::list<const DynamicTypeMember*> get_all_members() const;
 
     /**
      * Populates an associative collection of member references indexed by @ref MemberId
      * @attention This method is not thread safe. The returned collection use should not outlive this Dynamic object.
-     * @param[in, out] members map<@ref MemberId, @ref DynamicTypeMember> collection to populate
-     * @return standard @ref ReturnCode_t
+     * @return members map<@ref MemberId, @ref DynamicTypeMember> collection to populate
+
      */
-    RTPS_DllAPI ReturnCode_t get_all_members(
-            std::map<MemberId, const DynamicTypeMember*>& members) const;
+    RTPS_DllAPI std::map<MemberId, const DynamicTypeMember*> get_all_members_by_id() const;
 
     /**
      * Populates an associative collection of member references indexed by name
      * @attention This method is not thread safe. The returned collection use should not outlive this Dynamic object.
-     * @param[in, out] members map<@ref std::string, @ref DynamicTypeMember> collection to populate
-     * @return standard @ref ReturnCode_t
+     * @return members map<@ref std::string, @ref DynamicTypeMember> collection to populate
      */
-    RTPS_DllAPI ReturnCode_t get_all_members_by_name(
-            std::map<std::string, const DynamicTypeMember*>& members) const;
+    RTPS_DllAPI std::map<std::string, const DynamicTypeMember*> get_all_members_by_name() const;
 
     /**
      * Queries current number of members

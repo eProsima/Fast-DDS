@@ -24,6 +24,7 @@
 #endif // if defined(__has_include) && __has_include(<version>)
 
 #include <iomanip>
+#include <algorithm>
 
 using namespace eprosima::fastrtps::types;
 
@@ -131,15 +132,43 @@ ReturnCode_t TypeDescriptor::copy_from(
 
 bool TypeDescriptor::operator==(const TypeDescriptor& descriptor) const
 {
-    return name_ == descriptor.name_ &&
-           kind_ == descriptor.kind_ &&
-           base_type_ == descriptor.base_type_ &&
-           discriminator_type_ == descriptor.discriminator_type_ &&
-           bound_ == descriptor.bound_ &&
-           element_type_ == descriptor.element_type_ &&
-           key_element_type_ == descriptor.key_element_type_ &&
-           annotation_ == descriptor.annotation_ &&
-           members_ == descriptor.members_;
+    // Resolve alias dependencies
+    const TypeDescriptor* a = this;
+    const TypeDescriptor* b = &descriptor;
+
+    while ( a->kind_ == TypeKind::TK_ALIAS )
+    {
+        assert(a->base_type_);
+        a = a->base_type_.get();
+    };
+
+    while ( b->kind_ == TypeKind::TK_ALIAS )
+    {
+        assert(b->base_type_);
+        b = b->base_type_.get();
+    };
+
+    return a->name_ == b->name_ &&
+           a->kind_ == b->kind_ &&
+           a->bound_ == b->bound_ &&
+           a->annotation_ == b->annotation_ &&
+           a->members_ == b->members_ &&
+           (a->base_type_ == b->base_type_ || (
+               a->base_type_ &&
+               b->base_type_ &&
+               *a->base_type_ == *b->base_type_)) &&
+           (a->discriminator_type_ == b->discriminator_type_ || (
+               a->discriminator_type_ &&
+               b->discriminator_type_ &&
+               *a->discriminator_type_ == *b->discriminator_type_)) &&
+           (a->element_type_ == b->element_type_ || (
+               a->element_type_ &&
+               b->element_type_ &&
+               *a->element_type_ == *b->element_type_)) &&
+           (a->key_element_type_ == b->key_element_type_ || (
+               a->key_element_type_ &&
+               b->key_element_type_ &&
+               *a->key_element_type_ == *b->key_element_type_));
 }
 
 bool TypeDescriptor::operator!=(const TypeDescriptor& descriptor) const
@@ -364,23 +393,56 @@ void TypeDescriptor::set_name(
     name_ = std::move(name);
 }
 
-const std::list<DynamicTypeMember>& TypeDescriptor::get_all_members() const
+const std::list<const DynamicTypeMember*> TypeDescriptor::get_all_members() const
 {
-    return members_;
+    std::list<const DynamicTypeMember*> res;
+
+    // retrieve members from the base classes
+    if(base_type_)
+    {
+        res = base_type_->get_all_members();
+    }
+
+    // populate the local members
+    std::transform(
+        members_.begin(),
+        members_.end(),
+        std::back_inserter(res),
+        [](const DynamicTypeMember& m) { return &m; });
+
+    return res;
 }
 
-ReturnCode_t TypeDescriptor::get_all_members_by_name(
-        std::map<std::string, const DynamicTypeMember*>& members) const
+std::map<std::string, const DynamicTypeMember*> TypeDescriptor::get_all_members_by_name() const
 {
-    members = std::map<std::string, const DynamicTypeMember*>(member_by_name_.begin(), member_by_name_.end());
-    return ReturnCode_t::RETCODE_OK;
+    std::map<std::string, const DynamicTypeMember*> res;
+
+    // retrieve members from the base classes
+    if(base_type_)
+    {
+        res = base_type_->get_all_members_by_name();
+    }
+
+    // populate the local members
+    res.insert(member_by_name_.begin(), member_by_name_.end());
+
+    return res;
 }
 
-ReturnCode_t TypeDescriptor::get_all_members(
-        std::map<MemberId, const DynamicTypeMember*>& members) const
+std::map<MemberId, const DynamicTypeMember*> TypeDescriptor::get_all_members_by_id() const
 {
-    members = std::map<MemberId, const DynamicTypeMember*>(member_by_id_.begin(), member_by_id_.end());
-    return ReturnCode_t::RETCODE_OK;
+    std::map<MemberId, const DynamicTypeMember*> res;
+
+    // retrieve members from the base classes
+    if(base_type_)
+    {
+        res = base_type_->get_all_members_by_id();
+    }
+
+    // populate the local members
+    res.insert(member_by_id_.begin(), member_by_id_.end());
+
+    return res;
 }
 
 ReturnCode_t TypeDescriptor::get_member_by_index(

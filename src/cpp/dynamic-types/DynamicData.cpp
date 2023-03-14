@@ -121,13 +121,10 @@ void DynamicData::create_members(
     }
     else if (type_->get_member_count() > 0)
     {
-        std::map<MemberId,const DynamicTypeMember*> members;
-        auto res = type_->get_all_members(members);
-        assert(res == ReturnCode_t::RETCODE_OK);
-
-        for(auto& m : members)
+        for(auto pm : type_->get_all_members())
         {
-            values_[m.second->get_id()] = pData->clone_value(m.second->get_id(), m.second->get_kind());
+            assert(pm);
+            values_[pm->get_id()] = pData->clone_value(pm->get_id(), pm->get_kind());
         }
     }
     else
@@ -140,69 +137,59 @@ void DynamicData::create_members(
 void DynamicData::create_members(
         DynamicType_ptr pType)
 {
-    std::map<MemberId, const DynamicTypeMember*> members;
-    if (pType->get_all_members(members) == ReturnCode_t::RETCODE_OK)
+    if (pType->is_complex_kind())
     {
-        if (pType->is_complex_kind())
-        {
-            // Bitmasks and enums register their members but only manages one value.
-            if (pType->get_kind() == TypeKind::TK_BITMASK || pType->get_kind() == TypeKind::TK_ENUM)
-            {
-                add_value(pType->get_kind(), MEMBER_ID_INVALID);
-            }
-
-            for (const auto& m : members)
-            {
-                if (pType->get_kind() != TypeKind::TK_BITMASK && pType->get_kind() != TypeKind::TK_ENUM)
-                {
-                    DynamicData* data = DynamicDataFactory::get_instance()->create_data(m.second->get_type());
-                    if (m.second->get_kind() != TypeKind::TK_BITSET &&
-                        m.second->get_kind() != TypeKind::TK_STRUCTURE &&
-                        m.second->get_kind() != TypeKind::TK_UNION &&
-                        m.second->get_kind() != TypeKind::TK_SEQUENCE &&
-                        m.second->get_kind() != TypeKind::TK_ARRAY &&
-                        m.second->get_kind() != TypeKind::TK_MAP)
-                    {
-                        std::string def_value = m.second->annotation_get_default();
-                        if (!def_value.empty())
-                        {
-                            data->set_value(def_value);
-                        }
-                    }
-#ifdef DYNAMIC_TYPES_CHECKING
-                    complex_values_.insert(std::make_pair(m.first, data));
-#else
-                    values_.insert(std::make_pair(m.first, data));
-#endif // ifdef DYNAMIC_TYPES_CHECKING
-                }
-            }
-
-            // Set the default value for unions.
-            if (pType->get_kind() == TypeKind::TK_UNION)
-            {
-                bool defaultValue = false;
-                // Search the default value.
-                for (const auto& m : members)
-                {
-                    if (m.second->is_default_union_value())
-                    {
-                        set_union_id(m.first);
-                        defaultValue = true;
-                        break;
-                    }
-                }
-
-                // If there isn't a default value... set the first element of the union
-                if (!defaultValue && members.size() > 0)
-                {
-                    set_union_id(get_member_id_at_index(0));
-                }
-            }
-        }
-        else
+        // Bitmasks and enums register their members but only manages one value.
+        if (pType->get_kind() == TypeKind::TK_BITMASK || pType->get_kind() == TypeKind::TK_ENUM)
         {
             add_value(pType->get_kind(), MEMBER_ID_INVALID);
         }
+        else
+        {
+            for (auto pm : pType->get_all_members())
+            {
+                assert(pm);
+
+                DynamicData* data = DynamicDataFactory::get_instance()->create_data(pm->get_type());
+                if (pm->get_kind() != TypeKind::TK_BITSET &&
+                        pm->get_kind() != TypeKind::TK_STRUCTURE &&
+                        pm->get_kind() != TypeKind::TK_UNION &&
+                        pm->get_kind() != TypeKind::TK_SEQUENCE &&
+                        pm->get_kind() != TypeKind::TK_ARRAY &&
+                        pm->get_kind() != TypeKind::TK_MAP)
+                {
+                    std::string def_value = pm->annotation_get_default();
+                    if (!def_value.empty())
+                    {
+                        data->set_value(def_value);
+                    }
+                }
+#ifdef DYNAMIC_TYPES_CHECKING
+                complex_values_.insert(std::make_pair(pm->get_id(), data));
+#else
+                values_.insert(std::make_pair(pm->get_id(), data));
+#endif // ifdef DYNAMIC_TYPES_CHECKING
+
+                // Set the default value for unions.
+                if (pType->get_kind() == TypeKind::TK_UNION &&
+                        pm->is_default_union_value())
+                {
+                    set_union_id(pm->get_id());
+                }
+            }
+        }
+
+        // If there isn't a default value... set the first element of the union
+        if (pType->get_kind() == TypeKind::TK_UNION &&
+                get_union_id() == MEMBER_ID_INVALID &&
+                pType->get_member_count())
+        {
+            set_union_id(get_member_id_at_index(0));
+        }
+    }
+    else
+    {
+        add_value(pType->get_kind(), MEMBER_ID_INVALID);
     }
 }
 
@@ -3898,11 +3885,7 @@ ReturnCode_t DynamicData::set_enum_value(
 #ifdef DYNAMIC_TYPES_CHECKING
     if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
     {
-        std::map<MemberId, const DynamicTypeMember*> col;
-        type_->get_all_members(col);
-        auto it = col.find(value);
-
-        if(it == col.end())
+        if(!type_->exists_member_by_id(value))
         {
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
@@ -3938,11 +3921,8 @@ ReturnCode_t DynamicData::set_enum_value(
     {
         if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
         {
-            std::map<MemberId, const DynamicTypeMember*> col;
-            type_->get_all_members(col);
-            auto it = col.find(value);
 
-            if(it == col.end())
+            if(!type_->exists_member_by_id(value))
             {
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
@@ -3986,11 +3966,15 @@ ReturnCode_t DynamicData::get_enum_value(
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
 
-        auto it = type_->get_all_members().begin();
-        std::advance(it, uint32_value_);
-        value = it->get_name();
+        MemberDescriptor md;
+        ReturnCode_t res = get_member(md, uint32_value_);
 
-        return ReturnCode_t::RETCODE_OK;
+        if(!!res)
+        {
+            value = md.get_name();
+        }
+
+        return res;
     }
     else if (id != MEMBER_ID_INVALID)
     {
@@ -4020,11 +4004,15 @@ ReturnCode_t DynamicData::get_enum_value(
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
 
-            auto it = type_->get_all_members().begin();
-            std::advance(it, inner_value);
-            value = it->get_name();
+            MemberDescriptor md;
+            ReturnCode_t res = type_->get_member(md, inner_value);
 
-            return ReturnCode_t::RETCODE_OK;
+            if(!!res)
+            {
+                value = md.get_name();
+            }
+
+            return res;
         }
         else if (id != MEMBER_ID_INVALID)
         {
@@ -4049,16 +4037,13 @@ ReturnCode_t DynamicData::set_enum_value(
 #ifdef DYNAMIC_TYPES_CHECKING
     if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
     {
-        std::map<std::string, const DynamicTypeMember*> col;
-        type_->get_all_members_by_name(col);
-        auto it = col.find(value);
-
-        if(it == col.end())
+        auto mid = get_member_id_by_name(value);
+        if (mid == MEMBER_ID_INVALID)
         {
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
 
-        uint32_value_ = it->get_index();
+        uint32_value_ = mid;
         return ReturnCode_t::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
@@ -4089,16 +4074,13 @@ ReturnCode_t DynamicData::set_enum_value(
     {
         if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
         {
-            std::map<std::string, const DynamicTypeMember*> col;
-            type_->get_all_members_by_name(col);
-            auto it = col.find(value);
-
-            if(it == col.end())
+            auto mid = get_member_id_by_name(value);
+            if (mid == MEMBER_ID_INVALID)
             {
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
 
-            *((uint32_t*)itValue->second) = it->second->get_index();
+            *((uint32_t*)itValue->second) = mid;
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
