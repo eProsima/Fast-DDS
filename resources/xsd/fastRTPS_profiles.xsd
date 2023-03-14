@@ -727,7 +727,7 @@
         ├ total_participants [0~1],
         ├ total_readers      [0~1],
         ├ total_writers      [0~1],
-        ├ send_buffers ???   [0~1], ???
+        ├ send_buffers       [0~1],
         ├ max_properties     [uint32],
         ├ max_user_data      [uint32],
         └ max_partitions     [uint32] -->
@@ -744,14 +744,14 @@
             <xs:element name="total_participants" type="allocationConfigType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="total_readers" type="allocationConfigType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="total_writers" type="allocationConfigType" minOccurs="0" maxOccurs="1"/>
-            <!-- <xs:element name="send_buffers" minOccurs="0" maxOccurs="1">
+            <xs:element name="send_buffers" minOccurs="0" maxOccurs="1">
                 <xs:complexType>
                     <xs:all>
                         <xs:element name="preallocated_number" type="uint32" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="dynamic" type="boolean" minOccurs="0" maxOccurs="1"/>
                     </xs:all>
                 </xs:complexType>
-            </xs:element> -->
+            </xs:element>
             <xs:element name="max_properties" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="max_user_data" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="max_partitions" type="uint32" minOccurs="0" maxOccurs="1"/>
