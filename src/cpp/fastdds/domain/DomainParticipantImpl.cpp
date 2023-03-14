@@ -499,6 +499,16 @@ void DomainParticipantImpl::set_topic_listener(
             });
 }
 
+void DomainParticipantImpl::inconsistent_topic_found(
+        const TopicProxyFactory* factory)
+{
+    std::lock_guard<std::mutex> lock(mtx_topics_);
+    factory->for_each([](const std::unique_ptr<TopicProxy>& proxy)
+            {
+                proxy->notify_inconsistent_topic();
+            });
+}
+
 ReturnCode_t DomainParticipantImpl::delete_topic(
         const Topic* topic)
 {

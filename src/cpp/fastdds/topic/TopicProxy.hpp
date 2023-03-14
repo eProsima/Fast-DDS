@@ -123,7 +123,12 @@ public:
 
     void inconsistent_topic_found() override
     {
-        impl_->inconsistent_topic_found(user_topic_.get());
+        impl_->inconsistent_topic_found();
+    }
+
+    void notify_inconsistent_topic()
+    {
+        // TODO(Miguel C): Implement this
     }
 
 private:

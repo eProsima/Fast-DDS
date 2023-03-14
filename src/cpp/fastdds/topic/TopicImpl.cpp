@@ -206,11 +206,9 @@ TopicListener* TopicImpl::get_listener_for(
     return participant_->get_listener_for(status);
 }
 
-void TopicImpl::inconsistent_topic_found(
-        Topic* topic)
+void TopicImpl::inconsistent_topic_found()
 {
-    // TODO(Miguel C): Implement this
-    static_cast<void>(topic);
+    participant_->inconsistent_topic_found(factory_);
 }
 
 } // dds

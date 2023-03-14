@@ -270,6 +270,15 @@ public:
             TopicListener* listener,
             const StatusMask& mask);
 
+    /**
+     * Forward an inconsistent topic event to all the TopicProxy objects held by the same TopicProxy factory
+     * in a thread-safe way.
+     *
+     * @param factory  TopicProxyFactory managing the topic on which an inconsistent topic event has been triggered.
+     */
+    void inconsistent_topic_found(
+            const TopicProxyFactory* factory);
+
     ReturnCode_t delete_topic(
             const Topic* topic);
 
