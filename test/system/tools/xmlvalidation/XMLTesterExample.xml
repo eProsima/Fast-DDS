@@ -829,4 +829,8 @@
             </bitmask>
         </type>
     </types>
+
+    <library_settings>
+        <intraprocess_delivery>OFF</intraprocess_delivery>
+    </library_settings>
 </dds>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+    <library_settings>
+        <intraprocess_delivery>OFF</intraprocess_delivery> <!-- OFF | USER_DATA_ONLY | FULL -->
+    </library_settings>
     <profiles>
-        <library_settings>
-            <intraprocess_delivery>OFF</intraprocess_delivery> <!-- OFF | USER_DATA_ONLY | FULL -->
-        </library_settings>
         <!-- TRANSPORT -->
         <transport_descriptors>
             <transport_descriptor>

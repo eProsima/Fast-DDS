@@ -102,7 +102,7 @@
                 </data_sharing>
             </qos>
         </publisher>
-        <subscriber profile_name="sub_subscriber_profile">
+        <data_reader profile_name="sub_subscriber_profile">
             <topic>
                 <name>latency_intraprocess_pub2sub</name>
                 <dataType>LatencyType</dataType>
@@ -119,6 +119,11 @@
                     <kind>OFF</kind>
                 </data_sharing>
             </qos>
-        </subscriber>
+        </data_reader>
     </profiles>
+
+    <!-- INTRA-PROCESS -->
+    <library_settings>
+        <intraprocess_delivery>FULL</intraprocess_delivery>
+    </library_settings>
 </dds>
