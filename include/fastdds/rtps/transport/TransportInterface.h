@@ -17,12 +17,12 @@
 
 #include <memory>
 #include <vector>
+#include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/common/PortParameters.h>
 #include <fastdds/rtps/transport/TransportDescriptorInterface.h>
 #include <fastdds/rtps/transport/TransportReceiverInterface.h>
-#include <fastdds/rtps/attributes/PropertyPolicy.h>
 #include <fastdds/rtps/transport/SenderResource.h>
 
 namespace eprosima {

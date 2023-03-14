@@ -46,8 +46,8 @@
 #include <fastdds/rtps/writer/StatelessWriter.h>
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
-#include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/network/NetworkFactory.h>
+#include <rtps/participant/RTPSParticipantImpl.h>
 #include <security/OpenSSLInit.hpp>
 
 #define BUILTIN_ENDPOINT_PARTICIPANT_MESSAGE_SECURE_WRITER (1 << 20)

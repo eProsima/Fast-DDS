@@ -30,12 +30,11 @@
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
-#include <rtps/network/NetworkFactory.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
 #include <fastdds/core/policy/ParameterList.hpp>
-#include <fastrtps_deprecated/participant/ParticipantImpl.h>
+#include <rtps/network/NetworkFactory.h>
 
 #include <mutex>
 

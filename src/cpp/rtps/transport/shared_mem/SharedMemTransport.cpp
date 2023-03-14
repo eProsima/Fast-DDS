@@ -30,11 +30,11 @@
 #include <fastrtps/rtps/messages/MessageReceiver.h>
 
 #include <rtps/network/ReceiverResource.h>
-#include <rtps/transport/shared_mem/SHMLocator.hpp>
-#include <rtps/transport/shared_mem/SharedMemTransport.h>
-#include <rtps/transport/shared_mem/SharedMemSenderResource.hpp>
 #include <rtps/transport/shared_mem/SharedMemChannelResource.hpp>
 #include <rtps/transport/shared_mem/SharedMemManager.hpp>
+#include <rtps/transport/shared_mem/SharedMemSenderResource.hpp>
+#include <rtps/transport/shared_mem/SharedMemTransport.h>
+#include <rtps/transport/shared_mem/SHMLocator.hpp>
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 
 #define SHM_MANAGER_DOMAIN ("fastrtps")

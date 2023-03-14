@@ -18,11 +18,11 @@
 #include <cstring>
 #include <algorithm>
 
-#include <fastdds/rtps/transport/TransportInterface.h>
-#include <fastdds/rtps/transport/SenderResource.h>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/messages/CDRMessage.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
-#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/transport/SenderResource.h>
+#include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastrtps/utils/IPLocator.h>
 
 #include <rtps/network/ReceiverResource.h>
