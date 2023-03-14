@@ -128,7 +128,23 @@ public:
 
     void notify_inconsistent_topic()
     {
-        // TODO(Miguel C): Implement this
+        {
+            std::lock_guard<std::mutex> _(insonsistent_topic_mtx_);
+            insonsistent_topic_status_.total_count++;
+            insonsistent_topic_status_.total_count_change++;
+        }
+
+        StatusMask notify_status = StatusMask::inconsistent_topic();
+        TopicListener* listener = impl_->get_listener_for(notify_status, user_topic_.get());
+        if (listener != nullptr)
+        {
+            InconsistentTopicStatus callback_status;
+            if (get_inconsistent_topic_status(callback_status) == ReturnCode_t::RETCODE_OK)
+            {
+                listener->on_inconsistent_topic(user_topic_.get(), callback_status);
+            }
+        }
+        user_topic_->get_statuscondition().get_impl()->set_status(notify_status, true);
     }
 
 private:
