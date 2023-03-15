@@ -74,19 +74,32 @@ DynamicTypeBuilder::member_iterator DynamicTypeBuilder::add_empty_member(
         uint32_t index,
         const std::string& name)
 {
+    // inheritance corrections
+    uint32_t offset = 0;
+
+    if (base_type_)
+    {
+        offset = resolve_alias_type(*base_type_).get_member_count();
+    }
+
     // insert the new member
     member_iterator it;
-    if (index >= members_.size())
+    if (index >= members_.size() + offset)
     {
+        // adjust index
+        index = static_cast<uint32_t>(members_.size()) + offset;
         // at the end
-        index = uint32_t(members_.size());
         it = members_.emplace(members_.end(), index, MEMBER_ID_INVALID, name);
     }
     else
     {
+        // adjust index
+        int advance = std::max(int(index - offset), 0);
+        index = offset + advance;
+
         // move all the others
         it = members_.begin();
-        std::advance(it, index);
+        std::advance(it, advance);
         it = members_.emplace(it, index, name);
         // rename the others
         auto nit = it;

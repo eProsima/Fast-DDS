@@ -29,8 +29,10 @@
 #include "idl/BasicTypeObject.h"
 
 #include <tinyxml2.h>
-
 #include <gtest/gtest.h>
+
+#include <algorithm>
+#include <set>
 #include <tuple>
 
 using namespace eprosima::fastrtps;
@@ -329,6 +331,14 @@ public:
         return config_file_;
     }
 
+    struct order_member_desc
+        : public std::binary_function<const MemberDescriptor&, const MemberDescriptor&, bool>
+    {
+         result_type operator()(first_argument_type lhs, second_argument_type rhs ) const
+         {
+            return lhs.get_index() < rhs.get_index();
+         }
+    };
 };
 
 TEST_F(DynamicTypesTests, TypeDescriptors_unit_tests)
@@ -2330,7 +2340,7 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias_unit_tests)
     EXPECT_TRUE(child_alias_struct->equals(*child_struct));
 
     // • Checking nesting at various levels
-    int levels = 1;
+    int levels = 10;
     DynamicTypeBuilder_ptr nested_struct = child_struct,
                            nested_alias_struct = child_alias_struct;
 
@@ -2368,11 +2378,10 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias_unit_tests)
     EXPECT_TRUE(nested_struct->equals(*nested_alias_struct));
     EXPECT_TRUE(nested_alias_struct->equals(*nested_struct));
 
-    std::cout << *nested_struct << std::endl;
-    std::cout << *nested_alias_struct << std::endl;
+//    std::cout << *nested_struct << std::endl;
+//    std::cout << *nested_alias_struct << std::endl;
 
-    // • Checking serialization of nested aliases
-
+    // • Checking serialization of aliases
     auto nested_type = nested_struct->build();
     DynamicData* data = DynamicDataFactory::get_instance()->create_data(nested_type),
                * data2 = DynamicDataFactory::get_instance()->create_data(nested_type);
@@ -2383,13 +2392,30 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias_unit_tests)
     uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
-    ASSERT_TRUE(payload.length == payloadSize);
+    ASSERT_EQ(payload.length, payloadSize);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
     ASSERT_EQ(DynamicDataFactory::get_instance()->delete_data(data), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), ReturnCode_t::RETCODE_OK);
 
+    // • Checking serialization of nested aliases
+    auto alias_type = alias_struct->build();
+    data = DynamicDataFactory::get_instance()->create_data(alias_type),
+    data2 = DynamicDataFactory::get_instance()->create_data(alias_type);
+    ASSERT_NE(data, nullptr);
+    ASSERT_NE(data2, nullptr);
+
+    DynamicPubSubType pubsubAliasType(alias_type);
+    payloadSize = static_cast<uint32_t>(pubsubAliasType.getSerializedSizeProvider(data)());
+    SerializedPayload_t alias_payload(payloadSize);
+    ASSERT_TRUE(pubsubAliasType.serialize(data, &alias_payload));
+    ASSERT_EQ(alias_payload.length, payloadSize);
+    ASSERT_TRUE(pubsubAliasType.deserialize(&alias_payload, data2));
+    ASSERT_TRUE(data2->equals(data));
+
+    ASSERT_EQ(DynamicDataFactory::get_instance()->delete_data(data), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DynamicDataFactory::get_instance()->delete_data(data2), ReturnCode_t::RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_multi_alias_unit_tests)
@@ -2399,18 +2425,24 @@ TEST_F(DynamicTypesTests, DynamicType_multi_alias_unit_tests)
     uint32_t length = 15;
     std::string name = "ALIAS";
     std::string name2 = "ALIAS2";
-    DynamicTypeBuilder_cptr base_builder = factory.create_string_builder(length);
-    ASSERT_TRUE(base_builder);
-    DynamicTypeBuilder_ptr base_alias_builder = factory.create_alias_builder(*base_builder->build(), name);
-    ASSERT_TRUE(base_alias_builder);
-    DynamicType_ptr base_type = base_alias_builder->build();
+
+    DynamicType_ptr base_type = factory.create_string_type(length);
     ASSERT_TRUE(base_type);
-    EXPECT_EQ(base_type->get_name(), name);
-    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_builder(*base_alias_builder->build(), name2);
+
+    // alias
+    DynamicTypeBuilder_ptr base_alias_builder = factory.create_alias_builder(*base_type, name);
+    ASSERT_TRUE(base_alias_builder);
+    DynamicType_ptr alias_type = base_alias_builder->build();
+    ASSERT_TRUE(alias_type);
+    EXPECT_EQ(alias_type->get_name(), name);
+
+    // alias of an alias
+    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_builder(*alias_type, name2);
     ASSERT_TRUE(alias_builder);
     DynamicType_ptr created_type = alias_builder->build();
     ASSERT_TRUE(created_type);
     EXPECT_EQ(created_type->get_name(), name2);
+
     DynamicData* aliasData = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(aliasData != nullptr);
 
@@ -2431,6 +2463,7 @@ TEST_F(DynamicTypesTests, DynamicType_multi_alias_unit_tests)
         ASSERT_NE(aliasData->set_string_value("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID), ReturnCode_t::RETCODE_OK);
     }
 
+    ASSERT_EQ(DynamicDataFactory::get_instance()->delete_data(aliasData), ReturnCode_t::RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
@@ -3603,50 +3636,146 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
     ASSERT_TRUE(struct_type_builder);
 
     // Add members to the struct.
-    ASSERT_TRUE(struct_type_builder->add_member(0, "int32", base_type) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(struct_type_builder->add_member(1, "int64", base_type2) == ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(struct_type_builder->add_member(0, "int32", base_type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(struct_type_builder->add_member(1, "int64", base_type2), ReturnCode_t::RETCODE_OK);
 
     auto struct_type = struct_type_builder->build();
     ASSERT_TRUE(struct_type);
 
     // Create the child struct.
-    DynamicTypeBuilder_ptr child_struct_type_builder = factory.create_child_struct_builder(*struct_type_builder->build());
+    DynamicTypeBuilder_ptr child_struct_type_builder = factory.create_child_struct_builder(*struct_type);
     ASSERT_TRUE(child_struct_type_builder);
 
     // Add a new member to the child struct.
-    ASSERT_TRUE(child_struct_type_builder->add_member(2, "child_int32", base_type) == ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(child_struct_type_builder->add_member(2, "child_int32", base_type), ReturnCode_t::RETCODE_OK);
 
     {
         eprosima::fastdds::dds::Log::ScopeLogs _("disable"); // avoid expected errors logging
         // try to add a member to override one of the parent struct.
-        ASSERT_FALSE(child_struct_type_builder->add_member(3, "int32", base_type) == ReturnCode_t::RETCODE_OK);
+        EXPECT_NE(child_struct_type_builder->add_member(3, "int32", base_type), ReturnCode_t::RETCODE_OK);
     }
+
+    // Add a new member at front
+    EXPECT_EQ(child_struct_type_builder->add_member(0, 3, "first_child", base_type2), ReturnCode_t::RETCODE_OK);
+
+    // Add a new member at end
+    EXPECT_EQ(child_struct_type_builder->add_member(INDEX_INVALID, 4, "last_child", base_type2), ReturnCode_t::RETCODE_OK);
 
     auto child_struct_type = child_struct_type_builder->build();
     ASSERT_TRUE(child_struct_type);
+
+    // Validate the member related APIs
+
+    EXPECT_EQ(child_struct_type->get_member_count(), 5u);
+
+    MemberDescriptor members[5];
+
+    EXPECT_EQ(child_struct_type->get_member(members[0], 0), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(members[0].get_name(), "int32");
+    EXPECT_EQ(members[0].get_index(), 0u);
+    EXPECT_EQ(members[0].get_id(), 0u);
+    EXPECT_EQ(*members[0].get_type(), *base_type);
+
+    EXPECT_EQ(child_struct_type->get_member(members[1], 1), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(members[1].get_name(), "int64");
+    EXPECT_EQ(members[1].get_index(), 1u);
+    EXPECT_EQ(members[1].get_id(), 1u);
+    EXPECT_EQ(*members[1].get_type(), *base_type2);
+
+    EXPECT_EQ(child_struct_type->get_member(members[2], 3), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(members[2].get_name(), "first_child");
+    EXPECT_EQ(members[2].get_index(), 2u);
+    EXPECT_EQ(members[2].get_id(), 3u);
+    EXPECT_EQ(*members[2].get_type(), *base_type2);
+
+    EXPECT_EQ(child_struct_type->get_member(members[3], 2), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(members[3].get_name(), "child_int32");
+    EXPECT_EQ(members[3].get_index(), 3u);
+    EXPECT_EQ(members[3].get_id(), 2u);
+    EXPECT_EQ(*members[3].get_type(), *base_type);
+
+    EXPECT_EQ(child_struct_type->get_member(members[4], 4), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(members[4].get_name(), "last_child");
+    EXPECT_EQ(members[4].get_index(), 4u);
+    EXPECT_EQ(members[4].get_id(), 4u);
+    EXPECT_EQ(*members[4].get_type(), *base_type2);
+
+    for (auto& m : members)
+    {
+        EXPECT_TRUE(child_struct_type->exists_member_by_name(m.get_name()));
+        EXPECT_TRUE(child_struct_type->exists_member_by_id(m.get_id()));
+        EXPECT_EQ(child_struct_type->get_member_id_by_name(m.get_name()), m.get_id());
+        EXPECT_EQ(child_struct_type->get_member_id_at_index(m.get_index()), m.get_id());
+
+        MemberDescriptor aux;
+        EXPECT_EQ(child_struct_type->get_member_by_index(aux, m.get_index()), ReturnCode_t::RETCODE_OK);
+        EXPECT_EQ(aux, m);
+
+        EXPECT_EQ(child_struct_type->get_member_by_name(aux, m.get_name()), ReturnCode_t::RETCODE_OK);
+        EXPECT_EQ(aux, m);
+    }
+
+    auto member_seq = child_struct_type->get_all_members();
+    EXPECT_EQ(member_seq.size(), 5u);
+    EXPECT_TRUE(std::equal(member_seq.begin(), member_seq.end(), members,
+            [](const MemberDescriptor* a, const MemberDescriptor& b) -> bool { return *a == b; }));
+
+    // ancillary collection
+    std::set<MemberDescriptor, DynamicTypesTests::order_member_desc> aux;
+
+    auto name_map = child_struct_type->get_all_members_by_name();
+    EXPECT_EQ(name_map.size(), 5u);
+    std::transform(name_map.begin(), name_map.end(), std::inserter(aux, aux.end()),
+            [](std::pair<const std::string, const DynamicTypeMember*>& p)
+            {
+                return *p.second;
+            });
+    EXPECT_TRUE(std::equal(aux.begin(), aux.end(), members));
+
+    aux.clear();
+    auto id_map = child_struct_type->get_all_members_by_id();
+    EXPECT_EQ(id_map.size(), 5u);
+    std::transform(id_map.begin(), id_map.end(), std::inserter(aux, aux.end()),
+            [](std::pair<const MemberId, const DynamicTypeMember*>& p)
+            {
+                return *p.second;
+            });
+    EXPECT_TRUE(std::equal(aux.begin(), aux.end(), members));
+
+    // Validating data management
+
     auto struct_data = DynamicDataFactory::get_instance()->create_data(child_struct_type);
     ASSERT_TRUE(struct_data != nullptr);
 
-    ASSERT_FALSE(struct_data->set_int32_value(10, 1) == ReturnCode_t::RETCODE_OK);
-    ASSERT_FALSE(struct_data->set_string_value("", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
+    // Setting invalid types should fail
+    EXPECT_NE(struct_data->set_int32_value(10, 1), ReturnCode_t::RETCODE_OK);
+    EXPECT_NE(struct_data->set_string_value("", MEMBER_ID_INVALID), ReturnCode_t::RETCODE_OK);
 
     // Set and get the parent values.
     int32_t test1(234);
-    ASSERT_TRUE(struct_data->set_int32_value(test1, 0) == ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(struct_data->set_int32_value(test1, 0), ReturnCode_t::RETCODE_OK);
     int32_t test2(0);
-    ASSERT_TRUE(struct_data->get_int32_value(test2, 0) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(test1 == test2);
+    EXPECT_EQ(struct_data->get_int32_value(test2, 0), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(test1, test2);
+
     int64_t test3(234);
-    ASSERT_TRUE(struct_data->set_int64_value(test3, 1) == ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(struct_data->set_int64_value(test3, 1), ReturnCode_t::RETCODE_OK);
     int64_t test4(0);
-    ASSERT_TRUE(struct_data->get_int64_value(test4, 1) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(test3 == test4);
+    EXPECT_EQ(struct_data->get_int64_value(test4, 1), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(test3, test4);
+
     // Set and get the child value.
-    int32_t test5(234);
-    ASSERT_TRUE(struct_data->set_int32_value(test5, 2) == ReturnCode_t::RETCODE_OK);
-    int32_t test6(0);
-    ASSERT_TRUE(struct_data->get_int32_value(test6, 2) == ReturnCode_t::RETCODE_OK);
-    ASSERT_TRUE(test5 == test6);
+    EXPECT_EQ(struct_data->set_int32_value(test1, 2), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(struct_data->get_int32_value(test2, 2), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(test1, test2);
+
+    EXPECT_EQ(struct_data->set_int64_value(test3, 3), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(struct_data->get_int64_value(test4, 3), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(test3, test4);
+
+    EXPECT_EQ(struct_data->set_int64_value(test3, 4), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(struct_data->get_int64_value(test4, 4), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(test3, test4);
 
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(child_struct_type);

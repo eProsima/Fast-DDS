@@ -115,7 +115,6 @@ DynamicData* DynamicDataFactory::create_data(
                 {
                     newData = create_data(pType->get_base_type());
                     // newData->set_type_name(pType->get_name());
-                    // TODO BARR: refactor
                 }
                 else if (pType->get_kind() == TypeKind::TK_STRUCTURE || pType->get_kind() == TypeKind::TK_BITSET)
                 {
@@ -126,7 +125,6 @@ DynamicData* DynamicDataFactory::create_data(
                         dynamic_datas_.push_back(newData);
                     }
 #endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-                    create_members(newData, pType->get_base_type());
                 }
             }
             else
