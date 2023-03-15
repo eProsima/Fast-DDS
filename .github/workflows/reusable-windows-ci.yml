@@ -507,7 +507,7 @@ jobs:
                       "--packages-up-to", "fastrtps",
                       "--mixin", $translate["${{ matrix.cmake-config }}"]
 
-          $cmakeargs = '--cmake-args ${{ inputs.cmake-args }} '
+          $cmakeargs = '--cmake-args --no-warn-unused-cli ${{ inputs.cmake-args }} '
 
           # On Windows we must load the developer environment and chose a config
           $pwshmodule = gi $Env:VSPWSH
