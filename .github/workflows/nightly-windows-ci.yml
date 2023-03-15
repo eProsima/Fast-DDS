@@ -1,0 +1,22 @@
+name: Fast-DDS Windows CI
+
+on:
+  schedule:
+    - cron: '0 1 * * *'
+
+jobs:
+  nightly-sec-windows-ci:
+    uses: ./.github/workflows/reusable-windows-ci.yml
+    with:
+      label: 'nightly-sec-windows-ci'
+      cmake-args: "-DSECURITY=ON"
+      ctest-args: "-LE xfail"
+      force-meta-branch: 'nightly'
+
+  nightly-nosec-windows-ci:
+    uses: ./.github/workflows/reusable-windows-ci.yml
+    with:
+      label: 'nightly-sec-windows-ci'
+      cmake-args: "-DSECURITY=OFF"
+      ctest-args: "-LE xfail"
+      force-meta-branch: 'nightly'
