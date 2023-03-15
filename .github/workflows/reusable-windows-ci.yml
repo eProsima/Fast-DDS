@@ -457,7 +457,6 @@ jobs:
           "::endgroup::"
 
           # create source dir and download the sources
-          mkdir src
           vcs import src --input fastrtps.repos --skip-existing
 
       - name: Retrieve colcon.meta file
