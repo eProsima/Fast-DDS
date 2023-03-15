@@ -675,6 +675,8 @@ XMLP_ret XMLParser::parseXMLEnumDynamicType(
     }
 
     DynamicTypeBuilder_ptr typeBuilder = DynamicTypeBuilderFactory::get_instance().create_enum_builder();
+    typeBuilder->set_name(enumName);
+
     uint32_t currValue = 0;
     for (tinyxml2::XMLElement* literal = p_root->FirstChildElement(ENUMERATOR);
             literal != nullptr; literal = literal->NextSiblingElement(ENUMERATOR))

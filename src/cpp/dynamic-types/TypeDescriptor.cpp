@@ -707,9 +707,9 @@ std::ostream& eprosima::fastrtps::types::operator<<(std::ostream& os, const Type
     if (td.get_member_count())
     {
         os << manips << "members:";
-        for(const auto& m : td.get_all_members())
+        for(const DynamicTypeMember* m : td.get_all_members())
         {
-            os << m;
+            os << *m;
         }
     }
 
