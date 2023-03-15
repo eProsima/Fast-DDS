@@ -205,7 +205,9 @@ void DynamicPubSubType::UpdateDynamicTypeInfo()
     m_typeSize = static_cast<uint32_t>(DynamicData::getMaxCdrSerializedSize(dynamic_type_) + 4);
     setName(dynamic_type_->get_name().c_str());
 
-    if(m_isGetKeyDefined = dynamic_type_->key_annotation())
+    m_isGetKeyDefined = dynamic_type_->key_annotation();
+
+    if (m_isGetKeyDefined)
     {
         return;
     }

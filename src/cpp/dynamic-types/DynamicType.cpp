@@ -346,8 +346,9 @@ bool DynamicType::deserialize(
     }
 
     // check data and type are related
-    assert(kind_ == data.get_kind()
-        || data.type_->is_subclass(*this));
+    assert(kind_ == data.get_kind() ||
+           kind_ == TypeKind::TK_ALIAS ||
+           data.type_->is_subclass(*this));
 
     switch (get_kind())
     {
@@ -602,11 +603,6 @@ bool DynamicType::deserialize(
 
         case TypeKind::TK_STRUCTURE:
         {
-            // delegate in base clases if any
-            if (base_type_ && !base_type_->deserialize(data, cdr))
-            {
-                return false;
-            }
 
 #ifdef DYNAMIC_TYPES_CHECKING
             auto& value_col = data.complex_values_;
@@ -623,6 +619,9 @@ bool DynamicType::deserialize(
 
                 MemberId id = get_member_id_at_index(i);
                 std::tie(member_desc, found) = get_member(id);
+
+                // collection nodes initialized on construction
+                assert(found);
 
                 if (found)
                 {
@@ -769,12 +768,11 @@ bool DynamicType::deserialize(
             }
             break;
         }
-
         case TypeKind::TK_ALIAS:
-            break;
+            assert(base_type_);
+            return base_type_->deserialize(data, cdr);
     }
     return true;
-
 }
 
 size_t DynamicType::getCdrSerializedSize(
@@ -789,10 +787,11 @@ size_t DynamicType::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
     // check data and type are related
-    assert(kind_ == data.get_kind()
-        || data.type_->is_subclass(*this));
+    assert(kind_ == data.get_kind() ||
+           kind_ == TypeKind::TK_ALIAS ||
+           data.type_->is_subclass(*this));
 
-    switch (kind_)
+    switch (get_kind())
     {
         default:
             break;
@@ -893,11 +892,6 @@ size_t DynamicType::getCdrSerializedSize(
 
         case TypeKind::TK_STRUCTURE:
         {
-            // calculate inheritance overhead
-            if (base_type_)
-            {
-                current_alignment += base_type_->getCdrSerializedSize(data, current_alignment);
-            }
 
 #ifdef DYNAMIC_TYPES_CHECKING
             auto& value_col = data.complex_values_;
@@ -913,6 +907,9 @@ size_t DynamicType::getCdrSerializedSize(
 
                 MemberId id = get_member_id_at_index(i);
                 std::tie(member_desc, found) = get_member(id);
+
+                // all values should be filled on construction
+                assert(found);
 
                 if (found)
                 {
@@ -1002,7 +999,8 @@ size_t DynamicType::getCdrSerializedSize(
             break;
         }
         case TypeKind::TK_ALIAS:
-            break;
+            assert(base_type_);
+            return base_type_->getCdrSerializedSize(data, current_alignment);
     }
 
     return current_alignment - initial_alignment;
@@ -1420,8 +1418,9 @@ void DynamicType::serialize(
     }
 
     // check data and type are related
-    assert(kind_ == data.get_kind()
-        || data.type_->is_subclass(*this));
+    assert(kind_ == data.get_kind() ||
+           kind_ == TypeKind::TK_ALIAS ||
+           data.type_->is_subclass(*this));
 
     switch (get_kind())
     {
@@ -1654,11 +1653,6 @@ void DynamicType::serialize(
 
         case TypeKind::TK_STRUCTURE:
         {
-            // delegate in base clases if any
-            if (base_type_)
-            {
-                base_type_->serialize(data, cdr);
-            }
 
 #ifdef DYNAMIC_TYPES_CHECKING
             auto& value_col = data.complex_values_;
@@ -1673,6 +1667,9 @@ void DynamicType::serialize(
 
                 MemberId id = get_member_id_at_index(i);
                 std::tie(member_desc, found) = get_member(id);
+
+                // collection nodes initialized on construction
+                assert(found);
 
                 if (found)
                 {
@@ -1725,7 +1722,8 @@ void DynamicType::serialize(
             break;
         }
         case TypeKind::TK_ALIAS:
-            break;
+            assert(base_type_);
+            return base_type_->serialize(data, cdr);
     }
 }
 

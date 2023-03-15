@@ -32,9 +32,7 @@ void DynamicDataHelper::print(
         {
             case TypeKind::TK_STRUCTURE:
             {
-                std::map<MemberId, const DynamicTypeMember*> members;
-                data->type_->get_all_members(members);
-                for (auto it : members)
+                for (auto it : data->type_->get_all_members_by_id())
                 {
                     print_member(const_cast<DynamicData*>(data), it.second->get_descriptor());
                 }
@@ -332,9 +330,7 @@ void DynamicDataHelper::print_complex_element(
         case TypeKind::TK_BITSET:
         {
             std::cout << "<struct/bitset>" << std::endl;
-            std::map<types::MemberId, const types::DynamicTypeMember*> members;
-            st_data->type_->get_all_members(members);
-            for (auto it : members)
+            for (auto it : data->type_->get_all_members_by_id())
             {
                 print_member(st_data, it.second->get_descriptor(), tabs + "\t");
             }
@@ -357,8 +353,7 @@ void DynamicDataHelper::print_complex_element(
         case TypeKind::TK_MAP:
         {
             std::cout << "<map>" << std::endl;
-            std::map<types::MemberId, const types::DynamicTypeMember*> members;
-            st_data->type_->get_all_members(members);
+            auto members = st_data->type_->get_all_members_by_id();
             size_t size = st_data->get_item_count();
             for (size_t i = 0; i < size; ++i)
             {
@@ -414,9 +409,7 @@ void DynamicDataHelper::print_member(
         {
             DynamicData* st_data = data->loan_value(desc.get_id());
             std::cout << "<struct/bitset>" << std::endl;
-            std::map<types::MemberId, const types::DynamicTypeMember*> members;
-            desc.get_type()->get_all_members(members);
-            for (auto it : members)
+            for (auto it : data->type_->get_all_members_by_id())
             {
                 print_member(st_data, it.second->get_descriptor(), tabs + "\t");
             }
@@ -444,8 +437,7 @@ void DynamicDataHelper::print_member(
         {
             std::cout << "<map>" << std::endl;
             DynamicData* st_data = data->loan_value(desc.get_id());
-            std::map<types::MemberId, const types::DynamicTypeMember*> members;
-            desc.get_type()->get_all_members(members);
+            auto members = desc.get_type()->get_all_members_by_id();
             size_t size = data->get_item_count();
             for (size_t i = 0; i < size; ++i)
             {

@@ -115,6 +115,8 @@ protected:
 
     void refresh_indexes();
 
+    static const DynamicType& resolve_alias_type(const DynamicType& alias);
+
     /**
      * Returns the state of the @ref DynamicType or @ref DynamicTypeBuilder object
      * @param[out] descriptor object state

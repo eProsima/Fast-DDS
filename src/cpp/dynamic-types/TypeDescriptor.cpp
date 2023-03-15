@@ -109,6 +109,19 @@ void TypeDescriptor::refresh_indexes()
     }
 }
 
+const DynamicType& TypeDescriptor::resolve_alias_type(const DynamicType& type)
+{
+    const DynamicType* a = &type;
+
+    while ( a->get_kind() == TypeKind::TK_ALIAS )
+    {
+        assert(a->base_type_);
+        a = a->base_type_.get();
+    };
+
+    return *a;
+}
+
 void TypeDescriptor::clean()
 {
     annotation_.clear();
@@ -398,9 +411,9 @@ const std::list<const DynamicTypeMember*> TypeDescriptor::get_all_members() cons
     std::list<const DynamicTypeMember*> res;
 
     // retrieve members from the base classes
-    if(base_type_)
+    if (base_type_)
     {
-        res = base_type_->get_all_members();
+        res = resolve_alias_type(*base_type_).get_all_members();
     }
 
     // populate the local members
@@ -418,9 +431,9 @@ std::map<std::string, const DynamicTypeMember*> TypeDescriptor::get_all_members_
     std::map<std::string, const DynamicTypeMember*> res;
 
     // retrieve members from the base classes
-    if(base_type_)
+    if (base_type_)
     {
-        res = base_type_->get_all_members_by_name();
+        res = resolve_alias_type(*base_type_).get_all_members_by_name();
     }
 
     // populate the local members
@@ -434,9 +447,9 @@ std::map<MemberId, const DynamicTypeMember*> TypeDescriptor::get_all_members_by_
     std::map<MemberId, const DynamicTypeMember*> res;
 
     // retrieve members from the base classes
-    if(base_type_)
+    if (base_type_)
     {
-        res = base_type_->get_all_members_by_id();
+        res = resolve_alias_type(*base_type_).get_all_members_by_id();
     }
 
     // populate the local members
@@ -449,14 +462,32 @@ ReturnCode_t TypeDescriptor::get_member_by_index(
             MemberDescriptor& member,
             uint32_t index) const noexcept
 {
-    if(index >=  members_.size())
+    uint32_t offset = 0;
+
+    // try the base type
+    if (base_type_)
+    {
+        ReturnCode_t res = resolve_alias_type(*base_type_).get_member_by_index(member, index);
+        if (!res)
+        {
+            // correct the offset
+            offset = base_type_->get_member_count();
+        }
+        else
+        {
+            // we are done
+            return res;
+        }
+    }
+
+    if (index >= (offset + members_.size()))
     {
         EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting member by index, member not found.");
         return ReturnCode_t::RETCODE_ERROR;
     }
 
     auto it = members_.begin();
-    std::advance(it, index);
+    std::advance(it, index - offset);
     member = *it;
 
     return ReturnCode_t::RETCODE_OK;
@@ -466,6 +497,16 @@ ReturnCode_t TypeDescriptor::get_member_by_name(
         MemberDescriptor& member,
         const std::string& name) const noexcept
 {
+    // try the base type
+    if (base_type_)
+    {
+        ReturnCode_t res = resolve_alias_type(*base_type_).get_member_by_name(member, name);
+        if (!!res)
+        {
+            return res;
+        }
+    }
+
     auto it = member_by_name_.find(name);
     if (it != member_by_name_.end())
     {
@@ -487,6 +528,10 @@ TypeDescriptor::get_member(
     if (it != member_by_id_.end())
     {
         return {it->second, true};
+    }
+    else if (base_type_)
+    {
+        return resolve_alias_type(*base_type_).get_member(id);
     }
     else
     {
@@ -516,7 +561,14 @@ ReturnCode_t TypeDescriptor::get_member(
 
 uint32_t TypeDescriptor::get_member_count() const
 {
-    return static_cast<uint32_t>(members_.size());
+    std::size_t res{members_.size()};
+
+    if (base_type_)
+    {
+        res += resolve_alias_type(*base_type_).get_member_count();
+    }
+
+    return static_cast<uint32_t>(res);
 }
 
 MemberId TypeDescriptor::get_member_id_by_name(
@@ -528,6 +580,10 @@ MemberId TypeDescriptor::get_member_id_by_name(
     {
         return it->second->get_id();
     }
+    else if (base_type_)
+    {
+        return resolve_alias_type(*base_type_).get_member_id_by_name(name);
+    }
 
     return MEMBER_ID_INVALID;
 }
@@ -535,13 +591,34 @@ MemberId TypeDescriptor::get_member_id_by_name(
 MemberId TypeDescriptor::get_member_id_at_index(
         uint32_t index) const
 {
-    if(index >= members_.size())
+    MemberId res = MEMBER_ID_INVALID;
+    uint32_t offset = 0;
+
+    // try the base type
+    if (base_type_)
     {
+        res = resolve_alias_type(*base_type_).get_member_id_at_index(index);
+        if (res == MEMBER_ID_INVALID)
+        {
+            // correct the offset
+            offset = base_type_->get_member_count();
+        }
+        else
+        {
+            // we are done
+            return res;
+        }
+    }
+
+    if(index >= (offset + members_.size()))
+    {
+        // index out of boundaries
         return MEMBER_ID_INVALID;
     }
 
+    // retrieve from local collection
     auto it = members_.begin();
-    std::advance(it, index);
+    std::advance(it, index - offset);
     assert(it->get_index() == index);
     return it->get_id();
 }

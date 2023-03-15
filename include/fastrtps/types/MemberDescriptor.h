@@ -84,6 +84,19 @@ public:
 
     /**
      * convenience constructor
+     * @param[in] index desired position in the collection (zero based)
+     * @param[in] id @ref MemberId new member's identifier
+     * @param[in] name std::string new member's name
+     * @param[in] type @ref DynamicType new member's type
+     */
+    RTPS_DllAPI MemberDescriptor(
+            uint32_t index,
+            MemberId id,
+            const std::string& name,
+            DynamicType_ptr type);
+
+    /**
+     * convenience constructor
      * @remark Default index value assures it is appended to the collection.
      * @param[in] id @ref MemberId new member's identifier
      * @param[in] name std::string new member's name
