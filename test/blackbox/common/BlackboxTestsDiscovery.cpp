@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "fastdds/rtps/common/CDRMessage_t.h"
+#include <thread>
 #ifndef _WIN32
 #include <stdlib.h>
 #endif // _WIN32
@@ -1799,4 +1801,128 @@ TEST(Discovery, ServerClientEnvironmentSetUpDNS)
 
     ASSERT_TRUE(load_environment_server_info(text, output));
     ASSERT_EQ(output, standard);
+}
+
+TEST(Discovery, RemoteBuiltinEndpointHonoringPubWriterSubReader)
+{
+
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    auto reader_test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto writer_test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+
+    uint32_t num_reader_heartbeat = 0;
+    uint32_t num_reader_acknack = 0;
+
+    reader_test_transport->drop_heartbeat_messages_filter_ = [&num_reader_heartbeat](CDRMessage_t&)
+            {
+                num_reader_heartbeat++;
+                return false;
+            };
+
+    reader_test_transport->drop_ack_nack_messages_filter_ = [&num_reader_acknack](CDRMessage_t&)
+            {
+                num_reader_acknack++;
+                return false;
+            };
+
+    uint32_t num_writer_heartbeat = 0;
+    uint32_t num_writer_acknack = 0;
+
+    writer_test_transport->drop_heartbeat_messages_filter_ = [&num_writer_heartbeat](CDRMessage_t&)
+            {
+                num_writer_heartbeat++;
+                return false;
+            };
+
+    writer_test_transport->drop_ack_nack_messages_filter_ = [&num_writer_acknack](CDRMessage_t&)
+            {
+                num_writer_acknack++;
+                return false;
+            };
+
+    // OK - 3-3
+    reader.disable_builtin_transport().add_user_transport_to_pparams(reader_test_transport).
+            use_pub_writer_and_sub_reader();
+    writer.disable_builtin_transport().add_user_transport_to_pparams(writer_test_transport);
+
+    reader.init();
+    writer.init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery(std::chrono::seconds(3));
+    reader.wait_discovery(std::chrono::seconds(3));
+
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+
+    ASSERT_EQ(num_reader_heartbeat, 3);
+    ASSERT_EQ(num_reader_acknack, 3);
+    ASSERT_EQ(num_writer_heartbeat, 3);
+    ASSERT_EQ(num_writer_acknack, 3);
+
+}
+
+TEST(Discovery, RemoteBuiltinEndpointHonoringPubReaderSubWriter)
+{
+
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    auto reader_test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+    auto writer_test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
+
+    uint32_t num_reader_heartbeat = 0;
+    uint32_t num_reader_acknack = 0;
+
+    reader_test_transport->drop_heartbeat_messages_filter_ = [&num_reader_heartbeat](CDRMessage_t&)
+            {
+                num_reader_heartbeat++;
+                return false;
+            };
+
+    reader_test_transport->drop_ack_nack_messages_filter_ = [&num_reader_acknack](CDRMessage_t&)
+            {
+                num_reader_acknack++;
+                return false;
+            };
+
+    uint32_t num_writer_heartbeat = 0;
+    uint32_t num_writer_acknack = 0;
+
+    writer_test_transport->drop_heartbeat_messages_filter_ = [&num_writer_heartbeat](CDRMessage_t&)
+            {
+                num_writer_heartbeat++;
+                return false;
+            };
+
+    writer_test_transport->drop_ack_nack_messages_filter_ = [&num_writer_acknack](CDRMessage_t&)
+            {
+                num_writer_acknack++;
+                return false;
+            };
+
+    reader.disable_builtin_transport().add_user_transport_to_pparams(reader_test_transport);
+    writer.disable_builtin_transport().add_user_transport_to_pparams(writer_test_transport).
+            use_pub_reader_and_sub_writer();
+
+    reader.init();
+    writer.init();
+
+    ASSERT_TRUE(reader.isInitialized());
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery.
+    writer.wait_discovery(std::chrono::seconds(3));
+    reader.wait_discovery(std::chrono::seconds(3));
+
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+
+    ASSERT_EQ(num_reader_heartbeat, 3);
+    ASSERT_EQ(num_reader_acknack, 3);
+    ASSERT_EQ(num_writer_heartbeat, 3);
+    ASSERT_EQ(num_writer_acknack, 3);
 }

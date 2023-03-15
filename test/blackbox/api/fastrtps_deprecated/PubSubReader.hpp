@@ -977,6 +977,18 @@ public:
         return *this;
     }
 
+    PubSubReader& use_pub_writer_and_sub_reader()
+    {
+        participant_attr_.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader ^= true;
+        return *this;
+    }
+
+    PubSubReader& use_pub_reader_and_sub_writer()
+    {
+        participant_attr_.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter ^= true;
+        return *this;
+    }
+
     PubSubReader& setSubscriberIDs(
             uint8_t UserID,
             uint8_t EntityID)

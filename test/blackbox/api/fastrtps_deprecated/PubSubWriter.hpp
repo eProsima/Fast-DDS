@@ -988,6 +988,18 @@ public:
         return *this;
     }
 
+    PubSubWriter& use_pub_writer_and_sub_reader()
+    {
+        participant_attr_.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader ^= true;
+        return *this;
+    }
+
+    PubSubWriter& use_pub_reader_and_sub_writer()
+    {
+        participant_attr_.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter ^= true;
+        return *this;
+    }
+
     PubSubWriter& property_policy(
             const eprosima::fastrtps::rtps::PropertyPolicy& property_policy)
     {

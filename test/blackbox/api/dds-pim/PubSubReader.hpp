@@ -1445,6 +1445,20 @@ public:
 
 #endif // if HAVE_SQLITE3
 
+    PubSubReader& use_pub_writer_and_sub_reader()
+    {
+        participant_qos_.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader
+            ^= true;
+        return *this;
+    }
+
+    PubSubReader& use_pub_reader_and_sub_writer()
+    {
+        participant_qos_.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter
+            ^= true;
+        return *this;
+    }
+
     bool update_partition(
             const std::string& partition)
     {
