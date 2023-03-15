@@ -2378,9 +2378,6 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias_unit_tests)
     EXPECT_TRUE(nested_struct->equals(*nested_alias_struct));
     EXPECT_TRUE(nested_alias_struct->equals(*nested_struct));
 
-//    std::cout << *nested_struct << std::endl;
-//    std::cout << *nested_alias_struct << std::endl;
-
     // • Checking serialization of aliases
     auto nested_type = nested_struct->build();
     DynamicData* data = DynamicDataFactory::get_instance()->create_data(nested_type),
@@ -3304,8 +3301,6 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
-    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
-
     // Check items count with removes
     ASSERT_TRUE(data->get_item_count() == 2);
     ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
@@ -3365,31 +3360,28 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
     std::string sEnumTest;
     ASSERT_FALSE(data->get_enum_value(sEnumTest, MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
 
-    //// SERIALIZATION TEST
-    //MapStruct seq;
-    //MapStructPubSubType seqpb;
+    // SERIALIZATION TEST
+    MapStruct seq;
+    MapStructPubSubType seqpb;
 
-    //uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
-    //SerializedPayload_t dynamic_payload(payloadSize3);
-    //ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
-    //ASSERT_TRUE(dynamic_payload.length == payloadSize3);
-    //ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
+    uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+    SerializedPayload_t dynamic_payload(payloadSize3);
+    ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+    ASSERT_TRUE(dynamic_payload.length == payloadSize3);
+    ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
 
-    //uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
-    //SerializedPayload_t static_payload(static_payloadSize);
-    //ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
-    //ASSERT_TRUE(static_payload.length == static_payloadSize);
-    //types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
-    //ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
-    //ASSERT_TRUE(data3->equals(data));
+    uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
+    SerializedPayload_t static_payload(static_payloadSize);
+    ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
+    ASSERT_TRUE(static_payload.length == static_payloadSize);
+    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+    ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+    ASSERT_TRUE(data3->equals(data));
 
-    //ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
-    //ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
-    //ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
-
-    // Delete the map
-    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data2) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data2) == ReturnCode_t::RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_map_of_maps_unit_tests)
@@ -3522,27 +3514,27 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps_unit_tests)
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
-    //// SERIALIZATION TEST
-    //MapMapStruct seq;
-    //MapMapStructPubSubType seqpb;
+    // SERIALIZATION TEST
+    MapMapStruct seq;
+    MapMapStructPubSubType seqpb;
 
-    //uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
-    //SerializedPayload_t dynamic_payload(payloadSize3);
-    //ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
-    //ASSERT_TRUE(dynamic_payload.length == payloadSize3);
-    //ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
+    uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+    SerializedPayload_t dynamic_payload(payloadSize3);
+    ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+    ASSERT_TRUE(dynamic_payload.length == payloadSize3);
+    ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
 
-    //uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
-    //SerializedPayload_t static_payload(static_payloadSize);
-    //ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
-    //ASSERT_TRUE(static_payload.length == static_payloadSize);
-    //types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_map_type);
-    //ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
-    //ASSERT_TRUE(data3->equals(data));
+    uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
+    SerializedPayload_t static_payload(static_payloadSize);
+    ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
+    ASSERT_TRUE(static_payload.length == static_payloadSize);
+    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_map_type);
+    ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+    ASSERT_TRUE(data3->equals(data));
 
     ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
-    //ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
 }
 
 TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
@@ -4116,6 +4108,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_EnumStruct_test)
         enum_builder->add_member(0, "A");
         enum_builder->add_member(1, "B");
         enum_builder->add_member(2, "C");
+        enum_builder->set_name("MyEnum");
 
         // Struct EnumStruct
         DynamicTypeBuilder_ptr es_builder = factory.create_struct_builder();
@@ -4129,7 +4122,6 @@ TEST_F(DynamicTypesTests, DynamicType_XML_EnumStruct_test)
     }
 }
 
-/*
 TEST_F(DynamicTypesTests, DynamicType_XML_AliasStruct_test)
 {
     using namespace xmlparser;
@@ -4137,33 +4129,37 @@ TEST_F(DynamicTypesTests, DynamicType_XML_AliasStruct_test)
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("AliasStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("AliasStruct");
 
-        // Enum
-        DynamicTypeBuilder_ptr enum_builder = m_factory->create_enum_builder();
-        enum_builder->add_empty_member(0, "A");
-        enum_builder->add_empty_member(1, "B");
-        enum_builder->add_empty_member(2, "C");
-        enum_builder->set_name("MyEnum");
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        // Alias
-        DynamicTypeBuilder_ptr alias_builder = m_factory->create_alias_builder(enum_builder.get(), "MyAliasEnum");
+    // Enum
+    DynamicTypeBuilder_ptr enum_builder = factory.create_enum_builder();
+    enum_builder->add_member(0, "A");
+    enum_builder->add_member(1, "B");
+    enum_builder->add_member(2, "C");
+    enum_builder->set_name("MyEnum");
+    DynamicType_ptr enum_type = enum_builder->build();
 
-        // Struct AliasStruct
-        DynamicTypeBuilder_ptr aliass_builder_ptr = m_factory->create_struct_builder();
-        aliass_builder_ptr->add_member(0, "my_alias", alias_builder.get());
-        aliass_builder_ptr->set_name("AliasStruct");
+    // Alias
+    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_builder(*enum_type, "MyAliasEnum");
+    DynamicType_ptr alias_type = alias_builder->build();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(aliass_builder_ptr->build().get()));
+    // Struct AliasStruct
+    DynamicTypeBuilder_ptr struct_alias_builder = factory.create_struct_builder();
+    struct_alias_builder->add_member(0, "my_alias", alias_type);
+    struct_alias_builder->set_name("AliasStruct");
+    DynamicType_ptr struct_alias_type = struct_alias_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(), *struct_alias_type);
+    ASSERT_TRUE(pbType->GetDynamicType()->equals(*struct_alias_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
+/*
 TEST_F(DynamicTypesTests, DynamicType_XML_AliasAliasStruct_test)
 {
     using namespace xmlparser;
