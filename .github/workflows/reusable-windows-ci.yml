@@ -563,9 +563,13 @@ jobs:
 
       - name: Test
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') &&
-                ((steps.test.outcome == 'success') &&
-                (steps.build.outputs.BuildWarningsErrors == 0 ||
-                contains(steps.build.outputs.BuildWarningsErrors, 'warning'))) }}
+                (
+                  steps.build.outcome == 'success' &&
+                  (
+                    steps.build.outputs.BuildWarningsErrors == 0 ||
+                    contains(steps.build.outputs.BuildWarningsErrors, 'warning')
+                  )
+                ) }}
         id: test
         run: |
           # Create a junit file for test results
