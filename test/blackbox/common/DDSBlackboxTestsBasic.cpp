@@ -33,10 +33,18 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/types/TypesBase.h>
+#include <fastdds/core/policy/ParameterSerializer.hpp>
 
 #include "BlackboxTests.hpp"
+#include "../api/dds-pim/PubSubWriter.hpp"
+#include "../api/dds-pim/PubSubReader.hpp"
+//#include "PubSubReader.hpp"
+//#include "PubSubWriter.hpp"
 #include "../types/HelloWorldPubSubTypes.h"
+#include "../types/FixedSized.h"
+#include "../types/FixedSizedPubSubTypes.h"
 
 namespace eprosima {
 namespace fastdds {
@@ -269,6 +277,175 @@ TEST(DDSBasic, MultithreadedReaderCreationDoesNotDeadlock)
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_subscriber(subscriber));
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->delete_topic(topic));
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, factory->delete_participant(participant));
+}
+
+/**
+* Read a parameterList from a CDRMessage
+* @param[in] msg Reference to the message.
+* @param[out] exists_pid_related_sample_identity True if the parameter is inside msg.
+* @param[out] exists_pid_custom_related_sample_identity True if the parameter is inside msg.
+* @return true if parsing was correct, false otherwise.
+*/
+bool readParameterListfromCDRMsg(
+        fastrtps::rtps::CDRMessage_t& msg,
+        bool& exists_pid_related_sample_identity,
+        bool& exists_pid_custom_related_sample_identity)
+{
+    uint32_t qos_size = 0;
+
+    auto parameter_process = [&](
+        fastrtps::rtps::CDRMessage_t* msg,
+        const ParameterId_t pid,
+        uint16_t plength)
+            {
+                switch (pid)
+                {
+                    case PID_CUSTOM_RELATED_SAMPLE_IDENTITY:
+                    {
+                        if (plength >= 24)
+                        {
+                            ParameterSampleIdentity_t p(pid, plength);
+                            if (!fastdds::dds::ParameterSerializer<ParameterSampleIdentity_t>::read_from_cdr_message(p,
+                                    msg, plength))
+                            {
+                                return false;
+                            }
+                            exists_pid_custom_related_sample_identity = true;
+                        }
+                        break;
+                    }
+                    case (PID_RELATED_SAMPLE_IDENTITY):
+                    {
+                        if (plength >= 24)
+                        {
+                            ParameterSampleIdentity_t p(pid, plength);
+                            if (!fastdds::dds::ParameterSerializer<ParameterSampleIdentity_t>::read_from_cdr_message(p,
+                                    msg, plength))
+                            {
+                                return false;
+                            }
+                            exists_pid_related_sample_identity = true;
+                        }
+                        break;
+                    }
+
+                    default:
+                        break;
+                }
+                return true;
+            };
+
+    uint32_t original_pos = msg.pos;
+    bool is_sentinel = false;
+    while (!is_sentinel)
+    {
+        msg.pos = original_pos + qos_size;
+
+        ParameterId_t pid{PID_SENTINEL};
+        uint16_t plength = 0;
+        bool valid = true;
+        valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
+        valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, &plength);
+
+        if (pid == PID_SENTINEL)
+        {
+            // PID_SENTINEL is always considered of length 0
+            plength = 0;
+            is_sentinel = true;
+        }
+
+        qos_size += (4 + plength);
+
+        // Align to 4 byte boundary and prepare for next iteration
+        qos_size = (qos_size + 3) & ~3;
+
+        if (!valid || ((msg.pos + plength) > msg.length))
+        {
+            return false;
+        }
+        else if (!is_sentinel)
+        {
+            if (!parameter_process(&msg, pid, plength))
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+/**
+ * This test checks that PID_RELATED_SAMPLE_IDENTITY and
+ * PID_CUSTOM_RELATED_SAMPLE_IDENTITY are being sent as parameter,
+ * and that the new PID_RELATED_SAMPLE_IDENTITY is being properly
+ * interpreted.
+ */
+TEST(DDSBasic, PidRelatedSampleIdentity)
+{
+    PubSubWriter<HelloWorldPubSubType> reliable_writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reliable_reader(TEST_TOPIC_NAME);
+
+    // Test transport will be used in order to filter inlineQoS
+    auto test_transport = std::make_shared<eprosima::fastrtps::rtps::test_UDPv4TransportDescriptor>();
+    bool exists_pid_related_sample_identity = false;
+    bool exists_pid_custom_related_sample_identity = false;
+    bool another_debug_bool_flag = false;
+
+    test_transport->drop_data_messages_filter_ = [&exists_pid_related_sample_identity, &exists_pid_custom_related_sample_identity, &another_debug_bool_flag]
+            (eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
+            {
+                bool ret = readParameterListfromCDRMsg(msg, exists_pid_related_sample_identity, exists_pid_custom_related_sample_identity);
+                EXPECT_TRUE(ret);
+                return false;
+            };
+
+    reliable_writer.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+            .init();
+    ASSERT_TRUE(reliable_writer.isInitialized());
+
+    reliable_reader.reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS)
+            .disable_builtin_transport()
+            .add_user_transport_to_pparams(test_transport)
+            .init();
+    ASSERT_TRUE(reliable_reader.isInitialized());
+    
+    reliable_writer.wait_discovery();
+    reliable_reader.wait_discovery();
+
+    DataWriter& native_writer = reliable_writer.get_native_writer();
+
+    void* data = nullptr;
+    // Send reply associating it with the client request.
+    eprosima::fastrtps::rtps::WriteParams write_params;
+    eprosima::fastrtps::rtps::SampleIdentity related_sample_identity_;
+    //related_sample_identity_.writer_guid(native_writer->guid());
+    eprosima::fastrtps::rtps::GUID_t unknown_guid;
+    related_sample_identity_.writer_guid(unknown_guid);
+    eprosima::fastrtps::rtps::SequenceNumber_t seq(51, 24);
+    related_sample_identity_.sequence_number(seq);
+    write_params.related_sample_identity() = related_sample_identity_;
+
+    // Publish the new value, deduce the instance handle
+    bool write_ret = native_writer.write(&data, write_params);
+    ASSERT_EQ(true, write_ret);
+
+    DataReader& native_reader = reliable_reader.get_native_reader();
+
+    FixedSized read_data;
+    eprosima::fastdds::dds::SampleInfo info;
+    eprosima::fastrtps::Duration_t timeout;
+    timeout.seconds = 2;
+    while (!native_reader.wait_for_unread_message(timeout)) {};
+
+    ASSERT_EQ(eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK, native_reader.take_next_sample((void*)&read_data, &info));
+
+    ASSERT_TRUE(exists_pid_related_sample_identity);
+    ASSERT_TRUE(exists_pid_custom_related_sample_identity);
+
+    ASSERT_EQ(related_sample_identity_, info.related_sample_identity);
+
 }
 
 } // namespace dds
