@@ -280,14 +280,14 @@ TEST(DDSBasic, MultithreadedReaderCreationDoesNotDeadlock)
 }
 
 /**
-* Read a parameterList from a CDRMessage.
-* Search for PID_CUSTOM_RELATED_SAMPLE_IDENTITY and PID_RELATED_SAMPLE_IDENTITY.
-* Overwrite PID_CUSTOM_RELATED_SAMPLE_IDENTITY to just leave the new one in msg.
-* @param[in] msg Reference to the message.
-* @param[out] exists_pid_related_sample_identity True if the parameter is inside msg.
-* @param[out] exists_pid_custom_related_sample_identity True if the parameter is inside msg.
-* @return true if parsing was correct, false otherwise.
-*/
+ * Read a parameterList from a CDRMessage.
+ * Search for PID_CUSTOM_RELATED_SAMPLE_IDENTITY and PID_RELATED_SAMPLE_IDENTITY.
+ * Overwrite PID_CUSTOM_RELATED_SAMPLE_IDENTITY to just leave the new one in msg.
+ * @param[in] msg Reference to the message.
+ * @param[out] exists_pid_related_sample_identity True if the parameter is inside msg.
+ * @param[out] exists_pid_custom_related_sample_identity True if the parameter is inside msg.
+ * @return true if parsing was correct, false otherwise.
+ */
 bool readParameterListfromCDRMsg(
         fastrtps::rtps::CDRMessage_t& msg,
         bool& exists_pid_related_sample_identity,
@@ -400,13 +400,16 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
     bool exists_pid_custom_related_sample_identity = false;
     bool another_debug_bool_flag = false;
 
-    test_transport->drop_data_messages_filter_ = [&exists_pid_related_sample_identity, &exists_pid_custom_related_sample_identity, &another_debug_bool_flag]
-            (eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
+    test_transport->drop_data_messages_filter_ =
+            [&exists_pid_related_sample_identity, &exists_pid_custom_related_sample_identity,
+                    &another_debug_bool_flag]
+                (eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
             {
                 // Inside this filter, the two flags passed in register wether both PIDs are included in the msg to be sent.
                 // The legacy value is overwritten in order to sent a msg with only the standard PID_RELATED_SAMPLE_IDENTITY as valid parameter,
                 // so that the reader will only parse that one.
-                bool ret = readParameterListfromCDRMsg(msg, exists_pid_related_sample_identity, exists_pid_custom_related_sample_identity);
+                bool ret = readParameterListfromCDRMsg(msg, exists_pid_related_sample_identity,
+                                exists_pid_custom_related_sample_identity);
                 EXPECT_TRUE(ret);
                 return false;
             };
@@ -422,7 +425,7 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
             .add_user_transport_to_pparams(test_transport)
             .init();
     ASSERT_TRUE(reliable_reader.isInitialized());
-    
+
     reliable_writer.wait_discovery();
     reliable_reader.wait_discovery();
 
@@ -448,9 +451,12 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
     eprosima::fastdds::dds::SampleInfo info;
     eprosima::fastrtps::Duration_t timeout;
     timeout.seconds = 2;
-    while (!native_reader.wait_for_unread_message(timeout)) {};
+    while (!native_reader.wait_for_unread_message(timeout))
+    {
+    }
 
-    ASSERT_EQ(eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK, native_reader.take_next_sample((void*)&read_data, &info));
+    ASSERT_EQ(eprosima::fastrtps::types::ReturnCode_t::RETCODE_OK,
+            native_reader.take_next_sample((void*)&read_data, &info));
 
     ASSERT_TRUE(exists_pid_related_sample_identity);
     ASSERT_TRUE(exists_pid_custom_related_sample_identity);
