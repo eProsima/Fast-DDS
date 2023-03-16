@@ -675,8 +675,9 @@ jobs:
               # populate a log folder with the failures
               $logFolder = New-Item -Type Directory -Path test_logs
 
-              # copy the error reports from colcon logs
+              # copy the error reports and command log from colcon logs
               copy .\log\latest_test\fastrtps\stdout_stderr.log $logFolder
+              copy .\log\latest_test\fastrtps\command.log $logFolder
               "TestLogFolder=" + $logFolder.FullName | Out-File $Env:GITHUB_OUTPUT -Append
             }
 
