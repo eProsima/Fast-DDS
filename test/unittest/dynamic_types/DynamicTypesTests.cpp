@@ -5319,32 +5319,31 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitset_test)
     XMLProfileManager::DeleteInstance();
 }
 
-/*
 TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("MyBitMask");
 
-        DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("MyBitMask");
 
-        // Bitset
-        DynamicTypeBuilder_ptr builder_ptr = factory.create_bitmask_builder(8);
-        builder_ptr->add_empty_member(0, "flag0");
-        builder_ptr->add_empty_member(1, "flag1");
-        builder_ptr->add_empty_member(2, "flag2");
-        builder_ptr->add_empty_member(5, "flag5");
-        builder_ptr->set_name("MyBitMask");
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(builder_ptr->build().get()));
+    // Bitset
+    DynamicTypeBuilder_ptr builder = factory.create_bitmask_builder(8);
+    builder->add_member(0, "flag0");
+    builder->add_member(1, "flag1");
+    builder->add_member(2, "flag2");
+    builder->add_member(5, "flag5");
+    builder->set_name("MyBitMask");
+    DynamicType_ptr builder_type = builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(),*builder_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*builder_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST(TypeIdentifierTests, MinimalTypeIdentifierComparision)
@@ -5472,7 +5471,6 @@ TEST(TypeIdentifierTests, MinimalTypeIdentifierComparision)
     ASSERT_FALSE(unionUnion1 == wCharUnion2);
     ASSERT_FALSE(unionUnionStruct1 == unionUnion1);
 }
-*/
 
 int main(
         int argc,
