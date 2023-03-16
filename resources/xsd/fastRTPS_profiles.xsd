@@ -1137,35 +1137,35 @@
 
     <!--| LOCATOR TYPES DEFINITION |-->
     <!--udpv4 Locator:
-        ├ port    [uint32],
+        ├ port    [uint16],
         └ address [ipv4Address]-->
     <xs:complexType name="udpv4LocatorType">
         <xs:all>
-            <xs:element name="port" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="port" type="uint16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="address" type="ipv4Address" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
     <!--udpv6 Locator:
-        ├ port    [uint32],
+        ├ port    [uint16],
         └ address [ipv6Address]-->
     <xs:complexType name="udpv6LocatorType">
         <xs:all>
-            <xs:element name="port" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="port" type="uint16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="address" type="ipv6Address" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
     <!--tcpv4 Locator:
-        ├ port          [uint32],
-        ├ physical_port [uint32],
+        ├ port          [uint16],
+        ├ physical_port [uint16],
         ├ address       [ipv4Address],
         ├ unique_lan_id [string],
         └ wan_address   [ipv4AddressFormat]-->
     <xs:complexType name="tcpv4LocatorType">
         <xs:all>
-            <xs:element name="port" type="uint32" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="physical_port" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="port" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="physical_port" type="uint16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="address" type="ipv4Address" minOccurs="0" maxOccurs="1"/>
             <xs:element name="unique_lan_id" type="string" minOccurs="0" maxOccurs="1"/>
             <xs:element name="wan_address" type="ipv4AddressFormat" minOccurs="0" maxOccurs="1"/>
@@ -1173,13 +1173,13 @@
     </xs:complexType>
 
     <!--tcpv6 Locator:
-        ├ port          [uint32],
-        ├ physical_port [uint32],
+        ├ port          [uint16],
+        ├ physical_port [uint16],
         └ address       [ipv6Address]-->
     <xs:complexType name="tcpv6LocatorType">
         <xs:all>
-            <xs:element name="port" type="uint32" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="physical_port" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="port" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="physical_port" type="uint16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="address" type="ipv6Address" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
@@ -1189,11 +1189,11 @@
         |   att. cost        [uint8] (0~255),
         |   att. mask        [uint8] (1~31),
         |
-        ├ port    [uint32],
+        ├ port    [uint16],
         └ address [ipv4Address]-->
     <xs:complexType name="udpv4ExternalLocatorType">
         <xs:all>
-            <xs:element name="port" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="port" type="uint16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="address" type="ipv4Address" minOccurs="0" maxOccurs="1"/>
         </xs:all>
         <xs:attribute name="externality" default="1">
@@ -1227,11 +1227,11 @@
         |   att. cost        [uint8] (0~255),
         |   att. mask        [uint8] (1~127),
         |
-        ├ port    [uint32],
+        ├ port    [uint16],
         └ address [ipv6Address]-->
     <xs:complexType name="udpv6ExternalLocatorType">
         <xs:all>
-            <xs:element name="port" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="port" type="uint16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="address" type="ipv6Address" minOccurs="0" maxOccurs="1"/>
         </xs:all>
         <xs:attribute name="externality" default="1">
