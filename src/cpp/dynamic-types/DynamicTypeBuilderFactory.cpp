@@ -2480,6 +2480,7 @@ void DynamicTypeBuilderFactory::apply_type_annotations(
 }
 
 const int DynamicTypeBuilderFactory::indentation_index = std::ios_base::xalloc();
+const int DynamicTypeBuilderFactory::object_index = std::ios_base::xalloc();
 
 using namespace typekind_detail;
 

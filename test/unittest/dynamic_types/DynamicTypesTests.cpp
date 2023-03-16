@@ -4716,62 +4716,65 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ShortWStringStruct_test)
     XMLProfileManager::DeleteInstance();
 }
 
-/*
 TEST_F(DynamicTypesTests, DynamicType_XML_AliasStringStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("StructAliasString");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("StructAliasString");
 
-        // String
-        DynamicTypeBuilder_ptr string_builder = m_factory->create_string_builder();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        // Alias
-        DynamicTypeBuilder_ptr myAlias_builder = m_factory->create_alias_builder(string_builder.get(), "MyAliasString");
+    // String
+    DynamicType_ptr string_type = factory.create_string_type();
 
-        // Struct StructAliasString
-        DynamicTypeBuilder_ptr alias_string_builder_ptr = m_factory->create_struct_builder();
-        alias_string_builder_ptr->add_member(0, "my_alias_string", myAlias_builder.get());
-        alias_string_builder_ptr->set_name("StructAliasString");
+    // Alias
+    DynamicType_ptr myAlias_type = factory.create_alias_type(*string_type, "MyAliasString");
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(alias_string_builder_ptr->build().get()));
+    // Struct StructAliasString
+    DynamicTypeBuilder_ptr alias_string_builder = factory.create_struct_builder();
+    alias_string_builder->add_member(0, "my_alias_string", myAlias_type);
+    alias_string_builder->set_name("StructAliasString");
+    DynamicType_ptr alias_string_type = alias_string_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(), *alias_string_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*alias_string_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_StructAliasWString_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("StructAliasWString");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+        DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
         // wstring
-        DynamicTypeBuilder_ptr wstring_builder = m_factory->create_wstring_builder();
+        DynamicTypeBuilder_ptr wstring_builder = factory.create_builder_copy(
+                *factory.create_wstring_type());
+        wstring_builder->set_name("strings_255");
+        DynamicType_ptr wstring_type = wstring_builder->build();
 
         // Alias
-        DynamicTypeBuilder_ptr myAlias_builder =
-                m_factory->create_alias_builder(wstring_builder.get(), "MyAliasWString");
+        DynamicType_ptr myAlias_type =
+                factory.create_alias_type(*wstring_type, "MyAliasWString");
 
         // Struct StructAliasWString
-        DynamicTypeBuilder_ptr alias_wstring_builder_ptr = m_factory->create_struct_builder();
-        alias_wstring_builder_ptr->add_member(0, "my_alias_wstring", myAlias_builder.get());
-        alias_wstring_builder_ptr->set_name("StructAliasWString");
+        DynamicTypeBuilder_ptr alias_wstring_builder = factory.create_struct_builder();
+        alias_wstring_builder->add_member(0, "my_alias_wstring", myAlias_type);
+        alias_wstring_builder->set_name("StructAliasWString");
+        DynamicType_ptr alias_wstring_type = alias_wstring_builder->build();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(alias_wstring_builder_ptr->build().get()));
+        EXPECT_EQ(*pbType->GetDynamicType(), *alias_wstring_type);
+        EXPECT_TRUE(pbType->GetDynamicType()->equals(*alias_wstring_type));
 
         delete(pbType);
         XMLProfileManager::DeleteInstance();
@@ -4785,27 +4788,28 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArraytStruct_test)
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ArraytStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ArraytStruct");
 
-        // Int32
-        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        // Array
-        DynamicTypeBuilder_ptr array_builder = m_factory->create_array_builder(int32_builder.get(), { 2, 2, 2 });
+    // Int32
+    DynamicType_ptr int32_type = factory.create_int32_type();
 
-        // Struct ShortWStringStruct
-        DynamicTypeBuilder_ptr array_int32_builder_ptr = m_factory->create_struct_builder();
-        array_int32_builder_ptr->add_member(0, "my_array", array_builder.get());
-        array_int32_builder_ptr->set_name("ArraytStruct");
+    // Array
+    DynamicTypeBuilder_ptr array_builder = factory.create_array_builder(*int32_type, { 2, 2, 2 });
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(array_int32_builder_ptr->build().get()));
+    // Struct ShortWStringStruct
+    DynamicTypeBuilder_ptr array_int32_builder = factory.create_struct_builder();
+    array_int32_builder->add_member(0, "my_array", array_builder->build());
+    array_int32_builder->set_name("ArraytStruct");
+    DynamicType_ptr array_int32_type = array_int32_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(),*array_int32_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*array_int32_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayStruct_test)
@@ -4815,27 +4819,29 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayStruct_test)
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ArrayArrayStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ArrayArrayStruct");
 
-        // Typedef aka Alias
-        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
-        DynamicTypeBuilder_ptr array_builder = m_factory->create_array_builder(int32_builder.get(), { 2, 2 });
-        DynamicTypeBuilder_ptr myArray_builder = m_factory->create_alias_builder(array_builder.get(), "MyArray");
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        // Struct ArrayArrayStruct
-        DynamicTypeBuilder_ptr aas_builder = m_factory->create_struct_builder();
-        DynamicTypeBuilder_ptr aMyArray_builder = m_factory->create_array_builder(myArray_builder.get(), { 2, 2 });
-        aas_builder->add_member(0, "my_array_array", aMyArray_builder.get());
-        aas_builder->set_name("ArrayArrayStruct");
+    // Typedef aka Alias
+    DynamicTypeBuilder_ptr array_builder = factory.create_array_builder(
+            *factory.create_int32_type(),
+            { 2, 2 });
+    DynamicTypeBuilder_ptr myArray_builder = factory.create_alias_builder(*array_builder->build(), "MyArray");
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(aas_builder->build().get()));
+    // Struct ArrayArrayStruct
+    DynamicTypeBuilder_ptr aas_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr aMyArray_builder = factory.create_array_builder(*myArray_builder->build(), { 2, 2 });
+    aas_builder->add_member(0, "my_array_array", aMyArray_builder->build());
+    aas_builder->set_name("ArrayArrayStruct");
+    DynamicType_ptr aas_type = aas_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(), *aas_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*aas_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayArrayStruct_test)
@@ -4845,10 +4851,11 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayArrayStruct_test)
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ArrayArrayArrayStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ArrayArrayArrayStruct");
+
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
+
 //      Manual comparision test
 
 //           typedef long MyArray[2][2];
@@ -4879,54 +4886,63 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayArrayStruct_test)
 //            </struct>
 //           </type>
 
-        // Typedef aka Alias
-        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
-        DynamicTypeBuilder_ptr array_builder = m_factory->create_array_builder(int32_builder.get(), { 2, 2 });
-        DynamicTypeBuilder_ptr myArray_builder = m_factory->create_alias_builder(array_builder.get(), "MyArray");
+    // Typedef aka Alias
+    DynamicTypeBuilder_ptr array_builder = factory.create_array_builder(
+            *factory.create_int32_type(),
+            { 2, 2 });
+    DynamicTypeBuilder_ptr myArray_builder = factory.create_alias_builder(
+            *array_builder->build(),
+            "MyArray");
 
-        // Struct ArrayArrayStruct
-        DynamicTypeBuilder_ptr aas_builder = m_factory->create_struct_builder();
-        DynamicTypeBuilder_ptr aMyArray_builder = m_factory->create_array_builder(myArray_builder.get(), { 2, 2 });
-        aas_builder->add_member(0, "my_array_array", aMyArray_builder.get());
-        aas_builder->set_name("ArrayArrayStruct");
+    // Struct ArrayArrayStruct
+    DynamicTypeBuilder_ptr aas_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr aMyArray_builder = factory.create_array_builder(
+            *myArray_builder->build(),
+            { 2, 2 });
+    aas_builder->add_member(0, "my_array_array", aMyArray_builder->build());
+    aas_builder->set_name("ArrayArrayStruct");
 
-        // Struct ArrayArrayArrayStruct
-        DynamicTypeBuilder_ptr aaas_builder = m_factory->create_struct_builder();
-        DynamicTypeBuilder_ptr aas_array_builder = m_factory->create_array_builder(aas_builder.get(), { 2, 2 });
-        aaas_builder->add_member(0, "my_array_array_array", aas_array_builder.get());
-        aaas_builder->set_name("ArrayArrayArrayStruct");
+    // Struct ArrayArrayArrayStruct
+    DynamicTypeBuilder_ptr aaas_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr aas_array_builder = factory.create_array_builder(
+            *aas_builder->build(),
+            { 2, 2 });
+    aaas_builder->add_member(0, "my_array_array_array", aas_array_builder->build());
+    aaas_builder->set_name("ArrayArrayArrayStruct");
+    DynamicType_ptr aaas_type = aaas_builder->build();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(aaas_builder->build().get()));
+    EXPECT_EQ(*pbType->GetDynamicType(), *aaas_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*aaas_type));
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_SequenceStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("SequenceStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("SequenceStruct");
 
-        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
-        DynamicTypeBuilder_ptr seq_builder = m_factory->create_sequence_builder(int32_builder.get(), 2);
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        DynamicTypeBuilder_ptr seqs_builder = m_factory->create_struct_builder();
-        seqs_builder->add_member(0, "my_sequence", seq_builder.get());
-        seqs_builder->set_name("SequenceStruct");
+    DynamicTypeBuilder_ptr seq_builder = factory.create_sequence_builder(
+            *factory.create_int32_type(),
+            2);
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(seqs_builder->build().get()));
+    DynamicTypeBuilder_ptr seqs_builder = factory.create_struct_builder();
+    seqs_builder->add_member(0, "my_sequence", seq_builder->build());
+    seqs_builder->set_name("SequenceStruct");
+    DynamicType_ptr seqs_type = seqs_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(), *seqs_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*seqs_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_SequenceSequenceStruct_test)
@@ -4936,175 +4952,179 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SequenceSequenceStruct_test)
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("SequenceSequenceStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("SequenceSequenceStruct");
 
-        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
-        DynamicTypeBuilder_ptr seq_builder = m_factory->create_sequence_builder(int32_builder.get(), 2);
-        DynamicTypeBuilder_ptr alias_builder = m_factory->create_alias_builder(
-            seq_builder.get(), "my_sequence_sequence_inner");
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        DynamicTypeBuilder_ptr sss_builder = m_factory->create_struct_builder();
-        DynamicTypeBuilder_ptr seq_seq_builder = m_factory->create_sequence_builder(alias_builder.get(), 2);
-        sss_builder->add_member(0, "my_sequence_sequence", seq_seq_builder.get());
-        sss_builder->set_name("SequenceSequenceStruct");
+    DynamicTypeBuilder_ptr seq_builder = factory.create_sequence_builder(
+            *factory.create_int32_type(),
+            2);
+    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_builder(
+            *seq_builder->build(),
+            "my_sequence_sequence_inner");
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(sss_builder->build().get()));
+    DynamicTypeBuilder_ptr sss_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr seq_seq_builder = factory.create_sequence_builder(*alias_builder->build(), 2);
+    sss_builder->add_member(0, "my_sequence_sequence", seq_seq_builder->build());
+    sss_builder->set_name("SequenceSequenceStruct");
+    DynamicType_ptr sss_type = sss_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(), *sss_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*sss_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_MapStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("MapStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("MapStruct");
 
-        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
-        DynamicTypeBuilder_ptr map_builder = m_factory->create_map_builder(int32_builder.get(), int32_builder.get(), 7);
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        DynamicTypeBuilder_ptr maps_builder = m_factory->create_struct_builder();
-        maps_builder->add_member(0, "my_map", map_builder.get());
-        maps_builder->set_name("MapStruct");
+    DynamicTypeBuilder_ptr map_builder = factory.create_map_builder(
+            *factory.create_int32_type(),
+            *factory.create_int32_type(),
+            2);
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(maps_builder->build().get()));
+    DynamicTypeBuilder_ptr maps_builder = factory.create_struct_builder();
+    maps_builder->add_member(0, "my_map", map_builder->build());
+    maps_builder->set_name("MapStruct");
+    DynamicType_ptr maps_type = maps_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(), *maps_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*maps_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_MapMapStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("MapMapStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("MapMapStruct");
 
-        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
-        DynamicTypeBuilder_ptr map_builder = m_factory->create_map_builder(int32_builder.get(), int32_builder.get(), 7);
-        DynamicTypeBuilder_ptr alias_builder = m_factory->create_alias_builder(map_builder.get(), "my_map_map_inner");
-        DynamicTypeBuilder_ptr map_map_builder = m_factory->create_map_builder(alias_builder.get(),
-                        int32_builder.get(), 2);
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
+    DynamicType_ptr int32_type = factory.create_int32_type();
+    DynamicTypeBuilder_ptr map_builder = factory.create_map_builder(
+            *int32_type,
+            *int32_type,
+            2);
+    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_builder(
+            *map_builder->build(),
+            "my_map_map_inner");
+    DynamicTypeBuilder_ptr map_map_builder = factory.create_map_builder(
+            *int32_type,
+            *alias_builder->build(),
+            2);
 
-        DynamicTypeBuilder_ptr maps_builder = m_factory->create_struct_builder();
-        maps_builder->add_member(0, "my_map_map", map_map_builder.get());
-        maps_builder->set_name("MapMapStruct");
+    DynamicTypeBuilder_ptr maps_builder = factory.create_struct_builder();
+    maps_builder->add_member(0, "my_map_map", map_map_builder->build());
+    maps_builder->set_name("MapMapStruct");
+    DynamicType_ptr maps_type = maps_builder->build();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(maps_builder->build().get()));
+    EXPECT_EQ(*pbType->GetDynamicType(), *maps_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*maps_type));
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_StructStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("StructStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("StructStruct");
 
-        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
-        DynamicTypeBuilder_ptr int64_builder = m_factory->create_int64_builder();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        DynamicTypeBuilder_ptr structs_builder = m_factory->create_struct_builder();
-        structs_builder->add_member(0, "a", int32_builder.get());
-        structs_builder->add_member(1, "b", int64_builder.get());
-        structs_builder->set_name("StructStruct");
+    DynamicTypeBuilder_ptr structs_builder = factory.create_struct_builder();
+    structs_builder->add_member(0, "a", factory.create_int32_type());
+    structs_builder->add_member(1, "b", factory.create_int64_type());
+    structs_builder->set_name("StructStruct");
+    DynamicType_ptr structs_type = structs_builder->build();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(structs_builder->build().get()));
+    EXPECT_EQ(*pbType->GetDynamicType(), *structs_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*structs_type));
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_StructStructStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("StructStructStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("StructStructStruct");
 
-        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
-        DynamicTypeBuilder_ptr int64_builder = m_factory->create_int64_builder();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        DynamicTypeBuilder_ptr structs_builder = m_factory->create_struct_builder();
-        structs_builder->add_member(0, "a", int32_builder.get());
-        structs_builder->add_member(1, "b", int64_builder.get());
-        structs_builder->set_name("StructStruct");
+    DynamicTypeBuilder_ptr structs_builder = factory.create_struct_builder();
+    structs_builder->add_member(0, "a", factory.create_int32_type());
+    structs_builder->add_member(1, "b", factory.create_int64_type());
+    structs_builder->set_name("StructStruct");
 
-        DynamicTypeBuilder_ptr sss_builder = m_factory->create_struct_builder();
-        sss_builder->add_member(0, "child_struct", structs_builder.get());
-        sss_builder->add_member(1, "child_int64", int64_builder.get());
-        sss_builder->set_name("StructStructStruct");
+    DynamicTypeBuilder_ptr sss_builder = factory.create_struct_builder();
+    sss_builder->add_member(0, "child_struct", structs_builder->build());
+    sss_builder->add_member(1, "child_int64", factory.create_int64_type());
+    sss_builder->set_name("StructStructStruct");
+    DynamicType_ptr sss_type = sss_builder->build();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(sss_builder->build().get()));
+    EXPECT_EQ(*pbType->GetDynamicType(), *sss_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*sss_type));
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_SimpleUnionStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("SimpleUnionStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("SimpleUnionStruct");
 
-        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
-        DynamicTypeBuilder_ptr int64_builder = m_factory->create_int64_builder();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        DynamicTypeBuilder_ptr union_builder = m_factory->create_union_builder(int32_builder.get());
-        union_builder->add_member(0, "first", int32_builder.get(), "", { 0 }, true);
-        union_builder->add_member(1, "second", int64_builder.get(), "", { 1 }, false);
-        union_builder->set_name("SimpleUnion");
+    DynamicType_ptr int32_type = factory.create_int32_type();
 
+    DynamicTypeBuilder_ptr union_builder = factory.create_union_builder(*int32_type);
+    union_builder->add_member(0, "first", int32_type, "", std::vector<uint64_t>{ 0 }, true);
+    union_builder->add_member(1, "second", factory.create_int64_type(), "", std::vector<uint64_t>{ 1 }, false);
+    union_builder->set_name("SimpleUnion");
 
-        DynamicTypeBuilder_ptr us_builder = m_factory->create_struct_builder();
-        us_builder->add_member(0, "my_union", union_builder.get());
-        us_builder->set_name("SimpleUnionStruct");
+    DynamicTypeBuilder_ptr us_builder = factory.create_struct_builder();
+    us_builder->add_member(0, "my_union", union_builder->build());
+    us_builder->set_name("SimpleUnionStruct");
+    DynamicType_ptr us_type = us_builder->build();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(us_builder->build().get()));
+    EXPECT_EQ(*pbType->GetDynamicType(), *us_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*us_type));
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
+/*
 TEST_F(DynamicTypesTests, DynamicType_XML_UnionUnionStruct_test)
 {
     using namespace xmlparser;
@@ -5115,23 +5135,23 @@ TEST_F(DynamicTypesTests, DynamicType_XML_UnionUnionStruct_test)
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("UnionUnionStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+        DynamicTypeBuilderFactory* factory = DynamicTypeBuilderFactory::get_instance();
 
-        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
-        DynamicTypeBuilder_ptr int64_builder = m_factory->create_int64_builder();
+        DynamicTypeBuilder_ptr int32_builder = factory.create_int32_builder();
+        DynamicTypeBuilder_ptr int64_builder = factory.create_int64_builder();
 
-        DynamicTypeBuilder_ptr union_builder = m_factory->create_union_builder(int32_builder.get());
+        DynamicTypeBuilder_ptr union_builder = factory.create_union_builder(int32_builder.get());
         union_builder->add_member(0, "first", int32_builder.get(), "", { 0 }, true);
         union_builder->add_member(1, "second", int64_builder.get(), "", { 1 }, false);
         union_builder->set_name("SimpleUnion");
 
-        DynamicTypeBuilder_ptr union_union_builder = m_factory->create_union_builder(int32_builder.get());
+        DynamicTypeBuilder_ptr union_union_builder = factory.create_union_builder(int32_builder.get());
         union_union_builder->add_member(0, "first", int32_builder.get(), "", { 0 }, true);
         union_union_builder->add_member(1, "second", union_builder.get(), "", { 1 }, false);
         union_union_builder->set_name("UnionUnion");
 
 
-        DynamicTypeBuilder_ptr uus_builder = m_factory->create_struct_builder();
+        DynamicTypeBuilder_ptr uus_builder = factory.create_struct_builder();
         uus_builder->add_member(0, "my_union", union_union_builder.get());
         uus_builder->set_name("UnionUnionStruct");
 
@@ -5152,19 +5172,19 @@ TEST_F(DynamicTypesTests, DynamicType_XML_WCharUnionStruct_test)
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("WCharUnionStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+        DynamicTypeBuilderFactory* factory = DynamicTypeBuilderFactory::get_instance();
 
-        DynamicTypeBuilder_ptr wchar_builder = m_factory->create_char16_builder();
-        DynamicTypeBuilder_ptr int32_builder = m_factory->create_int32_builder();
-        DynamicTypeBuilder_ptr int64_builder = m_factory->create_int64_builder();
+        DynamicTypeBuilder_ptr wchar_builder = factory.create_char16_builder();
+        DynamicTypeBuilder_ptr int32_builder = factory.create_int32_builder();
+        DynamicTypeBuilder_ptr int64_builder = factory.create_int64_builder();
 
-        DynamicTypeBuilder_ptr union_builder = m_factory->create_union_builder(wchar_builder.get());
+        DynamicTypeBuilder_ptr union_builder = factory.create_union_builder(wchar_builder.get());
         union_builder->add_member(0, "first", int32_builder.get(), "", { 0 }, true);
         union_builder->add_member(1, "second", int64_builder.get(), "", { 1 }, false);
         union_builder->set_name("WCharUnion");
 
 
-        DynamicTypeBuilder_ptr us_builder = m_factory->create_struct_builder();
+        DynamicTypeBuilder_ptr us_builder = factory.create_struct_builder();
         us_builder->add_member(0, "my_union", union_builder.get());
         us_builder->set_name("WCharUnionStruct");
 
@@ -5251,13 +5271,13 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitset_test)
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("MyBitSet");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+        DynamicTypeBuilderFactory* factory = DynamicTypeBuilderFactory::get_instance();
 
-        DynamicTypeBuilder_ptr a_builder = m_factory->create_byte_builder();
-        DynamicTypeBuilder_ptr b_builder = m_factory->create_bool_builder();
-        DynamicTypeBuilder_ptr empty_builder = m_factory->create_byte_builder();
-        DynamicTypeBuilder_ptr c_builder = m_factory->create_uint16_builder();
-        DynamicTypeBuilder_ptr d_builder = m_factory->create_int16_builder();
+        DynamicTypeBuilder_ptr a_builder = factory.create_byte_builder();
+        DynamicTypeBuilder_ptr b_builder = factory.create_bool_builder();
+        DynamicTypeBuilder_ptr empty_builder = factory.create_byte_builder();
+        DynamicTypeBuilder_ptr c_builder = factory.create_uint16_builder();
+        DynamicTypeBuilder_ptr d_builder = factory.create_int16_builder();
         auto a_type = a_builder->build();
         auto b_type = b_builder->build();
         auto e_type = empty_builder->build();
@@ -5265,7 +5285,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitset_test)
         auto d_type = d_builder->build();
 
         // Bitset
-        DynamicTypeBuilder_ptr builder_ptr = m_factory->create_bitset_builder();
+        DynamicTypeBuilder_ptr builder_ptr = factory.create_bitset_builder();
         builder_ptr->add_member(0, "a", a_type);
         builder_ptr->add_member(1, "b", b_type);
         builder_ptr->add_member(2, "", e_type);
@@ -5302,10 +5322,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("MyBitMask");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+        DynamicTypeBuilderFactory* factory = DynamicTypeBuilderFactory::get_instance();
 
         // Bitset
-        DynamicTypeBuilder_ptr builder_ptr = m_factory->create_bitmask_builder(8);
+        DynamicTypeBuilder_ptr builder_ptr = factory.create_bitmask_builder(8);
         builder_ptr->add_empty_member(0, "flag0");
         builder_ptr->add_empty_member(1, "flag1");
         builder_ptr->add_empty_member(2, "flag2");
