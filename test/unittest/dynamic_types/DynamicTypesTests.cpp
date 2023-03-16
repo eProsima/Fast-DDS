@@ -5249,58 +5249,77 @@ TEST_F(DynamicTypesTests, DynamicType_bounded_wstring_unit_tests)
     XMLProfileManager::DeleteInstance();
 }
 
-/*
 TEST_F(DynamicTypesTests, DynamicType_XML_Bitset_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("MyBitSet");
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("MyBitSet");
 
-        DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        DynamicTypeBuilder_ptr a_builder = factory.create_byte_builder();
-        DynamicTypeBuilder_ptr b_builder = factory.create_bool_builder();
-        DynamicTypeBuilder_ptr empty_builder = factory.create_byte_builder();
-        DynamicTypeBuilder_ptr c_builder = factory.create_uint16_builder();
-        DynamicTypeBuilder_ptr d_builder = factory.create_int16_builder();
-        auto a_type = a_builder->build();
-        auto b_type = b_builder->build();
-        auto e_type = empty_builder->build();
-        auto c_type = c_builder->build();
-        auto d_type = d_builder->build();
+    auto a_type = factory.create_char8_type();
+    auto b_type = factory.create_bool_type();
+    auto c_type = factory.create_uint16_type();
+    auto d_type = factory.create_int16_type();
 
-        // Bitset
-        DynamicTypeBuilder_ptr builder_ptr = factory.create_bitset_builder();
-        builder_ptr->add_member(0, "a", a_type);
-        builder_ptr->add_member(1, "b", b_type);
-        builder_ptr->add_member(2, "", e_type);
-        builder_ptr->add_member(3, "c", c_type);
-        builder_ptr->add_member(4, "d", d_type);
-        builder_ptr->add_member(5, "", e_type); // Test more than one empty member. Trailing shouldn't affect equallity.
-        builder_ptr->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "3");
-        builder_ptr->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
-        builder_ptr->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "1");
-        builder_ptr->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "3");
-        // The member doesn't exist so the annotation application will fail, and isn't needed.
-        //builder_ptr->apply_annotation_to_member(2, ANNOTATION_BIT_BOUND_ID, "value", "4");
-        //builder_ptr->apply_annotation_to_member(2, ANNOTATION_POSITION_ID, "value", "4");
-        builder_ptr->apply_annotation_to_member(3, ANNOTATION_BIT_BOUND_ID, "value", "10");
-        builder_ptr->apply_annotation_to_member(3, ANNOTATION_POSITION_ID, "value", "8"); // 4 empty
-        builder_ptr->apply_annotation_to_member(4, ANNOTATION_BIT_BOUND_ID, "value", "12");
-        builder_ptr->apply_annotation_to_member(4, ANNOTATION_POSITION_ID, "value", "18");
-        builder_ptr->set_name("MyBitSet");
+/*
+ XML:
+    <bitset name="MyBitSet">
+        <bitfield name="a" bit_bound="3"/>
+        <bitfield name="b" bit_bound="1"/>
+        <bitfield bit_bound="4"/>
+        <bitfield name="c" bit_bound="10"/>
+        <bitfield name="d" bit_bound="12" type="int16"/>
+    </bitset>
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(builder_ptr->build().get()));
+ IDL:
+	bitset MyBitset
+	{
+		bitfield<3> a; // @bit_bound=3 @position=0
+		bitfield<1> b; // @bit_bound=1 @position=3
+		bitfield<4>;
+		bitfield<10> c; // @bit_bound=10 @position=8
+		bitfield<12, short> d; // @bit_bound=12 @position=18
+	};
+*/
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    // Bitset
+    DynamicTypeBuilder_ptr bitset_builder = factory.create_bitset_builder();
+
+    bitset_builder->add_member(0, "a", a_type);
+    bitset_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "3");
+    bitset_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
+
+    bitset_builder->add_member(1, "b", b_type);
+    bitset_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "1");
+    bitset_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "3");
+
+    bitset_builder->add_member(2, "", a_type);
+    // The member doesn't exist so the annotation application will fail, and isn't needed.
+    //bitset_builder->apply_annotation_to_member(2, ANNOTATION_BIT_BOUND_ID, "value", "4");
+    //bitset_builder->apply_annotation_to_member(2, ANNOTATION_POSITION_ID, "value", "4");
+
+    bitset_builder->add_member(3, "c", c_type);
+    bitset_builder->apply_annotation_to_member(3, ANNOTATION_BIT_BOUND_ID, "value", "10");
+    bitset_builder->apply_annotation_to_member(3, ANNOTATION_POSITION_ID, "value", "8"); // 4 empty
+
+    bitset_builder->add_member(4, "d", d_type);
+    bitset_builder->apply_annotation_to_member(4, ANNOTATION_BIT_BOUND_ID, "value", "12");
+    bitset_builder->apply_annotation_to_member(4, ANNOTATION_POSITION_ID, "value", "18");
+
+    bitset_builder->set_name("MyBitSet");
+    DynamicType_ptr bitset_type = bitset_builder->build();
+
+    EXPECT_EQ(*pbType->GetDynamicType(),*bitset_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*bitset_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
+/*
 TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
 {
     using namespace xmlparser;

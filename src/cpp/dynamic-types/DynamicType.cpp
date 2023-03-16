@@ -600,9 +600,6 @@ bool DynamicType::deserialize(
             break;
         }
         case TypeKind::TK_BITSET:
-            assert(element_type_);
-            eprosima_fallthrough
-
         case TypeKind::TK_STRUCTURE:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
@@ -883,9 +880,6 @@ size_t DynamicType::getCdrSerializedSize(
             break;
         }
         case TypeKind::TK_BITSET:
-            assert(element_type_ && !base_type_);
-            eprosima_fallthrough
-
         case TypeKind::TK_STRUCTURE:
         {
 
@@ -1071,9 +1065,6 @@ size_t DynamicType::getEmptyCdrSerializedSize(
             break;
         }
         case TypeKind::TK_BITSET:
-            assert(element_type_ && !base_type_);
-            eprosima_fallthrough
-
         case TypeKind::TK_STRUCTURE:
         {
             // calculate inheritance overhead
@@ -1234,9 +1225,6 @@ size_t DynamicType::getMaxCdrSerializedSize(
             break;
         }
         case TypeKind::TK_BITSET:
-            assert(element_type_ && !base_type_);
-            eprosima_fallthrough
-
         case TypeKind::TK_STRUCTURE:
         {
             // calculate inheritance overhead
@@ -1640,9 +1628,6 @@ void DynamicType::serialize(
             break;
         }
         case TypeKind::TK_BITSET:
-            assert(element_type_);
-            eprosima_fallthrough
-
         case TypeKind::TK_STRUCTURE:
         {
 
@@ -1866,9 +1851,6 @@ void DynamicType::serialize_empty_data(
             break;
         }
         case TypeKind::TK_BITSET:
-            assert(element_type_);
-            eprosima_fallthrough
-
         case TypeKind::TK_STRUCTURE:
         {
             // delegate in base clases if any
