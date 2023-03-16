@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"  ?>
 <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
-    <library_settings>
-        <intraprocess_delivery>FULL</intraprocess_delivery>
-    </library_settings>
     <profiles>
         <participant profile_name="test_participant_profile" is_default_profile="true">
             <domainId>2019102</domainId>
@@ -441,4 +438,7 @@
             </subscriber>
         </replier>
     </profiles>
+    <library_settings>
+        <intraprocess_delivery>FULL</intraprocess_delivery>
+    </library_settings>
 </dds>
