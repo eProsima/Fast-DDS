@@ -96,24 +96,15 @@ SecurityManager::SecurityManager(
     , local_permissions_handle_(nullptr)
     , auth_last_sequence_number_(1)
     , crypto_last_sequence_number_(1)
-    , temp_stateless_reader_proxy_data_(
-        participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-        participant->getRTPSParticipantAttributes().allocation.data_limits,
-        participant->getRTPSParticipantAttributes().allocation.content_filter)
-    , temp_stateless_writer_proxy_data_(
-        participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-        participant->getRTPSParticipantAttributes().allocation.data_limits)
-    , temp_volatile_reader_proxy_data_(
-        participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-        participant->getRTPSParticipantAttributes().allocation.data_limits,
-        participant->getRTPSParticipantAttributes().allocation.content_filter)
-    , temp_volatile_writer_proxy_data_(
-        participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
-        participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
-        participant->getRTPSParticipantAttributes().allocation.data_limits)
+    , temp_reader_proxies_({
+    participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
+    participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
+    participant->getRTPSParticipantAttributes().allocation.data_limits,
+    participant->getRTPSParticipantAttributes().allocation.content_filter})
+    , temp_writer_proxies_({
+    participant->getRTPSParticipantAttributes().allocation.locators.max_unicast_locators,
+    participant->getRTPSParticipantAttributes().allocation.locators.max_multicast_locators,
+    participant->getRTPSParticipantAttributes().allocation.data_limits})
 {
     assert(participant != nullptr);
     static OpenSSLInit openssl_init;
@@ -2056,29 +2047,34 @@ void SecurityManager::match_builtin_endpoints(
     if (participant_stateless_message_reader_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_WRITER)
     {
-        temp_stateless_writer_proxy_data_.clear();
-        temp_stateless_writer_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
-        temp_stateless_writer_proxy_data_.guid().entityId = participant_stateless_message_writer_entity_id;
-        temp_stateless_writer_proxy_data_.persistence_guid(temp_stateless_writer_proxy_data_.guid());
-        temp_stateless_writer_proxy_data_.set_remote_locators(participant_data.metatraffic_locators, network, false);
-        temp_stateless_writer_proxy_data_.topicKind(NO_KEY);
-        temp_stateless_writer_proxy_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-        temp_stateless_writer_proxy_data_.m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
-        participant_stateless_message_reader_->matched_writer_add(temp_stateless_writer_proxy_data_);
+
+        auto temp_stateless_writer_proxy_data_ = get_temporary_writer_proxies_pool().get();
+
+        temp_stateless_writer_proxy_data_->clear();
+        temp_stateless_writer_proxy_data_->guid().guidPrefix = participant_data.m_guid.guidPrefix;
+        temp_stateless_writer_proxy_data_->guid().entityId = participant_stateless_message_writer_entity_id;
+        temp_stateless_writer_proxy_data_->persistence_guid(temp_stateless_writer_proxy_data_->guid());
+        temp_stateless_writer_proxy_data_->set_remote_locators(participant_data.metatraffic_locators, network, false);
+        temp_stateless_writer_proxy_data_->topicKind(NO_KEY);
+        temp_stateless_writer_proxy_data_->m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+        temp_stateless_writer_proxy_data_->m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
+        participant_stateless_message_reader_->matched_writer_add(*temp_stateless_writer_proxy_data_);
     }
 
     if (participant_stateless_message_writer_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_STATELESS_MESSAGE_READER)
     {
-        temp_stateless_reader_proxy_data_.clear();
-        temp_stateless_reader_proxy_data_.m_expectsInlineQos = false;
-        temp_stateless_reader_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
-        temp_stateless_reader_proxy_data_.guid().entityId = participant_stateless_message_reader_entity_id;
-        temp_stateless_reader_proxy_data_.set_remote_locators(participant_data.metatraffic_locators, network, false);
-        temp_stateless_reader_proxy_data_.topicKind(NO_KEY);
-        temp_stateless_reader_proxy_data_.m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
-        temp_stateless_reader_proxy_data_.m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
-        participant_stateless_message_writer_->matched_reader_add(temp_stateless_reader_proxy_data_);
+        auto temp_stateless_reader_proxy_data_ = get_temporary_reader_proxies_pool().get();
+
+        temp_stateless_reader_proxy_data_->clear();
+        temp_stateless_reader_proxy_data_->m_expectsInlineQos = false;
+        temp_stateless_reader_proxy_data_->guid().guidPrefix = participant_data.m_guid.guidPrefix;
+        temp_stateless_reader_proxy_data_->guid().entityId = participant_stateless_message_reader_entity_id;
+        temp_stateless_reader_proxy_data_->set_remote_locators(participant_data.metatraffic_locators, network, false);
+        temp_stateless_reader_proxy_data_->topicKind(NO_KEY);
+        temp_stateless_reader_proxy_data_->m_qos.m_reliability.kind = BEST_EFFORT_RELIABILITY_QOS;
+        temp_stateless_reader_proxy_data_->m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
+        participant_stateless_message_writer_->matched_reader_add(*temp_stateless_reader_proxy_data_);
     }
 }
 
@@ -2091,29 +2087,33 @@ void SecurityManager::match_builtin_key_exchange_endpoints(
     if (participant_volatile_message_secure_reader_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_VOLATILE_MESSAGE_SECURE_WRITER)
     {
-        temp_volatile_writer_proxy_data_.clear();
-        temp_volatile_writer_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
-        temp_volatile_writer_proxy_data_.guid().entityId = participant_volatile_message_secure_writer_entity_id;
-        temp_volatile_writer_proxy_data_.persistence_guid(temp_volatile_writer_proxy_data_.guid());
-        temp_volatile_writer_proxy_data_.set_remote_locators(participant_data.metatraffic_locators, network, false);
-        temp_volatile_writer_proxy_data_.topicKind(NO_KEY);
-        temp_volatile_writer_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-        temp_volatile_writer_proxy_data_.m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
-        participant_volatile_message_secure_reader_->matched_writer_add(temp_volatile_writer_proxy_data_);
+        auto temp_volatile_writer_proxy_data_ = get_temporary_writer_proxies_pool().get();
+
+        temp_volatile_writer_proxy_data_->clear();
+        temp_volatile_writer_proxy_data_->guid().guidPrefix = participant_data.m_guid.guidPrefix;
+        temp_volatile_writer_proxy_data_->guid().entityId = participant_volatile_message_secure_writer_entity_id;
+        temp_volatile_writer_proxy_data_->persistence_guid(temp_volatile_writer_proxy_data_->guid());
+        temp_volatile_writer_proxy_data_->set_remote_locators(participant_data.metatraffic_locators, network, false);
+        temp_volatile_writer_proxy_data_->topicKind(NO_KEY);
+        temp_volatile_writer_proxy_data_->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+        temp_volatile_writer_proxy_data_->m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
+        participant_volatile_message_secure_reader_->matched_writer_add(*temp_volatile_writer_proxy_data_);
     }
 
     if (participant_volatile_message_secure_writer_ != nullptr &&
             builtin_endpoints & BUILTIN_ENDPOINT_PARTICIPANT_VOLATILE_MESSAGE_SECURE_READER)
     {
-        temp_volatile_reader_proxy_data_.clear();
-        temp_volatile_reader_proxy_data_.m_expectsInlineQos = false;
-        temp_volatile_reader_proxy_data_.guid().guidPrefix = participant_data.m_guid.guidPrefix;
-        temp_volatile_reader_proxy_data_.guid().entityId = participant_volatile_message_secure_reader_entity_id;
-        temp_volatile_reader_proxy_data_.set_remote_locators(participant_data.metatraffic_locators, network, false);
-        temp_volatile_reader_proxy_data_.topicKind(NO_KEY);
-        temp_volatile_reader_proxy_data_.m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
-        temp_volatile_reader_proxy_data_.m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
-        participant_volatile_message_secure_writer_->matched_reader_add(temp_volatile_reader_proxy_data_);
+        auto temp_volatile_reader_proxy_data_ = get_temporary_reader_proxies_pool().get();
+
+        temp_volatile_reader_proxy_data_->clear();
+        temp_volatile_reader_proxy_data_->m_expectsInlineQos = false;
+        temp_volatile_reader_proxy_data_->guid().guidPrefix = participant_data.m_guid.guidPrefix;
+        temp_volatile_reader_proxy_data_->guid().entityId = participant_volatile_message_secure_reader_entity_id;
+        temp_volatile_reader_proxy_data_->set_remote_locators(participant_data.metatraffic_locators, network, false);
+        temp_volatile_reader_proxy_data_->topicKind(NO_KEY);
+        temp_volatile_reader_proxy_data_->m_qos.m_reliability.kind = RELIABLE_RELIABILITY_QOS;
+        temp_volatile_reader_proxy_data_->m_qos.m_durability.kind = VOLATILE_DURABILITY_QOS;
+        participant_volatile_message_secure_writer_->matched_reader_add(*temp_volatile_reader_proxy_data_);
     }
 }
 
