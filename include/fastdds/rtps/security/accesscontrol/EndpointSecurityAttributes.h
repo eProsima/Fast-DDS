@@ -36,7 +36,7 @@ typedef uint32_t PluginEndpointSecurityAttributesMask;
 
 struct PluginEndpointSecurityAttributes
 {
-    PluginEndpointSecurityAttributes() : 
+    PluginEndpointSecurityAttributes() :
         is_submessage_encrypted(false), is_submessage_origin_authenticated(false), is_payload_encrypted(false)
     { }
 
@@ -74,8 +74,8 @@ typedef uint32_t EndpointSecurityAttributesMask;
 
 struct EndpointSecurityAttributes
 {
-    EndpointSecurityAttributes() : 
-        is_read_protected(true), is_write_protected(true),
+    EndpointSecurityAttributes() :
+        is_read_protected(false), is_write_protected(false),
         is_discovery_protected(false), is_liveliness_protected(false),
         is_submessage_protected(false), is_payload_protected(false), is_key_protected(false),
         plugin_endpoint_attributes(0UL)
