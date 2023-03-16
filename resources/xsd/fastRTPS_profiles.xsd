@@ -7,7 +7,7 @@
 
     <!--| MAIN DOCUMENT HIERARCHY |-->
     <!--__ROOT__:
-        ├ dds [0~1],
+        ├ dds              [0~1],
         |   ├ profiles         [0~1],
         |   ├ log              [0~1],
         |   ├ types            [0~1],
