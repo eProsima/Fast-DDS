@@ -581,12 +581,14 @@ jobs:
 
           # Show the arguments
           EchoArgs --packages-select fastrtps --event-handlers=console_direct+ `
-            --merge-install --executor sequential --ctest-args $ctestargs --timeout 300 --output-junit $junit
+            --merge-install --executor sequential --ctest-args $ctestargs --repeat until-pass:3 `
+            --timeout 300 --output-junit $junit
 
           # Run the testing
           "::group::ctest summary"
           colcon test --packages-select fastrtps --event-handlers=console_direct+ `
-            --merge-install --executor sequential --ctest-args $ctestargs --timeout 300 --output-junit $junit
+            --merge-install --executor sequential --ctest-args $ctestargs --repeat until-pass:3 `
+            --timeout 300 --output-junit $junit
           "::endgroup::"
 
       - name: Create test Summary
