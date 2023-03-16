@@ -280,7 +280,9 @@ TEST(DDSBasic, MultithreadedReaderCreationDoesNotDeadlock)
 }
 
 /**
-* Read a parameterList from a CDRMessage
+* Read a parameterList from a CDRMessage.
+* Search for PID_CUSTOM_RELATED_SAMPLE_IDENTITY and PID_RELATED_SAMPLE_IDENTITY.
+* Overwrite PID_CUSTOM_RELATED_SAMPLE_IDENTITY to just leave the new one in msg.
 * @param[in] msg Reference to the message.
 * @param[out] exists_pid_related_sample_identity True if the parameter is inside msg.
 * @param[out] exists_pid_custom_related_sample_identity True if the parameter is inside msg.
@@ -295,8 +297,9 @@ bool readParameterListfromCDRMsg(
 
     auto parameter_process = [&](
         fastrtps::rtps::CDRMessage_t* msg,
-        const ParameterId_t pid,
-        uint16_t plength)
+        ParameterId_t& pid,
+        uint16_t plength,
+        uint32_t& pid_pos)
             {
                 switch (pid)
                 {
@@ -311,6 +314,9 @@ bool readParameterListfromCDRMsg(
                                 return false;
                             }
                             exists_pid_custom_related_sample_identity = true;
+                            // Invalid assignment to overwrite parameter, in order to just send the standard PID_RELATED_SAMPLE_IDENTITY
+                            msg->buffer[pid_pos] = 0xff;
+                            msg->buffer[pid_pos + 1] = 0xff;
                         }
                         break;
                     }
@@ -344,6 +350,7 @@ bool readParameterListfromCDRMsg(
         ParameterId_t pid{PID_SENTINEL};
         uint16_t plength = 0;
         bool valid = true;
+        auto msg_pid_pos = msg.pos;
         valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, (uint16_t*)&pid);
         valid &= fastrtps::rtps::CDRMessage::readUInt16(&msg, &plength);
 
@@ -365,7 +372,7 @@ bool readParameterListfromCDRMsg(
         }
         else if (!is_sentinel)
         {
-            if (!parameter_process(&msg, pid, plength))
+            if (!parameter_process(&msg, pid, plength, msg_pid_pos))
             {
                 return false;
             }
@@ -379,6 +386,8 @@ bool readParameterListfromCDRMsg(
  * PID_CUSTOM_RELATED_SAMPLE_IDENTITY are being sent as parameter,
  * and that the new PID_RELATED_SAMPLE_IDENTITY is being properly
  * interpreted.
+ * Inside the transport filter, both PIDs are indentified, and the old PID is overwritten.
+ * Reader only receives the new PID, and identifies the related sample identity.
  */
 TEST(DDSBasic, PidRelatedSampleIdentity)
 {
@@ -394,6 +403,9 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
     test_transport->drop_data_messages_filter_ = [&exists_pid_related_sample_identity, &exists_pid_custom_related_sample_identity, &another_debug_bool_flag]
             (eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
             {
+                // Inside this filter, the two flags passed in register wether both PIDs are included in the msg to be sent.
+                // The legacy value is overwritten in order to sent a msg with only the standard PID_RELATED_SAMPLE_IDENTITY as valid parameter,
+                // so that the reader will only parse that one.
                 bool ret = readParameterListfromCDRMsg(msg, exists_pid_related_sample_identity, exists_pid_custom_related_sample_identity);
                 EXPECT_TRUE(ret);
                 return false;
@@ -420,7 +432,6 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
     // Send reply associating it with the client request.
     eprosima::fastrtps::rtps::WriteParams write_params;
     eprosima::fastrtps::rtps::SampleIdentity related_sample_identity_;
-    //related_sample_identity_.writer_guid(native_writer->guid());
     eprosima::fastrtps::rtps::GUID_t unknown_guid;
     related_sample_identity_.writer_guid(unknown_guid);
     eprosima::fastrtps::rtps::SequenceNumber_t seq(51, 24);
@@ -445,7 +456,6 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
     ASSERT_TRUE(exists_pid_custom_related_sample_identity);
 
     ASSERT_EQ(related_sample_identity_, info.related_sample_identity);
-
 }
 
 } // namespace dds
