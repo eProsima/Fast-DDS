@@ -1384,6 +1384,8 @@ bool Permissions::get_datawriter_sec_attributes(
         EndpointSecurityAttributes& attributes,
         SecurityException& exception)
 {
+    (void)exception;
+
     const AccessPermissionsHandle& lah = AccessPermissionsHandle::narrow(permissions_handle);
     const EndpointSecurityAttributes* attr = nullptr;
 
@@ -1408,6 +1410,8 @@ bool Permissions::get_datareader_sec_attributes(
         EndpointSecurityAttributes& attributes,
         SecurityException& exception)
 {
+    (void)exception;
+
     const AccessPermissionsHandle& lah = AccessPermissionsHandle::narrow(permissions_handle);
     const EndpointSecurityAttributes* attr = nullptr;
 
