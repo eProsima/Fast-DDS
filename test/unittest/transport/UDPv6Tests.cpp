@@ -12,17 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <thread>
 #include <memory>
+#include <thread>
 
 #include <asio.hpp>
 #include <gtest/gtest.h>
-#include <MockReceiverResource.h>
+
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/transport/UDPv6TransportDescriptor.h>
-#include <fastrtps/rtps/network/NetworkFactory.h>
-#include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/utils/Semaphore.h>
+
+#include <MockReceiverResource.h>
 #include <rtps/transport/UDPv6Transport.h>
 
 using namespace eprosima::fastrtps::rtps;

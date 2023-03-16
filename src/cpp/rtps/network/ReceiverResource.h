@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_RTPS_RECEIVER_RESOURCE_H
-#define _FASTDDS_RTPS_RECEIVER_RESOURCE_H
+#ifndef _RTPS_NETWORK_RECEIVERRESOURCE_H_
+#define _RTPS_NETWORK_RECEIVERRESOURCE_H_
 
 #include <condition_variable>
 #include <functional>
@@ -123,4 +123,4 @@ private:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif /* _FASTDDS_RTPS_RECEIVER_RESOURCE_H */
+#endif /* _RTPS_NETWORK_RECEIVERRESOURCE_H_ */

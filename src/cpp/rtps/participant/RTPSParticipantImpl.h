@@ -34,29 +34,24 @@
 #include <unistd.h>
 #endif // if defined(_WIN32)
 
-#include <rtps/messages/RTPSMessageGroup_t.hpp>
-#include <rtps/messages/SendBuffersManager.hpp>
-
-#include <fastdds/rtps/common/Guid.h>
-
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
-
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
-
+#include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
-
-#include <fastdds/rtps/network/NetworkFactory.h>
-#include <fastdds/rtps/network/ReceiverResource.h>
-#include <fastdds/rtps/network/SenderResource.h>
-
 #include <fastdds/rtps/messages/MessageReceiver.h>
-
 #include <fastdds/rtps/resources/ResourceEvent.h>
-#include "../flowcontrol/FlowControllerFactory.hpp"
+#include <fastdds/rtps/transport/SenderResource.h>
+#include <fastrtps/utils/Semaphore.h>
+#include <fastrtps/utils/shared_mutex.hpp>
 
+#include "../flowcontrol/FlowControllerFactory.hpp"
+#include <rtps/messages/RTPSMessageGroup_t.hpp>
+#include <rtps/messages/SendBuffersManager.hpp>
+#include <rtps/network/NetworkFactory.h>
+#include <rtps/network/ReceiverResource.h>
 #include <statistics/rtps/StatisticsBase.hpp>
 
 #if HAVE_SECURITY
@@ -64,9 +59,6 @@
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <rtps/security/SecurityManager.h>
 #endif // if HAVE_SECURITY
-
-#include <fastrtps/utils/Semaphore.h>
-#include <fastrtps/utils/shared_mutex.hpp>
 
 namespace eprosima {
 

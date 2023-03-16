@@ -21,10 +21,10 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.h>
-#include <fastdds/rtps/network/NetworkFactory.h>
 
 #include <fastdds/core/policy/ParameterList.hpp>
 #include <fastdds/core/policy/QosPoliciesSerializer.hpp>
+#include <rtps/network/NetworkFactory.h>
 
 #include "ProxyDataFilters.hpp"
 

@@ -24,7 +24,6 @@
 #include <mutex>
 
 #include <fastdds/dds/log/Log.hpp>
-
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
@@ -34,7 +33,6 @@
 #include <fastdds/rtps/history/ReaderHistory.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/messages/CDRMessage.h>
-#include <fastdds/rtps/network/NetworkFactory.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
 #include <fastdds/rtps/reader/StatelessReader.h>
@@ -47,6 +45,7 @@
 #include <fastdds/rtps/writer/StatelessWriter.h>
 
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
+#include <rtps/network/NetworkFactory.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <security/OpenSSLInit.hpp>
 

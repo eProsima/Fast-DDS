@@ -12,21 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
-#include <fastrtps/rtps/network/NetworkFactory.h>
+#include <vector>
 
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <gtest/gtest.h>
+
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
-#include <fastrtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
-
-#include <fastrtps/rtps/network/NetworkFactory.h>
-
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/transport/UDPv6TransportDescriptor.h>
+#include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastrtps/utils/IPLocator.h>
 
 #include <MockTransport.h>
-#include <gtest/gtest.h>
-#include <vector>
+#include <rtps/network/NetworkFactory.h>
 
 using namespace std;
 using namespace eprosima::fastrtps;

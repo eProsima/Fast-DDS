@@ -21,7 +21,7 @@
 
 // Include first possible mocks (depending on include on CMakeLists.txt)
 #include <fastrtps/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastrtps/rtps/network/NetworkFactory.h>
+#include <rtps/network/NetworkFactory.h>
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 #include <fastrtps/rtps/reader/RTPSReader.h>
 #include <fastrtps/rtps/resources/ResourceEvent.h>

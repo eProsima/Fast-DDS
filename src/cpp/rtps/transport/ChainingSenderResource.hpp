@@ -15,8 +15,8 @@
 #ifndef _RTPS_TRANSPORT_CHAININGSENDERRESOURCE_HPP_
 #define _RTPS_TRANSPORT_CHAININGSENDERRESOURCE_HPP_
 
-#include <fastdds/rtps/network/SenderResource.h>
 #include <fastdds/rtps/transport/ChainingTransport.h>
+#include <fastdds/rtps/transport/SenderResource.h>
 
 namespace eprosima {
 namespace fastdds {

@@ -13,7 +13,6 @@
 // limitations under the License.
 
 #include "SecurityTests.hpp"
-#include <fastrtps/rtps/network/NetworkFactory.h>
 
 TEST_F(SecurityTest, discovered_participant_begin_handshake_request_fail_and_then_ok)
 {

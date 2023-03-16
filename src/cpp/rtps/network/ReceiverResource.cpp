@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/rtps/network/ReceiverResource.h>
-#include <fastdds/rtps/messages/MessageReceiver.h>
+#include <rtps/network/ReceiverResource.h>
+
 #include <cassert>
+
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/messages/MessageReceiver.h>
 
 #define IDSTRING "(ID:" << std::this_thread::get_id() << ") " <<
 

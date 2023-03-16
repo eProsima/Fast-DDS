@@ -12,20 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef _FASTDDS_RTPS_NETWORK_FACTORY_HPP
-#define _FASTDDS_RTPS_NETWORK_FACTORY_HPP
+#ifndef _RTPS_NETWORK_NETWORKFACTORY_H_
+#define _RTPS_NETWORK_NETWORKFACTORY_H_
 
-#include <fastrtps/transport/TransportInterface.h>
-#include <fastrtps/rtps/common/LocatorSelector.hpp>
-#include <fastrtps/rtps/network/ReceiverResource.h>
-#include <fastrtps/rtps/network/SenderResource.h>
-#include <fastrtps/rtps/messages/MessageReceiver.h>
-#include <vector>
 #include <memory>
+#include <vector>
 
-namespace eprosima{
-namespace fastrtps{
-namespace rtps{
+#include <fastdds/rtps/transport/SenderResource.h>
+#include <fastrtps/rtps/common/LocatorSelector.hpp>
+#include <fastrtps/rtps/messages/MessageReceiver.h>
+#include <fastrtps/transport/TransportInterface.h>
+
+#include <rtps/network/ReceiverResource.h>
+
+namespace eprosima {
+namespace fastrtps {
+namespace rtps {
 
 class RTPSParticipantAttributes;
 
@@ -38,23 +40,29 @@ class RTPSParticipantAttributes;
  */
 class NetworkFactory
 {
-    public:
+public:
 
-        NetworkFactory() {}
+    NetworkFactory()
+    {
+    }
 
-        bool transform_remote_locator(
-                const Locator_t& remote_locator,
-                Locator_t& result_locator) const
-        {
-            result_locator = remote_locator;
-            return true;
-        }
+    bool transform_remote_locator(
+            const Locator_t& remote_locator,
+            Locator_t& result_locator) const
+    {
+        result_locator = remote_locator;
+        return true;
+    }
 
-        uint32_t get_min_send_buffer_size() { return 65536; }
+    uint32_t get_min_send_buffer_size()
+    {
+        return 65536;
+    }
+
 };
 
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif
+#endif // ifndef _RTPS_NETWORK_NETWORKFACTORY_H_

@@ -16,7 +16,7 @@
 #define __TRANSPORT_UDPSENDERRESOURCE_HPP__
 
 #include <fastdds/rtps/common/Locator.h>
-#include <fastdds/rtps/network/SenderResource.h>
+#include <fastdds/rtps/transport/SenderResource.h>
 
 #include <rtps/transport/UDPTransportInterface.h>
 

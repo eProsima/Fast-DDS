@@ -25,7 +25,6 @@
 
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
-#include <fastdds/rtps/network/NetworkFactory.h>
 
 #include <fastrtps/utils/shared_mutex.hpp>
 
@@ -55,6 +54,7 @@ class WLP;
 class RTPSParticipantImpl;
 class RTPSWriter;
 class RTPSReader;
+class NetworkFactory;
 
 /**
  * Class BuiltinProtocols that contains builtin endpoints implementing the discovery and liveliness protocols.
