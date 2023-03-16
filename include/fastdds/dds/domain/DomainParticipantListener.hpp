@@ -67,8 +67,8 @@ public:
      * This method is called when a new Participant is discovered, or a previously discovered participant changes
      * its QOS or is removed.
      *
-     * @param participant Pointer to the Participant which discovered the remote participant.
-     * @param info Remote participant information. User can take ownership of the object.
+     * @param[out] participant Pointer to the Participant which discovered the remote participant.
+     * @param[out] info Remote participant information. User can take ownership of the object.
      */
     virtual void on_participant_discovery(
             DomainParticipant* participant,
@@ -82,9 +82,9 @@ public:
      * This method is called when a new Participant is discovered, or a previously discovered participant changes
      * its QOS or is removed.
      *
-     * @param participant Pointer to the Participant which discovered the remote participant.
-     * @param info Remote participant information. User can take ownership of the object.
-     * @param should_be_ignored Flag to indicate the library to automatically ignore the discovered Participant.
+     * @param[out] participant Pointer to the Participant which discovered the remote participant.
+     * @param[out] info Remote participant information. User can take ownership of the object.
+     * @param[out] should_be_ignored Flag to indicate the library to automatically ignore the discovered Participant.
      */
     virtual void on_participant_discovery(
             DomainParticipant* participant,
@@ -100,8 +100,8 @@ public:
     /*!
      * This method is called when a new Participant is authenticated.
      *
-     * @param participant Pointer to the authenticated Participant.
-     * @param info Remote participant authentication information. User can take ownership of the object.
+     * @param[out] participant Pointer to the authenticated Participant.
+     * @param[out] info Remote participant authentication information. User can take ownership of the object.
      */
     virtual void onParticipantAuthentication(
             DomainParticipant* participant,
@@ -117,8 +117,8 @@ public:
      * This method is called when a new Subscriber is discovered, or a previously discovered subscriber changes
      * its QOS or is removed.
      *
-     * @param participant Pointer to the Participant which discovered the remote subscriber.
-     * @param info Remote subscriber information. User can take ownership of the object.
+     * @param[out] participant Pointer to the Participant which discovered the remote subscriber.
+     * @param[out] info Remote subscriber information. User can take ownership of the object.
      */
     virtual void on_subscriber_discovery(
             DomainParticipant* participant,
@@ -132,9 +132,9 @@ public:
      * This method is called when a new Subscriber is discovered, or a previously discovered subscriber changes
      * its QOS or is removed.
      *
-     * @param participant Pointer to the Participant which discovered the remote subscriber.
-     * @param info Remote subscriber information. User can take ownership of the object.
-     * @param should_be_ignored Flag to indicate the library to automatically ignore the discovered Participant.
+     * @param[out] participant Pointer to the Participant which discovered the remote subscriber.
+     * @param[out] info Remote subscriber information. User can take ownership of the object.
+     * @param[out] should_be_ignored Flag to indicate the library to automatically ignore the discovered Participant.
      */
     virtual void on_subscriber_discovery(
             DomainParticipant* participant,
@@ -150,8 +150,8 @@ public:
      * This method is called when a new Publisher is discovered, or a previously discovered publisher changes
      * its QOS or is removed.
      *
-     * @param participant Pointer to the Participant which discovered the remote publisher.
-     * @param info Remote publisher information. User can take ownership of the object.
+     * @param[out] participant Pointer to the Participant which discovered the remote publisher.
+     * @param[out] info Remote publisher information. User can take ownership of the object.
      */
     virtual void on_publisher_discovery(
             DomainParticipant* participant,
@@ -165,9 +165,9 @@ public:
      * This method is called when a new Publisher is discovered, or a previously discovered publisher changes
      * its QOS or is removed.
      *
-     * @param participant Pointer to the Participant which discovered the remote publisher.
-     * @param info Remote publisher information. User can take ownership of the object.
-     * @param should_be_ignored Flag to indicate the library to automatically ignore the discovered Participant.
+     * @param[out] participant Pointer to the Participant which discovered the remote publisher.
+     * @param[out] info Remote publisher information. User can take ownership of the object.
+     * @param[out] should_be_ignored Flag to indicate the library to automatically ignore the discovered Participant.
      */
     virtual void on_publisher_discovery(
             DomainParticipant* participant,

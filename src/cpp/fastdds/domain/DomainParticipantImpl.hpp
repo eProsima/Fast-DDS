@@ -328,6 +328,12 @@ public:
 
     // TODO Subscriber* get_builtin_subscriber();
 
+    /**
+     * @brief Locally ignore a remote domain participant.
+     *
+     * @param[in] handle Identifier of the remote participant to ignore.
+     * @return true if correctly ignored. False otherwise.
+     */
     bool ignore_participant(
             const InstanceHandle_t& handle);
 
@@ -336,9 +342,21 @@ public:
             const InstanceHandle_t& handle);
      */
 
+    /**
+     * @brief Locally ignore a remote datawriter.
+     *
+     * @param[in] handle Identifier of the remote datawriter to ignore.
+     * @return true if correctly ignored. False otherwise.
+     */
     bool ignore_publication(
             const InstanceHandle_t& handle);
 
+    /**
+     * @brief Locally ignore a remote datareader.
+     *
+     * @param[in] handle Identifier of the remote datareader to ignore.
+     * @return true if correctly ignored. False otherwise.
+     */
     bool ignore_subscription(
             const InstanceHandle_t& handle);
 

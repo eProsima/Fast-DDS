@@ -423,7 +423,7 @@ public:
     /**
      * Locally ignore a remote domain participant.
      *
-     * @note This action is not required to be reversible.
+     * @note This action is not reversible.
      *
      * @param handle Identifier of the remote participant to ignore
      * @return RETURN_OK code if everything correct, error code otherwise
@@ -437,7 +437,7 @@ public:
     /**
      * Locally ignore a topic.
      *
-     * @note This action is not required to be reversible.
+     * @note This action is not reversible.
      *
      * @param handle Identifier of the topic to ignore
      * @return RETURN_OK code if everything correct, error code otherwise
@@ -449,9 +449,9 @@ public:
             const InstanceHandle_t& handle);
 
     /**
-     * Locally ignore a datawriter.
+     * Locally ignore a remote datawriter.
      *
-     * @note This action is not required to be reversible.
+     * @note This action is not reversible.
      *
      * @param handle Identifier of the datawriter to ignore
      * @return RETURN_OK code if everything correct, error code otherwise
@@ -463,9 +463,9 @@ public:
             const InstanceHandle_t& handle);
 
     /**
-     * Locally ignore a datareader.
+     * Locally ignore a remote datareader.
      *
-     * @note This action is not required to be reversible.
+     * @note This action is not reversible.
      *
      * @param handle Identifier of the datareader to ignore
      * @return RETURN_OK code if everything correct, error code otherwise
