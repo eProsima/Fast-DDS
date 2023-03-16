@@ -631,23 +631,8 @@ bool SecurityManager::discovered_participant(
             case VALIDATION_PENDING_RETRY:
             // TODO(Ricardo) Send event.
             default:
-                if (strlen(exception.what()) > 0)
-                {
-                    EPROSIMA_LOG_ERROR(SECURITY_AUTHENTICATION, exception.what());
-                }
 
-                EPROSIMA_LOG_INFO(SECURITY, "Authentication failed for participant " <<
-                        participant_data.m_guid);
-
-                // Inform user about authenticated remote participant.
-                if (participant_->getListener() != nullptr)
-                {
-                    ParticipantAuthenticationInfo info;
-                    info.status = ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT;
-                    info.guid = participant_data.m_guid;
-                    participant_->getListener()->onParticipantAuthentication(
-                        participant_->getUserRTPSParticipant(), std::move(info));
-                }
+                on_validation_failed(participant_data, exception);
 
                 std::lock_guard<shared_mutex> _(mutex_);
 
@@ -850,21 +835,7 @@ bool SecurityManager::on_process_handshake(
 
     if (ret == VALIDATION_FAILED)
     {
-        // Inform user about authenticated remote participant.
-        if (participant_->getListener() != nullptr)
-        {
-            ParticipantAuthenticationInfo info;
-            info.status = ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT;
-            info.guid = participant_data.m_guid;
-            participant_->getListener()->onParticipantAuthentication(
-                participant_->getUserRTPSParticipant(), std::move(info));
-        }
-
-        if (strlen(exception.what()) > 0)
-        {
-            EPROSIMA_LOG_ERROR(SECURITY_AUTHENTICATION, exception.what());
-        }
-
+        on_validation_failed(participant_data, exception);
         return false;
     }
 
@@ -4240,6 +4211,29 @@ void SecurityManager::resend_handshake_message_token(
 
             dp_it->second->set_auth(remote_participant_info);
         }
+    }
+}
+
+void SecurityManager::on_validation_failed(
+        const ParticipantProxyData& participant_data,
+        const SecurityException& exception) const
+{
+    if (strlen(exception.what()) > 0)
+    {
+        EPROSIMA_LOG_ERROR(SECURITY_AUTHENTICATION, exception.what());
+    }
+
+    EPROSIMA_LOG_INFO(SECURITY, "Authentication failed for participant " <<
+            participant_data.m_guid);
+
+    // Inform user about authenticated remote participant.
+    if (participant_->getListener() != nullptr)
+    {
+        ParticipantAuthenticationInfo info;
+        info.status = ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT;
+        info.guid = participant_data.m_guid;
+        participant_->getListener()->onParticipantAuthentication(
+            participant_->getUserRTPSParticipant(), std::move(info));
     }
 }
 
