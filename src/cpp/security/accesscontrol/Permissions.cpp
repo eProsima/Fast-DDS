@@ -1154,9 +1154,7 @@ bool Permissions::check_create_datawriter(
     }
     else
     {
-        exception = _SecurityException_("Not found topic access rule for topic " + topic_name);
-        EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
-        return false;
+        return true;
     }
 
     // Search topic
@@ -1209,9 +1207,7 @@ bool Permissions::check_create_datareader(
     }
     else
     {
-        exception = _SecurityException_("Not found topic access rule for topic " + topic_name);
-        EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
-        return false;
+        return true;
     }
 
     for (auto rule : lah->grant.rules)
@@ -1264,10 +1260,7 @@ bool Permissions::check_remote_datawriter(
     }
     else
     {
-        exception = _SecurityException_(
-            "Not found topic access rule for topic " + publication_data.topicName().to_string());
-        EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
-        return false;
+        return true;
     }
 
     for (auto rule : rah->grant.rules)
@@ -1327,10 +1320,7 @@ bool Permissions::check_remote_datareader(
     }
     else
     {
-        exception = _SecurityException_(
-            "Not found topic access rule for topic " + subscription_data.topicName().to_string());
-        EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
-        return false;
+        return true;
     }
 
     for (auto rule : rah->grant.rules)
@@ -1405,8 +1395,7 @@ bool Permissions::get_datawriter_sec_attributes(
     }
     else
     {
-        exception = _SecurityException_("Not found topic access rule for topic " + topic_name);
-        EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
+        return true;
     }
 
     return false;
@@ -1430,8 +1419,7 @@ bool Permissions::get_datareader_sec_attributes(
     }
     else
     {
-        exception = _SecurityException_("Not found topic access rule for topic " + topic_name);
-        EMERGENCY_SECURITY_LOGGING("Permissions", exception.what());
+        return true;
     }
 
     return false;
