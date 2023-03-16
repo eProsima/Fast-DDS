@@ -4332,385 +4332,391 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LongLongStruct_test)
     XMLProfileManager::DeleteInstance();
 }
 
-/*
 TEST_F(DynamicTypesTests, DynamicType_XML_UShortStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("UShortStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("UShortStruct");
 
-        // uint16
-        DynamicTypeBuilder_ptr uint16_builder = m_factory->create_uint16_builder();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        // Struct UShortStruct
-        DynamicTypeBuilder_ptr uint16_builder_ptr = m_factory->create_struct_builder();
-        uint16_builder_ptr->add_member(0, "my_uint16", uint16_builder.get());
-        uint16_builder_ptr->set_name("UShortStruct");
+    // uint16
+    DynamicType_ptr byte_type = factory.create_uint16_type();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(uint16_builder_ptr->build().get()));
+    // Struct ShortStruct
+    DynamicTypeBuilder_ptr uint16_builder = factory.create_struct_builder();
+    uint16_builder->add_member(0, "my_uint16", byte_type);
+    uint16_builder->set_name("UShortStruct");
+    DynamicType_ptr uint16_type = uint16_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(),*uint16_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*uint16_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_ULongStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ULongStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ULongStruct");
 
-        // uint32
-        DynamicTypeBuilder_ptr uint32_builder = m_factory->create_uint32_builder();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        // Struct ULongStruct
-        DynamicTypeBuilder_ptr uint32_builder_ptr = m_factory->create_struct_builder();
-        uint32_builder_ptr->add_member(0, "my_uint32", uint32_builder.get());
-        uint32_builder_ptr->set_name("ULongStruct");
+    // uint32
+    DynamicType_ptr byte_type = factory.create_uint32_type();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(uint32_builder_ptr->build().get()));
+    // Struct ShortStruct
+    DynamicTypeBuilder_ptr uint32_builder = factory.create_struct_builder();
+    uint32_builder->add_member(0, "my_uint32", byte_type);
+    uint32_builder->set_name("ULongStruct");
+    DynamicType_ptr uint32_type = uint32_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(),*uint32_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*uint32_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_ULongLongStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ULongLongStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ULongLongStruct");
 
-        // uint64
-        DynamicTypeBuilder_ptr uint64_builder = m_factory->create_uint64_builder();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        // Struct ULongLongStruct
-        DynamicTypeBuilder_ptr uint64_builder_ptr = m_factory->create_struct_builder();
-        uint64_builder_ptr->add_member(0, "my_uint64", uint64_builder.get());
-        uint64_builder_ptr->set_name("ULongLongStruct");
+    // uint64
+    DynamicType_ptr byte_type = factory.create_uint64_type();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(uint64_builder_ptr->build().get()));
+    // Struct ShortStruct
+    DynamicTypeBuilder_ptr uint64_builder = factory.create_struct_builder();
+    uint64_builder->add_member(0, "my_uint64", byte_type);
+    uint64_builder->set_name("ULongLongStruct");
+    DynamicType_ptr uint64_type = uint64_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(),*uint64_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*uint64_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_FloatStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("FloatStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("FloatStruct");
 
-        // float32
-        DynamicTypeBuilder_ptr float32_builder = m_factory->create_float32_builder();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        // Struct FloatStruct
-        DynamicTypeBuilder_ptr float32_builder_ptr = m_factory->create_struct_builder();
-        float32_builder_ptr->add_member(0, "my_float32", float32_builder.get());
-        float32_builder_ptr->set_name("FloatStruct");
+    // float32
+    DynamicType_ptr byte_type = factory.create_float32_type();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(float32_builder_ptr->build().get()));
+    // Struct ShortStruct
+    DynamicTypeBuilder_ptr float32_builder = factory.create_struct_builder();
+    float32_builder->add_member(0, "my_float32", byte_type);
+    float32_builder->set_name("FloatStruct");
+    DynamicType_ptr float32_type = float32_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(),*float32_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*float32_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_DoubleStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("DoubleStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("DoubleStruct");
 
-        // float64
-        DynamicTypeBuilder_ptr float64_builder = m_factory->create_float64_builder();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        // Struct DoubleStruct
-        DynamicTypeBuilder_ptr float64_builder_ptr = m_factory->create_struct_builder();
-        float64_builder_ptr->add_member(0, "my_float64", float64_builder.get());
-        float64_builder_ptr->set_name("DoubleStruct");
+    // float64
+    DynamicType_ptr byte_type = factory.create_float64_type();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(float64_builder_ptr->build().get()));
+    // Struct ShortStruct
+    DynamicTypeBuilder_ptr float64_builder = factory.create_struct_builder();
+    float64_builder->add_member(0, "my_float64", byte_type);
+    float64_builder->set_name("DoubleStruct");
+    DynamicType_ptr float64_type = float64_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(),*float64_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*float64_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_LongDoubleStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("LongDoubleStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("LongDoubleStruct");
 
-        // float128
-        DynamicTypeBuilder_ptr float128_builder = m_factory->create_float128_builder();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        // Struct LongDoubleStruct
-        DynamicTypeBuilder_ptr float128_builder_ptr = m_factory->create_struct_builder();
-        float128_builder_ptr->add_member(0, "my_float128", float128_builder.get());
-        float128_builder_ptr->set_name("LongDoubleStruct");
+    // float128
+    DynamicType_ptr byte_type = factory.create_float128_type();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(float128_builder_ptr->build().get()));
+    // Struct ShortStruct
+    DynamicTypeBuilder_ptr float128_builder = factory.create_struct_builder();
+    float128_builder->add_member(0, "my_float128", byte_type);
+    float128_builder->set_name("LongDoubleStruct");
+    DynamicType_ptr float128_type = float128_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(),*float128_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*float128_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_CharStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("CharStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("CharStruct");
 
-        // char
-        DynamicTypeBuilder_ptr char8_builder = m_factory->create_char8_builder();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        // Struct CharStruct
-        DynamicTypeBuilder_ptr char_builder_ptr = m_factory->create_struct_builder();
-        char_builder_ptr->add_member(0, "my_char", char8_builder.get());
-        char_builder_ptr->set_name("CharStruct");
+    // char8
+    DynamicType_ptr byte_type = factory.create_char8_type();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(char_builder_ptr->build().get()));
+    // Struct ShortStruct
+    DynamicTypeBuilder_ptr char8_builder = factory.create_struct_builder();
+    char8_builder->add_member(0, "my_char", byte_type);
+    char8_builder->set_name("CharStruct");
+    DynamicType_ptr char8_type = char8_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(),*char8_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*char8_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_WCharStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("WCharStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("WCharStruct");
 
-        // wchar
-        DynamicTypeBuilder_ptr char16_builder = m_factory->create_char16_builder();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        // Struct WCharStruct
-        DynamicTypeBuilder_ptr wchar_builder_ptr = m_factory->create_struct_builder();
-        wchar_builder_ptr->add_member(0, "my_wchar", char16_builder.get());
-        wchar_builder_ptr->set_name("WCharStruct");
+    // wchar
+    DynamicType_ptr byte_type = factory.create_char16_type();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(wchar_builder_ptr->build().get()));
+    // Struct ShortStruct
+    DynamicTypeBuilder_ptr char16_builder = factory.create_struct_builder();
+    char16_builder->add_member(0, "my_wchar", byte_type);
+    char16_builder->set_name("WCharStruct");
+    DynamicType_ptr char16_type = char16_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(),*char16_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*char16_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_StringStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("StringStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("StringStruct");
 
-        // string
-        DynamicTypeBuilder_ptr string_builder = m_factory->create_string_builder();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        // Struct StringStruct
-        DynamicTypeBuilder_ptr string_builder_ptr = m_factory->create_struct_builder();
-        string_builder_ptr->add_member(0, "my_string", string_builder.get());
-        string_builder_ptr->set_name("StringStruct");
+    // string
+    DynamicType_ptr byte_type = factory.create_string_type();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(string_builder_ptr->build().get()));
+    // Struct ShortStruct
+    DynamicTypeBuilder_ptr string_builder = factory.create_struct_builder();
+    string_builder->add_member(0, "my_string", byte_type);
+    string_builder->set_name("StringStruct");
+    DynamicType_ptr string_type = string_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(),*string_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*string_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_WStringStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("WStringStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("WStringStruct");
 
-        // wstring
-        DynamicTypeBuilder_ptr wstring_builder = m_factory->create_wstring_builder();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        // Struct WStringStruct
-        DynamicTypeBuilder_ptr wstring_builder_ptr = m_factory->create_struct_builder();
-        wstring_builder_ptr->add_member(0, "my_wstring", wstring_builder.get());
-        wstring_builder_ptr->set_name("WStringStruct");
+    // wstring
+    DynamicTypeBuilder_ptr string_builder = factory.create_builder_copy(*factory.create_wstring_builder());
+    string_builder->set_name("strings_255");
+    DynamicType_ptr string_type = string_builder->build();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(wstring_builder_ptr->build().get()));
+    // Struct ShortStruct
+    DynamicTypeBuilder_ptr wstring_builder = factory.create_struct_builder();
+    wstring_builder->add_member(0, "my_wstring", string_type);
+    wstring_builder->set_name("WStringStruct");
+    DynamicType_ptr wstring_type = wstring_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(),*wstring_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*wstring_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_LargeStringStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("LargeStringStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("LargeStringStruct");
 
-        // large string
-        DynamicTypeBuilder_ptr string_builder = m_factory->create_string_builder(41925);
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        // Struct LargeStringStruct
-        DynamicTypeBuilder_ptr large_string_builder_ptr = m_factory->create_struct_builder();
-        large_string_builder_ptr->add_member(0, "my_large_string", string_builder.get());
-        large_string_builder_ptr->set_name("LargeStringStruct");
+    // string
+    DynamicType_ptr byte_type = factory.create_string_type(41925);
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(large_string_builder_ptr->build().get()));
+    // Struct ShortStruct
+    DynamicTypeBuilder_ptr string_builder = factory.create_struct_builder();
+    string_builder->add_member(0, "my_large_string", byte_type);
+    string_builder->set_name("LargeStringStruct");
+    DynamicType_ptr string_type = string_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(),*string_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*string_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_LargeWStringStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("LargeWStringStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("LargeWStringStruct");
 
-        // large wstring
-        DynamicTypeBuilder_ptr wstring_builder = m_factory->create_wstring_builder(41925);
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        // Struct LargeWStringStruct
-        DynamicTypeBuilder_ptr large_wstring_builder_ptr = m_factory->create_struct_builder();
-        large_wstring_builder_ptr->add_member(0, "my_large_wstring", wstring_builder.get());
-        large_wstring_builder_ptr->set_name("LargeWStringStruct");
+    // wstring
+    DynamicTypeBuilder_ptr string_builder = factory.create_builder_copy(*factory.create_wstring_builder(41925));
+    string_builder->set_name("wstringl_41925");
+    DynamicType_ptr string_type = string_builder->build();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(large_wstring_builder_ptr->build().get()));
+    // Struct ShortStruct
+    DynamicTypeBuilder_ptr wstring_builder = factory.create_struct_builder();
+    wstring_builder->add_member(0, "my_large_wstring", string_type);
+    wstring_builder->set_name("LargeWStringStruct");
+    DynamicType_ptr wstring_type = wstring_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(),*wstring_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*wstring_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_ShortStringStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStringStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStringStruct");
 
-        // Short string
-        DynamicTypeBuilder_ptr string_builder = m_factory->create_string_builder(15);
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        // Struct ShortStringStruct
-        DynamicTypeBuilder_ptr short_string_builder_ptr = m_factory->create_struct_builder();
-        short_string_builder_ptr->add_member(0, "my_short_string", string_builder.get());
-        short_string_builder_ptr->set_name("ShortStringStruct");
+    // string
+    DynamicType_ptr byte_type = factory.create_string_type(15);
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(short_string_builder_ptr->build().get()));
+    // Struct ShortStruct
+    DynamicTypeBuilder_ptr string_builder = factory.create_struct_builder();
+    string_builder->add_member(0, "my_short_string", byte_type);
+    string_builder->set_name("ShortStringStruct");
+    DynamicType_ptr string_type = string_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(),*string_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*string_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_ShortWStringStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ShortWStringStruct");
 
-        DynamicTypeBuilderFactory* m_factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ShortWStringStruct");
 
-        // Short wstring
-        DynamicTypeBuilder_ptr wstring_builder = m_factory->create_wstring_builder(15);
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        // Struct ShortWStringStruct
-        DynamicTypeBuilder_ptr short_wstring_builder_ptr = m_factory->create_struct_builder();
-        short_wstring_builder_ptr->add_member(0, "my_short_wstring", wstring_builder.get());
-        short_wstring_builder_ptr->set_name("ShortWStringStruct");
+    // wstring
+    DynamicTypeBuilder_ptr string_builder = factory.create_builder_copy(*factory.create_wstring_builder(15));
+    string_builder->set_name("wstrings_15");
+    DynamicType_ptr string_type = string_builder->build();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(short_wstring_builder_ptr->build().get()));
+    // Struct ShortStruct
+    DynamicTypeBuilder_ptr wstring_builder = factory.create_struct_builder();
+    wstring_builder->add_member(0, "my_short_wstring", string_type);
+    wstring_builder->set_name("ShortWStringStruct");
+    DynamicType_ptr wstring_type = wstring_builder->build();
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    EXPECT_EQ(*pbType->GetDynamicType(),*wstring_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*wstring_type));
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
+/*
 TEST_F(DynamicTypesTests, DynamicType_XML_AliasStringStruct_test)
 {
     using namespace xmlparser;
