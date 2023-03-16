@@ -70,9 +70,10 @@ namespace rtps {
  * The returned value is true if the routine returned true at any point,
  * or false otherwise.
  */
-bool for_matched_readers(
+template<typename T>
+static bool for_matched_readers(
         ResourceLimitedVector<ReaderProxy*>& reader_vector_1,
-        std::function<bool(ReaderProxy*)> fun)
+        T fun)
 {
     for (ReaderProxy* remote_reader : reader_vector_1)
     {
@@ -85,10 +86,11 @@ bool for_matched_readers(
     return false;
 }
 
-bool for_matched_readers(
+template<typename T>
+static bool for_matched_readers(
         ResourceLimitedVector<ReaderProxy*>& reader_vector_1,
         ResourceLimitedVector<ReaderProxy*>& reader_vector_2,
-        std::function<bool(ReaderProxy*)> fun)
+        T fun)
 {
     if (for_matched_readers(reader_vector_1, fun))
     {
@@ -97,11 +99,12 @@ bool for_matched_readers(
     return for_matched_readers(reader_vector_2, fun);
 }
 
-bool for_matched_readers(
+template<typename T>
+static bool for_matched_readers(
         ResourceLimitedVector<ReaderProxy*>& reader_vector_1,
         ResourceLimitedVector<ReaderProxy*>& reader_vector_2,
         ResourceLimitedVector<ReaderProxy*>& reader_vector_3,
-        std::function<bool(ReaderProxy*)> fun)
+        T fun)
 {
     if (for_matched_readers(reader_vector_1, reader_vector_2, fun))
     {
@@ -119,9 +122,10 @@ bool for_matched_readers(
  *
  * const version
  */
-bool for_matched_readers(
+template<typename T>
+static bool for_matched_readers(
         const ResourceLimitedVector<ReaderProxy*>& reader_vector_1,
-        std::function<bool(const ReaderProxy*)> fun)
+        T fun)
 {
     for (const ReaderProxy* remote_reader : reader_vector_1)
     {
@@ -134,10 +138,11 @@ bool for_matched_readers(
     return false;
 }
 
-bool for_matched_readers(
+template<typename T>
+static bool for_matched_readers(
         const ResourceLimitedVector<ReaderProxy*>& reader_vector_1,
         const ResourceLimitedVector<ReaderProxy*>& reader_vector_2,
-        std::function<bool(const ReaderProxy*)> fun)
+        T fun)
 {
     if (for_matched_readers(reader_vector_1, fun))
     {
@@ -146,11 +151,12 @@ bool for_matched_readers(
     return for_matched_readers(reader_vector_2, fun);
 }
 
-bool for_matched_readers(
+template<typename T>
+static bool for_matched_readers(
         const ResourceLimitedVector<ReaderProxy*>& reader_vector_1,
         const ResourceLimitedVector<ReaderProxy*>& reader_vector_2,
         const ResourceLimitedVector<ReaderProxy*>& reader_vector_3,
-        std::function<bool(const ReaderProxy*)> fun)
+        T fun)
 {
     if (for_matched_readers(reader_vector_1, reader_vector_2, fun))
     {
