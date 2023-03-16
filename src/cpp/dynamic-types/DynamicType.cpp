@@ -340,9 +340,11 @@ bool DynamicType::deserialize(
         DynamicData& data,
         eprosima::fastcdr::Cdr& cdr) const
 {
+    bool res = true;
+
     if (get_type_descriptor().annotation_is_non_serialized())
     {
-        return true;
+        return res;
     }
 
     // check data and type are related
@@ -603,43 +605,36 @@ bool DynamicType::deserialize(
 
         case TypeKind::TK_STRUCTURE:
         {
-
 #ifdef DYNAMIC_TYPES_CHECKING
             auto& value_col = data.complex_values_;
 #else
             auto& value_col = data.values_;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 
-            //uint32_t size(static_cast<uint32_t>(data.values_.size())), memberId(MEMBER_ID_INVALID);
-            for (uint32_t i = 0; i < value_col.size(); ++i)
+            // delegate in base clases if any
+            if (base_type_)
             {
-                //cdr >> memberId;
-                const DynamicTypeMember* member_desc;
-                bool found;
+                res &= base_type_->deserialize(data, cdr);
+            }
 
-                MemberId id = get_member_id_at_index(i);
-                std::tie(member_desc, found) = get_member(id);
-
-                // collection nodes initialized on construction
-                assert(found);
-
-                if (found)
+            for (const DynamicTypeMember& m : members_)
+            {
+                if (!m.annotation_is_non_serialized())
                 {
-                    if (!member_desc->annotation_is_non_serialized())
+                    DynamicData* member_data = nullptr;
+                    auto it = value_col.find(m.get_id());
+
+                    if (it != value_col.end())
                     {
-                        auto it = value_col.find(id);
-                        if (it != value_col.end())
-                        {
-                            ((DynamicData*)it->second)->deserialize(cdr);
-                        }
-                        else
-                        {
-                            DynamicData* pData = DynamicDataFactory::get_instance()->create_data(
-                                get_element_type());
-                            pData->deserialize(cdr);
-                            value_col.insert(std::make_pair(id, pData));
-                        }
+                        member_data = static_cast<DynamicData*>(it->second);
                     }
+                    else
+                    {
+                        member_data = DynamicDataFactory::get_instance()->create_data(m.get_type());
+                        value_col.insert(std::make_pair(it->first, member_data));
+                    }
+
+                    res &= member_data != nullptr ? m.type_->deserialize(*member_data, cdr) : false;
                 }
             }
         }
@@ -772,7 +767,8 @@ bool DynamicType::deserialize(
             assert(base_type_);
             return base_type_->deserialize(data, cdr);
     }
-    return true;
+
+    return res;
 }
 
 size_t DynamicType::getCdrSerializedSize(
@@ -899,27 +895,23 @@ size_t DynamicType::getCdrSerializedSize(
             auto& value_col = data.values_;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 
-            for (uint32_t i = 0; i < value_col.size(); ++i)
+            // calculate inheritance overhead
+            if (base_type_)
             {
-                //cdr >> memberId;
-                const DynamicTypeMember* member_desc;
-                bool found;
+                current_alignment += base_type_->getCdrSerializedSize(data, current_alignment);
+            }
 
-                MemberId id = get_member_id_at_index(i);
-                std::tie(member_desc, found) = get_member(id);
-
-                // all values should be filled on construction
-                assert(found);
-
-                if (found)
+            for (const DynamicTypeMember& m : members_)
+            {
+                if (!m.annotation_is_non_serialized())
                 {
-                    if (!member_desc->annotation_is_non_serialized())
+                    auto it = value_col.find(m.get_id());
+
+                    if (it != value_col.end())
                     {
-                        auto it = value_col.find(id);
-                        if (it != value_col.end())
-                        {
-                            current_alignment += member_desc->get_type()->getCdrSerializedSize(*(DynamicData*)it->second, current_alignment);
-                        }
+                        DynamicData* member_data = static_cast<DynamicData*>(it->second);
+                        current_alignment +=
+                                m.get_type()->getCdrSerializedSize(*member_data, current_alignment);
                     }
                 }
             }
@@ -1660,23 +1652,22 @@ void DynamicType::serialize(
             auto& value_col = data.values_;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 
-            for (uint32_t i = 0; i < value_col.size(); ++i)
+            // delegate in base clases if any
+            if (base_type_)
             {
-                const DynamicTypeMember* member_desc;
-                bool found;
+                base_type_->serialize(data, cdr);
+            }
 
-                MemberId id = get_member_id_at_index(i);
-                std::tie(member_desc, found) = get_member(id);
-
-                // collection nodes initialized on construction
-                assert(found);
-
-                if (found)
+            for (const DynamicTypeMember& m : members_)
+            {
+                if (!m.annotation_is_non_serialized())
                 {
-                    if (!member_desc->annotation_is_non_serialized())
+                    auto it = value_col.find(m.get_id());
+
+                    if (it != value_col.end())
                     {
-                        auto it = value_col.at(id);
-                        ((DynamicData*)it)->serialize(cdr);
+                        DynamicData* member_data = static_cast<DynamicData*>(it->second);
+                        m.type_->serialize(*member_data, cdr);
                     }
                 }
             }
