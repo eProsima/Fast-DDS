@@ -836,6 +836,8 @@ bool WLP::add_local_reader(
 bool WLP::remove_local_reader(
         RTPSReader* reader)
 {
+    std::lock_guard<std::recursive_mutex> guard(*mp_builtinProtocols->mp_PDP->getMutex());
+
     auto it = std::find(
         readers_.begin(),
         readers_.end(),
