@@ -1518,17 +1518,9 @@ public:
 
 #endif // if HAVE_SQLITE3
 
-    PubSubWriter& use_pub_writer_and_sub_reader()
+    PubSubWriter& use_writer_liveliness_protocol(bool use_wlp)
     {
-        participant_qos_.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader
-            ^= true;
-        return *this;
-    }
-
-    PubSubWriter& use_pub_reader_and_sub_writer()
-    {
-        participant_qos_.wire_protocol().builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter
-            ^= true;
+        participant_qos_.wire_protocol().builtin.use_WriterLivelinessProtocol = use_wlp;
         return *this;
     }
 

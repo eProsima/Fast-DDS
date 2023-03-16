@@ -977,15 +977,9 @@ public:
         return *this;
     }
 
-    PubSubReader& use_pub_writer_and_sub_reader()
+    PubSubReader& use_writer_liveliness_protocol(bool use_wlp)
     {
-        participant_attr_.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader ^= true;
-        return *this;
-    }
-
-    PubSubReader& use_pub_reader_and_sub_writer()
-    {
-        participant_attr_.rtps.builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter ^= true;
+        participant_attr_.rtps.builtin.use_WriterLivelinessProtocol = use_wlp;
         return *this;
     }
 
