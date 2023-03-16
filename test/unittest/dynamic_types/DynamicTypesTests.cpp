@@ -5124,143 +5124,132 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SimpleUnionStruct_test)
     XMLProfileManager::DeleteInstance();
 }
 
-/*
 TEST_F(DynamicTypesTests, DynamicType_XML_UnionUnionStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("UnionUnionStruct");
 
-        DynamicTypeBuilderFactory* factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("UnionUnionStruct");
 
-        DynamicTypeBuilder_ptr int32_builder = factory.create_int32_builder();
-        DynamicTypeBuilder_ptr int64_builder = factory.create_int64_builder();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        DynamicTypeBuilder_ptr union_builder = factory.create_union_builder(int32_builder.get());
-        union_builder->add_member(0, "first", int32_builder.get(), "", { 0 }, true);
-        union_builder->add_member(1, "second", int64_builder.get(), "", { 1 }, false);
-        union_builder->set_name("SimpleUnion");
+    DynamicType_ptr int32_type = factory.create_int32_type();
 
-        DynamicTypeBuilder_ptr union_union_builder = factory.create_union_builder(int32_builder.get());
-        union_union_builder->add_member(0, "first", int32_builder.get(), "", { 0 }, true);
-        union_union_builder->add_member(1, "second", union_builder.get(), "", { 1 }, false);
-        union_union_builder->set_name("UnionUnion");
+    DynamicTypeBuilder_ptr union_builder = factory.create_union_builder(*int32_type);
+    union_builder->add_member(0, "first", int32_type, "", std::vector<uint64_t>{ 0 }, true);
+    union_builder->add_member(1, "second", factory.create_int64_type(), "", std::vector<uint64_t>{ 1 }, false);
+    union_builder->set_name("SimpleUnion");
 
+    DynamicTypeBuilder_ptr union_union_builder = factory.create_union_builder(*int32_type);
+    union_union_builder->add_member(0, "first", int32_type, "", std::vector<uint64_t>{ 0 }, true);
+    union_union_builder->add_member(1, "second", union_builder->build(), "", std::vector<uint64_t>{ 1 }, false);
+    union_union_builder->set_name("UnionUnion");
 
-        DynamicTypeBuilder_ptr uus_builder = factory.create_struct_builder();
-        uus_builder->add_member(0, "my_union", union_union_builder.get());
-        uus_builder->set_name("UnionUnionStruct");
+    DynamicTypeBuilder_ptr uus_builder = factory.create_struct_builder();
+    uus_builder->add_member(0, "my_union", union_union_builder->build());
+    uus_builder->set_name("UnionUnionStruct");
+    DynamicType_ptr uus_type = uus_builder->build();
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(uus_builder->build().get()));
+    EXPECT_EQ(*pbType->GetDynamicType(), *uus_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*uus_type));
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_WCharUnionStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("WCharUnionStruct");
 
-        DynamicTypeBuilderFactory* factory = DynamicTypeBuilderFactory::get_instance();
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("WCharUnionStruct");
 
-        DynamicTypeBuilder_ptr wchar_builder = factory.create_char16_builder();
-        DynamicTypeBuilder_ptr int32_builder = factory.create_int32_builder();
-        DynamicTypeBuilder_ptr int64_builder = factory.create_int64_builder();
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-        DynamicTypeBuilder_ptr union_builder = factory.create_union_builder(wchar_builder.get());
-        union_builder->add_member(0, "first", int32_builder.get(), "", { 0 }, true);
-        union_builder->add_member(1, "second", int64_builder.get(), "", { 1 }, false);
-        union_builder->set_name("WCharUnion");
+    DynamicTypeBuilder_ptr union_builder = factory.create_union_builder(*factory.create_char16_type());
+    union_builder->add_member(0, "first", factory.create_int32_type(), "", std::vector<uint64_t>{ 0 }, true);
+    union_builder->add_member(1, "second", factory.create_int64_type(), "", std::vector<uint64_t>{ 1 }, false);
+    union_builder->set_name("WCharUnion");
 
+    DynamicTypeBuilder_ptr us_builder = factory.create_struct_builder();
+    us_builder->add_member(0, "my_union", union_builder->build());
+    us_builder->set_name("WCharUnionStruct");
+    DynamicType_ptr us_type = us_builder->build();
 
-        DynamicTypeBuilder_ptr us_builder = factory.create_struct_builder();
-        us_builder->add_member(0, "my_union", union_builder.get());
-        us_builder->set_name("WCharUnionStruct");
+    EXPECT_EQ(*pbType->GetDynamicType(), *us_type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*us_type));
 
-        ASSERT_TRUE(pbType->GetDynamicType()->equals(us_builder->build().get()));
-
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_bounded_string_unit_tests)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStringStruct");
-        DynamicData* data = DynamicDataFactory::get_instance()->create_data(pbType->GetDynamicType());
 
-        // SERIALIZATION TEST
-        StringStruct refData;
-        StringStructPubSubType refDatapb;
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStringStruct");
+    DynamicData* data = DynamicDataFactory::get_instance()->create_data(pbType->GetDynamicType());
 
-        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
-        SerializedPayload_t payload(payloadSize);
-        SerializedPayload_t dynamic_payload(payloadSize);
-        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
-        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+    // SERIALIZATION TEST
+    StringStruct refData;
+    StringStructPubSubType refDatapb;
 
-        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
-        SerializedPayload_t static_payload(static_payloadSize);
-        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
-        ASSERT_TRUE(static_payload.length == static_payloadSize);
-        ASSERT_FALSE(data->set_string_value("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+    uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
+    SerializedPayload_t dynamic_payload(payloadSize);
+    EXPECT_TRUE(pbType->serialize(data, &dynamic_payload));
+    EXPECT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+    SerializedPayload_t static_payload(static_payloadSize);
+    EXPECT_TRUE(refDatapb.serialize(&refData, &static_payload));
+    EXPECT_EQ(static_payload.length, static_payloadSize);
+    EXPECT_NE(data->set_string_value("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID), ReturnCode_t::RETCODE_OK);
+
+    EXPECT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
 TEST_F(DynamicTypesTests, DynamicType_bounded_wstring_unit_tests)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ShortWStringStruct");
-        DynamicData* data = DynamicDataFactory::get_instance()->create_data(pbType->GetDynamicType());
 
-        // SERIALIZATION TEST
-        StringStruct refData;
-        StringStructPubSubType refDatapb;
+    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ShortWStringStruct");
+    DynamicData* data = DynamicDataFactory::get_instance()->create_data(pbType->GetDynamicType());
 
-        uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
-        SerializedPayload_t payload(payloadSize);
-        SerializedPayload_t dynamic_payload(payloadSize);
-        ASSERT_TRUE(pbType->serialize(data, &dynamic_payload));
-        ASSERT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
+    // SERIALIZATION TEST
+    StringStruct refData;
+    StringStructPubSubType refDatapb;
 
-        uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
-        SerializedPayload_t static_payload(static_payloadSize);
-        ASSERT_TRUE(refDatapb.serialize(&refData, &static_payload));
-        ASSERT_TRUE(static_payload.length == static_payloadSize);
-        ASSERT_FALSE(data->set_string_value("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID) == ReturnCode_t::RETCODE_OK);
-        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+    uint32_t payloadSize = static_cast<uint32_t>(pbType->getSerializedSizeProvider(data)());
+    SerializedPayload_t payload(payloadSize);
+    SerializedPayload_t dynamic_payload(payloadSize);
+    EXPECT_TRUE(pbType->serialize(data, &dynamic_payload));
+    EXPECT_TRUE(refDatapb.deserialize(&dynamic_payload, &refData));
 
-        delete(pbType);
-        XMLProfileManager::DeleteInstance();
-    }
+    uint32_t static_payloadSize = static_cast<uint32_t>(refDatapb.getSerializedSizeProvider(&refData)());
+    SerializedPayload_t static_payload(static_payloadSize);
+    EXPECT_TRUE(refDatapb.serialize(&refData, &static_payload));
+    EXPECT_EQ(static_payload.length, static_payloadSize);
+    EXPECT_NE(data->set_string_value("TEST_OVER_LENGTH_LIMITS", MEMBER_ID_INVALID), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(DynamicDataFactory::get_instance()->delete_data(data), ReturnCode_t::RETCODE_OK);
+
+    delete(pbType);
+    XMLProfileManager::DeleteInstance();
 }
 
+/*
 TEST_F(DynamicTypesTests, DynamicType_XML_Bitset_test)
 {
     using namespace xmlparser;
@@ -5271,7 +5260,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitset_test)
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("MyBitSet");
 
-        DynamicTypeBuilderFactory* factory = DynamicTypeBuilderFactory::get_instance();
+        DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
         DynamicTypeBuilder_ptr a_builder = factory.create_byte_builder();
         DynamicTypeBuilder_ptr b_builder = factory.create_bool_builder();
@@ -5322,7 +5311,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
     {
         DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("MyBitMask");
 
-        DynamicTypeBuilderFactory* factory = DynamicTypeBuilderFactory::get_instance();
+        DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
         // Bitset
         DynamicTypeBuilder_ptr builder_ptr = factory.create_bitmask_builder(8);
