@@ -18,6 +18,7 @@
 
 #include <gtest/gtest.h>
 
+#include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantFactoryQos.hpp>
@@ -35,16 +36,13 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/types/TypesBase.h>
-#include <fastdds/core/policy/ParameterSerializer.hpp>
 
 #include "BlackboxTests.hpp"
 #include "../api/dds-pim/PubSubWriter.hpp"
 #include "../api/dds-pim/PubSubReader.hpp"
-//#include "PubSubReader.hpp"
-//#include "PubSubWriter.hpp"
-#include "../types/HelloWorldPubSubTypes.h"
 #include "../types/FixedSized.h"
 #include "../types/FixedSizedPubSubTypes.h"
+#include "../types/HelloWorldPubSubTypes.h"
 
 namespace eprosima {
 namespace fastdds {
@@ -288,7 +286,7 @@ TEST(DDSBasic, MultithreadedReaderCreationDoesNotDeadlock)
  * @param[out] exists_pid_custom_related_sample_identity True if the parameter is inside msg.
  * @return true if parsing was correct, false otherwise.
  */
-bool readParameterListfromCDRMsg(
+bool check_related_sample_identity_field(
         fastrtps::rtps::CDRMessage_t& msg,
         bool& exists_pid_related_sample_identity,
         bool& exists_pid_custom_related_sample_identity)
@@ -320,7 +318,7 @@ bool readParameterListfromCDRMsg(
                         }
                         break;
                     }
-                    case (PID_RELATED_SAMPLE_IDENTITY):
+                    case PID_RELATED_SAMPLE_IDENTITY:
                     {
                         if (plength >= 24)
                         {
@@ -398,17 +396,15 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
     auto test_transport = std::make_shared<eprosima::fastrtps::rtps::test_UDPv4TransportDescriptor>();
     bool exists_pid_related_sample_identity = false;
     bool exists_pid_custom_related_sample_identity = false;
-    bool another_debug_bool_flag = false;
 
     test_transport->drop_data_messages_filter_ =
-            [&exists_pid_related_sample_identity, &exists_pid_custom_related_sample_identity,
-                    &another_debug_bool_flag]
+            [&exists_pid_related_sample_identity, &exists_pid_custom_related_sample_identity]
                 (eprosima::fastrtps::rtps::CDRMessage_t& msg)-> bool
             {
-                // Inside this filter, the two flags passed in register wether both PIDs are included in the msg to be sent.
-                // The legacy value is overwritten in order to sent a msg with only the standard PID_RELATED_SAMPLE_IDENTITY as valid parameter,
+                // Inside this filter, the two flags passed in register whether both PIDs are included in the msg to be sent.
+                // The legacy value is overwritten in order to send a msg with only the standard PID_RELATED_SAMPLE_IDENTITY as valid parameter,
                 // so that the reader will only parse that one.
-                bool ret = readParameterListfromCDRMsg(msg, exists_pid_related_sample_identity,
+                bool ret = check_related_sample_identity_field(msg, exists_pid_related_sample_identity,
                                 exists_pid_custom_related_sample_identity);
                 EXPECT_TRUE(ret);
                 return false;

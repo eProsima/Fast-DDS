@@ -178,7 +178,7 @@ public:
      * @param sample_id Sample id.
      * @return true if operation is successful, false if the operation would overflow the maximum size of the message.
      */
-    static bool custom_add_parameter_sample_identity(
+    static bool add_parameter_custom_related_sample_identity(
             fastrtps::rtps::CDRMessage_t* cdr_message,
             const fastrtps::rtps::SampleIdentity& sample_id)
     {

@@ -125,7 +125,7 @@ struct DataMsgUtils
         {
             fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sample_identity(msg,
                     change->write_params.related_sample_identity());
-            fastdds::dds::ParameterSerializer<Parameter_t>::custom_add_parameter_sample_identity(msg,
+            fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_custom_related_sample_identity(msg,
                     change->write_params.related_sample_identity());
         }
 
