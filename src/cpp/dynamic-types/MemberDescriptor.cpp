@@ -394,6 +394,8 @@ std::ostream& eprosima::fastrtps::types::operator<<( std::ostream& os, const Mem
 
     // indentation increment
     ++os.iword(DynamicTypeBuilderFactory::indentation_index);
+    // parent object
+    auto desc = static_cast<const TypeDescriptor*>(os.pword(DynamicTypeBuilderFactory::object_index));
 
     auto manips = [](ostream& os) -> ostream&
     {
@@ -407,6 +409,12 @@ std::ostream& eprosima::fastrtps::types::operator<<( std::ostream& os, const Mem
        << manips << "index:" << md.get_index() << endl
        << manips << "name:" << md.get_name() << endl
        << manips << "id:" << md.get_id() << endl;
+
+    if ( nullptr != desc && desc->get_kind() == TypeKind::TK_UNION)
+    {
+        os << manips << "default value:" << md.get_default_value() << endl
+           << manips << "is default:" << std::boolalpha << md.is_default_union_value() << endl;
+    }
 
     // Show type
     auto bt = md.get_type();

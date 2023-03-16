@@ -706,11 +706,16 @@ std::ostream& eprosima::fastrtps::types::operator<<(std::ostream& os, const Type
     // Show members
     if (td.get_member_count())
     {
+        // notify the members which object they belong to
+        os.pword(DynamicTypeBuilderFactory::object_index) = (void*)&td;
+
         os << manips << "members:";
         for(const DynamicTypeMember* m : td.get_all_members())
         {
             os << *m;
         }
+
+        os.pword(DynamicTypeBuilderFactory::object_index) = nullptr;
     }
 
     // indentation decrement

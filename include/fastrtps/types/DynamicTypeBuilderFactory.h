@@ -472,8 +472,9 @@ public:
 
     RTPS_DllAPI bool is_empty() const;
 
-    //! ostream indentation ancillary
-    static const int indentation_index;
+    //! ostream ancillary
+    static const int indentation_index; //!< indentation
+    static const int object_index; //!< previous object in << stack
 };
 
 } // namespace types
