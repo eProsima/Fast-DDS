@@ -30,6 +30,7 @@
 #include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/security/authentication/Handshake.h>
 #include <fastdds/rtps/security/common/ParticipantGenericMessage.h>
+#include <fastrtps/utils/ProxyPool.hpp>
 #include <fastrtps/utils/shared_mutex.hpp>
 
 #include <map>
@@ -309,6 +310,24 @@ public:
     bool is_security_initialized() const
     {
         return (bool)ready_state_;
+    }
+
+    /**
+     * Access the temporary proxy pool for reader proxies
+     * @return pool reference
+     */
+    ProxyPool<ReaderProxyData>& get_temporary_reader_proxies_pool()
+    {
+        return temp_reader_proxies_;
+    }
+
+    /**
+     * Access the temporary proxy pool for writer proxies
+     * @return pool reference
+     */
+    ProxyPool<WriterProxyData>& get_temporary_writer_proxies_pool()
+    {
+        return temp_writer_proxies_;
     }
 
 private:
@@ -817,12 +836,11 @@ private:
     std::list<std::tuple<ReaderProxyData, GUID_t, GUID_t>> remote_reader_pending_discovery_messages_;
     std::list<std::tuple<WriterProxyData, GUID_t, GUID_t>> remote_writer_pending_discovery_messages_;
 
-    // The temporary proxies are required to prevent dynamic allocations and enforce real time on execution
-    // They are protected by the corresponding builtin reader endpoints mutexes to avoid data races
-    ReaderProxyData temp_stateless_reader_proxy_data_;
-    WriterProxyData temp_stateless_writer_proxy_data_;
-    ReaderProxyData temp_volatile_reader_proxy_data_;
-    WriterProxyData temp_volatile_writer_proxy_data_;
+    //! ProxyPool for temporary reader proxies
+    ProxyPool<ReaderProxyData> temp_reader_proxies_;
+    //! ProxyPool for temporary writer proxies
+    ProxyPool<WriterProxyData> temp_writer_proxies_;
+
 
     HistoryAttributes participant_stateless_message_writer_hattr_;
     HistoryAttributes participant_stateless_message_reader_hattr_;
