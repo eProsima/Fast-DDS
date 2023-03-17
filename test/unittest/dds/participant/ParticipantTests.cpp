@@ -77,6 +77,7 @@ using fastrtps::types::DynamicData_ptr;
 using fastrtps::types::DynamicDataFactory;
 using fastrtps::types::DynamicType_ptr;
 using fastrtps::types::DynamicTypeBuilder_ptr;
+using fastrtps::types::DynamicTypeBuilder_cptr;
 using fastrtps::types::DynamicTypeBuilderFactory;
 using fastrtps::types::TypeDescriptor;
 using fastrtps::xmlparser::XMLP_ret;
@@ -2882,8 +2883,8 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactories)
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     // Create the dynamic type builder
-    DynamicType_ptr base_type = DynamicTypeBuilderFactory::get_instance()->create_uint32_type();
-    DynamicTypeBuilder_ptr builder = DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
+    DynamicType_ptr base_type = DynamicTypeBuilderFactory::get_instance().create_uint32_type();
+    DynamicTypeBuilder_ptr builder = DynamicTypeBuilderFactory::get_instance().create_struct_builder();
     builder->add_member(0, "uint", base_type);
     // Build the complete dynamic type
     DynamicType_ptr dyn_type = builder->build();
@@ -2917,8 +2918,8 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotFillTypeInfo)
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     // Create the dynamic type builder
-    DynamicType_ptr base_type = DynamicTypeBuilderFactory::get_instance()->create_uint32_type();
-    DynamicTypeBuilder_ptr builder = DynamicTypeBuilderFactory::get_instance()->create_struct_builder();
+    DynamicType_ptr base_type = DynamicTypeBuilderFactory::get_instance().create_uint32_type();
+    DynamicTypeBuilder_ptr builder = DynamicTypeBuilderFactory::get_instance().create_struct_builder();
     builder->add_member(0, "uint", base_type);
 
     // Build the complete dynamic type
@@ -2931,70 +2932,6 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotFillTypeInfo)
     type->auto_fill_type_information(false);
     type->auto_fill_type_object(true);
     ASSERT_EQ(type.register_type(participant), ReturnCode_t::RETCODE_OK);
-
-    // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
-}
-
-// Mocked DynamicType for DynamicType creation tests
-class DynamicTypeMock : public eprosima::fastrtps::types::DynamicType
-{
-public:
-
-    DynamicTypeMock(
-            const eprosima::fastrtps::types::TypeDescriptor* descriptor)
-        : eprosima::fastrtps::types::DynamicType(descriptor)
-    {
-    }
-
-    DynamicType_ptr get_base_type_wrapper() const
-    {
-        return get_base_type();
-    }
-
-};
-
-/*
- * This test attempts to add a non supported custom dynamic type to the participant dynamic type factories. The type
- * should be registered in the participant but not added to the dynamic types factories.
- */
-TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotTypeIdentifier)
-{
-    // Do not enable entities on creation
-    DomainParticipantFactoryQos factory_qos;
-    factory_qos.entity_factory().autoenable_created_entities = false;
-    DomainParticipantFactory::get_instance()->set_qos(factory_qos);
-
-    // Create a disabled participant
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
-
-    // Create a not supported TypeDescriptor
-    const TypeDescriptor* myDescriptor = new TypeDescriptor("my_descriptor", 0x11);
-    // Create the base type for the dynamic type
-    DynamicType_ptr base_type(new DynamicTypeMock(myDescriptor));
-    // Create a custom dynamic type builder using the wrong TypeDescriptor
-    DynamicTypeBuilder_ptr builder =
-            DynamicTypeBuilderFactory::get_instance()->create_custom_builder(myDescriptor, "my_dynamic_type");
-    builder->add_member(0, "uint", base_type);
-    // Create the dynamic type
-    DynamicType_ptr dyn_type = builder->build();
-    // Create the data instance
-    DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(dyn_type));
-
-    // Register the type
-    TypeSupport type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
-    type->auto_fill_type_information(true);
-    type->auto_fill_type_object(true);
-    type.register_type(participant);
-
-    TypeSupport ret_type = participant->find_type("my_dynamic_type");
-
-    // The type is registered in the participant but not in the dynamic types factories
-    ASSERT_FALSE(ret_type.empty());
-
-    // Remove TypeDescriptor before closing
-    delete myDescriptor;
 
     // Remove the participant
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
@@ -3014,7 +2951,7 @@ TEST(ParticipantTests, GetTypes)
             DomainParticipantFactory::get_instance()->create_participant(0, pqos);
 
     // Create the dynamic type builder
-    DynamicTypeBuilder_ptr builder_string = DynamicTypeBuilderFactory::get_instance()->create_string_builder(100);
+    DynamicTypeBuilder_cptr builder_string = DynamicTypeBuilderFactory::get_instance().create_string_builder(100);
     // Create the dynamic type
     DynamicType_ptr dyn_type_string = builder_string->build();
     TypeSupport type_string(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type_string));
@@ -3056,7 +2993,7 @@ TEST(ParticipantTests, GetTypeDependencies)
             DomainParticipantFactory::get_instance()->create_participant(0, pqos);
 
     // Create the dynamic type builder
-    DynamicTypeBuilder_ptr builder_string = DynamicTypeBuilderFactory::get_instance()->create_string_builder(100);
+    DynamicTypeBuilder_cptr builder_string = DynamicTypeBuilderFactory::get_instance().create_string_builder(100);
     // Create the dynamic type
     DynamicType_ptr dyn_type_string = builder_string->build();
     TypeSupport type_string(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type_string));
@@ -3110,11 +3047,11 @@ TEST(ParticipantTests, RegisterRemoteTypeComplete)
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     // Create the complete dynamic type builder
-    DynamicTypeBuilder_ptr int32_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+    DynamicType_ptr int32_type = DynamicTypeBuilderFactory::get_instance().create_int32_type();
     DynamicTypeBuilder_ptr seqLong_builder =
-            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(int32_builder.get());
+            DynamicTypeBuilderFactory::get_instance().create_sequence_builder(*int32_type);
     DynamicTypeBuilder_ptr mySequenceLong_builder =
-            DynamicTypeBuilderFactory::get_instance()->create_alias_builder(seqLong_builder.get(), "MySequenceLong");
+            DynamicTypeBuilderFactory::get_instance().create_alias_builder(*seqLong_builder->build(), "MySequenceLong");
     // Build the dynamic type
     DynamicType_ptr dyn_type = mySequenceLong_builder->build();
 
@@ -3187,10 +3124,8 @@ TEST(ParticipantTests, RegisterRemoteTypeMinimal)
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
-    // Create the minimal dynamic type builder
-    DynamicTypeBuilder_ptr builder = DynamicTypeBuilderFactory::get_instance()->create_char16_builder();
     // Build the dynamic type
-    DynamicType_ptr dyn_type = DynamicTypeBuilderFactory::get_instance()->create_type(builder.get());
+    DynamicType_ptr dyn_type = DynamicTypeBuilderFactory::get_instance().create_char16_type();
     DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(dyn_type));
     data->set_string_value("Dynamic Char16");
 
@@ -3253,11 +3188,11 @@ TEST(ParticipantTests, RegisterRemoteTypePreconditionNotMet)
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
 
     // Create the type builder
-    DynamicTypeBuilder_ptr int32_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+    DynamicType_ptr int32_type = DynamicTypeBuilderFactory::get_instance().create_int32_type();
     DynamicTypeBuilder_ptr seqLong_builder =
-            DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(int32_builder.get());
+            DynamicTypeBuilderFactory::get_instance().create_sequence_builder(*int32_type);
     DynamicTypeBuilder_ptr mySequenceLong_builder =
-            DynamicTypeBuilderFactory::get_instance()->create_alias_builder(seqLong_builder.get(), "MySequenceLong");
+            DynamicTypeBuilderFactory::get_instance().create_alias_builder(*seqLong_builder->build(), "MySequenceLong");
     // Build the dynamic type
     DynamicType_ptr dyn_type = mySequenceLong_builder->build();
 

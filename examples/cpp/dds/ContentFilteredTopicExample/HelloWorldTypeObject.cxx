@@ -51,7 +51,7 @@ void registerHelloWorldTypes()
 const TypeIdentifier* GetHelloWorldIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("HelloWorld", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -84,8 +84,8 @@ const TypeObject* GetMinimalHelloWorldObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -134,11 +134,11 @@ const TypeObject* GetMinimalHelloWorldObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -167,14 +167,14 @@ const TypeObject* GetMinimalHelloWorldObject()
 const TypeObject* GetCompleteHelloWorldObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("HelloWorld", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -221,7 +221,7 @@ const TypeObject* GetCompleteHelloWorldObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));

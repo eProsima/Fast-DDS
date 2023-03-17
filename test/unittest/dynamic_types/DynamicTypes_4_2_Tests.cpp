@@ -254,8 +254,8 @@ TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
 
     TypeIdentifier conv_identifier;
     TypeObject conv_object;
-    DynamicTypeBuilderFactory::get_instance()->build_type_object(dyn_type, conv_object, true, true); // Avoid factory
-    DynamicTypeBuilderFactory::get_instance()->build_type_identifier(dyn_type, conv_identifier, true);
+    DynamicTypeBuilderFactory::get_instance().build_type_object(*dyn_type, conv_object, true, true); // Avoid factory
+    DynamicTypeBuilderFactory::get_instance().build_type_identifier(*dyn_type, conv_identifier, true);
 
     ASSERT_TRUE(*identifier == conv_identifier);
     ASSERT_TRUE(*object == conv_object);

@@ -97,7 +97,7 @@ void registernew_features_4_2Types()
 const TypeIdentifier* GetNewAliasesIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("NewAliases", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -130,8 +130,8 @@ const TypeObject* GetMinimalNewAliasesObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -306,11 +306,11 @@ const TypeObject* GetMinimalNewAliasesObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -339,14 +339,14 @@ const TypeObject* GetMinimalNewAliasesObject()
 const TypeObject* GetCompleteNewAliasesObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("NewAliases", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -522,7 +522,7 @@ const TypeObject* GetCompleteNewAliasesObject()
                     annParam.paramname_hash()[i] = message_hash.digest[i];
                 }
                 AnnotationParameterValue paramValue;
-                paramValue._d(TK_BOOLEAN);
+                paramValue._d(TypeKind::TK_BOOLEAN);
                 paramValue.from_string("true");
                 annParam.value(paramValue);
                 ann.param_seq().push_back(annParam);
@@ -540,7 +540,7 @@ const TypeObject* GetCompleteNewAliasesObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -569,7 +569,7 @@ const TypeObject* GetCompleteNewAliasesObject()
 const TypeIdentifier* GetWCharUnionIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("WCharUnion", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -602,8 +602,8 @@ const TypeObject* GetMinimalWCharUnionObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_UNION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_UNION);
 
     type_object->minimal().union_type().union_flags().IS_FINAL(false);
     type_object->minimal().union_type().union_flags().IS_APPENDABLE(false);
@@ -665,7 +665,7 @@ const TypeObject* GetMinimalWCharUnionObject()
     //type_object->minimal().union_type().header().detail()... // Empty
 
     TypeIdentifier* identifier = new TypeIdentifier();
-    identifier->_d(EK_MINIMAL);
+    identifier->_d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalUnionType::getCdrSerializedSize(type_object->minimal().union_type()) + 4));
@@ -695,14 +695,14 @@ const TypeObject* GetMinimalWCharUnionObject()
 const TypeObject* GetCompleteWCharUnionObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("WCharUnion", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_UNION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_UNION);
 
     type_object->complete().union_type().union_flags().IS_FINAL(false);
     type_object->complete().union_type().union_flags().IS_APPENDABLE(false);
@@ -760,7 +760,7 @@ const TypeObject* GetCompleteWCharUnionObject()
 
 
     TypeIdentifier* identifier = new TypeIdentifier();
-    identifier->_d(EK_COMPLETE);
+    identifier->_d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteUnionType::getCdrSerializedSize(type_object->complete().union_type()) + 4));
@@ -790,7 +790,7 @@ const TypeObject* GetCompleteWCharUnionObject()
 const TypeIdentifier* GetOctetUnionIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("OctetUnion", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -823,8 +823,8 @@ const TypeObject* GetMinimalOctetUnionObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_UNION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_UNION);
 
     type_object->minimal().union_type().union_flags().IS_FINAL(false);
     type_object->minimal().union_type().union_flags().IS_APPENDABLE(false);
@@ -886,7 +886,7 @@ const TypeObject* GetMinimalOctetUnionObject()
     //type_object->minimal().union_type().header().detail()... // Empty
 
     TypeIdentifier* identifier = new TypeIdentifier();
-    identifier->_d(EK_MINIMAL);
+    identifier->_d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalUnionType::getCdrSerializedSize(type_object->minimal().union_type()) + 4));
@@ -916,14 +916,14 @@ const TypeObject* GetMinimalOctetUnionObject()
 const TypeObject* GetCompleteOctetUnionObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("OctetUnion", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_UNION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_UNION);
 
     type_object->complete().union_type().union_flags().IS_FINAL(false);
     type_object->complete().union_type().union_flags().IS_APPENDABLE(false);
@@ -981,7 +981,7 @@ const TypeObject* GetCompleteOctetUnionObject()
 
 
     TypeIdentifier* identifier = new TypeIdentifier();
-    identifier->_d(EK_COMPLETE);
+    identifier->_d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteUnionType::getCdrSerializedSize(type_object->complete().union_type()) + 4));
@@ -1011,7 +1011,7 @@ const TypeObject* GetCompleteOctetUnionObject()
 const TypeIdentifier* GetInt8UnionIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("Int8Union", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -1044,8 +1044,8 @@ const TypeObject* GetMinimalInt8UnionObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_UNION);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_UNION);
 
     type_object->minimal().union_type().union_flags().IS_FINAL(false);
     type_object->minimal().union_type().union_flags().IS_APPENDABLE(false);
@@ -1107,7 +1107,7 @@ const TypeObject* GetMinimalInt8UnionObject()
     //type_object->minimal().union_type().header().detail()... // Empty
 
     TypeIdentifier* identifier = new TypeIdentifier();
-    identifier->_d(EK_MINIMAL);
+    identifier->_d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalUnionType::getCdrSerializedSize(type_object->minimal().union_type()) + 4));
@@ -1137,14 +1137,14 @@ const TypeObject* GetMinimalInt8UnionObject()
 const TypeObject* GetCompleteInt8UnionObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Int8Union", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_UNION);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_UNION);
 
     type_object->complete().union_type().union_flags().IS_FINAL(false);
     type_object->complete().union_type().union_flags().IS_APPENDABLE(false);
@@ -1202,7 +1202,7 @@ const TypeObject* GetCompleteInt8UnionObject()
 
 
     TypeIdentifier* identifier = new TypeIdentifier();
-    identifier->_d(EK_COMPLETE);
+    identifier->_d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteUnionType::getCdrSerializedSize(type_object->complete().union_type()) + 4));
@@ -1233,7 +1233,7 @@ namespace bitmodule {
     const TypeIdentifier* GetParentBitsetIdentifier(bool complete)
     {
         const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ParentBitset", complete);
-        if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+        if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
         {
             return c_identifier;
         }
@@ -1266,8 +1266,8 @@ namespace bitmodule {
         }
 
         TypeObject *type_object = new TypeObject();
-        type_object->_d(EK_MINIMAL);
-        type_object->minimal()._d(TK_BITSET);
+        type_object->_d(TypeKind::EK_MINIMAL);
+        type_object->minimal()._d(TypeKind::TK_BITSET);
 
         MinimalBitfield mbf_parent_bitfield;
         mbf_parent_bitfield.common().flags().TRY_CONSTRUCT1(false);
@@ -1279,7 +1279,7 @@ namespace bitmodule {
         mbf_parent_bitfield.common().flags().IS_DEFAULT(false);
         mbf_parent_bitfield.common().position(0);
         mbf_parent_bitfield.common().bitcount(17);
-        mbf_parent_bitfield.common().holder_type(TK_UINT32);
+        mbf_parent_bitfield.common().holder_type(TypeKind::TK_UINT32);
         MD5 parent_bitfield_hash("parent_bitfield");
         for(int i = 0; i < 4; ++i)
         {
@@ -1289,7 +1289,7 @@ namespace bitmodule {
 
 
         TypeIdentifier identifier;
-        identifier._d(EK_MINIMAL);
+        identifier._d(TypeKind::EK_MINIMAL);
 
         SerializedPayload_t payload(static_cast<uint32_t>(
             MinimalBitsetType::getCdrSerializedSize(type_object->minimal().bitset_type()) + 4));
@@ -1318,14 +1318,14 @@ namespace bitmodule {
     const TypeObject* GetCompleteParentBitsetObject()
     {
         const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ParentBitset", true);
-        if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+        if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
         {
             return c_type_object;
         }
 
         TypeObject *type_object = new TypeObject();
-        type_object->_d(EK_COMPLETE);
-        type_object->complete()._d(TK_BITSET);
+        type_object->_d(TypeKind::EK_COMPLETE);
+        type_object->complete()._d(TypeKind::TK_BITSET);
 
         // No flags apply
         //type_object->complete().bitset_type().bitset_flags().IS_FINAL(false);
@@ -1347,7 +1347,7 @@ namespace bitmodule {
         cbf_parent_bitfield.common().flags().IS_DEFAULT(false);
         cbf_parent_bitfield.common().position(0);
         cbf_parent_bitfield.common().bitcount(17);
-        cbf_parent_bitfield.common().holder_type(TK_UINT32);
+        cbf_parent_bitfield.common().holder_type(TypeKind::TK_UINT32);
         cbf_parent_bitfield.detail().name("parent_bitfield");
 
         // Position annotation always present
@@ -1362,7 +1362,7 @@ namespace bitmodule {
                 annParam.paramname_hash()[i] = message_hash.digest[i];
             }
             AnnotationParameterValue paramValue;
-            paramValue._d(TK_UINT16);
+            paramValue._d(TypeKind::TK_UINT16);
             paramValue.uint_16_value(0);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
@@ -1382,7 +1382,7 @@ namespace bitmodule {
                 annParam.paramname_hash()[i] = message_hash.digest[i];
             }
             AnnotationParameterValue paramValue;
-            paramValue._d(TK_UINT16);
+            paramValue._d(TypeKind::TK_UINT16);
             paramValue.uint_16_value(17);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
@@ -1394,7 +1394,7 @@ namespace bitmodule {
 
 
         TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(TypeKind::EK_COMPLETE);
 
         SerializedPayload_t payload(static_cast<uint32_t>(
             CompleteBitsetType::getCdrSerializedSize(type_object->complete().bitset_type()) + 4));
@@ -1423,7 +1423,7 @@ namespace bitmodule {
     const TypeIdentifier* GetMyBitsetIdentifier(bool complete)
     {
         const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("MyBitset", complete);
-        if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+        if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
         {
             return c_identifier;
         }
@@ -1456,8 +1456,8 @@ namespace bitmodule {
         }
 
         TypeObject *type_object = new TypeObject();
-        type_object->_d(EK_MINIMAL);
-        type_object->minimal()._d(TK_BITSET);
+        type_object->_d(TypeKind::EK_MINIMAL);
+        type_object->minimal()._d(TypeKind::TK_BITSET);
 
         MinimalBitfield mbf_a;
         mbf_a.common().flags().TRY_CONSTRUCT1(false);
@@ -1469,7 +1469,7 @@ namespace bitmodule {
         mbf_a.common().flags().IS_DEFAULT(false);
         mbf_a.common().position(0);
         mbf_a.common().bitcount(3);
-        mbf_a.common().holder_type(TK_CHAR8);
+        mbf_a.common().holder_type(TypeKind::TK_CHAR8);
         MD5 a_hash("a");
         for(int i = 0; i < 4; ++i)
         {
@@ -1486,7 +1486,7 @@ namespace bitmodule {
         mbf_b.common().flags().IS_DEFAULT(false);
         mbf_b.common().position(3);
         mbf_b.common().bitcount(1);
-        mbf_b.common().holder_type(TK_BOOLEAN);
+        mbf_b.common().holder_type(TypeKind::TK_BOOLEAN);
         MD5 b_hash("b");
         for(int i = 0; i < 4; ++i)
         {
@@ -1504,7 +1504,7 @@ namespace bitmodule {
         mbf_c.common().flags().IS_DEFAULT(false);
         mbf_c.common().position(8);
         mbf_c.common().bitcount(10);
-        mbf_c.common().holder_type(TK_UINT16);
+        mbf_c.common().holder_type(TypeKind::TK_UINT16);
         MD5 c_hash("c");
         for(int i = 0; i < 4; ++i)
         {
@@ -1521,7 +1521,7 @@ namespace bitmodule {
         mbf_d.common().flags().IS_DEFAULT(false);
         mbf_d.common().position(18);
         mbf_d.common().bitcount(12);
-        mbf_d.common().holder_type(TK_INT16);
+        mbf_d.common().holder_type(TypeKind::TK_INT16);
         MD5 d_hash("d");
         for(int i = 0; i < 4; ++i)
         {
@@ -1538,7 +1538,7 @@ namespace bitmodule {
         mbf_e.common().flags().IS_DEFAULT(false);
         mbf_e.common().position(30);
         mbf_e.common().bitcount(12);
-        mbf_e.common().holder_type(TK_INT16);
+        mbf_e.common().holder_type(TypeKind::TK_INT16);
         MD5 e_hash("e");
         for(int i = 0; i < 4; ++i)
         {
@@ -1555,7 +1555,7 @@ namespace bitmodule {
         mbf_f.common().flags().IS_DEFAULT(false);
         mbf_f.common().position(42);
         mbf_f.common().bitcount(12);
-        mbf_f.common().holder_type(TK_INT16);
+        mbf_f.common().holder_type(TypeKind::TK_INT16);
         MD5 f_hash("f");
         for(int i = 0; i < 4; ++i)
         {
@@ -1566,7 +1566,7 @@ namespace bitmodule {
         type_object->minimal().bitset_type().header().base_type(*GetParentBitsetIdentifier(false));
 
         TypeIdentifier identifier;
-        identifier._d(EK_MINIMAL);
+        identifier._d(TypeKind::EK_MINIMAL);
 
         SerializedPayload_t payload(static_cast<uint32_t>(
             MinimalBitsetType::getCdrSerializedSize(type_object->minimal().bitset_type()) + 4));
@@ -1595,14 +1595,14 @@ namespace bitmodule {
     const TypeObject* GetCompleteMyBitsetObject()
     {
         const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyBitset", true);
-        if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+        if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
         {
             return c_type_object;
         }
 
         TypeObject *type_object = new TypeObject();
-        type_object->_d(EK_COMPLETE);
-        type_object->complete()._d(TK_BITSET);
+        type_object->_d(TypeKind::EK_COMPLETE);
+        type_object->complete()._d(TypeKind::TK_BITSET);
 
         // No flags apply
         //type_object->complete().bitset_type().bitset_flags().IS_FINAL(false);
@@ -1624,7 +1624,7 @@ namespace bitmodule {
         cbf_a.common().flags().IS_DEFAULT(false);
         cbf_a.common().position(0);
         cbf_a.common().bitcount(3);
-        cbf_a.common().holder_type(TK_CHAR8);
+        cbf_a.common().holder_type(TypeKind::TK_CHAR8);
         cbf_a.detail().name("a");
 
         // Position annotation always present
@@ -1639,7 +1639,7 @@ namespace bitmodule {
                 annParam.paramname_hash()[i] = message_hash.digest[i];
             }
             AnnotationParameterValue paramValue;
-            paramValue._d(TK_UINT16);
+            paramValue._d(TypeKind::TK_UINT16);
             paramValue.uint_16_value(0);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
@@ -1659,7 +1659,7 @@ namespace bitmodule {
                 annParam.paramname_hash()[i] = message_hash.digest[i];
             }
             AnnotationParameterValue paramValue;
-            paramValue._d(TK_UINT16);
+            paramValue._d(TypeKind::TK_UINT16);
             paramValue.uint_16_value(3);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
@@ -1678,7 +1678,7 @@ namespace bitmodule {
         cbf_b.common().flags().IS_DEFAULT(false);
         cbf_b.common().position(3);
         cbf_b.common().bitcount(1);
-        cbf_b.common().holder_type(TK_BOOLEAN);
+        cbf_b.common().holder_type(TypeKind::TK_BOOLEAN);
         cbf_b.detail().name("b");
 
         // Position annotation always present
@@ -1693,7 +1693,7 @@ namespace bitmodule {
                 annParam.paramname_hash()[i] = message_hash.digest[i];
             }
             AnnotationParameterValue paramValue;
-            paramValue._d(TK_UINT16);
+            paramValue._d(TypeKind::TK_UINT16);
             paramValue.uint_16_value(3);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
@@ -1713,7 +1713,7 @@ namespace bitmodule {
                 annParam.paramname_hash()[i] = message_hash.digest[i];
             }
             AnnotationParameterValue paramValue;
-            paramValue._d(TK_UINT16);
+            paramValue._d(TypeKind::TK_UINT16);
             paramValue.uint_16_value(1);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
@@ -1733,7 +1733,7 @@ namespace bitmodule {
         cbf_c.common().flags().IS_DEFAULT(false);
         cbf_c.common().position(8);
         cbf_c.common().bitcount(10);
-        cbf_c.common().holder_type(TK_UINT16);
+        cbf_c.common().holder_type(TypeKind::TK_UINT16);
         cbf_c.detail().name("c");
 
         // Position annotation always present
@@ -1748,7 +1748,7 @@ namespace bitmodule {
                 annParam.paramname_hash()[i] = message_hash.digest[i];
             }
             AnnotationParameterValue paramValue;
-            paramValue._d(TK_UINT16);
+            paramValue._d(TypeKind::TK_UINT16);
             paramValue.uint_16_value(8);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
@@ -1768,7 +1768,7 @@ namespace bitmodule {
                 annParam.paramname_hash()[i] = message_hash.digest[i];
             }
             AnnotationParameterValue paramValue;
-            paramValue._d(TK_UINT16);
+            paramValue._d(TypeKind::TK_UINT16);
             paramValue.uint_16_value(10);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
@@ -1787,7 +1787,7 @@ namespace bitmodule {
         cbf_d.common().flags().IS_DEFAULT(false);
         cbf_d.common().position(18);
         cbf_d.common().bitcount(12);
-        cbf_d.common().holder_type(TK_INT16);
+        cbf_d.common().holder_type(TypeKind::TK_INT16);
         cbf_d.detail().name("d");
 
         // Position annotation always present
@@ -1802,7 +1802,7 @@ namespace bitmodule {
                 annParam.paramname_hash()[i] = message_hash.digest[i];
             }
             AnnotationParameterValue paramValue;
-            paramValue._d(TK_UINT16);
+            paramValue._d(TypeKind::TK_UINT16);
             paramValue.uint_16_value(18);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
@@ -1822,7 +1822,7 @@ namespace bitmodule {
                 annParam.paramname_hash()[i] = message_hash.digest[i];
             }
             AnnotationParameterValue paramValue;
-            paramValue._d(TK_UINT16);
+            paramValue._d(TypeKind::TK_UINT16);
             paramValue.uint_16_value(12);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
@@ -1841,7 +1841,7 @@ namespace bitmodule {
         cbf_e.common().flags().IS_DEFAULT(false);
         cbf_e.common().position(30);
         cbf_e.common().bitcount(12);
-        cbf_e.common().holder_type(TK_INT16);
+        cbf_e.common().holder_type(TypeKind::TK_INT16);
         cbf_e.detail().name("e");
 
         // Position annotation always present
@@ -1856,7 +1856,7 @@ namespace bitmodule {
                 annParam.paramname_hash()[i] = message_hash.digest[i];
             }
             AnnotationParameterValue paramValue;
-            paramValue._d(TK_UINT16);
+            paramValue._d(TypeKind::TK_UINT16);
             paramValue.uint_16_value(30);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
@@ -1876,7 +1876,7 @@ namespace bitmodule {
                 annParam.paramname_hash()[i] = message_hash.digest[i];
             }
             AnnotationParameterValue paramValue;
-            paramValue._d(TK_UINT16);
+            paramValue._d(TypeKind::TK_UINT16);
             paramValue.uint_16_value(12);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
@@ -1895,7 +1895,7 @@ namespace bitmodule {
         cbf_f.common().flags().IS_DEFAULT(false);
         cbf_f.common().position(42);
         cbf_f.common().bitcount(12);
-        cbf_f.common().holder_type(TK_INT16);
+        cbf_f.common().holder_type(TypeKind::TK_INT16);
         cbf_f.detail().name("f");
 
         // Position annotation always present
@@ -1910,7 +1910,7 @@ namespace bitmodule {
                 annParam.paramname_hash()[i] = message_hash.digest[i];
             }
             AnnotationParameterValue paramValue;
-            paramValue._d(TK_UINT16);
+            paramValue._d(TypeKind::TK_UINT16);
             paramValue.uint_16_value(42);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
@@ -1930,7 +1930,7 @@ namespace bitmodule {
                 annParam.paramname_hash()[i] = message_hash.digest[i];
             }
             AnnotationParameterValue paramValue;
-            paramValue._d(TK_UINT16);
+            paramValue._d(TypeKind::TK_UINT16);
             paramValue.uint_16_value(12);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
@@ -1943,7 +1943,7 @@ namespace bitmodule {
         type_object->complete().bitset_type().header().base_type(*GetParentBitsetIdentifier(true));
 
         TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(TypeKind::EK_COMPLETE);
 
         SerializedPayload_t payload(static_cast<uint32_t>(
             CompleteBitsetType::getCdrSerializedSize(type_object->complete().bitset_type()) + 4));
@@ -1972,7 +1972,7 @@ namespace bitmodule {
     const TypeIdentifier* GetMyBitMaskIdentifier(bool complete)
     {
         const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("MyBitMask", complete);
-        if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+        if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
         {
             return c_identifier;
         }
@@ -2005,8 +2005,8 @@ namespace bitmodule {
         }
 
         TypeObject *type_object = new TypeObject();
-        type_object->_d(EK_MINIMAL);
-        type_object->minimal()._d(TK_BITMASK);
+        type_object->_d(TypeKind::EK_MINIMAL);
+        type_object->minimal()._d(TypeKind::TK_BITMASK);
 
         type_object->minimal().bitmask_type().header().common().bit_bound(8);
 
@@ -2092,7 +2092,7 @@ namespace bitmodule {
 
 
         TypeIdentifier identifier;
-        identifier._d(EK_MINIMAL);
+        identifier._d(TypeKind::EK_MINIMAL);
 
         SerializedPayload_t payload(static_cast<uint32_t>(
             MinimalBitmaskType::getCdrSerializedSize(type_object->minimal().bitmask_type()) + 4));
@@ -2121,14 +2121,14 @@ namespace bitmodule {
     const TypeObject* GetCompleteMyBitMaskObject()
     {
         const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MyBitMask", true);
-        if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+        if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
         {
             return c_type_object;
         }
 
         TypeObject *type_object = new TypeObject();
-        type_object->_d(EK_COMPLETE);
-        type_object->complete()._d(TK_BITMASK);
+        type_object->_d(TypeKind::EK_COMPLETE);
+        type_object->complete()._d(TypeKind::TK_BITMASK);
 
         // No flags apply
         //type_object->complete().bitmask_type().bitmask_flags().IS_FINAL(false);
@@ -2164,7 +2164,7 @@ namespace bitmodule {
                 annParam.paramname_hash()[i] = message_hash.digest[i];
             }
             AnnotationParameterValue paramValue;
-            paramValue._d(TK_UINT16);
+            paramValue._d(TypeKind::TK_UINT16);
             paramValue.uint_16_value(0);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
@@ -2186,7 +2186,7 @@ namespace bitmodule {
                                 annParam.paramname_hash()[i] = message_hash.digest[i];
                             }
                             AnnotationParameterValue paramValue;
-                            paramValue._d(TK_UINT16);
+                            paramValue._d(TypeKind::TK_UINT16);
                             paramValue.from_string("0");
                             annParam.value(paramValue);
                             ann.param_seq().push_back(annParam);
@@ -2220,7 +2220,7 @@ namespace bitmodule {
                 annParam.paramname_hash()[i] = message_hash.digest[i];
             }
             AnnotationParameterValue paramValue;
-            paramValue._d(TK_UINT16);
+            paramValue._d(TypeKind::TK_UINT16);
             paramValue.uint_16_value(1);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
@@ -2242,7 +2242,7 @@ namespace bitmodule {
                                 annParam.paramname_hash()[i] = message_hash.digest[i];
                             }
                             AnnotationParameterValue paramValue;
-                            paramValue._d(TK_UINT16);
+                            paramValue._d(TypeKind::TK_UINT16);
                             paramValue.from_string("1");
                             annParam.value(paramValue);
                             ann.param_seq().push_back(annParam);
@@ -2276,7 +2276,7 @@ namespace bitmodule {
                 annParam.paramname_hash()[i] = message_hash.digest[i];
             }
             AnnotationParameterValue paramValue;
-            paramValue._d(TK_UINT16);
+            paramValue._d(TypeKind::TK_UINT16);
             paramValue.uint_16_value(4);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
@@ -2298,7 +2298,7 @@ namespace bitmodule {
                                 annParam.paramname_hash()[i] = message_hash.digest[i];
                             }
                             AnnotationParameterValue paramValue;
-                            paramValue._d(TK_UINT16);
+                            paramValue._d(TypeKind::TK_UINT16);
                             paramValue.from_string("4");
                             annParam.value(paramValue);
                             ann.param_seq().push_back(annParam);
@@ -2332,7 +2332,7 @@ namespace bitmodule {
                 annParam.paramname_hash()[i] = message_hash.digest[i];
             }
             AnnotationParameterValue paramValue;
-            paramValue._d(TK_UINT16);
+            paramValue._d(TypeKind::TK_UINT16);
             paramValue.uint_16_value(6);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
@@ -2354,7 +2354,7 @@ namespace bitmodule {
                                 annParam.paramname_hash()[i] = message_hash.digest[i];
                             }
                             AnnotationParameterValue paramValue;
-                            paramValue._d(TK_UINT16);
+                            paramValue._d(TypeKind::TK_UINT16);
                             paramValue.from_string("6");
                             annParam.value(paramValue);
                             ann.param_seq().push_back(annParam);
@@ -2388,7 +2388,7 @@ namespace bitmodule {
                 annParam.paramname_hash()[i] = message_hash.digest[i];
             }
             AnnotationParameterValue paramValue;
-            paramValue._d(TK_UINT16);
+            paramValue._d(TypeKind::TK_UINT16);
             paramValue.uint_16_value(7);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
@@ -2400,7 +2400,7 @@ namespace bitmodule {
 
 
         TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(TypeKind::EK_COMPLETE);
 
         SerializedPayload_t payload(static_cast<uint32_t>(
             CompleteBitmaskType::getCdrSerializedSize(type_object->complete().bitmask_type()) + 4));
@@ -2429,7 +2429,7 @@ namespace bitmodule {
     const TypeIdentifier* GetBitsetBitmaskIdentifier(bool complete)
     {
         const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("BitsetBitmask", complete);
-        if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+        if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
         {
             return c_identifier;
         }
@@ -2462,8 +2462,8 @@ namespace bitmodule {
         }
 
         TypeObject *type_object = new TypeObject();
-        type_object->_d(EK_MINIMAL);
-        type_object->minimal()._d(TK_STRUCTURE);
+        type_object->_d(TypeKind::EK_MINIMAL);
+        type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
         type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
         type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -2509,11 +2509,11 @@ namespace bitmodule {
 
         // Header
         // TODO Inheritance
-        //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+        //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
         //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
 
         TypeIdentifier identifier;
-        identifier._d(EK_MINIMAL);
+        identifier._d(TypeKind::EK_MINIMAL);
 
         SerializedPayload_t payload(static_cast<uint32_t>(
             MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -2542,14 +2542,14 @@ namespace bitmodule {
     const TypeObject* GetCompleteBitsetBitmaskObject()
     {
         const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BitsetBitmask", true);
-        if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+        if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
         {
             return c_type_object;
         }
 
         TypeObject *type_object = new TypeObject();
-        type_object->_d(EK_COMPLETE);
-        type_object->complete()._d(TK_STRUCTURE);
+        type_object->_d(TypeKind::EK_COMPLETE);
+        type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
         type_object->complete().struct_type().struct_flags().IS_FINAL(false);
         type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -2593,7 +2593,7 @@ namespace bitmodule {
 
 
         TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(TypeKind::EK_COMPLETE);
 
         SerializedPayload_t payload(static_cast<uint32_t>(
             CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -2622,7 +2622,7 @@ namespace bitmodule {
     const TypeIdentifier* GetBM2Identifier(bool complete)
     {
         const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("BM2", complete);
-        if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+        if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
         {
             return c_identifier;
         }
@@ -2655,8 +2655,8 @@ namespace bitmodule {
         }
 
         TypeObject *type_object = new TypeObject();
-        type_object->_d(EK_MINIMAL);
-        type_object->minimal()._d(TK_STRUCTURE);
+        type_object->_d(TypeKind::EK_MINIMAL);
+        type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
         type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
         type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -2703,12 +2703,12 @@ namespace bitmodule {
 
         // Header
         // TODO Inheritance
-        //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+        //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
         //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
         type_object->minimal().struct_type().header().base_type(*GetBitsetBitmaskIdentifier(false));
 
         TypeIdentifier identifier;
-        identifier._d(EK_MINIMAL);
+        identifier._d(TypeKind::EK_MINIMAL);
 
         SerializedPayload_t payload(static_cast<uint32_t>(
             MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -2737,14 +2737,14 @@ namespace bitmodule {
     const TypeObject* GetCompleteBM2Object()
     {
         const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BM2", true);
-        if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+        if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
         {
             return c_type_object;
         }
 
         TypeObject *type_object = new TypeObject();
-        type_object->_d(EK_COMPLETE);
-        type_object->complete()._d(TK_STRUCTURE);
+        type_object->_d(TypeKind::EK_COMPLETE);
+        type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
         type_object->complete().struct_type().struct_flags().IS_FINAL(false);
         type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -2790,7 +2790,7 @@ namespace bitmodule {
 
 
         TypeIdentifier identifier;
-        identifier._d(EK_COMPLETE);
+        identifier._d(TypeKind::EK_COMPLETE);
 
         SerializedPayload_t payload(static_cast<uint32_t>(
             CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
@@ -2820,7 +2820,7 @@ namespace bitmodule {
 const TypeIdentifier* GetStructTestIdentifier(bool complete)
 {
     const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructTest", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == TypeKind::EK_COMPLETE))
     {
         return c_identifier;
     }
@@ -2853,8 +2853,8 @@ const TypeObject* GetMinimalStructTestObject()
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_MINIMAL);
+    type_object->minimal()._d(TypeKind::TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
     type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -2934,12 +2934,12 @@ const TypeObject* GetMinimalStructTestObject()
 
     // Header
     // TODO Inheritance
-    //type_object->minimal().struct_type().header().base_type()._d(EK_MINIMAL);
+    //type_object->minimal().struct_type().header().base_type()._d(TypeKind::EK_MINIMAL);
     //type_object->minimal().struct_type().header().base_type().equivalence_hash()[0..13];
     type_object->minimal().struct_type().header().base_type(*GetNewAliasesIdentifier(false));
 
     TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
+    identifier._d(TypeKind::EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
@@ -2968,14 +2968,14 @@ const TypeObject* GetMinimalStructTestObject()
 const TypeObject* GetCompleteStructTestObject()
 {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructTest", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    if (c_type_object != nullptr && c_type_object->_d() == TypeKind::EK_COMPLETE)
     {
         return c_type_object;
     }
 
     TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_STRUCTURE);
+    type_object->_d(TypeKind::EK_COMPLETE);
+    type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
@@ -3048,7 +3048,7 @@ const TypeObject* GetCompleteStructTestObject()
 
 
     TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
+    identifier._d(TypeKind::EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
         CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));

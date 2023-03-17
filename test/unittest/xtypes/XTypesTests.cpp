@@ -737,60 +737,60 @@ TEST_F(XTypesTests, SimpleUnionCompleteCoercion)
 
 TEST_F(XTypesTests, TypeDescriptorFullyQualifiedName)
 {
-    DynamicTypeBuilder_ptr my_builder(DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
-    my_builder->add_member(0, "x", DynamicTypeBuilderFactory::get_instance()->create_float32_type());
-    my_builder->add_member(0, "y", DynamicTypeBuilderFactory::get_instance()->create_float32_type());
-    my_builder->add_member(0, "z", DynamicTypeBuilderFactory::get_instance()->create_float32_type());
-    const TypeDescriptor* my_descriptor = my_builder->get_type_descriptor();
+    DynamicTypeBuilder_ptr my_builder(DynamicTypeBuilderFactory::get_instance().create_struct_builder());
+    my_builder->add_member(0, "x", DynamicTypeBuilderFactory::get_instance().create_float32_type());
+    my_builder->add_member(0, "y", DynamicTypeBuilderFactory::get_instance().create_float32_type());
+    my_builder->add_member(0, "z", DynamicTypeBuilderFactory::get_instance().create_float32_type());
+    const TypeDescriptor& my_descriptor = *my_builder;
 
     my_builder->set_name("Position");
-    ASSERT_TRUE(my_descriptor->is_consistent());
+    ASSERT_TRUE(my_descriptor.is_consistent());
     my_builder->set_name("Position_");
-    ASSERT_TRUE(my_descriptor->is_consistent());
+    ASSERT_TRUE(my_descriptor.is_consistent());
     my_builder->set_name("Position123");
-    ASSERT_TRUE(my_descriptor->is_consistent());
+    ASSERT_TRUE(my_descriptor.is_consistent());
     my_builder->set_name("position_123");
-    ASSERT_TRUE(my_descriptor->is_consistent());
+    ASSERT_TRUE(my_descriptor.is_consistent());
     my_builder->set_name("_Position");
-    ASSERT_FALSE(my_descriptor->is_consistent());
+    ASSERT_FALSE(my_descriptor.is_consistent());
     my_builder->set_name("123Position");
-    ASSERT_FALSE(my_descriptor->is_consistent());
+    ASSERT_FALSE(my_descriptor.is_consistent());
     my_builder->set_name("Position&");
-    ASSERT_FALSE(my_descriptor->is_consistent());
+    ASSERT_FALSE(my_descriptor.is_consistent());
 
     my_builder->set_name("my_interface::action::dds_::Position");
-    ASSERT_TRUE(my_descriptor->is_consistent());
+    ASSERT_TRUE(my_descriptor.is_consistent());
     my_builder->set_name("my_interface:action::dds_::Position");
-    ASSERT_FALSE(my_descriptor->is_consistent());
+    ASSERT_FALSE(my_descriptor.is_consistent());
     my_builder->set_name("my_interface:::action::dds_::Position");
-    ASSERT_FALSE(my_descriptor->is_consistent());
+    ASSERT_FALSE(my_descriptor.is_consistent());
     my_builder->set_name("_my_interface::action::dds_::Position");
-    ASSERT_FALSE(my_descriptor->is_consistent());
+    ASSERT_FALSE(my_descriptor.is_consistent());
     my_builder->set_name("1my_interface::action::dds_::Position");
-    ASSERT_FALSE(my_descriptor->is_consistent());
+    ASSERT_FALSE(my_descriptor.is_consistent());
     my_builder->set_name(":my_interface::action::dds_::Position");
-    ASSERT_FALSE(my_descriptor->is_consistent());
+    ASSERT_FALSE(my_descriptor.is_consistent());
     my_builder->set_name("::my_interface::action::dds_::Position");
-    ASSERT_FALSE(my_descriptor->is_consistent());
+    ASSERT_FALSE(my_descriptor.is_consistent());
     my_builder->set_name("$my_interface::action::dds_::Position");
-    ASSERT_FALSE(my_descriptor->is_consistent());
+    ASSERT_FALSE(my_descriptor.is_consistent());
     my_builder->set_name("my_interface::2action::dds_::Position");
-    ASSERT_FALSE(my_descriptor->is_consistent());
+    ASSERT_FALSE(my_descriptor.is_consistent());
     my_builder->set_name("my_interface::_action::dds_::Position");
-    ASSERT_FALSE(my_descriptor->is_consistent());
+    ASSERT_FALSE(my_descriptor.is_consistent());
     my_builder->set_name("my_interface::*action::dds_::Position");
-    ASSERT_FALSE(my_descriptor->is_consistent());
+    ASSERT_FALSE(my_descriptor.is_consistent());
     my_builder->set_name("my_interface::action*::dds_::Position");
-    ASSERT_FALSE(my_descriptor->is_consistent());
+    ASSERT_FALSE(my_descriptor.is_consistent());
 }
 
 TEST_F(XTypesTests, MemberDescriptorFullyQualifiedName)
 {
     MemberId member_id = 0;
-    DynamicTypeBuilder_ptr my_builder(DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
-    my_builder->add_member(member_id++, "x", DynamicTypeBuilderFactory::get_instance()->create_float32_type());
-    my_builder->add_member(member_id++, "y", DynamicTypeBuilderFactory::get_instance()->create_float32_type());
-    my_builder->add_member(member_id, "z", DynamicTypeBuilderFactory::get_instance()->create_float32_type());
+    DynamicTypeBuilder_ptr my_builder(DynamicTypeBuilderFactory::get_instance().create_struct_builder());
+    my_builder->add_member(member_id++, "x", DynamicTypeBuilderFactory::get_instance().create_float32_type());
+    my_builder->add_member(member_id++, "y", DynamicTypeBuilderFactory::get_instance().create_float32_type());
+    my_builder->add_member(member_id, "z", DynamicTypeBuilderFactory::get_instance().create_float32_type());
 
     my_builder->set_name("Position");
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, my_builder->add_member(member_id++, "t1", my_builder->build()));
