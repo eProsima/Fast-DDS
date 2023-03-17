@@ -20,13 +20,14 @@
 #ifndef DYNAMIC_TYPES_HELPER_H_
 #define DYNAMIC_TYPES_HELPER_H_
 
-#include <fastrtps/fastrtps_fwd.h>
+#include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace types {
+
 class DynamicData;
-class DynamicType_ptr;
+
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
