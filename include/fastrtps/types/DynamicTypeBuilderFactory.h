@@ -32,68 +32,79 @@ class DynamicTypeBuilderFactory;
 class DynamicTypeBuilder;
 class DynamicType;
 
-/**
- * Interface use to track dynamic objects lifetime
- * /remarks
- * This interface is only enabled if *ENABLE_DYNAMIC_MEMORY_CHECK* is defined.
- */
-struct dynamic_tracker_interface
+enum class type_tracking
 {
-    //! clear collection contents
-    virtual void reset() noexcept {}
-    //! check if there are leakages
-    virtual bool is_empty() noexcept { return true; }
-    //! add primitive builder
-    virtual void add_primitive(const DynamicTypeBuilder*) noexcept {}
-    //! add primitive types
-    virtual void add_primitive(const DynamicType*) noexcept {}
-    //! add new builder
-    virtual bool add(const DynamicTypeBuilder*) noexcept { return true; }
-    //! remove builder
-    virtual bool remove(const DynamicTypeBuilder*) noexcept { return true; }
-    //! add new type
-    virtual bool add(const DynamicType*) noexcept { return true; }
-    //! remove type
-    virtual bool remove(const DynamicType*) noexcept { return true; }
-
-    // singleton creation
-    static dynamic_tracker_interface& get_dynamic_tracker();
+    none = 0,
+    partial,
+    complete
 };
 
-/**
- * @brief This class tracks dynamic type objects in order to prevent memory leakages
- */
-class dtypes_memory_check
-    : public dynamic_tracker_interface
+namespace detail {
+
+template<type_tracking mode>
+struct dynamic_tracker_data;
+
+template<>
+struct dynamic_tracker_data<type_tracking::none> {};
+
+template<>
+struct dynamic_tracker_data<type_tracking::partial>
 {
-    std::set<const DynamicTypeBuilder*> primitive_builders_list_; /*!< Collection of static builder instances */
-    std::set<const DynamicType*> primitive_types_list_; /*!< Collection of static type instances */
     std::set<const DynamicTypeBuilder*> builders_list_; /*!< Collection of active DynamicTypeBuilder instances */
     std::set<const DynamicType*> types_list_; /*!< Collection of active DynamicType instances */
     std::mutex mutex_; /*!< atomic access to the collections */
+};
 
+template<>
+struct dynamic_tracker_data<type_tracking::complete>
+    : public dynamic_tracker_data<type_tracking::partial>
+{
+    std::set<const DynamicTypeBuilder*> primitive_builders_list_; /*!< Collection of static builder instances */
+    std::set<const DynamicType*> primitive_types_list_; /*!< Collection of static type instances */
+};
+
+} // namespace detail
+
+/**
+ * Interface use to track dynamic objects lifetime
+ */
+template<type_tracking mode>
+class dynamic_tracker
+        : protected detail::dynamic_tracker_data<mode>
+{
     friend class DynamicTypeBuilder;
     friend class DynamicTypeBuilderFactory;
 
-    void reset() noexcept override;
-    bool is_empty() noexcept override;
-    void add_primitive(const DynamicTypeBuilder*) noexcept override;
-    void add_primitive(const DynamicType*) noexcept override;
-    bool add(const DynamicTypeBuilder*) noexcept override;
-    bool remove(const DynamicTypeBuilder*) noexcept override;
-    bool add(const DynamicType*) noexcept override;
-    bool remove(const DynamicType*) noexcept override;
+    //! clear collection contents
+    void reset() noexcept;
+    //! check if there are leakages
+    bool is_empty() noexcept;
+    //! add primitive builder
+    void add_primitive(const DynamicTypeBuilder*) noexcept;
+    //! add primitive types
+    void add_primitive(const DynamicType*) noexcept;
+    //! add new builder
+    bool add(const DynamicTypeBuilder*) noexcept;
+    //! remove builder
+    bool remove(const DynamicTypeBuilder*) noexcept;
+    //! add new type
+    bool add(const DynamicType*) noexcept;
+    //! remove type
+    bool remove(const DynamicType*) noexcept;
+
+    // singleton creation
+    static dynamic_tracker<mode>& get_dynamic_tracker()
+    {
+        static dynamic_tracker<mode> dynamic_tracker;
+        return dynamic_tracker;
+    }
 };
 
-inline dynamic_tracker_interface& dynamic_tracker_interface::get_dynamic_tracker()
-{
 #ifdef ENABLE_DYNAMIC_MEMORY_CHECK
-    static dtypes_memory_check dynamic_tracker;
+constexpr type_tracking selected_mode = type_tracking::complete;
 #else
-    static dynamic_tracker_interface dynamic_tracker;
+constexpr type_tracking selected_mode = type_tracking::none;
 #endif
-    return dynamic_tracker;
-}
 
 class TypeDescriptor;
 class TypeIdentifier;
@@ -107,7 +118,7 @@ class AnnotationParameterValue;
  */
 class DynamicTypeBuilderFactory
 {
-    using builder_allocator = detail::BuilderAllocator<DynamicTypeBuilder, DynamicTypeBuilderFactory, true>;
+    using builder_allocator = eprosima::detail::BuilderAllocator<DynamicTypeBuilder, DynamicTypeBuilderFactory, true>;
 
     // BuilderAllocator ancillary
     builder_allocator& get_allocator()

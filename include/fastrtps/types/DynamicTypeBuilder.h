@@ -33,7 +33,7 @@ class DynamicTypeBuilder
     : public TypeDescriptor
     , public std::enable_shared_from_this<DynamicTypeBuilder>
 {
-    using builder_allocator = detail::BuilderAllocator<DynamicType, DynamicTypeBuilder, false>;
+    using builder_allocator = eprosima::detail::BuilderAllocator<DynamicType, DynamicTypeBuilder, false>;
 
     friend builder_allocator;
 
