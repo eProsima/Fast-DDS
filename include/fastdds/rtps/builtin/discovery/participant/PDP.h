@@ -260,7 +260,7 @@ public:
      * @return true if found and deleted.
      */
     bool removeWriterProxyData(
-            const GUID_t& reader_guid,
+            const GUID_t& writer_guid,
             WriterDiscoveryInfo::DISCOVERY_STATUS reason);
 
     /**
