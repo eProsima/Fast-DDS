@@ -134,6 +134,18 @@ public:
         static_cast<void>(reader_info);
     }
 
+    /**
+     * This method is called when a new Reader is discovered, with a Topic that
+     * matches the name of a local writer, but with an incompatible type
+     *
+     * @param writer Pointer to the RTPSWriter.
+     */
+    virtual void on_incompatible_type(
+            RTPSWriter* writer)
+    {
+        static_cast<void>(writer);
+    }
+
 };
 
 }  /* namespace rtps */
