@@ -322,6 +322,10 @@
                     <max_partitions>256</max_partitions>
                     <max_user_data>256</max_user_data>
                     <max_properties>512</max_properties>
+                    <send_buffers>
+                        <preallocated_number>113</preallocated_number>
+                        <dynamic>true</dynamic>
+                    </send_buffers>
                 </allocation>
             </rtps>
         </participant>
@@ -693,6 +697,20 @@
                 <increment>0</increment>
             </matchedPublishersAllocation>
         </data_reader>
+
+        <topic profile_name="topic_profile_example" is_default_profile="true">
+            <historyQos>
+                <kind>KEEP_LAST</kind>
+                <depth>20</depth>
+            </historyQos>
+            <resourceLimitsQos>
+                <max_samples>5</max_samples>
+                <max_instances>2</max_instances>
+                <max_samples_per_instance>1</max_samples_per_instance>
+                <allocated_samples>20</allocated_samples>
+                <extra_samples>5</extra_samples>
+            </resourceLimitsQos>
+        </topic>
     </profiles>
 
     <log>
@@ -829,4 +847,8 @@
             </bitmask>
         </type>
     </types>
+
+    <library_settings>
+        <intraprocess_delivery>OFF</intraprocess_delivery>
+    </library_settings>
 </dds>

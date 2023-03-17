@@ -356,6 +356,11 @@
                 <max_user_data>256</max_user_data>
 
                 <max_properties>512</max_properties>
+
+                <send_buffers>
+                    <preallocated_number>127</preallocated_number>
+                    <dynamic>true</dynamic>
+                </send_buffers>
             </allocation>
         </rtps>
     </participant>

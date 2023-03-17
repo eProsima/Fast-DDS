@@ -7,14 +7,16 @@
 
     <!--| MAIN DOCUMENT HIERARCHY |-->
     <!--__ROOT__:
-        ├ dds      [0~1],
-        |   ├ profiles [0~1],
-        |   ├ log      [0~1],
-        |   └ types    [0~1], (rooted definition)
+        ├ dds              [0~1],
+        |   ├ profiles         [0~1],
+        |   ├ log              [0~1],
+        |   ├ types            [0~1],
+        |   └ library_settings [0~1] (rooted definition)
         |
-        ├ profiles [0~1],
-        ├ log      [0~1],
-        └ types    [0~1] (standalone definition) -->
+        ├ profiles         [0~1],
+        ├ log              [0~1],
+        ├ types            [0~1],
+        └ library_settings [0~1] (standalone definition) -->
     <!-- dds, profiles, log or types can be the ROOT element of the profile -->
     <xs:element name="dds">
         <xs:complexType>
@@ -22,28 +24,30 @@
                 <xs:element name="profiles" type="profilesType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="types" type="typesType" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="log" type="logType" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="library_settings" type="LibrarySettingsType" minOccurs="0" maxOccurs="1"/>
             </xs:all>
         </xs:complexType>
     </xs:element>
     <xs:element name="profiles" type="profilesType"/>
     <xs:element name="types" type="typesType"/>
     <xs:element name="log" type="logType"/>
+    <xs:element name="library_settings" type="LibrarySettingsType"/>
 
 
     <!--PROFILES:
-        ├ library_settings      [0~1],
         ├ participant           [0~*],
         ├ data_writer           [0~*],
         ├ data_reader           [0~*],
-        └ transport_descriptors [0~1] -->
+        ├ transport_descriptors [0~1],
+        └ topic                 [0~*] -->
     <xs:complexType name="profilesType">
         <xs:sequence minOccurs="1" maxOccurs="unbounded">   <!-- multiple instances of the elements -->
             <xs:choice minOccurs="1"> <!-- each instance can be one of the elements below -->
-                <xs:element name="library_settings" type="LibrarySettingsType" maxOccurs="1"/>
                 <xs:element name="participant" type="participantProfileType" maxOccurs="unbounded"/>
                 <xs:element name="data_writer" type="publisherProfileType" maxOccurs="unbounded"/>
                 <xs:element name="data_reader" type="subscriberProfileType" maxOccurs="unbounded"/>
                 <xs:element name="transport_descriptors" type="TransportDescriptorListType" maxOccurs="1"/>
+                <xs:element name="topic" type="topicProfileType" maxOccurs="unbounded"/>
             </xs:choice>
         </xs:sequence>
     </xs:complexType>
@@ -68,10 +72,6 @@
         </xs:sequence>
     </xs:complexType>
 
-
-
-
-    <!--| PROFILES ELEMENTS |-->
     <!--Library settings:
         └ intraprocess_delivery [string] ("OFF", "USER_DATA_ONLY", "FULL") -->
     <xs:complexType name="LibrarySettingsType">
@@ -91,6 +91,8 @@
         </xs:all>
     </xs:complexType>
 
+
+    <!--| PROFILES ELEMENTS |-->
     <!--Participant:
         | ╠ att. profile_name       [string] REQ,
         | ╚ att. is_default_profile [bool],
@@ -169,7 +171,7 @@
         └ matchedSubscribersAllocation [0~1]-->
     <xs:complexType name="publisherProfileType">
         <xs:all>
-            <xs:element name="topic" type="topicAttributesType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="topic" type="topicElementType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="qos" type="QosPoliciesType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="times" type="writerTimesType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
@@ -205,7 +207,7 @@
         └ matchedPublishersAllocation  [0~1]-->
     <xs:complexType name="subscriberProfileType">
         <xs:all minOccurs="0">
-            <xs:element name="topic" type="topicAttributesType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="topic" type="topicElementType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="qos" type="QosPoliciesType" minOccurs="0"/>
             <xs:element name="times" type="readerTimesType" minOccurs="0"/>
             <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
@@ -231,6 +233,36 @@
       </xs:sequence>
     </xs:complexType>
 
+    <!--Topic (profile):
+        | ╠ att. profile_name       [string] REQ,
+        | ╚ att. is_default_profile [bool],
+        |
+        ├ historyQoS        [0~1],
+        └ resourceLimitsQos [0~1],
+            ├ max_samples              [uint32],
+            ├ max_instances            [uint32],
+            ├ max_samples_per_instance [uint32],
+            ├ allocated_samples        [uint32],
+            └ extra_samples            [uint32] -->
+    <xs:complexType name="topicProfileType">
+        <xs:all>
+            <xs:element name="historyQos" type="historyQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="resourceLimitsQos" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:all>
+                        <xs:element name="max_samples" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="max_instances" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="max_samples_per_instance" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="allocated_samples" type="uint32" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="extra_samples" type="uint32" minOccurs="0" maxOccurs="1"/>
+                    </xs:all>
+                </xs:complexType>
+            </xs:element>
+        </xs:all>
+        <xs:attribute name="profile_name" type="string" use="required"/>
+        <xs:attribute name="is_default_profile" type="boolean" use="optional"/>
+    </xs:complexType>
+
     <!--Topic:
         ├ historyQoS        [0~1],
         └ resourceLimitsQos [0~1],
@@ -239,7 +271,7 @@
             ├ max_samples_per_instance [uint32],
             ├ allocated_samples        [uint32],
             └ extra_samples            [uint32] -->
-    <xs:complexType name="topicAttributesType">
+    <xs:complexType name="topicElementType">
         <xs:all>
             <xs:element name="historyQos" type="historyQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="resourceLimitsQos" minOccurs="0" maxOccurs="1">
@@ -695,7 +727,7 @@
         ├ total_participants [0~1],
         ├ total_readers      [0~1],
         ├ total_writers      [0~1],
-        ├ send_buffers ???   [0~1], ???
+        ├ send_buffers       [0~1],
         ├ max_properties     [uint32],
         ├ max_user_data      [uint32],
         └ max_partitions     [uint32] -->
@@ -712,14 +744,14 @@
             <xs:element name="total_participants" type="allocationConfigType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="total_readers" type="allocationConfigType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="total_writers" type="allocationConfigType" minOccurs="0" maxOccurs="1"/>
-            <!-- <xs:element name="send_buffers" minOccurs="0" maxOccurs="1">
+            <xs:element name="send_buffers" minOccurs="0" maxOccurs="1">
                 <xs:complexType>
                     <xs:all>
                         <xs:element name="preallocated_number" type="uint32" minOccurs="0" maxOccurs="1"/>
                         <xs:element name="dynamic" type="boolean" minOccurs="0" maxOccurs="1"/>
                     </xs:all>
                 </xs:complexType>
-            </xs:element> -->
+            </xs:element>
             <xs:element name="max_properties" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="max_user_data" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="max_partitions" type="uint32" minOccurs="0" maxOccurs="1"/>
@@ -1105,35 +1137,35 @@
 
     <!--| LOCATOR TYPES DEFINITION |-->
     <!--udpv4 Locator:
-        ├ port    [uint32],
+        ├ port    [uint16],
         └ address [ipv4Address]-->
     <xs:complexType name="udpv4LocatorType">
         <xs:all>
-            <xs:element name="port" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="port" type="uint16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="address" type="ipv4Address" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
     <!--udpv6 Locator:
-        ├ port    [uint32],
+        ├ port    [uint16],
         └ address [ipv6Address]-->
     <xs:complexType name="udpv6LocatorType">
         <xs:all>
-            <xs:element name="port" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="port" type="uint16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="address" type="ipv6Address" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
     <!--tcpv4 Locator:
-        ├ port          [uint32],
-        ├ physical_port [uint32],
+        ├ port          [uint16],
+        ├ physical_port [uint16],
         ├ address       [ipv4Address],
         ├ unique_lan_id [string],
         └ wan_address   [ipv4AddressFormat]-->
     <xs:complexType name="tcpv4LocatorType">
         <xs:all>
-            <xs:element name="port" type="uint32" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="physical_port" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="port" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="physical_port" type="uint16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="address" type="ipv4Address" minOccurs="0" maxOccurs="1"/>
             <xs:element name="unique_lan_id" type="string" minOccurs="0" maxOccurs="1"/>
             <xs:element name="wan_address" type="ipv4AddressFormat" minOccurs="0" maxOccurs="1"/>
@@ -1141,13 +1173,13 @@
     </xs:complexType>
 
     <!--tcpv6 Locator:
-        ├ port          [uint32],
-        ├ physical_port [uint32],
+        ├ port          [uint16],
+        ├ physical_port [uint16],
         └ address       [ipv6Address]-->
     <xs:complexType name="tcpv6LocatorType">
         <xs:all>
-            <xs:element name="port" type="uint32" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="physical_port" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="port" type="uint16" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="physical_port" type="uint16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="address" type="ipv6Address" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
@@ -1157,11 +1189,11 @@
         |   att. cost        [uint8] (0~255),
         |   att. mask        [uint8] (1~31),
         |
-        ├ port    [uint32],
+        ├ port    [uint16],
         └ address [ipv4Address]-->
     <xs:complexType name="udpv4ExternalLocatorType">
         <xs:all>
-            <xs:element name="port" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="port" type="uint16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="address" type="ipv4Address" minOccurs="0" maxOccurs="1"/>
         </xs:all>
         <xs:attribute name="externality" default="1">
@@ -1195,11 +1227,11 @@
         |   att. cost        [uint8] (0~255),
         |   att. mask        [uint8] (1~127),
         |
-        ├ port    [uint32],
+        ├ port    [uint16],
         └ address [ipv6Address]-->
     <xs:complexType name="udpv6ExternalLocatorType">
         <xs:all>
-            <xs:element name="port" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="port" type="uint16" minOccurs="0" maxOccurs="1"/>
             <xs:element name="address" type="ipv6Address" minOccurs="0" maxOccurs="1"/>
         </xs:all>
         <xs:attribute name="externality" default="1">

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
-    <profiles>
-        <library_settings>
-            <intraprocess_delivery>OFF</intraprocess_delivery>
-        </library_settings>
+    <library_settings>
+        <intraprocess_delivery>OFF</intraprocess_delivery>
+    </library_settings>
 
+    <profiles>
         <transport_descriptors>
             <transport_descriptor>
                 <transport_id>shm_transport</transport_id>

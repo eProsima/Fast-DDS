@@ -103,4 +103,9 @@
             </qos>
         </data_reader>
     </profiles>
+
+    <!-- INTRA-PROCESS -->
+    <library_settings>
+        <intraprocess_delivery>USER_DATA_ONLY</intraprocess_delivery>
+    </library_settings>
 </dds>
