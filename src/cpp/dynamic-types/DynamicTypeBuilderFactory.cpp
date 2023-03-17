@@ -34,32 +34,41 @@
 
 using namespace eprosima::fastrtps::types;
 
-void dtypes_memory_check::reset() noexcept
+// explicit instatiation of tracker methods for type_tracking::complete
+
+template<>
+void dynamic_tracker<type_tracking::complete>::reset() noexcept
 {
     std::lock_guard<std::mutex> _(mutex_);
     builders_list_.clear();
     types_list_.clear();
+    primitive_builders_list_.clear();
+    primitive_types_list_.clear();
 }
 
-bool dtypes_memory_check::is_empty() noexcept
+template<>
+bool dynamic_tracker<type_tracking::complete>::is_empty() noexcept
 {
     std::lock_guard<std::mutex> _(mutex_);
     return builders_list_.empty() && types_list_.empty();
 }
 
-void dtypes_memory_check::add_primitive(const DynamicTypeBuilder* pBuilder) noexcept
+template<>
+void dynamic_tracker<type_tracking::complete>::add_primitive(const DynamicTypeBuilder* pBuilder) noexcept
 {
     std::lock_guard<std::mutex> _(mutex_);
     primitive_builders_list_.insert(pBuilder);
 }
 
-void dtypes_memory_check::add_primitive(const DynamicType* pType) noexcept
+template<>
+void dynamic_tracker<type_tracking::complete>::add_primitive(const DynamicType* pType) noexcept
 {
     std::lock_guard<std::mutex> _(mutex_);
     primitive_types_list_.insert(pType);
 }
 
-bool dtypes_memory_check::add(const DynamicTypeBuilder* pBuilder) noexcept
+template<>
+bool dynamic_tracker<type_tracking::complete>::add(const DynamicTypeBuilder* pBuilder) noexcept
 {
     std::lock_guard<std::mutex> _(mutex_);
     if(!builders_list_.insert(pBuilder).second)
@@ -70,7 +79,8 @@ bool dtypes_memory_check::add(const DynamicTypeBuilder* pBuilder) noexcept
     return true;
 }
 
-bool dtypes_memory_check::remove(const DynamicTypeBuilder* pBuilder) noexcept
+template<>
+bool dynamic_tracker<type_tracking::complete>::remove(const DynamicTypeBuilder* pBuilder) noexcept
 {
     std::lock_guard<std::mutex> _(mutex_);
     if(!builders_list_.erase(pBuilder)
@@ -82,7 +92,8 @@ bool dtypes_memory_check::remove(const DynamicTypeBuilder* pBuilder) noexcept
     return true;
 }
 
-bool dtypes_memory_check::add(const DynamicType* pType) noexcept
+template<>
+bool dynamic_tracker<type_tracking::complete>::add(const DynamicType* pType) noexcept
 {
     std::lock_guard<std::mutex> _(mutex_);
     if(!types_list_.insert(pType).second)
@@ -93,7 +104,8 @@ bool dtypes_memory_check::add(const DynamicType* pType) noexcept
     return true;
 }
 
-bool dtypes_memory_check::remove(const DynamicType* type) noexcept
+template<>
+bool dynamic_tracker<type_tracking::complete>::remove(const DynamicType* type) noexcept
 {
     std::lock_guard<std::mutex> _(mutex_);
     if(!types_list_.erase(type)
@@ -104,6 +116,139 @@ bool dtypes_memory_check::remove(const DynamicType* type) noexcept
     }
     return true;
 }
+
+#ifndef NDEBUG
+// force instantiation for error checking
+template class eprosima::fastrtps::types::dynamic_tracker<type_tracking::complete>;
+#endif
+
+// explicit instatiation of tracker methods for type_tracking::partial
+
+template<>
+void dynamic_tracker<type_tracking::partial>::reset() noexcept
+{
+    std::lock_guard<std::mutex> _(mutex_);
+    builders_list_.clear();
+    types_list_.clear();
+}
+
+template<>
+bool dynamic_tracker<type_tracking::partial>::is_empty() noexcept
+{
+    std::lock_guard<std::mutex> _(mutex_);
+    return builders_list_.empty() && types_list_.empty();
+}
+
+template<>
+void dynamic_tracker<type_tracking::partial>::add_primitive(const DynamicTypeBuilder*) noexcept
+{
+}
+
+template<>
+void dynamic_tracker<type_tracking::partial>::add_primitive(const DynamicType*) noexcept
+{
+}
+
+template<>
+bool dynamic_tracker<type_tracking::partial>::add(const DynamicTypeBuilder* pBuilder) noexcept
+{
+    std::lock_guard<std::mutex> _(mutex_);
+    if(!builders_list_.insert(pBuilder).second)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "The given type builder has been inserted previously.");
+        return false;
+    }
+    return true;
+}
+
+template<>
+bool dynamic_tracker<type_tracking::partial>::remove(const DynamicTypeBuilder* pBuilder) noexcept
+{
+    std::lock_guard<std::mutex> _(mutex_);
+    if(!builders_list_.erase(pBuilder))
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "The given type builder has been already removed.");
+        return false;
+    }
+    return true;
+}
+
+template<>
+bool dynamic_tracker<type_tracking::partial>::add(const DynamicType* pType) noexcept
+{
+    std::lock_guard<std::mutex> _(mutex_);
+    if(!types_list_.insert(pType).second)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "The given type has been inserted previously.");
+        return false;
+    }
+    return true;
+}
+
+template<>
+bool dynamic_tracker<type_tracking::partial>::remove(const DynamicType* type) noexcept
+{
+    std::lock_guard<std::mutex> _(mutex_);
+    if(!types_list_.erase(type))
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "The given type has been already removed.");
+        return false;
+    }
+    return true;
+}
+
+#ifndef NDEBUG
+// force instantiation for error checking
+template class eprosima::fastrtps::types::dynamic_tracker<type_tracking::partial>;
+#endif
+
+// explicit instatiation of tracker methods for type_tracking::none
+
+template<>
+void dynamic_tracker<type_tracking::none>::reset() noexcept {}
+
+template<>
+bool dynamic_tracker<type_tracking::none>::is_empty() noexcept
+{
+    return true;
+}
+
+template<>
+void dynamic_tracker<type_tracking::none>::add_primitive(const DynamicTypeBuilder*) noexcept {}
+
+template<>
+void dynamic_tracker<type_tracking::none>::add_primitive(const DynamicType*) noexcept {}
+
+template<>
+bool dynamic_tracker<type_tracking::none>::add(const DynamicTypeBuilder*) noexcept
+{
+    return true;
+}
+
+template<>
+bool dynamic_tracker<type_tracking::none>::remove(const DynamicTypeBuilder*) noexcept
+{
+    return true;
+}
+
+template<>
+bool dynamic_tracker<type_tracking::none>::add(const DynamicType*) noexcept
+{
+    return true;
+}
+
+template<>
+bool dynamic_tracker<type_tracking::none>::remove(const DynamicType*) noexcept
+{
+    return true;
+}
+
+#ifndef NDEBUG
+// force instantiation for error checking
+template class eprosima::fastrtps::types::dynamic_tracker<type_tracking::none>;
+#endif
+
+// DynamicTypeBuilderFactory ancillary
 
 static std::string get_type_name(
         TypeKind kind)
@@ -161,7 +306,7 @@ DynamicTypeBuilderFactory& DynamicTypeBuilderFactory::get_instance() noexcept
 {
     // C++ standard requires preserve global construction order
     // make sure the dynamic tracker lifespan is larger than the factory one
-    dynamic_tracker_interface::get_dynamic_tracker();
+    dynamic_tracker<selected_mode>::get_dynamic_tracker();
 
     // C++11 guarantees the construction to be atomic
     static DynamicTypeBuilderFactory instance;
@@ -176,7 +321,7 @@ ReturnCode_t DynamicTypeBuilderFactory::delete_instance() noexcept
 
 void DynamicTypeBuilderFactory::reset()
 {
-    dynamic_tracker_interface::get_dynamic_tracker().reset();
+    dynamic_tracker<selected_mode>::get_dynamic_tracker().reset();
 }
 
 DynamicTypeBuilderFactory::~DynamicTypeBuilderFactory()
@@ -187,12 +332,12 @@ DynamicTypeBuilderFactory::~DynamicTypeBuilderFactory()
 
 void DynamicTypeBuilderFactory::after_construction(DynamicTypeBuilder* pBuilder)
 {
-    dynamic_tracker_interface::get_dynamic_tracker().add(pBuilder);
+    dynamic_tracker<selected_mode>::get_dynamic_tracker().add(pBuilder);
 }
 
 void DynamicTypeBuilderFactory::before_destruction(DynamicTypeBuilder* builder)
 {
-    dynamic_tracker_interface::get_dynamic_tracker().remove(builder);
+    dynamic_tracker<selected_mode>::get_dynamic_tracker().remove(builder);
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_builder(const TypeDescriptor& td) noexcept
@@ -321,7 +466,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::new_primitive_builder(TypeKind
                 TypeDescriptor{GenerateTypeName(get_type_name(kind)), kind},
                 true); // will be a static object
     // notify the tracker
-    dynamic_tracker_interface::get_dynamic_tracker().add_primitive(builder.get());
+    dynamic_tracker<selected_mode>::get_dynamic_tracker().add_primitive(builder.get());
     return builder;
 }
 
@@ -340,7 +485,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::new_unlimited_string_builder(b
                 descriptor,
                 true); // will be a static object
     // notify the tracker
-    dynamic_tracker_interface::get_dynamic_tracker().add_primitive(builder.get());
+    dynamic_tracker<selected_mode>::get_dynamic_tracker().add_primitive(builder.get());
     return builder;
 }
 
@@ -573,14 +718,14 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_union_builder(
 ReturnCode_t DynamicTypeBuilderFactory::delete_builder(
         DynamicTypeBuilder* builder) noexcept
 {
-    return dynamic_tracker_interface::get_dynamic_tracker().remove(builder)
+    return dynamic_tracker<selected_mode>::get_dynamic_tracker().remove(builder)
             ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_ALREADY_DELETED;
 }
 
 ReturnCode_t DynamicTypeBuilderFactory::delete_type(
         DynamicType* type) noexcept
 {
-    return dynamic_tracker_interface::get_dynamic_tracker().remove(type)
+    return dynamic_tracker<selected_mode>::get_dynamic_tracker().remove(type)
             ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_ALREADY_DELETED;
 }
 
@@ -634,7 +779,7 @@ DynamicType_ptr DynamicTypeBuilderFactory::get_primitive_type(TypeKind kind) noe
 
 bool DynamicTypeBuilderFactory::is_empty() const
 {
-    return dynamic_tracker_interface::get_dynamic_tracker().is_empty();
+    return dynamic_tracker<selected_mode>::get_dynamic_tracker().is_empty();
 }
 
 void DynamicTypeBuilderFactory::build_type_identifier(
