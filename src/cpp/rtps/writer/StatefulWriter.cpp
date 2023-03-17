@@ -435,15 +435,6 @@ void StatefulWriter::unsent_change_added_to_history(
                 }
                 );
 
-        if (should_be_sent)
-        {
-            flow_controller_->add_new_sample(this, change, max_blocking_time);
-        }
-        else
-        {
-            periodic_hb_event_->restart_timer(max_blocking_time);
-        }
-
         if (disable_positive_acks_)
         {
             auto source_timestamp = system_clock::time_point() + nanoseconds(change->sourceTimestamp.to_ns());
@@ -453,6 +444,17 @@ void StatefulWriter::unsent_change_added_to_history(
 
             ack_event_->update_interval_millisec((double)duration_cast<milliseconds>(interval).count());
             ack_event_->restart_timer(max_blocking_time);
+        }
+
+        // After adding the CacheChange_t to flowcontroller, its pointer cannot be used because it may be removed
+        // internally before exiting the call. For example if the writer matched with a best-effort reader.
+        if (should_be_sent)
+        {
+            flow_controller_->add_new_sample(this, change, max_blocking_time);
+        }
+        else
+        {
+            periodic_hb_event_->restart_timer(max_blocking_time);
         }
     }
     else
