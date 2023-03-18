@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "fastdds/rtps/common/CDRMessage_t.h"
 #include <thread>
 #ifndef _WIN32
 #include <stdlib.h>
@@ -29,6 +28,7 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <rtps/transport/test_UDPv4Transport.h>
 
+#include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 
 #include <utils/SystemInfo.hpp>
@@ -1842,7 +1842,8 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
                 return false;
             };
 
-    reader.disable_builtin_transport().add_user_transport_to_pparams(reader_test_transport).use_writer_liveliness_protocol(false);
+    reader.disable_builtin_transport().add_user_transport_to_pparams(reader_test_transport).
+            use_writer_liveliness_protocol(false);
     writer.disable_builtin_transport().add_user_transport_to_pparams(writer_test_transport);
 
     reader.init();
