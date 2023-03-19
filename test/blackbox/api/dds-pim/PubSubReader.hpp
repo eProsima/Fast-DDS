@@ -1445,7 +1445,8 @@ public:
 
 #endif // if HAVE_SQLITE3
 
-    PubSubReader& use_writer_liveliness_protocol(bool use_wlp)
+    PubSubReader& use_writer_liveliness_protocol(
+            bool use_wlp)
     {
         participant_qos_.wire_protocol().builtin.use_WriterLivelinessProtocol = use_wlp;
         return *this;

@@ -988,7 +988,8 @@ public:
         return *this;
     }
 
-    PubSubWriter& use_writer_liveliness_protocol(bool use_wlp)
+    PubSubWriter& use_writer_liveliness_protocol(
+            bool use_wlp)
     {
         participant_attr_.rtps.builtin.use_WriterLivelinessProtocol = use_wlp;
         return *this;
