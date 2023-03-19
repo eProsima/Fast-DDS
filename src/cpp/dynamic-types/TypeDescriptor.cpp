@@ -327,6 +327,14 @@ bool TypeDescriptor::is_consistent() const
         return false;
     }
 
+    // Check members if any
+    if (std::any_of(members_.begin(), members_.end(),
+            [this](const DynamicTypeMember& m){ return !m.is_consistent(kind_); }))
+    {
+        // inconsistencies in the use of annotations
+        return false;
+    }
+
     return true;
 }
 

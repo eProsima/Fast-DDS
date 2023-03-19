@@ -373,25 +373,12 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_alias_builder(
         const DynamicType& base_type,
         const std::string& sName)
 {
-    // Get a builder copy of base_type
-    DynamicTypeBuilder_ptr builder = create_builder_copy(base_type);
+    TypeDescriptor descriptor;
+    descriptor.set_kind(TypeKind::TK_ALIAS);
+    descriptor.set_base_type(base_type.shared_from_this());
+    descriptor.set_name(sName);
 
-    if(builder)
-    {
-        builder->set_kind(TypeKind::TK_ALIAS);
-        builder->set_base_type(base_type.shared_from_this());
-
-        if (sName.length() > 0)
-        {
-            builder->set_name(sName);
-        }
-
-        return builder;
-    }
-
-    EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating alias type, Error creating dynamic type builder");
-
-    return {};
+    return create_builder(descriptor);
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_array_builder(

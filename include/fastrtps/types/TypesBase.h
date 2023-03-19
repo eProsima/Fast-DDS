@@ -76,6 +76,7 @@ const std::string ANNOTATION_DEFAULT_ID = "default";
 const std::string ANNOTATION_DEFAULT_LITERAL_ID = "default_literal";
 const std::string ANNOTATION_VALUE_ID = "value";
 const std::string ANNOTATION_POSITION_ID = "position";
+const std::string ANNOTATION_EXTERNAL_ID = "external";
 
 const std::string EXTENSIBILITY_FINAL = "FINAL";
 const std::string EXTENSIBILITY_APPENDABLE = "APPENDABLE";

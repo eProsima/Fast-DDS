@@ -168,7 +168,10 @@ bool MemberDescriptor::is_consistent(
         TypeKind parentKind) const
 {
     // The type field is mandatory in every type except bitmasks and enums.
-    if ((parentKind != TypeKind::TK_BITMASK && parentKind != TypeKind::TK_ENUM) && !type_)
+    // Structures and unions allow it for @external. This condition can only
+    // be check in the DynamicTypeMember override
+    if ((parentKind != TypeKind::TK_BITMASK && parentKind != TypeKind::TK_ENUM &&
+         parentKind != TypeKind::TK_STRUCTURE && parentKind != TypeKind::TK_UNION) && !type_)
     {
         return false;
     }

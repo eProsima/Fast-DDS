@@ -5311,6 +5311,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitset_test)
 
     bitset_builder->set_name("MyBitSet");
     DynamicType_ptr bitset_type = bitset_builder->build();
+    ASSERT_TRUE(bitset_type);
 
     EXPECT_EQ(*pbType->GetDynamicType(),*bitset_type);
     EXPECT_TRUE(pbType->GetDynamicType()->equals(*bitset_type));
@@ -5337,10 +5338,11 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
     builder->add_member(2, "flag2");
     builder->add_member(5, "flag5");
     builder->set_name("MyBitMask");
-    DynamicType_ptr builder_type = builder->build();
+    DynamicType_ptr type = builder->build();
+    ASSERT_TRUE(type);
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*builder_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*builder_type));
+    EXPECT_EQ(*pbType->GetDynamicType(),*type);
+    EXPECT_TRUE(pbType->GetDynamicType()->equals(*type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();

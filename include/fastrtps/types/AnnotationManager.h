@@ -32,7 +32,6 @@ struct AnnotationManager
     std::pair<annotation_iterator, bool> get_annotation(const std::string& name) const;
 
     // Generic annnotations flags
-
     bool annotation_is_bit_bound() const;
 
     bool annotation_is_key() const;
@@ -49,6 +48,8 @@ struct AnnotationManager
     bool annotation_is_default_literal() const;
 
     bool annotation_is_position() const;
+
+    bool annotation_is_external() const;
 
     // Annotations flags for types
     bool annotation_is_extensibility() const;
@@ -74,9 +75,7 @@ struct AnnotationManager
 
     std::string annotation_get_extensibility() const;
 
-    bool annotation_get_nested() const;
-
-    bool annotation_get_key() const;
+    std::string annotation_get_external_typename() const;
 
     // Annotations setters
 
@@ -115,6 +114,8 @@ struct AnnotationManager
     void annotation_set_appendable();
 
     void annotation_set_nested(bool nested);
+
+    void annotation_set_external(const std::string& type_name);
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t apply_annotation(
