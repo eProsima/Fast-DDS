@@ -125,7 +125,12 @@ bool AnnotationManager::annotation_is_default_literal() const
 
 bool AnnotationManager::annotation_is_position() const
 {
-    return get_annotation(ANNOTATION_OPTIONAL_ID).second;
+    return get_annotation(ANNOTATION_POSITION_ID).second;
+}
+
+bool AnnotationManager::annotation_is_external() const
+{
+    return get_annotation(ANNOTATION_EXTERNAL_ID).second;
 }
 
 bool AnnotationManager::annotation_is_bit_bound() const
@@ -333,6 +338,11 @@ void AnnotationManager::annotation_set_nested(
     annotation_set(ANNOTATION_NESTED_ID, nested ? CONST_TRUE : CONST_FALSE);
 }
 
+void AnnotationManager::annotation_set_external(const std::string& type_name)
+{
+    annotation_set(ANNOTATION_EXTERNAL_ID, type_name);
+}
+
 ReturnCode_t AnnotationManager::apply_annotation(AnnotationDescriptor& descriptor)
 {
     if (descriptor.is_consistent())
@@ -417,6 +427,23 @@ std::string AnnotationManager::annotation_get_extensibility() const
     bool found;
 
     std::tie(it, found) = get_annotation(ANNOTATION_EXTENSIBILITY_ID);
+    if (found)
+    {
+        std::string value;
+        if (it->get_value(value) == ReturnCode_t::RETCODE_OK)
+        {
+            return value;
+        }
+    }
+    return {};
+}
+
+std::string AnnotationManager::annotation_get_external_typename() const
+{
+    annotation_iterator it;
+    bool found;
+
+    std::tie(it, found) = get_annotation(ANNOTATION_EXTERNAL_ID);
     if (found)
     {
         std::string value;

@@ -49,3 +49,30 @@ std::string DynamicTypeMember::get_default_value() const
     return res.empty() ? annotation_get_default() : res;
 }
 
+bool DynamicTypeMember::is_consistent(
+        TypeKind parentKind) const
+{
+    if(!MemberDescriptor::is_consistent(parentKind))
+    {
+        return false;
+    }
+
+    // checks based on annotations
+
+    // Structures and unions allow it for @external. This condition can only
+    // be check in the DynamicTypeMember override
+    if ((parentKind == TypeKind::TK_STRUCTURE || parentKind == TypeKind::TK_UNION) &&
+        !type_ && !annotation_is_external())
+    {
+        return false;
+    }
+
+    // Bitset non-anonymous elements must have position and bound
+    if (parentKind == TypeKind::TK_BITSET && !name_.empty() &&
+        (!annotation_is_bit_bound() || !annotation_is_position()))
+    {
+        return false;
+    }
+
+    return true;
+}

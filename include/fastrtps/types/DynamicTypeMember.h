@@ -60,26 +60,16 @@ public:
 
 public:
 
+    using MemberDescriptor::operator==;
+    using MemberDescriptor::operator!=;
+
     const MemberDescriptor& get_descriptor() const
     {
         return static_cast<const MemberDescriptor&>(*this);
     }
 
-    using MemberDescriptor::operator==;
-    using MemberDescriptor::operator!=;
-
-    using MemberDescriptor::get_kind;
-
-    using MemberDescriptor::get_id;
-
-    using MemberDescriptor::get_index;
-
-    using MemberDescriptor::get_name;
-
     // TODO: doxygen
     RTPS_DllAPI std::string get_default_value() const;
-
-    using MemberDescriptor::get_type;
 
     using AnnotationManager::get_annotation_count;
 
@@ -91,11 +81,12 @@ public:
     RTPS_DllAPI bool equals(
             const DynamicTypeMember&) const;
 
-    using MemberDescriptor::get_union_labels;
-
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_descriptor(
             MemberDescriptor& descriptor) const;
+
+    //! more accurate that base class because it has access to annotations
+    bool is_consistent(TypeKind parentKind) const;
 };
 
 } // namespace types
