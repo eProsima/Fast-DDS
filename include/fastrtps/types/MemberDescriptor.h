@@ -154,9 +154,9 @@ public:
      */
     RTPS_DllAPI ReturnCode_t copy_from(const MemberDescriptor& other);
 
-    bool operator==(const MemberDescriptor& other) const;
+    RTPS_DllAPI bool operator==(const MemberDescriptor& other) const;
 
-    bool operator!=(const MemberDescriptor& other) const;
+    RTPS_DllAPI bool operator!=(const MemberDescriptor& other) const;
 
     /**
      * State comparisson
@@ -255,7 +255,7 @@ public:
     // TODO: getters and setters for labels & default_label
 };
 
-std::ostream& operator<<( std::ostream& os, const MemberDescriptor & md);
+RTPS_DllAPI std::ostream& operator<<( std::ostream& os, const MemberDescriptor & md);
 
 } // namespace types
 } // namespace fastrtps

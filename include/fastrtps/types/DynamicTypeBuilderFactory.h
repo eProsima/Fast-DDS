@@ -142,7 +142,7 @@ class DynamicTypeBuilderFactory
     DynamicTypeBuilderFactory() = default;
 
     //! auxiliary method for primitive creation that atomically modifies the dynamic_tracker
-    DynamicTypeBuilder_ptr new_primitive_builder(TypeKind kind) noexcept;
+    RTPS_DllAPI DynamicTypeBuilder_ptr new_primitive_builder(TypeKind kind) noexcept;
 
     //! auxiliary method for string creation that atomically modifies the dynamic_tracker
     DynamicTypeBuilder_ptr new_unlimited_string_builder(bool large) noexcept;

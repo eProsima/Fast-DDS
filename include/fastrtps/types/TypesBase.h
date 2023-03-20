@@ -196,13 +196,13 @@ struct TypeKindName {};
 template<>                                                             \
 struct TypeKindName<TypeKind::type, char, std::char_traits<char>>      \
 {                                                                      \
-    static const char* name;                                           \
+    RTPS_DllAPI static const char* name;                               \
 };                                                                     \
                                                                        \
 template<>                                                             \
 struct TypeKindName<TypeKind::type, wchar_t, std::char_traits<wchar_t>>\
 {                                                                      \
-    static const wchar_t* name;                                        \
+    RTPS_DllAPI static const wchar_t* name;                            \
 };                                                                     \
 
 XTYPENAME(TK_BOOLEAN)
