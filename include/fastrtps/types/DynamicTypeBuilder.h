@@ -96,8 +96,13 @@ public:
             const DynamicType& other) const;
 
     using TypeDescriptor::get_annotation;
-
     using TypeDescriptor::get_annotation_count;
+
+    using TypeDescriptor::annotation_set_key;
+    using TypeDescriptor::annotation_set_must_understand;
+    using TypeDescriptor::annotation_set_mutable;
+    using TypeDescriptor::annotation_set_final;
+    using TypeDescriptor::annotation_set_appendable;
 
     using TypeDescriptor::get_descriptor;
 

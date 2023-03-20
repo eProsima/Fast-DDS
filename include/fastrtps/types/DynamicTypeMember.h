@@ -42,15 +42,15 @@ protected:
 
 public:
 
+    using AnnotationManager::get_all_annotations;
+    using AnnotationManager::get_annotation_count;
+    using AnnotationManager::get_annotation;
+
     using AnnotationManager::annotation_is_bit_bound;
     using AnnotationManager::annotation_is_key;
     using AnnotationManager::annotation_is_non_serialized;
 
-    using AnnotationManager::annotation_is_extensibility;
-    using AnnotationManager::annotation_is_mutable;
-    using AnnotationManager::annotation_is_final;
     using AnnotationManager::annotation_is_appendable;
-    using AnnotationManager::annotation_is_nested;
     using AnnotationManager::key_annotation;
     using AnnotationManager::annotation_is_default_literal;
     using AnnotationManager::annotation_is_optional;
@@ -71,10 +71,6 @@ public:
     // TODO: doxygen
     RTPS_DllAPI std::string get_default_value() const;
 
-    using AnnotationManager::get_annotation_count;
-
-    using AnnotationManager::get_annotation;
-
     bool operator==(const DynamicTypeMember& other) const;
 
     // TODO: doxygen
@@ -88,6 +84,8 @@ public:
     //! more accurate that base class because it has access to annotations
     bool is_consistent(TypeKind parentKind) const;
 };
+
+std::ostream& operator<<( std::ostream& os, const DynamicTypeMember& dm);
 
 } // namespace types
 } // namespace fastrtps

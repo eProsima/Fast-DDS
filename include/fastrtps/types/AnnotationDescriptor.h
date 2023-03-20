@@ -53,6 +53,11 @@ public:
 
     ReturnCode_t get_all_value(std::map<std::string, std::string>& value) const;
 
+    const std::map<std::string, std::string>& get_all_values() const
+    {
+        return value_;
+    }
+
     ReturnCode_t set_value(
         const std::string& key,
         const std::string& value);
@@ -72,6 +77,8 @@ public:
         return type_;
     }
 };
+
+std::ostream& operator<<( std::ostream& os, const AnnotationDescriptor& md);
 
 } // namespace types
 } // namespace fastrtps
