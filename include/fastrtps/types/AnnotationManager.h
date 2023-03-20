@@ -31,6 +31,11 @@ struct AnnotationManager
 
     std::pair<annotation_iterator, bool> get_annotation(const std::string& name) const;
 
+    const std::set<AnnotationDescriptor>& get_all_annotations() const
+    {
+        return annotation_;
+    }
+
     // Generic annnotations flags
     bool annotation_is_bit_bound() const;
 

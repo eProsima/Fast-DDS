@@ -403,7 +403,7 @@ std::ostream& eprosima::fastrtps::types::operator<<( std::ostream& os, const Mem
     auto manips = [](ostream& os) -> ostream&
     {
         long indent = os.iword(DynamicTypeBuilderFactory::indentation_index);
-        return os << setw(10) << left << string(indent, '\t');
+        return os << string(indent, '\t') << setw(10) << left;
     };
 
     // TODO: Barro, add support Type details and labels
@@ -424,7 +424,7 @@ std::ostream& eprosima::fastrtps::types::operator<<( std::ostream& os, const Mem
     if (bt)
     {
         os << manips << "type: ";
-        os << *bt << endl;
+        os << *bt;
     }
 
     // indentation decrement

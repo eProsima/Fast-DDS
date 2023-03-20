@@ -669,7 +669,7 @@ std::ostream& eprosima::fastrtps::types::operator<<(std::ostream& os, const Type
     auto manips = [](ostream& os) -> ostream&
     {
         long indent = os.iword(DynamicTypeBuilderFactory::indentation_index);
-        return os << setw(10) << left << string(indent, '\t');
+        return os << string(indent, '\t') << setw(10) << left;
     };
 
     // TODO: Barro, add support for bounds & annotations
@@ -709,6 +709,16 @@ std::ostream& eprosima::fastrtps::types::operator<<(std::ostream& os, const Type
     {
         os << manips << "discriminator type: ";
         os << *dt << endl;
+    }
+
+    // Show annotations
+    if (td.get_annotation_count())
+    {
+        os << manips << "annotations:" << endl;
+        for (const AnnotationDescriptor& d : td.get_all_annotations())
+        {
+            os << d;
+        }
     }
 
     // Show members

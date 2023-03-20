@@ -20,6 +20,7 @@
 #include <fastrtps/types/MemberDescriptor.h>
 
 #include <cassert>
+#include <iomanip>
 #include <tuple>
 
 using namespace eprosima::fastrtps::types;
@@ -75,4 +76,36 @@ bool DynamicTypeMember::is_consistent(
     }
 
     return true;
+}
+
+std::ostream& eprosima::fastrtps::types::operator<<( std::ostream& os, const DynamicTypeMember& dm)
+{
+    using namespace std;
+
+    // delegate into the base class
+    os << static_cast<const MemberDescriptor&>(dm);
+
+    // Show the annotations if any
+    if (dm.get_annotation_count())
+    {
+        // indentation increment
+        ++os.iword(DynamicTypeBuilderFactory::indentation_index);
+
+        auto manips = [](ostream& os) -> ostream&
+        {
+            long indent = os.iword(DynamicTypeBuilderFactory::indentation_index);
+            return os << string(indent, '\t') << setw(10) << left;
+        };
+
+        os << manips << "member annotations:" << endl;
+        for (const AnnotationDescriptor& d : dm.get_all_annotations())
+        {
+            os << d;
+        }
+
+        // indentation decrement
+        --os.iword(DynamicTypeBuilderFactory::indentation_index);
+    }
+
+    return os;
 }

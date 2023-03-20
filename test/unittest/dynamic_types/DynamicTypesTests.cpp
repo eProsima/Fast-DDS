@@ -33,6 +33,7 @@
 
 #include <algorithm>
 #include <set>
+#include <sstream>
 #include <tuple>
 
 using namespace eprosima::fastrtps;
@@ -4125,7 +4126,6 @@ TEST_F(DynamicTypesTests, DynamicType_XML_EnumStruct_test)
 TEST_F(DynamicTypesTests, DynamicType_XML_AliasStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
@@ -5318,6 +5318,65 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitset_test)
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
+}
+
+TEST_F(DynamicTypesTests, DynamicType_ostream_test)
+{
+    using namespace xmlparser;
+
+    DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
+
+    auto a_type = factory.create_char8_type();
+    auto b_type = factory.create_bool_type();
+    auto c_type = factory.create_uint16_type();
+    auto d_type = factory.create_int16_type();
+
+    // Bitset
+    DynamicTypeBuilder_ptr bitset_builder = factory.create_bitset_builder();
+
+    bitset_builder->add_member(0, "a", a_type);
+    bitset_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "3");
+    bitset_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
+
+    bitset_builder->add_member(1, "b", b_type);
+    bitset_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "1");
+    bitset_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "3");
+
+    bitset_builder->add_member(2, "", a_type);
+
+    bitset_builder->add_member(3, "c", c_type);
+    bitset_builder->apply_annotation_to_member(3, ANNOTATION_BIT_BOUND_ID, "value", "10");
+    bitset_builder->apply_annotation_to_member(3, ANNOTATION_POSITION_ID, "value", "8"); // 4 empty
+
+    bitset_builder->add_member(4, "d", d_type);
+    bitset_builder->apply_annotation_to_member(4, ANNOTATION_BIT_BOUND_ID, "value", "12");
+    bitset_builder->apply_annotation_to_member(4, ANNOTATION_POSITION_ID, "value", "18");
+
+    bitset_builder->set_name("MyBitSet");
+    bitset_builder->annotation_set_final();
+    DynamicType_ptr bitset_type = bitset_builder->build();
+    ASSERT_TRUE(bitset_type);
+
+    std::ostringstream os;
+    os << *bitset_type;
+
+    const std::string reference = "\n\tname:     MyBitSet\n\tkind:     TK_BITSET\n\tbounds:   1\n\tmembers:\
+  \n\t\tindex:    0\n\t\tname:     a\n\t\tid:       0\n\t\ttype:     \n\t\t\tname:     char\n\t\t\tkind:\
+     TK_CHAR8\n\t\t\tbounds:   0\n\t\tmember annotations:\n\t\t\tannotation:bit_bound\n\t\t\t\tkey:\
+     'value'\n\t\t\t\tvalue:   3\n\t\t\tannotation:position\n\t\t\t\tkey:     'value'\n\t\t\t\tvalue:\
+   0\n\n\t\tindex:    1\n\t\tname:     b\n\t\tid:       1\n\t\ttype:     \n\t\t\tname:     bool\n\t\t\tkind:\
+     TK_BOOLEAN\n\t\t\tbounds:   0\n\t\tmember annotations:\n\t\t\tannotation:bit_bound\n\t\t\t\tkey:\
+     'value'\n\t\t\t\tvalue:   1\n\t\t\tannotation:position\n\t\t\t\tkey:     'value'\n\t\t\t\tvalue:\
+   3\n\n\t\tindex:    2\n\t\tname:     \n\t\tid:       2\n\t\ttype:     \n\t\t\tname:     char\n\t\t\tkind:\
+     TK_CHAR8\n\t\t\tbounds:   0\n\n\t\tindex:    3\n\t\tname:     c\n\t\tid:       3\n\t\ttype:     \n\t\t\tname:\
+     uint16_t\n\t\t\tkind:     TK_UINT16\n\t\t\tbounds:   0\n\t\tmember annotations:\n\t\t\tannotation:\
+bit_bound\n\t\t\t\tkey:     'value'\n\t\t\t\tvalue:   10\n\t\t\tannotation:position\n\t\t\t\tkey:\
+     'value'\n\t\t\t\tvalue:   8\n\n\t\tindex:    4\n\t\tname:     d\n\t\tid:       4\n\t\ttype:\
+     \n\t\t\tname:     int16_t\n\t\t\tkind:     TK_INT16\n\t\t\tbounds:   0\n\t\tmember annotations:\
+\n\t\t\tannotation:bit_bound\n\t\t\t\tkey:     'value'\n\t\t\t\tvalue:   12\n\t\t\tannotation:position\n\t\t\t\tkey:\
+     'value'\n\t\t\t\tvalue:   18\n";
+
+    ASSERT_EQ(reference, os.str());
 }
 
 TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)

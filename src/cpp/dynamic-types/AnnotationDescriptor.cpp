@@ -17,6 +17,8 @@
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastdds/dds/log/Log.hpp>
 
+#include <iomanip>
+
 using namespace eprosima::fastrtps::types;
 
 ReturnCode_t AnnotationDescriptor::copy_from(
@@ -115,4 +117,36 @@ ReturnCode_t AnnotationDescriptor::set_value(
 {
     value_[key] = value;
     return ReturnCode_t::RETCODE_OK;
+}
+
+std::ostream& eprosima::fastrtps::types::operator<<( std::ostream& os, const AnnotationDescriptor& ad)
+{
+    using namespace std;
+
+    // indentation increment
+    ++os.iword(DynamicTypeBuilderFactory::indentation_index);
+
+    auto manips = [](ostream& os) -> ostream&
+    {
+        long indent = os.iword(DynamicTypeBuilderFactory::indentation_index);
+        return os << string(indent, '\t') << setw(10) << left;
+    };
+
+    // without type the annotation is not consistent and cannot be created
+    assert(ad.type());
+
+    // show type
+    os << manips << "annotation:" << ad.type()->get_name() << endl;
+
+    // show the map contents
+    for(auto pair : ad.get_all_values())
+    {
+        os << manips << "\tkey:" << "'" << pair.first << "'" << endl
+           << manips << "\tvalue:" << pair.second << endl;
+    }
+
+    // indentation decrement
+    --os.iword(DynamicTypeBuilderFactory::indentation_index);
+
+    return os;
 }
