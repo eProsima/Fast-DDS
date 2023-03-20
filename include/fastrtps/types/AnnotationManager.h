@@ -29,58 +29,58 @@ struct AnnotationManager
     std::set<AnnotationDescriptor> annotation_; // Annotations to apply
     using annotation_iterator = std::set<AnnotationDescriptor>::iterator;
 
-    std::pair<annotation_iterator, bool> get_annotation(const std::string& name) const;
+    RTPS_DllAPI std::pair<annotation_iterator, bool> get_annotation(const std::string& name) const;
 
-    const std::set<AnnotationDescriptor>& get_all_annotations() const
+    RTPS_DllAPI const std::set<AnnotationDescriptor>& get_all_annotations() const
     {
         return annotation_;
     }
 
     // Generic annnotations flags
-    bool annotation_is_bit_bound() const;
+    RTPS_DllAPI bool annotation_is_bit_bound() const;
 
-    bool annotation_is_key() const;
+    RTPS_DllAPI bool annotation_is_key() const;
 
-    bool annotation_is_non_serialized() const;
+    RTPS_DllAPI bool annotation_is_non_serialized() const;
 
     // Annotations flags for members
-    bool annotation_is_optional() const;
+    RTPS_DllAPI bool annotation_is_optional() const;
 
-    bool annotation_is_must_understand() const;
+    RTPS_DllAPI bool annotation_is_must_understand() const;
 
-    bool annotation_is_value() const;
+    RTPS_DllAPI bool annotation_is_value() const;
 
-    bool annotation_is_default_literal() const;
+    RTPS_DllAPI bool annotation_is_default_literal() const;
 
-    bool annotation_is_position() const;
+    RTPS_DllAPI bool annotation_is_position() const;
 
-    bool annotation_is_external() const;
+    RTPS_DllAPI bool annotation_is_external() const;
 
     // Annotations flags for types
-    bool annotation_is_extensibility() const;
+    RTPS_DllAPI bool annotation_is_extensibility() const;
 
-    bool annotation_is_mutable() const;
+    RTPS_DllAPI bool annotation_is_mutable() const;
 
-    bool annotation_is_final() const;
+    RTPS_DllAPI bool annotation_is_final() const;
 
-    bool annotation_is_appendable() const;
+    RTPS_DllAPI bool annotation_is_appendable() const;
 
-    bool annotation_is_nested() const;
+    RTPS_DllAPI bool annotation_is_nested() const;
 
-    bool key_annotation() const;
+    RTPS_DllAPI bool key_annotation() const;
 
     // Annotations getters
-    std::string annotation_get_value() const;
+    RTPS_DllAPI std::string annotation_get_value() const;
 
-    std::string annotation_get_default() const;
+    RTPS_DllAPI std::string annotation_get_default() const;
 
-    uint16_t annotation_get_position() const;
+    RTPS_DllAPI uint16_t annotation_get_position() const;
 
-    uint16_t annotation_get_bit_bound() const;
+    RTPS_DllAPI uint16_t annotation_get_bit_bound() const;
 
-    std::string annotation_get_extensibility() const;
+    RTPS_DllAPI std::string annotation_get_extensibility() const;
 
-    std::string annotation_get_external_typename() const;
+    RTPS_DllAPI std::string annotation_get_external_typename() const;
 
     // Annotations setters
 
@@ -92,35 +92,35 @@ struct AnnotationManager
     void annotation_set(const std::string& id, const std::string& new_val);
     void annotation_set(const std::string& id, const char* new_val);
 
-    void annotation_set_optional(bool optional);
+    RTPS_DllAPI void annotation_set_optional(bool optional);
 
-    void annotation_set_key(bool key);
+    RTPS_DllAPI void annotation_set_key(bool key);
 
-    void annotation_set_must_understand(bool must_understand);
+    RTPS_DllAPI void annotation_set_must_understand(bool must_understand);
 
-    void annotation_set_non_serialized(bool non_serialized);
+    RTPS_DllAPI void annotation_set_non_serialized(bool non_serialized);
 
-    void annotation_set_value(const std::string& value);
+    RTPS_DllAPI void annotation_set_value(const std::string& value);
 
-    void annotation_set_default(const std::string& default_value);
+    RTPS_DllAPI void annotation_set_default(const std::string& default_value);
 
-    void annotation_set_default_literal();
+    RTPS_DllAPI void annotation_set_default_literal();
 
-    void annotation_set_position(uint16_t position);
+    RTPS_DllAPI void annotation_set_position(uint16_t position);
 
-    void annotation_set_bit_bound(uint16_t bit_bound);
+    RTPS_DllAPI void annotation_set_bit_bound(uint16_t bit_bound);
 
-    void annotation_set_extensibility(const std::string& extensibility);
+    RTPS_DllAPI void annotation_set_extensibility(const std::string& extensibility);
 
-    void annotation_set_mutable();
+    RTPS_DllAPI void annotation_set_mutable();
 
-    void annotation_set_final();
+    RTPS_DllAPI void annotation_set_final();
 
-    void annotation_set_appendable();
+    RTPS_DllAPI void annotation_set_appendable();
 
-    void annotation_set_nested(bool nested);
+    RTPS_DllAPI void annotation_set_nested(bool nested);
 
-    void annotation_set_external(const std::string& type_name);
+    RTPS_DllAPI void annotation_set_external(const std::string& type_name);
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t apply_annotation(

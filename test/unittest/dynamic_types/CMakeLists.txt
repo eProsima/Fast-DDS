@@ -135,6 +135,29 @@ target_link_libraries(DynamicTypesTests GTest::gtest
     )
 add_gtest(DynamicTypesTests SOURCES ${DYNAMIC_TYPES_TEST_SOURCE})
 
+# in order to check proper dllexports on windows build DynamicTypesTests dynamically link to fastrtps target
+if(WIN32)
+
+    add_executable(DynamicTypesTests_dynlink 
+            DynamicTypesTests.cpp
+            idl/Basic.cxx
+            idl/BasicPubSubTypes.cxx
+            idl/BasicTypeObject.cxx
+        )
+
+    target_compile_definitions(DynamicTypesTests_dynlink PRIVATE
+            ENABLE_DYNAMIC_MEMORY_CHECK
+        )
+
+    target_link_libraries(DynamicTypesTests_dynlink
+            GTest::gtest
+            ${TINYXML2_LIBRARY}
+            fastcdr
+            fastrtps
+        )
+
+endif(WIN32)
+
 add_executable(DynamicComplexTypesTests ${DYNAMIC_COMPLEX_TYPES_TEST_SOURCE})
 target_compile_definitions(DynamicComplexTypesTests PRIVATE FASTRTPS_NO_LIB
     BOOST_ASIO_STANDALONE

@@ -58,7 +58,7 @@ public:
             use_the_create_method,
             TypeDescriptor&& descriptor);
 
-    RTPS_DllAPI virtual ~DynamicType();
+    RTPS_DllAPI ~DynamicType();
 
     const TypeDescriptor& get_type_descriptor() const
     {
@@ -70,7 +70,7 @@ protected:
     friend class DynamicTypeBuilder;
     friend class DynamicDataHelper;
 
-    RTPS_DllAPI virtual void clear();
+    RTPS_DllAPI void clear();
 
     // Serialization ancillary
     void serialize_empty_data(

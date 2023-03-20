@@ -317,7 +317,7 @@ public:
             const std::string& name) const noexcept;
 };
 
-std::ostream& operator<<(std::ostream& os, const TypeDescriptor& md);
+RTPS_DllAPI std::ostream& operator<<(std::ostream& os, const TypeDescriptor& md);
 
 } // namespace types
 } // namespace fastrtps

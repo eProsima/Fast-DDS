@@ -85,7 +85,7 @@ public:
     bool is_consistent(TypeKind parentKind) const;
 };
 
-std::ostream& operator<<( std::ostream& os, const DynamicTypeMember& dm);
+RTPS_DllAPI std::ostream& operator<<( std::ostream& os, const DynamicTypeMember& dm);
 
 } // namespace types
 } // namespace fastrtps

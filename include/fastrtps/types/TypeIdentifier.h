@@ -375,7 +375,7 @@ public:
     /**
      * Equals
      * */
-    bool operator==(
+    RTPS_DllAPI bool operator==(
             const TypeIdentifier& other) const;
 
     RTPS_DllAPI bool consistent(
