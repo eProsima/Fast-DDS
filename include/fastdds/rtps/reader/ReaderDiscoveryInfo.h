@@ -28,42 +28,47 @@ namespace fastrtps {
 namespace rtps {
 
 /**
-* Class ReaderDiscoveryInfo with discovery information of the reader.
-* @ingroup RTPS_MODULE
-*/
+ * Class ReaderDiscoveryInfo with discovery information of the reader.
+ * @ingroup RTPS_MODULE
+ */
 struct ReaderDiscoveryInfo
 {
-    public:
+public:
 
-        //!Enum DISCOVERY_STATUS, four different status for discovered readers.
-        //!@ingroup RTPS_MODULE
+    //!Enum DISCOVERY_STATUS, four different status for discovered readers.
+    //!@ingroup RTPS_MODULE
 #if defined(_WIN32)
-        enum RTPS_DllAPI DISCOVERY_STATUS
+    enum RTPS_DllAPI DISCOVERY_STATUS
 #else
-        enum DISCOVERY_STATUS
-#endif
-        {
-            DISCOVERED_READER,
-            CHANGED_QOS_READER,
-            REMOVED_READER
-        };
+    enum DISCOVERY_STATUS
+#endif // if defined(_WIN32)
+    {
+        DISCOVERED_READER,
+        CHANGED_QOS_READER,
+        REMOVED_READER,
+        IGNORED_READER
+    };
 
-        ReaderDiscoveryInfo(const ReaderProxyData& data)
-            : status(DISCOVERED_READER)
-            , info(data)
-        {}
+    ReaderDiscoveryInfo(
+            const ReaderProxyData& data)
+        : status(DISCOVERED_READER)
+        , info(data)
+    {
+    }
 
-        virtual ~ReaderDiscoveryInfo() {}
+    virtual ~ReaderDiscoveryInfo()
+    {
+    }
 
-        //! Status
-        DISCOVERY_STATUS status;
+    //! Status
+    DISCOVERY_STATUS status;
 
-        //! Participant discovery info
-        const ReaderProxyData& info;
+    //! Participant discovery info
+    const ReaderProxyData& info;
 };
 
-}
-}
-}
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif // _FASTDDS_RTPS_READER_READERDISCOVERYINFO_H__

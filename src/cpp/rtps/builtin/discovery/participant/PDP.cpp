@@ -675,6 +675,13 @@ bool PDP::removeReaderProxyData(
     return false;
 }
 
+bool PDP::removeReaderProxyData(
+        const GUID_t& /*reader_guid*/,
+        ReaderDiscoveryInfo::DISCOVERY_STATUS /*reason*/)
+{
+    return false;
+}
+
 bool PDP::removeWriterProxyData(
         const GUID_t& writer_guid)
 {
@@ -710,6 +717,13 @@ bool PDP::removeWriterProxyData(
         }
     }
 
+    return false;
+}
+
+bool PDP::removeWriterProxyData(
+        const GUID_t& /*writer_guid*/,
+        WriterDiscoveryInfo::DISCOVERY_STATUS /*reason*/)
+{
     return false;
 }
 

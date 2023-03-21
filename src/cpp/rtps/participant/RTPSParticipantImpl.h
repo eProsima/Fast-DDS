@@ -26,6 +26,7 @@
 #include <cstdlib>
 #include <list>
 #include <mutex>
+#include <set>
 #include <sys/types.h>
 
 #if defined(_WIN32)
@@ -583,6 +584,13 @@ private:
     //! Determine if the RTPSParticipantImpl was initialized successfully.
     bool initialized_ = false;
 
+    //! Ignored entities collections
+    std::set<GuidPrefix_t> ignored_participants_;
+    std::set<GUID_t> ignored_writers_;
+    std::set<GUID_t> ignored_readers_;
+    //! Protect ignored entities collection concurrent access
+    mutable shared_mutex ignored_mtx_;
+
     RTPSParticipantImpl& operator =(
             const RTPSParticipantImpl&) = delete;
 
@@ -988,6 +996,60 @@ public:
      * Function run when the RTPSDomain is notified that the environment file has changed.
      */
     void environment_file_has_changed();
+
+    /**
+     * @brief Query if the participant is found in the ignored collection
+     *
+     * @param[in] participant_guid Participant to be queried
+     * @return True if found in the ignored collection. False otherwise.
+     */
+    bool is_participant_ignored(
+            const GuidPrefix_t& participant_guid);
+
+    /**
+     * @brief Query if the writer is found in the ignored collection
+     *
+     * @param[in] writer_guid Writer to be queried
+     * @return True if found in the ignored collection. False otherwise.
+     */
+    bool is_writer_ignored(
+            const GUID_t& writer_guid);
+
+    /**
+     * @brief Query if the reader is found in the ignored collection
+     *
+     * @param[in] reader_guid Reader to be queried
+     * @return True if found in the ignored collection. False otherwise.
+     */
+    bool is_reader_ignored(
+            const GUID_t& reader_guid);
+
+    /**
+     * @brief Add a Participant into the corresponding ignore collection.
+     *
+     * @param[in] participant_guid Participant that is to be ignored.
+     * @return True if correctly included into the ignore collection. False otherwise.
+     */
+    bool ignore_participant(
+            const GuidPrefix_t& participant_guid);
+
+    /**
+     * @brief Add a Writer into the corresponding ignore collection.
+     *
+     * @param[in] writer_guid Writer that is to be ignored.
+     * @return True if correctly included into the ignore collection. False otherwise.
+     */
+    bool ignore_writer(
+            const GUID_t& writer_guid);
+
+    /**
+     * @brief Add a Reader into the corresponding ignore collection.
+     *
+     * @param[in] reader_guid Reader that is to be ignored.
+     * @return True if correctly included into the ignore collection. False otherwise.
+     */
+    bool ignore_reader(
+            const GUID_t& reader_guid);
 
     template <EndpointKind_t kind, octet no_key, octet with_key>
     static bool preprocess_endpoint_attributes(

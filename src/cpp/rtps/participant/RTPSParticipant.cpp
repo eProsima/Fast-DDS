@@ -178,6 +178,24 @@ void RTPSParticipant::enable()
     mp_impl->enable();
 }
 
+bool RTPSParticipant::ignore_participant(
+        const GuidPrefix_t& /*participant_guid*/)
+{
+    return false;
+}
+
+bool RTPSParticipant::ignore_writer(
+        const GUID_t& /*writer_guid*/)
+{
+    return false;
+}
+
+bool RTPSParticipant::ignore_reader(
+        const GUID_t& /*reader_guid*/)
+{
+    return false;
+}
+
 #if HAVE_SECURITY
 
 bool RTPSParticipant::is_security_enabled_for_writer(

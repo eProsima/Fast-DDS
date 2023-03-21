@@ -26,38 +26,43 @@ namespace fastrtps {
 namespace rtps {
 
 /**
-* Class WriterDiscoveryInfo with discovery information of the writer.
-* @ingroup RTPS_MODULE
-*/
+ * Class WriterDiscoveryInfo with discovery information of the writer.
+ * @ingroup RTPS_MODULE
+ */
 struct WriterDiscoveryInfo
 {
-    public:
+public:
 
-        //!Enum DISCOVERY_STATUS, four different status for discovered writers.
-        //!@ingroup RTPS_MODULE
+    //!Enum DISCOVERY_STATUS, four different status for discovered writers.
+    //!@ingroup RTPS_MODULE
 #if defined(_WIN32)
-        enum RTPS_DllAPI DISCOVERY_STATUS
+    enum RTPS_DllAPI DISCOVERY_STATUS
 #else
-        enum  DISCOVERY_STATUS
-#endif
-        {
-            DISCOVERED_WRITER,
-            CHANGED_QOS_WRITER,
-            REMOVED_WRITER
-        };
+    enum  DISCOVERY_STATUS
+#endif // if defined(_WIN32)
+    {
+        DISCOVERED_WRITER,
+        CHANGED_QOS_WRITER,
+        REMOVED_WRITER,
+        IGNORED_WRITER
+    };
 
-        WriterDiscoveryInfo(const WriterProxyData& data)
-            : status(DISCOVERED_WRITER)
-            , info(data)
-        {}
+    WriterDiscoveryInfo(
+            const WriterProxyData& data)
+        : status(DISCOVERED_WRITER)
+        , info(data)
+    {
+    }
 
-        virtual ~WriterDiscoveryInfo() {}
+    virtual ~WriterDiscoveryInfo()
+    {
+    }
 
-        //! Status
-        DISCOVERY_STATUS status;
+    //! Status
+    DISCOVERY_STATUS status;
 
-        //! Participant discovery info
-        const WriterProxyData& info;
+    //! Participant discovery info
+    const WriterProxyData& info;
 };
 
 }

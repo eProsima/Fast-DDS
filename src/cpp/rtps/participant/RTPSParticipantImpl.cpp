@@ -2509,6 +2509,42 @@ void RTPSParticipantImpl::get_default_unicast_locators()
     m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
 }
 
+bool RTPSParticipantImpl::is_participant_ignored(
+        const GuidPrefix_t& /*participant_guid*/)
+{
+    return false;
+}
+
+bool RTPSParticipantImpl::is_writer_ignored(
+        const GUID_t& /*writer_guid*/)
+{
+    return false;
+}
+
+bool RTPSParticipantImpl::is_reader_ignored(
+        const GUID_t& /*reader_guid*/)
+{
+    return false;
+}
+
+bool RTPSParticipantImpl::ignore_participant(
+        const GuidPrefix_t& /*participant_guid*/)
+{
+    return false;
+}
+
+bool RTPSParticipantImpl::ignore_writer(
+        const GUID_t& /*writer_guid*/)
+{
+    return false;
+}
+
+bool RTPSParticipantImpl::ignore_reader(
+        const GUID_t& /*reader_guid*/)
+{
+    return false;
+}
+
 #ifdef FASTDDS_STATISTICS
 
 bool RTPSParticipantImpl::register_in_writer(
