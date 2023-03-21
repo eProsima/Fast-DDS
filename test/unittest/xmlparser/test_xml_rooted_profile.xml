@@ -319,5 +319,12 @@
             </matchedPublishersAllocation>
         </data_reader>
 
+        <topic profile_name="test_subscriber_profile" is_default_profile="true">
+            <historyQos>
+                <kind>KEEP_LAST</kind>
+                <depth>20</depth>
+            </historyQos>
+        </topic>
+
     </profiles>
 </dds>

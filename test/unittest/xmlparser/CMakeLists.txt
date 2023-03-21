@@ -28,11 +28,17 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_root_library_settings_profil
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profile.xml
     COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_deprecated.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/test_xml_deprecated.xml
+    COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_security_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/test_xml_security_profile.xml
     COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_rooted_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/test_xml_rooted_profile.xml
+    COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_rooted_deprecated.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/test_xml_rooted_deprecated.xml
     COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/log_stdouterr_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/log_stdouterr_profile.xml

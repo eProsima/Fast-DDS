@@ -93,10 +93,6 @@
             </qos>
         </data_reader>
 
-        <!-- INTRA-PROCESS -->
-        <library_settings>
-            <intraprocess_delivery>USER_DATA_ONLY</intraprocess_delivery>
-        </library_settings>
     </profiles>
 
     <!-- INTRA-PROCESS -->

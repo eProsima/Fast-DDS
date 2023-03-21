@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"  ?>
 <dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
-    <library_settings>
-        <intraprocess_delivery>FULL</intraprocess_delivery>
-    </library_settings>
     <profiles>
         <participant profile_name="test_participant_profile">
             <domainId>123</domainId>
@@ -640,5 +637,21 @@
                 <increment>0</increment>
             </matchedPublishersAllocation>
         </data_reader>
+
+        <topic profile_name = "test_topic_profile">
+            <historyQos>
+                <kind>KEEP_LAST</kind>
+                <depth>20</depth>
+            </historyQos>
+            <resourceLimitsQos>
+                <max_samples>200</max_samples>
+                <max_instances>20</max_instances>
+                <max_samples_per_instance>100</max_samples_per_instance>
+                <allocated_samples>50</allocated_samples>
+            </resourceLimitsQos>
+        </topic>
     </profiles>
+    <library_settings>
+        <intraprocess_delivery>FULL</intraprocess_delivery>
+    </library_settings>
 </dds>
