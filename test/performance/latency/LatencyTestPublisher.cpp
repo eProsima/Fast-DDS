@@ -1064,13 +1064,14 @@ bool LatencyTestPublisher::init_dynamic_types()
     }
 
     // Dummy type registration
+    auto& factory = DynamicTypeBuilderFactory::get_instance();
     // Create basic builders
-    DynamicTypeBuilder_ptr struct_type_builder(DynamicTypeBuilderFactory::get_instance()->create_struct_builder());
+    DynamicTypeBuilder_ptr struct_type_builder(factory.create_struct_builder());
 
     // Add members to the struct.
-    struct_type_builder->add_member(0, "seqnum", DynamicTypeBuilderFactory::get_instance()->create_uint32_type());
-    struct_type_builder->add_member(1, "data", DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(
-                DynamicTypeBuilderFactory::get_instance()->create_byte_type(), BOUND_UNLIMITED));
+    struct_type_builder->add_member(0, "seqnum", factory.create_uint32_type());
+    struct_type_builder->add_member(1, "data", factory.create_sequence_builder(
+                *factory.create_byte_type(), BOUND_UNLIMITED)->build());
     struct_type_builder->set_name(LatencyDataType::type_name_);
     dynamic_pub_sub_type_.reset(new DynamicPubSubType(struct_type_builder->build()));
 
