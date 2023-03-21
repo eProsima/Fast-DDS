@@ -26,9 +26,7 @@
 #include <codecvt>
 #include <algorithm>
 
-namespace eprosima {
-namespace fastrtps {
-namespace types {
+using namespace eprosima::fastrtps::types;
 
 template <typename Map>
 bool map_compare(
@@ -337,6 +335,7 @@ MemberId DynamicData::get_member_id_at_index(
 
 TypeKind DynamicData::get_kind() const
 {
+    assert(type_);
     return type_->get_kind();
 }
 
@@ -551,7 +550,7 @@ void DynamicData::clean_members()
     }
     complex_values_.clear();
 #else
-    if (type_->has_children())
+    if (has_children())
     {
         for (auto it = values_.begin(); it != values_.end(); ++it)
         {
@@ -5267,6 +5266,19 @@ size_t DynamicData::getEmptyCdrSerializedSize(
     return type->getEmptyCdrSerializedSize(current_alignment);
 }
 
-} // namespace types
-} // namespace fastrtps
-} // namespace eprosima
+bool DynamicData::has_children() const
+{
+    switch(get_kind())
+    {
+        case TypeKind::TK_ANNOTATION:
+        case TypeKind::TK_ARRAY:
+        case TypeKind::TK_MAP:
+        case TypeKind::TK_SEQUENCE:
+        case TypeKind::TK_STRUCTURE:
+        case TypeKind::TK_UNION:
+        case TypeKind::TK_BITSET:
+            return true;
+        default:
+            return false;
+    };
+}

@@ -401,6 +401,26 @@ public:
 
 };
 
+} // namespace types
+} // namespace fastrtps
+} // namespace eprosima
+
+// linking ReturnCode_t to std::error_code
+// The specializations must be in the outer namespace (see N3730)
+namespace std {
+
+  template <>
+    struct is_error_code_enum<eprosima::fastrtps::types::ReturnCode_t> : true_type {};
+
+  template <>
+    struct is_error_code_enum<eprosima::fastrtps::types::ReturnCode_t::ReturnCodeValue> : true_type {};
+
+} // namespace std
+
+namespace eprosima {
+namespace fastrtps {
+namespace types {
+
 // Integrating ReturnCode_t into STL error framework
 namespace {
 
@@ -480,9 +500,6 @@ operator !=(
 {
     return b.operator!=(a);
 }
-
-// TODO Remove this alias when Fast-RTPS reaches version 2
-using ResponseCode = ReturnCode_t;
 
 typedef uint32_t MemberId;
 #define MEMBER_ID_INVALID 0X0FFFFFFFu
@@ -832,17 +849,5 @@ using DynamicTypeBuilder_cptr = std::shared_ptr<const DynamicTypeBuilder>;
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
-
-// linking ReturnCode_t to std::error_code
-
-namespace std {
-
-  template <>
-    struct is_error_code_enum<eprosima::fastrtps::types::ReturnCode_t> : true_type {};
-
-  template <>
-    struct is_error_code_enum<eprosima::fastrtps::types::ReturnCode_t::ReturnCodeValue> : true_type {};
-
-} // namespace std
 
 #endif // TYPES_BASE_H

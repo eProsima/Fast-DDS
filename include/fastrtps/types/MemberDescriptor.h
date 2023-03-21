@@ -52,6 +52,12 @@ protected:
 
     bool is_type_name_consistent(const std::string& sName) const;
 
+    //! builtin cast inherited on subclasses
+    const MemberDescriptor& get_descriptor() const
+    {
+        return *this;
+    }
+
 public:
 
     //! Default constructor
@@ -121,7 +127,16 @@ public:
             DynamicType_ptr type,
             const std::string& defaultValue);
 
-    // TODO:Barro doxygen
+    /**
+     * convenience constructor
+     * @remark default index value assures it is appended to the collection.
+     * @param[in] id @ref memberid new member's identifier
+     * @param[in] name std::string new member's name
+     * @param[in] type @ref dynamictype new member's type
+     * @param[in] defaultvalue std::string member default value as a string representation
+     * @param[in] unionlables collection of label identifiers associated to this member
+     * @param[in] isdefaultlabel is true if 'default' idl union case is enforced
+     */
     RTPS_DllAPI MemberDescriptor(
             MemberId id,
             const std::string& name,
@@ -154,8 +169,22 @@ public:
      */
     RTPS_DllAPI ReturnCode_t copy_from(const MemberDescriptor& other);
 
+    /**
+     * checks for equality according with [standard] section 7.5.2.7.4
+     * @param[in] other @ref memberdescriptor reference to compare to
+     * @remark the @ref memberdescriptor::equals relies on this method
+     * @return bool on equality
+     * [standard]: https://www.omg.org/spec/dds-xtypes/1.3/ "omg standard"
+     */
     RTPS_DllAPI bool operator==(const MemberDescriptor& other) const;
 
+    /**
+     * checks for inequality according with [standard] section 7.5.2.7.4
+     * @param[in] other @ref MemberDescriptor reference to compare to
+     * @remark the @ref MemberDescriptor::equals relies on this method
+     * @return bool on inequality
+     * [standard]: https://www.omg.org/spec/dds-xtypes/1.3/ "omg standard"
+     */
     RTPS_DllAPI bool operator!=(const MemberDescriptor& other) const;
 
     /**
@@ -163,9 +192,11 @@ public:
      * @remarks using `==` and `!=` operators is more convenient
      * @param[in] other @ref MemberDescriptor object whose state to compare to
      * @return \b bool `true` on equality
+     * [standard]: https://www.omg.org/spec/dds-xtypes/1.3/ "omg standard"
      */
     RTPS_DllAPI bool equals(const MemberDescriptor& other) const;
 
+    //! convenient getter for the associated \b type property
     RTPS_DllAPI TypeKind get_kind() const;
 
     /**
@@ -186,11 +217,13 @@ public:
      */
     RTPS_DllAPI std::string get_name() const;
 
+    //! getter for the labels member
     RTPS_DllAPI std::vector<uint64_t> get_union_labels() const;
 
-    // TODO: doxygen
+    //! getter for the \b default_value property
     RTPS_DllAPI std::string get_default_value() const;
 
+    //! checks if the member is the 'default' idl case
     RTPS_DllAPI bool is_default_union_value() const;
 
     /**
@@ -202,6 +235,7 @@ public:
      */
     RTPS_DllAPI bool is_consistent(TypeKind parentKind) const;
 
+    //! insert a new label for this union member
     RTPS_DllAPI void add_union_case_index(uint64_t value);
 
     /**
@@ -246,15 +280,14 @@ public:
 
     RTPS_DllAPI void set_default_union_value(bool bDefault);
 
-    // TODO: doxygen
+    // setter for the \b default_value property
     RTPS_DllAPI void set_default_value(const std::string& value)
     {
         default_value_ = value;
     }
-
-    // TODO: getters and setters for labels & default_label
 };
 
+//! @ref DynamicTypeMember expected `std::ostream` non-member override of `operator<<`
 RTPS_DllAPI std::ostream& operator<<( std::ostream& os, const MemberDescriptor & md);
 
 } // namespace types

@@ -265,7 +265,7 @@ void DynamicDataHelper::print_basic_collection(
     }
     else
     {
-        const std::vector<uint32_t>& bounds = data->type_->get_type_descriptor().bound_;
+        const std::vector<uint32_t>& bounds = data->type_->get_descriptor().bound_;
 
         std::vector<std::vector<uint32_t>> positions;
         fill_array_positions(bounds, positions);
@@ -303,7 +303,7 @@ void DynamicDataHelper::print_complex_collection(
     }
     else
     {
-        const std::vector<uint32_t>& bounds = data->type_->get_type_descriptor().bound_;
+        const std::vector<uint32_t>& bounds = data->type_->get_descriptor().bound_;
 
         std::vector<std::vector<uint32_t>> positions;
         fill_array_positions(bounds, positions);
@@ -323,7 +323,7 @@ void DynamicDataHelper::print_complex_element(
         const std::string& tabs)
 {
     DynamicData* st_data = data->loan_value(id);
-    const TypeDescriptor& desc = st_data->type_->get_type_descriptor();
+    const TypeDescriptor& desc = st_data->type_->get_descriptor();
     switch (desc.get_kind())
     {
         case TypeKind::TK_STRUCTURE:

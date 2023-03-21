@@ -547,18 +547,18 @@ TEST_F(DynamicComplexTypesTests, DynamicDiscoveryTest)
     {
         type1 = m_factory.create_uint16_type();
         //types::DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(type1));
-        m_factory.build_type_object(type1->get_type_descriptor(), typeObject1);
+        m_factory.build_type_object(type1->get_descriptor(), typeObject1);
     }
     {
         type2 = m_factory.create_int16_type();
         //types::DynamicData_ptr data2(DynamicDataFactory::get_instance()->create_data(type2));
-        m_factory.build_type_object(type2->get_type_descriptor(), typeObject2);
+        m_factory.build_type_object(type2->get_descriptor(), typeObject2);
     }
 
     {
         type3 = m_factory.create_int16_type();
         //types::DynamicData_ptr data2(DynamicDataFactory::get_instance()->create_data(type3));
-        m_factory.build_type_object(type3->get_type_descriptor(), typeObject3);
+        m_factory.build_type_object(type3->get_descriptor(), typeObject3);
     }
 
     const TypeIdentifier* identifier1 = TypeObjectFactory::get_instance()->get_type_identifier(type1->get_name());

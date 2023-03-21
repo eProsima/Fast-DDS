@@ -1394,7 +1394,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
         if (!values.empty())
         {
             std::vector<uint64_t> labels;
-            bool defaultLabel = dimensionsToLabels(values, labels); // TODO:Barro IT MUST BE TRUE
+            bool defaultLabel = dimensionsToLabels(values, labels);
             p_dynamictype->add_member(mId, memberName, memberBuilder->build(), "", labels, defaultLabel);
         }
         else

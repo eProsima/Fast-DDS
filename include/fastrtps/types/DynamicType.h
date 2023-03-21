@@ -60,10 +60,7 @@ public:
 
     RTPS_DllAPI ~DynamicType();
 
-    const TypeDescriptor& get_type_descriptor() const
-    {
-        return static_cast<const TypeDescriptor&>(*this);
-    }
+    using TypeDescriptor::get_descriptor;
 
 protected:
 
@@ -123,12 +120,13 @@ public:
     RTPS_DllAPI bool equals(
             const DynamicType& other) const;
 
-    RTPS_DllAPI bool has_children() const;
-
+    //! check if the type is complex
     RTPS_DllAPI bool is_complex_kind() const;
 
+    //! check if the type can be used as a discriminator
     RTPS_DllAPI bool is_discriminator_type() const;
 
+    //! returns footprint size if the underlying type is primitive
     RTPS_DllAPI size_t get_size() const;
 };
 

@@ -1450,9 +1450,9 @@ bool DomainParticipantImpl::register_dynamic_type_to_factories(
         {
             TypeObject typeObj;
 
-            dynFactory.build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj);
+            dynFactory.build_type_object(dpst->GetDynamicType()->get_descriptor(), typeObj);
             // Minimal too
-            dynFactory.build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, false);
+            dynFactory.build_type_object(dpst->GetDynamicType()->get_descriptor(), typeObj, false);
             const TypeIdentifier* type_id2 = objectFactory->get_type_identifier(dpst->getName());
             const TypeObject* type_obj = objectFactory->get_type_object(dpst->getName());
             if (type_id2 == nullptr)

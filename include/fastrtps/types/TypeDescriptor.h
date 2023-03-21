@@ -23,7 +23,8 @@
 #include <string>
 #include <vector>
 
-#if defined(__has_cpp_attribute) && __has_cpp_attribute(fallthrough)
+#if defined(__has_cpp_attribute) && __has_cpp_attribute(fallthrough) && \
+    (__has_cpp_attribute(fallthrough) < __cplusplus || __has_cpp_attribute(fallthrough) < _MSVC_LANG )
 #    define eprosima_fallthrough [[fallthrough]];
 #elif defined(__GNUC__) || defined(__clang__)
 #    define eprosima_fallthrough __attribute__((fallthrough));
@@ -125,6 +126,15 @@ protected:
     RTPS_DllAPI ReturnCode_t get_descriptor(
             TypeDescriptor& descriptor) const noexcept;
 
+    /**
+     * Returns the state of the @ref DynamicType or @ref DynamicTypeBuilder object
+     * @return @ref TypeDescriptor object state reference
+     */
+    RTPS_DllAPI const TypeDescriptor& get_descriptor() const noexcept
+    {
+        return *this;
+    }
+
     using member_iterator = std::list<DynamicTypeMember>::iterator;
 
     void clean();
@@ -147,12 +157,21 @@ protected:
     RTPS_DllAPI void set_name(
             std::string&& name);
 
+    //! Modifies the underlying kind
     RTPS_DllAPI void set_kind(
             TypeKind kind);
 
+    /**
+     * Modifies the underlying base type by copy
+     * @param[in] type DynamicType_ptr l-value reference
+     */
     RTPS_DllAPI void set_base_type(
             const DynamicType_ptr& type);
 
+    /**
+     * Modifies the underlying base type by copy
+     * @param[in] type DynamicType_ptr r-value reference
+     */
     RTPS_DllAPI void set_base_type(
             DynamicType_ptr&& type);
 
@@ -174,21 +193,43 @@ public:
 
 public:
 
-    // Checks if there is a member with the given name.
+    /**
+     * Checks if there is a member with the given name.
+     * @param[in] name string
+     * @return true if exists
+     */
     RTPS_DllAPI bool exists_member_by_name(
             const std::string& name) const;
 
-    // Checks if there is a member with the given id.
+    /**
+     * Checks if there is a member with the given id.
+     * @param[in] id MemberId
+     * @return true if exists
+     */
     RTPS_DllAPI bool exists_member_by_id(
             MemberId id) const;
 
-    // ancillary for DynamicData interfaces
+    /**
+     * Queries members by name
+     * @param[in] name string
+     * @return MemberId or MEMBER_ID_INVALID on failure
+     */
     RTPS_DllAPI MemberId get_member_id_by_name(
             const std::string& name) const;
 
+    /**
+     * Queries members by index
+     * @param[in] index uint32_t
+     * @return MemberId or MEMBER_ID_INVALID on failure
+     */
     RTPS_DllAPI MemberId get_member_id_at_index(
             uint32_t index) const;
 
+    /**
+     * Queries members by identifier
+     * @param[in] id MemberId
+     * @return std::pair where second if `second == true` then first is a reference to an associated @ref DynamicTypeMember
+     */
     RTPS_DllAPI std::pair<const DynamicTypeMember*, bool> get_member(
             MemberId id) const;
 
@@ -202,19 +243,35 @@ public:
     RTPS_DllAPI ReturnCode_t copy_from(
             const TypeDescriptor& descriptor) noexcept;
 
+    /**
+     * Checks equality according [standard] sections \b 7.5.2.7.4 \b 7.5.2.8.4
+     * @param[in] descriptor reference to the @ref TypeDescriptor to compare to
+     * @return true on equality
+     * @remarks Note that @ref TypeDescriptor is superclass of @ref DynamicType and @ref DynamicTypeBuilder.
+                The subclasses doesn't add any extra data to the state. The subclasses inherit this operator.
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
+     */
     RTPS_DllAPI bool operator==(const TypeDescriptor& descriptor) const;
 
+    /**
+     * Checks inequality according with the [standard] sections \b 7.5.2.7.4 \b 7.5.2.8.4
+     * @param[in] descriptor reference to the @ref TypeDescriptor to compare to
+     * @return true on equality
+     * @remarks Note that @ref TypeDescriptor is superclass of @ref DynamicType and @ref DynamicTypeBuilder.
+                The subclasses doesn't add any extra data to the state. The subclasses inherit this operator.
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
+     */
     RTPS_DllAPI bool operator!=(const TypeDescriptor& descriptor) const;
 
     /**
-     * State comparisson
+     * State comparisson according with the [standard] sections \b 7.5.2.7.4 \b 7.5.2.8.4
      * @remarks using `==` and `!=` operators is more convenient
      * @param[in] descriptor object state to compare to
      * @return \b bool `true` on equality
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
      */
     RTPS_DllAPI bool equals(
             const TypeDescriptor& descriptor) const noexcept;
-
 
     /**
      * Indicates whether the states of all of this descriptor's properties are consistent.
@@ -222,23 +279,57 @@ public:
      */
     RTPS_DllAPI bool is_consistent() const;
 
+    /**
+     * Checks if the kind is a primitive one according to the [standard] section \b 7.2.2.2
+     * @return \b bool `true` if primitive
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
+     */
     RTPS_DllAPI bool is_primitive() const;
 
+    //! Checks if the underlying aggregate type is a subclass of the given one
     RTPS_DllAPI bool is_subclass(const TypeDescriptor& descriptor) const;
 
-    // TODO: doxygen
+    /**
+     * Getter for @t base_type property (see [standard] table 50)
+     * @return @ref DynamicType
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
+     */
     RTPS_DllAPI DynamicType_ptr get_base_type() const;
 
-    // TODO: doxygen
+    /**
+     * Getter for @t bound property (see [standard] table 50)
+     * @param[in] index dimension bound to retrieve on multidimensional collections
+     * @return uint32_t
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
+     */
     RTPS_DllAPI uint32_t get_bounds(
             uint32_t index = 0) const;
 
+    //! Number of dimensions in the underlying collection
     RTPS_DllAPI uint32_t get_bounds_size() const;
 
+    //! Number of elements in the underlying collection
+    RTPS_DllAPI uint32_t get_total_bounds() const;
+
+    /**
+     * Getter for @t discriminator_type property (see [standard] table 50)
+     * @return @ref DynamicType
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
+     */
     RTPS_DllAPI DynamicType_ptr get_discriminator_type() const;
 
+    /**
+     * Getter for @t element_type property (see [standard] table 50)
+     * @return @ref DynamicType
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
+     */
     RTPS_DllAPI DynamicType_ptr get_element_type() const;
 
+    /**
+     * Getter for @t key_element_type property (see [standard] table 50)
+     * @return @ref DynamicType
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
+     */
     RTPS_DllAPI DynamicType_ptr get_key_element_type() const;
 
     /**
@@ -252,9 +343,6 @@ public:
      * @return std::string type name
      */
     RTPS_DllAPI std::string get_name() const;
-
-    // TODO: doxygen
-    RTPS_DllAPI uint32_t get_total_bounds() const;
 
     /**
      * Returns a member sequence collection
@@ -317,6 +405,7 @@ public:
             const std::string& name) const noexcept;
 };
 
+//! @ref TypeDescriptor expected `std::ostream` non-member override of `operator<<`
 RTPS_DllAPI std::ostream& operator<<(std::ostream& os, const TypeDescriptor& md);
 
 } // namespace types

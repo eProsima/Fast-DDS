@@ -123,7 +123,14 @@ public:
 
     using AnnotationManager::apply_annotation;
 
-    // TODO: doxygen
+    /**
+     * Apply the given annotation to this member (see [standard] section 7.5.2.9.6)
+     * @param[in] id Identifies the member to which the annotation shall be applied
+     * @param[in] Args @ref AnnotationDescriptor constructor arguments
+     * @return standard @ref ReturnCode_t
+     * @remarks the @ref AnnotationDescriptor arguments will be perfect forwarded in order to avoid copies
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
+     */
     template<typename... Ts>
     ReturnCode_t apply_annotation_to_member(
             MemberId id,

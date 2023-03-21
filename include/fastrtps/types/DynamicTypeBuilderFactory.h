@@ -113,7 +113,7 @@ class TypeObject;
 class AnnotationParameterValue;
 
 /**
- * This class is conceived as a singleton charged of creation of @ref DynamicTypeBuild objects.
+ * This class is conceived as a singleton charged of creation of @ref DynamicTypeBuilder objects.
  * For simplicity direct primitive types instantiation is also posible.
  */
 class DynamicTypeBuilderFactory

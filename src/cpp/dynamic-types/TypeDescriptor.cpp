@@ -124,7 +124,7 @@ const DynamicType& TypeDescriptor::resolve_alias_type(const DynamicType& type)
 
 void TypeDescriptor::clean()
 {
-    annotation_.clear();
+    AnnotationManager::clean();
 
     base_type_.reset();
     discriminator_type_.reset();
@@ -164,7 +164,7 @@ bool TypeDescriptor::operator==(const TypeDescriptor& descriptor) const
     return a->name_ == b->name_ &&
            a->kind_ == b->kind_ &&
            a->bound_ == b->bound_ &&
-           a->annotation_ == b->annotation_ &&
+           a->AnnotationManager::operator==(*b) &&
            a->members_ == b->members_ &&
            (a->base_type_ == b->base_type_ || (
                a->base_type_ &&
@@ -341,7 +341,7 @@ bool TypeDescriptor::is_consistent() const
 bool TypeDescriptor::is_primitive() const
 {
     return kind_ > TypeKind::TK_NONE && kind_ <= TypeKind::TK_CHAR16 &&
-           annotation_.empty() &&
+           0u == get_annotation_count() &&
            members_.empty() &&
            !base_type_ && !discriminator_type_ &&
            !element_type_ && !key_element_type_;

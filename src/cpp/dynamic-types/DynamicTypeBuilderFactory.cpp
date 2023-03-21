@@ -2586,7 +2586,7 @@ void DynamicTypeBuilderFactory::apply_type_annotations(
         AppliedAnnotationSeq& annotations,
         const TypeDescriptor& descriptor) const
 {
-    for (const AnnotationDescriptor& annotation : descriptor.annotation_)
+    for (const AnnotationDescriptor& annotation : descriptor.get_all_annotations())
     {
         AppliedAnnotation ann;
         ann.annotation_typeid(

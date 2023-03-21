@@ -364,9 +364,9 @@ bool Domain::registerDynamicType(
         DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
         TypeObject typeObj;
 
-        factory.build_type_object(type->GetDynamicType()->get_type_descriptor(), typeObj);
+        factory.build_type_object(type->GetDynamicType()->get_descriptor(), typeObj);
         // Minimal too
-        factory.build_type_object(type->GetDynamicType()->get_type_descriptor(), typeObj, false);
+        factory.build_type_object(type->GetDynamicType()->get_descriptor(), typeObj, false);
         const TypeIdentifier* type_id2 = typeFactory->get_type_identifier(type->getName());
         const TypeObject* type_obj = typeFactory->get_type_object(type->getName());
         if (type_id2 == nullptr)

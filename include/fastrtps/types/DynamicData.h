@@ -93,6 +93,8 @@ protected:
     ReturnCode_t set_union_id(
             MemberId id);
 
+    bool has_children() const;
+
     DynamicType_ptr type_;
 
 #ifdef DYNAMIC_TYPES_CHECKING

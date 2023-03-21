@@ -164,7 +164,7 @@ struct std::allocator_traits<eprosima::detail::BuilderAllocator<T, B, state>>
     using rebind_alloc = typename BA::template rebind<Other>::other;
 
     template <class ... Types>
-    static constexpr void construct(
+    static void construct(
             BA& alloc,
             T* const p,
             Types&&... args)
@@ -176,7 +176,7 @@ struct std::allocator_traits<eprosima::detail::BuilderAllocator<T, B, state>>
         alloc.after_construction(p);
     }
 
-    static constexpr void destroy(
+    static void destroy(
             BA& alloc,
             T* p)
     {

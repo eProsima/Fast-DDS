@@ -61,23 +61,6 @@ bool DynamicType::equals(
     return operator==(other);
 }
 
-bool DynamicType::has_children() const
-{
-    switch(kind_)
-    {
-        case TypeKind::TK_ANNOTATION:
-        case TypeKind::TK_ARRAY:
-        case TypeKind::TK_MAP:
-        case TypeKind::TK_SEQUENCE:
-        case TypeKind::TK_STRUCTURE:
-        case TypeKind::TK_UNION:
-        case TypeKind::TK_BITSET:
-            return true;
-        default:
-            return false;
-    };
-}
-
 bool DynamicType::is_complex_kind() const
 {
     switch(kind_)
@@ -342,7 +325,7 @@ bool DynamicType::deserialize(
 {
     bool res = true;
 
-    if (get_type_descriptor().annotation_is_non_serialized())
+    if (annotation_is_non_serialized())
     {
         return res;
     }

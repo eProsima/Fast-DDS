@@ -343,7 +343,7 @@ void AnnotationManager::annotation_set_external(const std::string& type_name)
     annotation_set(ANNOTATION_EXTERNAL_ID, type_name);
 }
 
-ReturnCode_t AnnotationManager::apply_annotation(AnnotationDescriptor& descriptor)
+ReturnCode_t AnnotationManager::apply_annotation(const AnnotationDescriptor& descriptor)
 {
     if (descriptor.is_consistent())
     {

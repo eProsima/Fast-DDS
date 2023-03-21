@@ -27,7 +27,7 @@ using namespace eprosima::fastrtps::types;
 
 bool DynamicTypeMember::operator==(const DynamicTypeMember& other) const
 {
-    return get_descriptor() == other.get_descriptor() && annotation_ == other.annotation_;
+    return get_descriptor() == other.get_descriptor() && AnnotationManager::operator==(other);
 }
 
 bool DynamicTypeMember::equals(

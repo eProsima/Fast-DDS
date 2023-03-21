@@ -63,21 +63,40 @@ public:
     using MemberDescriptor::operator==;
     using MemberDescriptor::operator!=;
 
-    const MemberDescriptor& get_descriptor() const
-    {
-        return static_cast<const MemberDescriptor&>(*this);
-    }
+    using MemberDescriptor::get_descriptor;
 
-    // TODO: doxygen
+    /**
+     * Getter for \b default_value property (see [standard] section 7.5.2.7.3)
+     * @return std::string
+     * @remarks fallbacks to any value kept as an annotation
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
+     */
     RTPS_DllAPI std::string get_default_value() const;
 
+    /**
+     * equality operator following [standard] section 7.5.2.7.4 guidelines
+     * @param[in] other @ref DynamicTypeMember reference to compare to
+     * @return `true` on equality
+     * @remarks @ref DynamicTypeMember::equals relies on this
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
+     */
     bool operator==(const DynamicTypeMember& other) const;
 
-    // TODO: doxygen
+    /**
+     * checks equality according to [standard] section 7.5.2.7.4 guidelines
+     * @param[in] other @ref DynamicTypeMember reference to compare to
+     * @return `true` on equality
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
+     */
     RTPS_DllAPI bool equals(
             const DynamicTypeMember&) const;
 
-    // TODO: doxygen
+    /**
+     * This operation provides a summary of the state of this type (see [standard] section 7.5.2.8.7 guidelines)
+     * @param[out] descriptor @ref MemberDescriptor to populate
+     * @return standard @ref ReturnCode_t
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
+     */
     RTPS_DllAPI ReturnCode_t get_descriptor(
             MemberDescriptor& descriptor) const;
 
@@ -85,6 +104,7 @@ public:
     bool is_consistent(TypeKind parentKind) const;
 };
 
+//! @ref DynamicTypeMember expected `std::ostream` non-member override of `operator<<`
 RTPS_DllAPI std::ostream& operator<<( std::ostream& os, const DynamicTypeMember& dm);
 
 } // namespace types
