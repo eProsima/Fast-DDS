@@ -12,26 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <thread>
+#include <gtest/gtest.h>
 #ifndef _WIN32
 #include <stdlib.h>
 #endif // _WIN32
 
-#include "BlackboxTests.hpp"
+#include <thread>
 
-#include "PubSubWriterReader.hpp"
-#include "PubSubReader.hpp"
-#include "PubSubWriter.hpp"
-
-#include <gtest/gtest.h>
-
+#include <fastdds/rtps/attributes/ServerAttributes.h>
+#include <fastdds/rtps/common/CDRMessage_t.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <rtps/transport/test_UDPv4Transport.h>
-
-#include <fastdds/rtps/common/CDRMessage_t.h>
-#include <fastdds/rtps/attributes/ServerAttributes.h>
-
 #include <utils/SystemInfo.hpp>
+
+#include "BlackboxTests.hpp"
+#include "PubSubReader.hpp"
+#include "PubSubWriter.hpp"
+#include "PubSubWriterReader.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -1858,8 +1855,8 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
 
     std::this_thread::sleep_for(std::chrono::seconds(5));
 
-    ASSERT_EQ(num_reader_heartbeat, 3);
-    ASSERT_EQ(num_reader_acknack, 3);
-    ASSERT_EQ(num_writer_heartbeat, 3);
-    ASSERT_EQ(num_writer_acknack, 3);
+    ASSERT_EQ(num_reader_heartbeat, 3u);
+    ASSERT_EQ(num_reader_acknack, 3u);
+    ASSERT_EQ(num_writer_heartbeat, 3u);
+    ASSERT_EQ(num_writer_acknack, 3u);
 }
