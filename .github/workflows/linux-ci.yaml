@@ -76,15 +76,17 @@ jobs:
 
       - name: Run tests Fast DDS
         run: |
+          USER_INPUT=${{ github.event.inputs.ctest-args }}
+          CUSTOM_TEST_ARGS=${USER_INPUT:-"
+          --label-exclude xfail \
+          --timeout 300 "}
           source install/setup.bash && \
           colcon test \
             --packages-select fastrtps \
             --event-handlers=console_direct+ \
             --return-code-on-test-failure \
             --retest-until-pass 3 \
-            --ctest-args \
-              --label-exclude xfail \
-              --timeout 300 ${{ github.event.inputs.ctest-args }}
+            --ctest-args ${CUSTOM_CTEST_ARGS}               
 
         continue-on-error: true
 
