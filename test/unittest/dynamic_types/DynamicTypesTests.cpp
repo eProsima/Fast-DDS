@@ -550,7 +550,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
 
     // Try to create with invalid values
     // • strings
-    DynamicTypeBuilder_cptr created_builder = factory.create_string_builder(BOUND_UNLIMITED);
+    DynamicTypeBuilder_cptr created_builder = factory.create_string_builder();
     ASSERT_TRUE(created_builder);
 
     DynamicType_ptr type = created_builder->build();
@@ -563,7 +563,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
     EXPECT_EQ(type, type2); // type objects are cached
 
     // • wstrings
-    created_builder = factory.create_wstring_builder(BOUND_UNLIMITED);
+    created_builder = factory.create_wstring_builder();
     ASSERT_TRUE(created_builder);
 
     type = created_builder->build();

@@ -343,26 +343,45 @@ public:
     RTPS_DllAPI DynamicTypeBuilder_cptr& create_byte_builder() noexcept;
 
     /**
-     * Creates a new @ref DynamicTypeBuilder object representing a string type.
+     * Creates a new @ref DynamicTypeBuilder object representing an unbounded string type.
+     * @remark The element type of the typed returned is a char8
+     * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.5 this method is
+     *         called `create_string_type` which is misguiding. It was renamed to simplify interface usage.
+     * @return new @ref DynamicTypeBuilder object
+     */
+    RTPS_DllAPI DynamicTypeBuilder_cptr create_string_builder() noexcept;
+
+    /**
+     * Creates a new @ref DynamicTypeBuilder object representing a bounded string type.
      * @remark The element type of the typed returned is a char8
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.5 this method is
      *         called `create_string_type` which is misguiding. It was renamed to simplify interface usage.
      * @param[in] bound `uint32_t` representing the maximun number of elements that may be stored.
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder_cptr create_string_builder(
-            uint32_t bound = BOUND_UNLIMITED);
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_string_builder(
+            uint32_t bound) noexcept;
 
     /**
-     * Creates a new @ref DynamicTypeBuilder object representing a wstring type.
+     * Creates a new @ref DynamicTypeBuilder object representing an unbounded wstring type.
      * @remark The element type of the typed returned is a char16
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.5 this method is
      *         called `create_wstring_type` which is misguiding. It was renamed to simplify interface usage.
      * @param[in] bound `uint32_t` representing the maximun number of elements that may be stored.
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder_cptr create_wstring_builder(
-            uint32_t bound = BOUND_UNLIMITED);
+    RTPS_DllAPI DynamicTypeBuilder_cptr create_wstring_builder() noexcept;
+
+    /**
+     * Creates a new @ref DynamicTypeBuilder object representing a bounded wstring type.
+     * @remark The element type of the typed returned is a char16
+     * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.5 this method is
+     *         called `create_wstring_type` which is misguiding. It was renamed to simplify interface usage.
+     * @param[in] bound `uint32_t` representing the maximun number of elements that may be stored.
+     * @return new @ref DynamicTypeBuilder object
+     */
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_wstring_builder(
+            uint32_t bound) noexcept;
 
     // TODO: doxygen
     RTPS_DllAPI DynamicTypeBuilder_ptr create_sequence_builder(

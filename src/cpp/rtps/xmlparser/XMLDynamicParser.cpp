@@ -269,11 +269,11 @@ static DynamicTypeBuilder_cptr getDiscriminatorTypeBuilder(
     }
     else if (disc.compare(STRING) == 0)
     {
-        return factory.create_string_builder(bound);
+        return bound == 0 ? factory.create_string_builder() : factory.create_string_builder(bound);
     }
     else if (disc.compare(WSTRING) == 0)
     {
-        return factory.create_wstring_builder(bound);
+        return bound == 0 ? factory.create_wstring_builder() : factory.create_wstring_builder(bound);
     }
 
     return XMLProfileManager::getDynamicTypeByName(disc)->shared_from_this();
@@ -1293,42 +1293,52 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
     }
     else if (strncmp(memberType, STRING, 7) == 0)
     {
-        uint32_t bound = 0;
+        auto string_builder = factory.create_string_builder();
         const char* boundStr = p_root->Attribute(STR_MAXLENGTH);
-        if (boundStr != nullptr)
+
+        if (nullptr != boundStr)
         {
-            bound = static_cast<uint32_t>(std::atoi(boundStr));
+            uint32_t bound = static_cast<uint32_t>(std::atoi(boundStr));
+            if ( bound > 0 )
+            {
+                string_builder = factory.create_string_builder(bound);
+            }
         }
+
         if (!isArray)
         {
-            memberBuilder = factory.create_string_builder(bound);
+            memberBuilder = string_builder;
         }
         else
         {
-            DynamicTypeBuilder_cptr innerBuilder = factory.create_string_builder(bound);
             std::vector<uint32_t> boundsArray;
             dimensionsToArrayBounds(memberArray, boundsArray);
-            memberBuilder = factory.create_array_builder(*innerBuilder->build(), boundsArray);
+            memberBuilder = factory.create_array_builder(*string_builder->build(), boundsArray);
         }
     }
     else if (strncmp(memberType, WSTRING, 8) == 0)
     {
-        uint32_t bound = 0;
+        auto string_builder = factory.create_wstring_builder();
         const char* boundStr = p_root->Attribute(STR_MAXLENGTH);
-        if (boundStr != nullptr)
+
+        if (nullptr != boundStr)
         {
-            bound = static_cast<uint32_t>(std::atoi(boundStr));
+            uint32_t bound = static_cast<uint32_t>(std::atoi(boundStr));
+            if ( bound > 0 )
+            {
+                string_builder = factory.create_wstring_builder(bound);
+            }
         }
+
         if (!isArray)
         {
-            memberBuilder = factory.create_wstring_builder(bound);
+            memberBuilder = string_builder;
         }
         else
         {
-            DynamicTypeBuilder_cptr innerBuilder = factory.create_wstring_builder(bound);
             std::vector<uint32_t> boundsArray;
             dimensionsToArrayBounds(memberArray, boundsArray);
-            memberBuilder = factory.create_array_builder(*innerBuilder->build(), boundsArray);
+            memberBuilder = factory.create_array_builder(*string_builder->build(), boundsArray);
         }
     }
     else // Complex type?
