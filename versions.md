@@ -10,6 +10,7 @@ Forthcoming
 * Overload `PDP::removeWriterProxyData` and `PDP::removeReaderProxyData` (ABI break on RTPS layer).
 * Overload RTPS discovery callbacks in RTPSParticipantListener (ABI break on RTPS layer).
 * Overload DDS discovery callbacks in DomainParticipantListener (ABI break on DDS layer). 
+* Added on_incompatible_type to RTPS listeners (ABI break on RTPS layer).
 
 Version 2.9.0
 -------------

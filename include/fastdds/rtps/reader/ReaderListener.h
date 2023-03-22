@@ -198,6 +198,18 @@ public:
         should_notify_individual_changes = true;
     }
 
+    /**
+     * This method is called when a new Writer is discovered, with a Topic that
+     * matches the name of a local reader, but with an incompatible type
+     *
+     * @param reader Pointer to the RTPSReader.
+     */
+    virtual void on_incompatible_type(
+            RTPSReader* reader)
+    {
+        static_cast<void>(reader);
+    }
+
 };
 
 } // namespace rtps
