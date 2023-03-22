@@ -361,6 +361,7 @@ int fastdds_discovery_server(
 
         // Handle signal SIGINT for every thread
         signal(SIGINT, sigint_handler);
+        signal(SIGTERM, sigint_handler);
 
         // Print running server attributes
         std::cout << "### Server is running ###" << std::endl;
