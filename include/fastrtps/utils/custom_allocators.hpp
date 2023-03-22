@@ -146,7 +146,7 @@ public:
 } // eprosima namespace
 
 /**
- * Specialization of `std::allocator_traits` for @ref BuilderAllocator.
+ * Specialization of `std::allocator_traits` for `BuilderAllocator`.
  * @tparam T instantiable class to allocate.
  * @tparam B class factory which receives the callbacks.
  * @tparam stateful decides if callbacks are instance methods or static ones.

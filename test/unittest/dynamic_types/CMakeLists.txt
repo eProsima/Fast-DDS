@@ -152,6 +152,10 @@ if(WIN32)
             ENABLE_DYNAMIC_MEMORY_CHECK
         )
 
+    target_include_directories(DynamicTypesTests_dynlink PRIVATE
+        $<$<BOOL:${TINYXML2_INCLUDE_DIR}>:${TINYXML2_INCLUDE_DIR}>
+        )
+
     target_link_libraries(DynamicTypesTests_dynlink
             GTest::gtest
             ${TINYXML2_LIBRARY}

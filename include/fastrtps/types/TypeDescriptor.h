@@ -23,8 +23,12 @@
 #include <string>
 #include <vector>
 
-#if defined(__has_cpp_attribute) && __has_cpp_attribute(fallthrough) && \
-    (__has_cpp_attribute(fallthrough) < __cplusplus || __has_cpp_attribute(fallthrough) < _MSVC_LANG )
+#ifndef __has_cpp_attribute
+#    define __has_cpp_attribute(x) 0
+#endif
+
+#if __has_cpp_attribute(fallthrough) && (__has_cpp_attribute(fallthrough) < __cplusplus \
+                                      || __has_cpp_attribute(fallthrough) < _MSVC_LANG )
 #    define eprosima_fallthrough [[fallthrough]];
 #elif defined(__GNUC__) || defined(__clang__)
 #    define eprosima_fallthrough __attribute__((fallthrough));
