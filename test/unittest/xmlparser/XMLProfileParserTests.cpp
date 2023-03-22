@@ -344,7 +344,7 @@ TEST_F(XMLProfileParserTests, XMLParserParticipantDeprecated)
     EXPECT_EQ(  xmlparser::XMLP_ret::XML_OK,
             xmlparser::XMLProfileManager::fillParticipantAttributes(participant_profile, participant_atts));
 
-    EXPECT_EQ(participant_atts.domainId, 123u);
+    EXPECT_EQ(participant_atts.domainId, 2019102u);
     RTPSParticipantAttributes& rtps_atts = participant_atts.rtps;
     BuiltinAttributes& builtin = rtps_atts.builtin;
     Locator_t locator;
@@ -518,7 +518,7 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParticipantProfileDeprecated)
             xmlparser::XMLProfileManager::loadXMLFile("test_xml_deprecated.xml"));
     xmlparser::XMLProfileManager::getDefaultParticipantAttributes(participant_atts);
 
-    EXPECT_EQ(participant_atts.domainId, 123u);
+    EXPECT_EQ(participant_atts.domainId, 2019102u);
     RTPSParticipantAttributes& rtps_atts = participant_atts.rtps;
     BuiltinAttributes& builtin = rtps_atts.builtin;
     Locator_t locator;

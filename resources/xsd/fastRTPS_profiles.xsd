@@ -66,7 +66,7 @@
     <xs:complexType name="logType">
         <xs:sequence minOccurs="1" maxOccurs="unbounded">
             <xs:choice minOccurs="1">
-                <xs:element name="use_default" type="boolean" minOccurs="0" maxOccurs="1"/>
+                <xs:element name="use_default" type="booleanCaps" minOccurs="0" maxOccurs="1"/>
                 <xs:element name="consumer" type="logConsumerType" minOccurs="0" maxOccurs="unbounded"/>
             </xs:choice>
         </xs:sequence>
@@ -1698,6 +1698,18 @@
     <xs:simpleType name="boolean">
         <xs:restriction base="xs:boolean"/> <!-- {true, false}, DOES NOT RECOGNIZE {TRUE, FALSE, True, False} -->
     </xs:simpleType>
+
+    <xs:simpleType name="booleanCaps">
+        <xs:union memberTypes="boolean stringBoolean"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="stringBoolean">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="FALSE"/>
+            <xs:enumeration value="TRUE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
 
     <!--STRING-->
     <xs:simpleType name="string">
