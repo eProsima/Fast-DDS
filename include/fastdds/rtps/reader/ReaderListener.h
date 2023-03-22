@@ -202,7 +202,7 @@ public:
      * This method is called when a new Writer is discovered, with a Topic that
      * matches the name of a local reader, but with an incompatible type
      *
-     * @param writer Pointer to the RTPSReader.
+     * @param reader Pointer to the RTPSReader.
      */
     virtual void on_incompatible_type(
             RTPSReader* reader)
