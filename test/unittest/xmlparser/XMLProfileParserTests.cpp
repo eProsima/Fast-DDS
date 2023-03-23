@@ -1321,7 +1321,8 @@ TEST_F(XMLProfileParserTests, log_register_stdouterr)
 
     EXPECT_CALL(*log_mock, ClearConsumers()).Times(1);
     EXPECT_CALL(*log_mock, RegisterConsumer(IsStdoutErrConsumer())).Times(1);
-    eprosima::fastrtps::xmlparser::XMLP_ret ret = xmlparser::XMLProfileManager::loadXMLFile("log_stdouterr_profile.xml");
+    eprosima::fastrtps::xmlparser::XMLP_ret ret =
+            xmlparser::XMLProfileManager::loadXMLFile("log_stdouterr_profile.xml");
     ASSERT_EQ(eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK, ret);
 }
 

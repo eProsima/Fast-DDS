@@ -36,26 +36,28 @@ using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
 using namespace eprosima::fastcdr::exception;
 
-class DynamicTypes_4_2_Tests: public ::testing::Test
+class DynamicTypes_4_2_Tests : public ::testing::Test
 {
     const std::string config_file_ = "types_profile.xml";
 
-    public:
-        DynamicTypes_4_2_Tests()
-        {
-        }
+public:
 
-        ~DynamicTypes_4_2_Tests()
-        {
-            eprosima::fastdds::dds::Log::KillThread();
-        }
+    DynamicTypes_4_2_Tests()
+    {
+    }
 
-        virtual void TearDown() override
-        {
-            TypeObjectFactory::delete_instance();
-            DynamicDataFactory::delete_instance();
-            DynamicTypeBuilderFactory::delete_instance();
-        }
+    ~DynamicTypes_4_2_Tests()
+    {
+        eprosima::fastdds::dds::Log::KillThread();
+    }
+
+    virtual void TearDown() override
+    {
+        TypeObjectFactory::delete_instance();
+        DynamicDataFactory::delete_instance();
+        DynamicTypeBuilderFactory::delete_instance();
+    }
+
 };
 
 TEST_F(DynamicTypes_4_2_Tests, Inheritance_And_Default_Value)

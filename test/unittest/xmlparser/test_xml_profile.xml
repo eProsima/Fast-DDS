@@ -190,13 +190,13 @@
                     <kind>ASYNCHRONOUS</kind>
                 </publishMode>
                 <userData>
-                    <value>5.3.0.1</value>
+                    <value>56.30.0.1</value>
                 </userData>
                 <topicData>
                     <value>5.3.1.0</value>
                 </topicData>
                 <groupData>
-                    <value>5.3.1.0.F</value>
+                    <value>5.3.1.0.F1</value>
                 </groupData>
             </qos>
             <times>
@@ -307,13 +307,13 @@
                     </names>
                 </partition>
                 <userData>
-                    <value>5.3.0.1</value>
+                    <value>56.30.0.1</value>
                 </userData>
                 <topicData>
                     <value>5.3.1.0</value>
                 </topicData>
                 <groupData>
-                    <value>5.3.1.0.F</value>
+                    <value>5.3.1.0.F1</value>
                 </groupData>
             </qos>
             <times>
