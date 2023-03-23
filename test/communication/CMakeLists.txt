@@ -115,7 +115,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_msg_submsg_crypto_besteffort_p
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_msg_submsg_crypto_besteffort_sub_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/secure_msg_submsg_crypto_besteffort_sub_profile.xml COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_submsg_crypto_besteffort_pub_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/secure_submsg_crypto_besteffort_pub_profile COPYONLY)
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_submsg_crypto_besteffort_pub_profile.xml COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_submsg_crypto_besteffort_sub_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/secure_submsg_crypto_besteffort_sub_profile.xml COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/shm_communication_subscriber_dies_while_processing_message_profile.xml
