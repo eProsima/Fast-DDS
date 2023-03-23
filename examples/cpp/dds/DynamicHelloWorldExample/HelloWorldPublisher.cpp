@@ -46,7 +46,7 @@ bool HelloWorldPublisher::init()
             eprosima::fastrtps::xmlparser::XMLProfileManager::loadXMLFile("helloworld_example_type_profile.xml"))
     {
         std::cout <<
-                "Cannot open XML file \"helloworld_example_type_profile.xml\". Please, run the publisher from the folder "
+            "Cannot open XML file \"helloworld_example_type_profile.xml\". Please, run the publisher from the folder "
                   << "that contatins this XML file." << std::endl;
         return false;
     }
