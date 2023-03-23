@@ -427,7 +427,7 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
 
     DataWriter& native_writer = reliable_writer.get_native_writer();
 
-    void* data = nullptr;
+    HelloWorld data;
     // Send reply associating it with the client request.
     eprosima::fastrtps::rtps::WriteParams write_params;
     eprosima::fastrtps::rtps::SampleIdentity related_sample_identity_;
@@ -438,12 +438,12 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
     write_params.related_sample_identity() = related_sample_identity_;
 
     // Publish the new value, deduce the instance handle
-    bool write_ret = native_writer.write(&data, write_params);
+    bool write_ret = native_writer.write((void*)&data, write_params);
     ASSERT_EQ(true, write_ret);
 
     DataReader& native_reader = reliable_reader.get_native_reader();
 
-    FixedSized read_data;
+    HelloWorld read_data;
     eprosima::fastdds::dds::SampleInfo info;
     eprosima::fastrtps::Duration_t timeout;
     timeout.seconds = 2;
