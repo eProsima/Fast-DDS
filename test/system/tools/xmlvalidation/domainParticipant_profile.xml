@@ -325,6 +325,16 @@
                         <propagate>true</propagate>
                     </property>
                 </properties>
+                <binary_properties>
+                    <property>
+                        <name>binary_prop_a</name>
+                        <propagate>false</propagate>
+                    </property>
+                    <property>
+                        <name>binary_prop_b</name>
+                        <propagate>true</propagate>
+                    </property>
+                </binary_properties>
             </propertiesPolicy>
 
             <allocation>

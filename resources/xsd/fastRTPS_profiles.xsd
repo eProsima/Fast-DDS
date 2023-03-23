@@ -1003,15 +1003,24 @@
         └ properties   [1]
             └ property [1~*] -->
     <xs:complexType name="propertyPolicyType">
-        <xs:all>
-            <xs:element name="properties" minOccurs="1" maxOccurs="1">
-                <xs:complexType>
-                    <xs:sequence minOccurs="1" maxOccurs="unbounded">
-                        <xs:element name="property" type="propertyType" minOccurs="1" maxOccurs="unbounded"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-        </xs:all>
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:choice minOccurs="1">
+                <xs:element name="properties" minOccurs="1" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                            <xs:element name="property" type="propertyType" minOccurs="1" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="binary_properties" minOccurs="1" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                            <xs:element name="property" type="binaryPropertyType" minOccurs="1" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:choice>
+        </xs:sequence>
     </xs:complexType>
 
     <!--Duration Type:
@@ -1611,6 +1620,16 @@
         <xs:all>
             <xs:element name="name" type="string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="value" type="string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="propagate" type="boolean" minOccurs="0" maxOccurs="1"/>
+        </xs:all>
+    </xs:complexType>
+
+    <!--Binary Property Type:
+        ├ name      [string],
+        └ propagate [bool]-->
+    <xs:complexType name="binaryPropertyType">
+        <xs:all>
+            <xs:element name="name" type="string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="propagate" type="boolean" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
