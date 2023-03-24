@@ -1192,6 +1192,19 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
         const PublicationMatchedStatus& info)
 {
     data_writer_->update_publication_matched_status(info);
+
+    StatusMask notify_status = StatusMask::publication_matched();
+    DataWriterListener* listener = data_writer_->get_listener_for(notify_status);
+    if (listener != nullptr)
+    {
+        PublicationMatchedStatus callback_status;
+        if (ReturnCode_t::RETCODE_OK == data_writer_->get_publication_matched_status(callback_status))
+        {
+            listener->on_publication_matched(data_writer_->user_datawriter_, callback_status);
+        }
+    } else {
+        data_writer_->user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
+    }
 }
 
 void DataWriterImpl::InnerDataWriterListener::on_offered_incompatible_qos(
@@ -1337,16 +1350,6 @@ void DataWriterImpl::update_publication_matched_status(
         publication_matched_status_.total_count_change += count_change;
     }
     publication_matched_status_.last_subscription_handle = status.last_subscription_handle;
-
-    StatusMask notify_status = StatusMask::publication_matched();
-    DataWriterListener* listener = get_listener_for(notify_status);
-    if (listener != nullptr)
-    {
-        listener->on_publication_matched(user_datawriter_, publication_matched_status_);
-        publication_matched_status_.current_count_change = 0;
-        publication_matched_status_.total_count_change = 0;
-    }
-    user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 
 ReturnCode_t DataWriterImpl::get_publication_matched_status(
