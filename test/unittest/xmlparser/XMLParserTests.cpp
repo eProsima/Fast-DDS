@@ -106,6 +106,9 @@ TEST_F(XMLParserTests, WrongNameBuffer)
     ASSERT_FALSE(get_participant_attributes(root, participant_atts));
 }
 
+/*
+ * Checks the supported and XML validated entity hierarchy
+ */
 TEST_F(XMLParserTests, TypesRooted)
 {
     std::unique_ptr<BaseNode> root;
@@ -147,6 +150,9 @@ TEST_F(XMLParserTests, TypesRooted)
     ASSERT_TRUE(topic_data);
 }
 
+/*
+ * Checks the supported entity hierarchy
+ */
 TEST_F(XMLParserTests, TypesRootedDeprecated)
 {
     std::unique_ptr<BaseNode> root;
@@ -188,7 +194,9 @@ TEST_F(XMLParserTests, TypesRootedDeprecated)
     ASSERT_TRUE(topic_data);
 }
 
-
+/*
+ * Checks the supported and XML validated entity hierarchy
+ */
 TEST_F(XMLParserTests, TypesRootedBuffer)
 {
     std::ifstream inFile;
@@ -233,6 +241,9 @@ TEST_F(XMLParserTests, TypesRootedBuffer)
     ASSERT_TRUE(topic_data);
 }
 
+/*
+ * Checks the supported entity hierarchy
+ */
 TEST_F(XMLParserTests, TypesRootedBufferDeprecated)
 {
     std::ifstream inFile;
@@ -276,7 +287,6 @@ TEST_F(XMLParserTests, TypesRootedBufferDeprecated)
     ASSERT_TRUE(subscriber_profile);
     ASSERT_TRUE(topic_data);
 }
-
 
 TEST_F(XMLParserTests, Types)
 {
@@ -417,6 +427,9 @@ TEST_F(XMLParserTests, DurationCheck)
     EXPECT_EQ(subscriber_atts.qos.m_latencyBudget.duration.seconds, 20);
 }
 
+/*
+ * Checks the XML validated data parsing
+ */
 TEST_F(XMLParserTests, Data)
 {
     std::unique_ptr<BaseNode> root;
@@ -508,6 +521,9 @@ TEST_F(XMLParserTests, Data)
     EXPECT_EQ(rtps_atts.userData, std::vector<octet>({0x56, 0x30, 0x0, 0xce}));
 }
 
+/*
+ * Checks the data parsing (with deprecated but supported elements)
+ */
 TEST_F(XMLParserTests, DataDeprecated)
 {
     std::unique_ptr<BaseNode> root;
@@ -598,7 +614,6 @@ TEST_F(XMLParserTests, DataDeprecated)
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
     EXPECT_EQ(rtps_atts.userData, std::vector<octet>({0x56, 0x30, 0x0, 0xce}));
 }
-
 
 TEST_F(XMLParserTests, DataBuffer)
 {
@@ -787,7 +802,6 @@ TEST_F(XMLParserTests, DataBufferDeprecated)
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
     EXPECT_EQ(rtps_atts.userData, std::vector<octet>({0x56, 0x30, 0x0, 0xce}));
 }
-
 
 /*
  * This test checks The return of the loadXMLProfiles method when a correct xml is parsed

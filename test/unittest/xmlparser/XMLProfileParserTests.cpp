@@ -238,6 +238,9 @@ TEST_F(XMLProfileParserTests, XMLParserLibrarySettings)
     EXPECT_EQ(library_settings.intraprocess_delivery, IntraprocessDeliveryType::INTRAPROCESS_FULL);
 }
 
+/*
+ * Checks the XML validated participant parsing
+ */
 TEST_F(XMLProfileParserTests, XMLParserParticipant)
 {
     std::string participant_profile = std::string("test_participant_profile");
@@ -334,6 +337,9 @@ TEST_F(XMLProfileParserTests, XMLParserParticipant)
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
 
+/*
+ * Checks the participant parsing (with deprecated but supported elements)
+ */
 TEST_F(XMLProfileParserTests, XMLParserParticipantDeprecated)
 {
     std::string participant_profile = std::string("test_participant_profile");
@@ -430,6 +436,9 @@ TEST_F(XMLProfileParserTests, XMLParserParticipantDeprecated)
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
 
+/*
+ * Checks the XML validated participant default profile parsing
+ */
 TEST_F(XMLProfileParserTests, XMLParserDefaultParticipantProfile)
 {
     ParticipantAttributes participant_atts;
@@ -510,6 +519,9 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParticipantProfile)
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
 
+/*
+ * Checks the participant default profile parsing (with deprecated but supported elements)
+ */
 TEST_F(XMLProfileParserTests, XMLParserDefaultParticipantProfileDeprecated)
 {
     ParticipantAttributes participant_atts;
@@ -590,7 +602,9 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultParticipantProfileDeprecated)
     EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
 }
 
-
+/*
+ * Checks the XML validated data writer parsing
+ */
 TEST_F(XMLProfileParserTests, XMLParserPublisher)
 {
     std::string publisher_profile = std::string("test_publisher_profile");
@@ -663,6 +677,9 @@ TEST_F(XMLProfileParserTests, XMLParserPublisher)
                 10u));
 }
 
+/*
+ * Checks the data writer parsing (with deprecated but supported elements)
+ */
 TEST_F(XMLProfileParserTests, XMLParserPublisherDeprecated)
 {
     std::string publisher_profile = std::string("test_publisher_profile");
@@ -735,7 +752,9 @@ TEST_F(XMLProfileParserTests, XMLParserPublisherDeprecated)
                 10u));
 }
 
-
+/*
+ * Checks the XML validated data writer default profile parsing
+ */
 TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
 {
     PublisherAttributes publisher_atts;
@@ -806,6 +825,9 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfile)
                 10u));
 }
 
+/*
+ * Checks the data writer default profile parsing (with deprecated but supported elements)
+ */
 TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfileDeprecated)
 {
     PublisherAttributes publisher_atts;
@@ -876,6 +898,9 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultPublisherProfileDeprecated)
                 10u));
 }
 
+/*
+ * Checks the XML validated data reader parsing
+ */
 TEST_F(XMLProfileParserTests, XMLParserSubscriber)
 {
     std::string subscriber_profile = std::string("test_subscriber_profile");
@@ -945,6 +970,9 @@ TEST_F(XMLProfileParserTests, XMLParserSubscriber)
                 10u));
 }
 
+/*
+ * Checks the data reader parsing (with deprecated but supported elements)
+ */
 TEST_F(XMLProfileParserTests, XMLParserSubscriberDeprecated)
 {
     std::string subscriber_profile = std::string("test_subscriber_profile");
@@ -1014,6 +1042,9 @@ TEST_F(XMLProfileParserTests, XMLParserSubscriberDeprecated)
                 10u));
 }
 
+/*
+ * Checks the XML validated data reader default profile parsing
+ */
 TEST_F(XMLProfileParserTests, XMLParserDefaultSubscriberProfile)
 {
     SubscriberAttributes subscriber_atts;
@@ -1081,6 +1112,9 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultSubscriberProfile)
                 10u));
 }
 
+/*
+ * Checks the data reader default profile parsing (with deprecated but supported elements)
+ */
 TEST_F(XMLProfileParserTests, XMLParserDefaultSubscriberProfileDeprecated)
 {
     SubscriberAttributes subscriber_atts;
@@ -1147,7 +1181,6 @@ TEST_F(XMLProfileParserTests, XMLParserDefaultSubscriberProfileDeprecated)
     EXPECT_EQ(subscriber_atts.matched_publisher_allocation, ResourceLimitedContainerConfig::fixed_size_configuration(
                 10u));
 }
-
 
 /*
  * Tests the correct parsing of a requester XML profile
