@@ -27,6 +27,7 @@
 
 #include <fastrtps/types/DynamicDataHelper.hpp>
 #include <fastrtps/types/DynamicDataFactory.h>
+#include <mutex>
 
 using namespace eprosima::fastdds::dds;
 using eprosima::fastrtps::types::ReturnCode_t;
@@ -136,29 +137,32 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
         const eprosima::fastrtps::types::TypeObject*,
         eprosima::fastrtps::types::DynamicType_ptr dyn_type)
 {
-    TypeSupport m_type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
-    m_type.register_type(subscriber_->mp_participant);
+    std::cout << "Discovered type: " << dyn_type->get_name() << " from topic " << topic_name << std::endl;
+    received_type_ = dyn_type;
+    reception_flag_.store(true);
+    types_cv_.notify_one();
+}
 
-    std::cout << "Discovered type: " << m_type->getName() << " from topic " << topic_name << std::endl;
+void HelloWorldSubscriber::initialize_entities()
+{
+    auto type = m_listener.received_type_;
+    std::cout << "Initializing DDS entities for type: " << type->get_name() << std::endl;
+    TypeSupport m_type(new eprosima::fastrtps::types::DynamicPubSubType(type));
+    m_type.register_type(mp_participant);
 
-    if (subscriber_->mp_subscriber == nullptr)
+    if (mp_subscriber == nullptr)
     {
-        //eprosima::fastrtps::SubscriberAttributes Rparam;
-        //Rparam = subscriber_->att_;
-        //Rparam.topic = subscriber_->topic_;
-        //Rparam.topic.topicName = topic;
-        //Rparam.qos = subscriber_->qos_;
-        subscriber_->mp_subscriber = subscriber_->mp_participant->create_subscriber(
+        mp_subscriber = mp_participant->create_subscriber(
             SUBSCRIBER_QOS_DEFAULT, nullptr);
 
-        if (subscriber_->mp_subscriber == nullptr)
+        if (mp_subscriber == nullptr)
         {
             return;
         }
     }
 
     //CREATE THE TOPIC
-    Topic* topic = subscriber_->mp_participant->create_topic(
+    Topic* topic = mp_participant->create_topic(
         "DDSDynHelloWorldTopic",
         m_type->getName(),
         TOPIC_QOS_DEFAULT);
@@ -169,22 +173,30 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
     }
 
     StatusMask sub_mask = StatusMask::subscription_matched() << StatusMask::data_available();
-    DataReader* reader = subscriber_->mp_subscriber->create_datareader(
+    DataReader* reader = mp_subscriber->create_datareader(
         topic,
-        subscriber_->qos_,
-        &subscriber_->m_listener,
+        qos_,
+        &m_listener,
         sub_mask);
 
-    subscriber_->topics_[reader] = topic;
-    subscriber_->readers_[reader] = dyn_type;
+    topics_[reader] = topic;
+    readers_[reader] = type;
     eprosima::fastrtps::types::DynamicData_ptr data(
-        eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type));
-    subscriber_->datas_[reader] = data;
+        eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(type));
+    datas_[reader] = data;
 }
 
 void HelloWorldSubscriber::run()
 {
     std::cout << "Subscriber running. Please press enter to stop the Subscriber" << std::endl;
+    std::unique_lock<std::mutex> lock(m_listener.types_mx_);
+    m_listener.types_cv_.wait(lock, [&]()
+            {
+                return m_listener.reception_flag_.exchange(false);
+            });
+
+    initialize_entities();
+
     std::cin.ignore();
 }
 
@@ -192,6 +204,14 @@ void HelloWorldSubscriber::run(
         uint32_t number)
 {
     std::cout << "Subscriber running until " << number << "samples have been received" << std::endl;
+    std::unique_lock<std::mutex> lock(m_listener.types_mx_);
+    m_listener.types_cv_.wait(lock, [&]()
+            {
+                return m_listener.reception_flag_.exchange(false);
+            });
+
+    initialize_entities();
+
     while (number > this->m_listener.n_samples)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));

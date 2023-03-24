@@ -32,6 +32,8 @@
 
 #include <fastrtps/attributes/SubscriberAttributes.h>
 
+#include <atomic>
+#include <condition_variable>
 #include <map>
 
 class HelloWorldSubscriber
@@ -51,6 +53,9 @@ public:
     //!Run the subscriber until number samples have been received.
     void run(
             uint32_t number);
+
+    //! Initialize all required entities for data transmission
+    void initialize_entities();
 
 private:
 
@@ -105,6 +110,14 @@ public:
         int n_matched;
 
         uint32_t n_samples;
+
+        std::mutex types_mx_;
+
+        std::condition_variable types_cv_;
+
+        eprosima::fastrtps::types::DynamicType_ptr received_type_;
+
+        std::atomic<bool> reception_flag_{false};
 
         HelloWorldSubscriber* subscriber_;
 
