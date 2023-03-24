@@ -977,6 +977,13 @@ public:
         return *this;
     }
 
+    PubSubReader& use_writer_liveliness_protocol(
+            bool use_wlp)
+    {
+        participant_attr_.rtps.builtin.use_WriterLivelinessProtocol = use_wlp;
+        return *this;
+    }
+
     PubSubReader& setSubscriberIDs(
             uint8_t UserID,
             uint8_t EntityID)
