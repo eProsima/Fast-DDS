@@ -75,15 +75,15 @@ protected:
 public:
 
     //! Default constructor
-    RTPS_DllAPI TypeDescriptor() noexcept = default;
+    RTPS_DllAPI TypeDescriptor() = default;
 
     //! Copy constructor
     RTPS_DllAPI TypeDescriptor(
-            const TypeDescriptor& other) noexcept;
+            const TypeDescriptor& other) ;
 
     //! Move constructor
     RTPS_DllAPI TypeDescriptor(
-            TypeDescriptor&& other) noexcept = default;
+            TypeDescriptor&& other) = default;
 
     /**
      * Default copy assignment
@@ -107,7 +107,7 @@ public:
      *    the \b subclasses are not supposed to introduce members requiring
      *    complex clean-up. State is constrained to the \b superclass.
      */
-    RTPS_DllAPI ~TypeDescriptor() noexcept;
+    RTPS_DllAPI ~TypeDescriptor();
 
     static bool is_type_name_consistent(
             const std::string& sName);

@@ -29,7 +29,7 @@ class MemberDescriptor;
 class DynamicType;
 class DynamicTypeMember;
 
-class DynamicTypeBuilder
+class DynamicTypeBuilder final
     : public TypeDescriptor
     , public std::enable_shared_from_this<DynamicTypeBuilder>
 {

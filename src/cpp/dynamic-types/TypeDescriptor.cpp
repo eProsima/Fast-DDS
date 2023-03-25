@@ -77,7 +77,7 @@ TypeDescriptor::TypeDescriptor(
 
 
 TypeDescriptor::TypeDescriptor(
-        const TypeDescriptor& other) noexcept
+        const TypeDescriptor& other)
         : TypeDescriptorData(other)
 {
     refresh_indexes();

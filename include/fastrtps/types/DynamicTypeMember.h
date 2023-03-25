@@ -27,7 +27,7 @@ namespace types {
 class AnnotationDescriptor;
 class DynamicType;
 
-class DynamicTypeMember
+class DynamicTypeMember final
     : public MemberDescriptor
     , protected AnnotationManager
 {

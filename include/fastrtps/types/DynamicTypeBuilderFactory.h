@@ -116,7 +116,7 @@ class AnnotationParameterValue;
  * This class is conceived as a singleton charged of creation of @ref DynamicTypeBuilder objects.
  * For simplicity direct primitive types instantiation is also posible.
  */
-class DynamicTypeBuilderFactory
+class DynamicTypeBuilderFactory final
 {
     using builder_allocator = eprosima::detail::BuilderAllocator<DynamicTypeBuilder, DynamicTypeBuilderFactory, true>;
 
@@ -269,12 +269,28 @@ public:
     RTPS_DllAPI DynamicType_ptr get_primitive_type(
             TypeKind kind) noexcept;
 
+    /**
+     * Frees any framework resources associated with the given builder.
+     * @remark This method is thread-safe.
+     * @remark RAII will prevent memory leaks even if this method is not called.
+     * @remark Non-primitive builders are tracked and this method will stop the tracking.
+     * @param[in] builder @ref DynamicTypeBuilder object whose resources to free
+     * @return standard ReturnCode_t
+     */
     RTPS_DllAPI ReturnCode_t delete_builder(
-            DynamicTypeBuilder* builder) noexcept;
+            const DynamicTypeBuilder& builder) noexcept;
 
-    // TODO: doxygen
+    /**
+     * Frees any framework resources associated with the given type according with [standard] section 7.5.2.2.10.
+     * @remark This method is thread-safe.
+     * @remark RAII will prevent memory leaks even if this method is not called.
+     * @remark Non-primitive types will not be tracked by the framework after this call.
+     * @param[in] type @ref DynamicType object whose resources to free
+     * @return standard ReturnCode_t
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
+     */
     RTPS_DllAPI ReturnCode_t delete_type(
-            DynamicType* type) noexcept;
+            const DynamicType& type) noexcept;
 
     /**
      * Returns a singleton @ref DynamicTypeBuilder object

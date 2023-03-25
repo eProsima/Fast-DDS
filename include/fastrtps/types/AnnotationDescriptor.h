@@ -26,7 +26,7 @@ namespace types{
 class MemberDescriptor;
 class DynamicType;
 
-class AnnotationDescriptor
+class AnnotationDescriptor final
 {
 protected:
     friend class DynamicTypeBuilderFactory;

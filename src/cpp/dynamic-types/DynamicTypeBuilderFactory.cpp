@@ -712,16 +712,16 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_union_builder(
 }
 
 ReturnCode_t DynamicTypeBuilderFactory::delete_builder(
-        DynamicTypeBuilder* builder) noexcept
+        const DynamicTypeBuilder& builder) noexcept
 {
-    return dynamic_tracker<selected_mode>::get_dynamic_tracker().remove(builder)
+    return dynamic_tracker<selected_mode>::get_dynamic_tracker().remove(&builder)
             ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_ALREADY_DELETED;
 }
 
 ReturnCode_t DynamicTypeBuilderFactory::delete_type(
-        DynamicType* type) noexcept
+        const DynamicType& type) noexcept
 {
-    return dynamic_tracker<selected_mode>::get_dynamic_tracker().remove(type)
+    return dynamic_tracker<selected_mode>::get_dynamic_tracker().remove(&type)
             ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_ALREADY_DELETED;
 }
 
