@@ -238,7 +238,7 @@ public:
      *         called `create_type` which is misguiding. It was renamed to simplify interface usage.
      * @remark This method will always create a new builder object. In order to access primitive static allocated
      *         ones and avoid heap overhead use the `create_xxxx_builder()` methods.
-     * @param[in] descriptor object state to copy
+     * @param[in] td object state to copy
      * @return new @ref DynamicTypeBuilder object
      */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_builder(const TypeDescriptor& td) noexcept;
@@ -260,7 +260,7 @@ public:
      * @remark This method is thread-safe.
      * @remark This method will always create a new builder object. In order to access primitive static allocated
      *         ones and avoid heap overhead use the `create_xxxx_builder()` methods.
-     * @param[in] type @ref DynamicTypeBuilder object
+     * @param[in] builder @ref DynamicTypeBuilder object
      * @return new @ref DynamicTypeBuilder object
      */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_builder_copy(const DynamicTypeBuilder& builder) noexcept;
@@ -367,7 +367,6 @@ public:
      * @remark The element type of the typed returned is a char16
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.5 this method is
      *         called `create_wstring_type` which is misguiding. It was renamed to simplify interface usage.
-     * @param[in] bound `uint32_t` representing the maximun number of elements that may be stored.
      * @return new @ref DynamicTypeBuilder object
      */
     RTPS_DllAPI DynamicTypeBuilder_cptr create_wstring_builder() noexcept;

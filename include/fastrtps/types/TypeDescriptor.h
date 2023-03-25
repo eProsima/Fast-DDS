@@ -294,14 +294,14 @@ public:
     RTPS_DllAPI bool is_subclass(const TypeDescriptor& descriptor) const;
 
     /**
-     * Getter for @t base_type property (see [standard] table 50)
+     * Getter for @b base_type property (see [standard] table 50)
      * @return @ref DynamicType
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
     RTPS_DllAPI DynamicType_ptr get_base_type() const;
 
     /**
-     * Getter for @t bound property (see [standard] table 50)
+     * Getter for @b bound property (see [standard] table 50)
      * @param[in] index dimension bound to retrieve on multidimensional collections
      * @return uint32_t
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
@@ -316,21 +316,21 @@ public:
     RTPS_DllAPI uint32_t get_total_bounds() const;
 
     /**
-     * Getter for @t discriminator_type property (see [standard] table 50)
+     * Getter for @b discriminator_type property (see [standard] table 50)
      * @return @ref DynamicType
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
     RTPS_DllAPI DynamicType_ptr get_discriminator_type() const;
 
     /**
-     * Getter for @t element_type property (see [standard] table 50)
+     * Getter for @b element_type property (see [standard] table 50)
      * @return @ref DynamicType
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
     RTPS_DllAPI DynamicType_ptr get_element_type() const;
 
     /**
-     * Getter for @t key_element_type property (see [standard] table 50)
+     * Getter for @b key_element_type property (see [standard] table 50)
      * @return @ref DynamicType
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
@@ -368,7 +368,7 @@ public:
     /**
      * Populates an associative collection of member references indexed by name
      * @attention This method is not thread safe. The returned collection use should not outlive this Dynamic object.
-     * @return members map<@ref std::string, @ref DynamicTypeMember> collection to populate
+     * @return members map<std::string, @ref DynamicTypeMember> collection to populate
      */
     RTPS_DllAPI std::map<std::string, const DynamicTypeMember*> get_all_members_by_name() const;
 

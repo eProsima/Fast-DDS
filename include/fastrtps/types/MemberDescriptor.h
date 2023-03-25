@@ -71,6 +71,7 @@ public:
 
     /**
      * convenience constructor
+     * @param[in] id MemberId new member's identifier
      * @param[in] name std::string new member's name
      */
     RTPS_DllAPI MemberDescriptor(
@@ -130,12 +131,12 @@ public:
     /**
      * convenience constructor
      * @remark default index value assures it is appended to the collection.
-     * @param[in] id @ref memberid new member's identifier
+     * @param[in] id @ref MemberId new member's identifier
      * @param[in] name std::string new member's name
-     * @param[in] type @ref dynamictype new member's type
-     * @param[in] defaultvalue std::string member default value as a string representation
-     * @param[in] unionlables collection of label identifiers associated to this member
-     * @param[in] isdefaultlabel is true if 'default' idl union case is enforced
+     * @param[in] type @ref DynamicType new member's type
+     * @param[in] defaultValue std::string member default value as a string representation
+     * @param[in] unionLabels collection of label identifiers associated to this member
+     * @param[in] isDefaultLabel is true if 'default' idl union case is enforced
      */
     RTPS_DllAPI MemberDescriptor(
             MemberId id,
@@ -171,10 +172,10 @@ public:
 
     /**
      * checks for equality according with [standard] section 7.5.2.7.4
-     * @param[in] other @ref memberdescriptor reference to compare to
-     * @remark the @ref memberdescriptor::equals relies on this method
+     * @param[in] other @ref MemberDescriptor reference to compare to
+     * @remark the @ref MemberDescriptor::equals relies on this method
      * @return bool on equality
-     * [standard]: https://www.omg.org/spec/dds-xtypes/1.3/ "omg standard"
+     * [standard]: https://www.omg.org/spec/dds-xtypes/1.3/ "OMG standard"
      */
     RTPS_DllAPI bool operator==(const MemberDescriptor& other) const;
 

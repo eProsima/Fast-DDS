@@ -89,7 +89,7 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
     RTPS_DllAPI bool equals(
-            const DynamicTypeMember&) const;
+            const DynamicTypeMember& other) const;
 
     /**
      * This operation provides a summary of the state of this type (see [standard] section 7.5.2.8.7 guidelines)
