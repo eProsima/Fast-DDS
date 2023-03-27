@@ -1,0 +1,9 @@
+struct SimpleLarge_TypeIntrospectionExample
+{
+	unsigned long index;
+    string message;
+    long points[3];
+    string second_message;
+    sequence<short> some_values;
+    boolen is_it_not_true_that_true_is_not_true;
+};

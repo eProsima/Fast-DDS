@@ -1,0 +1,8 @@
+<types>
+    <type>
+        <struct name="Array_TypeIntrospectionExample">
+            <member name="index" type="uint32"/>
+            <member name="points" type="int32" arrayDimensions="3"/>
+        </struct>
+    </type>
+</types>

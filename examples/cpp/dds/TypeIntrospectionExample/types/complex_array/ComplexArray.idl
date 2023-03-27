@@ -1,0 +1,19 @@
+
+struct InternalArrayPoints_TypeIntrospectionExample
+{
+    long x_member;
+    long y_member;
+    long z_member;
+};
+
+struct InternalArrayMessage_TypeIntrospectionExample
+{
+    string message;
+};
+
+struct ComplexArray_TypeIntrospectionExample
+{
+	unsigned long index;
+    InternalArrayPoints_TypeIntrospectionExample internal_data[3];
+    InternalArrayMessage_TypeIntrospectionExample messages[2];
+};

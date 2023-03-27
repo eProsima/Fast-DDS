@@ -51,7 +51,7 @@ bool HelloWorldPublisher::init()
     }
 
     eprosima::fastrtps::types::DynamicType_ptr dyn_type =
-            eprosima::fastrtps::xmlparser::XMLProfileManager::getDynamicTypeByName("HelloWorld")->build();
+            eprosima::fastrtps::xmlparser::XMLProfileManager::getDynamicTypeByName("HelloWorldDyn")->build();
     TypeSupport m_type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
     m_Hello = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type);
 
@@ -93,7 +93,7 @@ bool HelloWorldPublisher::init()
         return false;
     }
 
-    topic_ = mp_participant->create_topic("DDSDynHelloWorldTopic", "HelloWorld", TOPIC_QOS_DEFAULT);
+    topic_ = mp_participant->create_topic("DDSDynHelloWorldTopic", "HelloWorldDyn", TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
     {
