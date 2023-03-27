@@ -47,11 +47,6 @@ jobs:
               contains(github.event.pull_request.labels.*.name, 'skip-ci')) }}
     runs-on: ubuntu-22.04
     steps:
-      - name: Download GCC 12
-        uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@main
-        with:
-          packages: "g++-12 gcc-12"
-
       - name: Download the sanitizers cmake module and apply some fixes
         run: |
           git config --global user.email "dummy@mail.com"
