@@ -578,14 +578,14 @@ jobs:
           $ctestargs = '${{ inputs.ctest-args }}'.split(" ")
 
           # Show the arguments
-          EchoArgs --packages-select fastrtps --event-handlers=console_direct+ `
-            --merge-install --executor sequential --ctest-args $ctestargs --repeat until-pass:3 `
+          EchoArgs --packages-select fastrtps --retest-until-pass 3 --event-handlers=console_direct+ `
+            --merge-install --executor sequential --ctest-args $ctestargs `
             --timeout 300 --output-junit $junit
 
           # Run the testing
           "::group::ctest summary"
-          colcon test --packages-select fastrtps --event-handlers=console_direct+ `
-            --merge-install --executor sequential --ctest-args $ctestargs --repeat until-pass:3 `
+          colcon test --packages-select fastrtps --retest-until-pass 3 --event-handlers=console_direct+ `
+            --merge-install --executor sequential --ctest-args $ctestargs `
             --timeout 300 --output-junit $junit
           "::endgroup::"
 
