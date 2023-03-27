@@ -95,17 +95,19 @@ void CacheChangePool::return_cache_to_pool(
         CacheChange_t* ch)
 {
     ch->kind = ALIVE;
-    ch->sequenceNumber.high = 0;
-    ch->sequenceNumber.low = 0;
     ch->writerGUID = c_Guid_Unknown;
     ch->instanceHandle.clear();
-    ch->isRead = 0;
+    ch->sequenceNumber.high = 0;
+    ch->sequenceNumber.low = 0;
+    ch->inline_qos.pos = 0;
+    ch->inline_qos.length = 0;
+    ch->isRead = false;
     ch->sourceTimestamp.seconds(0);
     ch->sourceTimestamp.fraction(0);
     ch->writer_info.num_sent_submessages = 0;
+    ch->write_params.sample_identity(SampleIdentity::unknown());
+    ch->write_params.related_sample_identity(SampleIdentity::unknown());
     ch->setFragmentSize(0);
-    ch->inline_qos.pos = 0;
-    ch->inline_qos.length = 0;
     assert(free_caches_.end() == std::find(free_caches_.begin(), free_caches_.end(), ch));
     free_caches_.push_back(ch);
 }
