@@ -20,6 +20,15 @@
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
 
+<<<<<<< HEAD
+=======
+#include <fastdds/dds/log/Log.hpp>
+
+#if defined(__APPLE__)
+#include <TargetConditionals.h>
+#endif // if defined(__APPLE__)
+
+>>>>>>> c24bef2d7 (Include the right header when building for iOS (#3002))
 #if defined(_WIN32)
 #pragma comment(lib, "Iphlpapi.lib")
 #include <stdio.h>
@@ -37,7 +46,27 @@
 #include <unistd.h>
 #include <string.h>
 #include <net/if.h>
+<<<<<<< HEAD
 #endif
+=======
+#include <sys/ioctl.h>
+#if defined(__APPLE__) && TARGET_OS_IPHONE
+#include <net/ethernet.h>
+#else
+#include <net/if_arp.h>
+#endif // if defined(__APPLE__) && TARGET_OS_IPHONE
+#include <errno.h>
+#if defined(__APPLE__)
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#include <net/if_dl.h>
+#include <netinet/in.h>
+#endif // if defined(__APPLE__)
+#if defined(__QNXNTO__)
+#include <net/if_dl.h>
+#endif // if defined(__QNXNTO__)
+#endif // if defined(_WIN32)
+>>>>>>> c24bef2d7 (Include the right header when building for iOS (#3002))
 
 #if defined(__FreeBSD__)
 #include <netinet/in.h>
