@@ -5,7 +5,7 @@ In the first one launch: ./DDSDynamicHelloWorldExample publisher
 In the second one: ./DDSDynamicHelloWorldExample subscriber
 (or DDSDynamicHelloWorldExample.exe subscriber on windows).
 
-In this example, the publisher loads a type from the XML file "example_type.xml".
+In this example, the publisher loads a type from the XML file "helloworld_example_type_profile.xml".
 The publisher shares the TypeObject so another participants can discover it.
 
 The subscriber will discover the type and introspecting it will show the received messages from the publisher.

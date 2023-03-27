@@ -3,16 +3,16 @@
     "participants" : [
         {
             "kind" : "subscriber",
-            "xmlfile" : "simple_reliable.xml",
+            "xmlfile" : "simple_reliable_profile.xml",
             "publishers" : "2"
         },
         {
             "kind" : "publisher",
-            "xmlfile" : "simple_reliable.xml"
+            "xmlfile" : "simple_reliable_profile.xml"
         },
         {
             "kind" : "pubsub",
-            "xmlfile" : "simple_reliable.xml",
+            "xmlfile" : "simple_reliable_profile.xml",
             "publishers" : "2"
         }
     ]

@@ -54,12 +54,12 @@ TEST_F(XMLParserTests, regressions)
 {
     std::unique_ptr<BaseNode> root;
 
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/12736.xml", root));
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13418.xml", root));
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13454.xml", root));
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13513.xml", root));
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/14456.xml", root));
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/15344.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/12736_profile_bin.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13418_profile_bin.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13454_profile_bin.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13513_profile_bin.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/14456_profile_bin.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/15344_profile_bin.xml", root));
 }
 
 TEST_F(XMLParserTests, NoFile)
@@ -89,7 +89,7 @@ TEST_F(XMLParserTests, EmptyString)
 TEST_F(XMLParserTests, WrongName)
 {
     std::unique_ptr<BaseNode> root;
-    ASSERT_EQ(XMLParser::loadXML("test_xml_profiles.xml", root), XMLP_ret::XML_OK);
+    ASSERT_EQ(XMLParser::loadXML("test_xml_profile.xml", root), XMLP_ret::XML_OK);
     ParticipantAttributes participant_atts;
     ASSERT_FALSE(get_participant_attributes(root, participant_atts));
 }
@@ -97,7 +97,7 @@ TEST_F(XMLParserTests, WrongName)
 TEST_F(XMLParserTests, WrongNameBuffer)
 {
     std::ifstream inFile;
-    inFile.open("test_xml_profiles.xml");
+    inFile.open("test_xml_profile.xml");
     std::stringstream strStream;
     strStream << inFile.rdbuf();
     std::unique_ptr<BaseNode> root;
@@ -106,10 +106,57 @@ TEST_F(XMLParserTests, WrongNameBuffer)
     ASSERT_FALSE(get_participant_attributes(root, participant_atts));
 }
 
+/*
+ * Checks the supported and XML validated entity hierarchy
+ */
 TEST_F(XMLParserTests, TypesRooted)
 {
     std::unique_ptr<BaseNode> root;
-    ASSERT_EQ(XMLParser::loadXML("test_xml_profiles_rooted.xml", root), XMLP_ret::XML_OK);
+    ASSERT_EQ(XMLParser::loadXML("test_xml_rooted_profile.xml", root), XMLP_ret::XML_OK);
+
+    ParticipantAttributes participant_atts;
+    bool participant_profile = false;
+    bool publisher_profile   = false;
+    bool subscriber_profile  = false;
+    bool topic_data          = false;
+    for (const auto& root_child : root->getChildren())
+    {
+        if (root_child->getType() == NodeType::PROFILES)
+        {
+            for (const auto& profile : root_child->getChildren())
+            {
+                if (profile->getType() == NodeType::PARTICIPANT)
+                {
+                    participant_profile = true;
+                }
+                else if (profile->getType() == NodeType::PUBLISHER)
+                {
+                    publisher_profile = true;
+                }
+                else if (profile->getType() == NodeType::SUBSCRIBER)
+                {
+                    subscriber_profile = true;
+                }
+                else if (profile->getType() == NodeType::TOPIC)
+                {
+                    topic_data = true;
+                }
+            }
+        }
+    }
+    ASSERT_TRUE(participant_profile);
+    ASSERT_TRUE(publisher_profile);
+    ASSERT_TRUE(subscriber_profile);
+    ASSERT_TRUE(topic_data);
+}
+
+/*
+ * Checks the supported entity hierarchy
+ */
+TEST_F(XMLParserTests, TypesRootedDeprecated)
+{
+    std::unique_ptr<BaseNode> root;
+    ASSERT_EQ(XMLParser::loadXML("test_xml_rooted_deprecated.xml", root), XMLP_ret::XML_OK);
 
     ParticipantAttributes participant_atts;
     bool participant_profile = false;
@@ -147,10 +194,60 @@ TEST_F(XMLParserTests, TypesRooted)
     ASSERT_TRUE(topic_data);
 }
 
+/*
+ * Checks the supported and XML validated entity hierarchy
+ */
 TEST_F(XMLParserTests, TypesRootedBuffer)
 {
     std::ifstream inFile;
-    inFile.open("test_xml_profiles_rooted.xml");
+    inFile.open("test_xml_rooted_profile.xml");
+    std::stringstream strStream;
+    strStream << inFile.rdbuf();
+    std::unique_ptr<BaseNode> root;
+    ASSERT_EQ(XMLParser::loadXML(strStream.str().data(), strStream.str().size(), root), XMLP_ret::XML_OK);
+    ParticipantAttributes participant_atts;
+    bool participant_profile = false;
+    bool publisher_profile   = false;
+    bool subscriber_profile  = false;
+    bool topic_data          = false;
+    for (const auto& root_child : root->getChildren())
+    {
+        if (root_child->getType() == NodeType::PROFILES)
+        {
+            for (const auto& profile : root_child->getChildren())
+            {
+                if (profile->getType() == NodeType::PARTICIPANT)
+                {
+                    participant_profile = true;
+                }
+                else if (profile->getType() == NodeType::PUBLISHER)
+                {
+                    publisher_profile = true;
+                }
+                else if (profile->getType() == NodeType::SUBSCRIBER)
+                {
+                    subscriber_profile = true;
+                }
+                else if (profile->getType() == NodeType::TOPIC)
+                {
+                    topic_data = true;
+                }
+            }
+        }
+    }
+    ASSERT_TRUE(participant_profile);
+    ASSERT_TRUE(publisher_profile);
+    ASSERT_TRUE(subscriber_profile);
+    ASSERT_TRUE(topic_data);
+}
+
+/*
+ * Checks the supported entity hierarchy
+ */
+TEST_F(XMLParserTests, TypesRootedBufferDeprecated)
+{
+    std::ifstream inFile;
+    inFile.open("test_xml_rooted_deprecated.xml");
     std::stringstream strStream;
     strStream << inFile.rdbuf();
     std::unique_ptr<BaseNode> root;
@@ -194,7 +291,7 @@ TEST_F(XMLParserTests, TypesRootedBuffer)
 TEST_F(XMLParserTests, Types)
 {
     std::unique_ptr<BaseNode> root;
-    ASSERT_EQ(XMLParser::loadXML("test_xml_profiles.xml", root), XMLP_ret::XML_OK);
+    ASSERT_EQ(XMLParser::loadXML("test_xml_profile.xml", root), XMLP_ret::XML_OK);
 
     BaseNode* profiles(root->getChild(0));
     ASSERT_TRUE(profiles);
@@ -227,7 +324,7 @@ TEST_F(XMLParserTests, Types)
 TEST_F(XMLParserTests, TypesBuffer)
 {
     std::ifstream inFile;
-    inFile.open("test_xml_profiles.xml");
+    inFile.open("test_xml_profile.xml");
     std::stringstream strStream;
     strStream << inFile.rdbuf();
     std::unique_ptr<BaseNode> root;
@@ -269,7 +366,7 @@ TEST_F(XMLParserTests, DurationCheck)
     const std::string profile_name2{"test_publisher_profile"};
     const std::string profile_name3{"test_subscriber_profile"};
 
-    ASSERT_EQ(XMLParser::loadXML("test_xml_duration.xml", root), XMLP_ret::XML_OK);
+    ASSERT_EQ(XMLParser::loadXML("test_xml_duration_profile.xml", root), XMLP_ret::XML_OK);
 
     ParticipantAttributes participant_atts;
     bool participant_profile = false;
@@ -330,13 +427,110 @@ TEST_F(XMLParserTests, DurationCheck)
     EXPECT_EQ(subscriber_atts.qos.m_latencyBudget.duration.seconds, 20);
 }
 
+/*
+ * Checks the XML validated data parsing
+ */
 TEST_F(XMLParserTests, Data)
 {
     std::unique_ptr<BaseNode> root;
     const std::string name_attribute{"profile_name"};
     const std::string profile_name{"test_participant_profile"};
 
-    ASSERT_EQ(XMLParser::loadXML("test_xml_profiles.xml", root), XMLP_ret::XML_OK);
+    ASSERT_EQ(XMLParser::loadXML("test_xml_profile.xml", root), XMLP_ret::XML_OK);
+
+    BaseNode* profiles(root->getChild(0));
+    ASSERT_TRUE(profiles);
+    ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
+
+    ParticipantAttributes participant_atts;
+    bool participant_profile = false;
+    for (const auto& profile : profiles->getChildren())
+    {
+        if (profile->getType() == NodeType::PARTICIPANT)
+        {
+            auto data_node = dynamic_cast<DataNode<ParticipantAttributes>*>(profile.get());
+            auto search    = data_node->getAttributes().find(name_attribute);
+            if ((search != data_node->getAttributes().end()) && (search->second == profile_name))
+            {
+                participant_atts    = *data_node->get();
+                participant_profile = true;
+            }
+        }
+    }
+
+    ASSERT_TRUE(participant_profile);
+    EXPECT_EQ(participant_atts.domainId, 123u);
+    RTPSParticipantAttributes& rtps_atts = participant_atts.rtps;
+    BuiltinAttributes& builtin           = rtps_atts.builtin;
+    Locator_t locator;
+    LocatorListIterator loc_list_it;
+    PortParameters& port = rtps_atts.port;
+    IPLocator::setIPv4(locator, 192, 168, 1, 2);
+    locator.port = 2019;
+    EXPECT_EQ(*rtps_atts.defaultUnicastLocatorList.begin(), locator);
+    IPLocator::setIPv4(locator, 239, 255, 0, 1);
+    locator.port = 2021;
+    EXPECT_EQ(*rtps_atts.defaultMulticastLocatorList.begin(), locator);
+    IPLocator::setIPv4(locator, 192, 168, 1, 1);
+    locator.port = 1979;
+    EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32u);
+    EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
+    EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE);
+    EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
+    EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
+    EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
+    EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
+    EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
+    IPLocator::setIPv4(locator, 192, 168, 1, 5);
+    locator.port = 9999;
+    EXPECT_EQ(*(loc_list_it = builtin.metatrafficUnicastLocatorList.begin()), locator);
+    IPLocator::setIPv4(locator, 192, 168, 1, 6);
+    locator.port = 6666;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    IPLocator::setIPv4(locator, 239, 255, 0, 2);
+    locator.port = 32;
+    EXPECT_EQ(*(loc_list_it = builtin.metatrafficMulticastLocatorList.begin()), locator);
+    IPLocator::setIPv4(locator, 239, 255, 0, 3);
+    locator.port = 2112;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    IPLocator::setIPv4(locator, 239, 255, 0, 1);
+    locator.port = 21120;
+    EXPECT_EQ(*(loc_list_it = builtin.initialPeersList.begin()), locator);
+    EXPECT_EQ(builtin.readerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
+    EXPECT_EQ(builtin.writerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
+    EXPECT_EQ(builtin.readerPayloadSize, 1000u);
+    EXPECT_EQ(builtin.writerPayloadSize, 2000u);
+    EXPECT_EQ(builtin.mutation_tries, 55u);
+    EXPECT_EQ(port.portBase, 12);
+    EXPECT_EQ(port.domainIDGain, 34);
+    EXPECT_EQ(port.participantIDGain, 56);
+    EXPECT_EQ(port.offsetd0, 78);
+    EXPECT_EQ(port.offsetd1, 90);
+    EXPECT_EQ(port.offsetd2, 123);
+    EXPECT_EQ(port.offsetd3, 456);
+    EXPECT_EQ(rtps_atts.participantID, 9898);
+    //EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048u);
+    //EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45u);
+    EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
+    EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
+    EXPECT_EQ(rtps_atts.userData, std::vector<octet>({0x56, 0x30, 0x0, 0xce}));
+}
+
+/*
+ * Checks the data parsing (with deprecated but supported elements)
+ */
+TEST_F(XMLParserTests, DataDeprecated)
+{
+    std::unique_ptr<BaseNode> root;
+    const std::string name_attribute{"profile_name"};
+    const std::string profile_name{"test_participant_profile"};
+
+    ASSERT_EQ(XMLParser::loadXML("test_xml_deprecated.xml", root), XMLP_ret::XML_OK);
 
     BaseNode* profiles(root->getChild(0));
     ASSERT_TRUE(profiles);
@@ -426,7 +620,101 @@ TEST_F(XMLParserTests, DataBuffer)
     const std::string name_attribute{"profile_name"};
     const std::string profile_name{"test_participant_profile"};
     std::ifstream inFile;
-    inFile.open("test_xml_profiles.xml");
+    inFile.open("test_xml_profile.xml");
+    std::stringstream strStream;
+    strStream << inFile.rdbuf();
+    std::unique_ptr<BaseNode> root;
+    ASSERT_EQ(XMLParser::loadXML(strStream.str().data(), strStream.str().size(), root), XMLP_ret::XML_OK);
+
+    BaseNode* profiles(root->getChild(0));
+    ASSERT_TRUE(profiles);
+    ASSERT_EQ(profiles->getType(), xmlparser::NodeType::PROFILES);
+
+    ParticipantAttributes participant_atts;
+    bool participant_profile = false;
+    for (const auto& profile : profiles->getChildren())
+    {
+        if (profile->getType() == NodeType::PARTICIPANT)
+        {
+            auto data_node = dynamic_cast<DataNode<ParticipantAttributes>*>(profile.get());
+            auto search    = data_node->getAttributes().find(name_attribute);
+            if ((search != data_node->getAttributes().end()) && (search->second == profile_name))
+            {
+                participant_atts    = *data_node->get();
+                participant_profile = true;
+            }
+        }
+    }
+
+    ASSERT_TRUE(participant_profile);
+    EXPECT_EQ(participant_atts.domainId, 123u);
+    RTPSParticipantAttributes& rtps_atts = participant_atts.rtps;
+    BuiltinAttributes& builtin           = rtps_atts.builtin;
+    Locator_t locator;
+    LocatorListIterator loc_list_it;
+    PortParameters& port = rtps_atts.port;
+    IPLocator::setIPv4(locator, 192, 168, 1, 2);
+    locator.port = 2019;
+    EXPECT_EQ(*rtps_atts.defaultUnicastLocatorList.begin(), locator);
+    IPLocator::setIPv4(locator, 239, 255, 0, 1);
+    locator.port = 2021;
+    EXPECT_EQ(*rtps_atts.defaultMulticastLocatorList.begin(), locator);
+    IPLocator::setIPv4(locator, 192, 168, 1, 1);
+    locator.port = 1979;
+    EXPECT_EQ(rtps_atts.sendSocketBufferSize, 32u);
+    EXPECT_EQ(rtps_atts.listenSocketBufferSize, 1000u);
+    EXPECT_EQ(builtin.discovery_config.discoveryProtocol, eprosima::fastrtps::rtps::DiscoveryProtocol::SIMPLE);
+    EXPECT_EQ(builtin.use_WriterLivelinessProtocol, false);
+    EXPECT_EQ(builtin.discovery_config.use_SIMPLE_EndpointDiscoveryProtocol, true);
+    EXPECT_EQ(builtin.discovery_config.use_STATIC_EndpointDiscoveryProtocol, false);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration, c_TimeInfinite);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.seconds, 10);
+    EXPECT_EQ(builtin.discovery_config.leaseDuration_announcementperiod.nanosec, 333u);
+    EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationWriterANDSubscriptionReader, false);
+    EXPECT_EQ(builtin.discovery_config.m_simpleEDP.use_PublicationReaderANDSubscriptionWriter, true);
+    IPLocator::setIPv4(locator, 192, 168, 1, 5);
+    locator.port = 9999;
+    EXPECT_EQ(*(loc_list_it = builtin.metatrafficUnicastLocatorList.begin()), locator);
+    IPLocator::setIPv4(locator, 192, 168, 1, 6);
+    locator.port = 6666;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    IPLocator::setIPv4(locator, 239, 255, 0, 2);
+    locator.port = 32;
+    EXPECT_EQ(*(loc_list_it = builtin.metatrafficMulticastLocatorList.begin()), locator);
+    IPLocator::setIPv4(locator, 239, 255, 0, 3);
+    locator.port = 2112;
+    ++loc_list_it;
+    EXPECT_EQ(*loc_list_it, locator);
+    IPLocator::setIPv4(locator, 239, 255, 0, 1);
+    locator.port = 21120;
+    EXPECT_EQ(*(loc_list_it = builtin.initialPeersList.begin()), locator);
+    EXPECT_EQ(builtin.readerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
+    EXPECT_EQ(builtin.writerHistoryMemoryPolicy, PREALLOCATED_MEMORY_MODE);
+    EXPECT_EQ(builtin.readerPayloadSize, 1000u);
+    EXPECT_EQ(builtin.writerPayloadSize, 2000u);
+    EXPECT_EQ(builtin.mutation_tries, 55u);
+    EXPECT_EQ(port.portBase, 12);
+    EXPECT_EQ(port.domainIDGain, 34);
+    EXPECT_EQ(port.participantIDGain, 56);
+    EXPECT_EQ(port.offsetd0, 78);
+    EXPECT_EQ(port.offsetd1, 90);
+    EXPECT_EQ(port.offsetd2, 123);
+    EXPECT_EQ(port.offsetd3, 456);
+    EXPECT_EQ(rtps_atts.participantID, 9898);
+    //EXPECT_EQ(rtps_atts.throughputController.bytesPerPeriod, 2048u);
+    //EXPECT_EQ(rtps_atts.throughputController.periodMillisecs, 45u);
+    EXPECT_EQ(rtps_atts.useBuiltinTransports, true);
+    EXPECT_EQ(std::string(rtps_atts.getName()), "test_name");
+    EXPECT_EQ(rtps_atts.userData, std::vector<octet>({0x56, 0x30, 0x0, 0xce}));
+}
+
+TEST_F(XMLParserTests, DataBufferDeprecated)
+{
+    const std::string name_attribute{"profile_name"};
+    const std::string profile_name{"test_participant_profile"};
+    std::ifstream inFile;
+    inFile.open("test_xml_deprecated.xml");
     std::stringstream strStream;
     strStream << inFile.rdbuf();
     std::unique_ptr<BaseNode> root;
@@ -528,19 +816,19 @@ TEST_F(XMLParserTests, loadXMLProfiles)
     const char* xml =
             "\
             <profiles>\
-                <publisher profile_name=\"test_publisher_profile\"\
+                <data_writer profile_name=\"test_publisher_profile\"\
                 is_default_profile=\"true\">\
                     <qos>\
                         <durability>\
                             <kind>TRANSIENT_LOCAL</kind>\
                         </durability>\
                     </qos>\
-                </publisher>\
-                <subscriber profile_name=\"test_subscriber_profile\" is_default_profile=\"true\">\
+                </data_writer>\
+                <data_reader profile_name=\"test_subscriber_profile\" is_default_profile=\"true\">\
                     <historyMemoryPolicy>PREALLOCATED_WITH_REALLOC</historyMemoryPolicy>\
                     <userDefinedID>13</userDefinedID>\
                     <entityID>31</entityID>\
-                </subscriber>\
+                </data_reader>\
             </profiles>\
             ";
 

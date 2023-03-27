@@ -433,7 +433,7 @@ TEST(StatisticsDomainParticipant, CreateParticipantUsingXML)
 {
 #ifdef FASTDDS_STATISTICS
     // 0. Setup test
-    std::string xml_file = "StatisticsDomainParticipant.xml";
+    std::string xml_file = "StatisticsDomainParticipant_profile.xml";
     std::string participant_profile_name = "statistics_participant";
 
     // Create TypeSupports

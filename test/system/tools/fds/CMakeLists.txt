@@ -58,7 +58,7 @@ if(PYTHONINTERP_FOUND)
         configure_file(${PROJECT_SOURCE_DIR}/test/certs/permissions_helloworld.smime
             ${CMAKE_CURRENT_BINARY_DIR}/permissions_helloworld.smime COPYONLY)
 
-        configure_file("test_xml_secure_discovery_server.xml" "test_xml_secure_discovery_server.xml" COPYONLY)
+        configure_file("test_xml_secure_discovery_server_profile.xml" "test_xml_secure_discovery_server_profile.xml" COPYONLY)
     endif()
 
 
@@ -122,8 +122,8 @@ if(PYTHONINTERP_FOUND)
 
     endforeach()
 
-    configure_file("test_xml_discovery_server.xml" "test_xml_discovery_server.xml" COPYONLY)
-    configure_file("test_wrong_xml_discovery_server.xml" "test_wrong_xml_discovery_server.xml" COPYONLY)
+    configure_file("test_xml_discovery_server_profile.xml" "test_xml_discovery_server_profile.xml" COPYONLY)
+    configure_file("test_wrong_xml_discovery_server_profile.xml" "test_wrong_xml_discovery_server_profile.xml" COPYONLY)
     unset(TEST_ENVIRONMENT)
 
 endif()

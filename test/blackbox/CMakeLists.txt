@@ -317,24 +317,24 @@ if(W_UNICAST_PORT_RANDOM_NUMBER LESS 1025)
 endif()
 math(EXPR R_UNICAST_PORT_RANDOM_NUMBER "${W_UNICAST_PORT_RANDOM_NUMBER} + 1")
 math(EXPR MULTICAST_PORT_RANDOM_NUMBER "${R_UNICAST_PORT_RANDOM_NUMBER} + 1")
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubWriter.xml.in
-    ${CMAKE_CURRENT_BINARY_DIR}/PubSubWriter.xml)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubReader.xml.in
-    ${CMAKE_CURRENT_BINARY_DIR}/PubSubReader.xml)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubWriterPersistence.xml.in
-    ${CMAKE_CURRENT_BINARY_DIR}/PubSubWriterPersistence.xml)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubReaderPersistence.xml.in
-    ${CMAKE_CURRENT_BINARY_DIR}/PubSubReaderPersistence.xml)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/discovery_participant_flags.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/discovery_participant_flags.xml)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/persistence.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/persistence.xml)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/StatisticsDomainParticipant.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/StatisticsDomainParticipant.xml)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubWriter_static_disc.xml.in
+    ${CMAKE_CURRENT_BINARY_DIR}/PubSubWriter_static_disc.xml)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubReader_static_disc.xml.in
+    ${CMAKE_CURRENT_BINARY_DIR}/PubSubReader_static_disc.xml)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubWriterPersistence_static_disc.xml.in
+    ${CMAKE_CURRENT_BINARY_DIR}/PubSubWriterPersistence_static_disc.xml)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/PubSubReaderPersistence_static_disc.xml.in
+    ${CMAKE_CURRENT_BINARY_DIR}/PubSubReaderPersistence_static_disc.xml)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/discovery_participant_flags_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/discovery_participant_flags_profile.xml)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/persistence_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/persistence_profile.xml)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/StatisticsDomainParticipant_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/StatisticsDomainParticipant_profile.xml)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utils/check_guid.py
     ${CMAKE_CURRENT_BINARY_DIR}/check_guid.py)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/partitions.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/partitions.xml)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/partitions_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/partitions_profile.xml)
 
 if(FASTRTPS_API_TESTS)
     set(BLACKBOXTESTS_FASTRTPS_SOURCE

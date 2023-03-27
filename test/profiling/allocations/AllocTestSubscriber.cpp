@@ -42,7 +42,7 @@ bool AllocTestSubscriber::init(
 {
     m_profile = profile;
     m_outputFile = outputFile;
-    Domain::loadXMLProfilesFile("test_xml_profiles.xml");
+    Domain::loadXMLProfilesFile("test_xml_profile.xml");
 
     ParticipantAttributes participant_att;
     if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK ==

@@ -47,14 +47,14 @@ target_link_libraries(
 ###########################################################################
 set(
     THROUGHPUT_TEST_LIST
-    intraprocess_best_effort
-    intraprocess_reliable
-    interprocess_best_effort_udp
-    interprocess_reliable_udp
-#    interprocess_best_effort_tcp
-#    interprocess_reliable_tcp
-    interprocess_best_effort_shm
-    interprocess_reliable_shm
+    throughput_intraprocess_best_effort_profile
+    throughput_intraprocess_reliable_profile
+    throughput_interprocess_best_effort_udp_profile
+    throughput_interprocess_reliable_udp_profile
+#   throughput_interprocess_best_effort_tcp_profile
+#   throughput_interprocess_reliable_tcp_profile
+    throughput_interprocess_best_effort_shm_profile
+    throughput_interprocess_reliable_shm_profile
 )
 
 ###########################################################################

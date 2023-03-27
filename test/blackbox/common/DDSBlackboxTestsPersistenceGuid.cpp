@@ -174,7 +174,7 @@ TEST_P(PersistenceGuid, SetPersistenceGuidByXML)
 {
     // Create DataWriter using XML Profile
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
-    writer.set_xml_filename("persistence.xml");
+    writer.set_xml_filename("persistence_profile.xml");
     writer.set_participant_profile("persistence_participant");
     writer.set_datawriter_profile("persistence_data_writer");
 
@@ -183,7 +183,7 @@ TEST_P(PersistenceGuid, SetPersistenceGuidByXML)
 
     // Create DataReader using XML Profile
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    reader.set_xml_filename("persistence.xml");
+    reader.set_xml_filename("persistence_profile.xml");
     reader.set_participant_profile("persistence_participant");
     reader.set_datareader_profile("persistence_data_reader");
 

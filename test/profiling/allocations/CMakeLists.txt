@@ -33,7 +33,7 @@ if (osrf_testing_tools_cpp_FOUND)
     file(GLOB ALLOCTEST_EXAMPLE_SOURCES_CXX "*.cxx")
     file(GLOB ALLOCTEST_EXAMPLE_SOURCES_CPP "*.cpp")
 
-    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test_xml_profiles.xml
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test_xml_profile.xml
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR}
         )
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/test.sh

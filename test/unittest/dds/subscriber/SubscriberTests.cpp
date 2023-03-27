@@ -623,7 +623,7 @@ void check_datareader_with_profile (
 
 TEST(SubscriberTests, CreateDataReaderWithProfile)
 {
-    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
@@ -650,7 +650,7 @@ TEST(SubscriberTests, CreateDataReaderWithProfile)
 
 TEST(SubscriberTests, GetDataReaderProfileQos)
 {
-    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profiles.xml");
+    DomainParticipantFactory::get_instance()->load_XML_profiles_file("test_xml_profile.xml");
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);

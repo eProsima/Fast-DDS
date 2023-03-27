@@ -36,26 +36,28 @@ using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
 using namespace eprosima::fastcdr::exception;
 
-class DynamicTypes_4_2_Tests: public ::testing::Test
+class DynamicTypes_4_2_Tests : public ::testing::Test
 {
-    const std::string config_file_ = "types.xml";
+    const std::string config_file_ = "types_profile.xml";
 
-    public:
-        DynamicTypes_4_2_Tests()
-        {
-        }
+public:
 
-        ~DynamicTypes_4_2_Tests()
-        {
-            eprosima::fastdds::dds::Log::KillThread();
-        }
+    DynamicTypes_4_2_Tests()
+    {
+    }
 
-        virtual void TearDown() override
-        {
-            TypeObjectFactory::delete_instance();
-            DynamicDataFactory::delete_instance();
-            DynamicTypeBuilderFactory::delete_instance();
-        }
+    ~DynamicTypes_4_2_Tests()
+    {
+        eprosima::fastdds::dds::Log::KillThread();
+    }
+
+    virtual void TearDown() override
+    {
+        TypeObjectFactory::delete_instance();
+        DynamicDataFactory::delete_instance();
+        DynamicTypeBuilderFactory::delete_instance();
+    }
+
 };
 
 TEST_F(DynamicTypes_4_2_Tests, Inheritance_And_Default_Value)
@@ -173,7 +175,7 @@ TEST_F(DynamicTypes_4_2_Tests, New_Union_Discriminators)
         ASSERT_FALSE(struct_test.int8Union().case_six() == 666);
         ASSERT_TRUE(false);
     }
-    catch(const BadParamException&)
+    catch (const BadParamException&)
     {
     }
 
@@ -183,7 +185,7 @@ TEST_F(DynamicTypes_4_2_Tests, New_Union_Discriminators)
         ASSERT_FALSE(struct_test.int8Union().case_three() == 333);
         ASSERT_TRUE(false);
     }
-    catch(const BadParamException&)
+    catch (const BadParamException&)
     {
     }
     ASSERT_TRUE(struct_test.int8Union().case_six() == 666);
@@ -199,7 +201,7 @@ TEST_F(DynamicTypes_4_2_Tests, New_Union_Discriminators)
         ASSERT_FALSE(struct_test.octetUnion().case_seven() == 777);
         ASSERT_TRUE(false);
     }
-    catch(const BadParamException&)
+    catch (const BadParamException&)
     {
     }
 
@@ -209,7 +211,7 @@ TEST_F(DynamicTypes_4_2_Tests, New_Union_Discriminators)
         ASSERT_FALSE(struct_test.octetUnion().case_five() == 555);
         ASSERT_TRUE(false);
     }
-    catch(const BadParamException&)
+    catch (const BadParamException&)
     {
     }
     ASSERT_TRUE(struct_test.octetUnion().case_seven() == 777);
@@ -225,7 +227,7 @@ TEST_F(DynamicTypes_4_2_Tests, New_Union_Discriminators)
         ASSERT_FALSE(struct_test.charUnion().case_one() == 222);
         ASSERT_TRUE(false);
     }
-    catch(const BadParamException&)
+    catch (const BadParamException&)
     {
     }
 
@@ -235,7 +237,7 @@ TEST_F(DynamicTypes_4_2_Tests, New_Union_Discriminators)
         ASSERT_FALSE(struct_test.charUnion().case_zero() == 111);
         ASSERT_TRUE(false);
     }
-    catch(const BadParamException&)
+    catch (const BadParamException&)
     {
     }
     ASSERT_TRUE(struct_test.charUnion().case_one() == 222);
@@ -250,7 +252,7 @@ TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
     const TypeObject* object = GetCompleteStructTestObject();
 
     DynamicType_ptr dyn_type =
-        TypeObjectFactory::get_instance()->build_dynamic_type("StructTest", identifier, object);
+            TypeObjectFactory::get_instance()->build_dynamic_type("StructTest", identifier, object);
 
     TypeIdentifier conv_identifier;
     TypeObject conv_object;
@@ -285,19 +287,19 @@ TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
 
     // DEBUG Printing payloads
     /*
-    std::cout << "Payload: " << std::endl;
-    for (int i = 0; i < payload_size; ++i)
-    {
+       std::cout << "Payload: " << std::endl;
+       for (int i = 0; i < payload_size; ++i)
+       {
         std::cout << std::hex << (uint32_t)(payload.data[i]) << " ";
-    }
-    std::cout << std::endl;
-    std::cout << "ST_Payload: " << std::endl;
-    for (int i = 0; i < st_payload.length; ++i)
-    {
+       }
+       std::cout << std::endl;
+       std::cout << "ST_Payload: " << std::endl;
+       for (int i = 0; i < st_payload.length; ++i)
+       {
         std::cout << std::hex << (uint32_t)(st_payload.data[i]) << " ";
-    }
-    std::cout << "--------------------------" << std::endl;
-    */
+       }
+       std::cout << "--------------------------" << std::endl;
+     */
     ASSERT_TRUE(dyn_data_from_static->equals(dyn_data_from_dynamic.get()));
 }
 
@@ -309,7 +311,7 @@ TEST_F(DynamicTypes_4_2_Tests, Static_Dynamic_Values)
     const TypeObject* object = GetCompleteStructTestObject();
 
     DynamicType_ptr dyn_type =
-        TypeObjectFactory::get_instance()->build_dynamic_type("StructTest", identifier, object);
+            TypeObjectFactory::get_instance()->build_dynamic_type("StructTest", identifier, object);
 
     // Serialize static initialization with values
     StructTest struct_test;
@@ -374,7 +376,9 @@ TEST_F(DynamicTypes_4_2_Tests, Static_Dynamic_Values)
     ASSERT_TRUE(struct_test_from_dynamic.charUnion().case_one() == struct_test.charUnion().case_one());
     ASSERT_TRUE(struct_test_from_dynamic.octetUnion().case_seven() == struct_test.octetUnion().case_seven());
     ASSERT_TRUE(struct_test_from_dynamic.int8Union().case_three() == struct_test.int8Union().case_three());
-    ASSERT_TRUE(struct_test_from_dynamic.myStructBits().mybitset().parent_bitfield() == struct_test.myStructBits().mybitset().parent_bitfield());
+    ASSERT_TRUE(
+        struct_test_from_dynamic.myStructBits().mybitset().parent_bitfield() ==
+        struct_test.myStructBits().mybitset().parent_bitfield());
     ASSERT_TRUE(struct_test_from_dynamic.myStructBits().mybitset().a() == struct_test.myStructBits().mybitset().a());
     ASSERT_TRUE(struct_test_from_dynamic.myStructBits().mybitset().b() == struct_test.myStructBits().mybitset().b());
     ASSERT_TRUE(struct_test_from_dynamic.myStructBits().mybitset().c() == struct_test.myStructBits().mybitset().c());
@@ -394,52 +398,54 @@ TEST_F(DynamicTypes_4_2_Tests, Static_Dynamic_Values)
     ASSERT_TRUE(dyn_data->get_int64_value(dyn_data->get_member_id_by_name("int64_")) == struct_test.int64_());
     ASSERT_TRUE(dyn_data->get_uint64_value(dyn_data->get_member_id_by_name("uint64_")) == struct_test.uint64_());
     ASSERT_FALSE(dyn_data->get_string_value(dyn_data->get_member_id_by_name("local_string")) ==
-        struct_test.local_string()); // Non serialized
+            struct_test.local_string()); // Non serialized
 
     DynamicData* charUnion = dyn_data->loan_value(dyn_data->get_member_id_by_name("charUnion"));
     ASSERT_TRUE(charUnion->get_int32_value(charUnion->get_member_id_by_name("case_one")) ==
-        struct_test.charUnion().case_one());
+            struct_test.charUnion().case_one());
     dyn_data->return_loaned_value(charUnion);
 
     DynamicData* octetUnion = dyn_data->loan_value(dyn_data->get_member_id_by_name("octetUnion"));
     ASSERT_TRUE(octetUnion->get_int32_value(octetUnion->get_member_id_by_name("case_seven")) ==
-        struct_test.octetUnion().case_seven());
+            struct_test.octetUnion().case_seven());
     dyn_data->return_loaned_value(octetUnion);
 
     DynamicData* int8Union = dyn_data->loan_value(dyn_data->get_member_id_by_name("int8Union"));
     ASSERT_TRUE(int8Union->get_int32_value(int8Union->get_member_id_by_name("case_three")) ==
-        struct_test.int8Union().case_three());
+            struct_test.int8Union().case_three());
     dyn_data->return_loaned_value(int8Union);
 
     DynamicData* myStructBits = dyn_data->loan_value(dyn_data->get_member_id_by_name("myStructBits"));
     DynamicData* mybitset = myStructBits->loan_value(myStructBits->get_member_id_by_name("mybitset"));
 
     ASSERT_TRUE(mybitset->get_uint32_value(mybitset->get_member_id_by_name("parent_bitfield"))
-        == struct_test.myStructBits().mybitset().parent_bitfield());
+            == struct_test.myStructBits().mybitset().parent_bitfield());
     ASSERT_TRUE(mybitset->get_char8_value(mybitset->get_member_id_by_name("a"))
-        == struct_test.myStructBits().mybitset().a());
+            == struct_test.myStructBits().mybitset().a());
     ASSERT_TRUE(mybitset->get_bool_value(mybitset->get_member_id_by_name("b"))
-        == struct_test.myStructBits().mybitset().b());
+            == struct_test.myStructBits().mybitset().b());
     ASSERT_TRUE(mybitset->get_uint16_value(mybitset->get_member_id_by_name("c"))
-        == struct_test.myStructBits().mybitset().c());
+            == struct_test.myStructBits().mybitset().c());
     ASSERT_TRUE(mybitset->get_int16_value(mybitset->get_member_id_by_name("d"))
-        == struct_test.myStructBits().mybitset().d());
+            == struct_test.myStructBits().mybitset().d());
     ASSERT_TRUE(mybitset->get_int16_value(mybitset->get_member_id_by_name("e"))
-        == struct_test.myStructBits().mybitset().e());
+            == struct_test.myStructBits().mybitset().e());
     ASSERT_TRUE(mybitset->get_int16_value(mybitset->get_member_id_by_name("f"))
-        == struct_test.myStructBits().mybitset().f());
+            == struct_test.myStructBits().mybitset().f());
 
     myStructBits->return_loaned_value(mybitset);
     ASSERT_TRUE(myStructBits->get_uint64_value(myStructBits->get_member_id_by_name("mybitmask")) ==
-        struct_test.myStructBits().mybitmask());
+            struct_test.myStructBits().mybitmask());
     ASSERT_TRUE(myStructBits->get_uint64_value(myStructBits->get_member_id_by_name("two")) ==
-        struct_test.myStructBits().two());
+            struct_test.myStructBits().two());
     ASSERT_TRUE(myStructBits->get_int32_value(myStructBits->get_member_id_by_name("mylong")) ==
-        struct_test.myStructBits().mylong());
+            struct_test.myStructBits().mylong());
     dyn_data->return_loaned_value(myStructBits);
 }
 
-int main(int argc, char **argv)
+int main(
+        int argc,
+        char** argv)
 {
     eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Info);
 

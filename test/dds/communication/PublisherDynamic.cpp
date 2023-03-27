@@ -237,7 +237,7 @@ int main(
        }
      */
 
-    xmlparser::XMLProfileManager::loadXMLFile("example_type.xml");
+    xmlparser::XMLProfileManager::loadXMLFile("example_type_profile.xml");
 
     DomainParticipantQos participant_qos;
     participant_qos.wire_protocol().builtin.typelookup_config.use_server = true;
