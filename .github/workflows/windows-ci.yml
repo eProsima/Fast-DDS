@@ -20,14 +20,14 @@ on:
         required: false
         type: string
       force-meta-branch:
-        description: 'Branch to checkout in Fast-DDS-CI'
+        description: 'Branch to checkout from eprosima-CI'
         required: false
         type: string
   push:
     branches:
       - 'master'
+      - '2.10.x'
       - '2.9.x'
-      - '2.8.x'
       - '2.6.x'
       - '2.1.x'
     paths-ignore:

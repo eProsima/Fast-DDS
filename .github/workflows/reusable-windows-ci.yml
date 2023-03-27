@@ -20,7 +20,7 @@ on:
         required: false
         type: string
       force-meta-branch:
-        description: 'Branch to checkout in Fast-DDS-CI'
+        description: 'Branch to checkout from eprosima-CI'
         required: false
         type: string
 
@@ -338,9 +338,9 @@ jobs:
           $assert = {if($_ -is [Management.Automation.ErrorRecord] -and $_.Exception.Message -match "^(error|fatal):")
                         { Write-Error $_ } else { Write-Output $_ } }
 
-          # Download Fast-DDS-CI repo and checkout current branch
-          git clone https://github.com/eProsima/Fast-DDS-CI.git Fast-DDS-CI 2>&1 | % $assert
-          pushd Fast-DDS-CI
+          # Download eprosima-CI repo and checkout current branch
+          git clone https://github.com/eProsima/eprosima-CI.git eprosima-CI 2>&1 | % $assert
+          pushd eprosima-CI
           # locally master is main
           git symbolic-ref refs/heads/master refs/heads/main 2>&1 | % $assert
 
@@ -369,7 +369,7 @@ jobs:
                     }
                     else
                     {
-                        Write-Output "Fast-DDS-CI lacks branch $repo_branch"
+                        Write-Output "eprosima-CI lacks branch $repo_branch"
                     }
                   }
               }
@@ -383,7 +383,7 @@ jobs:
                   }
                   else
                   {
-                    Write-Output "Fast-DDS-CI lacks branch $repo_branch"
+                    Write-Output "eprosima-CI lacks branch $repo_branch"
                   }
               }
             }
@@ -410,24 +410,22 @@ jobs:
           "::endgroup::"
 
           # download the repos file
-          $repos = ((Invoke-WebRequest -Authentication OAuth -Token $secret `
-            -Uri "${{ github.api_url }}/repos/eProsima/Fast-DDS/contents/fastrtps.repos?ref=${{ github.ref }}" `
-            -Headers @{"method"="GET";"Accept"="application/vnd.github.v3+json"}).content |
-            ConvertFrom-Json).content | ConvertFrom-CIBase64 | ConvertFrom-Yaml
+          $repos_path = ".\src\fastrtps\fastrtps.repos"
+          $repos = Get-Content $repos_path | ConvertFrom-Yaml
 
           # merge with the provided Fast-DDS-CLI depends.repos
-          $depends_path = ".\Fast-DDS-CI\depends.repos"
+          $depends_path = ".\eprosima-CI\depends.repos"
           if(Test-Path $depends_path)
           {
             $depends = Get-Content $depends_path | ConvertFrom-Yaml
 
-            # Replace fastrtps.repos entires with depends.repos ones
+            # Replace fastrtps.repos entries with depends.repos ones
             $depends.repositories.GetEnumerator() |
                     % { $repos.repositories[$_.Name] = $_.Value}
           }
           else
           {
-            Write-Output "depends.repos not available in Fast-DDS-CI"
+            Write-Output "depends.repos not available in eprosima-CI"
           }
 
           # cmake --find-package has issues on unix base system
@@ -461,15 +459,15 @@ jobs:
 
       - name: Retrieve colcon.meta file
         run: |
-          # Try retrieve it from the Fast-DDS-CI
-          $meta_path = ".\Fast-DDS-CI\colcon.meta"
+          # Try retrieve it from the eprosima-CI
+          $meta_path = ".\eprosima-CI\colcon.meta"
           if(Test-Path $meta_path)
           {
             $meta = Get-Content $meta_path | ConvertFrom-Yaml
           }
           else
           {
-            Write-Output "depends.repos not available in Fast-DDS-CI"
+            Write-Output "depends.repos not available in eprosima-CI"
 
             # generate dynamically one
             $meta = [PSCustomObject]@{names=@{fastrtps=@{"cmake-args"=$Null}}}
