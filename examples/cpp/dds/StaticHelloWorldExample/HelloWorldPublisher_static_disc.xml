@@ -1,13 +1,13 @@
 <staticdiscovery>
-	<participant>
-		<name>HelloWorldPublisher</name>
-		<writer>
-			<userId>1</userId>
-			<entityId>2</entityId>
+    <participant>
+        <name>HelloWorldPublisher</name>
+        <writer>
+            <userId>1</userId>
+            <entityID>2</entityID>
             <topicName>HelloWorldTopic</topicName>
-			<topicDataType>HelloWorld</topicDataType>
-			<topicKind>NO_KEY</topicKind>
-			<reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
-		</writer>
-	</participant>
+            <topicDataType>HelloWorld</topicDataType>
+            <topicKind>NO_KEY</topicKind>
+            <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
+        </writer>
+    </participant>
 </staticdiscovery>
