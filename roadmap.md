@@ -24,13 +24,10 @@ The following list of features are planned to be addressed in the short term, an
 minor release of the product:
 
 * Complete support for dynamic network interfaces
-* Secure Discovery Server
 * XML generation tool
-* DomainParticipant DDS API implementation:
-    - `DomainParticipant::ignore_participant`
-    - `DomainParticipant::ignore_topic`
-    - `DomainParticipant::ignore_publication`
-    - `DomainParticipant::ignore_subscription`
+* DDS-XTypes 1.3
+* Monitor service to keep track of discovery events.
+* Tier 1 support for QNX platforms.
 
 ## Medium term
 
@@ -39,7 +36,7 @@ release(s) generated in the next **9 months** after next planned release:
 
 * Support for Time-based filter QoS
 * Service aware DataWriter
-* DDS-XTypes 1.3
+* Thread configuration QoS.
 
 ## Long term
 
@@ -50,4 +47,3 @@ Please feel free to contact us if you wish to get involved in the implementation
 * Full DDS API compliance
 * Compliance with DDS-XML
 * Low bandwidth transports
-* ISO 26262 compliance
