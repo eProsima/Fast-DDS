@@ -1739,7 +1739,7 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
         fastrtps::rtps::SampleIdentity request_objects;
 
         // Lock now, we don't want to process the reply before we add the requests' ID to the maps.
-        std::lock_guard<std::mutex> lock(mtx_request_cb_);
+        std::lock_guard<std::recursive_mutex> lock(mtx_request_cb_);
 
         // If any pending dependency exists, retrieve it.
         if (!dependencies.empty())
@@ -1793,7 +1793,7 @@ bool DomainParticipantImpl::check_get_type_request(
     if (builtin::INVALID_SAMPLE_IDENTITY != requestId)
     {
         // First level request?
-        std::lock_guard<std::mutex> lock(mtx_request_cb_);
+        std::lock_guard<std::recursive_mutex> lock(mtx_request_cb_);
 
         auto cb_it = register_callbacks_.find(requestId);
 
@@ -1897,7 +1897,7 @@ bool DomainParticipantImpl::check_get_dependencies_request(
         TypeIdentifierSeq retrieve_objects;
 
         // First level request?
-        std::lock_guard<std::mutex> lock(mtx_request_cb_);
+        std::lock_guard<std::recursive_mutex> lock(mtx_request_cb_);
 
         auto cb_it = register_callbacks_.find(requestId);
 
