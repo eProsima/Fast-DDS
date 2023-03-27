@@ -97,19 +97,6 @@ void MemberDescriptor::add_union_case_index(
     labels_.insert(value);
 }
 
-bool MemberDescriptor::check_union_labels(
-        const std::vector<uint64_t>& labels) const
-{
-    for (auto it = labels.begin(); it != labels.end(); ++it)
-    {
-        if (std::find(labels_.begin(), labels_.end(), *it) != labels_.end())
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
 ReturnCode_t MemberDescriptor::copy_from(
         const MemberDescriptor& other)
 {
@@ -159,9 +146,9 @@ std::string MemberDescriptor::get_name() const
     return name_;
 }
 
-std::vector<uint64_t> MemberDescriptor::get_union_labels() const
+const std::set<uint64_t>& MemberDescriptor::get_union_labels() const
 {
-    return std::vector<uint64_t>(labels_.begin(), labels_.end());
+    return labels_;
 }
 
 bool MemberDescriptor::is_consistent(

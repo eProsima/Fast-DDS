@@ -2746,13 +2746,18 @@ namespace bitmodule {
         type_object->_d(TypeKind::EK_COMPLETE);
         type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
+        // Header
+        type_object->complete().struct_type().header().detail().type_name("BM2");
+        // TODO inheritance
+        type_object->complete().struct_type().header().base_type(*GetBitsetBitmaskIdentifier(true));
+
         type_object->complete().struct_type().struct_flags().IS_FINAL(false);
         type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
         type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
         type_object->complete().struct_type().struct_flags().IS_NESTED(false);
         type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-        MemberId memberId = 0;
+        MemberId memberId = (MemberId)GetCompleteBitsetBitmaskObject()->complete().struct_type().member_seq().size();
         CompleteStructMember cst_two;
         cst_two.common().member_id(memberId++);
         cst_two.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -2781,13 +2786,6 @@ namespace bitmodule {
         cst_mylong.detail().name("mylong");
 
         type_object->complete().struct_type().member_seq().emplace_back(cst_mylong);
-
-
-        // Header
-        type_object->complete().struct_type().header().detail().type_name("BM2");
-        // TODO inheritance
-        type_object->complete().struct_type().header().base_type(*GetBitsetBitmaskIdentifier(true));
-
 
         TypeIdentifier identifier;
         identifier._d(TypeKind::EK_COMPLETE);
@@ -2977,13 +2975,18 @@ const TypeObject* GetCompleteStructTestObject()
     type_object->_d(TypeKind::EK_COMPLETE);
     type_object->complete()._d(TypeKind::TK_STRUCTURE);
 
+    // Header
+    type_object->complete().struct_type().header().detail().type_name("StructTest");
+    // TODO inheritance
+    type_object->complete().struct_type().header().base_type(*GetNewAliasesIdentifier(true));
+
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
     type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    MemberId memberId = 0;
+    MemberId memberId = (MemberId)GetCompleteNewAliasesObject()->complete().struct_type().member_seq().size();
     CompleteStructMember cst_charUnion;
     cst_charUnion.common().member_id(memberId++);
     cst_charUnion.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -3039,13 +3042,6 @@ const TypeObject* GetCompleteStructTestObject()
     cst_myStructBits.detail().name("myStructBits");
 
     type_object->complete().struct_type().member_seq().emplace_back(cst_myStructBits);
-
-
-    // Header
-    type_object->complete().struct_type().header().detail().type_name("StructTest");
-    // TODO inheritance
-    type_object->complete().struct_type().header().base_type(*GetNewAliasesIdentifier(true));
-
 
     TypeIdentifier identifier;
     identifier._d(TypeKind::EK_COMPLETE);

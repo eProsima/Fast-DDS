@@ -68,7 +68,6 @@ bool DynamicType::is_complex_kind() const
         case TypeKind::TK_ANNOTATION:
         case TypeKind::TK_ARRAY:
         case TypeKind::TK_BITMASK:
-        case TypeKind::TK_ENUM:
         case TypeKind::TK_MAP:
         case TypeKind::TK_SEQUENCE:
         case TypeKind::TK_STRUCTURE:
@@ -159,6 +158,7 @@ bool DynamicType::deserialize_discriminator(
         eprosima::fastcdr::Cdr& cdr) const
 {
     assert(discriminator_type_);
+    uint64_t label = 0;
 
     switch(discriminator_type_->get_kind())
     {
@@ -166,49 +166,49 @@ bool DynamicType::deserialize_discriminator(
         {
             bool id;
             cdr >> id;
-            data.union_id_ = MemberId(id);
+            label = id;
             break;
         }
         case TypeKind::TK_BYTE:
         {
             octet id;
             cdr >> id;
-            data.union_id_ = MemberId(id);
+            label = id;
             break;
         }
         case TypeKind::TK_CHAR8:
         {
             char id;
             cdr >> id;
-            data.union_id_ = MemberId(id);
+            label = id;
             break;
         }
         case TypeKind::TK_INT16:
         {
             int16_t id;
             cdr >> id;
-            data.union_id_ = MemberId(id);
+            label = id;
             break;
         }
         case TypeKind::TK_UINT16:
         {
             uint16_t id;
             cdr >> id;
-            data.union_id_ = MemberId(id);
+            label = id;
             break;
         }
         case TypeKind::TK_CHAR16:
         {
             wchar_t id;
             cdr >> id;
-            data.union_id_ = MemberId(id);
+            label = id;
             break;
         }
         case TypeKind::TK_INT32:
         {
             int32_t id;
             cdr >> id;
-            data.union_id_ = MemberId(id);
+            label = id;
             break;
         }
         case TypeKind::TK_UINT32:
@@ -216,14 +216,14 @@ bool DynamicType::deserialize_discriminator(
         {
             uint32_t id;
             cdr >> id;
-            data.union_id_ = MemberId(id);
+            label = id;
             break;
         }
         case TypeKind::TK_FLOAT32:
         {
             float id;
             cdr >> id;
-            data.union_id_ = MemberId(id);
+            label = static_cast<uint64_t>(id);
             break;
         }
         case TypeKind::TK_INT64:
@@ -232,7 +232,7 @@ bool DynamicType::deserialize_discriminator(
 
             int64_t id;
             cdr >> id;
-            data.union_id_ = MemberId(id);
+            label = id;
             break;
         }
         case TypeKind::TK_UINT64:
@@ -241,35 +241,35 @@ bool DynamicType::deserialize_discriminator(
 
             uint64_t id;
             cdr >> id;
-            data.union_id_ = MemberId(id);
+            label = id;
             break;
         }
         case TypeKind::TK_FLOAT64:
         {
             double id;
             cdr >> id;
-            data.union_id_ = MemberId(id);
+            label = static_cast<uint64_t>(id);
             break;
         }
         case TypeKind::TK_FLOAT128:
         {
             long double id;
             cdr >> id;
-            data.union_id_ = MemberId(id);
+            label = static_cast<uint64_t>(id);
             break;
         }
         case TypeKind::TK_STRING8:
         {
             std::string id;
             cdr >> id;
-            data.union_id_ = stoul(id);
+            label = stoul(id);
             break;
         }
         case TypeKind::TK_STRING16:
         {
             std::wstring id;
             cdr >> id;
-            data.union_id_ = stoul(id);
+            label = stoul(id);
             break;
         }
         case TypeKind::TK_BITMASK:
@@ -281,21 +281,21 @@ bool DynamicType::deserialize_discriminator(
                 {
                     uint8_t id;
                     cdr >> id;
-                    data.union_id_ = id;
+                    label = id;
                     break;
                 }
                 case 2:
                 {
                     uint16_t id;
                     cdr >> id;
-                    data.union_id_ = id;
+                    label = id;
                     break;
                 }
                 case 3:
                 {
                     uint32_t id;
                     cdr >> id;
-                    data.union_id_ = id;
+                    label = id;
                     break;
                 }
                 case 4:
@@ -304,7 +304,7 @@ bool DynamicType::deserialize_discriminator(
 
                     uint64_t id;
                     cdr >> id;
-                    data.union_id_ = MemberId(id);
+                    label = id;
                     break;
                 }
             }
@@ -316,6 +316,14 @@ bool DynamicType::deserialize_discriminator(
             return false;
     }
 
+    // Search the MemberId associated to the label if any
+    MemberId id =  get_id_from_label(label);
+    if (MEMBER_ID_INVALID == id)
+    {
+        return false;
+    }
+
+    data.union_id_ = id;
     return true;
 }
 
@@ -1272,84 +1280,97 @@ void DynamicType::serialize_discriminator(
         eprosima::fastcdr::Cdr& cdr) const
 {
     assert(discriminator_type_);
-    MemberId id = data.union_id_;
+    const DynamicTypeMember* pM;
+    bool found;
+
+    // retrieve the associated label
+    uint64_t label = data.union_id_;
+    std::tie(pM, found) = get_member(data.union_id_);
+    if (found)
+    {
+        auto& lbls = pM->get_union_labels();
+        if (!lbls.empty())
+        {
+            label = *lbls.begin();
+        }
+    }
 
     switch(discriminator_type_->get_kind())
     {
         case TypeKind::TK_BOOLEAN:
         {
-            cdr << (bool)id;
+            cdr << (bool)label;
             break;
         }
         case TypeKind::TK_BYTE:
         {
-            cdr << (octet)id;
+            cdr << (octet)label;
             break;
         }
         case TypeKind::TK_CHAR8:
         {
-            cdr << (char)id;
+            cdr << (char)label;
             break;
         }
         case TypeKind::TK_INT16:
         {
-            cdr << (int16_t)id;
+            cdr << (int16_t)label;
             break;
         }
         case TypeKind::TK_UINT16:
         {
-            cdr << (uint16_t)id;
+            cdr << (uint16_t)label;
             break;
         }
         case TypeKind::TK_CHAR16:
         {
-            cdr << (wchar_t)id;
+            cdr << (wchar_t)label;
             break;
         }
         case TypeKind::TK_INT32:
         {
-            cdr << (int32_t)id;
+            cdr << (int32_t)label;
             break;
         }
         case TypeKind::TK_UINT32:
         case TypeKind::TK_ENUM:
         {
-            cdr << (uint32_t)id;
+            cdr << (uint32_t)label;
             break;
         }
         case TypeKind::TK_FLOAT32:
         {
-            cdr << (float)id;
+            cdr << (float)label;
             break;
         }
         case TypeKind::TK_INT64:
         {
-            cdr << (int64_t)id;
+            cdr << (int64_t)label;
             break;
         }
         case TypeKind::TK_UINT64:
         {
-            cdr << (uint64_t)id;
+            cdr << (uint64_t)label;
             break;
         }
         case TypeKind::TK_FLOAT64:
         {
-            cdr << (double)id;
+            cdr << (double)label;
             break;
         }
         case TypeKind::TK_FLOAT128:
         {
-            cdr << (long double)id;
+            cdr << (long double)label;
             break;
         }
         case TypeKind::TK_STRING8:
         {
-            cdr << std::to_string(id);
+            cdr << std::to_string(label);
             break;
         }
         case TypeKind::TK_STRING16:
         {
-            cdr << std::to_wstring(id);
+            cdr << std::to_wstring(label);
             break;
         }
         case TypeKind::TK_BITMASK:
@@ -1357,10 +1378,10 @@ void DynamicType::serialize_discriminator(
             size_t type_size = get_size();
             switch (type_size)
             {
-                case 1: cdr << (uint8_t)id; break;
-                case 2: cdr << (uint16_t)id; break;
-                case 3: cdr << (uint32_t)id; break;
-                case 4: cdr << (uint64_t)id; break;
+                case 1: cdr << (uint8_t)label; break;
+                case 2: cdr << (uint16_t)label; break;
+                case 3: cdr << (uint32_t)label; break;
+                case 4: cdr << (uint64_t)label; break;
             }
         }
         eprosima_fallthrough;

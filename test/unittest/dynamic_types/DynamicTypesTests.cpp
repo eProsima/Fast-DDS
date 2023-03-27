@@ -1996,6 +1996,11 @@ TEST_F(DynamicTypesTests, DynamicType_enum_unit_tests)
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
+    // Check if the clear methods work properly
+    EXPECT_EQ(data->clear_all_values(), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(data2->clear_all_values(), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(data3->clear_all_values(), ReturnCode_t::RETCODE_OK);
+
     ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
     ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);

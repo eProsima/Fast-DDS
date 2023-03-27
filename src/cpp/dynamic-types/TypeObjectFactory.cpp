@@ -317,25 +317,27 @@ void TypeObjectFactory::fill_minimal_information(
 
     switch (ident->_d())
     {
-        /*
-           case TypeKind::TK_BOOLEAN:
-           case TypeKind::TK_BYTE:
-           case TypeKind::TK_INT16:
-           case TypeKind::TK_INT32:
-           case TypeKind::TK_INT64:
-           case TypeKind::TK_UINT16:
-           case TypeKind::TK_UINT32:
-           case TypeKind::TK_UINT64:
-           case TypeKind::TK_FLOAT32:
-           case TypeKind::TK_FLOAT64:
-           case TypeKind::TK_FLOAT128:
-           case TypeKind::TK_CHAR8:
-           case TypeKind::TK_CHAR16:
-           case TypeKind::TK_STRING8:
-           case TypeKind::TK_STRING16:
-            info->minimal().dependent_typeid_count(0);
+        case TypeKind::TK_BOOLEAN:
+        case TypeKind::TK_BYTE:
+        case TypeKind::TK_INT16:
+        case TypeKind::TK_INT32:
+        case TypeKind::TK_INT64:
+        case TypeKind::TK_UINT16:
+        case TypeKind::TK_UINT32:
+        case TypeKind::TK_UINT64:
+        case TypeKind::TK_FLOAT32:
+        case TypeKind::TK_FLOAT64:
+        case TypeKind::TK_FLOAT128:
+        case TypeKind::TK_CHAR8:
+        case TypeKind::TK_CHAR16:
+        case TypeKind::TK_STRING8:
+        case TypeKind::TK_STRING16:
+        case TypeKind::TI_STRING8_SMALL:
+        case TypeKind::TI_STRING8_LARGE:
+        case TypeKind::TI_STRING16_SMALL:
+        case TypeKind::TI_STRING16_LARGE:
+            // primitives lack dependendants
             break;
-         */
         case TypeKind::TK_SEQUENCE:
         {
             info->minimal().dependent_typeid_count(1);
@@ -1910,7 +1912,6 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             // Apply type's annotations
             apply_type_annotations(struct_type, object->complete().struct_type().header().detail().ann_custom());
 
-            //uint32_t order = 0;
             const CompleteStructMemberSeq& structVector = object->complete().struct_type().member_seq();
             for (auto member = structVector.begin(); member != structVector.end(); ++member)
             {
@@ -1922,12 +1923,17 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                             << (int)member->common().member_type_id()._d());
                 }
                 MemberDescriptor memDesc;
-                memDesc.id_ = member->common().member_id();
+                memDesc.set_id(member->common().member_id());
                 memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
-                //memDesc.set_index(order++);
                 memDesc.set_name(member->detail().name());
+
                 struct_type->add_member(memDesc);
-                apply_member_annotations(struct_type, member->common().member_id(), member->detail().ann_custom());
+                if (MEMBER_ID_INVALID == memDesc.get_id())
+                {
+                    memDesc.set_id(struct_type->get_member_id_by_name(memDesc.get_name()));
+                }
+
+                apply_member_annotations(struct_type, memDesc.get_id(), member->detail().ann_custom());
             }
             return struct_type->build();
         }

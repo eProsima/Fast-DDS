@@ -107,7 +107,7 @@ public:
      *    the \b subclasses are not supposed to introduce members requiring
      *    complex clean-up. State is constrained to the \b superclass.
      */
-    RTPS_DllAPI ~TypeDescriptor();
+    RTPS_DllAPI ~TypeDescriptor() noexcept;
 
     static bool is_type_name_consistent(
             const std::string& sName);
@@ -198,6 +198,13 @@ public:
 public:
 
     /**
+     * Queries the member associated to a given label
+     * @param[in] label uint64_t value to query
+     * @return MEMBER_ID_INVALID on failure
+     */
+    MemberId get_id_from_label(uint64_t label) const;
+
+    /**
      * Checks if there is a member with the given name.
      * @param[in] name string
      * @return true if exists
@@ -236,8 +243,6 @@ public:
      */
     RTPS_DllAPI std::pair<const DynamicTypeMember*, bool> get_member(
             MemberId id) const;
-
-public:
 
     /**
      * Returns the state of the @ref DynamicType or @ref DynamicTypeBuilder object

@@ -160,7 +160,15 @@ public:
 
     RTPS_DllAPI ~MemberDescriptor() = default;
 
-    bool check_union_labels(const std::vector<uint64_t>& labels) const;
+    //! check if any given labels are already set
+    template<typename C, typename T = typename C::value_type>
+    bool check_union_labels(C const& labels) const
+    {
+        return std::none_of(labels.begin(), labels.end(), [this](uint64_t l) -> bool
+                {
+                    return labels_.find(l) != labels_.end();
+                });
+    }
 
     /**
      * Overwrite the contents of this descriptor with those of another descriptor
@@ -219,7 +227,7 @@ public:
     RTPS_DllAPI std::string get_name() const;
 
     //! getter for the labels member
-    RTPS_DllAPI std::vector<uint64_t> get_union_labels() const;
+    RTPS_DllAPI const std::set<uint64_t>& get_union_labels() const;
 
     //! getter for the \b default_value property
     RTPS_DllAPI std::string get_default_value() const;

@@ -1618,10 +1618,25 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         // Apply annotations
         apply_type_annotations(object.complete().struct_type().header().detail().ann_custom(), descriptor);
 
-        for (auto pm : descriptor.get_all_members())
+        auto members = descriptor.get_all_members();
+        auto it = members.begin();
+
+        // Populate base type
+        auto base_type = descriptor.get_base_type();
+        if (base_type)
         {
-            assert(pm);
-            const DynamicTypeMember& member = *pm;
+            TypeIdentifier parent;
+            build_type_identifier(*base_type, parent);
+            object.complete().struct_type().header().base_type(parent);
+
+            // TypeObject only references a types own members
+            std::advance(it, base_type->get_member_count());
+        }
+
+        for (; it != members.end(); ++it)
+        {
+            assert(nullptr != *it);
+            const DynamicTypeMember& member = **it;
 
             CompleteStructMember msm;
             msm.common().member_id(member.get_index());
@@ -1661,13 +1676,6 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         object.complete().struct_type().header().detail().type_name(descriptor.get_name());
         //object.complete().struct_type().header().detail().ann_builtin()...
         //object.complete().struct_type().header().detail().ann_custom()...
-
-        if (descriptor.get_base_type().get() != nullptr)
-        {
-            TypeIdentifier parent;
-            build_type_identifier(*descriptor.get_base_type(), parent);
-            object.complete().struct_type().header().base_type(parent);
-        }
         //object.complete().struct_type().header().base_type().equivalence_hash()[0..13];
 
         TypeIdentifier identifier;

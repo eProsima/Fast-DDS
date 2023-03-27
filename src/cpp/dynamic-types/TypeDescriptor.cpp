@@ -659,6 +659,38 @@ bool TypeDescriptor::exists_member_by_id(
     return member_by_id_.find(id) != member_by_id_.end();
 }
 
+MemberId TypeDescriptor::get_id_from_label(uint64_t label) const
+{
+    // Check is a union
+    if (TypeKind::TK_UNION != kind_)
+    {
+        return MEMBER_ID_INVALID;
+    }
+
+    // check the base class if any
+    if (base_type_)
+    {
+        MemberId id = base_type_->get_id_from_label(label);
+        if (MEMBER_ID_INVALID != id)
+        {
+            return id;
+        }
+    }
+
+    // Check the members
+    for (auto & m : members_)
+    {
+        auto& lbs = m.get_union_labels();
+        auto it = lbs.find(label);
+        if (it != lbs.end())
+        {
+            return m.get_id();
+        }
+    }
+
+    return MEMBER_ID_INVALID;
+}
+
 std::ostream& eprosima::fastrtps::types::operator<<(std::ostream& os, const TypeDescriptor& td)
 {
     using namespace std;
