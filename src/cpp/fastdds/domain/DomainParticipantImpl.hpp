@@ -596,7 +596,7 @@ protected:
     TopicQos default_topic_qos_;
 
     // Mutex for requests and callbacks maps.
-    std::mutex mtx_request_cb_;
+    std::recursive_mutex mtx_request_cb_;
 
     // register_remote_type parent request, type_name, callback relationship.
     std::map<fastrtps::rtps::SampleIdentity,
