@@ -139,9 +139,9 @@ jobs:
              # WER service is manual by default
              Start-Service WerSvc
 
-      - name: Install colcon
+      - name: Install colcon and other python packages
         run: |
-          pip3 install -U colcon-common-extensions vcstool colcon-mixin
+          pip3 install -U colcon-common-extensions vcstool colcon-mixin xmlschema
 
           # patch colcon issue with visual studio 2022
           $patch = gci -Include build.py -Recurse `
