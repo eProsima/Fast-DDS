@@ -1060,7 +1060,13 @@ bool PDP::remove_remote_participant(
             std::lock_guard<std::mutex> lock(callback_mtx_);
             ParticipantDiscoveryInfo info(*pdata);
             info.status = reason;
-            listener->onParticipantDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+            bool should_ignore;
+            listener->onParticipantDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(
+                        info), should_ignore);
+            if (should_ignore && !mp_RTPSParticipant->is_participant_ignored(pdata->m_guid.guidPrefix))
+            {
+                mp_RTPSParticipant->ignore_participant(pdata->m_guid.guidPrefix);
+            }
         }
 
         this->mp_mutex->lock();
