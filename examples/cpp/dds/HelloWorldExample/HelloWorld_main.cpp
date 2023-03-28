@@ -24,6 +24,8 @@
 #include "HelloWorldSubscriber.h"
 
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
 #include <fastrtps/log/Log.h>
 
 #include <optionparser.hpp>
@@ -136,6 +138,25 @@ struct Arg : public option::Arg
         return option::ARG_ILLEGAL;
     }
 
+    static option::ArgStatus AutomaticDiscovery(
+            const option::Option& option,
+            bool msg)
+    {
+        std::array<std::string, 3> options = {"off", "localhost", "subnet"};
+        for (auto opt : options)
+        {
+            if (option.arg == opt)
+            {
+                return option::ARG_OK;
+            }
+        }
+        if (msg)
+        {
+            print_error("Value for option '", option, "' is invalid\n");
+        }
+        return option::ARG_ILLEGAL;
+    }
+
 };
 
 enum  optionIndex
@@ -144,13 +165,19 @@ enum  optionIndex
     HELP,
     SAMPLES,
     INTERVAL,
-    ENVIRONMENT
+    ENVIRONMENT,
+    AUTOMATIC_DISCOVERY,
+    STATIC_PEERS
 };
 
 const option::Descriptor usage[] = {
     { UNKNOWN_OPT, 0, "", "",                Arg::None,
       "Usage: HelloWorldExample <publisher|subscriber>\n\nGeneral options:" },
     { HELP,    0, "h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
+    { AUTOMATIC_DISCOVERY, 0, "a", "automatic_discovery", Arg::AutomaticDiscovery,
+      "  -a \t--automatic_discovery   \toff|localhost|subnet (defaults: off)" },
+    { STATIC_PEERS, 0, "p", "static_peers", Arg::String,
+      "  -p \t--static_peers   \tComma separated list of initial peers as locators" },
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nPublisher options:"},
     { SAMPLES, 0, "s", "samples",            Arg::NumericRange<>,
       "  -s <num>, \t--samples=<num>  \tNumber of samples (0, default, infinite)." },
@@ -188,6 +215,9 @@ int main(
     uint32_t count = 10;
     uint32_t sleep = 100;
     bool use_environment_qos = false;
+    eprosima::examples::helloworld::AutomaticDiscovery discovery_mode =
+            eprosima::examples::helloworld::AutomaticDiscovery::OFF;
+    std::vector<std::string> initial_peers;
 
     argc -= (argc > 0);
     argv += (argc > 0); // skip program name argv[0] if present
@@ -289,6 +319,31 @@ int main(
         {
             use_environment_qos = true;
         }
+
+        opt = options[AUTOMATIC_DISCOVERY];
+        if (opt)
+        {
+            if (strcmp(opt->arg, "localhost") == 0)
+            {
+                discovery_mode = eprosima::examples::helloworld::AutomaticDiscovery::LOCALHOST;
+            }
+            else if (strcmp(opt->arg, "subnet") == 0)
+            {
+                discovery_mode = eprosima::examples::helloworld::AutomaticDiscovery::SUBNET;
+            }
+        }
+
+        opt = options[STATIC_PEERS];
+        if (opt)
+        {
+            std::stringstream option_stream(opt->arg);
+            std::string initial_peer;
+
+            while (std::getline(option_stream, initial_peer, ','))
+            {
+                initial_peers.push_back(initial_peer);
+            }
+        }
     }
 
     switch (type)
@@ -296,7 +351,7 @@ int main(
         case 1:
         {
             HelloWorldPublisher mypub;
-            if (mypub.init(use_environment_qos))
+            if (mypub.init(use_environment_qos, discovery_mode, initial_peers))
             {
                 mypub.run(count, sleep);
             }
@@ -305,7 +360,7 @@ int main(
         case 2:
         {
             HelloWorldSubscriber mysub;
-            if (mysub.init(use_environment_qos))
+            if (mysub.init(use_environment_qos, discovery_mode, initial_peers))
             {
                 mysub.run();
             }

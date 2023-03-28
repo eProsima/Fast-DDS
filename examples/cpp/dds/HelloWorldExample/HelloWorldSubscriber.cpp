@@ -18,13 +18,24 @@
  */
 
 #include "HelloWorldSubscriber.h"
+
+#include <thread>
+#include <string>
+
+#include <asio.hpp>
+
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/SampleInfo.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
+#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
-#include <fastdds/dds/subscriber/DataReader.hpp>
-#include <fastdds/dds/subscriber/SampleInfo.hpp>
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+
+#include "common.hpp"
 
 using namespace eprosima::fastdds::dds;
 
@@ -34,12 +45,34 @@ HelloWorldSubscriber::HelloWorldSubscriber()
     , topic_(nullptr)
     , reader_(nullptr)
     , type_(new HelloWorldPubSubType())
+    , host_name_(asio::ip::host_name())
 {
 }
 
 bool HelloWorldSubscriber::init(
-        bool use_env)
+        bool use_env,
+        eprosima::examples::helloworld::AutomaticDiscovery discovery_mode,
+        std::vector<std::string> initial_peers)
 {
+    discovery_mode_ = discovery_mode;
+    std::cout << "Subscriber discovery mode: " << discovery_mode_ << std::endl;
+    if (!initial_peers.empty())
+    {
+        std::cout << "Subscriber initial peers list:" << std::endl;
+        for (auto peer : initial_peers)
+        {
+            std::stringstream iss(peer);
+            std::string hostname;
+            std::getline(iss, hostname, '@');
+            std::string locator_stream;
+            std::getline(iss, locator_stream, '@');
+            eprosima::fastrtps::rtps::Locator_t loc;
+            std::istringstream(locator_stream) >> loc;
+            initial_peers_.push_back(std::pair<std::string, eprosima::fastrtps::rtps::Locator_t>(hostname, loc));
+            std::cout << "   - " << peer << std::endl;
+        }
+    }
+
     DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
     pqos.name("Participant_sub");
     auto factory = DomainParticipantFactory::get_instance();
@@ -50,7 +83,57 @@ bool HelloWorldSubscriber::init(
         factory->get_default_participant_qos(pqos);
     }
 
-    participant_ = factory->create_participant(0, pqos);
+    switch (discovery_mode_)
+    {
+        case eprosima::examples::helloworld::AutomaticDiscovery::OFF:
+        {
+            // Clear multicast listening locators
+            pqos.wire_protocol().builtin.metatrafficMulticastLocatorList.clear();
+
+            // Clear unicast listening locators and add UDPv4 any, letting Fast DDS take care of the
+            // port number
+            pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.clear();
+            eprosima::fastrtps::rtps::Locator_t loc;
+            std::istringstream("UDPv4:[0.0.0.0]:0") >> loc;
+            pqos.wire_protocol().builtin.metatrafficUnicastLocatorList.push_back(loc);
+            break;
+        }
+        case eprosima::examples::helloworld::AutomaticDiscovery::LOCALHOST:
+        {
+            // Create a descriptor for the new transport.
+            auto udp_transport = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
+            udp_transport->TTL = 0;
+            pqos.transport().clear();
+            pqos.transport().user_transports.push_back(udp_transport);
+            pqos.transport().use_builtin_transports = false;
+            break;
+        }
+        case eprosima::examples::helloworld::AutomaticDiscovery::SUBNET:
+        {
+            break;
+        }
+    }
+
+    // Add Host name to participant data
+    pqos.user_data().clear();
+    pqos.user_data().resize(host_name_.length());
+    for (size_t i = 0; i < host_name_.length(); i++)
+    {
+        pqos.user_data().at(i) = (unsigned char)host_name_.at(i);
+    }
+
+    // Add static initial peers (if any)
+    for (auto peer : initial_peers_)
+    {
+        pqos.user_data().emplace_back(',');
+        for (size_t i = 0; i < peer.first.length(); i++)
+        {
+            pqos.user_data().emplace_back(peer.first.at(i));
+        }
+        pqos.wire_protocol().builtin.initialPeersList.push_back(peer.second);
+    }
+
+    participant_ = factory->create_participant(0, pqos, this, eprosima::fastdds::dds::StatusMask::none());
 
     if (participant_ == nullptr)
     {
@@ -178,5 +261,92 @@ void HelloWorldSubscriber::run(
     while (number > listener_.samples_)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    }
+}
+
+void HelloWorldSubscriber::on_participant_discovery(
+        eprosima::fastdds::dds::DomainParticipant* participant,
+        eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+        bool& should_be_ignored)
+{
+    static_cast<void>(participant);
+
+    // New participant discovered
+    if (eprosima::fastrtps::rtps::ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT == info.status)
+    {
+        // Get hostname from user data
+        unsigned char c = '0';
+        std::vector<std::string> hosts;
+        std::string host_aux = "";
+        for (long unsigned int i = 0; i < info.info.m_userData.size() && c != '\0'; i++)
+        {
+            c = info.info.m_userData.at(i);
+            if (c != ',')
+            {
+                host_aux = host_aux + (char)c;
+            }
+            else
+            {
+                hosts.push_back(host_aux);
+                host_aux = "";
+            }
+        }
+        hosts.push_back(host_aux);
+
+        if (host_name_ == hosts[0])
+        {
+            std::cout << "Participant discovered in same host: " << host_name_ << std::endl;
+            std::cout << "   - Status: Accepted" << std::endl;
+        }
+        else
+        {
+            std::cout << "Participant discovered in different host: " << hosts[0] << std::endl;
+            if (discovery_mode_ == eprosima::examples::helloworld::AutomaticDiscovery::LOCALHOST)
+            {
+                // Check if this is a peer of mine
+                auto local_peer_it = std::find_if(initial_peers_.begin(), initial_peers_.end(),
+                                [hosts](std::pair<std::string,
+                                eprosima::fastrtps::rtps::Locator_t> const& elem)
+                                {
+                                    return elem.first == hosts[0];
+                                });
+
+                if (local_peer_it != initial_peers_.end())
+                {
+                    std::cout << "   - Status: Accepted due to local initial peers" << std::endl;
+                }
+                // Check if I'm a peer of it
+                else
+                {
+                    auto host_it = std::find(std::next(hosts.begin()), hosts.end(), host_name_);
+                    if (host_it != hosts.end())
+                    {
+                        std::cout << "   - Status: Accepted due to remote initial peers" << std::endl;
+                    }
+                    else
+                    {
+                        should_be_ignored = true;
+                        std::cout << "   - Status: Ignored" << std::endl;
+                    }
+                }
+            }
+            else
+            {
+                std::cout << "   - Status: Accepted" << std::endl;
+            }
+        }
+        std::cout << "   - Name: " << info.info.m_participantName << std::endl;
+        std::cout << "   - GUID: " << info.info.m_guid << std::endl;
+        std::cout << "   - Initial Peers: ";
+
+        for (auto peer = std::next(hosts.begin()); peer != hosts.end(); peer++)
+        {
+            std::cout << *peer;
+            if (std::next(peer) != hosts.end())
+            {
+                std::cout << ",";
+            }
+        }
+        std::cout << std::endl;
     }
 }

@@ -20,13 +20,20 @@
 #ifndef HELLOWORLDPUBLISHER_H_
 #define HELLOWORLDPUBLISHER_H_
 
-#include "HelloWorldPubSubTypes.h"
+#include <string>
 
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 
-class HelloWorldPublisher
+#include "HelloWorldPubSubTypes.h"
+#include "common.hpp"
+
+class HelloWorldPublisher : private eprosima::fastdds::dds::DomainParticipantListener
 {
 public:
 
@@ -36,7 +43,9 @@ public:
 
     //!Initialize
     bool init(
-            bool use_env);
+            bool use_env,
+            eprosima::examples::helloworld::AutomaticDiscovery discovery_mode,
+            std::vector<std::string> initial_peers);
 
     //!Publish a sample
     bool publish(
@@ -60,6 +69,12 @@ private:
     eprosima::fastdds::dds::DataWriter* writer_;
 
     bool stop_;
+
+    std::string host_name_;
+
+    eprosima::examples::helloworld::AutomaticDiscovery discovery_mode_;
+
+    std::vector<std::pair<std::string, eprosima::fastrtps::rtps::Locator_t>> initial_peers_;
 
     class PubListener : public eprosima::fastdds::dds::DataWriterListener
     {
@@ -88,6 +103,11 @@ private:
     void runThread(
             uint32_t number,
             uint32_t sleep);
+
+    void on_participant_discovery(
+            eprosima::fastdds::dds::DomainParticipant* participant,
+            eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+            bool& should_be_ignored) override;
 
     eprosima::fastdds::dds::TypeSupport type_;
 };

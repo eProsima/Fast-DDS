@@ -20,14 +20,21 @@
 #ifndef HELLOWORLDSUBSCRIBER_H_
 #define HELLOWORLDSUBSCRIBER_H_
 
-#include "HelloWorldPubSubTypes.h"
+#include <string>
 
-#include <fastdds/dds/domain/DomainParticipant.hpp>
-#include <fastdds/dds/subscriber/DataReaderListener.hpp>
-#include <fastrtps/subscriber/SampleInfo.h>
 #include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
+#include <fastdds/rtps/common/Locator.h>
+#include <fastdds/rtps/common/LocatorList.hpp>
+#include <fastrtps/subscriber/SampleInfo.h>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 
-class HelloWorldSubscriber
+#include "HelloWorldPubSubTypes.h"
+#include "common.hpp"
+
+class HelloWorldSubscriber : private eprosima::fastdds::dds::DomainParticipantListener
 {
 public:
 
@@ -37,7 +44,9 @@ public:
 
     //!Initialize the subscriber
     bool init(
-            bool use_env);
+            bool use_env,
+            eprosima::examples::helloworld::AutomaticDiscovery discovery_mode,
+            std::vector<std::string> initial_peers);
 
     //!RUN the subscriber
     void run();
@@ -57,6 +66,12 @@ private:
     eprosima::fastdds::dds::DataReader* reader_;
 
     eprosima::fastdds::dds::TypeSupport type_;
+
+    std::string host_name_;
+
+    eprosima::examples::helloworld::AutomaticDiscovery discovery_mode_;
+
+    std::vector<std::pair<std::string, eprosima::fastrtps::rtps::Locator_t>> initial_peers_;
 
     class SubListener : public eprosima::fastdds::dds::DataReaderListener
     {
@@ -86,6 +101,11 @@ private:
         uint32_t samples_;
     }
     listener_;
+
+    void on_participant_discovery(
+            eprosima::fastdds::dds::DomainParticipant* participant,
+            eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+            bool& should_be_ignored) override;
 };
 
 #endif /* HELLOWORLDSUBSCRIBER_H_ */
