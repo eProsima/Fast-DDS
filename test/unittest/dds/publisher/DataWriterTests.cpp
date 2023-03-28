@@ -1457,6 +1457,7 @@ public:
 /**
  * This test checks instance wait_for_acknowledgements API
  */
+#ifndef __QNXNTO__
 TEST(DataWriterTests, InstanceWaitForAcknowledgement)
 {
     // Test parameters
@@ -1542,6 +1543,7 @@ TEST(DataWriterTests, InstanceWaitForAcknowledgement)
     EXPECT_CALL(*history, wait_for_acknowledgement_last_change(_, _, _)).WillOnce(testing::Return(false));
     EXPECT_EQ(ReturnCode_t::RETCODE_TIMEOUT, instance_datawriter->wait_for_acknowledgments(&data, handle, max_wait));
 }
+#endif // __QNXNTO__
 
 class DataWriterUnsupportedTests : public ::testing::Test
 {

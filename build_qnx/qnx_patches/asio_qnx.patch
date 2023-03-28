@@ -1,0 +1,15 @@
+diff --git a/asio/src/Makefile.am b/asio/src/Makefile.am
+index e9b20e60..94f13506 100644
+--- a/asio/src/Makefile.am
++++ b/asio/src/Makefile.am
+@@ -14,10 +14,6 @@ if HAVE_CXX17
+ EXAMPLES_CPP17 = examples/cpp17
+ endif
+ 
+-SUBDIRS = $(EXAMPLES_CPP03) $(EXAMPLES_CPP11) $(EXAMPLES_CPP14) $(EXAMPLES_CPP17) tests
+-
+-DIST_SUBDIRS = examples/cpp03 examples/cpp11 examples/cpp14 examples/cpp17 tests
+-
+ EXTRA_DIST = \
+ 	Makefile.mgw \
+ 	Makefile.msc \

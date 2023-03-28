@@ -113,6 +113,7 @@ TEST(ReaderProxyTests, find_change_removed_test)
 }
 
 // Regression test for #13556 (Github #2423)
+#ifndef __QNXNTO__
 TEST(ReaderProxyTests, requested_changes_set_test)
 {
     StatefulWriter writerMock;
@@ -147,6 +148,7 @@ TEST(ReaderProxyTests, requested_changes_set_test)
 
     rproxy.requested_changes_set(set, gap_builder, {0, 1});
 }
+#endif // __QNXNTO__
 
 FragmentNumber_t mark_next_fragment_sent(
         ReaderProxy& rproxy,

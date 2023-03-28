@@ -160,6 +160,9 @@ target_link_libraries(XMLProfileParserTests GTest::gmock
     ${TINYXML2_LIBRARY}
     fastcdr
     )
+if(QNX)
+    target_link_libraries(XMLProfileParserTests socket)
+endif()
 add_gtest(XMLProfileParserTests SOURCES XMLProfileParserTests.cpp)
 ###################################  XMLProfileParserTests  ####################################################
 
@@ -257,6 +260,9 @@ target_link_libraries(XMLParserTests GTest::gtest
     ${TINYXML2_LIBRARY}
     fastcdr
     )
+if(QNX)
+    target_link_libraries(XMLParserTests socket)
+endif()
 add_gtest(XMLParserTests SOURCES XMLParserTests.cpp XMLElementParserTests.cpp)
 ######################################  XMLParserTests  ########################################################
 
@@ -388,6 +394,9 @@ target_link_libraries(XMLEndpointParserTests GTest::gtest
     ${TINYXML2_LIBRARY}
     fastcdr
     )
+if(QNX)
+    target_link_libraries(XMLEndpointParserTests socket)
+endif()
 add_gtest(XMLEndpointParserTests SOURCES XMLEndpointParserTests.cpp)
 
 if(ANDROID)

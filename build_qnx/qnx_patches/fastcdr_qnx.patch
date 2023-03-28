@@ -1,0 +1,15 @@
+diff --git a/src/cpp/CMakeLists.txt b/src/cpp/CMakeLists.txt
+index da35d03..19f3393 100644
+--- a/src/cpp/CMakeLists.txt
++++ b/src/cpp/CMakeLists.txt
+@@ -54,6 +54,10 @@ elseif(NOT EPROSIMA_INSTALLER)
+ 
+     target_compile_definitions(${PROJECT_NAME} PRIVATE ${PROJECT_NAME_UPPER}_SOURCE)
+ 
++    if(QNX)
++        target_compile_definitions(${PROJECT_NAME} PRIVATE _QNX_SOURCE)
++    endif()
++
+     # Define public headers
+     target_include_directories(${PROJECT_NAME} PUBLIC
+         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>

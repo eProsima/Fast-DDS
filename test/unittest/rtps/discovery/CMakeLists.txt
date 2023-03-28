@@ -86,6 +86,9 @@ target_include_directories(EdpTests PRIVATE
 target_link_libraries(EdpTests foonathan_memory
     GTest::gmock
     ${CMAKE_DL_LIBS})
+if(QNX)
+    target_link_libraries(EdpTests socket)
+endif()
 if(MSVC OR MSVC_IDE)
     target_link_libraries(EdpTests ${PRIVACY} fastcdr iphlpapi Shlwapi ws2_32)
 else()

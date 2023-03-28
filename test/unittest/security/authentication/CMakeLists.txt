@@ -72,6 +72,9 @@ target_link_libraries(BuiltinPKIDH
     $<$<BOOL:${WIN32}>:ws2_32>
     $<$<BOOL:${LibP11_FOUND}>:eProsima_p11>  # $<TARGET_NAME_IF_EXISTS:eProsima_p11>
     )
+if(QNX)
+    target_link_libraries(BuiltinPKIDH socket)
+endif()
 add_gtest(BuiltinPKIDH
     SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/AuthenticationPluginTests.hpp
