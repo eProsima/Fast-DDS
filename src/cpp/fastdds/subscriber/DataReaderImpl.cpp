@@ -923,7 +923,9 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
         {
             listener->on_subscription_matched(data_reader_->user_datareader_, callback_status);
         }
-    } else {
+    }
+    else
+    {
         data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
     }
 }

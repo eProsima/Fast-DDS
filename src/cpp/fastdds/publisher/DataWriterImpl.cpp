@@ -1202,7 +1202,9 @@ void DataWriterImpl::InnerDataWriterListener::onWriterMatched(
         {
             listener->on_publication_matched(data_writer_->user_datawriter_, callback_status);
         }
-    } else {
+    }
+    else
+    {
         data_writer_->user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
     }
 }
