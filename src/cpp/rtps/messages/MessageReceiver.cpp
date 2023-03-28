@@ -349,6 +349,11 @@ void MessageReceiver::processCDRMsg(
             return;
         }
 
+        if (participant_->is_participant_ignored(source_guid_prefix_))
+        {
+            return;
+        }
+
         notify_network_statistics(source_locator, reception_locator, msg);
 
 #if HAVE_SECURITY && !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)

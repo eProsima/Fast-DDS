@@ -74,8 +74,8 @@ public:
             DomainParticipant* participant,
             fastrtps::rtps::ParticipantDiscoveryInfo&& info)
     {
-        static_cast<void>(participant);
-        static_cast<void>(info);
+        bool dummy_ignore = false;
+        on_participant_discovery(participant, std::move(info), dummy_ignore);
     }
 
     /*!

@@ -179,9 +179,9 @@ void RTPSParticipant::enable()
 }
 
 bool RTPSParticipant::ignore_participant(
-        const GuidPrefix_t& /*participant_guid*/)
+        const GuidPrefix_t& participant_guid)
 {
-    return false;
+    return mp_impl->ignore_participant(participant_guid);
 }
 
 bool RTPSParticipant::ignore_writer(

@@ -17,6 +17,9 @@
  *
  */
 
+#include "fastdds/rtps/builtin/discovery/participant/PDP.h"
+#include "fastdds/rtps/common/EntityId_t.hpp"
+#include "fastdds/rtps/participant/ParticipantDiscoveryInfo.h"
 #include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <algorithm>
@@ -2510,9 +2513,10 @@ void RTPSParticipantImpl::get_default_unicast_locators()
 }
 
 bool RTPSParticipantImpl::is_participant_ignored(
-        const GuidPrefix_t& /*participant_guid*/)
+        const GuidPrefix_t& participant_guid)
 {
-    return false;
+    shared_lock<shared_mutex> _(ignored_mtx_);
+    return ignored_participants_.find(participant_guid) != ignored_participants_.end();
 }
 
 bool RTPSParticipantImpl::is_writer_ignored(
@@ -2528,8 +2532,16 @@ bool RTPSParticipantImpl::is_reader_ignored(
 }
 
 bool RTPSParticipantImpl::ignore_participant(
-        const GuidPrefix_t& /*participant_guid*/)
+        const GuidPrefix_t& participant_guid)
 {
+    if (!is_participant_ignored(participant_guid))
+    {
+        {
+            std::unique_lock<shared_mutex> _(ignored_mtx_);
+            ignored_participants_.insert(participant_guid);
+        }
+        return true;
+    }
     return false;
 }
 
