@@ -92,6 +92,33 @@
                         <domainId>11</domainId>
                     </domain_ids>
                 </data_sharing>
+
+                <destination_order>
+                    <kind>BY_RECEPTION_TIMESTAMP</kind>
+                </destination_order>
+
+                <durabilityService>
+                    <service_cleanup_delay>
+                        <sec>1</sec>
+                    </service_cleanup_delay>
+                    <history_kind>KEEP_ALL</history_kind>
+                    <history_depth>15</history_depth>
+                    <max_samples>10</max_samples>
+                    <max_instances>5</max_instances>
+                    <max_samples_per_instance>1</max_samples_per_instance>
+                </durabilityService>
+
+                <presentation>
+                    <access_scope>TOPIC</access_scope>
+                    <coherent_access>true</coherent_access>
+                    <ordered_access>true</ordered_access>
+                </presentation>
+
+                <timeBasedFilter>
+                    <minimum_separation>
+                        <sec>1</sec>
+                    </minimum_separation>
+                </timeBasedFilter>
             </qos>
 
             <times>
