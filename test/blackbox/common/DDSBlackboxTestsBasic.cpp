@@ -12,11 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <atomic>
 #include <condition_variable>
+#include <gmock/gmock-matchers.h>
 #include <mutex>
 #include <thread>
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
+
 
 #include <fastdds/core/policy/ParameterSerializer.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
@@ -34,6 +38,7 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/types/TypesBase.h>
 
@@ -458,6 +463,89 @@ TEST(DDSBasic, PidRelatedSampleIdentity)
     ASSERT_TRUE(exists_pid_custom_related_sample_identity);
 
     ASSERT_EQ(related_sample_identity_, info.related_sample_identity);
+}
+
+/**
+ * This test checks that PID_RELATED_SAMPLE_IDENTITY and
+ * PID_CUSTOM_RELATED_SAMPLE_IDENTITY are being sent as parameter,
+ * and that the new PID_RELATED_SAMPLE_IDENTITY is being properly
+ * interpreted.
+ * Inside the transport filter, both PIDs are indentified, and the old PID is overwritten.
+ * Reader only receives the new PID, and identifies the related sample identity.
+ */
+TEST(DDSBasic, IgnoreParticipant)
+{
+
+    struct IgnoringDomainParticipantListener : public DomainParticipantListener
+    {
+        std::atomic_int num_matched{0};
+        std::atomic_int num_ignored{0};
+
+        void on_participant_discovery(
+                DomainParticipant* /*participant*/,
+                eprosima::fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+                bool& should_be_ignored) override
+        {
+            std::cout << "Using custom listener" << std::endl;
+            if (info.status == info.DISCOVERED_PARTICIPANT)
+            {
+                std::cout << "Discovered participant" << std::endl;
+                if (info.info.m_userData == std::vector<eprosima::fastrtps::rtps::octet>({ 'i', 'g', 'n' }))
+                {
+                    std::cout << "Ignoring participant" << std::endl;
+                    should_be_ignored = true;
+                    num_ignored++;
+                }
+                else
+                {
+                    std::cout << "Accepting participant" << std::endl;
+                    num_matched++;
+                }
+            }
+        }
+
+    };
+    // Set DomainParticipantFactory to create disabled entities
+    DomainParticipantFactoryQos factory_qos;
+    DomainParticipantFactory* factory = DomainParticipantFactory::get_instance();
+
+    DomainParticipantQos ignored_participant_qos;
+    DomainParticipantQos valid_participant_qos;
+    DomainParticipantQos other_participant_qos;
+
+    const char* prefix = "00.00.00.00.00.00.FF.FF.FF.FF.FF.FF";
+
+    std::istringstream is(prefix);
+
+    is >> ignored_participant_qos.wire_protocol().prefix;
+
+    ignored_participant_qos.user_data().data_vec({ 'i', 'g', 'n' });
+    valid_participant_qos.user_data().data_vec({ 'o', 'k' });
+
+    IgnoringDomainParticipantListener ignListener;
+    DomainParticipant* participant_listener = factory->create_participant(
+        (uint32_t)GET_PID() % 230, other_participant_qos, &ignListener);
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    DomainParticipant* participant_ign =
+            factory->create_participant((uint32_t)GET_PID() % 230, ignored_participant_qos);
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    DomainParticipant* participant_valid =
+            factory->create_participant((uint32_t)GET_PID() % 230, valid_participant_qos);
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+
+    factory->delete_participant(participant_ign);
+
+    ignored_participant_qos.user_data().data_vec({ 'o', 'k' });
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    participant_ign = factory->create_participant((uint32_t)GET_PID() % 230, ignored_participant_qos);
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+    ASSERT_EQ (ignListener.num_matched.load(), 1);
+    ASSERT_EQ (ignListener.num_ignored.load(), 1);
+
+    factory->delete_participant(participant_valid);
+    factory->delete_participant(participant_listener);
+    factory->delete_participant(participant_ign);
+
 }
 
 } // namespace dds

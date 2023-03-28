@@ -16,6 +16,7 @@
 #define _FASTDDS_PARTICIPANTIMPL_HPP_
 
 #include <atomic>
+#include <fastdds/rtps/common/InstanceHandle.h>
 #include <map>
 #include <mutex>
 #include <string>
@@ -374,6 +375,10 @@ public:
 
     MOCK_METHOD1(find_content_filter_factory, IContentFilterFactory * (
                 const char* filter_class_name));
+
+    MOCK_METHOD1(ignore_participant, bool (
+                const fastrtps::rtps::InstanceHandle_t& handle));
+
 
     TopicDescription* lookup_topicdescription(
             const std::string& topic_name) const

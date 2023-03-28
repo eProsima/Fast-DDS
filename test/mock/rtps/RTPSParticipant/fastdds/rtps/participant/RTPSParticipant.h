@@ -169,6 +169,9 @@ public:
                 const TopicAttributes& topicAtt,
                 const ReaderQos& rqos));
 
+    MOCK_METHOD1(ignore_participant, bool(
+                const GuidPrefix_t& participant_guid));
+
     MOCK_METHOD4(updateReader, bool(
                 RTPSReader * Reader,
                 const TopicAttributes& topicAtt,
