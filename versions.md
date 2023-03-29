@@ -1,6 +1,8 @@
 Forthcoming
 -----------
 
+* Added `ignore_participant` implementation.
+
 Version 2.10.0
 --------------
 
