@@ -17,10 +17,6 @@
  *
  */
 
-#include "fastdds/rtps/builtin/discovery/participant/PDP.h"
-#include "fastdds/rtps/common/EntityId_t.hpp"
-#include "fastdds/rtps/participant/ParticipantDiscoveryInfo.h"
-#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <algorithm>
 #include <functional>
@@ -32,11 +28,14 @@
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/StatelessReader.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
@@ -60,6 +59,7 @@
 #include <rtps/builtin/discovery/participant/PDPClient.h>
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/network/ExternalLocatorsProcessor.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/persistence/PersistenceService.h>
 #include <statistics/rtps/GuidUtils.hpp>
 
@@ -2539,6 +2539,8 @@ bool RTPSParticipantImpl::ignore_participant(
         {
             std::unique_lock<shared_mutex> _(ignored_mtx_);
             ignored_participants_.insert(participant_guid);
+            pdp()->remove_remote_participant(GUID_t(participant_guid, c_EntityId_RTPSParticipant),
+                    ParticipantDiscoveryInfo::DISCOVERY_STATUS::IGNORED_PARTICIPANT);
         }
         return true;
     }

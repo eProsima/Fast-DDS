@@ -152,7 +152,7 @@ void PDPListener::onNewCacheChangeAdded(
                     RTPSParticipantListener* listener = parent_pdp_->getRTPSParticipant()->getListener();
                     if (listener != nullptr)
                     {
-                        bool should_be_ignored;
+                        bool should_be_ignored = false;
                         {
                             std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
                             ParticipantDiscoveryInfo info(*pdata);
@@ -167,8 +167,6 @@ void PDPListener::onNewCacheChangeAdded(
                         if (should_be_ignored)
                         {
                             parent_pdp_->getRTPSParticipant()->ignore_participant(guid.guidPrefix);
-                            parent_pdp_->remove_remote_participant(guid,
-                                    ParticipantDiscoveryInfo::DISCOVERY_STATUS::IGNORED_PARTICIPANT);
                         }
 
                     }
@@ -207,7 +205,7 @@ void PDPListener::onNewCacheChangeAdded(
                 RTPSParticipantListener* listener = parent_pdp_->getRTPSParticipant()->getListener();
                 if (listener != nullptr)
                 {
-                    bool should_be_ignored;
+                    bool should_be_ignored = false;
 
                     {
                         std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
@@ -222,8 +220,6 @@ void PDPListener::onNewCacheChangeAdded(
                     if (should_be_ignored)
                     {
                         parent_pdp_->getRTPSParticipant()->ignore_participant(temp_participant_data_.m_guid.guidPrefix);
-                        parent_pdp_->remove_remote_participant(guid,
-                                ParticipantDiscoveryInfo::DISCOVERY_STATUS::IGNORED_PARTICIPANT);
                     }
                 }
             }

@@ -17,6 +17,7 @@
  *
  */
 
+#include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
 
@@ -431,7 +432,12 @@ void MessageReceiver::processCDRMsg(
                     else
                     {
                         EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Data Submsg received, processing.");
-                        valid = proc_Submsg_Data(submessage, &submsgh);
+                        EntityId_t writerId = c_EntityId_Unknown;
+                        valid = proc_Submsg_Data(submessage, &submsgh, writerId);
+                        if (valid && writerId == c_EntityId_SPDPWriter)
+                        {
+                            ignore_submessages = participant_->is_participant_ignored(source_guid_prefix_);
+                        }
                     }
                     break;
                 }
@@ -706,7 +712,8 @@ void MessageReceiver::findAllReaders(
 
 bool MessageReceiver::proc_Submsg_Data(
         CDRMessage_t* msg,
-        SubmessageHeader_t* smh) const
+        SubmessageHeader_t* smh,
+        EntityId_t& writerID) const
 {
     eprosima::shared_lock<eprosima::shared_mutex> guard(mtx_);
 
@@ -761,6 +768,8 @@ bool MessageReceiver::proc_Submsg_Data(
     ch.kind = ALIVE;
     ch.writerGUID.guidPrefix = source_guid_prefix_;
     valid &= CDRMessage::readEntityId(msg, &ch.writerGUID.entityId);
+
+    writerID = ch.writerGUID.entityId;
 
     //Get sequence number
     valid &= CDRMessage::readSequenceNumber(msg, &ch.sequenceNumber);
