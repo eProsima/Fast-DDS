@@ -387,7 +387,7 @@ TEST_F(DynamicTypes_4_2_Tests, Static_Dynamic_Values)
     ASSERT_TRUE(struct_test_from_dynamic.myStructBits().two() == struct_test.myStructBits().two());
     ASSERT_TRUE(struct_test_from_dynamic.myStructBits().mylong() == struct_test.myStructBits().mylong());
 
-    ASSERT_TRUE(dyn_data->get_int8_value(dyn_data->get_member_id_by_name("int8_")) == struct_test.int8_());
+    ASSERT_TRUE(dyn_data->get_int8_value(dyn_data->get_member_id_by_name("octet_")) == struct_test.int8_());
     ASSERT_TRUE(dyn_data->get_uint8_value(dyn_data->get_member_id_by_name("uint8_")) == struct_test.uint8_());
     ASSERT_TRUE(dyn_data->get_int16_value(dyn_data->get_member_id_by_name("int16_")) == struct_test.int16_());
     ASSERT_TRUE(dyn_data->get_uint16_value(dyn_data->get_member_id_by_name("uint16_")) == struct_test.uint16_());

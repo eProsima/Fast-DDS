@@ -253,7 +253,7 @@ void DynamicDataHelper::print_basic_collection(
     {
         auto count = data->get_item_count();
         std::cout << "[";
-        for (uint32_t i = 0; i < count; ++i)
+        for (MemberId i{0}; i < count; ++i)
         {
             print_basic_element(data, i, data->type_->get_element_type()->get_kind());
             std::cout << (i == count - 1 ? "]" : ", ");
@@ -289,7 +289,7 @@ void DynamicDataHelper::print_complex_collection(
     {
         auto count = data->get_item_count();
 
-        for (uint32_t i = 0; i < count; ++i)
+        for (MemberId i{0}; i < count; ++i)
         {
             std::cout << tabs << "[" << i << "] = ";
             print_complex_element(data, i, tabs);

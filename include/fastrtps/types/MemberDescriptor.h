@@ -16,6 +16,7 @@
 #define TYPES_MEMBER_DESCRIPTOR_H
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/MemberId.h>
 
 #include <set>
 #include <type_traits>
@@ -36,7 +37,7 @@ class MemberDescriptor
 {
 protected:
     std::string name_;                  // Name of the member
-    MemberId id_ = MEMBER_ID_INVALID;   // MemberId, it should be filled automatically when the member is added.
+    MemberId id_;                       // MemberId, it should be filled automatically when the member is added.
     DynamicType_ptr type_;              // Member's Type.
     std::string default_value_;         // Default value of the member in string.
     uint32_t index_ = INDEX_INVALID;    // Definition order of the member inside it's parent.
@@ -82,24 +83,20 @@ public:
     /**
      * convenience constructor
      * @param[in] index desired position in the collection (zero based)
-     * @param[in] id @ref MemberId new member's identifier
      * @param[in] name std::string new member's name
      */
     RTPS_DllAPI MemberDescriptor(
             uint32_t index,
-            MemberId id,
             const std::string& name);
 
     /**
      * convenience constructor
      * @param[in] index desired position in the collection (zero based)
-     * @param[in] id @ref MemberId new member's identifier
      * @param[in] name std::string new member's name
      * @param[in] type @ref DynamicType new member's type
      */
     RTPS_DllAPI MemberDescriptor(
             uint32_t index,
-            MemberId id,
             const std::string& name,
             DynamicType_ptr type);
 

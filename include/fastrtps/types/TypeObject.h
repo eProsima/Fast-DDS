@@ -16,6 +16,7 @@
 #define TYPES_TYPE_OBJECT_H
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/MemberId.h>
 #include <fastrtps/types/TypeObjectHashId.h>
 #include <fastrtps/types/TypeIdentifier.h>
 #include <fastrtps/types/AnnotationParameterValue.h>

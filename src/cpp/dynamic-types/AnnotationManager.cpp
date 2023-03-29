@@ -455,14 +455,14 @@ std::string AnnotationManager::annotation_get_external_typename() const
     return {};
 }
 
-MemberId AnnotationManager::get_annotation_count() const
+std::size_t AnnotationManager::get_annotation_count() const
 {
-    return MemberId(annotation_.size());
+    return annotation_.size();
 }
 
 ReturnCode_t AnnotationManager::get_annotation(
         AnnotationDescriptor& descriptor,
-        MemberId idx) const
+        std::size_t idx) const
 {
     assert(idx < get_annotation_count());
     auto it = annotation_.begin();

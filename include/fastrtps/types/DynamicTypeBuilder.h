@@ -47,7 +47,7 @@ class DynamicTypeBuilder final
         explicit use_the_create_method() = default;
     };
 
-    MemberId current_member_id_ = 0;
+    MemberId current_member_id_{0};
 
     mutable DynamicType_ptr instance_; //!< Instance of the associated type object
 

@@ -17,6 +17,7 @@
 
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/MemberId.h>
 
 #include <limits>
 #include <list>
@@ -284,9 +285,12 @@ public:
 
     /**
      * Indicates whether the states of all of this descriptor's properties are consistent.
+     * @param type bool `true` if we search a consistent type
+     * @remark consistency for a type is more restrictive than for a builder which may require
+     *         members and annotations.
      * @return \b bool `true` if consistent
      */
-    RTPS_DllAPI bool is_consistent() const;
+    RTPS_DllAPI bool is_consistent(bool type = false) const;
 
     /**
      * Checks if the kind is a primitive one according to the [standard] section \b 7.2.2.2

@@ -16,6 +16,7 @@
 #define TYPES_ANNOTATION_MANAGER_H
 
 #include <fastrtps/types/AnnotationDescriptor.h>
+#include <fastrtps/types/MemberId.h>
 
 #include <set>
 #include <string>
@@ -212,7 +213,7 @@ public:
      */
     RTPS_DllAPI ReturnCode_t get_annotation(
             AnnotationDescriptor& descriptor,
-            MemberId idx) const;
+            std::size_t idx) const;
 
     /**
      * This operation returns the current number of annotations applied to the type
@@ -220,7 +221,7 @@ public:
      * @return number of annotations
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    RTPS_DllAPI MemberId get_annotation_count() const;
+    RTPS_DllAPI std::size_t get_annotation_count() const;
 };
 
 } // namespace types

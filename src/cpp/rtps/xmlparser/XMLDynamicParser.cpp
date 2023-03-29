@@ -193,7 +193,7 @@ XMLP_ret XMLParser::parseXMLBitvalueDynamicType(
         return XMLP_ret::XML_ERROR;
     }
 
-    p_dynamictype->add_member(field_position, memberName);
+    p_dynamictype->add_member(MemberId{field_position}, memberName);
     //p_dynamictype->apply_annotation_to_member(
     //    p_dynamictype->get_member_id_by_name(memberName), ANNOTATION_POSITION_ID, "value", position);
     ++field_position;
@@ -387,7 +387,7 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
      */
     XMLP_ret ret = XMLP_ret::XML_OK;
     DynamicTypeBuilder_ptr typeBuilder;
-    uint32_t mId = 0;
+    MemberId mId{0};
 
     const char* name = p_root->Attribute(NAME);
     if (nullptr == name)
@@ -718,7 +718,7 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
     const char* name = p_root->Attribute(NAME);
     DynamicTypeBuilder_ptr typeBuilder; // = DynamicTypeBuilderFactory::get_instance().create_struct_builder();
     //typeBuilder->set_name(name);
-    uint32_t mId = 0;
+    MemberId mId{0};
 
     const char* baseType = p_root->Attribute(BASE_TYPE);
     if (baseType != nullptr)
@@ -807,7 +807,7 @@ XMLP_ret XMLParser::parseXMLUnionDynamicType(
                 *discriminator->build());
             typeBuilder->set_name(name);
 
-            uint32_t mId = 0;
+            MemberId mId{0};
             for (p_element = p_root->FirstChildElement(CASE);
                     p_element != nullptr; p_element = p_element->NextSiblingElement(CASE))
             {

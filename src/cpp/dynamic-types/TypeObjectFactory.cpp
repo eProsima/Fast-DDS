@@ -1969,12 +1969,12 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             for (auto member = enumVector.begin(); member != enumVector.end(); ++member)
             {
                 enum_type->add_member(member->common().value(), member->detail().name());
-                apply_member_annotations(enum_type, member->common().value(), member->detail().ann_custom());
+                apply_member_annotations(enum_type, MemberId(member->common().value()), member->detail().ann_custom());
                 if (member->common().flags().IS_DEFAULT())
                 {
                     AnnotationDescriptor def_flag;
                     def_flag.set_value(ANNOTATION_DEFAULT_LITERAL_ID, CONST_TRUE);
-                    enum_type->apply_annotation_to_member(member->common().value(), def_flag);
+                    enum_type->apply_annotation_to_member(MemberId(member->common().value()), def_flag);
                 }
             }
             return enum_type->build();
@@ -1995,10 +1995,10 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             const CompleteBitflagSeq& seq = object->complete().bitmask_type().flag_seq();
             for (auto member = seq.begin(); member != seq.end(); ++member)
             {
-                bitmask_type->add_member(member->common().position(), member->detail().name());
-                MemberId m_id = bitmask_type->get_member_id_by_name(member->detail().name());
+                MemberId id{member->common().position()};
+                bitmask_type->add_member(id, member->detail().name());
                 // member->common().position() should be already an annotation
-                apply_member_annotations(bitmask_type, m_id, member->detail().ann_custom());
+                apply_member_annotations(bitmask_type, id, member->detail().ann_custom());
             }
             return bitmask_type->build();
         }
@@ -2083,7 +2083,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 }
                 else
                 {
-                    memDesc.default_value_ = std::to_string(memDesc.id_);
+                    memDesc.default_value_ = std::to_string(*memDesc.id_);
                     for (uint32_t lab : member->common().label_seq())
                     {
                         memDesc.add_union_case_index(lab);

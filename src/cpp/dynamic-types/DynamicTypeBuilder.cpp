@@ -89,7 +89,7 @@ DynamicTypeBuilder::member_iterator DynamicTypeBuilder::add_empty_member(
         // adjust index
         index = static_cast<uint32_t>(members_.size()) + offset;
         // at the end
-        it = members_.emplace(members_.end(), index, MEMBER_ID_INVALID, name);
+        it = members_.emplace(members_.end(), index, name);
     }
     else
     {
@@ -230,8 +230,8 @@ DynamicType_ptr DynamicTypeBuilder::build() const
         return instance_;
     }
 
-    // otherwise, create a new one
-    if (is_consistent())
+    // otherwise, create a new one. Check total consistency
+    if (is_consistent(true))
     {
         instance_ = std::allocate_shared<DynamicType>(
             builder_allocator{},

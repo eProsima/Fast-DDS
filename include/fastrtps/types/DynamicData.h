@@ -15,8 +15,9 @@
 #ifndef TYPES_DYNAMIC_DATA_H
 #define TYPES_DYNAMIC_DATA_H
 
-#include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/DynamicDataPtr.h>
+#include <fastrtps/types/MemberId.h>
+#include <fastrtps/types/TypesBase.h>
 
 //#define DYNAMIC_TYPES_CHECKING
 
@@ -290,7 +291,7 @@ public:
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_int32_value(
             int32_t& value,
-            MemberId id) const;
+            MemberId id = MEMBER_ID_INVALID) const;
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t set_int32_value(
@@ -300,7 +301,7 @@ public:
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_uint32_value(
             uint32_t& value,
-            MemberId id) const;
+            MemberId id = MEMBER_ID_INVALID) const;
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t set_uint32_value(
@@ -310,7 +311,7 @@ public:
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_int16_value(
             int16_t& value,
-            MemberId id) const;
+            MemberId id = MEMBER_ID_INVALID) const;
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t set_int16_value(
@@ -320,7 +321,7 @@ public:
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_uint16_value(
             uint16_t& value,
-            MemberId id) const;
+            MemberId id = MEMBER_ID_INVALID) const;
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t set_uint16_value(
@@ -330,7 +331,7 @@ public:
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_int64_value(
             int64_t& value,
-            MemberId id) const;
+            MemberId id = MEMBER_ID_INVALID) const;
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t set_int64_value(
@@ -340,7 +341,7 @@ public:
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_uint64_value(
             uint64_t& value,
-            MemberId id) const;
+            MemberId id = MEMBER_ID_INVALID) const;
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t set_uint64_value(
@@ -350,7 +351,7 @@ public:
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_float32_value(
             float& value,
-            MemberId id) const;
+            MemberId id = MEMBER_ID_INVALID) const;
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t set_float32_value(
@@ -360,7 +361,7 @@ public:
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_float64_value(
             double& value,
-            MemberId id) const;
+            MemberId id = MEMBER_ID_INVALID) const;
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t set_float64_value(
@@ -370,7 +371,7 @@ public:
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_float128_value(
             long double& value,
-            MemberId id) const;
+            MemberId id = MEMBER_ID_INVALID) const;
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t set_float128_value(
@@ -380,7 +381,7 @@ public:
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_char8_value(
             char& value,
-            MemberId id) const;
+            MemberId id = MEMBER_ID_INVALID) const;
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t set_char8_value(
@@ -390,7 +391,7 @@ public:
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_char16_value(
             wchar_t& value,
-            MemberId id) const;
+            MemberId id = MEMBER_ID_INVALID) const;
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t set_char16_value(
@@ -400,7 +401,7 @@ public:
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_byte_value(
             octet& value,
-            MemberId id) const;
+            MemberId id = MEMBER_ID_INVALID) const;
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t set_byte_value(
@@ -410,7 +411,7 @@ public:
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_int8_value(
             int8_t& value,
-            MemberId id) const
+            MemberId id = MEMBER_ID_INVALID) const
     {
         octet aux;
         ReturnCode_t result = get_byte_value(aux, id);
@@ -429,7 +430,7 @@ public:
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_uint8_value(
             uint8_t& value,
-            MemberId id) const
+            MemberId id = MEMBER_ID_INVALID) const
     {
         octet aux;
         ReturnCode_t result = get_byte_value(aux, id);
@@ -448,7 +449,7 @@ public:
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_bool_value(
             bool& value,
-            MemberId id) const;
+            MemberId id = MEMBER_ID_INVALID) const;
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t set_bool_value(
@@ -471,7 +472,7 @@ public:
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_string_value(
             std::string& value,
-            MemberId id) const;
+            MemberId id = MEMBER_ID_INVALID) const;
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t set_string_value(
@@ -481,7 +482,7 @@ public:
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_wstring_value(
             std::wstring& value,
-            MemberId id) const;
+            MemberId id = MEMBER_ID_INVALID) const;
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t set_wstring_value(
@@ -490,7 +491,7 @@ public:
 
     RTPS_DllAPI ReturnCode_t get_enum_value(
             std::string& value,
-            MemberId id) const;
+            MemberId id = MEMBER_ID_INVALID) const;
 
     RTPS_DllAPI ReturnCode_t set_enum_value(
             const std::string& value,
@@ -498,7 +499,7 @@ public:
 
     RTPS_DllAPI ReturnCode_t get_enum_value(
             uint32_t& value,
-            MemberId id) const;
+            MemberId id = MEMBER_ID_INVALID) const;
 
     RTPS_DllAPI ReturnCode_t set_enum_value(
             const uint32_t& value,
@@ -523,7 +524,7 @@ public:
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t get_complex_value(
             DynamicData** value,
-            MemberId id) const;
+            MemberId id = MEMBER_ID_INVALID) const;
 
     // TODO: doxygen
     RTPS_DllAPI ReturnCode_t set_complex_value(
@@ -533,7 +534,7 @@ public:
     // Basic types returns (copy)
     // TODO: doxygen
     RTPS_DllAPI int32_t get_int32_value(
-            MemberId id) const
+            MemberId id = MEMBER_ID_INVALID) const
     {
         int32_t value;
         if (get_int32_value(value, id) != ReturnCode_t::RETCODE_OK)
@@ -545,7 +546,7 @@ public:
 
     // TODO: doxygen
     RTPS_DllAPI uint32_t get_uint32_value(
-            MemberId id) const
+            MemberId id = MEMBER_ID_INVALID) const
     {
         uint32_t value;
         if (get_uint32_value(value, id) != ReturnCode_t::RETCODE_OK)
@@ -557,7 +558,7 @@ public:
 
     // TODO: doxygen
     RTPS_DllAPI int16_t get_int16_value(
-            MemberId id) const
+            MemberId id = MEMBER_ID_INVALID) const
     {
         int16_t value;
         if (get_int16_value(value, id) != ReturnCode_t::RETCODE_OK)
@@ -569,7 +570,7 @@ public:
 
     // TODO: doxygen
     RTPS_DllAPI uint16_t get_uint16_value(
-            MemberId id) const
+            MemberId id = MEMBER_ID_INVALID) const
     {
         uint16_t value;
         if (get_uint16_value(value, id) != ReturnCode_t::RETCODE_OK)
@@ -581,7 +582,7 @@ public:
 
     // TODO: doxygen
     RTPS_DllAPI int64_t get_int64_value(
-            MemberId id) const
+            MemberId id = MEMBER_ID_INVALID) const
     {
         int64_t value;
         if (get_int64_value(value, id) != ReturnCode_t::RETCODE_OK)
@@ -593,7 +594,7 @@ public:
 
     // TODO: doxygen
     RTPS_DllAPI uint64_t get_uint64_value(
-            MemberId id) const
+            MemberId id = MEMBER_ID_INVALID) const
     {
         uint64_t value;
         if (get_uint64_value(value, id) != ReturnCode_t::RETCODE_OK)
@@ -605,7 +606,7 @@ public:
 
     // TODO: doxygen
     RTPS_DllAPI float get_float32_value(
-            MemberId id) const
+            MemberId id = MEMBER_ID_INVALID) const
     {
         float value;
         if (get_float32_value(value, id) != ReturnCode_t::RETCODE_OK)
@@ -617,7 +618,7 @@ public:
 
     // TODO: doxygen
     RTPS_DllAPI double get_float64_value(
-            MemberId id) const
+            MemberId id = MEMBER_ID_INVALID) const
     {
         double value;
         if (get_float64_value(value, id) != ReturnCode_t::RETCODE_OK)
@@ -629,7 +630,7 @@ public:
 
     // TODO: doxygen
     RTPS_DllAPI long double get_float128_value(
-            MemberId id) const
+            MemberId id = MEMBER_ID_INVALID) const
     {
         long double value;
         if (get_float128_value(value, id) != ReturnCode_t::RETCODE_OK)
@@ -641,7 +642,7 @@ public:
 
     // TODO: doxygen
     RTPS_DllAPI char get_char8_value(
-            MemberId id) const
+            MemberId id = MEMBER_ID_INVALID) const
     {
         char value;
         if (get_char8_value(value, id) != ReturnCode_t::RETCODE_OK)
@@ -653,7 +654,7 @@ public:
 
     // TODO: doxygen
     RTPS_DllAPI wchar_t get_char16_value(
-            MemberId id) const
+            MemberId id = MEMBER_ID_INVALID) const
     {
         wchar_t value;
         if (get_char16_value(value, id) != ReturnCode_t::RETCODE_OK)
@@ -665,7 +666,7 @@ public:
 
     // TODO: doxygen
     RTPS_DllAPI octet get_byte_value(
-            MemberId id) const
+            MemberId id = MEMBER_ID_INVALID) const
     {
         octet value;
         if (get_byte_value(value, id) != ReturnCode_t::RETCODE_OK)
@@ -677,7 +678,7 @@ public:
 
     // TODO: doxygen
     RTPS_DllAPI int8_t get_int8_value(
-            MemberId id) const
+            MemberId id = MEMBER_ID_INVALID) const
     {
         int8_t value;
         if (get_int8_value(value, id) != ReturnCode_t::RETCODE_OK)
@@ -689,7 +690,7 @@ public:
 
     // TODO: doxygen
     RTPS_DllAPI uint8_t get_uint8_value(
-            MemberId id) const
+            MemberId id = MEMBER_ID_INVALID) const
     {
         uint8_t value;
         if (get_uint8_value(value, id) != ReturnCode_t::RETCODE_OK)
@@ -701,7 +702,7 @@ public:
 
     // TODO: doxygen
     RTPS_DllAPI bool get_bool_value(
-            MemberId id) const
+            MemberId id = MEMBER_ID_INVALID) const
     {
         bool value;
         if (get_bool_value(value, id) != ReturnCode_t::RETCODE_OK)
@@ -726,7 +727,7 @@ public:
 
     // TODO: doxygen
     RTPS_DllAPI std::string get_string_value(
-            MemberId id) const
+            MemberId id = MEMBER_ID_INVALID) const
     {
         std::string value;
         if (get_string_value(value, id) != ReturnCode_t::RETCODE_OK)
@@ -738,7 +739,7 @@ public:
 
     // TODO: doxygen
     RTPS_DllAPI std::wstring get_wstring_value(
-            MemberId id) const
+            MemberId id = MEMBER_ID_INVALID) const
     {
         std::wstring value;
         if (get_wstring_value(value, id) != ReturnCode_t::RETCODE_OK)
@@ -749,7 +750,7 @@ public:
     }
 
     RTPS_DllAPI std::string get_enum_value(
-            MemberId id) const
+            MemberId id = MEMBER_ID_INVALID) const
     {
         std::string value;
         if (get_enum_value(value, id) != ReturnCode_t::RETCODE_OK)

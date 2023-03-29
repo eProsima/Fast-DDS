@@ -270,8 +270,14 @@ uint32_t TypeDescriptor::get_total_bounds() const
     return BOUND_UNLIMITED;
 }
 
-bool TypeDescriptor::is_consistent() const
+bool TypeDescriptor::is_consistent(bool type /* = false*/) const
 {
+    // Enums should have at least one member
+    if (type && kind_ == TypeKind::TK_ENUM && members_.empty())
+    {
+        return false;
+    }
+
     // Alias Types need the base type to indicate what type has been aliased.
     if (kind_ == TypeKind::TK_ALIAS && !base_type_)
     {
@@ -328,7 +334,7 @@ bool TypeDescriptor::is_consistent() const
     }
 
     // Check members if any
-    if (std::any_of(members_.begin(), members_.end(),
+    if (type && std::any_of(members_.begin(), members_.end(),
             [this](const DynamicTypeMember& m){ return !m.is_consistent(kind_); }))
     {
         // inconsistencies in the use of annotations

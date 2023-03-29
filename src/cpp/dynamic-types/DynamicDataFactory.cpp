@@ -137,6 +137,16 @@ DynamicData* DynamicDataFactory::create_data(
                 }
 #endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
 
+                // Enums must have a default value
+                if (pType->get_kind() == TypeKind::TK_ENUM)
+                {
+                    MemberId id = pType->get_member_id_at_index(0);
+                    // enums cannot be instantiated without members
+                    assert(MEMBER_ID_INVALID != id);
+                    // initialize the enum
+                    newData->set_uint32_value(*id);
+                }
+
                 // Arrays must have created every members for serialization.
                 if (pType->get_kind() == TypeKind::TK_ARRAY)
                 {

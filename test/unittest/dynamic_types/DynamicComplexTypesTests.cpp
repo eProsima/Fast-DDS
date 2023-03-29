@@ -1213,8 +1213,8 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     DynamicPubSubType pubsubType(m_DynManualType);
     uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(dynData.get())());
     SerializedPayload_t payload(payloadSize);
-    ASSERT_TRUE(pubsubType.serialize(dynData.get(), &payload));
-    ASSERT_TRUE(payload.length == payloadSize);
+    EXPECT_TRUE(pubsubType.serialize(dynData.get(), &payload));
+    EXPECT_TRUE(payload.length == payloadSize);
     /*
        std::cout << "BEGIN" << std::endl;
        for (uint32_t j = 0; j < payload.length; j += 100)
@@ -1240,37 +1240,37 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     CompleteStructPubSubType pbComplete;
     uint32_t payloadSize2 = static_cast<uint32_t>(m_StaticType.getSerializedSizeProvider(&staticData)());
     SerializedPayload_t stPayload(payloadSize2);
-    ASSERT_TRUE(pbComplete.serialize(&staticData, &stPayload));
-    ASSERT_TRUE(stPayload.length == payloadSize2);
-    /*
-       std::cout << "BEGIN" << std::endl;
-       for (uint32_t j = 0; j < stPayload.length; j += 100)
-       {
-        std::cout << std::endl;
-        for (uint32_t k = 0; k < 100; k++)
-        {
-            if (j + k < stPayload.length)
-            {
-                if ((int)stPayload.data[j + k] == 204)
-                {
-                    std::cout << 0 << " ";
-                }
-                else
-                {
-                    std::cout << (int)stPayload.data[j + k] << " ";
-                }
-            }
-        }
-       }
-       std::cout << "END" << std::endl;
-     */
+    EXPECT_TRUE(pbComplete.serialize(&staticData, &stPayload));
+    EXPECT_TRUE(stPayload.length == payloadSize2);
+
+//       std::cout << "BEGIN" << std::endl;
+//       for (uint32_t j = 0; j < stPayload.length; j += 100)
+//       {
+//        std::cout << std::endl;
+//        for (uint32_t k = 0; k < 100; k++)
+//        {
+//            if (j + k < stPayload.length)
+//            {
+//                if ((int)stPayload.data[j + k] == 204)
+//                {
+//                    std::cout << 0 << " ";
+//                }
+//                else
+//                {
+//                    std::cout << (int)stPayload.data[j + k] << " ";
+//                }
+//            }
+//        }
+//       }
+//       std::cout << "END" << std::endl;
+
     types::DynamicData_ptr dynDataFromDynamic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
-    ASSERT_TRUE(pubsubType.deserialize(&payload, dynDataFromDynamic.get()));
+    EXPECT_TRUE(pubsubType.deserialize(&payload, dynDataFromDynamic.get()));
 
     types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
-    ASSERT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic.get()));
+    EXPECT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic.get()));
 
-    ASSERT_TRUE(dynDataFromStatic->equals(dynDataFromDynamic.get()));
+    EXPECT_TRUE(dynDataFromStatic->equals(dynDataFromDynamic.get()));
 }
 
 TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)

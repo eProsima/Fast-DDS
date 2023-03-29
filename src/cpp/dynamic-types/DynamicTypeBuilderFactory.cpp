@@ -1639,7 +1639,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
             const DynamicTypeMember& member = **it;
 
             CompleteStructMember msm;
-            msm.common().member_id(member.get_index());
+            msm.common().member_id(MemberId(member.get_index()));
             msm.common().member_flags().TRY_CONSTRUCT1(false);
             msm.common().member_flags().TRY_CONSTRUCT2(false);
             msm.common().member_flags().IS_EXTERNAL(false);
@@ -1723,7 +1723,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
             const DynamicTypeMember& member = *pm;
 
             MinimalStructMember msm;
-            msm.common().member_id(member.get_index());
+            msm.common().member_id(MemberId(member.get_index()));
             msm.common().member_flags().TRY_CONSTRUCT1(false);
             msm.common().member_flags().TRY_CONSTRUCT2(false);
             msm.common().member_flags().IS_EXTERNAL(false);
@@ -1834,7 +1834,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
             const DynamicTypeMember& member = *pm;
 
             CompleteUnionMember mum;
-            mum.common().member_id(member.get_index());
+            mum.common().member_id(MemberId(member.get_index()));
             mum.common().member_flags().TRY_CONSTRUCT1(false);
             mum.common().member_flags().TRY_CONSTRUCT2(false);
             mum.common().member_flags().IS_EXTERNAL(false);
@@ -1930,7 +1930,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
             const DynamicTypeMember& member = *pm;
 
             MinimalUnionMember mum;
-            mum.common().member_id(member.get_index());
+            mum.common().member_id(MemberId(member.get_index()));
             mum.common().member_flags().TRY_CONSTRUCT1(false);
             mum.common().member_flags().TRY_CONSTRUCT2(false);
             mum.common().member_flags().IS_EXTERNAL(false);

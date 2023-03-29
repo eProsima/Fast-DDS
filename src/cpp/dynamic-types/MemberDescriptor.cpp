@@ -33,21 +33,17 @@ MemberDescriptor::MemberDescriptor(
 
 MemberDescriptor::MemberDescriptor(
         uint32_t index,
-        MemberId id,
         const std::string& name)
     : name_(name)
-    , id_(id)
     , index_(index)
 {
 }
 
 MemberDescriptor::MemberDescriptor(
         uint32_t index,
-        MemberId id,
         const std::string& name,
         DynamicType_ptr type)
     : name_(name)
-    , id_(id)
     , type_(type)
     , index_(index)
 {

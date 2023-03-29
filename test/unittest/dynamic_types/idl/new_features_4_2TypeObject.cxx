@@ -139,7 +139,7 @@ const TypeObject* GetMinimalNewAliasesObject()
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    MemberId memberId = 0;
+    MemberId memberId = 0_id;
     MinimalStructMember mst_int8_;
     mst_int8_.common().member_id(memberId++);
     mst_int8_.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -149,7 +149,7 @@ const TypeObject* GetMinimalNewAliasesObject()
     mst_int8_.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_int8_.common().member_flags().IS_KEY(false);
     mst_int8_.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_int8_.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int8_t", false));
+    mst_int8_.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("octet", false));
 
     MD5 int8__hash("int8_");
     for(int i = 0; i < 4; ++i)
@@ -354,7 +354,7 @@ const TypeObject* GetCompleteNewAliasesObject()
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    MemberId memberId = 0;
+    MemberId memberId = 0_id;
     CompleteStructMember cst_int8_;
     cst_int8_.common().member_id(memberId++);
     cst_int8_.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -364,9 +364,9 @@ const TypeObject* GetCompleteNewAliasesObject()
     cst_int8_.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_int8_.common().member_flags().IS_KEY(false);
     cst_int8_.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_int8_.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int8_t", false));
+    cst_int8_.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("octet", false));
 
-    cst_int8_.detail().name("int8_");
+    cst_int8_.detail().name("octet_");
 
     type_object->complete().struct_type().member_seq().emplace_back(cst_int8_);
 
@@ -621,7 +621,7 @@ const TypeObject* GetMinimalWCharUnionObject()
 
     type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("wchar_t", false));
 
-    MemberId memberId = 0;
+    MemberId memberId = 0_id;
     MinimalUnionMember mst_case_zero;
     mst_case_zero.common().member_id(memberId++);
     mst_case_zero.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -721,7 +721,7 @@ const TypeObject* GetCompleteWCharUnionObject()
     type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("wchar_t", false));
 
 
-    MemberId memberId = 0;
+    MemberId memberId = 0_id;
     CompleteUnionMember cst_case_zero;
     cst_case_zero.common().member_id(memberId++);
     cst_case_zero.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -842,7 +842,7 @@ const TypeObject* GetMinimalOctetUnionObject()
 
     type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint8_t", false));
 
-    MemberId memberId = 0;
+    MemberId memberId = 0_id;
     MinimalUnionMember mst_case_five;
     mst_case_five.common().member_id(memberId++);
     mst_case_five.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -942,7 +942,7 @@ const TypeObject* GetCompleteOctetUnionObject()
     type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint8_t", false));
 
 
-    MemberId memberId = 0;
+    MemberId memberId = 0_id;
     CompleteUnionMember cst_case_five;
     cst_case_five.common().member_id(memberId++);
     cst_case_five.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -1061,9 +1061,9 @@ const TypeObject* GetMinimalInt8UnionObject()
     type_object->minimal().union_type().discriminator().common().member_flags().IS_KEY(false); // Unsupported
     type_object->minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false); // Doesn't apply
 
-    type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int8_t", false));
+    type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("octet", false));
 
-    MemberId memberId = 0;
+    MemberId memberId = 0_id;
     MinimalUnionMember mst_case_three;
     mst_case_three.common().member_id(memberId++);
     mst_case_three.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -1160,10 +1160,10 @@ const TypeObject* GetCompleteInt8UnionObject()
     type_object->complete().union_type().discriminator().common().member_flags().IS_KEY(false); // Unsupported
     type_object->complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false); // Doesn't apply
 
-    type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("int8_t", false));
+    type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("octet", false));
 
 
-    MemberId memberId = 0;
+    MemberId memberId = 0_id;
     CompleteUnionMember cst_case_three;
     cst_case_three.common().member_id(memberId++);
     cst_case_three.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -2471,7 +2471,7 @@ namespace bitmodule {
         type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
         type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-        MemberId memberId = 0;
+        MemberId memberId = 0_id;
         MinimalStructMember mst_mybitset;
         mst_mybitset.common().member_id(memberId++);
         mst_mybitset.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -2557,7 +2557,7 @@ namespace bitmodule {
         type_object->complete().struct_type().struct_flags().IS_NESTED(false);
         type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-        MemberId memberId = 0;
+        MemberId memberId = 0_id;
         CompleteStructMember cst_mybitset;
         cst_mybitset.common().member_id(memberId++);
         cst_mybitset.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -2664,7 +2664,7 @@ namespace bitmodule {
         type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
         type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-        MemberId memberId = 0;
+        MemberId memberId = 0_id;
         MinimalStructMember mst_two;
         mst_two.common().member_id(memberId++);
         mst_two.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -2860,7 +2860,7 @@ const TypeObject* GetMinimalStructTestObject()
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    MemberId memberId = 0;
+    MemberId memberId = 0_id;
     MinimalStructMember mst_charUnion;
     mst_charUnion.common().member_id(memberId++);
     mst_charUnion.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported

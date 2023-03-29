@@ -656,7 +656,7 @@ bool DynamicType::deserialize(
                         }
                     }
 #else
-                    auto it = data.values_.find(i);
+                    auto it = data.values_.find(MemberId(i));
                     if (it != data.values_.end())
                     {
                         ((DynamicData*)it->second)->deserialize(cdr);
@@ -726,7 +726,7 @@ bool DynamicType::deserialize(
                     data.complex_values_.insert(std::make_pair(i, pData));
                 }
 #else
-                auto it = data.values_.find(i);
+                auto it = data.values_.find(MemberId(i));
                 if (it != data.values_.end())
                 {
                     ((DynamicData*)it->second)->deserialize(cdr);
@@ -850,7 +850,7 @@ size_t DynamicType::getCdrSerializedSize(
         case TypeKind::TK_UNION:
         {
             // Union discriminator
-            current_alignment += sizeof(MemberId) + eprosima::fastcdr::Cdr::alignment(current_alignment, sizeof(MemberId));
+            current_alignment += MemberId::serialized_size + eprosima::fastcdr::Cdr::alignment(current_alignment, MemberId::serialized_size);
 
             if (data.union_id_ != MEMBER_ID_INVALID)
             {
@@ -915,7 +915,7 @@ size_t DynamicType::getCdrSerializedSize(
                 auto it = data.complex_values_.find(idx);
                 if (it != data.complex_values_.end())
 #else
-                auto it = data.values_.find(idx);
+                auto it = data.values_.find(MemberId(idx));
                 if (it != data.values_.end())
 #endif // ifdef DYNAMIC_TYPES_CHECKING
                 {
@@ -1284,7 +1284,7 @@ void DynamicType::serialize_discriminator(
     bool found;
 
     // retrieve the associated label
-    uint64_t label = data.union_id_;
+    uint64_t label = *data.union_id_;
     std::tie(pM, found) = get_member(data.union_id_);
     if (found)
     {
@@ -1625,7 +1625,7 @@ void DynamicType::serialize(
             cdr << static_cast<uint32_t>(data.values_.size());
             for (uint32_t idx = 0; idx < static_cast<uint32_t>(data.values_.size()); ++idx)
             {
-                auto it = data.values_.at(idx);
+                auto it = data.values_.at(MemberId(idx));
                 ((DynamicData*)it)->serialize(cdr);
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
@@ -1671,7 +1671,7 @@ void DynamicType::serialize(
                 auto it = data.complex_values_.find(idx);
                 if (it != data.complex_values_.end())
 #else
-                auto it = data.values_.find(idx);
+                auto it = data.values_.find(MemberId(idx));
                 if (it != data.values_.end())
 #endif // ifdef DYNAMIC_TYPES_CHECKING
                 {
@@ -1846,7 +1846,7 @@ void DynamicType::serialize_empty_data(
         }
         case TypeKind::TK_UNION:
         {
-            cdr << static_cast<uint32_t>(MEMBER_ID_INVALID);
+            cdr << *MEMBER_ID_INVALID;
             break;
         }
         case TypeKind::TK_SEQUENCE: // Sequence is like structure, but with size

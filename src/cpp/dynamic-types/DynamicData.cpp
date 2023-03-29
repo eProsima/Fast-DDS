@@ -3360,7 +3360,7 @@ ReturnCode_t DynamicData::get_bool_value(
         else if (get_kind() == TypeKind::TK_BITMASK && id < type_->get_bounds())
         {
             // Note that is not required for all bits in the mask to have an associated member
-            value = (*((uint64_t*)it->second) & ((uint64_t)1 << id)) != 0;
+            value = (*((uint64_t*)it->second) & ((uint64_t)1 << *id)) != 0;
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
@@ -3480,11 +3480,11 @@ ReturnCode_t DynamicData::set_bool_value(
                 // Note that is not required for all bits in the mask to have an associated member
                 if (value)
                 {
-                    *((uint64_t*)it->second) |= ((uint64_t)1 << id);
+                    *((uint64_t*)it->second) |= ((uint64_t)1 << *id);
                 }
                 else
                 {
-                    *((uint64_t*)it->second) &= ~((uint64_t)1 << id);
+                    *((uint64_t*)it->second) &= ~((uint64_t)1 << *id);
                 }
                 return ReturnCode_t::RETCODE_OK;
             }
@@ -3921,7 +3921,7 @@ ReturnCode_t DynamicData::set_enum_value(
         if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
         {
 
-            if(!type_->exists_member_by_id(value))
+            if(!type_->exists_member_by_id(MemberId(value)))
             {
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
@@ -4004,7 +4004,7 @@ ReturnCode_t DynamicData::get_enum_value(
             }
 
             MemberDescriptor md;
-            ReturnCode_t res = type_->get_member(md, inner_value);
+            ReturnCode_t res = type_->get_member(md, MemberId(inner_value));
 
             if(!!res)
             {
@@ -4079,7 +4079,7 @@ ReturnCode_t DynamicData::set_enum_value(
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
 
-            *((uint32_t*)itValue->second) = mid;
+            *((uint32_t*)itValue->second) = *mid;
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
