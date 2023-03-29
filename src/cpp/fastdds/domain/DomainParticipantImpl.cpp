@@ -20,6 +20,7 @@
 #include "fastdds/rtps/common/Guid.h"
 #include "fastdds/rtps/common/GuidPrefix_t.hpp"
 #include <chrono>
+#include <fastrtps/types/TypesBase.h>
 #include <string>
 
 #include <asio.hpp>
@@ -829,10 +830,12 @@ PublisherImpl* DomainParticipantImpl::create_publisher_impl(
    }
  */
 
-bool DomainParticipantImpl::ignore_participant(
+ReturnCode_t DomainParticipantImpl::ignore_participant(
         const InstanceHandle_t& handle)
 {
-    return rtps_participant_->ignore_participant(iHandle2GUID(handle).guidPrefix);
+    return (nullptr == rtps_participant_) ? ReturnCode_t::RETCODE_NOT_ENABLED :
+           rtps_participant_->ignore_participant(iHandle2GUID(handle).guidPrefix) ? ReturnCode_t::RETCODE_OK :
+           ReturnCode_t::RETCODE_ERROR;
 }
 
 /* TODO

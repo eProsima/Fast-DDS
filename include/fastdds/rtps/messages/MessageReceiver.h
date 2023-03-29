@@ -157,7 +157,7 @@ private:
      * -Return an error if the message is malformed.
      * @param[in,out] msg Pointer to the message
      * @param[in] smh Pointer to the submessage header
-     * @param[in, out] WriterID Writer EntityID (only for DATA messages)
+     * @param[out] WriterID Writer EntityID (only for DATA messages)
      * @return True if correct, false otherwise
      */
 

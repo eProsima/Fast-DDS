@@ -332,9 +332,12 @@ public:
      * @brief Locally ignore a remote domain participant.
      *
      * @param[in] handle Identifier of the remote participant to ignore.
-     * @return true if correctly ignored. False otherwise.
+     * @return RETCODE_NOT_ENABLED if the participant is not enabled.
+     *         RETCODE_ERROR if unable to ignore.
+     *         RETCODE_OK if successful.
+     *
      */
-    bool ignore_participant(
+    ReturnCode_t ignore_participant(
             const InstanceHandle_t& handle);
 
     /* TODO

@@ -2537,8 +2537,10 @@ bool RTPSParticipantImpl::ignore_participant(
     if (!is_participant_ignored(participant_guid))
     {
         {
-            std::unique_lock<shared_mutex> _(ignored_mtx_);
-            ignored_participants_.insert(participant_guid);
+            {
+                std::unique_lock<shared_mutex> _(ignored_mtx_);
+                ignored_participants_.insert(participant_guid);
+            }
             pdp()->remove_remote_participant(GUID_t(participant_guid, c_EntityId_RTPSParticipant),
                     ParticipantDiscoveryInfo::DISCOVERY_STATUS::IGNORED_PARTICIPANT);
         }
