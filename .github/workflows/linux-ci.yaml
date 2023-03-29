@@ -51,10 +51,18 @@ jobs:
           target_directory: src
           googletest: true
 
+      - name: Set up hosts file for DNS testing
+        run: |
+          echo "" >> /etc/hosts
+          echo "localhost.test 127.0.0.1 ::1" >> /etc/hosts
+          echo "www.eprosima.com.test 154.56.134.194" >> /etc/hosts
+          echo "www.acme.com.test 216.58.215.164 2a00:1450:400e:803::2004" >> /etc/hosts
+          echo "www.foo.com.test 140.82.121.4 140.82.121.3" >> /etc/hosts
+          echo "acme.org.test ff1e::ffff:efff:1" >> /etc/hosts
+
       - name: Build workspace
         run: |
-          USER_INPUT=${{ github.event.inputs.cmake-args }}
-          CUSTOM_CMAKE_ARGS=${USER_INPUT:-"
+          USER_INPUT=${{ github.event.inputs.cmake-args || " \
           -DCMAKE_BUILD_TYPE=RelWithDebInfo \
           -DTHIRDPARTY=OFF \
           -DEPROSIMA_BUILD_TESTS=ON \
@@ -68,7 +76,8 @@ jobs:
           -DSHM_TRANSPORT_DEFAULT=ON \
           -DSYSTEM_TESTS=ON \
           -DSECURITY=ON \
-          -DFASTDDS_STATISTICS=ON "}
+          -DFASTDDS_STATISTICS=ON \
+          "}}
 
           colcon build \
             --event-handlers=console_direct+ \
@@ -76,10 +85,9 @@ jobs:
 
       - name: Run tests Fast DDS
         run: |
-          USER_INPUT=${{ github.event.inputs.ctest-args }}
-          CUSTOM_TEST_ARGS=${USER_INPUT:-"
+          USER_INPUT=${{ github.event.inputs.ctest-args || " \
           --label-exclude xfail \
-          --timeout 300 "}
+          --timeout 300 " }}
           source install/setup.bash && \
           colcon test \
             --packages-select fastrtps \
