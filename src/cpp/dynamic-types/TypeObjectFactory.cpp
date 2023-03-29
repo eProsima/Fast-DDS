@@ -79,16 +79,9 @@ TypeObjectFactory::TypeObjectFactory()
     identifiers_created_.push_back(auxIdent);
     auxIdent->_d(TypeKind::TK_BYTE);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_BYTE, auxIdent));
-    // TypeKind::TK_BYTE:
-    auxIdent = new TypeIdentifier();
-    identifiers_created_.push_back(auxIdent);
+    // TypeKind::TK_BYTE alias
     auxIdent->_d(TypeKind::TK_BYTE);
     identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_UINT8, auxIdent));
-    // TypeKind::TK_BYTE:
-    auxIdent = new TypeIdentifier();
-    identifiers_created_.push_back(auxIdent);
-    auxIdent->_d(TypeKind::TK_BYTE);
-    identifiers_.insert(std::pair<std::string, TypeIdentifier*>(TKNAME_INT8, auxIdent));
     // TypeKind::TK_INT16:
     auxIdent = new TypeIdentifier();
     identifiers_created_.push_back(auxIdent);
@@ -963,7 +956,7 @@ TypeKind TypeObjectFactory::get_type_kind(
     {
         return TypeKind::TK_CHAR8;
     }
-    else if (type_name == TKNAME_BYTE || type_name == TKNAME_INT8 || type_name == TKNAME_UINT8)
+    else if (type_name == TKNAME_BYTE || type_name == TKNAME_UINT8)
     {
         return TypeKind::TK_BYTE;
     }
@@ -1832,7 +1825,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 const TypeIdentifier* aux2 = try_get_complete(identifier->map_sdefn().key_identifier());
                 descriptor.bound_.emplace_back(static_cast<uint32_t>(identifier->map_sdefn().bound()));
                 descriptor.element_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
-                descriptor.key_element_type_ = build_dynamic_type(get_type_name(aux), aux2, get_type_object(aux2));
+                descriptor.key_element_type_ = build_dynamic_type(get_type_name(aux2), aux2, get_type_object(aux2));
             }
             else
             {
@@ -1840,7 +1833,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 const TypeIdentifier* aux2 = try_get_complete(identifier->map_ldefn().key_identifier());
                 descriptor.bound_.emplace_back(identifier->map_ldefn().bound());
                 descriptor.element_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
-                descriptor.key_element_type_ = build_dynamic_type(get_type_name(aux), aux2, get_type_object(aux2));
+                descriptor.key_element_type_ = build_dynamic_type(get_type_name(aux2), aux2, get_type_object(aux2));
             }
             break;
         }

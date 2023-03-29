@@ -462,7 +462,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::new_unlimited_string_builder(b
 {
     TypeDescriptor descriptor;
     descriptor.set_kind(large ? TypeKind::TK_STRING16 : TypeKind::TK_STRING8);
-    descriptor.set_name(TypeNamesGenerator::get_string_type_name(MAX_STRING_LENGTH, false, true));
+    descriptor.set_name(TypeNamesGenerator::get_string_type_name(MAX_STRING_LENGTH, large, true));
     descriptor.element_type_ = large ? create_char16_type() : create_char8_type();
     descriptor.bound_.push_back(MAX_STRING_LENGTH);
 

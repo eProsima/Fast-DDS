@@ -91,7 +91,6 @@ const std::string TKNAME_INT64 = "int64_t";
 const std::string TKNAME_UINT64 = "uint64_t";
 const std::string TKNAME_CHAR8 = "char";
 const std::string TKNAME_BYTE = "octet";
-const std::string TKNAME_INT8 = "int8_t";
 const std::string TKNAME_UINT8 = "uint8_t";
 const std::string TKNAME_CHAR16 = "wchar";
 const std::string TKNAME_CHAR16T = "wchar_t";

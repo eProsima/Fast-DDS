@@ -204,8 +204,7 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMyOctetArray500Type()
     {
         DynamicType_ptr octet_type = m_factory.create_byte_type();
         DynamicTypeBuilder_ptr myOctetArray500_builder = m_factory.create_array_builder(*octet_type, { 500 });
-        myOctetArray500_builder->set_name("MyOctetArray500");
-        m_MyOctetArray500 = myOctetArray500_builder->build();
+        m_MyOctetArray500 = m_factory.create_alias_type(*myOctetArray500_builder->build(), "MyOctetArray500");
     }
 
     return m_MyOctetArray500;
@@ -216,8 +215,7 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetBSAlias5Type()
     if (m_BSAlias5.get() == nullptr)
     {
         DynamicTypeBuilder_ptr bSAlias5_builder = m_factory.create_array_builder(*GetBasicStructType(), { 5 });
-        bSAlias5_builder->set_name("BSAlias5");
-        m_BSAlias5 = bSAlias5_builder->build();
+        m_BSAlias5 = m_factory.create_alias_type(*bSAlias5_builder->build(), "BSAlias5");
     }
 
     return m_BSAlias5;
@@ -228,8 +226,7 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMA3Type()
     if (m_MA3.get() == nullptr)
     {
         DynamicTypeBuilder_ptr mA3_builder = m_factory.create_array_builder(*GetMyAliasEnum3Type(), { 42 });
-        mA3_builder->set_name("MA3");
-        m_MA3 = mA3_builder->build();
+        m_MA3 = m_factory.create_alias_type(*mA3_builder->build(), "MA3");
     }
 
     return m_MA3;
@@ -241,8 +238,7 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMyMiniArrayType()
     {
         DynamicType_ptr int32_type = m_factory.create_int32_type();
         DynamicTypeBuilder_ptr myMiniArray_builder = m_factory.create_array_builder(*int32_type, { 2 });
-        myMiniArray_builder->set_name("MyMiniArray");
-        m_MyMiniArray = myMiniArray_builder->build();
+        m_MyMiniArray = m_factory.create_alias_type(*myMiniArray_builder->build(), "MyMiniArray");
     }
 
     return m_MyMiniArray;
@@ -322,9 +318,8 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetComplexStructType()
         DynamicType_ptr my_sequence_struct_type = my_sequence_struct_builder->build();
 
         DynamicType_ptr char_type = m_factory.create_char8_type();
-        DynamicType_ptr byte_type = m_factory.create_byte_type();
         DynamicTypeBuilder_ptr my_array_octet_builder = m_factory.create_array_builder(
-            *byte_type, { 500, 5, 4 });
+            *char_type, { 500, 5, 4 });
         DynamicType_ptr my_array_octet_type = my_array_octet_builder->build();
 
         // MyOctetArray500 is already created
@@ -374,7 +369,6 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetComplexStructType()
 
         // Add members to the struct.
         int idx = 0;
-        complexStruct_builder->add_member(idx++, "uint", DynamicTypeBuilderFactory::get_instance().create_uint32_type());
         complexStruct_builder->add_member(idx++, "my_octet", octet_type);
         complexStruct_builder->add_member(idx++, "my_basic_struct", GetBasicStructType());
         complexStruct_builder->add_member(idx++, "my_alias_enum", GetMyAliasEnumType());
@@ -488,10 +482,12 @@ TEST_F(DynamicComplexTypesTests, Static_Manual_Comparison)
 
 TEST_F(DynamicComplexTypesTests, Manual_Auto_Comparision)
 {
+    EXPECT_EQ(*m_DynAutoType, *m_DynManualType);
+
     types::DynamicData* dynAutoData = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
     types::DynamicData* dynManualData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
 
-    ASSERT_TRUE(dynManualData->equals(dynAutoData));
+    EXPECT_TRUE(dynManualData->equals(dynAutoData));
 
     DynamicDataFactory::get_instance()->delete_data(dynAutoData);
     DynamicDataFactory::get_instance()->delete_data(dynManualData);

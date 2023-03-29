@@ -18,6 +18,7 @@
 #include <fastrtps/types/TypesBase.h>
 
 #include <set>
+#include <type_traits>
 
 namespace eprosima{
 namespace fastrtps{
@@ -161,7 +162,9 @@ public:
     RTPS_DllAPI ~MemberDescriptor() = default;
 
     //! check if any given labels are already set
-    template<typename C, typename T = typename C::value_type>
+    template<
+        typename C,
+        typename std::enable_if<std::is_same<uint64_t, typename C::value_type>::value, bool>::type = true>
     bool check_union_labels(C const& labels) const
     {
         return std::none_of(labels.begin(), labels.end(), [this](uint64_t l) -> bool
