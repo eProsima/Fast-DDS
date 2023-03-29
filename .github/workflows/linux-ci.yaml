@@ -53,48 +53,32 @@ jobs:
 
       - name: Set up hosts file for DNS testing
         run: |
-          echo "" >> /etc/hosts
-          echo "localhost.test 127.0.0.1 ::1" >> /etc/hosts
-          echo "www.eprosima.com.test 154.56.134.194" >> /etc/hosts
-          echo "www.acme.com.test 216.58.215.164 2a00:1450:400e:803::2004" >> /etc/hosts
-          echo "www.foo.com.test 140.82.121.4 140.82.121.3" >> /etc/hosts
-          echo "acme.org.test ff1e::ffff:efff:1" >> /etc/hosts
+          sudo echo "" | sudo tee -a /etc/hosts
+          sudo echo "localhost.test 127.0.0.1 ::1" | sudo tee -a /etc/hosts
+          sudo echo "www.eprosima.com.test 154.56.134.194" | sudo tee -a /etc/hosts
+          sudo echo "www.acme.com.test 216.58.215.164 2a00:1450:400e:803::2004" | sudo tee -a /etc/hosts
+          sudo echo "www.foo.com.test 140.82.121.4 140.82.121.3" | sudo tee -a /etc/hosts
+          sudo echo "acme.org.test ff1e::ffff:efff:1" | sudo tee -a /etc/hosts
 
       - name: Build workspace
         run: |
-          USER_INPUT=${{ github.event.inputs.cmake-args || " \
-          -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-          -DTHIRDPARTY=OFF \
-          -DEPROSIMA_BUILD_TESTS=ON \
-          -DGTEST_INDIVIDUAL=ON \
-          -DTHIRDPARTY_UPDATE=OFF \
-          -DINTERNAL_DEBUG=OFF \
-          -DFASTRTPS_API_TESTS=ON \
-          -DFASTDDS_PIM_API_TESTS=ON \
-          -DPERFORMANCE_TESTS=ON \
-          -DNO_TLS=OFF \
-          -DSHM_TRANSPORT_DEFAULT=ON \
-          -DSYSTEM_TESTS=ON \
-          -DSECURITY=ON \
-          -DFASTDDS_STATISTICS=ON \
-          "}}
-
+          pwd
+          ls
+          cat src/Fast-DDS/.github/workflows/linux-ci/linux-ci.meta
           colcon build \
             --event-handlers=console_direct+ \
-            --cmake-args ${CUSTOM_CMAKE_ARGS}
+            --metas src/Fast-DDS/.github/workflows/linux-ci/linux-ci.meta \
+            --cmake-args ${{ github.event.inputs.cmake-args }}
 
       - name: Run tests Fast DDS
         run: |
-          USER_INPUT=${{ github.event.inputs.ctest-args || " \
-          --label-exclude xfail \
-          --timeout 300 " }}
           source install/setup.bash && \
           colcon test \
             --packages-select fastrtps \
             --event-handlers=console_direct+ \
             --return-code-on-test-failure \
             --retest-until-pass 3 \
-            --ctest-args ${CUSTOM_CTEST_ARGS}               
+            --ctest-args ${{ github.event.inputs.ctest-args }}
 
         continue-on-error: true
 
