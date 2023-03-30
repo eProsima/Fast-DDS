@@ -913,6 +913,21 @@ void DataReaderImpl::InnerDataReaderListener::onReaderMatched(
         const SubscriptionMatchedStatus& info)
 {
     data_reader_->update_subscription_matched_status(info);
+
+    StatusMask notify_status = StatusMask::subscription_matched();
+    DataReaderListener* listener = data_reader_->get_listener_for(notify_status);
+    if (listener != nullptr)
+    {
+        SubscriptionMatchedStatus callback_status;
+        if (ReturnCode_t::RETCODE_OK == data_reader_->get_subscription_matched_status(callback_status))
+        {
+            listener->on_subscription_matched(data_reader_->user_datareader_, callback_status);
+        }
+    }
+    else
+    {
+        data_reader_->user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
+    }
 }
 
 void DataReaderImpl::InnerDataReaderListener::on_liveliness_changed(
@@ -1100,16 +1115,6 @@ void DataReaderImpl::update_subscription_matched_status(
         history_.writer_not_alive(iHandle2GUID(status.last_publication_handle));
         try_notify_read_conditions();
     }
-
-    StatusMask notify_status = StatusMask::subscription_matched();
-    DataReaderListener* listener = get_listener_for(notify_status);
-    if (listener != nullptr)
-    {
-        listener->on_subscription_matched(user_datareader_, subscription_matched_status_);
-        subscription_matched_status_.current_count_change = 0;
-        subscription_matched_status_.total_count_change = 0;
-    }
-    user_datareader_->get_statuscondition().get_impl()->set_status(notify_status, true);
 }
 
 ReturnCode_t DataReaderImpl::get_subscription_matched_status(
