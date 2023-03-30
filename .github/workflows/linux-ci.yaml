@@ -62,15 +62,13 @@ jobs:
 
       - name: Build workspace
         run: |
-          pwd
-          ls
-          cat src/Fast-DDS/.github/workflows/linux-ci/linux-ci.meta
           colcon build \
             --event-handlers=console_direct+ \
             --metas src/Fast-DDS/.github/workflows/linux-ci/linux-ci.meta \
             --cmake-args ${{ github.event.inputs.cmake-args }}
 
       - name: Run tests Fast DDS
+        id: testing
         run: |
           source install/setup.bash && \
           colcon test \
@@ -78,6 +76,7 @@ jobs:
             --event-handlers=console_direct+ \
             --return-code-on-test-failure \
             --retest-until-pass 3 \
+            --metas src/Fast-DDS/.github/workflows/linux-ci/linux-ci.meta \
             --ctest-args ${{ github.event.inputs.ctest-args }}
 
         continue-on-error: true
@@ -86,6 +85,16 @@ jobs:
         uses: actions/upload-artifact@v1
 
         with:
-          name: test-results-${{ matrix.ubuntu-version }}
+          name: test-results-${{ matrix.runner-os }}
           path: log/latest_test/fastrtps
         if: always()
+
+      - name: Check for failure
+        if: steps.testing.outcome != 'success'
+        run: |
+          echo '## ${{ matrix.runner-os }}' >> $GITHUB_STEP_SUMMARY
+          echo '| Test | Reason | <<EOF' >> $GITHUB_STEP_SUMMARY
+          echo '|---|---|' >> $GITHUB_STEP_SUMMARY'
+          grep -rin "(Failed\|(Child\|(Timeout" log/latest_test/fastrtps/stdout_stderr.log | awk -F "[-|(|)]+" '//{print "|" $2 "| " $3 " |"}' >> $GITHUB_STEP_SUMMARY
+          echo 'EOF' >> $$GITHUB_STEP_SUMMARY
+          exit 1
