@@ -29,10 +29,6 @@ if(NOT fastrtps_FOUND)
     find_package(fastrtps REQUIRED)
 endif()
 
-if(NOT Asio_FOUND)
-    find_package(Asio QUIET)
-endif()
-
 #Check C++11
 include(CheckCXXCompilerFlag)
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
@@ -47,12 +43,9 @@ file(GLOB DDS_DEADLINEQOS_EXAMPLE_SOURCES "*.cxx")
 
 add_executable(DDSDeadlineQoSExample ${DDS_DEADLINEQOS_EXAMPLE_SOURCES})
 target_compile_definitions(DDSDeadlineQoSExample PRIVATE
-    BOOST_ASIO_STANDALONE
-    ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
-target_include_directories(DDSDeadlineQoSExample PRIVATE ${Asio_INCLUDE_DIR})
 target_link_libraries(DDSDeadlineQoSExample fastrtps fastcdr foonathan_memory)
 if(UNIX AND NOT(QNXNTO) AND NOT(ANDROID))
     target_link_libraries(DDSDeadlineQoSExample pthread)
