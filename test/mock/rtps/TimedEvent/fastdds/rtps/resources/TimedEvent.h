@@ -44,6 +44,8 @@ public:
     MOCK_METHOD0(recreate_timer, void());
     MOCK_METHOD1(update_interval, bool(const Duration_t&));
     MOCK_METHOD1(update_interval_millisec, bool(double));
+    MOCK_METHOD0(getIntervalMilliSec, double());
+
 };
 
 } // namespace rtps
