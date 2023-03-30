@@ -18,11 +18,9 @@
 
 #include <fastrtps/Domain.h>
 #include <fastrtps/log/Log.h>
-#include "asio.hpp"
 
 using namespace eprosima;
 using namespace eprosima::fastrtps;
-using namespace asio;
 
 /**
  * @brief Parses command line arguments
