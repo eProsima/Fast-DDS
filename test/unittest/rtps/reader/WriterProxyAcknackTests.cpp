@@ -106,7 +106,7 @@ TEST(WriterProxyAcknackTests, AcknackBackoff)
 
     // Simulate initial acknack and check that the current acknack timer is increased from the default
     SequenceNumberSet_t t1(SequenceNumber_t(0, 0));
-    EXPECT_CALL(readerMock, simp_send_acknack(t1)).Times(1u);
+    EXPECT_CALL(readerMock, simp_send_acknack(t1)).Times(2u);
     EXPECT_EQ ( wproxy.initial_acknack_->getIntervalMilliSec(),
             readerMock.getTimes().initialAcknackDelay.to_ns() / 1000000);
     wproxy.perform_initial_ack_nack();
