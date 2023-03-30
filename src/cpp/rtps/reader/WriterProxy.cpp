@@ -515,6 +515,9 @@ bool WriterProxy::perform_initial_ack_nack()
             if (0 == last_heartbeat_count_)
             {
                 reader_->send_acknack(this, sns, this, false);
+                auto time_ms = initial_acknack_->getIntervalMilliSec();
+                initial_acknack_->update_interval_millisec(time_ms * 2);
+                initial_acknack_->restart_timer();
                 ret_value = true;
             }
         }
