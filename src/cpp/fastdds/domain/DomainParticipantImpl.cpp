@@ -835,7 +835,7 @@ ReturnCode_t DomainParticipantImpl::ignore_participant(
 {
     return (nullptr == rtps_participant_) ? ReturnCode_t::RETCODE_NOT_ENABLED :
            rtps_participant_->ignore_participant(iHandle2GUID(handle).guidPrefix) ? ReturnCode_t::RETCODE_OK :
-           ReturnCode_t::RETCODE_ERROR;
+           ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
 /* TODO

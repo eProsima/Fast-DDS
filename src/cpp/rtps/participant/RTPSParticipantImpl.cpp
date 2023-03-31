@@ -2534,6 +2534,11 @@ bool RTPSParticipantImpl::is_reader_ignored(
 bool RTPSParticipantImpl::ignore_participant(
         const GuidPrefix_t& participant_guid)
 {
+    if (participant_guid == m_guid.guidPrefix)
+    {
+        EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, "A participant is unable to ignore itself");
+        return false;
+    }
     {
         shared_lock<eprosima::shared_mutex> _(mp_builtinProtocols->getDiscoveryMutex());
 
@@ -2547,19 +2552,15 @@ bool RTPSParticipantImpl::ignore_participant(
             }
         }
     }
-    if (!is_participant_ignored(participant_guid))
     {
-        {
-            {
-                std::unique_lock<shared_mutex> _(ignored_mtx_);
-                ignored_participants_.insert(participant_guid);
-            }
-            pdp()->remove_remote_participant(GUID_t(participant_guid, c_EntityId_RTPSParticipant),
-                    ParticipantDiscoveryInfo::DISCOVERY_STATUS::IGNORED_PARTICIPANT);
-        }
-        return true;
+        std::unique_lock<shared_mutex> _(ignored_mtx_);
+        ignored_participants_.insert(participant_guid);
     }
-    return false;
+    pdp()->remove_remote_participant(GUID_t(participant_guid, c_EntityId_RTPSParticipant),
+            ParticipantDiscoveryInfo::DISCOVERY_STATUS::IGNORED_PARTICIPANT);
+
+    return true;
+
 }
 
 bool RTPSParticipantImpl::ignore_writer(
