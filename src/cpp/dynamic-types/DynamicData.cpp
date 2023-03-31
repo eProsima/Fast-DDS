@@ -135,6 +135,8 @@ void DynamicData::create_members(
 void DynamicData::create_members(
         DynamicType_ptr pType)
 {
+    assert(pType);
+
     if (pType->is_complex_kind())
     {
         // Bitmasks and enums register their members but only manages one value.
@@ -187,7 +189,14 @@ void DynamicData::create_members(
     }
     else
     {
-        add_value(pType->get_kind(), MEMBER_ID_INVALID);
+        // Resolve alias type, avoid reference counting
+        const DynamicType* type = pType.get();
+        while ( type->get_kind() == TypeKind::TK_ALIAS )
+        {
+            type = type->get_base_type().get();
+        }
+
+        add_value(type->get_kind(), MEMBER_ID_INVALID);
     }
 }
 
@@ -285,6 +294,9 @@ bool DynamicData::equals(
                         case 4: bitmask_kind = TypeKind::TK_UINT32; break;
                         case 8: bitmask_kind = TypeKind::TK_UINT64; break;
                     }
+
+                    assert(values_.size() && other->values_.size());
+
                     if (!compare_values(bitmask_kind, values_.begin()->second, other->values_.begin()->second))
                     {
                         return false;
@@ -1766,6 +1778,15 @@ ReturnCode_t DynamicData::set_int32_value(
         }
         else if (get_kind() == TypeKind::TK_ARRAY)
         {
+            assert(default_array_value_);
+            int32_t default_value;
+            auto default_res = default_array_value_->get_int32_value(default_value);
+
+            if (!!default_res && value == default_value)
+            { // don't add default elements
+                return ReturnCode_t::RETCODE_OK;
+            }
+
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
             {
@@ -1817,6 +1838,15 @@ ReturnCode_t DynamicData::set_int32_value(
     }
     else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
+        assert(default_array_value_);
+        int32_t default_value;
+        auto default_res = default_array_value_->get_int32_value(default_value);
+
+        if (!!default_res && value == default_value)
+        { // don't add default elements
+            return ReturnCode_t::RETCODE_OK;
+        }
+
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
         {
@@ -1916,6 +1946,15 @@ ReturnCode_t DynamicData::set_uint32_value(
         }
         else if (get_kind() == TypeKind::TK_ARRAY)
         {
+            assert(default_array_value_);
+            uint32_t default_value;
+            auto default_res = default_array_value_->get_uint32_value(default_value);
+
+            if (!!default_res && value == default_value)
+            { // don't add default elements
+                return ReturnCode_t::RETCODE_OK;
+            }
+
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
             {
@@ -1966,6 +2005,15 @@ ReturnCode_t DynamicData::set_uint32_value(
     }
     else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
+        assert(default_array_value_);
+        uint32_t default_value;
+        auto default_res = default_array_value_->get_uint32_value(default_value);
+
+        if (!!default_res && value == default_value)
+        { // don't add default elements
+            return ReturnCode_t::RETCODE_OK;
+        }
+
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
         {
@@ -2065,6 +2113,15 @@ ReturnCode_t DynamicData::set_int16_value(
         }
         else if (get_kind() == TypeKind::TK_ARRAY)
         {
+            assert(default_array_value_);
+            int16_t default_value;
+            auto default_res = default_array_value_->get_int16_value(default_value);
+
+            if (!!default_res && value == default_value)
+            { // don't add default elements
+                return ReturnCode_t::RETCODE_OK;
+            }
+
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
             {
@@ -2115,6 +2172,15 @@ ReturnCode_t DynamicData::set_int16_value(
     }
     else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
+        assert(default_array_value_);
+        int16_t default_value;
+        auto default_res = default_array_value_->get_int16_value(default_value);
+
+        if (!!default_res && value == default_value)
+        { // don't add default elements
+            return ReturnCode_t::RETCODE_OK;
+        }
+
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
         {
@@ -2214,6 +2280,15 @@ ReturnCode_t DynamicData::set_uint16_value(
         }
         else if (get_kind() == TypeKind::TK_ARRAY)
         {
+            assert(default_array_value_);
+            uint16_t default_value;
+            auto default_res = default_array_value_->get_uint16_value(default_value);
+
+            if (!!default_res && value == default_value)
+            { // don't add default elements
+                return ReturnCode_t::RETCODE_OK;
+            }
+
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
             {
@@ -2264,6 +2339,15 @@ ReturnCode_t DynamicData::set_uint16_value(
     }
     else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
+        assert(default_array_value_);
+        uint16_t default_value;
+        auto default_res = default_array_value_->get_uint16_value(default_value);
+
+        if (!!default_res && value == default_value)
+        { // don't add default elements
+            return ReturnCode_t::RETCODE_OK;
+        }
+
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
         {
@@ -2362,6 +2446,15 @@ ReturnCode_t DynamicData::set_int64_value(
         }
         else if (get_kind() == TypeKind::TK_ARRAY)
         {
+            assert(default_array_value_);
+            int64_t default_value;
+            auto default_res = default_array_value_->get_int64_value(default_value);
+
+            if (!!default_res && value == default_value)
+            { // don't add default elements
+                return ReturnCode_t::RETCODE_OK;
+            }
+
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
             {
@@ -2412,6 +2505,15 @@ ReturnCode_t DynamicData::set_int64_value(
     }
     else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
+        assert(default_array_value_);
+        int64_t default_value;
+        auto default_res = default_array_value_->get_int64_value(default_value);
+
+        if (!!default_res && value == default_value)
+        { // don't add default elements
+            return ReturnCode_t::RETCODE_OK;
+        }
+
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
         {
@@ -2511,6 +2613,15 @@ ReturnCode_t DynamicData::set_uint64_value(
         }
         else if (get_kind() == TypeKind::TK_ARRAY)
         {
+            assert(default_array_value_);
+            uint64_t default_value;
+            auto default_res = default_array_value_->get_uint64_value(default_value);
+
+            if (!!default_res && value == default_value)
+            { // don't add default elements
+                return ReturnCode_t::RETCODE_OK;
+            }
+
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
             {
@@ -2561,6 +2672,15 @@ ReturnCode_t DynamicData::set_uint64_value(
     }
     else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
+        assert(default_array_value_);
+        uint64_t default_value;
+        auto default_res = default_array_value_->get_uint64_value(default_value);
+
+        if (!!default_res && value == default_value)
+        { // don't add default elements
+            return ReturnCode_t::RETCODE_OK;
+        }
+
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
         {
@@ -2648,6 +2768,15 @@ ReturnCode_t DynamicData::set_float32_value(
         }
         else if (get_kind() == TypeKind::TK_ARRAY)
         {
+            assert(default_array_value_);
+            float default_value;
+            auto default_res = default_array_value_->get_float32_value(default_value);
+
+            if (!!default_res && value == default_value)
+            { // don't add default elements
+                return ReturnCode_t::RETCODE_OK;
+            }
+
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
             {
@@ -2679,6 +2808,15 @@ ReturnCode_t DynamicData::set_float32_value(
     }
     else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
+        assert(default_array_value_);
+        float default_value;
+        auto default_res = default_array_value_->get_float32_value(default_value);
+
+        if (!!default_res && value == default_value)
+        { // don't add default elements
+            return ReturnCode_t::RETCODE_OK;
+        }
+
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
         {
@@ -2766,6 +2904,15 @@ ReturnCode_t DynamicData::set_float64_value(
         }
         else if (get_kind() == TypeKind::TK_ARRAY)
         {
+            assert(default_array_value_);
+            double default_value;
+            auto default_res = default_array_value_->get_float64_value(default_value);
+
+            if (!!default_res && value == default_value)
+            { // don't add default elements
+                return ReturnCode_t::RETCODE_OK;
+            }
+
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
             {
@@ -2796,6 +2943,15 @@ ReturnCode_t DynamicData::set_float64_value(
     }
     else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
+        assert(default_array_value_);
+        double default_value;
+        auto default_res = default_array_value_->get_float64_value(default_value);
+
+        if (!!default_res && value == default_value)
+        { // don't add default elements
+            return ReturnCode_t::RETCODE_OK;
+        }
+
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
         {
@@ -2883,6 +3039,15 @@ ReturnCode_t DynamicData::set_float128_value(
         }
         else if (get_kind() == TypeKind::TK_ARRAY)
         {
+            assert(default_array_value_);
+            long double default_value;
+            auto default_res = default_array_value_->get_float128_value(default_value);
+
+            if (!!default_res && value == default_value)
+            { // don't add default elements
+                return ReturnCode_t::RETCODE_OK;
+            }
+
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
             {
@@ -2913,6 +3078,15 @@ ReturnCode_t DynamicData::set_float128_value(
     }
     else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
+        assert(default_array_value_);
+        long double default_value;
+        auto default_res = default_array_value_->get_float128_value(default_value);
+
+        if (!!default_res && value == default_value)
+        { // don't add default elements
+            return ReturnCode_t::RETCODE_OK;
+        }
+
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
         {
@@ -3000,6 +3174,15 @@ ReturnCode_t DynamicData::set_char8_value(
         }
         else if (get_kind() == TypeKind::TK_ARRAY)
         {
+            assert(default_array_value_);
+            char default_value;
+            auto default_res = default_array_value_->get_char8_value(default_value);
+
+            if (!!default_res && value == default_value)
+            { // don't add default elements
+                return ReturnCode_t::RETCODE_OK;
+            }
+
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
             {
@@ -3030,6 +3213,15 @@ ReturnCode_t DynamicData::set_char8_value(
     }
     else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
+        assert(default_array_value_);
+        char default_value;
+        auto default_res = default_array_value_->get_char8_value(default_value);
+
+        if (!!default_res && value == default_value)
+        { // don't add default elements
+            return ReturnCode_t::RETCODE_OK;
+        }
+
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
         {
@@ -3117,6 +3309,15 @@ ReturnCode_t DynamicData::set_char16_value(
         }
         else if (get_kind() == TypeKind::TK_ARRAY)
         {
+            assert(default_array_value_);
+            wchar_t default_value;
+            auto default_res = default_array_value_->get_char16_value(default_value);
+
+            if (!!default_res && value == default_value)
+            { // don't add default elements
+                return ReturnCode_t::RETCODE_OK;
+            }
+
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
             {
@@ -3148,6 +3349,15 @@ ReturnCode_t DynamicData::set_char16_value(
     }
     else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
+        assert(default_array_value_);
+        wchar_t default_value;
+        auto default_res = default_array_value_->get_char16_value(default_value);
+
+        if (!!default_res && value == default_value)
+        { // don't add default elements
+            return ReturnCode_t::RETCODE_OK;
+        }
+
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
         {
@@ -3247,6 +3457,15 @@ ReturnCode_t DynamicData::set_byte_value(
         }
         else if (get_kind() == TypeKind::TK_ARRAY)
         {
+            assert(default_array_value_);
+            octet default_value;
+            auto default_res = default_array_value_->get_byte_value(default_value);
+
+            if (!!default_res && value == default_value)
+            { // don't add default elements
+                return ReturnCode_t::RETCODE_OK;
+            }
+
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
             {
@@ -3297,6 +3516,15 @@ ReturnCode_t DynamicData::set_byte_value(
     }
     else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
+        assert(default_array_value_);
+        octet default_value;
+        auto default_res = default_array_value_->get_byte_value(default_value);
+
+        if (!!default_res && value == default_value)
+        { // don't add default elements
+            return ReturnCode_t::RETCODE_OK;
+        }
+
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
         {
@@ -3434,6 +3662,15 @@ ReturnCode_t DynamicData::set_bool_value(
         }
         else if (get_kind() == TypeKind::TK_ARRAY)
         {
+            assert(default_array_value_);
+            bool default_value;
+            auto default_res = default_array_value_->get_bool_value(default_value);
+
+            if (!!default_res && value == default_value)
+            { // don't add default elements
+                return ReturnCode_t::RETCODE_OK;
+            }
+
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
             {
@@ -3506,6 +3743,15 @@ ReturnCode_t DynamicData::set_bool_value(
     }
     else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
+        assert(default_array_value_);
+        bool default_value;
+        auto default_res = default_array_value_->get_bool_value(default_value);
+
+        if (!!default_res && value == default_value)
+        { // don't add default elements
+            return ReturnCode_t::RETCODE_OK;
+        }
+
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
         {
@@ -3602,6 +3848,15 @@ ReturnCode_t DynamicData::set_string_value(
         }
         else if (get_kind() == TypeKind::TK_ARRAY)
         {
+            assert(default_array_value_);
+            std::string default_value;
+            auto default_res = default_array_value_->get_string_value(default_value);
+
+            if (!!default_res && value == default_value)
+            { // don't add default elements
+                return ReturnCode_t::RETCODE_OK;
+            }
+
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
             {
@@ -3641,6 +3896,15 @@ ReturnCode_t DynamicData::set_string_value(
     }
     else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
+        assert(default_array_value_);
+        std::string default_value;
+        auto default_res = default_array_value_->get_string_value(default_value);
+
+        if (!!default_res && value == default_value)
+        { // don't add default elements
+            return ReturnCode_t::RETCODE_OK;
+        }
+
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
         {
@@ -3764,6 +4028,15 @@ ReturnCode_t DynamicData::set_wstring_value(
         }
         else if (get_kind() == TypeKind::TK_ARRAY)
         {
+            assert(default_array_value_);
+            std::wstring default_value;
+            auto default_res = default_array_value_->get_wstring_value(default_value);
+
+            if (!!default_res && value == default_value)
+            { // don't add default elements
+                return ReturnCode_t::RETCODE_OK;
+            }
+
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
             {
@@ -3803,6 +4076,15 @@ ReturnCode_t DynamicData::set_wstring_value(
     }
     else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
+        assert(default_array_value_);
+        std::wstring default_value;
+        auto default_res = default_array_value_->get_wstring_value(default_value);
+
+        if (!!default_res && value == default_value)
+        { // don't add default elements
+            return ReturnCode_t::RETCODE_OK;
+        }
+
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
         {
@@ -3906,6 +4188,15 @@ ReturnCode_t DynamicData::set_enum_value(
         }
         else if (get_kind() == TypeKind::TK_ARRAY)
         {
+            assert(default_array_value_);
+            uint32_t default_value;
+            auto default_res = default_array_value_->get_enum_value(default_value);
+
+            if (!!default_res && value == default_value)
+            { // don't add default elements
+                return ReturnCode_t::RETCODE_OK;
+            }
+
             ReturnCode_t insertResult = insert_array_data(id);
             if (insertResult == ReturnCode_t::RETCODE_OK)
             {
@@ -3941,6 +4232,15 @@ ReturnCode_t DynamicData::set_enum_value(
     }
     else if (get_kind() == TypeKind::TK_ARRAY && id != MEMBER_ID_INVALID)
     {
+        assert(default_array_value_);
+        uint32_t default_value;
+        auto default_res = default_array_value_->get_enum_value(default_value);
+
+        if (!!default_res && value == default_value)
+        { // don't add default elements
+            return ReturnCode_t::RETCODE_OK;
+        }
+
         ReturnCode_t insertResult = insert_array_data(id);
         if (insertResult == ReturnCode_t::RETCODE_OK)
         {

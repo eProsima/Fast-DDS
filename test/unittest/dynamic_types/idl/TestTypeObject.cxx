@@ -937,7 +937,7 @@ const TypeObject* GetMinimalBasicStructObject()
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    MemberId memberId = 0;
+    MemberId memberId{0};
     MinimalStructMember mst_my_bool;
     mst_my_bool.common().member_id(memberId++);
     mst_my_bool.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -1261,7 +1261,7 @@ const TypeObject* GetCompleteBasicStructObject()
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    MemberId memberId = 0;
+    MemberId memberId{0};
     CompleteStructMember cst_my_bool;
     cst_my_bool.common().member_id(memberId++);
     cst_my_bool.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -2497,7 +2497,7 @@ const TypeObject* GetMinimalComplexStructObject()
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    MemberId memberId = 0;
+    MemberId memberId{0};
     MinimalStructMember mst_my_octet;
     mst_my_octet.common().member_id(memberId++);
     mst_my_octet.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -2956,7 +2956,7 @@ const TypeObject* GetCompleteComplexStructObject()
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    MemberId memberId = 0;
+    MemberId memberId{0};
     CompleteStructMember cst_my_octet;
     cst_my_octet.common().member_id(memberId++);
     cst_my_octet.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -3386,7 +3386,7 @@ const TypeObject* GetMinimalMyUnionObject()
 
     type_object->minimal().union_type().discriminator().common().type_id(*GetMyEnumIdentifier(false));
 
-    MemberId memberId = 0;
+    MemberId memberId{0};
     MinimalUnionMember mst_basic;
     mst_basic.common().member_id(memberId++);
     mst_basic.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -3485,7 +3485,7 @@ const TypeObject* GetCompleteMyUnionObject()
     type_object->complete().union_type().discriminator().common().type_id(*GetMyEnumIdentifier(true));
 
 
-    MemberId memberId = 0;
+    MemberId memberId{0};
     CompleteUnionMember cst_basic;
     cst_basic.common().member_id(memberId++);
     cst_basic.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -3605,7 +3605,7 @@ const TypeObject* GetMinimalMyUnion2Object()
 
     type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("octet", false));
 
-    MemberId memberId = 0;
+    MemberId memberId{0};
     MinimalUnionMember mst_uno;
     mst_uno.common().member_id(memberId++);
     mst_uno.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -3725,7 +3725,7 @@ const TypeObject* GetCompleteMyUnion2Object()
     type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("octet", false));
 
 
-    MemberId memberId = 0;
+    MemberId memberId{0};
     CompleteUnionMember cst_uno;
     cst_uno.common().member_id(memberId++);
     cst_uno.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -3853,7 +3853,7 @@ const TypeObject* GetMinimalCompleteStructObject()
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    MemberId memberId = 0;
+    MemberId memberId{0};
     MinimalStructMember mst_my_union;
     mst_my_union.common().member_id(memberId++);
     mst_my_union.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -3939,7 +3939,7 @@ const TypeObject* GetCompleteCompleteStructObject()
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    MemberId memberId = 0;
+    MemberId memberId{0};
     CompleteStructMember cst_my_union;
     cst_my_union.common().member_id(memberId++);
     cst_my_union.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -4046,7 +4046,7 @@ const TypeObject* GetMinimalKeyedStructObject()
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    MemberId memberId = 0;
+    MemberId memberId{0};
     MinimalStructMember mst_key;
     mst_key.common().member_id(memberId++);
     mst_key.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -4133,7 +4133,7 @@ const TypeObject* GetCompleteKeyedStructObject()
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    MemberId memberId = 0;
+    MemberId memberId{0};
     CompleteStructMember cst_key;
     cst_key.common().member_id(memberId++);
     cst_key.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported

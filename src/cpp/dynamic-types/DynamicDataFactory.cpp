@@ -151,6 +151,7 @@ DynamicData* DynamicDataFactory::create_data(
                 if (pType->get_kind() == TypeKind::TK_ARRAY)
                 {
                     DynamicData* defaultArrayData = new DynamicData(pType->get_element_type());
+                    assert(nullptr != defaultArrayData);
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
                     {
                         std::unique_lock<std::recursive_mutex> scoped(mutex_);

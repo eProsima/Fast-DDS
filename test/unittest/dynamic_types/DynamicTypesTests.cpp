@@ -353,6 +353,12 @@ TEST_F(DynamicTypesTests, member_id_unit_tests)
     MemberId id1 = 1_id;
     EXPECT_EQ(id1, 1u);
 
+    // • Using signed integers
+    MemberId ids1{-1ll}, ids2{1ll};
+
+    EXPECT_EQ(ids1, 0); // truncate
+    EXPECT_EQ(ids2, 1);
+
     // • Using integer primitives
     MemberId id2{1u}, id3{1}, id4{1l}, id5{1ul}, id6{1ll}, id7{1ull};
 

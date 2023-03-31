@@ -138,8 +138,8 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetKeyedStructType()
         DynamicTypeBuilder_ptr octet_builder = m_factory.create_builder_copy(
                 *m_factory.create_byte_builder());
         octet_builder->apply_annotation(ANNOTATION_KEY_ID, "value", "true");
-        keyedStruct_builder->add_member(0, "key", octet_builder->build());
-        keyedStruct_builder->add_member(1, "basic", GetBasicStructType());
+        keyedStruct_builder->add_member(0_id, "key", octet_builder->build());
+        keyedStruct_builder->add_member(1_id, "basic", GetBasicStructType());
         keyedStruct_builder->apply_annotation(ANNOTATION_KEY_ID, "value", "true");
         keyedStruct_builder->set_name("KeyedStruct");
         m_KeyedStructType = keyedStruct_builder->build();
@@ -154,9 +154,9 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMyEnumType()
     {
         DynamicTypeBuilder_ptr myEnum_builder = m_factory.create_enum_builder();
         myEnum_builder->set_name("MyEnum");
-        myEnum_builder->add_member(0, "A");
-        myEnum_builder->add_member(1, "B");
-        myEnum_builder->add_member(2, "C");
+        myEnum_builder->add_member(0_id, "A");
+        myEnum_builder->add_member(1_id, "B");
+        myEnum_builder->add_member(2_id, "C");
         m_MyEnumType = myEnum_builder->build();
     }
 
@@ -404,8 +404,8 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetUnionSwitchType()
     {
         DynamicTypeBuilder_ptr myUnion_builder = DynamicTypeBuilderFactory::get_instance().create_union_builder(
             *GetMyEnumType());
-        myUnion_builder->add_member(0, "basic", GetBasicStructType(), "A", std::vector<uint64_t>{ 0 }, false);
-        myUnion_builder->add_member(1, "complex", GetComplexStructType(), "B", std::vector<uint64_t>{ 1, 2 }, false);
+        myUnion_builder->add_member(0_id, "basic", GetBasicStructType(), "A", std::vector<uint64_t>{ 0 }, false);
+        myUnion_builder->add_member(1_id, "complex", GetComplexStructType(), "B", std::vector<uint64_t>{ 1, 2 }, false);
         myUnion_builder->set_name("MyUnion");
         m_UnionSwitchType = myUnion_builder->build();
     }
@@ -422,9 +422,9 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetUnion2SwitchType()
         DynamicType_ptr string_type = DynamicTypeBuilderFactory::get_instance().create_string_type();
         DynamicTypeBuilder_ptr myUnion2_builder = DynamicTypeBuilderFactory::get_instance().create_union_builder(
                 *octet_type);
-        myUnion2_builder->add_member(0, "uno", int32_type, "0", std::vector<uint64_t>{ 0 }, false);
-        myUnion2_builder->add_member(1, "imString", string_type, "1", std::vector<uint64_t>{ 1 }, false);
-        myUnion2_builder->add_member(2, "tres", int32_type, "2", std::vector<uint64_t>{ 2 }, false);
+        myUnion2_builder->add_member(0_id, "uno", int32_type, "0", std::vector<uint64_t>{ 0 }, false);
+        myUnion2_builder->add_member(1_id, "imString", string_type, "1", std::vector<uint64_t>{ 1 }, false);
+        myUnion2_builder->add_member(2_id, "tres", int32_type, "2", std::vector<uint64_t>{ 2 }, false);
         myUnion2_builder->set_name("MyUnion2");
         m_Union2SwitchType = myUnion2_builder->build();
     }
@@ -931,7 +931,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
             for (unsigned int k = 0; k < 4; ++k)
             {
                 MemberId array_idx = my_array_octet->get_array_index({ i, j, k });
-                my_array_octet->set_byte_value(static_cast<uint8_t>(j * k), array_idx);
+                my_array_octet->set_char8_value(static_cast<uint8_t>(j * k), array_idx);
             }
         }
         //staticData.my_union().complex().my_array_octet()[i][j][k] = j*k;
@@ -957,7 +957,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
         tempBasic->set_char16_value(L'C', tempBasic->get_member_id_by_name("my_wchar"));
         tempBasic->set_string_value("JC@eProsima", tempBasic->get_member_id_by_name("my_string"));
         tempBasic->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", tempBasic->get_member_id_by_name("my_wstring"));
-        my_array_struct->set_complex_value(tempBasic, i);
+        my_array_struct->set_complex_value(tempBasic, MemberId{i});
     }
     complex->return_loaned_value(my_array_struct);
 
@@ -1120,7 +1120,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     DynamicData* oct_array_500 = my_map_long_octet_array_500->loan_value(vId);
     for (int j = 0; j < 500; ++j)
     {
-        oct_array_500->set_byte_value(j % 256, j);
+        oct_array_500->set_byte_value(j % 256, MemberId{j});
         //staticData.my_union().complex().my_map_long_octet_array_500()[0][i] = i%256;
     }
     my_map_long_octet_array_500->return_loaned_value(oct_array_500);
@@ -1132,7 +1132,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
 
     for (int j = 0; j < 500; ++j)
     {
-        oct_array_500->set_byte_value((j + 55) % 256, j);
+        oct_array_500->set_byte_value((j + 55) % 256, MemberId{j});
         //staticData.my_union().complex().my_map_long_octet_array_500()[10][i] = (i+55)%256;
     }
     my_map_long_octet_array_500->return_loaned_value(oct_array_500);
@@ -1166,7 +1166,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     DynamicData* multi_alias_array_42 = complex->loan_value(complex->get_member_id_by_name("multi_alias_array_42"));
     for (int j = 0; j < 42; ++j)
     {
-        multi_alias_array_42->set_enum_value(j % 3, j);
+        multi_alias_array_42->set_enum_value(j % 3, MemberId{j});
         //staticData.my_union().complex().multi_alias_array_42()[i](i%3);
     }
     complex->return_loaned_value(multi_alias_array_42);
@@ -1174,10 +1174,10 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     DynamicData* my_array_arrays = complex->loan_value(complex->get_member_id_by_name("my_array_arrays"));
     for (unsigned int j = 0; j < 5; ++j)
     {
-        DynamicData* myMiniArray = my_array_arrays->loan_value(j);
+        DynamicData* myMiniArray = my_array_arrays->loan_value(MemberId{j});
         for (unsigned int k = 0; k < 2; ++k)
         {
-            myMiniArray->set_int32_value(j * k, k);
+            myMiniArray->set_int32_value(j * k, MemberId{k});
             //staticData.my_union().complex().my_array_arrays()[i][j](i*j);
         }
         my_array_arrays->return_loaned_value(myMiniArray);
@@ -1194,7 +1194,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
         seq->set_int32_value(j * 10, id);
         seq->insert_sequence_data(id);
         seq->set_int32_value(j * 100, id);
-        my_sequences_array->set_complex_value(seq, j);
+        my_sequences_array->set_complex_value(seq, MemberId{j});
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i*10);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i*100);
@@ -1459,7 +1459,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
         tempBasic->set_char16_value(L'C', tempBasic->get_member_id_by_name("my_wchar"));
         tempBasic->set_string_value("JC@eProsima", tempBasic->get_member_id_by_name("my_string"));
         tempBasic->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", tempBasic->get_member_id_by_name("my_wstring"));
-        my_array_struct->set_complex_value(tempBasic, i);
+        my_array_struct->set_complex_value(tempBasic, MemberId{i});
     }
     complex->return_loaned_value(my_array_struct);
 
@@ -1622,7 +1622,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     DynamicData* oct_array_500 = my_map_long_octet_array_500->loan_value(vId);
     for (int j = 0; j < 500; ++j)
     {
-        oct_array_500->set_byte_value(j % 256, j);
+        oct_array_500->set_byte_value(j % 256, MemberId{j});
         //staticData.my_union().complex().my_map_long_octet_array_500()[0][i] = i%256;
     }
     my_map_long_octet_array_500->return_loaned_value(oct_array_500);
@@ -1634,7 +1634,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
 
     for (int j = 0; j < 500; ++j)
     {
-        oct_array_500->set_byte_value((j + 55) % 256, j);
+        oct_array_500->set_byte_value((j + 55) % 256, MemberId{j});
         //staticData.my_union().complex().my_map_long_octet_array_500()[10][i] = (i+55)%256;
     }
     my_map_long_octet_array_500->return_loaned_value(oct_array_500);
@@ -1668,7 +1668,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     DynamicData* multi_alias_array_42 = complex->loan_value(complex->get_member_id_by_name("multi_alias_array_42"));
     for (int j = 0; j < 42; ++j)
     {
-        multi_alias_array_42->set_enum_value(j % 3, j);
+        multi_alias_array_42->set_enum_value(j % 3, MemberId{j});
         //staticData.my_union().complex().multi_alias_array_42()[i](i%3);
     }
     complex->return_loaned_value(multi_alias_array_42);
@@ -1676,10 +1676,10 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     DynamicData* my_array_arrays = complex->loan_value(complex->get_member_id_by_name("my_array_arrays"));
     for (unsigned int j = 0; j < 5; ++j)
     {
-        DynamicData* myMiniArray = my_array_arrays->loan_value(j);
+        DynamicData* myMiniArray = my_array_arrays->loan_value(MemberId{j});
         for (unsigned int k = 0; k < 2; ++k)
         {
-            myMiniArray->set_int32_value(j * k, k);
+            myMiniArray->set_int32_value(j * k, MemberId{k});
             //staticData.my_union().complex().my_array_arrays()[i][j](i*j);
         }
         my_array_arrays->return_loaned_value(myMiniArray);
@@ -1696,7 +1696,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
         seq->set_int32_value(j * 10, id);
         seq->insert_sequence_data(id);
         seq->set_int32_value(j * 100, id);
-        my_sequences_array->set_complex_value(seq, j);
+        my_sequences_array->set_complex_value(seq, MemberId{j});
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i*10);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i*100);
@@ -1918,7 +1918,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
         tempBasic->set_char16_value(L'C', tempBasic->get_member_id_by_name("my_wchar"));
         tempBasic->set_string_value("JC@eProsima", tempBasic->get_member_id_by_name("my_string"));
         tempBasic->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", tempBasic->get_member_id_by_name("my_wstring"));
-        my_array_struct->set_complex_value(tempBasic, i);
+        my_array_struct->set_complex_value(tempBasic, MemberId{i});
     }
     complex->return_loaned_value(my_array_struct);
 
@@ -2081,7 +2081,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     DynamicData* oct_array_500 = my_map_long_octet_array_500->loan_value(vId);
     for (int j = 0; j < 500; ++j)
     {
-        oct_array_500->set_byte_value(j % 256, j);
+        oct_array_500->set_byte_value(j % 256, MemberId{j});
         //staticData.my_union().complex().my_map_long_octet_array_500()[0][i] = i%256;
     }
     my_map_long_octet_array_500->return_loaned_value(oct_array_500);
@@ -2093,7 +2093,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
 
     for (int j = 0; j < 500; ++j)
     {
-        oct_array_500->set_byte_value((j + 55) % 256, j);
+        oct_array_500->set_byte_value((j + 55) % 256, MemberId{j});
         //staticData.my_union().complex().my_map_long_octet_array_500()[10][i] = (i+55)%256;
     }
     my_map_long_octet_array_500->return_loaned_value(oct_array_500);
@@ -2127,7 +2127,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     DynamicData* multi_alias_array_42 = complex->loan_value(complex->get_member_id_by_name("multi_alias_array_42"));
     for (int j = 0; j < 42; ++j)
     {
-        multi_alias_array_42->set_enum_value(j % 3, j);
+        multi_alias_array_42->set_enum_value(j % 3, MemberId{j});
         //staticData.my_union().complex().multi_alias_array_42()[i](i%3);
     }
     complex->return_loaned_value(multi_alias_array_42);
@@ -2135,10 +2135,10 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     DynamicData* my_array_arrays = complex->loan_value(complex->get_member_id_by_name("my_array_arrays"));
     for (unsigned int j = 0; j < 5; ++j)
     {
-        DynamicData* myMiniArray = my_array_arrays->loan_value(j);
+        DynamicData* myMiniArray = my_array_arrays->loan_value(MemberId{j});
         for (unsigned int k = 0; k < 2; ++k)
         {
-            myMiniArray->set_int32_value(j * k, k);
+            myMiniArray->set_int32_value(j * k, MemberId{k});
             //staticData.my_union().complex().my_array_arrays()[i][j](i*j);
         }
         my_array_arrays->return_loaned_value(myMiniArray);
@@ -2155,7 +2155,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
         seq->set_int32_value(j * 10, id);
         seq->insert_sequence_data(id);
         seq->set_int32_value(j * 100, id);
-        my_sequences_array->set_complex_value(seq, j);
+        my_sequences_array->set_complex_value(seq, MemberId{j});
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i*10);
         // staticData.my_union().complex().my_sequences_array()[i].push_back(i*100);

@@ -51,6 +51,14 @@ public:
         : value_(static_cast<integer_type>(i))
     {}
 
+    // support for signed construction
+    template<typename type,
+             typename std::enable_if<std::is_integral<type>::value &&
+                                     std::is_signed<type>::value, bool>::type = 0>
+    explicit member_id(type i)
+        : value_(i < 0 ? 0 : i)
+    {}
+
     // interaction with integers, note invalid values propagate
     member_id& operator=(const integer_type& i)
     {
@@ -318,10 +326,20 @@ namespace detail {
 template <class CharT, class Traits>
 struct member_id_invalid
 {
-    static const std::basic_string<CharT, Traits> value;
+    static const std::basic_string<CharT, Traits> get();
 };
 
-const std::string member_id_invalid<std::string::value_type, std::string::traits_type>::value = "MEMBER_ID_INVALID";
+template<>
+inline const std::string member_id_invalid<std::string::value_type, std::string::traits_type>::get()
+{
+    return "MEMBER_ID_INVALID";
+}
+
+template<>
+inline const std::wstring member_id_invalid<std::wstring::value_type, std::wstring::traits_type>::get()
+{
+    return L"MEMBER_ID_INVALID";
+}
 
 } // detail namespace
 
@@ -336,7 +354,7 @@ std::basic_istream<CharT, Traits>& operator>>(std::basic_istream<CharT, Traits>&
     else // check if is MEMBER_ID_INVALID
     {
         istr.clear();
-        const auto & val = detail::member_id_invalid<CharT, Traits>::value;
+        const auto & val = detail::member_id_invalid<CharT, Traits>::get();
         auto res = std::mismatch(val.begin(), val.end(), std::istream_iterator<CharT, CharT, Traits>(istr));
         if (val.end() == res.first)
         {
@@ -353,7 +371,7 @@ std::basic_ostream<CharT, Traits>& operator<<(std::basic_ostream<CharT, Traits>&
 {
     if(!x)
     {
-        return ostr << detail::member_id_invalid<CharT, Traits>::value;
+        return ostr << detail::member_id_invalid<CharT, Traits>::get();
     }
     return ostr << *x;
 }
