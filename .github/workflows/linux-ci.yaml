@@ -93,8 +93,7 @@ jobs:
         if: steps.testing.outcome != 'success'
         run: |
           echo '## ${{ matrix.runner-os }}' >> $GITHUB_STEP_SUMMARY
-          echo '| Test | Reason | <<EOF' >> $GITHUB_STEP_SUMMARY
+          echo '| Test | Reason |' >> $GITHUB_STEP_SUMMARY
           echo '|---|---|' >> $GITHUB_STEP_SUMMARY'
           grep -rin "(Failed\|(Child\|(Timeout" log/latest_test/fastrtps/stdout_stderr.log | awk -F "[-|(|)]+" '//{print "|" $2 "| " $3 " |"}' >> $GITHUB_STEP_SUMMARY
-          echo 'EOF' >> $$GITHUB_STEP_SUMMARY
           exit 1
