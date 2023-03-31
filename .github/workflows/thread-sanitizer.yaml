@@ -31,6 +31,10 @@ env:
   TSAN_OPTIONS: second_deadlock_stack=1
   # ubuntu host doesn't have an environment SHELL value (docker and vm images does)???
   SHELL: /bin/bash
+  # GCC 11.3 (Ubuntu Jammy default) produces several false positives regarding timed synchronization protocols
+  # These issues were fixed in GCC 12 so we upgrade to that version.
+  CC: gcc-12
+  CXX: g++-12
 
 defaults:
   run:
@@ -41,7 +45,7 @@ jobs:
     name: Sanitizer Evaluation
     if: ${{ !(contains(github.event.pull_request.labels.*.name, 'no-test') ||
               contains(github.event.pull_request.labels.*.name, 'skip-ci')) }}
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Download the sanitizers cmake module and apply some fixes
         run: |
