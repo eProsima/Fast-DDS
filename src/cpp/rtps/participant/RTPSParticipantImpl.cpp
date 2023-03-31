@@ -2534,6 +2534,19 @@ bool RTPSParticipantImpl::is_reader_ignored(
 bool RTPSParticipantImpl::ignore_participant(
         const GuidPrefix_t& participant_guid)
 {
+    {
+        shared_lock<eprosima::shared_mutex> _(mp_builtinProtocols->getDiscoveryMutex());
+
+        for (auto server_it = m_att.builtin.discovery_config.m_DiscoveryServers.begin();
+                server_it != m_att.builtin.discovery_config.m_DiscoveryServers.end(); server_it++)
+        {
+            if (server_it->guidPrefix == participant_guid)
+            {
+                EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, "Cannot ignore one of this participant Discovery Servers");
+                return false;
+            }
+        }
+    }
     if (!is_participant_ignored(participant_guid))
     {
         {
