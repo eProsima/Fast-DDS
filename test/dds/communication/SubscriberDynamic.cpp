@@ -41,6 +41,7 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps::types::literals;
 
 class ParListener : public DomainParticipantListener
 {
@@ -376,11 +377,11 @@ int main(
 
                     ++number_samples;
 
-                    sample->get_string_value(message, 0);
-                    sample->get_uint32_value(index, 1);
+                    sample->get_string_value(message, 0_id);
+                    sample->get_uint32_value(index, 1_id);
 
-                    types::DynamicData* inner = sample->loan_value(2);
-                    inner->get_byte_value(count, 0);
+                    types::DynamicData* inner = sample->loan_value(2_id);
+                    inner->get_byte_value(count, 0_id);
                     sample->return_loaned_value(inner);
 
                     std::cout << "Received sample: index(" << index << "), message("

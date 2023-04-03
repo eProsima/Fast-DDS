@@ -556,7 +556,7 @@ void ThroughputPublisher::run(
             }
 
             // Modify the data Sample
-            dynamic_data_->set_uint32_value(0, 0);
+            dynamic_data_->set_uint32_value(0, 0_id);
             DynamicData* member_data = dynamic_data_->loan_value(
                 dynamic_data_->get_member_id_at_index(1));
 
@@ -737,7 +737,7 @@ bool ThroughputPublisher::test(
         {
             if (dynamic_types_)
             {
-                dynamic_data_->set_uint32_value(++seqnum, 0);
+                dynamic_data_->set_uint32_value(++seqnum, 0_id);
                 data_writer_->write(dynamic_data_);
             }
             else if (data_loans_)

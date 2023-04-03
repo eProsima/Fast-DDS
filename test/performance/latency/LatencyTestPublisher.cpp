@@ -577,8 +577,8 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
 
         // Check if is the expected echo message
         if ((pub->dynamic_types_
-                && (pub->dynamic_data_in_->get_uint32_value(0)
-                != pub->dynamic_data_out_->get_uint32_value(0)))
+                && (pub->dynamic_data_in_->get_uint32_value(0_id)
+                != pub->dynamic_data_out_->get_uint32_value(0_id)))
                 || (!pub->dynamic_types_
                 && (pub->latency_data_in_->seqnum
                 != pub->latency_data_out_->seqnum)))
@@ -606,7 +606,7 @@ void LatencyTestPublisher::LatencyDataReaderListener::on_data_available(
             // Reset seqnum from out data
             if (pub->dynamic_types_)
             {
-                pub->dynamic_data_out_->set_uint32_value(0, 0);
+                pub->dynamic_data_out_->set_uint32_value(0, 0_id);
             }
             else
             {
@@ -788,8 +788,8 @@ bool LatencyTestPublisher::test(
 
         if (dynamic_types_)
         {
-            dynamic_data_in_->set_uint32_value(0, 0);
-            dynamic_data_out_->set_uint32_value(count, 0);
+            dynamic_data_in_->set_uint32_value(0, 0_id);
+            dynamic_data_out_->set_uint32_value(count, 0_id);
             data = dynamic_data_out_;
         }
         else

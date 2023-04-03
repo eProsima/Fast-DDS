@@ -1433,7 +1433,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
             for (unsigned int k = 0; k < 4; ++k)
             {
                 MemberId array_idx = my_array_octet->get_array_index({ i, j, k });
-                my_array_octet->set_byte_value(static_cast<uint8_t>(j * k), array_idx);
+                my_array_octet->set_char8_value(static_cast<uint8_t>(j * k), array_idx);
             }
         }
         //staticData.my_union().complex().my_array_octet()[i][j][k] = j*k;
@@ -1892,7 +1892,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
             for (unsigned int k = 0; k < 4; ++k)
             {
                 MemberId array_idx = my_array_octet->get_array_index({ i, j, k });
-                my_array_octet->set_byte_value(static_cast<uint8_t>(j * k), array_idx);
+                my_array_octet->set_char8_value(static_cast<uint8_t>(j * k), array_idx);
             }
         }
         //staticData.my_union().complex().my_array_octet()[i][j][k] = j*k;

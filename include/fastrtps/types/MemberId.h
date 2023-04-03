@@ -15,8 +15,6 @@
 #ifndef MEMBER_ID_H
 #define MEMBER_ID_H
 
-#include <fastcdr/Cdr.h>
-
 #include <cstdint>
 #include <istream>
 #include <iterator>
@@ -234,14 +232,16 @@ public:
         return value_ >= invalid;
     }
 
-    // CDR input/output support
+    // CDR input/output support (avoid dependency using templates)
 
-    fastcdr::Cdr& serialize(fastcdr::Cdr& buf) const
+    template<class Cdr>
+    Cdr& serialize(Cdr& buf) const
     {
         return buf << **this;
     }
 
-    fastcdr::Cdr& deserialize(fastcdr::Cdr& buf)
+    template<class Cdr>
+    Cdr& deserialize(Cdr& buf)
     {
         base tmp;
         buf >> tmp;

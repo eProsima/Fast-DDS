@@ -325,10 +325,6 @@ void TypeObjectFactory::fill_minimal_information(
         case TypeKind::TK_CHAR16:
         case TypeKind::TK_STRING8:
         case TypeKind::TK_STRING16:
-        case TypeKind::TI_STRING8_SMALL:
-        case TypeKind::TI_STRING8_LARGE:
-        case TypeKind::TI_STRING16_SMALL:
-        case TypeKind::TI_STRING16_LARGE:
             // primitives lack dependendants
             break;
         case TypeKind::TK_SEQUENCE:
@@ -489,6 +485,17 @@ void TypeObjectFactory::fill_minimal_information(
         case TypeKind::EK_COMPLETE:
             // Cannot happen
             break;
+        case TypeKind::TI_STRING8_SMALL:
+        case TypeKind::TI_STRING8_LARGE:
+        case TypeKind::TI_STRING16_SMALL:
+        case TypeKind::TI_STRING16_LARGE:
+        case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
+        case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
+        case TypeKind::TI_PLAIN_ARRAY_SMALL:
+        case TypeKind::TI_PLAIN_ARRAY_LARGE:
+        case TypeKind::TI_PLAIN_MAP_SMALL:
+        case TypeKind::TI_PLAIN_MAP_LARGE:
+            break; // lack dependencies
         default:
             // TODO:BARRO check the missing cases
             assert(0);
@@ -587,25 +594,23 @@ void TypeObjectFactory::fill_complete_information(
 
     switch (ident->_d())
     {
-        /*
-           case TypeKind::TK_BOOLEAN:
-           case TypeKind::TK_BYTE:
-           case TypeKind::TK_INT16:
-           case TypeKind::TK_INT32:
-           case TypeKind::TK_INT64:
-           case TypeKind::TK_UINT16:
-           case TypeKind::TK_UINT32:
-           case TypeKind::TK_UINT64:
-           case TypeKind::TK_FLOAT32:
-           case TypeKind::TK_FLOAT64:
-           case TypeKind::TK_FLOAT128:
-           case TypeKind::TK_CHAR8:
-           case TypeKind::TK_CHAR16:
-           case TypeKind::TK_STRING8:
-           case TypeKind::TK_STRING16:
-            info->complete().dependent_typeid_count(0);
+        case TypeKind::TK_BOOLEAN:
+        case TypeKind::TK_BYTE:
+        case TypeKind::TK_INT16:
+        case TypeKind::TK_INT32:
+        case TypeKind::TK_INT64:
+        case TypeKind::TK_UINT16:
+        case TypeKind::TK_UINT32:
+        case TypeKind::TK_UINT64:
+        case TypeKind::TK_FLOAT32:
+        case TypeKind::TK_FLOAT64:
+        case TypeKind::TK_FLOAT128:
+        case TypeKind::TK_CHAR8:
+        case TypeKind::TK_CHAR16:
+        case TypeKind::TK_STRING8:
+        case TypeKind::TK_STRING16:
+            // lack dependents
             break;
-         */
         case TypeKind::TK_SEQUENCE:
         {
             info->complete().dependent_typeid_count(1);
@@ -858,7 +863,17 @@ void TypeObjectFactory::fill_complete_information(
                     break;
             }
             break;
-
+        case TypeKind::TI_STRING8_SMALL:
+        case TypeKind::TI_STRING8_LARGE:
+        case TypeKind::TI_STRING16_SMALL:
+        case TypeKind::TI_STRING16_LARGE:
+        case TypeKind::TI_PLAIN_SEQUENCE_SMALL:
+        case TypeKind::TI_PLAIN_SEQUENCE_LARGE:
+        case TypeKind::TI_PLAIN_ARRAY_SMALL:
+        case TypeKind::TI_PLAIN_ARRAY_LARGE:
+        case TypeKind::TI_PLAIN_MAP_SMALL:
+        case TypeKind::TI_PLAIN_MAP_LARGE:
+            break; // lack dependencies
         default:
             // TODO:BARRO check the missing cases
             assert(0);

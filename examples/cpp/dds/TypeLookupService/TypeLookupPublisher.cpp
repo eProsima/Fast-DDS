@@ -35,6 +35,7 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps::types::literals;
 
 TypeLookupPublisher::TypeLookupPublisher()
     : mp_participant(nullptr)
@@ -56,10 +57,10 @@ bool TypeLookupPublisher::init()
     TypeSupport m_type(new types::DynamicPubSubType(dyn_type));
     m_Hello = types::DynamicDataFactory::get_instance()->create_data(dyn_type);
 
-    m_Hello->set_string_value("Hello DDS Dynamic World", 0);
-    m_Hello->set_uint32_value(0, 1);
-    types::DynamicData* inner = m_Hello->loan_value(2);
-    inner->set_byte_value(10, 0);
+    m_Hello->set_string_value("Hello DDS Dynamic World", 0_id);
+    m_Hello->set_uint32_value(0, 1_id);
+    types::DynamicData* inner = m_Hello->loan_value(2_id);
+    inner->set_byte_value(10, 0_id);
     m_Hello->return_loaned_value(inner);
 
     DomainParticipantQos pqos;
@@ -166,9 +167,9 @@ void TypeLookupPublisher::runThread(
             if (publish(false))
             {
                 std::string message;
-                m_Hello->get_string_value(message, 0);
+                m_Hello->get_string_value(message, 0_id);
                 uint32_t index;
-                m_Hello->get_uint32_value(index, 1);
+                m_Hello->get_uint32_value(index, 1_id);
                 std::cout << "Message: " << message << " with index: " << index << " SENT" << std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
@@ -185,9 +186,9 @@ void TypeLookupPublisher::runThread(
             else
             {
                 std::string message;
-                m_Hello->get_string_value(message, 0);
+                m_Hello->get_string_value(message, 0_id);
                 uint32_t index;
-                m_Hello->get_uint32_value(index, 1);
+                m_Hello->get_uint32_value(index, 1_id);
                 std::cout << "Message: " << message << " with index: " << index << " SENT" << std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
@@ -220,12 +221,12 @@ bool TypeLookupPublisher::publish(
     if (m_listener.firstConnected || !waitForListener || m_listener.n_matched > 0)
     {
         uint32_t index;
-        m_Hello->get_uint32_value(index, 1);
-        m_Hello->set_uint32_value(index + 1, 1);
-        types::DynamicData* inner = m_Hello->loan_value(2);
+        m_Hello->get_uint32_value(index, 1_id);
+        m_Hello->set_uint32_value(index + 1, 1_id);
+        types::DynamicData* inner = m_Hello->loan_value(2_id);
         octet inner_count;
-        inner->get_byte_value(inner_count, 0);
-        inner->set_byte_value(inner_count + 1, 0);
+        inner->get_byte_value(inner_count, 0_id);
+        inner->set_byte_value(inner_count + 1, 0_id);
         m_Hello->return_loaned_value(inner);
         writer_->write(m_Hello.get());
         return true;

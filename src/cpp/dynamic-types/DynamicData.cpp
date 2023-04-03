@@ -312,7 +312,12 @@ bool DynamicData::equals(
                                 other->values_.begin(),
                                 [](const decltype(values_)::value_type& l, const decltype(values_)::value_type& r)
                                 {
-                                    return ((DynamicData*)l.second)->equals((DynamicData*)r.second);
+                                    DynamicData* left = (DynamicData*)l.second;
+                                    DynamicData* right = (DynamicData*)r.second;
+                                    bool res = left->equals(right);
+                                    return res;
+                                    // TODO: undo once finished debugging
+                                    // return ((DynamicData*)l.second)->equals((DynamicData*)r.second);
                                 });
                 }
                 else

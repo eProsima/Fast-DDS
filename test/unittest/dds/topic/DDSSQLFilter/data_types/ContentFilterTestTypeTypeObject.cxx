@@ -658,7 +658,7 @@ const TypeObject* GetMinimalStructTypeObject()
     type_object->minimal().struct_type().struct_flags().IS_NESTED(true);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    MemberId memberId = 0;
+    MemberId memberId{0};
     MinimalStructMember mst_char_field;
     mst_char_field.common().member_id(memberId++);
     mst_char_field.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -979,7 +979,7 @@ const TypeObject* GetCompleteStructTypeObject()
     type_object->complete().struct_type().struct_flags().IS_NESTED(true);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    MemberId memberId = 0;
+    MemberId memberId{0};
     CompleteStructMember cst_char_field;
     cst_char_field.common().member_id(memberId++);
     cst_char_field.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -1305,7 +1305,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    MemberId memberId = 0;
+    MemberId memberId{0};
     MinimalStructMember mst_char_field;
     mst_char_field.common().member_id(memberId++);
     mst_char_field.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -2555,7 +2555,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    MemberId memberId = 0;
+    MemberId memberId{0};
     CompleteStructMember cst_char_field;
     cst_char_field.common().member_id(memberId++);
     cst_char_field.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported

@@ -33,6 +33,7 @@
 #include <thread>
 
 using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastrtps::types::literals;
 
 HelloWorldPublisher::HelloWorldPublisher()
     : mp_participant(nullptr)
@@ -56,9 +57,9 @@ bool HelloWorldPublisher::init()
     TypeSupport m_type(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type));
     m_Hello = eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(dyn_type);
 
-    m_Hello->set_string_value("Hello DDS Dynamic World", 0);
-    m_Hello->set_uint32_value(0, 1);
-    eprosima::fastrtps::types::DynamicData* array = m_Hello->loan_value(2);
+    m_Hello->set_string_value("Hello DDS Dynamic World", 0_id);
+    m_Hello->set_uint32_value(0, 1_id);
+    eprosima::fastrtps::types::DynamicData* array = m_Hello->loan_value(2_id);
     array->set_uint32_value(10, array->get_array_index({0, 0}));
     array->set_uint32_value(20, array->get_array_index({1, 0}));
     array->set_uint32_value(30, array->get_array_index({2, 0}));
@@ -163,11 +164,11 @@ void HelloWorldPublisher::runThread(
             if (publish(false))
             {
                 std::string message;
-                m_Hello->get_string_value(message, 0);
+                m_Hello->get_string_value(message, 0_id);
                 uint32_t index;
-                m_Hello->get_uint32_value(index, 1);
+                m_Hello->get_uint32_value(index, 1_id);
                 std::string aux_array = "[";
-                eprosima::fastrtps::types::DynamicData* array = m_Hello->loan_value(2);
+                eprosima::fastrtps::types::DynamicData* array = m_Hello->loan_value(2_id);
                 for (uint32_t i = 0; i < 5; ++i)
                 {
                     aux_array += "[";
@@ -197,11 +198,11 @@ void HelloWorldPublisher::runThread(
             else
             {
                 std::string message;
-                m_Hello->get_string_value(message, 0);
+                m_Hello->get_string_value(message, 0_id);
                 uint32_t index;
-                m_Hello->get_uint32_value(index, 1);
+                m_Hello->get_uint32_value(index, 1_id);
                 std::string aux_array = "[";
-                eprosima::fastrtps::types::DynamicData* array = m_Hello->loan_value(2);
+                eprosima::fastrtps::types::DynamicData* array = m_Hello->loan_value(2_id);
                 for (uint32_t i = 0; i < 5; ++i)
                 {
                     aux_array += "[";
@@ -247,10 +248,10 @@ bool HelloWorldPublisher::publish(
     if (m_listener.firstConnected || !waitForListener || m_listener.n_matched > 0)
     {
         uint32_t index;
-        m_Hello->get_uint32_value(index, 1);
-        m_Hello->set_uint32_value(index + 1, 1);
+        m_Hello->get_uint32_value(index, 1_id);
+        m_Hello->set_uint32_value(index + 1, 1_id);
 
-        eprosima::fastrtps::types::DynamicData* array = m_Hello->loan_value(2);
+        eprosima::fastrtps::types::DynamicData* array = m_Hello->loan_value(2_id);
         array->set_uint32_value(10 + index, array->get_array_index({0, 0}));
         array->set_uint32_value(20 + index, array->get_array_index({1, 0}));
         array->set_uint32_value(30 + index, array->get_array_index({2, 0}));

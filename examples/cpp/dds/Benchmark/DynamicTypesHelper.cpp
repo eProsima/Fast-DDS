@@ -34,7 +34,7 @@ DynamicData* DynamicTypesHelper::CreateData()
 {
     DynamicType_ptr pBaseType = DynamicTypeBuilderFactory::get_instance().create_uint32_type();
     DynamicTypeBuilder_ptr pBuilder = DynamicTypeBuilderFactory::get_instance().create_struct_builder();
-    pBuilder->add_member(0, "uint", pBaseType);
+    pBuilder->add_member(0_id, "uint", pBaseType);
     pBuilder->set_name("Dyn_BenchMark");
     DynamicType_ptr pType = pBuilder->build();
     return DynamicDataFactory::get_instance()->create_data(pType);
@@ -228,9 +228,9 @@ DynamicType_ptr DynamicTypesHelper::GetMyEnumType()
 {
     DynamicTypeBuilder_ptr myEnum_builder = DynamicTypeBuilderFactory::get_instance().create_enum_builder();
     myEnum_builder->set_name("MyEnum");
-    myEnum_builder->add_member(0, "A");
-    myEnum_builder->add_member(1, "B");
-    myEnum_builder->add_member(2, "C");
+    myEnum_builder->add_member(0_id, "A");
+    myEnum_builder->add_member(1_id, "B");
+    myEnum_builder->add_member(2_id, "C");
     return myEnum_builder->build();
 }
 
@@ -267,8 +267,8 @@ DynamicType_ptr DynamicTypesHelper::GetUnionSwitchType()
 {
     DynamicTypeBuilder_ptr myUnion_builder = DynamicTypeBuilderFactory::get_instance().create_union_builder(
         *GetMyEnumType());
-    myUnion_builder->add_member(0, "basic", GetBasicStructType(), "A", std::vector<uint64_t>{ 0 }, false);
-    myUnion_builder->add_member(1, "complex", GetComplexStructType(), "B", std::vector<uint64_t>{ 1, 2 }, false);
+    myUnion_builder->add_member(0_id, "basic", GetBasicStructType(), "A", std::vector<uint64_t>{ 0 }, false);
+    myUnion_builder->add_member(1_id, "complex", GetComplexStructType(), "B", std::vector<uint64_t>{ 1, 2 }, false);
     myUnion_builder->set_name("MyUnion");
     return myUnion_builder->build();
 }
@@ -280,9 +280,9 @@ DynamicType_ptr DynamicTypesHelper::GetUnion2SwitchType()
     DynamicType_ptr string_type = DynamicTypeBuilderFactory::get_instance().create_string_type();
     DynamicTypeBuilder_ptr myUnion2_builder = DynamicTypeBuilderFactory::get_instance().create_union_builder(
         *octet_type);
-    myUnion2_builder->add_member(0, "uno", int32_type, "0", std::vector<uint64_t>{ 0 }, false);
-    myUnion2_builder->add_member(1, "imString", string_type, "1", std::vector<uint64_t>{ 1 }, false);
-    myUnion2_builder->add_member(2, "tres", int32_type, "2", std::vector<uint64_t>{ 2 }, false);
+    myUnion2_builder->add_member(0_id, "uno", int32_type, "0", std::vector<uint64_t>{ 0 }, false);
+    myUnion2_builder->add_member(1_id, "imString", string_type, "1", std::vector<uint64_t>{ 1 }, false);
+    myUnion2_builder->add_member(2_id, "tres", int32_type, "2", std::vector<uint64_t>{ 2 }, false);
     myUnion2_builder->set_name("MyUnion2");
     return myUnion2_builder->build();
 }

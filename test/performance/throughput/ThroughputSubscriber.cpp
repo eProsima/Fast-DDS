@@ -146,7 +146,7 @@ void ThroughputSubscriber::DataReaderListener::on_data_available(
             if (info_.valid_data)
             {
                 uint32_t seq_num = sub.dynamic_types_
-                    ? sub.dynamic_data_->get_uint32_value(0)
+                    ? sub.dynamic_data_->get_uint32_value(0_id)
                     : sub.throughput_data_->seqnum;
 
                 if ((last_seq_num_ + 1) < seq_num)

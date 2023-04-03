@@ -40,6 +40,7 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps::types::literals;
 
 static bool run = true;
 
@@ -304,10 +305,10 @@ int main(
     }
 
     types::DynamicData_ptr data(types::DynamicDataFactory::get_instance()->create_data(dyn_type));
-    data->set_string_value("Hello DDS Dynamic World", 0);
-    data->set_uint32_value(1, 1);
-    types::DynamicData* inner = data->loan_value(2);
-    inner->set_byte_value(10, 0);
+    data->set_string_value("Hello DDS Dynamic World", 0_id);
+    data->set_uint32_value(1, 1_id);
+    types::DynamicData* inner = data->loan_value(2_id);
+    inner->set_byte_value(10, 0_id);
     data->return_loaned_value(inner);
 
     while (run)
@@ -315,21 +316,21 @@ int main(
         writer->write(data.get());
 
         uint32_t index;
-        data->get_uint32_value(index, 1);
+        data->get_uint32_value(index, 1_id);
 
         if (index == samples)
         {
-            data->set_uint32_value(1, 1);
+            data->set_uint32_value(1, 1_id);
         }
         else
         {
-            data->set_uint32_value(index + 1, 1);
+            data->set_uint32_value(index + 1, 1_id);
         }
 
-        inner = data->loan_value(2);
+        inner = data->loan_value(2_id);
         octet inner_count;
-        inner->get_byte_value(inner_count, 0);
-        inner->set_byte_value(inner_count + 1, 0);
+        inner->get_byte_value(inner_count, 0_id);
+        inner->set_byte_value(inner_count + 1, 0_id);
         data->return_loaned_value(inner);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(250));

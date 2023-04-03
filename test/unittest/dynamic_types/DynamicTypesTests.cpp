@@ -29,6 +29,7 @@
 #include "idl/BasicTypeObject.h"
 
 #include <fastcdr/FastBuffer.h>
+#include <fastcdr/Cdr.h>
 
 #include <tinyxml2.h>
 #include <gtest/gtest.h>
@@ -5303,7 +5304,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_MapStruct_test)
     DynamicTypeBuilder_ptr map_builder = factory.create_map_builder(
             *factory.create_int32_type(),
             *factory.create_int32_type(),
-            2);
+            7);
 
     DynamicTypeBuilder_ptr maps_builder = factory.create_struct_builder();
     maps_builder->add_member(0_id, "my_map", map_builder->build());

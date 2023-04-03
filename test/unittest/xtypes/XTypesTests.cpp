@@ -786,7 +786,7 @@ TEST_F(XTypesTests, TypeDescriptorFullyQualifiedName)
 
 TEST_F(XTypesTests, MemberDescriptorFullyQualifiedName)
 {
-    MemberId member_id = 0;
+    MemberId member_id{0};
     DynamicTypeBuilder_ptr my_builder(DynamicTypeBuilderFactory::get_instance().create_struct_builder());
     my_builder->add_member(member_id++, "x", DynamicTypeBuilderFactory::get_instance().create_float32_type());
     my_builder->add_member(member_id++, "y", DynamicTypeBuilderFactory::get_instance().create_float32_type());

@@ -93,7 +93,7 @@ const TypeObject* GetMinimalHelloWorldObject()
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    MemberId memberId = 0;
+    MemberId memberId{0};
     MinimalStructMember mst_index;
     mst_index.common().member_id(memberId++);
     mst_index.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -182,7 +182,7 @@ const TypeObject* GetCompleteHelloWorldObject()
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    MemberId memberId = 0;
+    MemberId memberId{0};
     CompleteStructMember cst_index;
     cst_index.common().member_id(memberId++);
     cst_index.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
