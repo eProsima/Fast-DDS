@@ -360,7 +360,7 @@ TEST(DDSDataWriter, OfferedDeadlineMissedListener)
     std::atomic_bool deadline_called{false};
     std::unique_lock<std::mutex> lck(mtx);
 
-    WriterWrapper(cv, deadline_called);
+    WriterWrapper writer_w(cv, deadline_called);
 
     auto ret = cv.wait_for(lck, std::chrono::seconds(1), [&]()
                     {
