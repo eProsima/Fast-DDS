@@ -320,7 +320,7 @@ TEST(DDSDataWriter, OfferedDeadlineMissedListener)
             publisher_ = participant_->create_publisher(PUBLISHER_QOS_DEFAULT);
 
             DataWriterQos dw_qos = DATAWRITER_QOS_DEFAULT;
-            dw_qos.deadline().period = Time_t(0, 1e+6);
+            dw_qos.deadline().period = Time_t(0, 1000000);
             datawriter_ = publisher_->create_datawriter(
                 topic_,
                 dw_qos);
