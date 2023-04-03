@@ -426,9 +426,7 @@ public:
      * @note This action is not reversible.
      *
      * @param handle Identifier of the remote participant to ignore
-     * @return RETURN_OK code if everything correct, error code otherwise
-     *
-     * @warning Not supported yet. Currently returns RETCODE_UNSUPPORTED
+     * @return RETURN_OK code if everything correct, RETCODE_BAD_PARAMENTER otherwise
      *
      */
     RTPS_DllAPI ReturnCode_t ignore_participant(

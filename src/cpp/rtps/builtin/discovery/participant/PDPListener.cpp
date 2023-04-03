@@ -109,6 +109,11 @@ void PDPListener::onNewCacheChangeAdded(
             change->instanceHandle = temp_participant_data_.m_key;
             guid = temp_participant_data_.m_guid;
 
+            if (parent_pdp_->getRTPSParticipant()->is_participant_ignored(guid.guidPrefix))
+            {
+                return;
+            }
+
             // Filter locators
             const auto& pattr = parent_pdp_->getRTPSParticipant()->getAttributes();
             fastdds::rtps::ExternalLocatorsProcessor::filter_remote_locators(temp_participant_data_,
@@ -147,13 +152,23 @@ void PDPListener::onNewCacheChangeAdded(
                     RTPSParticipantListener* listener = parent_pdp_->getRTPSParticipant()->getListener();
                     if (listener != nullptr)
                     {
-                        std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
-                        ParticipantDiscoveryInfo info(*pdata);
-                        info.status = status;
+                        bool should_be_ignored = false;
+                        {
+                            std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
+                            ParticipantDiscoveryInfo info(*pdata);
+                            info.status = status;
 
-                        listener->onParticipantDiscovery(
-                            parent_pdp_->getRTPSParticipant()->getUserRTPSParticipant(),
-                            std::move(info));
+
+                            listener->onParticipantDiscovery(
+                                parent_pdp_->getRTPSParticipant()->getUserRTPSParticipant(),
+                                std::move(info),
+                                should_be_ignored);
+                        }
+                        if (should_be_ignored)
+                        {
+                            parent_pdp_->getRTPSParticipant()->ignore_participant(guid.guidPrefix);
+                        }
+
                     }
 
                     // Assigning remote endpoints implies sending a DATA(p) to all matched and fixed readers, since
@@ -190,13 +205,22 @@ void PDPListener::onNewCacheChangeAdded(
                 RTPSParticipantListener* listener = parent_pdp_->getRTPSParticipant()->getListener();
                 if (listener != nullptr)
                 {
-                    std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
-                    ParticipantDiscoveryInfo info(*pdata);
-                    info.status = status;
+                    bool should_be_ignored = false;
 
-                    listener->onParticipantDiscovery(
-                        parent_pdp_->getRTPSParticipant()->getUserRTPSParticipant(),
-                        std::move(info));
+                    {
+                        std::lock_guard<std::mutex> cb_lock(parent_pdp_->callback_mtx_);
+                        ParticipantDiscoveryInfo info(*pdata);
+                        info.status = status;
+
+                        listener->onParticipantDiscovery(
+                            parent_pdp_->getRTPSParticipant()->getUserRTPSParticipant(),
+                            std::move(info),
+                            should_be_ignored);
+                    }
+                    if (should_be_ignored)
+                    {
+                        parent_pdp_->getRTPSParticipant()->ignore_participant(temp_participant_data_.m_guid.guidPrefix);
+                    }
                 }
             }
 

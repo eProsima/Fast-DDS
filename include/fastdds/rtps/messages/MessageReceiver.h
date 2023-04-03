@@ -157,6 +157,7 @@ private:
      * -Return an error if the message is malformed.
      * @param[in,out] msg Pointer to the message
      * @param[in] smh Pointer to the submessage header
+     * @param[out] WriterID Writer EntityID (only for DATA messages)
      * @return True if correct, false otherwise
      */
 
@@ -165,11 +166,13 @@ private:
      *
      * @param msg
      * @param smh
+     * @param writerID
      * @return
      */
     bool proc_Submsg_Data(
             CDRMessage_t* msg,
-            SubmessageHeader_t* smh) const;
+            SubmessageHeader_t* smh,
+            EntityId_t& writerID) const;
     bool proc_Submsg_DataFrag(
             CDRMessage_t* msg,
             SubmessageHeader_t* smh) const;

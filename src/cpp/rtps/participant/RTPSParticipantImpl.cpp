@@ -17,7 +17,6 @@
  *
  */
 
-#include <rtps/participant/RTPSParticipantImpl.h>
 
 #include <algorithm>
 #include <functional>
@@ -29,11 +28,14 @@
 #include <fastdds/rtps/attributes/ServerAttributes.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/common/EntityId_t.hpp>
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/messages/MessageReceiver.h>
+#include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/reader/StatelessReader.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
@@ -57,6 +59,7 @@
 #include <rtps/builtin/discovery/participant/PDPClient.h>
 #include <rtps/history/BasicPayloadPool.hpp>
 #include <rtps/network/ExternalLocatorsProcessor.hpp>
+#include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/persistence/PersistenceService.h>
 #include <statistics/rtps/GuidUtils.hpp>
 
@@ -2510,9 +2513,10 @@ void RTPSParticipantImpl::get_default_unicast_locators()
 }
 
 bool RTPSParticipantImpl::is_participant_ignored(
-        const GuidPrefix_t& /*participant_guid*/)
+        const GuidPrefix_t& participant_guid)
 {
-    return false;
+    shared_lock<shared_mutex> _(ignored_mtx_);
+    return ignored_participants_.find(participant_guid) != ignored_participants_.end();
 }
 
 bool RTPSParticipantImpl::is_writer_ignored(
@@ -2528,9 +2532,35 @@ bool RTPSParticipantImpl::is_reader_ignored(
 }
 
 bool RTPSParticipantImpl::ignore_participant(
-        const GuidPrefix_t& /*participant_guid*/)
+        const GuidPrefix_t& participant_guid)
 {
-    return false;
+    if (participant_guid == m_guid.guidPrefix)
+    {
+        EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, "A participant is unable to ignore itself");
+        return false;
+    }
+    {
+        shared_lock<eprosima::shared_mutex> _(mp_builtinProtocols->getDiscoveryMutex());
+
+        for (auto server_it = m_att.builtin.discovery_config.m_DiscoveryServers.begin();
+                server_it != m_att.builtin.discovery_config.m_DiscoveryServers.end(); server_it++)
+        {
+            if (server_it->guidPrefix == participant_guid)
+            {
+                EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT, "Cannot ignore one of this participant Discovery Servers");
+                return false;
+            }
+        }
+    }
+    {
+        std::unique_lock<shared_mutex> _(ignored_mtx_);
+        ignored_participants_.insert(participant_guid);
+    }
+    pdp()->remove_remote_participant(GUID_t(participant_guid, c_EntityId_RTPSParticipant),
+            ParticipantDiscoveryInfo::DISCOVERY_STATUS::IGNORED_PARTICIPANT);
+
+    return true;
+
 }
 
 bool RTPSParticipantImpl::ignore_writer(

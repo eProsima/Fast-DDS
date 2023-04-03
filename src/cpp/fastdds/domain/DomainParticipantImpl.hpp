@@ -332,9 +332,12 @@ public:
      * @brief Locally ignore a remote domain participant.
      *
      * @param[in] handle Identifier of the remote participant to ignore.
-     * @return true if correctly ignored. False otherwise.
+     * @return RETCODE_NOT_ENABLED if the participant is not enabled.
+     *         RETCODE_ERROR if unable to ignore.
+     *         RETCODE_OK if successful.
+     *
      */
-    bool ignore_participant(
+    ReturnCode_t ignore_participant(
             const InstanceHandle_t& handle);
 
     /* TODO
@@ -658,7 +661,8 @@ protected:
 
         void onParticipantDiscovery(
                 fastrtps::rtps::RTPSParticipant* participant,
-                fastrtps::rtps::ParticipantDiscoveryInfo&& info) override;
+                fastrtps::rtps::ParticipantDiscoveryInfo&& info,
+                bool& should_be_ignored) override;
 
 #if HAVE_SECURITY
         void onParticipantAuthentication(

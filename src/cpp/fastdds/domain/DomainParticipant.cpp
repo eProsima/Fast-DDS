@@ -271,8 +271,7 @@ const Subscriber* DomainParticipant::get_builtin_subscriber() const
 ReturnCode_t DomainParticipant::ignore_participant(
         const InstanceHandle_t& handle)
 {
-    static_cast<void> (handle);
-    return ReturnCode_t::RETCODE_UNSUPPORTED;
+    return impl_->ignore_participant(handle);
 }
 
 ReturnCode_t DomainParticipant::ignore_topic(

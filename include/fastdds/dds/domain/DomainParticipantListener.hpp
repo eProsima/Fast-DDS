@@ -91,9 +91,8 @@ public:
             fastrtps::rtps::ParticipantDiscoveryInfo&& info,
             bool& should_be_ignored)
     {
-        static_cast<void>(participant);
-        static_cast<void>(info);
-        static_cast<void>(should_be_ignored);
+        on_participant_discovery(participant, std::move(info));
+        should_be_ignored = false;
     }
 
 #if HAVE_SECURITY

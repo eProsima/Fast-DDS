@@ -17,7 +17,10 @@
  *
  */
 
+#include "fastdds/rtps/common/Guid.h"
+#include "fastdds/rtps/common/GuidPrefix_t.hpp"
 #include <chrono>
+#include <fastrtps/types/TypesBase.h>
 #include <string>
 
 #include <asio.hpp>
@@ -827,12 +830,12 @@ PublisherImpl* DomainParticipantImpl::create_publisher_impl(
    }
  */
 
-bool DomainParticipantImpl::ignore_participant(
+ReturnCode_t DomainParticipantImpl::ignore_participant(
         const InstanceHandle_t& handle)
 {
-    static_cast<void>(handle);
-    EPROSIMA_LOG_ERROR(PARTICIPANT, "Not implemented.");
-    return false;
+    return (nullptr == rtps_participant_) ? ReturnCode_t::RETCODE_NOT_ENABLED :
+           rtps_participant_->ignore_participant(iHandle2GUID(handle).guidPrefix) ? ReturnCode_t::RETCODE_OK :
+           ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
 /* TODO
@@ -1528,12 +1531,14 @@ ReturnCode_t DomainParticipantImpl::unregister_type(
 
 void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
         RTPSParticipant*,
-        ParticipantDiscoveryInfo&& info)
+        ParticipantDiscoveryInfo&& info,
+        bool& should_be_ignored)
 {
     Sentry sentinel(this);
     if (sentinel)
     {
-        participant_->listener_->on_participant_discovery(participant_->participant_, std::move(info));
+        participant_->listener_->on_participant_discovery(participant_->participant_, std::move(info),
+                should_be_ignored);
     }
 }
 

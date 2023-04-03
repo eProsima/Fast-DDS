@@ -142,6 +142,11 @@ void PDPServerListener::onNewCacheChangeAdded(
                     pdp_server()->getRTPSParticipant()->network_factory(),
                     pdp_server()->getRTPSParticipant()->has_shm_transport()))
         {
+            if (parent_pdp_->getRTPSParticipant()->is_participant_ignored(participant_data.m_guid.guidPrefix))
+            {
+                return;
+            }
+
             const auto& pattr = pdp_server()->getRTPSParticipant()->getAttributes();
             fastdds::rtps::ExternalLocatorsProcessor::filter_remote_locators(participant_data,
                     pattr.builtin.metatraffic_external_unicast_locators, pattr.default_external_unicast_locators,
@@ -363,13 +368,20 @@ void PDPServerListener::onNewCacheChangeAdded(
                 RTPSParticipantListener* listener = pdp_server()->getRTPSParticipant()->getListener();
                 if (listener != nullptr)
                 {
-                    std::lock_guard<std::mutex> cb_lock(pdp_server()->callback_mtx_);
-                    ParticipantDiscoveryInfo info(*pdata);
-                    info.status = status;
+                    bool should_be_ignored = false;
+                    {
+                        std::lock_guard<std::mutex> cb_lock(pdp_server()->callback_mtx_);
+                        ParticipantDiscoveryInfo info(*pdata);
+                        info.status = status;
 
-                    listener->onParticipantDiscovery(
-                        pdp_server()->getRTPSParticipant()->getUserRTPSParticipant(),
-                        std::move(info));
+                        listener->onParticipantDiscovery(
+                            pdp_server()->getRTPSParticipant()->getUserRTPSParticipant(),
+                            std::move(info), should_be_ignored);
+                    }
+                    if (should_be_ignored)
+                    {
+                        parent_pdp_->getRTPSParticipant()->ignore_participant(guid.guidPrefix);
+                    }
                 }
             }
 

@@ -3668,7 +3668,6 @@ TEST(ParticipantTests, ContentFilterInterfaces)
  *  create_multitopic
  *  delete_multitopic
  *  get_builtin_subscriber
- *  ignore_participant
  *  ignore_topic
  *  ignore_publication
  *  ignore_subscription
@@ -3705,7 +3704,6 @@ TEST(ParticipantTests, UnsupportedMethods)
 
     ASSERT_EQ(participant->get_builtin_subscriber(), nullptr);
 
-    ASSERT_EQ(participant->ignore_participant(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
     ASSERT_EQ(participant->ignore_topic(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
     ASSERT_EQ(participant->ignore_publication(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
     ASSERT_EQ(participant->ignore_subscription(InstanceHandle_t()), ReturnCode_t::RETCODE_UNSUPPORTED);
