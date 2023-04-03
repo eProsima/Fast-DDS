@@ -527,7 +527,13 @@ bool WriterProxy::perform_initial_ack_nack()
             if (0 == last_heartbeat_count_)
             {
                 reader_->send_acknack(this, sns, this, false);
-                ret_value = true;
+                double time_ms = initial_acknack_->getIntervalMilliSec();
+                constexpr double max_ms = 60 * 60 * 1000; // Limit to 1 hour
+                if (time_ms < max_ms)
+                {
+                    initial_acknack_->update_interval_millisec(time_ms * 2);
+                    ret_value = true;
+                }
             }
         }
     }
