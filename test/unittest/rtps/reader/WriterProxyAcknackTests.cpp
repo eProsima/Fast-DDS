@@ -116,6 +116,27 @@ TEST(WriterProxyAcknackTests, AcknackBackoff)
     EXPECT_EQ ( wproxy.initial_acknack_->getIntervalMilliSec(),
             readerMock.getTimes().initialAcknackDelay.to_ns() * 4 / 1000000);
 
+    // Simulate heartbeat reception and check if the delay cannot be updated again
+    bool assert_liveliness = false;
+    uint32_t heartbeat_count = 1;
+    int32_t current_sample_lost = 0;
+
+    wproxy.process_heartbeat(
+        heartbeat_count,
+        SequenceNumber_t(0, 1),
+        SequenceNumber_t(0, 1),
+        false,
+        false,
+        false,
+        assert_liveliness,
+        current_sample_lost);
+
+    EXPECT_EQ ( wproxy.initial_acknack_->getIntervalMilliSec(),
+            readerMock.getTimes().initialAcknackDelay.to_ns() * 4 / 1000000);
+    wproxy.perform_initial_ack_nack();
+    EXPECT_EQ ( wproxy.initial_acknack_->getIntervalMilliSec(),
+            readerMock.getTimes().initialAcknackDelay.to_ns() * 4 / 1000000);
+
 }
 
 } // namespace rtps
