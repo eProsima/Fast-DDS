@@ -1134,3 +1134,26 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
     ASSERT_FALSE(load_environment_server_info(text, output));
 
 }
+
+//! Regression test for redmine issue 10674
+TEST(Discovery, MulticastInitialPeer)
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    eprosima::fastdds::rtps::LocatorList peers;
+    eprosima::fastdds::rtps::Locator loc{};
+    loc.kind = LOCATOR_KIND_UDPv4;
+    IPLocator::setIPv4(loc, "239.255.0.1");
+    peers.push_back(loc);
+
+    reader.participant_id(100).initial_peers(peers).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.participant_id(101).initial_peers(peers).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Wait for discovery (times out before the fix).
+    writer.wait_discovery();
+    reader.wait_discovery();
+}

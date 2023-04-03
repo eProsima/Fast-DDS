@@ -681,12 +681,27 @@ bool UDPTransportInterface::configureInitialPeerLocator(
 {
     if (locator.port == 0)
     {
-        for (uint32_t i = 0; i < configuration()->maxInitialPeersRange; ++i)
+        if (IPLocator::isMulticast(locator))
         {
+<<<<<<< HEAD
             Locator_t auxloc(locator);
             auxloc.port = port_params.getUnicastPort(domainId, i);
 
+=======
+            Locator auxloc(locator);
+            auxloc.port = port_params.getMulticastPort(domainId);
+>>>>>>> 49baf5154 (Correctly assign multicast port to multicast initial peers (#3425))
             list.push_back(auxloc);
+        }
+        else
+        {
+            for (uint32_t i = 0; i < configuration()->maxInitialPeersRange; ++i)
+            {
+                Locator auxloc(locator);
+                auxloc.port = port_params.getUnicastPort(domainId, i);
+
+                list.push_back(auxloc);
+            }
         }
     }
     else
