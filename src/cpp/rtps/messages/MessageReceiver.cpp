@@ -336,7 +336,7 @@ void MessageReceiver::processCDRMsg(
     int decode_ret = 0;
 #endif // if HAVE_SECURITY && !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
 
-    bool ignore_submessages;
+    bool ignore_submessages = false;
 
     {
         std::lock_guard<eprosima::shared_mutex> guard(mtx_);
@@ -353,7 +353,10 @@ void MessageReceiver::processCDRMsg(
             return;
         }
 
+#if !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
         ignore_submessages = participant_->is_participant_ignored(source_guid_prefix_);
+#endif  // if !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
+
         if (!ignore_submessages)
         {
             notify_network_statistics(source_locator, reception_locator, msg);
@@ -434,10 +437,13 @@ void MessageReceiver::processCDRMsg(
                         EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "Data Submsg received, processing.");
                         EntityId_t writerId = c_EntityId_Unknown;
                         valid = proc_Submsg_Data(submessage, &submsgh, writerId);
+#if !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
                         if (valid && writerId == c_EntityId_SPDPWriter)
                         {
                             ignore_submessages = participant_->is_participant_ignored(source_guid_prefix_);
                         }
+#endif  // if !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
+
                     }
                     break;
                 }
@@ -532,7 +538,9 @@ void MessageReceiver::processCDRMsg(
                 case INFO_SRC:
                     EPROSIMA_LOG_INFO(RTPS_MSG_IN, IDSTRING "InfoSRC message received, processing...");
                     valid = proc_Submsg_InfoSRC(submessage, &submsgh);
+#if !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
                     ignore_submessages = participant_->is_participant_ignored(source_guid_prefix_);
+#endif  // if !defined(FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION)
                     break;
                 case INFO_TS:
                 {
