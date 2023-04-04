@@ -4872,11 +4872,11 @@ ReturnCode_t DynamicData::insert_complex_value(
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
-            outId = static_cast<MemberId>(complex_values_.size());
+            outId = complex_values_.size();
             complex_values_.insert(std::make_pair(outId, DynamicDataFactory::get_instance()->create_copy(value)));
             return ReturnCode_t::RETCODE_OK;
 #else
-            outId = static_cast<MemberId>(values_.size());
+            outId = values_.size();
             values_.insert(std::make_pair(outId, DynamicDataFactory::get_instance()->create_copy(value)));
             return ReturnCode_t::RETCODE_OK;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
@@ -4903,11 +4903,11 @@ ReturnCode_t DynamicData::insert_complex_value(
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
-            outId = static_cast<MemberId>(complex_values_.size());
+            outId = complex_values_.size();
             complex_values_.insert(std::make_pair(outId, DynamicDataFactory::get_instance()->create_copy(value.get())));
             return ReturnCode_t::RETCODE_OK;
 #else
-            outId = static_cast<MemberId>(values_.size());
+            outId = values_.size();
             values_.insert(std::make_pair(outId, DynamicDataFactory::get_instance()->create_copy(value.get())));
             return ReturnCode_t::RETCODE_OK;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
@@ -4934,11 +4934,11 @@ ReturnCode_t DynamicData::insert_complex_value(
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
-            outId = static_cast<MemberId>(complex_values_.size());
+            outId = complex_values_.size();
             complex_values_.insert(std::make_pair(outId, value));
             return ReturnCode_t::RETCODE_OK;
 #else
-            outId = static_cast<MemberId>(values_.size());
+            outId = values_.size();
             values_.insert(std::make_pair(outId, value));
             return ReturnCode_t::RETCODE_OK;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
@@ -4966,12 +4966,12 @@ ReturnCode_t DynamicData::insert_sequence_data(
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
-            outId = static_cast<MemberId>(complex_values_.size());
+            outId = complex_values_.size();
             complex_values_.insert(std::make_pair(outId, new_element));
             return ReturnCode_t::RETCODE_OK;
 #else
             DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
-            outId = static_cast<MemberId>(values_.size());
+            outId = values_.size();
             values_.insert(std::make_pair(outId, new_element));
             return ReturnCode_t::RETCODE_OK;
 #endif // ifdef DYNAMIC_TYPES_CHECKING

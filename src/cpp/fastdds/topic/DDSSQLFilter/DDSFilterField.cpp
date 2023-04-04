@@ -46,12 +46,12 @@ bool DDSFilterField::set_value(
     bool last_step = access_path_.size() - 1 == n;
     bool ret = false;
 
-    if (access_path_[n].array_index < MEMBER_ID_INVALID)
+    if (access_path_[n].array_index != MEMBER_ID_INVALID)
     {
         DynamicData* array_data = data.loan_value(member_id);
         if (nullptr != array_data)
         {
-            member_id = static_cast<MemberId>(access_path_[n].array_index);
+            member_id = access_path_[n].array_index;
             if (array_data->get_item_count() > member_id)
             {
                 if (last_step)

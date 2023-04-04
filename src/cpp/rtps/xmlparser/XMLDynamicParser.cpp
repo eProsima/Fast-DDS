@@ -1348,7 +1348,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
         {
             memberBuilder = typePtr->shared_from_this();
         }
-        else
+        else if (typePtr)
         {
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
