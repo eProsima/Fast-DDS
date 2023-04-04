@@ -265,7 +265,11 @@ public:
      */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_builder_copy(const DynamicTypeBuilder& builder) noexcept;
 
-    // TODO: doxygen
+    /**
+     * Retrieve the cached @ref DynamicType object associated to a given primitive
+     * @param[in] kind type identifying the primitive type to retrieve
+     * @return @ref DynamicType object
+     */
     RTPS_DllAPI DynamicType_ptr get_primitive_type(
             TypeKind kind) noexcept;
 
@@ -398,36 +402,76 @@ public:
     RTPS_DllAPI DynamicTypeBuilder_ptr create_wstring_builder(
             uint32_t bound) noexcept;
 
-    // TODO: doxygen
+    /**
+     * Creates a new @ref DynamicTypeBuilder object representing a sequence
+     * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.4 this method is
+     *         called `create_sequence_type` which is misguiding. It was renamed to simplify interface usage.
+     * @param[in] type @ref DynamicType which becomes the element type
+     * @param[in] bound `uint32_t` representing the maximun number of elements that may be stored.
+     * @return new @ref DynamicTypeBuilder object
+     */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_sequence_builder(
             const DynamicType& type,
             uint32_t bound = MAX_ELEMENTS_COUNT) noexcept;
 
-    // TODO: doxygen
+    /**
+     * Creates a new @ref DynamicTypeBuilder object representing an array
+     * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.1 this method is
+     *         called `create_array_type` which is misguiding. It was renamed to simplify interface usage.
+     * @param[in] type @ref DynamicType which becomes the element type
+     * @param[in] bound `uint32_t` representing the desired dimensions
+     * @return new @ref DynamicTypeBuilder object
+     */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_array_builder(
             const DynamicType& type,
             const std::vector<uint32_t>& bounds) noexcept;
 
-    // TODO: doxygen
+    /**
+     * Creates a new @ref DynamicTypeBuilder object representing a map
+     * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.3 this method is
+     *         called `create_map_type` which is misguiding. It was renamed to simplify interface usage.
+     * @param[in] key_type @ref DynamicType which becomes the map's key type
+     * @param[in] value_type @ref DynamicType which becomes the map's value type
+     * @param[in] bound `uint32_t` representing the maximun number of elements that may be stored.
+     * @return new @ref DynamicTypeBuilder object
+     */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_map_builder(
             const DynamicType& key_type,
             const DynamicType& value_type,
             uint32_t bound = MAX_ELEMENTS_COUNT) noexcept;
 
-    // TODO: doxygen
+    /**
+     * Creates a new @ref DynamicTypeBuilder object representing a bitmask
+     * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.2 this method is
+     *         called `create_bitmask_type` which is misguiding. It was renamed to simplify interface usage.
+     * @param[in] bound `uint32_t` representing the maximun number of elements that may be stored.
+     * @return new @ref DynamicTypeBuilder object
+     */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_bitmask_builder(
             uint32_t bound = 32) noexcept;
 
-    // TODO: doxygen
+    /**
+     * Creates a new @ref DynamicTypeBuilder object representing a bitset
+     * @param[in] bound `uint32_t` representing the maximun number of elements that may be stored.
+     * @return new @ref DynamicTypeBuilder object
+     */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_bitset_builder(
             uint32_t bound = 32) noexcept;
 
-    // TODO: doxygen
+    /**
+     * Creates a new @ref DynamicTypeBuilder object representing an alias
+     * @param[in] base_type @ref DynamicType to be referenced
+     * @param[in] sName new alias name
+     * @return new @ref DynamicTypeBuilder object
+     */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_alias_builder(
             const DynamicType& base_type,
             const std::string& sName);
 
-    // TODO: doxygen
+    /**
+     * Creates a new @ref DynamicTypeBuilder object representing an enum
+     * @return new @ref DynamicTypeBuilder object
+     */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_enum_builder();
 
     /**
@@ -436,19 +480,31 @@ public:
      */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_struct_builder() noexcept;
 
-    // TODO: doxygen
+    /**
+     * Creates a new @ref DynamicTypeBuilder object representing a subclass
+     * @param[in] parent_type @ref DynamicType identifying the desired superclass
+     * @return new @ref DynamicTypeBuilder object
+     */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_child_struct_builder(
             const DynamicType& parent_type);
 
-    // TODO: doxygen
+    /**
+     * Creates a new @ref DynamicTypeBuilder object representing a union
+     * @param[in] discriminator_type @ref DynamicType associated to the union's discriminator
+     * @return new @ref DynamicTypeBuilder object
+     */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_union_builder(
             const DynamicType& discriminator_type);
 
-    // TODO: doxygen
+    /**
+     * Creates a new @ref DynamicTypeBuilder object representing an annotation
+     * @param[in] name string annotation identifier
+     * @return new @ref DynamicTypeBuilder object
+     */
     RTPS_DllAPI DynamicType_ptr create_annotation_primitive(
             const std::string& name);
 
-    // TODO: doxygen
+    //! returns type instantiation of the @ref DynamicTypeBuilderFactory::create_alias_type builder
     RTPS_DllAPI DynamicType_ptr create_alias_type(
             const DynamicType& base_type,
             const std::string& sName);
@@ -500,7 +556,11 @@ public:
     RTPS_DllAPI DynamicType_ptr create_wstring_type(
             uint32_t bound = MAX_STRING_LENGTH) noexcept;
 
-    // TODO: doxygen
+    /**
+     * Creates a new @ref DynamicTypeBuilder object representing a bitset
+     * @param[in] bound `uint32_t` representing the maximun number of elements that may be stored.
+     * @return new @ref DynamicTypeBuilder object
+     */
     RTPS_DllAPI DynamicType_ptr create_bitset_type(
             uint32_t bound);
 

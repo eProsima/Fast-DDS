@@ -158,9 +158,10 @@ TEST_P(DynamicTypesPrimitiveTestsAPIs, primitives_apis_unit_tests)
     EXPECT_FALSE(*custom_builder == *builder1);
 
     // the custom type must not be a static instance
+    static_assert(selected_mode == type_tracking::complete, "testing requires memory tracking");
+    // The custom instance must be able to create a new type
     EXPECT_FALSE(factory.is_empty());
 
-    // The custom instance must be able to create a new type
     DynamicType_ptr custom_type1 = custom_builder->build();
     ASSERT_TRUE(custom_type1);
 
