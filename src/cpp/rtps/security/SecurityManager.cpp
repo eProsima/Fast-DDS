@@ -16,6 +16,7 @@
  * @file SecurityManager.h
  */
 
+#include "fastdds/rtps/security/exceptions/SecurityException.h"
 #include <rtps/security/SecurityManager.h>
 
 #include <cassert>
@@ -4191,30 +4192,40 @@ void SecurityManager::resend_handshake_message_token(
 
         if (remote_participant_info)
         {
-            if (remote_participant_info->change_sequence_number_ != SequenceNumber_t::unknown())
+            if (remote_participant_info->handshake_requests_sent_ >= DiscoveredParticipantInfo::MAX_HANDSHAKE_REQUESTS)
             {
-                CacheChange_t* p_change = participant_stateless_message_writer_history_->remove_change_and_reuse(
-                    remote_participant_info->change_sequence_number_);
-                remote_participant_info->change_sequence_number_ = SequenceNumber_t::unknown();
-
-                if (p_change != nullptr)
-                {
-                    EPROSIMA_LOG_INFO(SECURITY, "Authentication handshake resent to participant " <<
-                            remote_participant_key);
-                    if (participant_stateless_message_writer_history_->add_change(p_change))
-                    {
-                        remote_participant_info->change_sequence_number_ = p_change->sequenceNumber;
-                    }
-                    //TODO (Ricardo) What to do if not added?
-                }
+                SecurityException exception;
+                remote_participant_info->event_->cancel_timer();
+                on_validation_failed(dp_it->second->participant_data(), exception);
             }
-
-            if (remote_participant_info->auth_status_ == AUTHENTICATION_WAITING_REPLY)
+            else
             {
-                // Avoid DoS attack by exponentially increasing event interval
-                auto time_ms = remote_participant_info->event_->getIntervalMilliSec();
-                remote_participant_info->event_->update_interval_millisec(time_ms * 2);
-                remote_participant_info->event_->restart_timer();
+                if (remote_participant_info->change_sequence_number_ != SequenceNumber_t::unknown())
+                {
+                    CacheChange_t* p_change = participant_stateless_message_writer_history_->remove_change_and_reuse(
+                        remote_participant_info->change_sequence_number_);
+                    remote_participant_info->change_sequence_number_ = SequenceNumber_t::unknown();
+
+                    if (p_change != nullptr)
+                    {
+                        EPROSIMA_LOG_INFO(SECURITY, "Authentication handshake resent to participant " <<
+                                remote_participant_key);
+                        if (participant_stateless_message_writer_history_->add_change(p_change))
+                        {
+                            remote_participant_info->change_sequence_number_ = p_change->sequenceNumber;
+                            remote_participant_info->handshake_requests_sent_++;
+                        }
+                        //TODO (Ricardo) What to do if not added?
+                    }
+                }
+
+                if (remote_participant_info->auth_status_ == AUTHENTICATION_WAITING_REPLY)
+                {
+                    // Avoid DoS attack by exponentially increasing event interval
+                    auto time_ms = remote_participant_info->event_->getIntervalMilliSec();
+                    remote_participant_info->event_->update_interval_millisec(time_ms * 2);
+                    remote_participant_info->event_->restart_timer();
+                }
             }
 
             dp_it->second->set_auth(remote_participant_info);

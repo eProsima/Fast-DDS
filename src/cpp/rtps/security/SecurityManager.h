@@ -368,6 +368,7 @@ private:
                 , auth_status_(auth_status)
                 , expected_sequence_number_(0)
                 , change_sequence_number_(SequenceNumber_t::unknown())
+                , handshake_requests_sent_(0)
             {
             }
 
@@ -394,6 +395,8 @@ private:
 
             EventUniquePtr event_;
 
+            uint32_t handshake_requests_sent_;
+
         private:
 
             AuthenticationInfo(
@@ -405,6 +408,7 @@ private:
         typedef std::unique_ptr<AuthenticationInfo> AuthUniquePtr;
 
         static constexpr uint32_t INITIAL_RESEND_HANDSHAKE_MILLISECS = 125;
+        static constexpr uint32_t MAX_HANDSHAKE_REQUESTS = 5;
 
         DiscoveredParticipantInfo(
                 AuthenticationStatus auth_status,
