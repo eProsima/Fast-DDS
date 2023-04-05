@@ -604,7 +604,7 @@ bool SecurityManager::discovered_participant(
                     resend_handshake_message_token(guid);
                     return true;
                 },
-                500)); // TODO (Ricardo) Configurable
+                DiscoveredParticipantInfo::INITIAL_RESEND_HANDSHAKE_MILLISECS)); // TODO (Ricardo) Configurable
 
         IdentityHandle* remote_identity_handle = nullptr;
 
@@ -4207,6 +4207,14 @@ void SecurityManager::resend_handshake_message_token(
                     }
                     //TODO (Ricardo) What to do if not added?
                 }
+            }
+
+            if (remote_participant_info->auth_status_ == AUTHENTICATION_WAITING_REPLY)
+            {
+                // Avoid DoS attack by exponentially increasing event interval
+                auto time_ms = remote_participant_info->event_->getIntervalMilliSec();
+                remote_participant_info->event_->update_interval_millisec(time_ms * 2);
+                remote_participant_info->event_->restart_timer();
             }
 
             dp_it->second->set_auth(remote_participant_info);
