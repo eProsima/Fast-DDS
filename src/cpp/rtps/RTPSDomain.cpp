@@ -599,6 +599,18 @@ RTPSParticipant* RTPSDomainImpl::clientServerEnvironmentCreationOverride(
 
 uint32_t RTPSDomainImpl::getNewId()
 {
+    // Get the smallest available participant ID.
+    // Settings like maxInitialPeersRange control how many participants a peer
+    // will look for on this host.
+    // Choosing the smallest value ensures peers using unicast discovery will
+    // find this participant as long as the total number of participants has
+    // not exceeded the number of peers they will look for.
+    for (uint32_t i = 0; i <= m_maxRTPSParticipantID; ++i) {
+        if (m_RTPSParticipantIDs.find(i) == m_RTPSParticipantIDs.end()) {
+            return i;
+        }
+    }
+    // Couldn't find any free space in the set of IDs; return one larger.
     return m_maxRTPSParticipantID++;
 }
 

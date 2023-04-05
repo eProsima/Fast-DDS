@@ -214,6 +214,9 @@ private:
 
     /**
      * @brief Get Id to create a RTPSParticipant.
+     *
+     * This function assumes m_mutex is already locked by the caller.
+     *
      * @return Different ID for each call.
      */
     uint32_t getNewId();
