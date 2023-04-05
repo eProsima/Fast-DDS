@@ -4237,6 +4237,11 @@ void SecurityManager::on_validation_failed(
         const ParticipantProxyData& participant_data,
         const SecurityException& exception) const
 {
+    if (participant_->security_attributes().allow_unauthenticated_participants)
+    {
+        participant_->pdp()->notifyAboveRemoteEndpoints(participant_data, false);
+    }
+
     if (strlen(exception.what()) > 0)
     {
         EPROSIMA_LOG_ERROR(SECURITY_AUTHENTICATION, exception.what());
