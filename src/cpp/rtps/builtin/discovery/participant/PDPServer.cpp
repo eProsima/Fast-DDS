@@ -729,7 +729,7 @@ void PDPServer::perform_builtin_endpoints_matching(
 
     if (mp_builtin->mp_WLP != nullptr)
     {
-        mp_builtin->mp_WLP->assignRemoteEndpoints(pdata);
+        mp_builtin->mp_WLP->assignRemoteEndpoints(pdata, true);
     }
 }
 

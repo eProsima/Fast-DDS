@@ -462,7 +462,7 @@ void PDPSimple::notifyAboveRemoteEndpoints(
 
     if (mp_builtin->mp_WLP != nullptr)
     {
-        mp_builtin->mp_WLP->assignRemoteEndpoints(pdata);
+        mp_builtin->mp_WLP->assignRemoteEndpoints(pdata, (notify_secure_endpoints ? true : false));
     }
 
     if (mp_builtin->tlm_ != nullptr)
