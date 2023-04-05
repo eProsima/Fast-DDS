@@ -605,7 +605,8 @@ uint32_t RTPSDomainImpl::getNewId()
     // Choosing the smallest value ensures peers using unicast discovery will
     // find this participant as long as the total number of participants has
     // not exceeded the number of peers they will look for.
-    for (uint32_t i = 0; i <= m_maxRTPSParticipantID; ++i)
+    uint32_t i = 0;
+    for (; i <= m_RTPSParticipantIDs.size(); ++i)
     {
         if (m_RTPSParticipantIDs.find(i) == m_RTPSParticipantIDs.end())
         {
@@ -613,7 +614,7 @@ uint32_t RTPSDomainImpl::getNewId()
         }
     }
     // Couldn't find any free space in the set of IDs; return one larger.
-    return m_maxRTPSParticipantID++;
+    return i + 1;
 }
 
 void RTPSDomainImpl::create_participant_guid(

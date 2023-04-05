@@ -105,16 +105,6 @@ public:
             RTPSParticipant* p);
 
     /**
-     * Set the maximum RTPSParticipantID.
-     * @param maxRTPSParticipantId ID.
-     */
-    static inline void setMaxRTPSParticipantId(
-            uint32_t maxRTPSParticipantId)
-    {
-        get_instance()->m_maxRTPSParticipantID = maxRTPSParticipantId;
-    }
-
-    /**
      * Creates a RTPSParticipant as default server or client if ROS_MASTER_URI environment variable is set.
      * @param domain_id DDS domain associated
      * @param enabled True if the RTPSParticipant should be enabled on creation. False if it will be enabled later with RTPSParticipant::enable()
@@ -229,8 +219,6 @@ private:
                                                                                               get_instance() };
 
     std::mutex m_mutex;
-
-    std::atomic<uint32_t> m_maxRTPSParticipantID;
 
     std::vector<t_p_RTPSParticipant> m_RTPSParticipants;
 
