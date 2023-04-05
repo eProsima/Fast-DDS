@@ -506,7 +506,8 @@ void PDPClient::assignRemoteEndpoints(
 }
 
 void PDPClient::notifyAboveRemoteEndpoints(
-        const ParticipantProxyData& pdata)
+        const ParticipantProxyData& pdata,
+        bool /*notify_secure_endpoints*/)
 {
 #if HAVE_SECURITY
     if (mp_RTPSParticipant->is_secure())

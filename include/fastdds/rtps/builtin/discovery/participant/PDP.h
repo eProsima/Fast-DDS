@@ -279,9 +279,11 @@ public:
     /**
      * Override to match additional endpoints to PDP. Like EDP or WLP.
      * @param pdata Pointer to the ParticipantProxyData object.
+     * @param notify_secure_endpoints Whether to try notifying secure endpoints.
      */
     virtual void notifyAboveRemoteEndpoints(
-            const ParticipantProxyData& pdata) = 0;
+            const ParticipantProxyData& pdata,
+            bool notify_secure_endpoints) = 0;
 
     /**
      * Some PDP classes require EDP matching with update PDP DATAs like EDPStatic

@@ -135,7 +135,8 @@ public:
     void removeRemoteEndpoints(
             fastrtps::rtps::ParticipantProxyData* pdata) override;
     void notifyAboveRemoteEndpoints(
-            const fastrtps::rtps::ParticipantProxyData& pdata) override;
+            const fastrtps::rtps::ParticipantProxyData& pdata,
+            bool notify_secure_endpoints) override;
 
 #if HAVE_SECURITY
     bool pairing_remote_writer_with_local_reader_after_security(

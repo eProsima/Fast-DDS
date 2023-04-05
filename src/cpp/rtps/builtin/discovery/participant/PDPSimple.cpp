@@ -422,7 +422,7 @@ void PDPSimple::assignRemoteEndpoints(
     mp_RTPSParticipant->security_manager().discovered_participant(*pdata);
 #else
     //Inform EDP of new RTPSParticipant data:
-    notifyAboveRemoteEndpoints(*pdata);
+    notifyAboveRemoteEndpoints(*pdata, true);
 #endif // if HAVE_SECURITY
 }
 
@@ -451,7 +451,8 @@ void PDPSimple::removeRemoteEndpoints(
 }
 
 void PDPSimple::notifyAboveRemoteEndpoints(
-        const ParticipantProxyData& pdata)
+        const ParticipantProxyData& pdata,
+        bool /*notify_secure_endpoints*/)
 {
     //Inform EDP of new RTPSParticipant data:
     if (mp_EDP != nullptr)

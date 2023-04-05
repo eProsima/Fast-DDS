@@ -676,7 +676,8 @@ void PDPServer::assignRemoteEndpoints(
 }
 
 void PDPServer::notifyAboveRemoteEndpoints(
-        const ParticipantProxyData& pdata)
+        const ParticipantProxyData& pdata,
+        bool /*notify_secure_endpoints*/)
 {
     static_cast<void>(pdata);
 #if HAVE_SECURITY

@@ -569,7 +569,7 @@ bool SecurityManager::discovered_participant(
 
     if (authentication_plugin_ == nullptr)
     {
-        participant_->pdp()->notifyAboveRemoteEndpoints(participant_data);
+        participant_->pdp()->notifyAboveRemoteEndpoints(participant_data, true);
         return true;
     }
 
@@ -4077,7 +4077,7 @@ bool SecurityManager::participant_authorized(
 void SecurityManager::notify_participant_authorized(
         const ParticipantProxyData& participant_data)
 {
-    participant_->pdp()->notifyAboveRemoteEndpoints(participant_data);
+    participant_->pdp()->notifyAboveRemoteEndpoints(participant_data, true);
 
     EPROSIMA_LOG_INFO(SECURITY, "Participant " << participant_data.m_guid << " authenticated");
 
