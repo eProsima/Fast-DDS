@@ -1,0 +1,83 @@
+MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----3ED8A7B5D8704D95C963ADF84CBA4013"
+
+This is an S/MIME signed message
+
+------3ED8A7B5D8704D95C963ADF84CBA4013
+Content-Type: text/plain
+
+<?xml version="1.0" encoding="utf-8"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="omg_shared_ca_domain_governance.xsd">
+    <domain_access_rules>
+        <domain_rule>
+            <domains>
+                <id_range>
+                    <min>0</min>
+                    <max>230</max>
+                </id_range>
+            </domains>
+            <allow_unauthenticated_participants>true</allow_unauthenticated_participants>
+            <enable_join_access_control>true</enable_join_access_control>
+            <discovery_protection_kind>NONE</discovery_protection_kind>
+            <liveliness_protection_kind>NONE</liveliness_protection_kind>
+            <rtps_protection_kind>NONE</rtps_protection_kind>
+            <topic_access_rules>
+                <topic_rule>
+                    <topic_expression>HelloWorldTopic_*</topic_expression>
+                    <enable_discovery_protection>false</enable_discovery_protection>
+                    <enable_liveliness_protection>false</enable_liveliness_protection>
+                    <enable_read_access_control>false</enable_read_access_control>
+                    <enable_write_access_control>false</enable_write_access_control>
+                    <metadata_protection_kind>NONE</metadata_protection_kind>
+                    <data_protection_kind>NONE</data_protection_kind>
+                </topic_rule>
+                <topic_rule>
+                    <topic_expression>SecureHelloWorldTopic_*</topic_expression>
+                    <enable_discovery_protection>true</enable_discovery_protection>
+                    <enable_liveliness_protection>true</enable_liveliness_protection>
+                    <enable_read_access_control>true</enable_read_access_control>
+                    <enable_write_access_control>true</enable_write_access_control>
+                    <metadata_protection_kind>ENCRYPT</metadata_protection_kind>
+                    <data_protection_kind>ENCRYPT</data_protection_kind>
+                </topic_rule>
+            </topic_access_rules>
+        </domain_rule>
+    </domain_access_rules>
+</dds>
+
+
+------3ED8A7B5D8704D95C963ADF84CBA4013
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+MIIEtAYJKoZIhvcNAQcCoIIEpTCCBKECAQExDzANBglghkgBZQMEAgEFADALBgkq
+hkiG9w0BBwGgggJuMIICajCCAhGgAwIBAgIUcsQhk60Hd3DBT+O8EmRXlj8CSf8w
+CgYIKoZIzj0EAwIwgZwxCzAJBgNVBAYTAkVTMQswCQYDVQQIDAJNQTEUMBIGA1UE
+BwwLVHJlcyBDYW50b3MxETAPBgNVBAoMCGVQcm9zaW1hMREwDwYDVQQLDAhlUHJv
+c2ltYTEfMB0GA1UEAwwWZVByb3NpbWEgT3RoZXIgVGVzdCBDQTEjMCEGCSqGSIb3
+DQEJARYUb3RoZXJjYUBlcHJvc2ltYS5jb20wHhcNMjMwMzMwMTAzNTAyWhcNMzMw
+MzI3MTAzNTAyWjCBnDELMAkGA1UEBhMCRVMxCzAJBgNVBAgMAk1BMRQwEgYDVQQH
+DAtUcmVzIENhbnRvczERMA8GA1UECgwIZVByb3NpbWExETAPBgNVBAsMCGVQcm9z
+aW1hMR8wHQYDVQQDDBZlUHJvc2ltYSBPdGhlciBUZXN0IENBMSMwIQYJKoZIhvcN
+AQkBFhRvdGhlcmNhQGVwcm9zaW1hLmNvbTBZMBMGByqGSM49AgEGCCqGSM49AwEH
+A0IABE43rFtDDe1JkOMvvGAE7qKIvwRw5RT1W0EGijZiR2pj/RZ184KuxajfOLGY
+RXOa4J93e33h3mmqrDUFrieMqoyjLzAtMAwGA1UdEwQFMAMBAf8wHQYDVR0OBBYE
+FMkCyFAODKjV+jph9N6evAPX8an4MAoGCCqGSM49BAMCA0cAMEQCIAOLdnOdkQla
+8/ziYXxwU2VyN/iEgznWtvSH91sa1w2iAiAVwQ2wHaEh1SGrrgAt68LbmY1XRrFU
+KqF+dVwAw95t1zGCAgowggIGAgEBMIG1MIGcMQswCQYDVQQGEwJFUzELMAkGA1UE
+CAwCTUExFDASBgNVBAcMC1RyZXMgQ2FudG9zMREwDwYDVQQKDAhlUHJvc2ltYTER
+MA8GA1UECwwIZVByb3NpbWExHzAdBgNVBAMMFmVQcm9zaW1hIE90aGVyIFRlc3Qg
+Q0ExIzAhBgkqhkiG9w0BCQEWFG90aGVyY2FAZXByb3NpbWEuY29tAhRyxCGTrQd3
+cMFP47wSZFeWPwJJ/zANBglghkgBZQMEAgEFAKCB5DAYBgkqhkiG9w0BCQMxCwYJ
+KoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yMzAzMzAxMDUzNDFaMC8GCSqGSIb3
+DQEJBDEiBCDV6TuSpf4t4CNuV6COQbOAuFMe3hQmoBCfeC7KTvNFijB5BgkqhkiG
+9w0BCQ8xbDBqMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJYIZIAWUDBAEC
+MAoGCCqGSIb3DQMHMA4GCCqGSIb3DQMCAgIAgDANBggqhkiG9w0DAgIBQDAHBgUr
+DgMCBzANBggqhkiG9w0DAgIBKDAKBggqhkjOPQQDAgRHMEUCIC/wGlgiP0Mqwk9Q
++av8l4t+tf1ahpkdQEfi2wm74LM8AiEAgI/H2cMIbfrDX5fHFWxmSBb3zGMlYTxB
+nRx2oh22H+s=
+
+------3ED8A7B5D8704D95C963ADF84CBA4013--
+
