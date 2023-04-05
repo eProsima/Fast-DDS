@@ -74,6 +74,7 @@ TEST_P(DynamicTypesPrimitiveTestsAPIs, primitives_apis_unit_tests)
 {
     // Get the factory singleton
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
+    bool track_active = selected_mode > type_tracking::none;
 
     // Retrieve parameters
     TypeKind kind;
@@ -158,9 +159,11 @@ TEST_P(DynamicTypesPrimitiveTestsAPIs, primitives_apis_unit_tests)
     EXPECT_FALSE(*custom_builder == *builder1);
 
     // the custom type must not be a static instance
-    static_assert(selected_mode == type_tracking::complete, "testing requires memory tracking");
-    // The custom instance must be able to create a new type
-    EXPECT_FALSE(factory.is_empty());
+    if (track_active)
+    {
+        // The custom instance must be able to create a new type
+        EXPECT_FALSE(factory.is_empty());
+    }
 
     DynamicType_ptr custom_type1 = custom_builder->build();
     ASSERT_TRUE(custom_type1);
@@ -187,7 +190,11 @@ TEST_P(DynamicTypesPrimitiveTestsAPIs, primitives_apis_unit_tests)
 
     // The new types shouldn't be static
     custom_builder.reset();
-    EXPECT_FALSE(factory.is_empty());
+
+    if (track_active)
+    {
+        EXPECT_FALSE(factory.is_empty());
+    }
 
     // All resources should be freed out of scope
     custom_type1.reset();
