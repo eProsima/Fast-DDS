@@ -274,7 +274,7 @@ public:
     RTPS_DllAPI bool operator!=(const TypeDescriptor& descriptor) const;
 
     /**
-     * State comparisson according with the [standard] sections \b 7.5.2.7.4 \b 7.5.2.8.4
+     * State comparison according with the [standard] sections \b 7.5.2.7.4 \b 7.5.2.8.4
      * @remarks using `==` and `!=` operators is more convenient
      * @param[in] descriptor object state to compare to
      * @return \b bool `true` on equality

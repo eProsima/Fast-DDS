@@ -163,8 +163,8 @@ public:
     /**
      * Compares two @ref DynamicData, equality requires:
      *     - Their respective type definitions are equal
-     *     - All contained values are equal and occur in the same oreder
-     *     - If the samples' type is an aggregated type, previous rule shall be ammended as follows:
+     *     - All contained values are equal and occur in the same order
+     *     - If the samples' type is an aggregated type, previous rule shall be amended as follows:
      *          -# Members shall be compared without regard to their order.
      *          -# One of the samples may omit a non-optional member that is present in the other if that
      *             member takes its default value in the latter sample.
@@ -183,12 +183,12 @@ public:
      *     dimensions.
      * @li If the object is of a bitmask type, return the number of named flags that are currently set in the bitmask.
      * @li If the object is of a structure or annotation type, return the number of members in the object.
-     *     This value may be different than the number of members in the corresponding @ref DynamicType (some optional 
+     *     This value may be different than the number of members in the corresponding @ref DynamicType (some optional
      *     members may be omitted.
      * @li If the object is of a union type, return the number of members in the object. This number will be two if the
      *     discriminator value selects a member and one otherwise.
      * @li if the object is of a primitive or enumerated type, it is atomic: return one.
-     * @li if the object is of an alias type, return the value appropriate fo the alia's base type.
+     * @li if the object is of an alias type, return the value appropriate for the alias base type.
      * @return count as defined above
      */
     RTPS_DllAPI uint32_t get_item_count() const;
@@ -224,7 +224,7 @@ public:
 
     /**
      * Returns a loaned retrieved using @ref DynamicData::return_loaned_value
-     * @param [in] @ref DynamicData previously loaned
+     * @param [in] value @ref DynamicData previously loaned
      */
     RTPS_DllAPI ReturnCode_t return_loaned_value(
             const DynamicData* value);

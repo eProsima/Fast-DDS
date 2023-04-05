@@ -114,7 +114,7 @@ class AnnotationParameterValue;
 
 /**
  * This class is conceived as a singleton charged of creation of @ref DynamicTypeBuilder objects.
- * For simplicity direct primitive types instantiation is also posible.
+ * For simplicity direct primitive types instantiation is also possible.
  */
 class DynamicTypeBuilderFactory final
 {
@@ -376,7 +376,7 @@ public:
      * @remark The element type of the typed returned is a char8
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.5 this method is
      *         called `create_string_type` which is misguiding. It was renamed to simplify interface usage.
-     * @param[in] bound `uint32_t` representing the maximun number of elements that may be stored.
+     * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilder object
      */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_string_builder(
@@ -396,7 +396,7 @@ public:
      * @remark The element type of the typed returned is a char16
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.5 this method is
      *         called `create_wstring_type` which is misguiding. It was renamed to simplify interface usage.
-     * @param[in] bound `uint32_t` representing the maximun number of elements that may be stored.
+     * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilder object
      */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_wstring_builder(
@@ -407,7 +407,7 @@ public:
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.4 this method is
      *         called `create_sequence_type` which is misguiding. It was renamed to simplify interface usage.
      * @param[in] type @ref DynamicType which becomes the element type
-     * @param[in] bound `uint32_t` representing the maximun number of elements that may be stored.
+     * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilder object
      */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_sequence_builder(
@@ -419,7 +419,7 @@ public:
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.1 this method is
      *         called `create_array_type` which is misguiding. It was renamed to simplify interface usage.
      * @param[in] type @ref DynamicType which becomes the element type
-     * @param[in] bound `uint32_t` representing the desired dimensions
+     * @param[in] bounds `uint32_t` representing the desired dimensions
      * @return new @ref DynamicTypeBuilder object
      */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_array_builder(
@@ -432,7 +432,7 @@ public:
      *         called `create_map_type` which is misguiding. It was renamed to simplify interface usage.
      * @param[in] key_type @ref DynamicType which becomes the map's key type
      * @param[in] value_type @ref DynamicType which becomes the map's value type
-     * @param[in] bound `uint32_t` representing the maximun number of elements that may be stored.
+     * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilder object
      */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_map_builder(
@@ -444,7 +444,7 @@ public:
      * Creates a new @ref DynamicTypeBuilder object representing a bitmask
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.2 this method is
      *         called `create_bitmask_type` which is misguiding. It was renamed to simplify interface usage.
-     * @param[in] bound `uint32_t` representing the maximun number of elements that may be stored.
+     * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilder object
      */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_bitmask_builder(
@@ -452,7 +452,7 @@ public:
 
     /**
      * Creates a new @ref DynamicTypeBuilder object representing a bitset
-     * @param[in] bound `uint32_t` representing the maximun number of elements that may be stored.
+     * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilder object
      */
     RTPS_DllAPI DynamicTypeBuilder_ptr create_bitset_builder(
@@ -558,7 +558,7 @@ public:
 
     /**
      * Creates a new @ref DynamicTypeBuilder object representing a bitset
-     * @param[in] bound `uint32_t` representing the maximun number of elements that may be stored.
+     * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilder object
      */
     RTPS_DllAPI DynamicType_ptr create_bitset_type(

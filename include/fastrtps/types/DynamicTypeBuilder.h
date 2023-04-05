@@ -87,7 +87,7 @@ public:
     using TypeDescriptor::equals;
 
     /**
-     * Underlying state comparisson
+     * Underlying state comparison
      * @remarks using `==` and `!=` operators is more convenient
      * @param[in] other @ref DynamicType object to compare to
      * @return \b bool `true` on equality

@@ -197,7 +197,7 @@ public:
     RTPS_DllAPI bool operator!=(const MemberDescriptor& other) const;
 
     /**
-     * State comparisson
+     * State comparison
      * @remarks using `==` and `!=` operators is more convenient
      * @param[in] other @ref MemberDescriptor object whose state to compare to
      * @return \b bool `true` on equality

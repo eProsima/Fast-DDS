@@ -122,7 +122,7 @@ public:
         return t;
     }
 
-    // comparisson with integers
+    // comparison with integers
     bool operator==(const integer_type& i) const
     {
         bool a_invalid = value_ >= invalid;
@@ -156,7 +156,7 @@ public:
         return *this == i ? true : value_ > i;
     }
 
-    // comparisson
+    // comparison
     bool operator==(const member_id& i) const
     {
         return this->operator==(i.value_);
@@ -280,7 +280,7 @@ member_id<base> operator-(const typename member_id<base>::integer_type& x, const
     return mx -= y;
 }
 
-// comparisson
+// comparison
 
 template<class base>
 bool operator==(const typename member_id<base>::integer_type& x, const member_id<base>& y)

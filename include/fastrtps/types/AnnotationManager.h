@@ -46,7 +46,7 @@ protected:
         annotation_.clear();
     }
 
-    //! annotation state comparisson
+    //! annotation state comparison
     bool operator==(const AnnotationManager& other) const
     {
         return annotation_ == other.annotation_;

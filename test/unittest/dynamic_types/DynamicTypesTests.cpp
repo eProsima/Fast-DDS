@@ -386,8 +386,8 @@ TEST_F(DynamicTypesTests, member_id_unit_tests)
     EXPECT_EQ(id6, 2ll);
     EXPECT_EQ(id7, 2ull);
 
-    // Check comparisson
-    // • test comparisson methods
+    // Check comparison
+    // • test comparison methods
     id1 = 1;
     id2 = 2;
 
@@ -439,7 +439,7 @@ TEST_F(DynamicTypesTests, member_id_unit_tests)
     EXPECT_GE(id2, 1ull);
     EXPECT_GE(id2, 1_id);
 
-    // • test comparisson functions
+    // • test comparison functions
     EXPECT_EQ(1u, id1);
     EXPECT_EQ(1, id1);
     EXPECT_EQ(1l, id1);
@@ -774,7 +774,7 @@ TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
     EXPECT_EQ(md.get_name(), md1.get_name());
     EXPECT_EQ(md.get_type(), md1.get_type());
 
-    // • checking MemberDescriptor comparisson and construction
+    // • checking MemberDescriptor comparison and construction
     MemberDescriptor md2{1_id, "int64", factory.create_int64_type()};
     md2.set_index(1); // second addition
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->get_member(md, 1_id));
@@ -2612,7 +2612,7 @@ TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
 
 TEST_F(DynamicTypesTests, DynamicType_nested_alias_unit_tests)
 {
-    // Check alias comparisson in dependent types
+    // Check alias comparison in dependent types
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // • Simple struct with nested aliases
