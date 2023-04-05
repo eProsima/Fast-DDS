@@ -724,7 +724,7 @@ void PDPServer::perform_builtin_endpoints_matching(
     //Inform EDP of new RTPSParticipant data:
     if (mp_EDP != nullptr)
     {
-        mp_EDP->assignRemoteEndpoints(pdata);
+        mp_EDP->assignRemoteEndpoints(pdata, true);
     }
 
     if (mp_builtin->mp_WLP != nullptr)
