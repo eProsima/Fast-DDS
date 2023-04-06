@@ -453,6 +453,17 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         return;
     }
 
+#if HAVE_SECURITY
+    // Start security
+    if (!m_security_manager.init(
+                security_attributes_,
+                m_att.properties))
+    {
+        // Participant will be deleted, no need to allocate buffers or create builtin endpoints
+        return;
+    }
+#endif // if HAVE_SECURITY
+
     /* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
        Else -> Take them */
 
@@ -541,17 +552,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
                     m_network_Factory.fill_default_locator_port(domain_id_, loc, m_att, true);
                 });
     }
-
-#if HAVE_SECURITY
-    // Start security
-    if (!m_security_manager.init(
-                security_attributes_,
-                m_att.properties))
-    {
-        // Participant will be deleted, no need to allocate buffers or create builtin endpoints
-        return;
-    }
-#endif // if HAVE_SECURITY
 
     if (is_intraprocess_only())
     {
