@@ -560,10 +560,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         m_att.defaultMulticastLocatorList.clear();
     }
 
-    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, true, false, true);
+    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, false, false, true);
     createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true, false, true);
     createReceiverResources(m_att.defaultUnicastLocatorList, true, false, true);
-    createReceiverResources(m_att.defaultMulticastLocatorList, true, false, true);
+    createReceiverResources(m_att.defaultMulticastLocatorList, false, false, true);
 
     {
         using namespace fastdds::rtps::network::external_locators;
