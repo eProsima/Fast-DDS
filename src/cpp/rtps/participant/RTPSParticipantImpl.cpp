@@ -524,8 +524,7 @@ void RTPSParticipantImpl::setup_meta_traffic()
 
     // Creation of metatraffic locator and receiver resources
     uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(domain_id_);
-    uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(domain_id_,
-                    static_cast<uint32_t>(m_att.participantID));
+    metatraffic_unicast_port_ = m_att.port.getUnicastPort(domain_id_, static_cast<uint32_t>(m_att.participantID));
     uint32_t meta_multicast_port_for_check = metatraffic_multicast_port;
 
     /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
@@ -551,7 +550,7 @@ void RTPSParticipantImpl::setup_meta_traffic()
         std::for_each(m_att.builtin.metatrafficUnicastLocatorList.begin(),
                 m_att.builtin.metatrafficUnicastLocatorList.end(), [&](Locator_t& locator)
                 {
-                    m_network_Factory.fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
+                    m_network_Factory.fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port_);
                 });
         m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
     }
@@ -2799,15 +2798,13 @@ void RTPSParticipantImpl::environment_file_has_changed()
 void RTPSParticipantImpl::get_default_metatraffic_locators()
 {
     uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(domain_id_);
-    uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(domain_id_,
-                    static_cast<uint32_t>(m_att.participantID));
 
     m_network_Factory.getDefaultMetatrafficMulticastLocators(m_att.builtin.metatrafficMulticastLocatorList,
             metatraffic_multicast_port);
     m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
 
     m_network_Factory.getDefaultMetatrafficUnicastLocators(m_att.builtin.metatrafficUnicastLocatorList,
-            metatraffic_unicast_port);
+            metatraffic_unicast_port_);
     m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
 }
 
