@@ -237,7 +237,12 @@ Locator_t& RTPSParticipantImpl::applyLocatorAdaptRule(
 {
     // This is a completely made up rule
     // It is transport responsibility to interpret this new port.
-    loc.port += m_att.port.participantIDGain;
+    uint16_t delta = m_att.port.participantIDGain;
+    if (metatraffic_unicast_port_ == loc.port)
+    {
+        metatraffic_unicast_port_ += delta;
+    }
+    loc.port += delta;
     return loc;
 }
 
