@@ -469,43 +469,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     setup_initial_peers();
     setup_output_traffic();
 
-    /* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
-       Else -> Take them */
-
-    // Creation of metatraffic locator and receiver resources
-    uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(domain_id_);
-    uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(domain_id_,
-                    static_cast<uint32_t>(m_att.participantID));
-    uint32_t meta_multicast_port_for_check = metatraffic_multicast_port;
-
-    /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
-    if (m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
-    {
-        get_default_metatraffic_locators();
-        internal_metatraffic_locators_ = true;
-    }
-    else
-    {
-        if (0 < m_att.builtin.metatrafficMulticastLocatorList.size() &&
-                0 !=  m_att.builtin.metatrafficMulticastLocatorList.begin()->port)
-        {
-            meta_multicast_port_for_check = m_att.builtin.metatrafficMulticastLocatorList.begin()->port;
-        }
-        std::for_each(m_att.builtin.metatrafficMulticastLocatorList.begin(),
-                m_att.builtin.metatrafficMulticastLocatorList.end(), [&](Locator_t& locator)
-                {
-                    m_network_Factory.fillMetatrafficMulticastLocator(locator, metatraffic_multicast_port);
-                });
-        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
-
-        std::for_each(m_att.builtin.metatrafficUnicastLocatorList.begin(),
-                m_att.builtin.metatrafficUnicastLocatorList.end(), [&](Locator_t& locator)
-                {
-                    m_network_Factory.fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
-                });
-        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
-    }
-
     // Initial peers
     if (m_att.builtin.initialPeersList.empty())
     {
@@ -560,31 +523,17 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 
     if (is_intraprocess_only())
     {
-        m_att.builtin.metatrafficUnicastLocatorList.clear();
         m_att.defaultUnicastLocatorList.clear();
         m_att.defaultMulticastLocatorList.clear();
     }
 
-    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, false, false, true);
-    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true, false, true);
     createReceiverResources(m_att.defaultUnicastLocatorList, true, false, true);
     createReceiverResources(m_att.defaultMulticastLocatorList, false, false, true);
 
     {
         using namespace fastdds::rtps::network::external_locators;
-        set_listening_locators(m_att.builtin.metatraffic_external_unicast_locators,
-                m_att.builtin.metatrafficUnicastLocatorList);
         set_listening_locators(m_att.default_external_unicast_locators,
                 m_att.defaultUnicastLocatorList);
-    }
-
-    // Check metatraffic multicast port
-    if (0 < m_att.builtin.metatrafficMulticastLocatorList.size() &&
-            m_att.builtin.metatrafficMulticastLocatorList.begin()->port != meta_multicast_port_for_check)
-    {
-        EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT,
-                "Metatraffic multicast port " << meta_multicast_port_for_check << " cannot be opened."
-                " It may is opened by another application. Discovery may fail.");
     }
 
     bool allow_growing_buffers = m_att.allocation.send_buffers.dynamic;
@@ -671,6 +620,63 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 
 void RTPSParticipantImpl::setup_meta_traffic()
 {
+    /* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
+       Else -> Take them */
+
+    // Creation of metatraffic locator and receiver resources
+    uint32_t metatraffic_multicast_port = m_att.port.getMulticastPort(domain_id_);
+    uint32_t metatraffic_unicast_port = m_att.port.getUnicastPort(domain_id_,
+                    static_cast<uint32_t>(m_att.participantID));
+    uint32_t meta_multicast_port_for_check = metatraffic_multicast_port;
+
+    /* INSERT DEFAULT MANDATORY MULTICAST LOCATORS HERE */
+    if (m_att.builtin.metatrafficMulticastLocatorList.empty() && m_att.builtin.metatrafficUnicastLocatorList.empty())
+    {
+        get_default_metatraffic_locators();
+        internal_metatraffic_locators_ = true;
+    }
+    else
+    {
+        if (0 < m_att.builtin.metatrafficMulticastLocatorList.size() &&
+                0 !=  m_att.builtin.metatrafficMulticastLocatorList.begin()->port)
+        {
+            meta_multicast_port_for_check = m_att.builtin.metatrafficMulticastLocatorList.begin()->port;
+        }
+        std::for_each(m_att.builtin.metatrafficMulticastLocatorList.begin(),
+                m_att.builtin.metatrafficMulticastLocatorList.end(), [&](Locator_t& locator)
+                {
+                    m_network_Factory.fillMetatrafficMulticastLocator(locator, metatraffic_multicast_port);
+                });
+        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficMulticastLocatorList);
+
+        std::for_each(m_att.builtin.metatrafficUnicastLocatorList.begin(),
+                m_att.builtin.metatrafficUnicastLocatorList.end(), [&](Locator_t& locator)
+                {
+                    m_network_Factory.fillMetatrafficUnicastLocator(locator, metatraffic_unicast_port);
+                });
+        m_network_Factory.NormalizeLocators(m_att.builtin.metatrafficUnicastLocatorList);
+    }
+
+    createReceiverResources(m_att.builtin.metatrafficMulticastLocatorList, false, false, true);
+    createReceiverResources(m_att.builtin.metatrafficUnicastLocatorList, true, false, true);
+
+    if (is_intraprocess_only())
+    {
+        m_att.builtin.metatrafficUnicastLocatorList.clear();
+    }
+
+    // Check metatraffic multicast port
+    if (0 < m_att.builtin.metatrafficMulticastLocatorList.size() &&
+            m_att.builtin.metatrafficMulticastLocatorList.begin()->port != meta_multicast_port_for_check)
+    {
+        EPROSIMA_LOG_WARNING(RTPS_PARTICIPANT,
+                "Metatraffic multicast port " << meta_multicast_port_for_check << " cannot be opened."
+                " It may is opened by another application. Discovery may fail.");
+    }
+
+    namespace external_locators = fastdds::rtps::network::external_locators;
+    external_locators::set_listening_locators(m_att.builtin.metatraffic_external_unicast_locators,
+            m_att.builtin.metatrafficUnicastLocatorList);
 }
 
 void RTPSParticipantImpl::setup_user_traffic()
