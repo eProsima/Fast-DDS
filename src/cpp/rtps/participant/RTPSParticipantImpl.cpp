@@ -469,56 +469,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     setup_initial_peers();
     setup_output_traffic();
 
-    // Creation of user locator and receiver resources
-    //If no default locators are defined we define some.
-    /* The reasoning here is the following.
-       If the parameters of the RTPS Participant don't hold default listening locators for the creation
-       of Endpoints, we make some for Unicast only.
-       If there is at least one listen locator of any kind, we do not create any default ones.
-       If there are no sending locators defined, we create default ones for the transports we implement.
-     */
-    if (m_att.defaultUnicastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
-    {
-        //Default Unicast Locators in case they have not been provided
-        /* INSERT DEFAULT UNICAST LOCATORS FOR THE PARTICIPANT */
-        get_default_unicast_locators();
-        internal_default_locators_ = true;
-        EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
-                m_att.getName() << " Created with NO default Unicast Locator List, adding Locators:"
-                                << m_att.defaultUnicastLocatorList);
-    }
-    else
-    {
-        // Locator with port 0, calculate port.
-        std::for_each(m_att.defaultUnicastLocatorList.begin(), m_att.defaultUnicastLocatorList.end(),
-                [&](Locator_t& loc)
-                {
-                    m_network_Factory.fill_default_locator_port(domain_id_, loc, m_att, false);
-                });
-        m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
-
-        std::for_each(m_att.defaultMulticastLocatorList.begin(), m_att.defaultMulticastLocatorList.end(),
-                [&](Locator_t& loc)
-                {
-                    m_network_Factory.fill_default_locator_port(domain_id_, loc, m_att, true);
-                });
-    }
-
-    if (is_intraprocess_only())
-    {
-        m_att.defaultUnicastLocatorList.clear();
-        m_att.defaultMulticastLocatorList.clear();
-    }
-
-    createReceiverResources(m_att.defaultUnicastLocatorList, true, false, true);
-    createReceiverResources(m_att.defaultMulticastLocatorList, false, false, true);
-
-    {
-        using namespace fastdds::rtps::network::external_locators;
-        set_listening_locators(m_att.default_external_unicast_locators,
-                m_att.defaultUnicastLocatorList);
-    }
-
     bool allow_growing_buffers = m_att.allocation.send_buffers.dynamic;
     size_t num_send_buffers = m_att.allocation.send_buffers.preallocated_number;
     if (num_send_buffers == 0)
@@ -664,6 +614,53 @@ void RTPSParticipantImpl::setup_meta_traffic()
 
 void RTPSParticipantImpl::setup_user_traffic()
 {
+    // Creation of user locator and receiver resources
+    //If no default locators are defined we define some.
+    /* The reasoning here is the following.
+       If the parameters of the RTPS Participant don't hold default listening locators for the creation
+       of Endpoints, we make some for Unicast only.
+       If there is at least one listen locator of any kind, we do not create any default ones.
+       If there are no sending locators defined, we create default ones for the transports we implement.
+     */
+    if (m_att.defaultUnicastLocatorList.empty() && m_att.defaultMulticastLocatorList.empty())
+    {
+        //Default Unicast Locators in case they have not been provided
+        /* INSERT DEFAULT UNICAST LOCATORS FOR THE PARTICIPANT */
+        get_default_unicast_locators();
+        internal_default_locators_ = true;
+        EPROSIMA_LOG_INFO(RTPS_PARTICIPANT,
+                m_att.getName() << " Created with NO default Unicast Locator List, adding Locators:"
+                                << m_att.defaultUnicastLocatorList);
+    }
+    else
+    {
+        // Locator with port 0, calculate port.
+        std::for_each(m_att.defaultUnicastLocatorList.begin(), m_att.defaultUnicastLocatorList.end(),
+                [&](Locator_t& loc)
+                {
+                    m_network_Factory.fill_default_locator_port(domain_id_, loc, m_att, false);
+                });
+        m_network_Factory.NormalizeLocators(m_att.defaultUnicastLocatorList);
+
+        std::for_each(m_att.defaultMulticastLocatorList.begin(), m_att.defaultMulticastLocatorList.end(),
+                [&](Locator_t& loc)
+                {
+                    m_network_Factory.fill_default_locator_port(domain_id_, loc, m_att, true);
+                });
+    }
+
+    if (is_intraprocess_only())
+    {
+        m_att.defaultUnicastLocatorList.clear();
+        m_att.defaultMulticastLocatorList.clear();
+    }
+
+    createReceiverResources(m_att.defaultUnicastLocatorList, true, false, true);
+    createReceiverResources(m_att.defaultMulticastLocatorList, false, false, true);
+
+    namespace external_locators = fastdds::rtps::network::external_locators;
+    external_locators::set_listening_locators(m_att.default_external_unicast_locators,
+            m_att.defaultUnicastLocatorList);
 }
 
 void RTPSParticipantImpl::setup_initial_peers()
