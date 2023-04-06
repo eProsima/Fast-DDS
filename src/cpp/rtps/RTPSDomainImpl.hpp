@@ -211,6 +211,9 @@ private:
      */
     uint32_t getNewId();
 
+    uint32_t get_id_for_prefix(
+            uint32_t participant_id);
+
     void removeRTPSParticipant_nts(
             t_p_RTPSParticipant&);
 
@@ -225,6 +228,8 @@ private:
     std::set<uint32_t> m_RTPSParticipantIDs;
 
     FileWatchHandle file_watch_handle_;
+
+    uint32_t prefix_id_offset_ = 0;
 };
 
 } // namespace rtps

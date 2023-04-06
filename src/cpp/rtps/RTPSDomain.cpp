@@ -190,7 +190,7 @@ RTPSParticipant* RTPSDomainImpl::createParticipant(
 
     // Generate a new GuidPrefix_t
     GuidPrefix_t guidP;
-    guid_prefix_create(ID, guidP);
+    guid_prefix_create(instance->get_id_for_prefix(ID), guidP);
     if (!PParam.builtin.metatraffic_external_unicast_locators.empty())
     {
         fastdds::rtps::LocatorList locators;
@@ -616,6 +616,20 @@ uint32_t RTPSDomainImpl::getNewId()
     // The exisiting IDs must be continuous starting from zero, so the next
     // available ID must be the size of the set of IDs.
     return static_cast<uint32_t>(m_RTPSParticipantIDs.size());
+}
+
+uint32_t RTPSDomainImpl::get_id_for_prefix(
+        uint32_t participant_id)
+{
+    uint32_t ret = participant_id;
+    if (ret < 0x10000)
+    {
+        std::lock_guard<std::mutex> guard(m_mutex);
+        ret |= prefix_id_offset_;
+        prefix_id_offset_ += 0x10000;
+    }
+
+    return ret;
 }
 
 void RTPSDomainImpl::create_participant_guid(
