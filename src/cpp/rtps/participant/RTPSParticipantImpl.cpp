@@ -469,23 +469,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     setup_initial_peers();
     setup_output_traffic();
 
-    // Initial peers
-    if (m_att.builtin.initialPeersList.empty())
-    {
-        m_att.builtin.initialPeersList = m_att.builtin.metatrafficMulticastLocatorList;
-    }
-    else
-    {
-        LocatorList_t initial_peers;
-        initial_peers.swap(m_att.builtin.initialPeersList);
-
-        std::for_each(initial_peers.begin(), initial_peers.end(),
-                [&](Locator_t& locator)
-                {
-                    m_network_Factory.configureInitialPeerLocator(domain_id_, locator, m_att);
-                });
-    }
-
     // Creation of user locator and receiver resources
     //If no default locators are defined we define some.
     /* The reasoning here is the following.
@@ -685,6 +668,22 @@ void RTPSParticipantImpl::setup_user_traffic()
 
 void RTPSParticipantImpl::setup_initial_peers()
 {
+    // Initial peers
+    if (m_att.builtin.initialPeersList.empty())
+    {
+        m_att.builtin.initialPeersList = m_att.builtin.metatrafficMulticastLocatorList;
+    }
+    else
+    {
+        LocatorList_t initial_peers;
+        initial_peers.swap(m_att.builtin.initialPeersList);
+
+        std::for_each(initial_peers.begin(), initial_peers.end(),
+                [&](Locator_t& locator)
+                {
+                    m_network_Factory.configureInitialPeerLocator(domain_id_, locator, m_att);
+                });
+    }
 }
 
 void RTPSParticipantImpl::setup_output_traffic()
