@@ -469,40 +469,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     setup_initial_peers();
     setup_output_traffic();
 
-    bool allow_growing_buffers = m_att.allocation.send_buffers.dynamic;
-    size_t num_send_buffers = m_att.allocation.send_buffers.preallocated_number;
-    if (num_send_buffers == 0)
-    {
-        // Two buffers (user, events)
-        num_send_buffers = 2;
-        // Add one buffer per reception thread
-        num_send_buffers += m_receiverResourcelist.size();
-    }
-
-    // Create buffer pool
-    send_buffers_.reset(new SendBuffersManager(num_send_buffers, allow_growing_buffers));
-    send_buffers_->init(this);
-
-    // Initialize flow controller factory.
-    // This must be done after initiate network layer.
-    flow_controller_factory_.init(this);
-
-    // Support old API
-    if (m_att.throughputController.bytesPerPeriod != UINT32_MAX && m_att.throughputController.periodMillisecs != 0)
-    {
-        fastdds::rtps::FlowControllerDescriptor old_descriptor;
-        old_descriptor.name = guid_str_.c_str();
-        old_descriptor.max_bytes_per_period = m_att.throughputController.bytesPerPeriod;
-        old_descriptor.period_ms = m_att.throughputController.periodMillisecs;
-        flow_controller_factory_.register_flow_controller(old_descriptor);
-    }
-
-    // Register user's flow controllers.
-    for (auto flow_controller_desc : m_att.flow_controllers)
-    {
-        flow_controller_factory_.register_flow_controller(*flow_controller_desc.get());
-    }
-
 #if HAVE_SECURITY
     if (m_security_manager.is_security_active())
     {
@@ -685,6 +651,39 @@ void RTPSParticipantImpl::setup_initial_peers()
 
 void RTPSParticipantImpl::setup_output_traffic()
 {
+    bool allow_growing_buffers = m_att.allocation.send_buffers.dynamic;
+    size_t num_send_buffers = m_att.allocation.send_buffers.preallocated_number;
+    if (num_send_buffers == 0)
+    {
+        // Two buffers (user, events)
+        num_send_buffers = 2;
+        // Add one buffer per reception thread
+        num_send_buffers += m_receiverResourcelist.size();
+    }
+
+    // Create buffer pool
+    send_buffers_.reset(new SendBuffersManager(num_send_buffers, allow_growing_buffers));
+    send_buffers_->init(this);
+
+    // Initialize flow controller factory.
+    // This must be done after initiate network layer.
+    flow_controller_factory_.init(this);
+
+    // Support old API
+    if (m_att.throughputController.bytesPerPeriod != UINT32_MAX && m_att.throughputController.periodMillisecs != 0)
+    {
+        fastdds::rtps::FlowControllerDescriptor old_descriptor;
+        old_descriptor.name = guid_str_.c_str();
+        old_descriptor.max_bytes_per_period = m_att.throughputController.bytesPerPeriod;
+        old_descriptor.period_ms = m_att.throughputController.periodMillisecs;
+        flow_controller_factory_.register_flow_controller(old_descriptor);
+    }
+
+    // Register user's flow controllers.
+    for (auto flow_controller_desc : m_att.flow_controllers)
+    {
+        flow_controller_factory_.register_flow_controller(*flow_controller_desc.get());
+    }
 }
 
 void RTPSParticipantImpl::enable()
