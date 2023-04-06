@@ -464,6 +464,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     }
 #endif // if HAVE_SECURITY
 
+    setup_meta_traffic();
+    setup_user_traffic();
+    setup_initial_peers();
+    setup_output_traffic();
+
     /* If metatrafficMulticastLocatorList is empty, add mandatory default Locators
        Else -> Take them */
 
@@ -661,6 +666,22 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         RTPSParticipant* par,
         RTPSParticipantListener* plisten)
     : RTPSParticipantImpl(domain_id, PParam, guidP, c_GuidPrefix_Unknown, par, plisten)
+{
+}
+
+void RTPSParticipantImpl::setup_meta_traffic()
+{
+}
+
+void RTPSParticipantImpl::setup_user_traffic()
+{
+}
+
+void RTPSParticipantImpl::setup_initial_peers()
+{
+}
+
+void RTPSParticipantImpl::setup_output_traffic()
 {
 }
 

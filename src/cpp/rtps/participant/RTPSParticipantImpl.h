@@ -622,6 +622,11 @@ private:
     //! Protect ignored entities collection concurrent access
     mutable shared_mutex ignored_mtx_;
 
+    void setup_meta_traffic();
+    void setup_user_traffic();
+    void setup_initial_peers();
+    void setup_output_traffic();
+
     RTPSParticipantImpl& operator =(
             const RTPSParticipantImpl&) = delete;
 
