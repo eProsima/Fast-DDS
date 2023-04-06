@@ -615,7 +615,7 @@ uint32_t RTPSDomainImpl::getNewId()
     // Couldn't find any free space in the set of IDs.
     // The exisiting IDs must be continuous starting from zero, so the next
     // available ID must be the size of the set of IDs.
-    return m_RTPSParticipantIDs.size();
+    return static_cast<uint32_t>(m_RTPSParticipantIDs.size());
 }
 
 void RTPSDomainImpl::create_participant_guid(
