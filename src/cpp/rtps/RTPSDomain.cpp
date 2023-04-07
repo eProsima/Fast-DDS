@@ -129,7 +129,9 @@ RTPSParticipant* RTPSDomain::createParticipant(
     }
 
     uint32_t ID;
+    if (!instance->prepare_participant_id(PParam.participantID, ID))
     {
+<<<<<<< HEAD
         std::lock_guard<std::mutex> guard(m_mutex);
 
         if (PParam.participantID < 0)
@@ -149,6 +151,9 @@ RTPSParticipant* RTPSDomain::createParticipant(
                 return nullptr;
             }
         }
+=======
+        return nullptr;
+>>>>>>> e46e87550 (Pick smallest available participant ID for new paricipants (#3437))
     }
 
     if (!PParam.defaultUnicastLocatorList.isValid())
@@ -166,7 +171,21 @@ RTPSParticipant* RTPSDomain::createParticipant(
 
     // Generate a new GuidPrefix_t
     GuidPrefix_t guidP;
+<<<<<<< HEAD
     guid_prefix_create(ID, guidP);
+=======
+    guid_prefix_create(instance->get_id_for_prefix(ID), guidP);
+    if (!PParam.builtin.metatraffic_external_unicast_locators.empty())
+    {
+        fastdds::rtps::LocatorList locators;
+        fastrtps::rtps::IPFinder::getIP4Address(&locators);
+        fastdds::rtps::ExternalLocatorsProcessor::add_external_locators(locators,
+                PParam.builtin.metatraffic_external_unicast_locators);
+        uint16_t host_id = Host::compute_id(locators);
+        guidP.value[2] = static_cast<octet>(host_id & 0xFF);
+        guidP.value[3] = static_cast<octet>((host_id >> 8) & 0xFF);
+    }
+>>>>>>> e46e87550 (Pick smallest available participant ID for new paricipants (#3437))
 
     RTPSParticipant* p = new RTPSParticipant(nullptr);
     RTPSParticipantImpl* pimpl = nullptr;
@@ -222,8 +241,15 @@ RTPSParticipant* RTPSDomain::createParticipant(
     }
 
     {
+<<<<<<< HEAD
         std::lock_guard<std::mutex> guard(m_mutex);
         m_RTPSParticipants.push_back(t_p_RTPSParticipant(p, pimpl));
+=======
+        std::lock_guard<std::mutex> guard(instance->m_mutex);
+        instance->m_RTPSParticipants.push_back(t_p_RTPSParticipant(p, pimpl));
+        instance->m_RTPSParticipantIDs[ID].used = true;
+        instance->m_RTPSParticipantIDs[ID].reserved = true;
+>>>>>>> e46e87550 (Pick smallest available participant ID for new paricipants (#3437))
     }
 
     // Check the environment file in case it was modified during participant creation leading to a missed callback.
@@ -254,9 +280,17 @@ bool RTPSDomain::removeRTPSParticipant(
         {
             if (it->second->getGuid().guidPrefix == p->getGuid().guidPrefix)
             {
+<<<<<<< HEAD
                 RTPSDomain::t_p_RTPSParticipant participant = *it;
                 m_RTPSParticipants.erase(it);
                 m_RTPSParticipantIDs.erase(m_RTPSParticipantIDs.find(participant.second->getRTPSParticipantID()));
+=======
+                RTPSDomainImpl::t_p_RTPSParticipant participant = *it;
+                instance->m_RTPSParticipants.erase(it);
+                uint32_t participant_id = participant.second->getRTPSParticipantID();
+                instance->m_RTPSParticipantIDs[participant_id].used = false;
+                instance->m_RTPSParticipantIDs[participant_id].reserved = false;
+>>>>>>> e46e87550 (Pick smallest available participant ID for new paricipants (#3437))
                 lock.unlock();
                 removeRTPSParticipant_nts(participant);
                 return true;
@@ -547,17 +581,78 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     return nullptr;
 }
 
+<<<<<<< HEAD
+=======
+uint32_t RTPSDomainImpl::getNewId()
+{
+    // Get the smallest available participant ID.
+    // Settings like maxInitialPeersRange control how many participants a peer
+    // will look for on this host.
+    // Choosing the smallest value ensures peers using unicast discovery will
+    // find this participant as long as the total number of participants has
+    // not exceeded the number of peers they will look for.
+    uint32_t i = 0;
+    while (m_RTPSParticipantIDs[i].reserved || m_RTPSParticipantIDs[i].used)
+    {
+        ++i;
+    }
+    m_RTPSParticipantIDs[i].reserved = true;
+    return i;
+}
+
+bool RTPSDomainImpl::prepare_participant_id(
+        int32_t input_id,
+        uint32_t& participant_id)
+{
+    std::lock_guard<std::mutex> guard(m_mutex);
+    if (input_id < 0)
+    {
+        participant_id = getNewId();
+    }
+    else
+    {
+        participant_id = input_id;
+        if (m_RTPSParticipantIDs[participant_id].used == true)
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "RTPSParticipant with the same ID already exists");
+            return false;
+        }
+    }
+    return true;
+}
+
+uint32_t RTPSDomainImpl::get_id_for_prefix(
+        uint32_t participant_id)
+{
+    uint32_t ret = participant_id;
+    if (ret < 0x10000)
+    {
+        std::lock_guard<std::mutex> guard(m_mutex);
+        ret |= m_RTPSParticipantIDs[participant_id].counter;
+        m_RTPSParticipantIDs[participant_id].counter += 0x10000;
+    }
+
+    return ret;
+}
+
+>>>>>>> e46e87550 (Pick smallest available participant ID for new paricipants (#3437))
 void RTPSDomainImpl::create_participant_guid(
         int32_t& participant_id,
         GUID_t& guid)
 {
     if (participant_id < 0)
     {
+<<<<<<< HEAD
         std::lock_guard<std::mutex> guard(RTPSDomain::m_mutex);
         do
         {
             participant_id = RTPSDomain::getNewId();
         } while (RTPSDomain::m_RTPSParticipantIDs.find(participant_id) != RTPSDomain::m_RTPSParticipantIDs.end());
+=======
+        auto instance = get_instance();
+        std::lock_guard<std::mutex> guard(instance->m_mutex);
+        participant_id = instance->getNewId();
+>>>>>>> e46e87550 (Pick smallest available participant ID for new paricipants (#3437))
     }
 
     guid_prefix_create(participant_id, guid.guidPrefix);
