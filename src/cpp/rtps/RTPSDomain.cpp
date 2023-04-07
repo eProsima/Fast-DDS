@@ -153,26 +153,9 @@ RTPSParticipant* RTPSDomainImpl::createParticipant(
     }
 
     uint32_t ID;
+    if (!instance->prepare_participant_id(PParam.participantID, ID))
     {
-        std::lock_guard<std::mutex> guard(instance->m_mutex);
-
-        if (PParam.participantID < 0)
-        {
-            ID = instance->getNewId();
-            while (instance->m_RTPSParticipantIDs.insert(ID).second == false)
-            {
-                ID = instance->getNewId();
-            }
-        }
-        else
-        {
-            ID = PParam.participantID;
-            if (instance->m_RTPSParticipantIDs.insert(ID).second == false)
-            {
-                EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "RTPSParticipant with the same ID already exists");
-                return nullptr;
-            }
-        }
+        return nullptr;
     }
 
     if (!PParam.defaultUnicastLocatorList.isValid())
@@ -259,6 +242,8 @@ RTPSParticipant* RTPSDomainImpl::createParticipant(
     {
         std::lock_guard<std::mutex> guard(instance->m_mutex);
         instance->m_RTPSParticipants.push_back(t_p_RTPSParticipant(p, pimpl));
+        instance->m_RTPSParticipantIDs[ID].used = true;
+        instance->m_RTPSParticipantIDs[ID].reserved = true;
     }
 
     // Check the environment file in case it was modified during participant creation leading to a missed callback.
@@ -291,7 +276,9 @@ bool RTPSDomainImpl::removeRTPSParticipant(
             {
                 RTPSDomainImpl::t_p_RTPSParticipant participant = *it;
                 instance->m_RTPSParticipants.erase(it);
-                instance->m_RTPSParticipantIDs.erase(participant.second->getRTPSParticipantID());
+                uint32_t participant_id = participant.second->getRTPSParticipantID();
+                instance->m_RTPSParticipantIDs[participant_id].used = false;
+                instance->m_RTPSParticipantIDs[participant_id].reserved = false;
                 lock.unlock();
                 instance->removeRTPSParticipant_nts(participant);
                 return true;
@@ -605,17 +592,34 @@ uint32_t RTPSDomainImpl::getNewId()
     // Choosing the smallest value ensures peers using unicast discovery will
     // find this participant as long as the total number of participants has
     // not exceeded the number of peers they will look for.
-    for (uint32_t i = 0; i < m_RTPSParticipantIDs.size(); ++i)
+    uint32_t i = 0;
+    while (m_RTPSParticipantIDs[i].reserved || m_RTPSParticipantIDs[i].used)
     {
-        if (m_RTPSParticipantIDs.find(i) == m_RTPSParticipantIDs.end())
+        ++i;
+    }
+    m_RTPSParticipantIDs[i].reserved = true;
+    return i;
+}
+
+bool RTPSDomainImpl::prepare_participant_id(
+        int32_t input_id,
+        uint32_t& participant_id)
+{
+    std::lock_guard<std::mutex> guard(m_mutex);
+    if (input_id < 0)
+    {
+        participant_id = getNewId();
+    }
+    else
+    {
+        participant_id = input_id;
+        if (m_RTPSParticipantIDs[participant_id].used == true)
         {
-            return i;
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "RTPSParticipant with the same ID already exists");
+            return false;
         }
     }
-    // Couldn't find any free space in the set of IDs.
-    // The exisiting IDs must be continuous starting from zero, so the next
-    // available ID must be the size of the set of IDs.
-    return static_cast<uint32_t>(m_RTPSParticipantIDs.size());
+    return true;
 }
 
 uint32_t RTPSDomainImpl::get_id_for_prefix(
@@ -625,8 +629,8 @@ uint32_t RTPSDomainImpl::get_id_for_prefix(
     if (ret < 0x10000)
     {
         std::lock_guard<std::mutex> guard(m_mutex);
-        ret |= prefix_id_offset_;
-        prefix_id_offset_ += 0x10000;
+        ret |= m_RTPSParticipantIDs[participant_id].counter;
+        m_RTPSParticipantIDs[participant_id].counter += 0x10000;
     }
 
     return ret;
@@ -640,10 +644,7 @@ void RTPSDomainImpl::create_participant_guid(
     {
         auto instance = get_instance();
         std::lock_guard<std::mutex> guard(instance->m_mutex);
-        do
-        {
-            participant_id = instance->getNewId();
-        } while (instance->m_RTPSParticipantIDs.find(participant_id) != instance->m_RTPSParticipantIDs.end());
+        participant_id = instance->getNewId();
     }
 
     guid_prefix_create(participant_id, guid.guidPrefix);

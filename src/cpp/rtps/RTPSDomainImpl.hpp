@@ -19,6 +19,7 @@
 #include <chrono>
 #include <memory>
 #include <thread>
+#include <unordered_map>
 
 #if defined(_WIN32) || defined(__unix__)
 #include <FileWatch.hpp>
@@ -211,6 +212,10 @@ private:
      */
     uint32_t getNewId();
 
+    bool prepare_participant_id(
+            int32_t input_id,
+            uint32_t& participant_id);
+
     uint32_t get_id_for_prefix(
             uint32_t participant_id);
 
@@ -225,11 +230,16 @@ private:
 
     std::vector<t_p_RTPSParticipant> m_RTPSParticipants;
 
-    std::set<uint32_t> m_RTPSParticipantIDs;
+    struct ParticipantIDState
+    {
+        uint32_t counter = 0;
+        bool reserved = false;
+        bool used = false;
+    };
+
+    std::unordered_map<uint32_t, ParticipantIDState> m_RTPSParticipantIDs;
 
     FileWatchHandle file_watch_handle_;
-
-    uint32_t prefix_id_offset_ = 0;
 };
 
 } // namespace rtps
