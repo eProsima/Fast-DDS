@@ -102,8 +102,7 @@ class dynamic_tracker
 
 #if defined(ENABLE_DYNAMIC_MEMORY_CHECK) \
     && (!defined(_MSC_VER) || _MSC_VER >= 1921) \
-    && (!defined(__GLIBCXX__) || __GLIBCXX__ >= 20220421) \
-    && !defined(__APPLE__)
+    && (!defined(__APPLE__) || _LIBCPP_STD_VER >= 20)
 constexpr type_tracking selected_mode = type_tracking::complete;
 #else
 constexpr type_tracking selected_mode = type_tracking::none;
