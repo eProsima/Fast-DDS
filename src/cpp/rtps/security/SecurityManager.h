@@ -745,11 +745,11 @@ private:
             const GUID_t& remote_participant_key) const;
 
     /**
-    * Determines de action to do when validation process fails
-    * @param participant_data ParticipantProxyData& exchange partner
-    * @param exception Exception to generate (if any)
-    * @return true if this participant should be considered as authenticated
-    */
+     * Determines de action to do when validation process fails
+     * @param participant_data ParticipantProxyData& exchange partner
+     * @param exception Exception to generate (if any)
+     * @return true if this participant should be considered as authenticated
+     */
     void on_validation_failed(
             const ParticipantProxyData& participant_data,
             const SecurityException& exception) const;
