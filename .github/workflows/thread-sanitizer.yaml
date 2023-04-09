@@ -143,7 +143,8 @@ jobs:
       - name: Run Fast-DDS test & generate sanitizer reports
         run: |
           cd ws/build/fastdds
-          ctest --timeout 30 -j 2 -V ${{ inputs.optional_ctest_args }}
+          # Exclude DDSSQLFilterValueTests tests to prevent hitting GH Actions resource limits
+          ctest --timeout 30 -j 2 -V -E DDSSQLFilterValueTests ${{ inputs.optional_ctest_args }}
           # ctest fails if sanitizer reports are present
           $LASTEXITCODE=0
 
