@@ -92,7 +92,10 @@ inline bool CDRMessage::readData(
     {
         return false;
     }
-    memcpy(o, &msg->buffer[msg->pos], length);
+    if (length > 0)
+    {
+        memcpy(o, &msg->buffer[msg->pos], length);
+    }
     msg->pos += length;
     return true;
 }
@@ -468,8 +471,10 @@ inline bool CDRMessage::addData(
     {
         return false;
     }
-
-    memcpy(&msg->buffer[msg->pos], data, length);
+    if (length > 0)
+    {
+        memcpy(&msg->buffer[msg->pos], data, length);
+    }
     msg->pos += length;
     msg->length += length;
     return true;
