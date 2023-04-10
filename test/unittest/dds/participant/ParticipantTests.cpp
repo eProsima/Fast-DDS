@@ -3728,22 +3728,24 @@ TEST(ParticipantTests, UnsupportedMethods)
 /*
  * Regression test for redmine issue #18050.
  *
- * This tests tries to create two participant with the same fixed id.
+ * This test tries to create two participants with the same fixed id.
  */
 TEST(ParticipantTests, TwoParticipantWithSameFixedId)
 {
     DomainParticipantQos participant_qos;
     participant_qos.wire_protocol().participant_id = 1;
 
-    // Create the participant
+    // Create the first participant
     DomainParticipant* participant1 =
             DomainParticipantFactory::get_instance()->create_participant(0, participant_qos);
     ASSERT_NE(participant1, nullptr);
 
+    // Creating a second participant with the same fixed id should fail
     DomainParticipant* participant2 =
             DomainParticipantFactory::get_instance()->create_participant(0, participant_qos);
     ASSERT_EQ(participant2, nullptr);
 
+    // Destroy the first participant
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant1), ReturnCode_t::RETCODE_OK);
 }
 

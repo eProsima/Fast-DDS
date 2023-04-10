@@ -661,7 +661,7 @@ bool RTPSDomainImpl::create_participant_guid(
         int32_t& participant_id,
         GUID_t& guid)
 {
-    bool ret_value = reserve_participant_id(participant_id);
+    bool ret_value = get_instance()->reserve_participant_id(participant_id);
 
     if (ret_value)
     {
