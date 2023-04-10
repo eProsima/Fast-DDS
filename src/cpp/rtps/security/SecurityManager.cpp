@@ -16,7 +16,6 @@
  * @file SecurityManager.h
  */
 
-#include "fastdds/rtps/security/exceptions/SecurityException.h"
 #include <rtps/security/SecurityManager.h>
 
 #include <cassert>
