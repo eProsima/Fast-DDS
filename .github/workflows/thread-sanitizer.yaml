@@ -28,7 +28,7 @@ on:
       - '!**/CMakeLists.txt'
 
 env:
-  TSAN_OPTIONS: second_deadlock_stack=1
+  TSAN_OPTIONS: second_deadlock_stack=1 history_size=7 memory_limit_mb=5000
   # ubuntu host doesn't have an environment SHELL value (docker and vm images does)???
   SHELL: /bin/bash
   # GCC 11.3 (Ubuntu Jammy default) produces several false positives regarding timed synchronization protocols
@@ -143,7 +143,8 @@ jobs:
       - name: Run Fast-DDS test & generate sanitizer reports
         run: |
           cd ws/build/fastdds
-          ctest --timeout 30 -j 2 -V ${{ inputs.optional_ctest_args }}
+          # Exclude DDSSQLFilterValueTests tests to prevent hitting GH Actions resource limits
+          ctest --timeout 30 -j 2 -V -E DDSSQLFilterValueTests ${{ inputs.optional_ctest_args }}
           # ctest fails if sanitizer reports are present
           $LASTEXITCODE=0
 
