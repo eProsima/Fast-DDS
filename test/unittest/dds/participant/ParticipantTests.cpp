@@ -3725,6 +3725,28 @@ TEST(ParticipantTests, UnsupportedMethods)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
+/*
+ * Regression test for redmine issue #18050.
+ *
+ * This tests tries to create two participant with the same fixed id.
+ */
+TEST(ParticipantTests, TwoParticipantWithSameFixedId)
+{
+    DomainParticipantQos participant_qos;
+    participant_qos.wire_protocol().participant_id = 1;
+
+    // Create the participant
+    DomainParticipant* participant1 =
+            DomainParticipantFactory::get_instance()->create_participant(0, participant_qos);
+    ASSERT_NE(participant1, nullptr);
+
+    DomainParticipant* participant2 =
+            DomainParticipantFactory::get_instance()->create_participant(0, participant_qos);
+    ASSERT_EQ(participant2, nullptr);
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant1), ReturnCode_t::RETCODE_OK);
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
