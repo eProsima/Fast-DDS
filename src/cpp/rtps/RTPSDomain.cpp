@@ -639,19 +639,18 @@ uint32_t RTPSDomainImpl::get_id_for_prefix(
 bool RTPSDomainImpl::reserve_participant_id(
         int32_t& participant_id)
 {
-    auto instance = get_instance();
-    std::lock_guard<std::mutex> guard(instance->m_mutex);
+    std::lock_guard<std::mutex> guard(m_mutex);
     if (participant_id < 0)
     {
-        participant_id = instance->getNewId();
+        participant_id = getNewId();
     }
     else
     {
-        if (instance->m_RTPSParticipantIDs[participant_id].reserved == true)
+        if (m_RTPSParticipantIDs[participant_id].reserved == true)
         {
             return false;
         }
-        instance->m_RTPSParticipantIDs[participant_id].reserved = true;
+        m_RTPSParticipantIDs[participant_id].reserved = true;
     }
 
     return true;

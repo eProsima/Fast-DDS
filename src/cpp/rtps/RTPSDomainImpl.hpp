@@ -225,7 +225,7 @@ private:
      *
      * @return True value if reservation was possible. False in other case.
      */
-    static bool reserve_participant_id(
+    bool reserve_participant_id(
             int32_t& participant_id);
 
     uint32_t get_id_for_prefix(
