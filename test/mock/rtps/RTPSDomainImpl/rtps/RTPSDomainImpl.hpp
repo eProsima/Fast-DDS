@@ -61,10 +61,11 @@ public:
         return nullptr;
     }
 
-    static void create_participant_guid(
+    static bool create_participant_guid(
             int32_t& /*participant_id*/,
             GUID_t& /*guid*/)
     {
+        return true;
     }
 
     /**

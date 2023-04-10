@@ -149,8 +149,10 @@ public:
      * @param [in, out] participant_id   Participant identifier for which to generate the GUID.
      *                                   When negative, it will be modified to the first non-existent participant id.
      * @param [out]     guid             GUID corresponding to participant_id
+     *
+     * @return True value if guid was created. False in other case.
      */
-    static void create_participant_guid(
+    static bool create_participant_guid(
             int32_t& participant_id,
             GUID_t& guid);
 
@@ -215,6 +217,16 @@ private:
     bool prepare_participant_id(
             int32_t input_id,
             uint32_t& participant_id);
+
+    /**
+     * Reserves a participant id.
+     * @param [in, out] participant_id   Participant identifier for reservation.
+     *                                   When negative, it will be modified to the first non-existent participant id.
+     *
+     * @return True value if reservation was possible. False in other case.
+     */
+    static bool reserve_participant_id(
+            int32_t& participant_id);
 
     uint32_t get_id_for_prefix(
             uint32_t participant_id);

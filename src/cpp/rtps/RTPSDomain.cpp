@@ -636,19 +636,40 @@ uint32_t RTPSDomainImpl::get_id_for_prefix(
     return ret;
 }
 
-void RTPSDomainImpl::create_participant_guid(
+bool RTPSDomainImpl::reserve_participant_id(
+        int32_t& participant_id)
+{
+    auto instance = get_instance();
+    std::lock_guard<std::mutex> guard(instance->m_mutex);
+    if (participant_id < 0)
+    {
+        participant_id = instance->getNewId();
+    }
+    else
+    {
+        if (instance->m_RTPSParticipantIDs[participant_id].reserved == true)
+        {
+            return false;
+        }
+        instance->m_RTPSParticipantIDs[participant_id].reserved = true;
+    }
+
+    return true;
+}
+
+bool RTPSDomainImpl::create_participant_guid(
         int32_t& participant_id,
         GUID_t& guid)
 {
-    if (participant_id < 0)
+    bool ret_value = reserve_participant_id(participant_id);
+
+    if (ret_value)
     {
-        auto instance = get_instance();
-        std::lock_guard<std::mutex> guard(instance->m_mutex);
-        participant_id = instance->getNewId();
+        guid_prefix_create(participant_id, guid.guidPrefix);
+        guid.entityId = c_EntityId_RTPSParticipant;
     }
 
-    guid_prefix_create(participant_id, guid.guidPrefix);
-    guid.entityId = c_EntityId_RTPSParticipant;
+    return ret_value;
 }
 
 RTPSParticipantImpl* RTPSDomainImpl::find_local_participant(
