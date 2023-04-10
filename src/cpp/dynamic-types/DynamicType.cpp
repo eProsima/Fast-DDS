@@ -309,7 +309,7 @@ bool DynamicType::deserialize_discriminator(
                 }
             }
         }
-        eprosima_fallthrough;
+        FASTRTPS_FALLTHROUGH;
         default:
             EPROSIMA_LOG_ERROR(DYN_TYPES, "DynamicData with wrong discriminator type: "
                 << discriminator_type_->get_kind());
@@ -1384,7 +1384,7 @@ void DynamicType::serialize_discriminator(
                 case 4: cdr << (uint64_t)label; break;
             }
         }
-        eprosima_fallthrough;
+        FASTRTPS_FALLTHROUGH;
         default:
             EPROSIMA_LOG_ERROR(DYN_TYPES, "DynamicData with wrong discriminator type: "
                 << discriminator_type_->get_kind());

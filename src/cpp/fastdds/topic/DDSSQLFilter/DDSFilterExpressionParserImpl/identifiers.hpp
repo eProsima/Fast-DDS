@@ -195,7 +195,7 @@ struct identifier_processor
                         break;
                     }
                 }
-            eprosima_fallthrough
+            FASTRTPS_FALLTHROUGH
             default:
                 throw parse_error("type is not primitive", pos);
         }

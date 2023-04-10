@@ -101,16 +101,32 @@
 // Statistics
 #cmakedefine FASTDDS_STATISTICS
 
+#ifndef __has_cpp_attribute
+#    define __has_cpp_attribute(x) 0
+#endif
+
 // Deprecated macro
-#if __cplusplus >= 201402L
-#define FASTRTPS_DEPRECATED(msg) [[ deprecated(msg) ]]
+#if __has_cpp_attribute(deprecated) && \
+    (__has_cpp_attribute(deprecated) < __cplusplus || __has_cpp_attribute(deprecated) < _MSVC_LANG)
+#   define FASTRTPS_DEPRECATED(msg) [[ deprecated(msg) ]]
 #elif defined(__GNUC__) || defined(__clang__)
-#define FASTRTPS_DEPRECATED(msg) __attribute__ ((deprecated(msg)))
+#   define FASTRTPS_DEPRECATED(msg) __attribute__ ((deprecated(msg)))
 #elif defined(_MSC_VER)
-#define FASTRTPS_DEPRECATED(msg) __declspec(deprecated(msg))
+#   define FASTRTPS_DEPRECATED(msg) __declspec(deprecated(msg))
 #else
-#define FASTRTPS_DEPRECATED(msg)
-#endif /* if __cplusplus >= 201402L */
+#   define FASTRTPS_DEPRECATED(msg)
+#endif /* if __has_cpp_attribute(deprecated) */
+
+// Fallthrough macro
+#if __has_cpp_attribute(fallthrough) && \
+    (__has_cpp_attribute(fallthrough) < __cplusplus || __has_cpp_attribute(fallthrough) < _MSVC_LANG)
+#    define FASTRTPS_FALLTHROUGH [[fallthrough]]
+#elif defined(__GNUC__) || defined(__clang__)
+#    define FASTRTPS_FALLTHROUGH __attribute__((fallthrough))
+#else
+#    define FASTRTPS_FALLTHROUGH
+#endif /* if __has_cpp_attribute(fallthrough) */
+
 
 // Deprecation with version
 #define FASTDDS_DEPRECATED_UNTIL(major, entity_name, msg)                                                           \
