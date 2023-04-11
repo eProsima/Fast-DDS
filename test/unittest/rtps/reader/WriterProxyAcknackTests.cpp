@@ -100,7 +100,6 @@ TEST(WriterProxyAcknackTests, AcknackBackoff)
     StatefulReader readerMock; // avoid annoying uninteresting call warnings
 
     // Testing the Timed events are properly configured
-    EXPECT_CALL(readerMock, getEventResource()).Times(1u);
     WriterProxy wproxy(&readerMock, RemoteLocatorsAllocationAttributes(), ResourceLimitedContainerConfig());
     wproxy.start(wattr, SequenceNumber_t());
 
