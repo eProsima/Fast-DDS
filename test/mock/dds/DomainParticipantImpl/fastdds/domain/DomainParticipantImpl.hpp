@@ -355,9 +355,9 @@ public:
     }
 
     MOCK_METHOD5(create_contentfilteredtopic, ContentFilteredTopic * (
-                const std::string & name,
+                const std::string& name,
                 Topic * related_topic,
-                const std::string & filter_expression,
+                const std::string& filter_expression,
                 const std::vector<std::string>& expression_parameters,
                 const char* filter_class_name));
 
@@ -378,7 +378,7 @@ public:
                 const char* filter_class_name));
 
     MOCK_METHOD1(ignore_participant, bool (
-                const fastrtps::rtps::InstanceHandle_t & handle));
+                const fastrtps::rtps::InstanceHandle_t& handle));
 
 
     TopicDescription* lookup_topicdescription(
