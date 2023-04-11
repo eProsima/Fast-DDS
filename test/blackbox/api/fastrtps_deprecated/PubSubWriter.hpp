@@ -988,6 +988,13 @@ public:
         return *this;
     }
 
+    PubSubWriter& use_writer_liveliness_protocol(
+            bool use_wlp)
+    {
+        participant_attr_.rtps.builtin.use_WriterLivelinessProtocol = use_wlp;
+        return *this;
+    }
+
     PubSubWriter& property_policy(
             const eprosima::fastrtps::rtps::PropertyPolicy& property_policy)
     {
