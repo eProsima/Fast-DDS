@@ -3769,17 +3769,12 @@ TEST(ParticipantTests, TwoParticipantWithSameFixedId)
         // Creating a second participant with the same fixed id should fail
         DomainParticipant* participant2 =
                 DomainParticipantFactory::get_instance()->create_participant(0, participant_qos);
-        ASSERT_NE(participant2, nullptr);
+        ASSERT_EQ(participant2, nullptr);
 
         ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant1->enable());
 
-        ASSERT_EQ(ReturnCode_t::RETCODE_PRECONDITION_NOT_MET, participant2->enable());
-
         // Destroy the first participant
         ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant1), ReturnCode_t::RETCODE_OK);
-
-        // Destroy the second participant
-        ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant2), ReturnCode_t::RETCODE_OK);
 
         factory_qos.entity_factory().autoenable_created_entities = true;
         ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->set_qos(factory_qos));
