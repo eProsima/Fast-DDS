@@ -257,12 +257,8 @@ ReturnCode_t DomainParticipantImpl::enable()
 {
     // Should not have been previously enabled
     assert(get_rtps_participant() == nullptr);
-
-    // Preconditions
-    if (guid_ == GUID_t::unknown())
-    {
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
-    }
+    // Should not have failed assigning the GUID
+    assert (guid_ != GUID_t::unknown());
 
     fastrtps::rtps::RTPSParticipantAttributes rtps_attr;
     utils::set_attributes_from_qos(rtps_attr, qos_);

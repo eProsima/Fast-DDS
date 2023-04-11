@@ -221,7 +221,7 @@ private:
     /**
      * Reserves a participant id.
      * @param [in, out] participant_id   Participant identifier for reservation.
-     *                                   When negative, it will be modified to the first non-existent participant id.
+     *                                   When negative, it will be modified to the first non-reserved participant id.
      *
      * @return True value if reservation was possible. False in other case.
      */
