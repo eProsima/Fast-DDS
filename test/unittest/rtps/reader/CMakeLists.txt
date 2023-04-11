@@ -53,9 +53,6 @@ add_gtest(WriterProxyTests SOURCES ${WRITERPROXYTESTS_SOURCE})
 
 if(ANDROID)
     set_property(TARGET WriterProxyTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
-<<<<<<< HEAD
-endif()
-=======
 endif()
 
 
@@ -156,4 +153,3 @@ if(ANDROID)
     set_property(TARGET WriterProxyAcknackTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
 endif()
 
->>>>>>> c40a4c19c (Initial acknack backoff (#3419))
