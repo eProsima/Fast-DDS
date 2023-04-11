@@ -507,3 +507,22 @@ bool DomainParticipant::has_active_entities()
 {
     return impl_->has_active_entities();
 }
+
+ReturnCode_t DomainParticipant::enable_monitor_service() const
+{
+    return impl_->enable_monitor_service();
+}
+
+ReturnCode_t DomainParticipant::disable_monitor_service() const
+{
+    return impl_->disable_monitor_service();
+}
+
+ReturnCode_t DomainParticipant::check_compatible_qos(
+        const fastrtps::rtps::WriterProxyData &wdata,
+        const fastrtps::rtps::ReaderProxyData &rdata,
+        fastrtps::rtps::EDP::MatchingFailureMask &reason,
+        fastdds::dds::PolicyMask &incompatible_qos) const
+{
+    return impl_->check_compatible_qos(wdata, rdata, reason, incompatible_qos);
+}

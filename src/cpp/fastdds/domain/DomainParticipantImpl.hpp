@@ -25,6 +25,7 @@
 #include <mutex>
 #include <condition_variable>
 
+#include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
@@ -503,6 +504,16 @@ public:
      * @return true if the participant has no deleted entities, false otherwise
      */
     bool has_active_entities();
+
+    ReturnCode_t enable_monitor_service() const;
+
+    ReturnCode_t disable_monitor_service() const;
+
+    ReturnCode_t check_compatible_qos(
+            const fastrtps::rtps::WriterProxyData& wdata,
+            const fastrtps::rtps::ReaderProxyData& rdata,
+            fastrtps::rtps::EDP::MatchingFailureMask& reason,
+            fastdds::dds::PolicyMask& incompatible_qos) const;
 
 
     /**

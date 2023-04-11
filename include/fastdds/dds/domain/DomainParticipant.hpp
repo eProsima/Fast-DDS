@@ -36,6 +36,7 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/common/Time_t.h>
@@ -54,6 +55,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 class ResourceEvent;
+class WriterProxyData;
+class ReaderProxyData;
 } // namespace rtps
 
 namespace types {
@@ -942,6 +945,46 @@ public:
      * @return true if any, false otherwise.
      */
     bool has_active_entities();
+
+    /**
+     * Enables the monitor service in this DomainParticipant.
+     *
+     * @return RETCODE_OK if the monitor service could be correctly enabled.
+     * @return RETCODE_ERROR if the monitor service could not be enabled properly.
+     *
+     * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
+     */
+    RTPS_DllAPI ReturnCode_t enable_monitor_service() const;
+
+    /**
+     * Disable the monitor service in this DomainParticipant. Does nothing if the service was not enabled before.
+     *
+     * @return RETCODE_OK if the monitor service could be correctly disabled.
+     * @return RETCODE_NOT_ENABLED if the monitor service was not previously enabled.
+     * @return RETCODE_ERROR if the service could not be properly disabled.
+     *
+     * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
+     */
+    RTPS_DllAPI ReturnCode_t disable_monitor_service() const;
+
+    /**
+     * Enables the internal monitor service in this DomainParticipant.
+     *
+     * @param wdata Pointer to the WriterProxyData object.
+     * @param rdata Pointer to the ReaderProxyData object.
+     * @param [out] reason On return will specify the reason of failed matching (if any).
+     * @param [out] incompatible_qos On return will specify all the QoS values that were incompatible (if any).
+     *
+     * @return RETCODE_OK if qos are compatible.
+     * @return RETCODE_ERROR if qos are incompatible. Check reason and incompatible_qos.
+     *
+     * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
+     */
+    RTPS_DllAPI ReturnCode_t check_compatible_qos(
+            const fastrtps::rtps::WriterProxyData& wdata,
+            const fastrtps::rtps::ReaderProxyData& rdata,
+            fastrtps::rtps::EDP::MatchingFailureMask& reason,
+            fastdds::dds::PolicyMask& incompatible_qos) const;
 
 protected:
 

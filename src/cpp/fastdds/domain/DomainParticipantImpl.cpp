@@ -2114,6 +2114,25 @@ bool DomainParticipantImpl::has_active_entities()
     return false;
 }
 
+ReturnCode_t DomainParticipantImpl::enable_monitor_service() const
+{
+    return rtps_participant_->enable_monitor_service();
+}
+
+ReturnCode_t DomainParticipantImpl::disable_monitor_service() const
+{
+    return rtps_participant_->disable_monitor_service();
+}
+
+ReturnCode_t DomainParticipantImpl::check_compatible_qos(
+        const fastrtps::rtps::WriterProxyData &wdata,
+        const fastrtps::rtps::ReaderProxyData &rdata,
+        fastrtps::rtps::EDP::MatchingFailureMask &reason,
+        fastdds::dds::PolicyMask &incompatible_qos) const
+{
+    return rtps_participant_->check_compatible_qos(wdata, rdata, reason, incompatible_qos);
+}
+
 bool DomainParticipantImpl::set_qos(
         DomainParticipantQos& to,
         const DomainParticipantQos& from,
