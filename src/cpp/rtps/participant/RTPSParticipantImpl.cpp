@@ -2588,10 +2588,10 @@ ReturnCode_t RTPSParticipantImpl::disable_monitor_service() const
 }
 
 ReturnCode_t RTPSParticipantImpl::check_compatible_qos(
-        const fastrtps::rtps::WriterProxyData &/*wdata*/,
-        const fastrtps::rtps::ReaderProxyData &/*rdata*/,
-        fastrtps::rtps::EDP::MatchingFailureMask &/*reason*/,
-        fastdds::dds::PolicyMask &/*incompatible_qos*/) const
+        const fastrtps::rtps::WriterProxyData& /*wdata*/,
+        const fastrtps::rtps::ReaderProxyData& /*rdata*/,
+        fastrtps::rtps::EDP::MatchingFailureMask& /*reason*/,
+        fastdds::dds::PolicyMask& /*incompatible_qos*/) const
 {
     EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "check_compatible_qos() is not supported yet");
     return types::ReturnCode_t{types::ReturnCode_t::RETCODE_UNSUPPORTED};

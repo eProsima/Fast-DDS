@@ -181,10 +181,10 @@ public:
                 const ReaderQos& rqos,
                 const fastdds::rtps::ContentFilterProperty* content_filter));
 
-    MOCK_CONST_METHOD4(check_compatible_qos, types::ReturnCode_t(const fastrtps::rtps::WriterProxyData &,
-            const fastrtps::rtps::ReaderProxyData &,
-            fastrtps::rtps::EDP::MatchingFailureMask &,
-            fastdds::dds::PolicyMask &));
+    MOCK_CONST_METHOD4(check_compatible_qos, types::ReturnCode_t(const fastrtps::rtps::WriterProxyData&,
+            const fastrtps::rtps::ReaderProxyData&,
+            fastrtps::rtps::EDP::MatchingFailureMask&,
+            fastdds::dds::PolicyMask&));
 
     const RTPSParticipantAttributes& getRTPSParticipantAttributes()
     {

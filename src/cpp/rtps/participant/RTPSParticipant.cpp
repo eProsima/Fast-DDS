@@ -207,10 +207,10 @@ types::ReturnCode_t RTPSParticipant::disable_monitor_service() const
 }
 
 types::ReturnCode_t RTPSParticipant::check_compatible_qos(
-        const fastrtps::rtps::WriterProxyData &wdata,
-        const fastrtps::rtps::ReaderProxyData &rdata,
-        fastrtps::rtps::EDP::MatchingFailureMask &reason,
-        fastdds::dds::PolicyMask &incompatible_qos) const
+        const fastrtps::rtps::WriterProxyData& wdata,
+        const fastrtps::rtps::ReaderProxyData& rdata,
+        fastrtps::rtps::EDP::MatchingFailureMask& reason,
+        fastdds::dds::PolicyMask& incompatible_qos) const
 {
     return mp_impl->check_compatible_qos(wdata, rdata, reason, incompatible_qos);
 }
