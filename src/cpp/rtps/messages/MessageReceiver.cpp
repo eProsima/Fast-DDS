@@ -1054,6 +1054,13 @@ bool MessageReceiver::proc_Submsg_Heartbeat(
     SequenceNumber_t lastSN;
     CDRMessage::readSequenceNumber(msg, &firstSN);
     CDRMessage::readSequenceNumber(msg, &lastSN);
+
+    SequenceNumber_t zeroSN;
+    if (firstSN <= zeroSN)
+    {
+        logWarning(RTPS_MSG_IN, IDSTRING "Invalid Heartbeat received (" << firstSN << " <= 0), ignoring");
+        return false;
+    }
     if (lastSN < firstSN && lastSN != firstSN - 1)
     {
         logWarning(RTPS_MSG_IN, IDSTRING "Invalid Heartbeat received (" << firstSN << ") - (" <<
