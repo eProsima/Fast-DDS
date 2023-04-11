@@ -128,6 +128,9 @@ public:
 
     MOCK_CONST_METHOD0(getParticipantNames, std::vector<std::string>());
 
+    MOCK_CONST_METHOD0(enable_monitor_service, types::ReturnCode_t());
+    MOCK_CONST_METHOD0(disable_monitor_service, types::ReturnCode_t());
+
     MOCK_METHOD2(newRemoteWriterDiscovered, bool(
                 const GUID_t& pguid,
                 int16_t userDefinedId));
@@ -177,6 +180,11 @@ public:
                 const TopicAttributes& topicAtt,
                 const ReaderQos& rqos,
                 const fastdds::rtps::ContentFilterProperty* content_filter));
+
+    MOCK_CONST_METHOD4(check_compatible_qos, types::ReturnCode_t(const fastrtps::rtps::WriterProxyData &,
+            const fastrtps::rtps::ReaderProxyData &,
+            fastrtps::rtps::EDP::MatchingFailureMask &,
+            fastdds::dds::PolicyMask &));
 
     const RTPSParticipantAttributes& getRTPSParticipantAttributes()
     {

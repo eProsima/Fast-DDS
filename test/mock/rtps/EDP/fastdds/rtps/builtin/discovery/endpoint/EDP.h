@@ -36,6 +36,8 @@ class EDP
 {
     public:
 
+    class MatchingFailureMask{};
+
 #if HAVE_SECURITY
         MOCK_METHOD3(pairing_reader_proxy_with_local_writer, bool(const GUID_t& local_writer,
                     const GUID_t& remote_participant_guid, ReaderProxyData& rdata));
