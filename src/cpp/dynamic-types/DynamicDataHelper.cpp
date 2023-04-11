@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastrtps/types/v1_3/MemberDescriptor.h>
 #include <fastrtps/types/DynamicDataHelper.hpp>
-#include <fastrtps/types/MemberDescriptor.h>
 
+// TODO: fix when the v1_1 files are included
 using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
 
 void DynamicDataHelper::print(
         const DynamicData_ptr& data)
@@ -28,11 +30,11 @@ void DynamicDataHelper::print(
 {
     if (nullptr != data)
     {
-        switch (data->type_->get_kind())
+        switch (data->get_kind())
         {
             case TypeKind::TK_STRUCTURE:
             {
-                for (auto it : data->type_->get_all_members_by_id())
+                for (auto it : data->get_type()->get_all_members_by_id())
                 {
                     print_member(const_cast<DynamicData*>(data), it.second->get_descriptor());
                 }
@@ -139,7 +141,7 @@ void DynamicDataHelper::print_basic_element(
         }
         case TypeKind::TK_BITMASK:
         {
-            size_t size = data->type_->get_size();
+            size_t size = data->get_type()->get_size();
             switch (size)
             {
                 case 1: std::cout << data->get_uint8_value(id); break;
@@ -163,7 +165,7 @@ void DynamicDataHelper::print_collection(
         DynamicData* data,
         const std::string& tabs)
 {
-    switch (data->type_->get_element_type()->get_kind())
+    switch (data->get_type()->get_element_type()->get_kind())
     {
         case TypeKind::TK_NONE:
         case TypeKind::TK_BOOLEAN:
@@ -249,13 +251,13 @@ void DynamicDataHelper::aux_index_position(
 void DynamicDataHelper::print_basic_collection(
         DynamicData* data)
 {
-    if (data->type_->get_kind() == TypeKind::TK_SEQUENCE)
+    if (data->get_type()->get_kind() == TypeKind::TK_SEQUENCE)
     {
         auto count = data->get_item_count();
         std::cout << "[";
         for (MemberId i{0}; i < count; ++i)
         {
-            print_basic_element(data, i, data->type_->get_element_type()->get_kind());
+            print_basic_element(data, i, data->get_type()->get_element_type()->get_kind());
             std::cout << (i == count - 1 ? "]" : ", ");
         }
         if (count == 0)
@@ -265,7 +267,7 @@ void DynamicDataHelper::print_basic_collection(
     }
     else
     {
-        const std::vector<uint32_t>& bounds = data->type_->get_descriptor().bound_;
+        const std::vector<uint32_t>& bounds = data->get_type()->get_descriptor().bound_;
 
         std::vector<std::vector<uint32_t>> positions;
         fill_array_positions(bounds, positions);
@@ -273,7 +275,7 @@ void DynamicDataHelper::print_basic_collection(
         std::cout << "[";
         for (size_t i = 0; i < positions.size(); ++i)
         {
-            print_basic_element(data, data->get_array_index(positions[i]), data->type_->get_element_type()->get_kind());
+            print_basic_element(data, data->get_array_index(positions[i]), data->get_type()->get_element_type()->get_kind());
             std::cout << (i == positions.size() - 1 ? "]" : ", ");
         }
     }
@@ -285,7 +287,7 @@ void DynamicDataHelper::print_complex_collection(
         const std::string& tabs)
 {
     std::cout << std::endl;
-    if (data->type_->get_kind() == TypeKind::TK_SEQUENCE)
+    if (data->get_type()->get_kind() == TypeKind::TK_SEQUENCE)
     {
         auto count = data->get_item_count();
 
@@ -303,7 +305,7 @@ void DynamicDataHelper::print_complex_collection(
     }
     else
     {
-        const std::vector<uint32_t>& bounds = data->type_->get_descriptor().bound_;
+        const std::vector<uint32_t>& bounds = data->get_type()->get_descriptor().bound_;
 
         std::vector<std::vector<uint32_t>> positions;
         fill_array_positions(bounds, positions);
@@ -322,15 +324,17 @@ void DynamicDataHelper::print_complex_element(
         MemberId id,
         const std::string& tabs)
 {
+    using namespace v1_3;
+
     DynamicData* st_data = data->loan_value(id);
-    const TypeDescriptor& desc = st_data->type_->get_descriptor();
+    const TypeDescriptor& desc = st_data->get_type()->get_descriptor();
     switch (desc.get_kind())
     {
         case TypeKind::TK_STRUCTURE:
         case TypeKind::TK_BITSET:
         {
             std::cout << "<struct/bitset>" << std::endl;
-            for (auto it : data->type_->get_all_members_by_id())
+            for (auto it : data->get_type()->get_all_members_by_id())
             {
                 print_member(st_data, it.second->get_descriptor(), tabs + "\t");
             }
@@ -340,7 +344,7 @@ void DynamicDataHelper::print_complex_element(
         {
             std::cout << "<union>" << std::endl;
             MemberDescriptor member;
-            st_data->type_->get_member(member, st_data->union_id_);
+            st_data->get_type()->get_member(member, st_data->union_id_);
             print_member(st_data, member, tabs + "\t");
             break;
         }
@@ -353,7 +357,7 @@ void DynamicDataHelper::print_complex_element(
         case TypeKind::TK_MAP:
         {
             std::cout << "<map>" << std::endl;
-            auto members = st_data->type_->get_all_members_by_id();
+            auto members = st_data->get_type()->get_all_members_by_id();
             size_t size = st_data->get_item_count();
             for (size_t i = 0; i < size; ++i)
             {
@@ -409,7 +413,7 @@ void DynamicDataHelper::print_member(
         {
             DynamicData* st_data = data->loan_value(desc.get_id());
             std::cout << "<struct/bitset>" << std::endl;
-            for (auto it : data->type_->get_all_members_by_id())
+            for (auto it : data->get_type()->get_all_members_by_id())
             {
                 print_member(st_data, it.second->get_descriptor(), tabs + "\t");
             }

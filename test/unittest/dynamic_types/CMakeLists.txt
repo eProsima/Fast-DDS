@@ -20,27 +20,6 @@ if(WIN32)
 endif()
 
 set(DYNAMIC_TYPES_SOURCE
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationManager.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicData.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicDataFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicType.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicPubSubType.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicDataPtr.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeBuilder.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeBuilderFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeMember.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/MemberDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationParameterValue.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeIdentifier.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeIdentifierTypes.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObject.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectHashId.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeNamesGenerator.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/BuiltinAnnotationsTypeObject.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPFinder.cpp
@@ -132,6 +111,7 @@ target_link_libraries(DynamicTypesTests GTest::gtest
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
     fastcdr
+    fastdds::xtypes
     )
 if(QNX)
     target_link_libraries(DynamicTypesTests socket)
@@ -183,6 +163,7 @@ target_link_libraries(DynamicComplexTypesTests GTest::gtest
     $<$<BOOL:${WIN32}>:ws2_32>
     ${TINYXML2_LIBRARY}
     fastcdr
+    fastdds::xtypes
     )
 if(QNX)
     target_link_libraries(DynamicComplexTypesTests socket)
@@ -209,6 +190,7 @@ target_include_directories(DynamicTypes_4_2_Tests PRIVATE
     fastcdr
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
+target_link_libraries(DynamicTypes_4_2_Tests fastdds::xtypes)
 if(QNX)
     target_link_libraries(DynamicTypes_4_2_Tests socket)
 endif()

@@ -32,8 +32,11 @@
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 
 using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::types;
 using namespace eprosima::fastdds::dds;
+
+// TODO Barro: fix when v1.1 sources are introduced
+using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
 
 LatencyTestSubscriber::LatencyTestSubscriber()
     : latency_command_type_(new TestCommandDataType())

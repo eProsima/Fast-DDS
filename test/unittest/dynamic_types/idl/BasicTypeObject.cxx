@@ -38,6 +38,8 @@ namespace { char dummy; }
 
 using namespace eprosima::fastrtps::rtps;
 
+using eprosima::fastrtps::types::v1_3::MemberId;
+
 void registerBasicTypes()
 {
     TypeObjectFactory *factory = TypeObjectFactory::get_instance();

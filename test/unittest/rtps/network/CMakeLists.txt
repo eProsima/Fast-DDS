@@ -103,28 +103,6 @@ add_executable(ExternalLocatorsProcessorTests
     ExternalLocatorsProcessorTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/network/ExternalLocatorsProcessor.cpp
 
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationManager.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicData.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicDataFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicType.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicPubSubType.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicDataPtr.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeBuilder.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeBuilderFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicTypeMember.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/MemberDescriptor.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationParameterValue.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeIdentifier.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeIdentifierTypes.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObject.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectHashId.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeNamesGenerator.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/BuiltinAnnotationsTypeObject.cpp
-
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/FlowControllerConsts.cpp
 
@@ -157,6 +135,7 @@ target_include_directories(ExternalLocatorsProcessorTests PRIVATE
     )
 target_link_libraries(ExternalLocatorsProcessorTests fastcdr
     GTest::gtest ${MOCKS}
+    fastdds::xtypes
     ${CMAKE_THREAD_LIBS_INIT} ${CMAKE_DL_LIBS})
 
 if(QNX)

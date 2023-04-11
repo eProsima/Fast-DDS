@@ -13,18 +13,18 @@
 // limitations under the License.
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/types/AnnotationDescriptor.h>
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeMember.h>
-#include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/v1_3/AnnotationDescriptor.h>
+#include <fastrtps/types/v1_3/DynamicData.h>
+#include <fastrtps/types/v1_3/DynamicDataFactory.h>
+#include <fastrtps/types/v1_3/DynamicType.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilder.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/v1_3/DynamicTypeMember.h>
+#include <fastrtps/types/v1_3/TypeDescriptor.h>
 
 #include <fastcdr/Cdr.h>
 
-using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
 
 DynamicType::DynamicType(
         use_the_create_method)

@@ -585,7 +585,7 @@ sp_transport_t XMLProfileManager::getTransportById(
 
 bool XMLProfileManager::insertDynamicTypeByName(
         const std::string& type_name,
-        types::DynamicTypeBuilder_ptr&& type)
+        types::v1_3::DynamicTypeBuilder_ptr&& type)
 {
     if (dynamic_types_.find(type_name) == dynamic_types_.end())
     {

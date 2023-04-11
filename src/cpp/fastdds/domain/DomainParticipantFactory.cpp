@@ -73,8 +73,11 @@ DomainParticipantFactory::~DomainParticipantFactory()
     }
 
     // Deletes DynamicTypes and TypeObject factories
-    fastrtps::types::DynamicTypeBuilderFactory::delete_instance();
-    fastrtps::types::DynamicDataFactory::delete_instance();
+//    TODO Barro: uncomment when v1.1 sources are reintroduced
+//    fastrtps::types::v1_1::DynamicTypeBuilderFactory::delete_instance();
+//    fastrtps::types::v1_1::DynamicDataFactory::delete_instance();
+    fastrtps::types::v1_3::DynamicTypeBuilderFactory::delete_instance();
+    fastrtps::types::v1_3::DynamicDataFactory::delete_instance();
     fastrtps::types::TypeObjectFactory::delete_instance();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));

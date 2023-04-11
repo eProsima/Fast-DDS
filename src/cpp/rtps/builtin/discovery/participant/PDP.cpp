@@ -64,19 +64,18 @@
 #include <mutex>
 #include <chrono>
 
-namespace eprosima {
-namespace fastrtps {
-namespace rtps {
-
+using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps::types::v1_3;
 
 // Default configuration values for PDP reliable entities.
 
-const Duration_t pdp_heartbeat_period{ 0, 350 * 1000000  }; // 350 milliseconds
-const Duration_t pdp_nack_response_delay{ 0, 100 * 1000000  }; // 100 milliseconds
-const Duration_t pdp_nack_supression_duration{ 0, 11 * 1000000 }; // 11 milliseconds
-const Duration_t pdp_heartbeat_response_delay{ 0, 11 * 1000000 }; // 11 milliseconds
+const Duration_t eprosima::fastrtps::rtps::pdp_heartbeat_period{ 0, 350 * 1000000  }; // 350 milliseconds
+const Duration_t eprosima::fastrtps::rtps::pdp_nack_response_delay{ 0, 100 * 1000000  }; // 100 milliseconds
+const Duration_t eprosima::fastrtps::rtps::pdp_nack_supression_duration{ 0, 11 * 1000000 }; // 11 milliseconds
+const Duration_t eprosima::fastrtps::rtps::pdp_heartbeat_response_delay{ 0, 11 * 1000000 }; // 11 milliseconds
 
-const int32_t pdp_initial_reserved_caches = 20;
+const int32_t eprosima::fastrtps::rtps::pdp_initial_reserved_caches = 20;
 
 
 PDP::PDP (
@@ -1224,7 +1223,7 @@ void PDP::check_and_notify_type_discovery(
     }
 
     // Are we discovering a type?
-    types::DynamicType_ptr dyn_type;
+    DynamicType_ptr dyn_type;
     if (type_obj && type_obj->_d() == types::TypeKind::EK_COMPLETE) // Writer shares a Complete TypeObject
     {
         dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
@@ -1315,7 +1314,3 @@ void PDP::set_external_participant_properties_(
         }
     }
 }
-
-} /* namespace rtps */
-} /* namespace fastrtps */
-} /* namespace eprosima */

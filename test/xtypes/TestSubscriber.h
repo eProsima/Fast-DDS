@@ -83,7 +83,7 @@ public:
         return m_subListener.n_samples;
     }
 
-    eprosima::fastrtps::types::DynamicType_ptr discovered_type() const
+    eprosima::fastrtps::types::v1_3::DynamicType_ptr discovered_type() const
     {
         return disc_type_;
     }
@@ -112,7 +112,7 @@ private:
     std::condition_variable m_cvDiscovery;
     std::condition_variable cv_type_discovery_;
     std::condition_variable cv_;
-    eprosima::fastrtps::types::DynamicType_ptr disc_type_;
+    eprosima::fastrtps::types::v1_3::DynamicType_ptr disc_type_;
     eprosima::fastdds::dds::DataReaderQos reader_qos;
     bool using_typelookup_;
     bool tls_callback_called_;
@@ -143,7 +143,7 @@ public:
                 const eprosima::fastrtps::string_255& topic,
                 const eprosima::fastrtps::types::TypeIdentifier* identifier,
                 const eprosima::fastrtps::types::TypeObject* object,
-                eprosima::fastrtps::types::DynamicType_ptr dyn_type) override;
+                eprosima::fastrtps::types::v1_3::DynamicType_ptr dyn_type) override;
 
         void on_type_information_received(
                 eprosima::fastdds::dds::DomainParticipant* participant,

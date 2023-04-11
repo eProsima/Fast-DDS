@@ -21,41 +21,32 @@
 #define DYNAMIC_TYPES_HELPER_H_
 
 #include <fastrtps/types/TypesBase.h>
-
-namespace eprosima {
-namespace fastrtps {
-namespace types {
-
-class DynamicData;
-
-} // namespace types
-} // namespace fastrtps
-} // namespace eprosima
+#include <fastrtps/types/DynamicData.h>
 
 class DynamicTypesHelper
 {
 public:
 
-    static eprosima::fastrtps::types::DynamicData* CreateSmallData();
-    static eprosima::fastrtps::types::DynamicData* CreateData();
-    static eprosima::fastrtps::types::DynamicData* CreateMediumData();
-    static eprosima::fastrtps::types::DynamicData* CreateBigData();
+    static eprosima::fastrtps::types::v1_3::DynamicData* CreateSmallData();
+    static eprosima::fastrtps::types::v1_3::DynamicData* CreateData();
+    static eprosima::fastrtps::types::v1_3::DynamicData* CreateMediumData();
+    static eprosima::fastrtps::types::v1_3::DynamicData* CreateBigData();
 
 protected:
 
-    static eprosima::fastrtps::types::DynamicType_ptr GetMyMiniArrayType();
-    static eprosima::fastrtps::types::DynamicType_ptr GetBSAlias5Type();
-    static eprosima::fastrtps::types::DynamicType_ptr GetBasicStructType();
-    static eprosima::fastrtps::types::DynamicType_ptr GetMyOctetArray500Type();
-    static eprosima::fastrtps::types::DynamicType_ptr GetMySequenceLongType();
-    static eprosima::fastrtps::types::DynamicType_ptr GetMyEnumType();
-    static eprosima::fastrtps::types::DynamicType_ptr GetMyAliasEnumType();
-    static eprosima::fastrtps::types::DynamicType_ptr GetMA3Type();
-    static eprosima::fastrtps::types::DynamicType_ptr GetMyAliasEnum3Type();
-    static eprosima::fastrtps::types::DynamicType_ptr GetMyAliasEnum2Type();
-    static eprosima::fastrtps::types::DynamicType_ptr GetUnionSwitchType();
-    static eprosima::fastrtps::types::DynamicType_ptr GetUnion2SwitchType();
-    static eprosima::fastrtps::types::DynamicType_ptr GetComplexStructType();
+    static eprosima::fastrtps::types::v1_3::DynamicType_ptr GetMyMiniArrayType();
+    static eprosima::fastrtps::types::v1_3::DynamicType_ptr GetBSAlias5Type();
+    static eprosima::fastrtps::types::v1_3::DynamicType_ptr GetBasicStructType();
+    static eprosima::fastrtps::types::v1_3::DynamicType_ptr GetMyOctetArray500Type();
+    static eprosima::fastrtps::types::v1_3::DynamicType_ptr GetMySequenceLongType();
+    static eprosima::fastrtps::types::v1_3::DynamicType_ptr GetMyEnumType();
+    static eprosima::fastrtps::types::v1_3::DynamicType_ptr GetMyAliasEnumType();
+    static eprosima::fastrtps::types::v1_3::DynamicType_ptr GetMA3Type();
+    static eprosima::fastrtps::types::v1_3::DynamicType_ptr GetMyAliasEnum3Type();
+    static eprosima::fastrtps::types::v1_3::DynamicType_ptr GetMyAliasEnum2Type();
+    static eprosima::fastrtps::types::v1_3::DynamicType_ptr GetUnionSwitchType();
+    static eprosima::fastrtps::types::v1_3::DynamicType_ptr GetUnion2SwitchType();
+    static eprosima::fastrtps::types::v1_3::DynamicType_ptr GetComplexStructType();
 
 
 };

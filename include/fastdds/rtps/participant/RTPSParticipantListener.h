@@ -175,7 +175,7 @@ public:
             const string_255& topic,
             const types::TypeIdentifier* identifier,
             const types::TypeObject* object,
-            types::DynamicType_ptr dyn_type)
+            types::v1_3::DynamicType_ptr dyn_type)
     {
         static_cast<void>(participant);
         static_cast<void>(request_sample_id);

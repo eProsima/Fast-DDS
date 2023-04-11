@@ -13,17 +13,18 @@
 // limitations under the License.
 
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/MemberDescriptor.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/TypeNamesGenerator.h>
 #include <fastrtps/types/BuiltinAnnotationsTypeObject.h>
-#include <fastrtps/types/AnnotationDescriptor.h>
+#include <fastrtps/types/v1_3/AnnotationDescriptor.h>
+#include <fastrtps/types/v1_3/DynamicType.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilder.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/v1_3/DynamicTypeMember.h>
+#include <fastrtps/types/v1_3/MemberDescriptor.h>
+#include <fastrtps/types/v1_3/TypeDescriptor.h>
 #include <fastrtps/utils/md5.h>
 #include <fastdds/dds/log/Log.hpp>
+
 #include <sstream>
 
 namespace eprosima {
@@ -1744,11 +1745,13 @@ static TypeKind GetTypeKindFromIdentifier(
     }
 }
 
-DynamicType_ptr TypeObjectFactory::build_dynamic_type(
+v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
         const std::string& name,
         const TypeIdentifier* identifier,
         const TypeObject* object) const
 {
+    using namespace v1_3;
+
     TypeKind kind = GetTypeKindFromIdentifier(identifier);
     TypeDescriptor descriptor(name, kind);
     switch (kind)
@@ -1876,11 +1879,13 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
 }
 
 // TODO annotations
-DynamicType_ptr TypeObjectFactory::build_dynamic_type(
-        TypeDescriptor& descriptor,
+v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
+        v1_3::TypeDescriptor& descriptor,
         const TypeObject* object,
-        const DynamicType_ptr annotation_member_type) const
+        const v1_3::DynamicType_ptr annotation_member_type) const
 {
+    using namespace v1_3;
+
     if (object == nullptr || object->_d() != TypeKind::EK_COMPLETE)
     {
         return DynamicType_ptr(nullptr);
@@ -2148,9 +2153,11 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
 }
 
 void TypeObjectFactory::apply_type_annotations(
-        DynamicTypeBuilder_ptr& type_builder,
+        v1_3::DynamicTypeBuilder_ptr& type_builder,
         const AppliedAnnotationSeq& annotations) const
 {
+    using namespace v1_3;
+
     for (const AppliedAnnotation& annotation : annotations)
     {
         const TypeIdentifier* anno_id = get_stored_type_identifier(&annotation.annotation_typeid());
@@ -2172,10 +2179,12 @@ void TypeObjectFactory::apply_type_annotations(
 }
 
 void TypeObjectFactory::apply_member_annotations(
-        DynamicTypeBuilder_ptr& parent_type_builder,
-        MemberId member_id,
+        v1_3::DynamicTypeBuilder_ptr& parent_type_builder,
+        v1_3::MemberId member_id,
         const AppliedAnnotationSeq& annotations) const
 {
+    using namespace v1_3;
+
     for (const AppliedAnnotation& annotation : annotations)
     {
         const TypeIdentifier* anno_id = get_stored_type_identifier(&annotation.annotation_typeid());
@@ -2197,9 +2206,11 @@ void TypeObjectFactory::apply_member_annotations(
 }
 
 std::string TypeObjectFactory::get_key_from_hash(
-        const DynamicType_ptr annotation_descriptor_type,
+        const v1_3::DynamicType_ptr annotation_descriptor_type,
         const NameHash& hash) const
 {
+    using namespace v1_3;
+
     for (auto it : annotation_descriptor_type->get_all_members_by_id())
     {
         std::string name = it.second->get_name();

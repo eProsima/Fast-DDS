@@ -49,8 +49,8 @@ typedef node_att_map_t::const_iterator node_att_map_cit_t;
 
 typedef std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> sp_transport_t;
 typedef std::map<std::string, sp_transport_t>  sp_transport_map_t;
-typedef types::DynamicTypeBuilder*             p_dynamictypebuilder_t;
-typedef std::map<std::string, types::DynamicTypeBuilder_ptr> p_dynamictype_map_t;
+typedef types::v1_3::DynamicTypeBuilder*             p_dynamictypebuilder_t;
+typedef std::map<std::string, types::v1_3::DynamicTypeBuilder_ptr> p_dynamictype_map_t;
 
 typedef std::unique_ptr<ParticipantAttributes> up_participant_t;
 typedef DataNode<ParticipantAttributes>        node_participant_t;
@@ -258,10 +258,10 @@ protected:
     RTPS_DllAPI static XMLP_ret parseXMLBitmaskDynamicType(
             tinyxml2::XMLElement* p_root);
 
-    RTPS_DllAPI static types::DynamicTypeBuilder_cptr parseXMLBitfieldDynamicType(
+    RTPS_DllAPI static types::v1_3::DynamicTypeBuilder_cptr parseXMLBitfieldDynamicType(
             tinyxml2::XMLElement* p_root,
             p_dynamictypebuilder_t p_dynamictype,
-            types::MemberId mId,
+            types::v1_3::MemberId mId,
             uint16_t& position);
 
     RTPS_DllAPI static XMLP_ret parseXMLBitvalueDynamicType(
@@ -269,15 +269,15 @@ protected:
             p_dynamictypebuilder_t p_dynamictype,
             uint16_t& position);
 
-    RTPS_DllAPI static types::DynamicTypeBuilder_cptr parseXMLMemberDynamicType(
+    RTPS_DllAPI static types::v1_3::DynamicTypeBuilder_cptr parseXMLMemberDynamicType(
             tinyxml2::XMLElement* p_root,
             p_dynamictypebuilder_t p_dynamictype,
-            types::MemberId mId);
+            types::v1_3::MemberId mId);
 
-    RTPS_DllAPI static types::DynamicTypeBuilder_cptr parseXMLMemberDynamicType(
+    RTPS_DllAPI static types::v1_3::DynamicTypeBuilder_cptr parseXMLMemberDynamicType(
             tinyxml2::XMLElement* p_root,
             p_dynamictypebuilder_t p_dynamictype,
-            types::MemberId mId,
+            types::v1_3::MemberId mId,
             const std::string& values);
 
     RTPS_DllAPI static XMLP_ret fillDataNode(

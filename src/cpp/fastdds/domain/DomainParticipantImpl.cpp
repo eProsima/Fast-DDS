@@ -1439,7 +1439,10 @@ ReturnCode_t DomainParticipantImpl::register_type(
 bool DomainParticipantImpl::register_dynamic_type_to_factories(
         const TypeSupport& type) const
 {
-    using namespace  eprosima::fastrtps::types;
+    // TODO Barro: Fix when v1.1 sources are reintroduced
+    using namespace eprosima::fastrtps::types;
+    using namespace eprosima::fastrtps::types::v1_3;
+
     DynamicPubSubType* dpst = dynamic_cast<DynamicPubSubType*>(type.get());
     if (dpst != nullptr) // Registering a dynamic type.
     {
@@ -1578,7 +1581,7 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_discovery(
         const fastrtps::string_255& topic,
         const fastrtps::types::TypeIdentifier* identifier,
         const fastrtps::types::TypeObject* object,
-        fastrtps::types::DynamicType_ptr dyn_type)
+        fastrtps::types::v1_3::DynamicType_ptr dyn_type)
 {
     Sentry sentinel(this);
     if (sentinel)
@@ -1675,9 +1678,11 @@ fastrtps::rtps::SampleIdentity DomainParticipantImpl::get_types(
 ReturnCode_t DomainParticipantImpl::register_remote_type(
         const fastrtps::types::TypeInformation& type_information,
         const std::string& type_name,
-        std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback)
+        std::function<void(const std::string& name, const fastrtps::types::v1_3::DynamicType_ptr type)>& callback)
 {
+    // TODO Barro: fix when v1.1 sources are introduced
     using namespace fastrtps::types;
+    using namespace fastrtps::types::v1_3;
 
     if (get_rtps_participant() == nullptr)
     {
@@ -1779,7 +1784,7 @@ bool DomainParticipantImpl::check_get_type_request(
         const fastrtps::rtps::SampleIdentity& requestId,
         const fastrtps::types::TypeIdentifier* identifier,
         const fastrtps::types::TypeObject* object,
-        fastrtps::types::DynamicType_ptr dyn_type)
+        fastrtps::types::v1_3::DynamicType_ptr dyn_type)
 {
     // Maybe we have a pending request?
     if (builtin::INVALID_SAMPLE_IDENTITY != requestId)
@@ -1813,7 +1818,7 @@ bool DomainParticipantImpl::check_get_type_request(
             auto pending = parent_requests_.find(requestId);
             if (pending != parent_requests_.end() && pending->second.size() < 2) // Exists and everything is solved.
             {
-                fastrtps::types::DynamicType_ptr dynamic =
+                fastrtps::types::v1_3::DynamicType_ptr dynamic =
                         fastrtps::types::TypeObjectFactory::get_instance()->build_dynamic_type(name, identifier,
                                 object);
 
@@ -1993,7 +1998,7 @@ bool DomainParticipantImpl::check_get_dependencies_request(
 }
 
 ReturnCode_t DomainParticipantImpl::register_dynamic_type(
-        fastrtps::types::DynamicType_ptr dyn_type)
+        fastrtps::types::v1_3::DynamicType_ptr dyn_type)
 {
     TypeSupport type(new fastrtps::types::DynamicPubSubType(dyn_type));
     return get_participant()->register_type(type);
@@ -2070,7 +2075,7 @@ void DomainParticipantImpl::on_child_requests_finished(
             {
                 parent_requests_.erase(pending_requests_it);
             }
-            cb_it->second.second(cb_it->second.first, fastrtps::types::DynamicType_ptr(nullptr)); // Everything should be already registered
+            cb_it->second.second(cb_it->second.first, fastrtps::types::v1_3::DynamicType_ptr(nullptr)); // Everything should be already registered
             register_callbacks_.erase(cb_it);
         }
     }

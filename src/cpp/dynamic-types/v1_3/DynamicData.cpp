@@ -11,22 +11,23 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/MemberDescriptor.h>
-#include <fastrtps/types/DynamicType.h>
+
 #include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeMember.h>
-#include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicDataPtr.h>
+#include <fastrtps/types/v1_3/DynamicData.h>
+#include <fastrtps/types/v1_3/MemberDescriptor.h>
+#include <fastrtps/types/v1_3/DynamicType.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/v1_3/DynamicTypeMember.h>
+#include <fastrtps/types/v1_3/TypeDescriptor.h>
+#include <fastrtps/types/v1_3/DynamicDataFactory.h>
+#include <fastrtps/types/v1_3/DynamicDataPtr.h>
 #include <fastdds/dds/log/Log.hpp>
 
 #include <locale>
 #include <codecvt>
 #include <algorithm>
 
-using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
 
 template <typename Map>
 bool map_compare(

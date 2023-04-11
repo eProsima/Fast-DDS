@@ -19,9 +19,9 @@
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeMember.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilder.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/v1_3/DynamicTypeMember.h>
 
 #include <fastdds/dds/log/FileConsumer.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
@@ -33,8 +33,10 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
 using namespace eprosima::fastrtps::xmlparser;
+
+using eprosima::fastrtps::types::MAX_ELEMENTS_COUNT;
 
 XMLP_ret XMLParser::parseXMLDynamicType(
         tinyxml2::XMLElement* p_root)

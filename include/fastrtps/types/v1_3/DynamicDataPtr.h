@@ -12,14 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_DYNAMIC_DATA_PTR_H
-#define TYPES_DYNAMIC_DATA_PTR_H
+#ifndef TYPES_1_3_DYNAMIC_DATA_PTR_H
+#define TYPES_1_3_DYNAMIC_DATA_PTR_H
 
 #include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace types {
+namespace v1_3 {
 
 class DynamicData;
 
@@ -56,8 +57,9 @@ public:
             DynamicData*);
 };
 
+} // namespace v1_3
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_DYNAMIC_DATA_PTR_H
+#endif // TYPES_1_3_DYNAMIC_DATA_PTR_H

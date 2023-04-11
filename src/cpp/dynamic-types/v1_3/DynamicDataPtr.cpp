@@ -12,13 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/DynamicDataPtr.h>
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/v1_3/DynamicDataPtr.h>
+#include <fastrtps/types/v1_3/DynamicData.h>
+#include <fastrtps/types/v1_3/DynamicDataFactory.h>
 
-namespace eprosima {
-namespace fastrtps {
-namespace types {
+using namespace eprosima::fastrtps::types::v1_3;
 
 DynamicData_ptr::DynamicData_ptr(
         DynamicData* pData)
@@ -34,7 +32,3 @@ DynamicData_ptr& DynamicData_ptr::operator =(
 {
     return operator =(DynamicData_ptr(ptr));
 }
-
-} // namespace types
-} // namespace fastrtps
-} // namespace eprosima

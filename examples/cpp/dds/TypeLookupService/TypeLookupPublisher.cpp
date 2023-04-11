@@ -35,7 +35,10 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::types::literals;
+
+// TODO Barro: fix when v1.1 sources are introduced
+using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
 
 TypeLookupPublisher::TypeLookupPublisher()
     : mp_participant(nullptr)
@@ -53,13 +56,13 @@ bool TypeLookupPublisher::init()
         return false;
     }
 
-    types::DynamicType_ptr dyn_type = xmlparser::XMLProfileManager::getDynamicTypeByName("TypeLookup")->build();
-    TypeSupport m_type(new types::DynamicPubSubType(dyn_type));
-    m_Hello = types::DynamicDataFactory::get_instance()->create_data(dyn_type);
+    DynamicType_ptr dyn_type = xmlparser::XMLProfileManager::getDynamicTypeByName("TypeLookup")->build();
+    TypeSupport m_type(new DynamicPubSubType(dyn_type));
+    m_Hello = DynamicDataFactory::get_instance()->create_data(dyn_type);
 
     m_Hello->set_string_value("Hello DDS Dynamic World", 0_id);
     m_Hello->set_uint32_value(0, 1_id);
-    types::DynamicData* inner = m_Hello->loan_value(2_id);
+    DynamicData* inner = m_Hello->loan_value(2_id);
     inner->set_byte_value(10, 0_id);
     m_Hello->return_loaned_value(inner);
 
@@ -223,7 +226,7 @@ bool TypeLookupPublisher::publish(
         uint32_t index;
         m_Hello->get_uint32_value(index, 1_id);
         m_Hello->set_uint32_value(index + 1, 1_id);
-        types::DynamicData* inner = m_Hello->loan_value(2_id);
+        DynamicData* inner = m_Hello->loan_value(2_id);
         octet inner_count;
         inner->get_byte_value(inner_count, 0_id);
         inner->set_byte_value(inner_count + 1, 0_id);

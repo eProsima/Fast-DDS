@@ -16,10 +16,10 @@
 #define TYPES_TYPE_OBJECT_H
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/MemberId.h>
+#include <fastrtps/types/AnnotationParameterValue.h>
+#include <fastrtps/types/v1_3/MemberId.h>
 #include <fastrtps/types/TypeObjectHashId.h>
 #include <fastrtps/types/TypeIdentifier.h>
-#include <fastrtps/types/AnnotationParameterValue.h>
 #include <cstdint>
 #include <array>
 
@@ -56,11 +56,11 @@ public:
             CommonStructMember&& x);
 
     RTPS_DllAPI inline void member_id(
-            const MemberId& _member_id) { m_member_id = _member_id; }
+            const v1_3::MemberId& _member_id) { m_member_id = _member_id; }
     RTPS_DllAPI inline void member_id(
-            MemberId&& _member_id) { m_member_id = std::move(_member_id); }
-    RTPS_DllAPI inline const MemberId& member_id() const { return m_member_id; }
-    RTPS_DllAPI inline MemberId& member_id() { return m_member_id; }
+            v1_3::MemberId&& _member_id) { m_member_id = std::move(_member_id); }
+    RTPS_DllAPI inline const v1_3::MemberId& member_id() const { return m_member_id; }
+    RTPS_DllAPI inline v1_3::MemberId& member_id() { return m_member_id; }
 
     RTPS_DllAPI inline void member_flags(
             const StructMemberFlag& _member_flags) { m_member_flags = _member_flags; }
@@ -93,7 +93,7 @@ public:
 
 private:
 
-    MemberId m_member_id;
+    v1_3::MemberId m_member_id;
     StructMemberFlag m_member_flags;
     TypeIdentifier m_member_type_id;
 };
@@ -730,11 +730,11 @@ public:
             CommonUnionMember&& x);
 
     RTPS_DllAPI inline void member_id(
-            const MemberId& _member_id) { m_member_id = _member_id; }
+            const v1_3::MemberId& _member_id) { m_member_id = _member_id; }
     RTPS_DllAPI inline void member_id(
-            MemberId&& _member_id) { m_member_id = std::move(_member_id); }
-    RTPS_DllAPI inline const MemberId& member_id() const { return m_member_id; }
-    RTPS_DllAPI inline MemberId& member_id() { return m_member_id; }
+            v1_3::MemberId&& _member_id) { m_member_id = std::move(_member_id); }
+    RTPS_DllAPI inline const v1_3::MemberId& member_id() const { return m_member_id; }
+    RTPS_DllAPI inline v1_3::MemberId& member_id() { return m_member_id; }
 
     RTPS_DllAPI inline void member_flags(
             const UnionMemberFlag& _member_flags) { m_member_flags = _member_flags; }
@@ -774,7 +774,7 @@ public:
 
 private:
 
-    MemberId m_member_id;
+    v1_3::MemberId m_member_id;
     UnionMemberFlag m_member_flags;
     TypeIdentifier m_type_id;
     UnionCaseLabelSeq m_label_seq;

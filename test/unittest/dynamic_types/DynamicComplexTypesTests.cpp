@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/TypesBase.h>
 #include <gtest/gtest.h>
+
+#include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicDataPtr.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/TypeDescriptor.h>
@@ -24,6 +24,7 @@
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/v1_3/DynamicDataPtr.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastdds/dds/log/Log.hpp>
 
@@ -33,7 +34,10 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+
+// TODO Barro: fix when v1.1 sources are introduced
 using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
 
 class DynamicComplexTypesTests : public ::testing::Test
 {
@@ -77,49 +81,49 @@ public:
 
     void init();
 
-    types::DynamicType_ptr GetMyEnumType();
-    types::DynamicType_ptr GetMyAliasEnumType();
-    types::DynamicType_ptr GetMyAliasEnum2Type();
-    types::DynamicType_ptr GetMyAliasEnum3Type();
-    types::DynamicType_ptr GetMyOctetArray500Type();
-    types::DynamicType_ptr GetBSAlias5Type();
-    types::DynamicType_ptr GetMA3Type();
-    types::DynamicType_ptr GetMyMiniArrayType();
-    types::DynamicType_ptr GetMySequenceLongType();
-    types::DynamicType_ptr GetBasicStructType();
-    types::DynamicType_ptr GetComplexStructType();
-    types::DynamicType_ptr GetUnionSwitchType();
-    types::DynamicType_ptr GetUnion2SwitchType();
-    types::DynamicType_ptr GetCompleteStructType();
-    types::DynamicType_ptr GetKeyedStructType();
+    DynamicType_ptr GetMyEnumType();
+    DynamicType_ptr GetMyAliasEnumType();
+    DynamicType_ptr GetMyAliasEnum2Type();
+    DynamicType_ptr GetMyAliasEnum3Type();
+    DynamicType_ptr GetMyOctetArray500Type();
+    DynamicType_ptr GetBSAlias5Type();
+    DynamicType_ptr GetMA3Type();
+    DynamicType_ptr GetMyMiniArrayType();
+    DynamicType_ptr GetMySequenceLongType();
+    DynamicType_ptr GetBasicStructType();
+    DynamicType_ptr GetComplexStructType();
+    DynamicType_ptr GetUnionSwitchType();
+    DynamicType_ptr GetUnion2SwitchType();
+    DynamicType_ptr GetCompleteStructType();
+    DynamicType_ptr GetKeyedStructType();
 
     // Static types
     //CompleteStruct m_Static;
     CompleteStructPubSubType m_StaticType;
     // Dynamic Types
     //DynamicData* m_DynAuto;
-    types::DynamicType_ptr m_DynAutoType;
+    DynamicType_ptr m_DynAutoType;
     //DynamicData* m_DynManual;
-    types::DynamicType_ptr m_DynManualType;
+    DynamicType_ptr m_DynManualType;
     DynamicTypeBuilderFactory& m_factory;
 
 private:
 
-    types::DynamicType_ptr m_MyEnumType;
-    types::DynamicType_ptr m_MyAliasEnumType;
-    types::DynamicType_ptr m_MyAliasEnum2Type;
-    types::DynamicType_ptr m_MyAliasEnum3Type;
-    types::DynamicType_ptr m_MyOctetArray500;
-    types::DynamicType_ptr m_BSAlias5;
-    types::DynamicType_ptr m_MA3;
-    types::DynamicType_ptr m_MyMiniArray;
-    types::DynamicType_ptr m_MySequenceLong;
-    types::DynamicType_ptr m_BasicStructType;
-    types::DynamicType_ptr m_ComplexStructType;
-    types::DynamicType_ptr m_UnionSwitchType;
-    types::DynamicType_ptr m_Union2SwitchType;
-    types::DynamicType_ptr m_CompleteStructType;
-    types::DynamicType_ptr m_KeyedStructType;
+    DynamicType_ptr m_MyEnumType;
+    DynamicType_ptr m_MyAliasEnumType;
+    DynamicType_ptr m_MyAliasEnum2Type;
+    DynamicType_ptr m_MyAliasEnum3Type;
+    DynamicType_ptr m_MyOctetArray500;
+    DynamicType_ptr m_BSAlias5;
+    DynamicType_ptr m_MA3;
+    DynamicType_ptr m_MyMiniArray;
+    DynamicType_ptr m_MySequenceLong;
+    DynamicType_ptr m_BasicStructType;
+    DynamicType_ptr m_ComplexStructType;
+    DynamicType_ptr m_UnionSwitchType;
+    DynamicType_ptr m_Union2SwitchType;
+    DynamicType_ptr m_CompleteStructType;
+    DynamicType_ptr m_KeyedStructType;
 };
 
 /*
@@ -130,7 +134,7 @@ private:
     BasicStruct basic;
    };
  */
-types::DynamicType_ptr DynamicComplexTypesTests::GetKeyedStructType()
+DynamicType_ptr DynamicComplexTypesTests::GetKeyedStructType()
 {
     if (m_KeyedStructType.get() == nullptr)
     {
@@ -148,7 +152,7 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetKeyedStructType()
     return m_KeyedStructType;
 }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetMyEnumType()
+DynamicType_ptr DynamicComplexTypesTests::GetMyEnumType()
 {
     if (m_MyEnumType.get() == nullptr)
     {
@@ -163,7 +167,7 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMyEnumType()
     return m_MyEnumType;
 }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnumType()
+DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnumType()
 {
     if (m_MyAliasEnumType.get() == nullptr)
     {
@@ -174,7 +178,7 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnumType()
     return m_MyAliasEnumType;
 }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnum2Type()
+DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnum2Type()
 {
     if (m_MyAliasEnum2Type.get() == nullptr)
     {
@@ -186,7 +190,7 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnum2Type()
     return m_MyAliasEnum2Type;
 }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnum3Type()
+DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnum3Type()
 {
     if (m_MyAliasEnum3Type.get() == nullptr)
     {
@@ -198,7 +202,7 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnum3Type()
     return m_MyAliasEnum3Type;
 }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetMyOctetArray500Type()
+DynamicType_ptr DynamicComplexTypesTests::GetMyOctetArray500Type()
 {
     if (m_MyOctetArray500.get() == nullptr)
     {
@@ -210,7 +214,7 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMyOctetArray500Type()
     return m_MyOctetArray500;
 }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetBSAlias5Type()
+DynamicType_ptr DynamicComplexTypesTests::GetBSAlias5Type()
 {
     if (m_BSAlias5.get() == nullptr)
     {
@@ -221,7 +225,7 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetBSAlias5Type()
     return m_BSAlias5;
 }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetMA3Type()
+DynamicType_ptr DynamicComplexTypesTests::GetMA3Type()
 {
     if (m_MA3.get() == nullptr)
     {
@@ -232,7 +236,7 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMA3Type()
     return m_MA3;
 }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetMyMiniArrayType()
+DynamicType_ptr DynamicComplexTypesTests::GetMyMiniArrayType()
 {
     if (m_MyMiniArray.get() == nullptr)
     {
@@ -244,7 +248,7 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMyMiniArrayType()
     return m_MyMiniArray;
 }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetMySequenceLongType()
+DynamicType_ptr DynamicComplexTypesTests::GetMySequenceLongType()
 {
     if (m_MySequenceLong.get() == nullptr)
     {
@@ -258,7 +262,7 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetMySequenceLongType()
     return m_MySequenceLong;
 }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetBasicStructType()
+DynamicType_ptr DynamicComplexTypesTests::GetBasicStructType()
 {
     if (m_BasicStructType.get() == nullptr)
     {
@@ -305,7 +309,7 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetBasicStructType()
     return m_BasicStructType;
 }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetComplexStructType()
+DynamicType_ptr DynamicComplexTypesTests::GetComplexStructType()
 {
     if (m_ComplexStructType.get() == nullptr)
     {
@@ -398,7 +402,7 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetComplexStructType()
     return m_ComplexStructType;
 }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetUnionSwitchType()
+DynamicType_ptr DynamicComplexTypesTests::GetUnionSwitchType()
 {
     if (m_UnionSwitchType.get() == nullptr)
     {
@@ -413,7 +417,7 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetUnionSwitchType()
     return m_UnionSwitchType;
 }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetUnion2SwitchType()
+DynamicType_ptr DynamicComplexTypesTests::GetUnion2SwitchType()
 {
     if (!m_Union2SwitchType)
     {
@@ -432,7 +436,7 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetUnion2SwitchType()
     return m_Union2SwitchType;
 }
 
-types::DynamicType_ptr DynamicComplexTypesTests::GetCompleteStructType()
+DynamicType_ptr DynamicComplexTypesTests::GetCompleteStructType()
 {
     if (m_CompleteStructType.get() == nullptr)
     {
@@ -461,8 +465,8 @@ TEST_F(DynamicComplexTypesTests, Static_Manual_Comparison)
 {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
-    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
-    types::DynamicData_ptr dynData2(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
+    DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
+    DynamicData_ptr dynData2(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
     ASSERT_TRUE(dynData2->equals(dynData.get()));
 
     uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(dynData.get())());
@@ -484,8 +488,8 @@ TEST_F(DynamicComplexTypesTests, Manual_Auto_Comparision)
 {
     EXPECT_EQ(*m_DynAutoType, *m_DynManualType);
 
-    types::DynamicData* dynAutoData = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
-    types::DynamicData* dynManualData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
+    DynamicData* dynAutoData = DynamicDataFactory::get_instance()->create_data(m_DynAutoType);
+    DynamicData* dynManualData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
 
     EXPECT_TRUE(dynManualData->equals(dynAutoData));
 
@@ -497,7 +501,7 @@ TEST_F(DynamicComplexTypesTests, Static_Auto_Comparision)
 {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubtype(m_DynAutoType);
-    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     uint32_t payloadSize = static_cast<uint32_t>(pubsubtype.getSerializedSizeProvider(dynData.get())());
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubtype.serialize(dynData.get(), &payload));
@@ -511,7 +515,7 @@ TEST_F(DynamicComplexTypesTests, Static_Auto_Comparision)
     ASSERT_TRUE(m_StaticType.serialize(&staticData, &payload2));
     ASSERT_TRUE(payloadSize2 == payload2.length);
 
-    types::DynamicData_ptr dynData2(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    DynamicData_ptr dynData2(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     ASSERT_TRUE(pubsubtype.deserialize(&payload2, dynData2.get()));
 
     ASSERT_TRUE(dynData2->equals(dynData.get()));
@@ -527,8 +531,8 @@ TEST_F(DynamicComplexTypesTests, Conversions_Test)
         true);
     DynamicType_ptr newAutoType = TypeObjectFactory::get_instance()->build_dynamic_type(m_DynManualType->get_name(),
                     identifier, &newObject);
-    types::DynamicData* dynData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
-    types::DynamicData* dynData2 = DynamicDataFactory::get_instance()->create_data(newAutoType);
+    DynamicData* dynData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
+    DynamicData* dynData2 = DynamicDataFactory::get_instance()->create_data(newAutoType);
 
     ASSERT_TRUE(dynData2->equals(dynData));
 
@@ -542,18 +546,18 @@ TEST_F(DynamicComplexTypesTests, DynamicDiscoveryTest)
     DynamicType_ptr type1, type2, type3;
     {
         type1 = m_factory.create_uint16_type();
-        //types::DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(type1));
+        //DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(type1));
         m_factory.build_type_object(type1->get_descriptor(), typeObject1);
     }
     {
         type2 = m_factory.create_int16_type();
-        //types::DynamicData_ptr data2(DynamicDataFactory::get_instance()->create_data(type2));
+        //DynamicData_ptr data2(DynamicDataFactory::get_instance()->create_data(type2));
         m_factory.build_type_object(type2->get_descriptor(), typeObject2);
     }
 
     {
         type3 = m_factory.create_int16_type();
-        //types::DynamicData_ptr data2(DynamicDataFactory::get_instance()->create_data(type3));
+        //DynamicData_ptr data2(DynamicDataFactory::get_instance()->create_data(type3));
         m_factory.build_type_object(type3->get_descriptor(), typeObject3);
     }
 
@@ -569,8 +573,8 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_A)
 {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
-    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
-    types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
+    DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
 
     CompleteStruct staticData;
     staticData.my_union()._d(A);
@@ -638,8 +642,8 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_B)
 {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
-    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
-    types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
+    DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
 
     CompleteStruct staticData;
     staticData.my_union()._d(A);
@@ -707,8 +711,8 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_C)
 {
     // Serialize <-> Deserialize Test
     DynamicPubSubType pubsubType(m_DynManualType);
-    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
-    types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
+    DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
 
     CompleteStruct staticData;
     staticData.my_union()._d(A);
@@ -773,7 +777,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_C)
 
 TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
 {
-    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
+    DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
 
     CompleteStruct staticData;
     staticData.my_union()._d() = B;
@@ -1264,10 +1268,10 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
 //       }
 //       std::cout << "END" << std::endl;
 
-    types::DynamicData_ptr dynDataFromDynamic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    DynamicData_ptr dynDataFromDynamic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     EXPECT_TRUE(pubsubType.deserialize(&payload, dynDataFromDynamic.get()));
 
-    types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     EXPECT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic.get()));
 
     EXPECT_TRUE(dynDataFromStatic->equals(dynDataFromDynamic.get()));
@@ -1275,7 +1279,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
 
 TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
 {
-    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
+    DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
 
     CompleteStruct staticData;
     staticData.my_union()._d() = B;
@@ -1724,10 +1728,10 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     ASSERT_TRUE(pbComplete.serialize(&staticData, &stPayload));
     ASSERT_TRUE(stPayload.length == payloadSize2);
 
-    types::DynamicData_ptr dynDataFromDynamic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    DynamicData_ptr dynDataFromDynamic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     ASSERT_TRUE(pubsubType.deserialize(&payload, dynDataFromDynamic.get()));
 
-    types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     ASSERT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic.get()));
 
     ASSERT_TRUE(dynDataFromStatic->equals(dynDataFromDynamic.get()));
@@ -1735,7 +1739,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
 
 TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
 {
-    types::DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
+    DynamicData_ptr dynData(DynamicDataFactory::get_instance()->create_data(m_DynManualType));
 
     CompleteStruct staticData;
     staticData.my_union()._d() = B;
@@ -2225,10 +2229,10 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
        }
        std::cout << "END" << std::endl;
      */
-    types::DynamicData_ptr dynDataFromDynamic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    DynamicData_ptr dynDataFromDynamic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     ASSERT_TRUE(pubsubType.deserialize(&payload, dynDataFromDynamic.get()));
 
-    types::DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
+    DynamicData_ptr dynDataFromStatic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     ASSERT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic.get()));
 
     ASSERT_TRUE(dynDataFromStatic->equals(dynDataFromDynamic.get()));
@@ -2288,10 +2292,10 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_with_Keys)
     ASSERT_TRUE(dynPubSub.serialize(dynData, &dynPayload));
     ASSERT_TRUE(payloadSize2 == dynPayload.length);
 
-    types::DynamicData* dynDataFromStatic = DynamicDataFactory::get_instance()->create_data(GetKeyedStructType());
+    DynamicData* dynDataFromStatic = DynamicDataFactory::get_instance()->create_data(GetKeyedStructType());
     ASSERT_TRUE(pubsubType.deserialize(&stPayload, dynDataFromStatic));
 
-    types::DynamicData* dynDataFromDynamic = DynamicDataFactory::get_instance()->create_data(GetKeyedStructType());
+    DynamicData* dynDataFromDynamic = DynamicDataFactory::get_instance()->create_data(GetKeyedStructType());
     ASSERT_TRUE(dynPubSub.deserialize(&dynPayload, dynDataFromDynamic));
 
     ASSERT_TRUE(dynDataFromStatic->equals(dynDataFromDynamic));

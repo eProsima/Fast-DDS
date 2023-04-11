@@ -22,8 +22,8 @@
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/DynamicDataPtr.h>
 #include <fastrtps/types/TypeObjectFactory.h>
+#include <fastrtps/types/v1_3/DynamicDataPtr.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastcdr/exceptions/BadParamException.h>
 #include "idl/new_features_4_2PubSubTypes.h"
@@ -31,8 +31,11 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::types;
 using namespace eprosima::fastcdr::exception;
+
+// TODO Barro: fix when v1.1 sources are introduced
+using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
 
 class DynamicTypes_4_2_Tests : public ::testing::Test
 {
@@ -280,7 +283,7 @@ TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
     DynamicData_ptr dyn_data_from_dynamic(DynamicDataFactory::get_instance()->create_data(dyn_type));
     ASSERT_TRUE(pst_dynamic.deserialize(&payload, dyn_data_from_dynamic.get()));
 
-    types::DynamicData_ptr dyn_data_from_static(DynamicDataFactory::get_instance()->create_data(dyn_type));
+    DynamicData_ptr dyn_data_from_static(DynamicDataFactory::get_instance()->create_data(dyn_type));
     ASSERT_TRUE(pst_dynamic.deserialize(&st_payload, dyn_data_from_static.get()));
 
 //  // DEBUG Printing payloads

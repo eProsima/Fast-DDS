@@ -12,14 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/MemberDescriptor.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/v1_3/DynamicDataFactory.h>
+#include <fastrtps/types/v1_3/MemberDescriptor.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
 #include <fastdds/dds/log/Log.hpp>
 
-namespace eprosima {
-namespace fastrtps {
-namespace types {
+using namespace eprosima::fastrtps::types::v1_3;
 
 class DynamicDataFactoryReleaser
 {
@@ -224,7 +222,3 @@ bool DynamicDataFactory::is_empty() const
     return true;
 #endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
 }
-
-} // namespace types
-} // namespace fastrtps
-} // namespace eprosima

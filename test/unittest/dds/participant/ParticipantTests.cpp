@@ -73,13 +73,13 @@ namespace dds {
 using fastrtps::ParticipantAttributes;
 using fastrtps::PublisherAttributes;
 using fastrtps::SubscriberAttributes;
-using fastrtps::types::DynamicData_ptr;
-using fastrtps::types::DynamicDataFactory;
-using fastrtps::types::DynamicType_ptr;
-using fastrtps::types::DynamicTypeBuilder_ptr;
-using fastrtps::types::DynamicTypeBuilder_cptr;
-using fastrtps::types::DynamicTypeBuilderFactory;
-using fastrtps::types::TypeDescriptor;
+using fastrtps::types::v1_3::DynamicData_ptr;
+using fastrtps::types::v1_3::DynamicDataFactory;
+using fastrtps::types::v1_3::DynamicType_ptr;
+using fastrtps::types::v1_3::DynamicTypeBuilder_ptr;
+using fastrtps::types::v1_3::DynamicTypeBuilder_cptr;
+using fastrtps::types::v1_3::DynamicTypeBuilderFactory;
+using fastrtps::types::v1_3::TypeDescriptor;
 using fastrtps::xmlparser::XMLP_ret;
 using fastrtps::xmlparser::XMLProfileManager;
 
@@ -3074,8 +3074,8 @@ TEST(ParticipantTests, RegisterRemoteTypeComplete)
 
     // Create the functor for the remote type registration
     std::string topic_name = "footopic";
-    std::function<void(const std::string&, const fastrtps::types::DynamicType_ptr)> callback =
-            [topic_name](const std::string&, const fastrtps::types::DynamicType_ptr type)
+    std::function<void(const std::string&, const fastrtps::types::v1_3::DynamicType_ptr)> callback =
+            [topic_name](const std::string&, const fastrtps::types::v1_3::DynamicType_ptr type)
             {
                 std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
             };
@@ -3148,8 +3148,8 @@ TEST(ParticipantTests, RegisterRemoteTypeMinimal)
 
     // Create the functor for the remote type registration
     std::string topic_name = "footopic";
-    std::function<void(const std::string&, const fastrtps::types::DynamicType_ptr)> callback =
-            [topic_name](const std::string&, const fastrtps::types::DynamicType_ptr type)
+    std::function<void(const std::string&, const fastrtps::types::v1_3::DynamicType_ptr)> callback =
+            [topic_name](const std::string&, const fastrtps::types::v1_3::DynamicType_ptr type)
             {
                 std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
             };
@@ -3205,8 +3205,8 @@ TEST(ParticipantTests, RegisterRemoteTypePreconditionNotMet)
 
     // Create the functor for the remote type registration
     std::string topic_name = "footopic";
-    std::function<void(const std::string&, const fastrtps::types::DynamicType_ptr)> callback =
-            [topic_name](const std::string&, const fastrtps::types::DynamicType_ptr type)
+    std::function<void(const std::string&, const fastrtps::types::v1_3::DynamicType_ptr)> callback =
+            [topic_name](const std::string&, const fastrtps::types::v1_3::DynamicType_ptr type)
             {
                 std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
             };

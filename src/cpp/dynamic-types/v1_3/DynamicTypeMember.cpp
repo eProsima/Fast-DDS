@@ -13,17 +13,17 @@
 // limitations under the License.
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/types/AnnotationDescriptor.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeMember.h>
-#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/v1_3/AnnotationDescriptor.h>
+#include <fastrtps/types/v1_3/DynamicType.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/v1_3/DynamicTypeMember.h>
+#include <fastrtps/types/v1_3/MemberDescriptor.h>
 
 #include <cassert>
 #include <iomanip>
 #include <tuple>
 
-using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
 
 bool DynamicTypeMember::operator==(const DynamicTypeMember& other) const
 {
@@ -78,7 +78,7 @@ bool DynamicTypeMember::is_consistent(
     return true;
 }
 
-std::ostream& eprosima::fastrtps::types::operator<<( std::ostream& os, const DynamicTypeMember& dm)
+std::ostream& eprosima::fastrtps::types::v1_3::operator<<( std::ostream& os, const DynamicTypeMember& dm)
 {
     using namespace std;
 

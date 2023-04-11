@@ -23,12 +23,11 @@
 #include <vector>
 
 #include <fastdds/rtps/common/SerializedPayload.h>
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/TypeIdentifier.h>
-#include <fastrtps/types/TypesBase.h>
 
 #include "DDSFilterPredicate.hpp"
 #include "DDSFilterValue.hpp"
+
+using namespace eprosima::fastrtps::types::v1_3;
 
 namespace eprosima {
 namespace fastdds {
@@ -36,11 +35,9 @@ namespace dds {
 namespace DDSSQLFilter {
 
 bool DDSFilterField::set_value(
-        eprosima::fastrtps::types::DynamicData& data,
+        DynamicData& data,
         size_t n)
 {
-    using namespace eprosima::fastrtps::types;
-
     uint32_t index = static_cast<uint32_t>(access_path_[n].member_index);
     auto member_id = data.get_member_id_at_index(index);
     bool last_step = access_path_.size() - 1 == n;
@@ -104,8 +101,8 @@ bool DDSFilterField::set_value(
 }
 
 bool DDSFilterField::set_value(
-        const eprosima::fastrtps::types::DynamicData* data,
-        eprosima::fastrtps::types::MemberId member_id)
+        const DynamicData* data,
+        MemberId member_id)
 {
     using namespace eprosima::fastrtps::types;
 

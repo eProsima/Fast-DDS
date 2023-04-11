@@ -29,12 +29,12 @@
 #include <fastrtps/participant/Participant.h>
 #include <fastrtps/publisher/Publisher.h>
 #include <fastrtps/subscriber/Subscriber.h>
-#include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicPubSubType.h>
+#include <fastrtps/types/TypeObjectFactory.h>
+#include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeMember.h>
-#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include <fastrtps_deprecated/participant/ParticipantImpl.h>
@@ -76,8 +76,11 @@ void Domain::stopAll()
     }
 
     // Deletes DynamicTypes and TypeObject factories
-    types::DynamicTypeBuilderFactory::delete_instance();
-    types::DynamicDataFactory::delete_instance();
+    //TODO Barro: uncomment when v1.1 sources are reintroduced
+    //types::v1_1::DynamicTypeBuilderFactory::delete_instance();
+    //types::v1_1::DynamicDataFactory::delete_instance();
+    types::v1_3::DynamicTypeBuilderFactory::delete_instance();
+    types::v1_3::DynamicDataFactory::delete_instance();
     types::TypeObjectFactory::delete_instance();
     XMLProfileManager::DeleteInstance();
 
@@ -354,7 +357,8 @@ bool Domain::registerDynamicType(
         Participant* part,
         types::DynamicPubSubType* type)
 {
-    using namespace eprosima::fastrtps::types;
+    using namespace eprosima::fastrtps::types::v1_3;
+
     TypeObjectFactory* typeFactory = TypeObjectFactory::get_instance();
 
     const TypeIdentifier* type_id_min = typeFactory->get_type_identifier(type->getName());

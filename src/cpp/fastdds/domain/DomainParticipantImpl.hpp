@@ -492,7 +492,7 @@ public:
     ReturnCode_t register_remote_type(
             const fastrtps::types::TypeInformation& type_information,
             const std::string& type_name,
-            std::function<void(const std::string& name, const fastrtps::types::DynamicType_ptr type)>& callback);
+            std::function<void(const std::string& name, const fastrtps::types::v1_3::DynamicType_ptr type)>& callback);
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
     virtual void disable();
@@ -585,7 +585,7 @@ protected:
     std::map<fastrtps::rtps::SampleIdentity,
             std::pair<std::string, std::function<void(
                 const std::string& name,
-                const fastrtps::types::DynamicType_ptr)>>> register_callbacks_;
+                const fastrtps::types::v1_3::DynamicType_ptr)>>> register_callbacks_;
 
     // Relationship between child and parent request
     std::map<fastrtps::rtps::SampleIdentity, fastrtps::rtps::SampleIdentity> child_requests_;
@@ -684,7 +684,7 @@ protected:
                 const fastrtps::string_255& topic,
                 const fastrtps::types::TypeIdentifier* identifier,
                 const fastrtps::types::TypeObject* object,
-                fastrtps::types::DynamicType_ptr dyn_type) override;
+                fastrtps::types::v1_3::DynamicType_ptr dyn_type) override;
 
         void on_type_dependencies_reply(
                 fastrtps::rtps::RTPSParticipant* participant,
@@ -707,7 +707,7 @@ protected:
             InstanceHandle_t& handle);
 
     ReturnCode_t register_dynamic_type(
-            fastrtps::types::DynamicType_ptr dyn_type);
+            fastrtps::types::v1_3::DynamicType_ptr dyn_type);
 
     bool register_dynamic_type_to_factories(
             const TypeSupport& type) const;
@@ -716,7 +716,7 @@ protected:
             const fastrtps::rtps::SampleIdentity& requestId,
             const fastrtps::types::TypeIdentifier* identifier,
             const fastrtps::types::TypeObject* object,
-            fastrtps::types::DynamicType_ptr dyn_type);
+            fastrtps::types::v1_3::DynamicType_ptr dyn_type);
 
     bool check_get_dependencies_request(
             const fastrtps::rtps::SampleIdentity& requestId,

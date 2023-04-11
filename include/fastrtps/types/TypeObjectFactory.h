@@ -43,10 +43,10 @@ protected:
     mutable std::vector<TypeInformation*> informations_created_;
     std::map<std::string, std::string> aliases_; // Aliases
 
-    DynamicType_ptr build_dynamic_type(
-            TypeDescriptor& descriptor,
+    v1_3::DynamicType_ptr build_dynamic_type(
+            v1_3::TypeDescriptor& descriptor,
             const TypeObject* object,
-            const DynamicType_ptr annotation_member_type = DynamicType_ptr(nullptr)) const;
+            const v1_3::DynamicType_ptr annotation_member_type = {}) const;
 
     const TypeIdentifier* try_get_complete(
             const TypeIdentifier* identifier) const;
@@ -63,16 +63,16 @@ protected:
     void create_builtin_annotations();
 
     void apply_type_annotations(
-            DynamicTypeBuilder_ptr& type_builder,
+            v1_3::DynamicTypeBuilder_ptr& type_builder,
             const AppliedAnnotationSeq& annotations) const;
 
     void apply_member_annotations(
-            DynamicTypeBuilder_ptr& parent_type_builder,
-            MemberId member_id,
+            v1_3::DynamicTypeBuilder_ptr& parent_type_builder,
+            v1_3::MemberId member_id,
             const AppliedAnnotationSeq& annotations) const;
 
     std::string get_key_from_hash(
-            const DynamicType_ptr annotation_descriptor_type,
+            const v1_3::DynamicType_ptr annotation_descriptor_type,
             const NameHash& hash) const;
 
     /**
@@ -191,7 +191,7 @@ public:
             uint32_t bound,
             bool complete = false);
 
-    RTPS_DllAPI DynamicType_ptr build_dynamic_type(
+    RTPS_DllAPI v1_3::DynamicType_ptr build_dynamic_type(
             const std::string& name,
             const TypeIdentifier* identifier,
             const TypeObject* object = nullptr) const;

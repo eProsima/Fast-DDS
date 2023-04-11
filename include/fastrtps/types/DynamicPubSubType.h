@@ -17,7 +17,7 @@
 
 #include <fastrtps/types/TypesBase.h>
 #include <fastdds/dds/topic/TopicDataType.hpp>
-#include <fastrtps/types/DynamicDataPtr.h>
+#include <fastrtps/types/v1_3/DynamicDataPtr.h>
 #include <fastrtps/utils/md5.h>
 
 namespace eprosima {
@@ -30,7 +30,7 @@ protected:
 
     void UpdateDynamicTypeInfo();
 
-    DynamicType_ptr dynamic_type_;
+    v1_3::DynamicType_ptr dynamic_type_;
     MD5 m_md5;
     unsigned char* m_keyBuffer = nullptr;
 
@@ -39,7 +39,7 @@ public:
     RTPS_DllAPI DynamicPubSubType() = default;
 
     RTPS_DllAPI DynamicPubSubType(
-            DynamicType_ptr pDynamicType);
+            v1_3::DynamicType_ptr pDynamicType);
 
     RTPS_DllAPI virtual ~DynamicPubSubType();
 
@@ -66,13 +66,13 @@ public:
 
     RTPS_DllAPI void CleanDynamicType();
 
-    RTPS_DllAPI DynamicType_ptr GetDynamicType() const;
+    RTPS_DllAPI v1_3::DynamicType_ptr GetDynamicType() const;
 
     RTPS_DllAPI ReturnCode_t SetDynamicType(
-            DynamicData_ptr pData);
+            v1_3::DynamicData_ptr pData);
 
     RTPS_DllAPI ReturnCode_t SetDynamicType(
-            DynamicType_ptr pType);
+            v1_3::DynamicType_ptr pType);
 };
 
 } // namespace types

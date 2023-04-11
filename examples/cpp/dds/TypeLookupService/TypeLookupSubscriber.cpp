@@ -33,6 +33,10 @@ using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
+// TODO Barro: fix when v1.1 sources are introduced
+using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
+
 TypeLookupSubscriber::TypeLookupSubscriber()
     : mp_participant(nullptr)
     , mp_subscriber(nullptr)
@@ -142,16 +146,16 @@ void TypeLookupSubscriber::SubListener::on_data_available(
 
     if (dit != subscriber_->datas_.end())
     {
-        types::DynamicData_ptr data = dit->second;
+        DynamicData_ptr data = dit->second;
         SampleInfo info;
         if (reader->take_next_sample(data.get(), &info) == ReturnCode_t::RETCODE_OK)
         {
             if (info.valid_data)
             {
-                types::DynamicType_ptr type = subscriber_->readers_[reader];
+                DynamicType_ptr type = subscriber_->readers_[reader];
                 this->n_samples++;
                 std::cout << "Received data of type " << type->get_name() << std::endl;
-                types::DynamicDataHelper::print(data);
+                DynamicDataHelper::print(data);
             }
         }
     }
@@ -163,8 +167,8 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
         const eprosima::fastrtps::string_255 type_name,
         const eprosima::fastrtps::types::TypeInformation& type_information)
 {
-    std::function<void(const std::string&, const types::DynamicType_ptr)> callback =
-            [this, topic_name](const std::string& name, const types::DynamicType_ptr type)
+    std::function<void(const std::string&, const DynamicType_ptr)> callback =
+            [this, topic_name](const std::string& name, const DynamicType_ptr type)
             {
                 std::cout << "Discovered type: " << name << " from topic " << topic_name << std::endl;
 
@@ -212,14 +216,14 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                         const types::TypeObject* obj =
                                 types::TypeObjectFactory::get_instance()->get_type_object(ident);
 
-                        types::DynamicType_ptr dyn_type =
+                        DynamicType_ptr dyn_type =
                                 types::TypeObjectFactory::get_instance()->build_dynamic_type(name, ident, obj);
 
                         if (nullptr != dyn_type)
                         {
                             subscriber_->readers_[reader] = dyn_type;
-                            types::DynamicData_ptr data(
-                                types::DynamicDataFactory::get_instance()->create_data(dyn_type));
+                            DynamicData_ptr data(
+                                DynamicDataFactory::get_instance()->create_data(dyn_type));
                             subscriber_->datas_[reader] = data;
                         }
                         else
@@ -236,7 +240,7 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                 {
                     subscriber_->topics_[reader] = topic;
                     subscriber_->readers_[reader] = type;
-                    types::DynamicData_ptr data(types::DynamicDataFactory::get_instance()->create_data(type));
+                    DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(type));
                     subscriber_->datas_[reader] = data;
                 }
             };

@@ -61,7 +61,7 @@ public:
      * @param [in] type  The DynamicType to assign.
      */
     void set_type(
-            const eprosima::fastrtps::types::DynamicType_ptr& type);
+            const eprosima::fastrtps::types::v1_3::DynamicType_ptr& type);
 
     /// The root condition of the expression tree.
     std::unique_ptr<DDSFilterCondition> root;
@@ -78,17 +78,17 @@ private:
     public:
 
         void operator ()(
-                eprosima::fastrtps::types::DynamicData* ptr)
+                eprosima::fastrtps::types::v1_3::DynamicData* ptr)
         {
-            eprosima::fastrtps::types::DynamicDataFactory::get_instance()->delete_data(ptr);
+            eprosima::fastrtps::types::v1_3::DynamicDataFactory::get_instance()->delete_data(ptr);
         }
 
     };
 
     /// The Dynamic type used to deserialize the payloads
-    eprosima::fastrtps::types::DynamicType_ptr dyn_type_;
+    eprosima::fastrtps::types::v1_3::DynamicType_ptr dyn_type_;
     /// The Dynamic data used to deserialize the payloads
-    std::unique_ptr<eprosima::fastrtps::types::DynamicData, DynDataDeleter> dyn_data_;
+    std::unique_ptr<eprosima::fastrtps::types::v1_3::DynamicData, DynDataDeleter> dyn_data_;
 };
 
 }  // namespace DDSSQLFilter

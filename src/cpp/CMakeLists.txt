@@ -14,6 +14,42 @@
 
 include(CheckCXXSourceCompiles)
 
+# xtypes is introduced as an interface library to simplify management
+add_library(xtypes INTERFACE)
+
+# introduce an alias to make even external and internal linking
+add_library(fastdds::xtypes ALIAS xtypes)
+
+target_compile_features(xtypes INTERFACE cxx_std_11)
+
+target_sources(xtypes INTERFACE
+    # common
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeIdentifier.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeIdentifierTypes.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObject.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectHashId.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectFactory.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeNamesGenerator.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/BuiltinAnnotationsTypeObject.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicDataHelper.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicPubSubType.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationParameterValue.cpp
+
+    # version 1.3
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/AnnotationManager.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/AnnotationDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicData.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicDataFactory.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicType.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicDataPtr.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicTypeBuilder.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicTypeBuilderFactory.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicTypeMember.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/TypeDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/MemberDescriptor.cpp
+)
+
 # Set source files
 
 if(WIN32)
@@ -30,6 +66,7 @@ add_definitions(-DNOMINMAX)
 endif(WIN32)
 
 file(GLOB DDSSQLFILTER_SOURCES fastdds/topic/DDSSQLFilter/*.cpp)
+
 
 set(${PROJECT_NAME}_source_files
     ${ALL_HEADERS}
@@ -139,29 +176,6 @@ set(${PROJECT_NAME}_source_files
     rtps/transport/tcp/TCPControlMessage.cpp
     rtps/transport/tcp/RTCPMessageManager.cpp
     rtps/transport/ChainingTransport.cpp
-
-    dynamic-types/AnnotationDescriptor.cpp
-    dynamic-types/AnnotationManager.cpp
-    dynamic-types/AnnotationParameterValue.cpp
-    dynamic-types/DynamicData.cpp
-    dynamic-types/DynamicDataFactory.cpp
-    dynamic-types/DynamicType.cpp
-    dynamic-types/DynamicPubSubType.cpp
-    dynamic-types/DynamicDataPtr.cpp
-    dynamic-types/DynamicTypeBuilder.cpp
-    dynamic-types/DynamicTypeBuilderFactory.cpp
-    dynamic-types/DynamicTypeMember.cpp
-    dynamic-types/MemberDescriptor.cpp
-    dynamic-types/TypeDescriptor.cpp
-    dynamic-types/TypeIdentifier.cpp
-    dynamic-types/TypeIdentifierTypes.cpp
-    dynamic-types/TypeObject.cpp
-    dynamic-types/TypeObjectHashId.cpp
-    dynamic-types/TypeObjectFactory.cpp
-    dynamic-types/TypeNamesGenerator.cpp
-    dynamic-types/TypesBase.cpp
-    dynamic-types/BuiltinAnnotationsTypeObject.cpp
-    dynamic-types/DynamicDataHelper.cpp
 
     fastrtps_deprecated/attributes/TopicAttributes.cpp
     fastdds/core/Entity.cpp
@@ -490,6 +504,7 @@ target_link_libraries(${PROJECT_NAME} ${PRIVACY} fastcdr foonathan_memory
     $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
     ${THIRDPARTY_BOOST_LINK_LIBS}
     PRIVATE eProsima_atomic
+    PRIVATE fastdds::xtypes
     )
 
 if(MSVC OR MSVC_IDE)

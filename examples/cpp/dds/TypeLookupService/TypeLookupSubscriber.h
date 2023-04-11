@@ -59,9 +59,9 @@ private:
 
     std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastdds::dds::Topic*> topics_;
 
-    std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastrtps::types::DynamicType_ptr> readers_;
+    std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastrtps::types::v1_3::DynamicType_ptr> readers_;
 
-    std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastrtps::types::DynamicData_ptr> datas_;
+    std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastrtps::types::v1_3::DynamicData_ptr> datas_;
 
     eprosima::fastrtps::SubscriberAttributes att_;
 

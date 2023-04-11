@@ -45,6 +45,10 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
 
+// TODO Barro: fix when v1.1 sources are introduced
+using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
+
 static int DOMAIN_ID_ = 10;
 
 // TODO - Remove DISABLED when XTYPES are implemented.
@@ -231,7 +235,7 @@ TEST_F(xtypestests, TypeDiscoverySubs)
     // Wait for discovery.
     sub.waitTypeDiscovery(true, 3);
 
-    eprosima::fastrtps::types::DynamicType_ptr disc_type = sub.discovered_type();
+    DynamicType_ptr disc_type = sub.discovered_type();
     ASSERT_TRUE(disc_type != nullptr);
 
     sub.register_discovered_type();
@@ -277,7 +281,7 @@ TEST_F(xtypestests, TypeDiscoveryPubs)
     // Wait for discovery.
     pub.waitTypeDiscovery(true, 3);
 
-    eprosima::fastrtps::types::DynamicType_ptr disc_type = pub.discovered_type();
+    DynamicType_ptr disc_type = pub.discovered_type();
     ASSERT_TRUE(disc_type != nullptr);
 
     pub.register_discovered_type();

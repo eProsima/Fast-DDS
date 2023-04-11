@@ -65,9 +65,9 @@ private:
 
     std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastdds::dds::Topic*> topics_;
 
-    std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastrtps::types::DynamicType_ptr> readers_;
+    std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastrtps::types::v1_3::DynamicType_ptr> readers_;
 
-    std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastrtps::types::DynamicData_ptr> datas_;
+    std::map<eprosima::fastdds::dds::DataReader*, eprosima::fastrtps::types::v1_3::DynamicData_ptr> datas_;
 
     eprosima::fastrtps::SubscriberAttributes att_;
 
@@ -105,7 +105,7 @@ public:
                 const eprosima::fastrtps::string_255& topic,
                 const eprosima::fastrtps::types::TypeIdentifier* identifier,
                 const eprosima::fastrtps::types::TypeObject* object,
-                eprosima::fastrtps::types::DynamicType_ptr dyn_type) override;
+                eprosima::fastrtps::types::v1_3::DynamicType_ptr dyn_type) override;
 
         int n_matched;
 
@@ -115,7 +115,7 @@ public:
 
         std::condition_variable types_cv_;
 
-        eprosima::fastrtps::types::DynamicType_ptr received_type_;
+        eprosima::fastrtps::types::v1_3::DynamicType_ptr received_type_;
 
         std::atomic<bool> reception_flag_{false};
 

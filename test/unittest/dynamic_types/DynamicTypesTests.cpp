@@ -13,15 +13,15 @@
 // limitations under the License.
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/MemberDescriptor.h>
-#include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/DynamicDataPtr.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilder.h>
+#include <fastrtps/types/v1_3/DynamicDataFactory.h>
+#include <fastrtps/types/v1_3/TypeDescriptor.h>
+#include <fastrtps/types/v1_3/MemberDescriptor.h>
+#include <fastrtps/types/v1_3/DynamicType.h>
+#include <fastrtps/types/v1_3/DynamicData.h>
+#include <fastrtps/types/v1_3/DynamicDataPtr.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
@@ -43,7 +43,7 @@
 using namespace eprosima::fastcdr;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
 
 // Ancillary gtest formatters
 
@@ -967,7 +967,7 @@ TEST_F(DynamicTypesTests, DynamicType_int32_unit_tests)
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -983,7 +983,7 @@ TEST_F(DynamicTypesTests, DynamicType_int32_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(wlongpb.serialize(&wlong, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -1066,7 +1066,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint32_unit_tests)
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -1082,7 +1082,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint32_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(wlongpb.serialize(&wlong, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -1165,7 +1165,7 @@ TEST_F(DynamicTypesTests, DynamicType_int16_unit_tests)
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -1181,7 +1181,7 @@ TEST_F(DynamicTypesTests, DynamicType_int16_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(wshortpb.serialize(&wshort, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -1264,7 +1264,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint16_unit_tests)
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -1280,7 +1280,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint16_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(wshortpb.serialize(&wshort, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -1363,7 +1363,7 @@ TEST_F(DynamicTypesTests, DynamicType_int64_unit_tests)
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -1379,7 +1379,7 @@ TEST_F(DynamicTypesTests, DynamicType_int64_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(wlonglongpb.serialize(&wlonglong, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -1462,7 +1462,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint64_unit_tests)
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -1478,7 +1478,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint64_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(wlonglongpb.serialize(&wlonglong, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -1561,7 +1561,7 @@ TEST_F(DynamicTypesTests, DynamicType_float32_unit_tests)
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -1577,7 +1577,7 @@ TEST_F(DynamicTypesTests, DynamicType_float32_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(wfloatpb.serialize(&wfloat, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -1660,7 +1660,7 @@ TEST_F(DynamicTypesTests, DynamicType_float64_unit_tests)
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -1676,7 +1676,7 @@ TEST_F(DynamicTypesTests, DynamicType_float64_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(wdoublepb.serialize(&wdouble, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -1759,7 +1759,7 @@ TEST_F(DynamicTypesTests, DynamicType_float128_unit_tests)
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -1775,7 +1775,7 @@ TEST_F(DynamicTypesTests, DynamicType_float128_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(wldoublepb.serialize(&wldouble, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -1858,7 +1858,7 @@ TEST_F(DynamicTypesTests, DynamicType_char8_unit_tests)
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -1874,7 +1874,7 @@ TEST_F(DynamicTypesTests, DynamicType_char8_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(wcharpb.serialize(&wchar, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -1958,7 +1958,7 @@ TEST_F(DynamicTypesTests, DynamicType_char16_unit_tests)
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -1974,7 +1974,7 @@ TEST_F(DynamicTypesTests, DynamicType_char16_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(wcharpb.serialize(&wchar, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -2057,7 +2057,7 @@ TEST_F(DynamicTypesTests, DynamicType_byte_unit_tests)
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -2073,7 +2073,7 @@ TEST_F(DynamicTypesTests, DynamicType_byte_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(wcharpb.serialize(&wchar, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -2156,7 +2156,7 @@ TEST_F(DynamicTypesTests, DynamicType_bool_unit_tests)
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -2172,7 +2172,7 @@ TEST_F(DynamicTypesTests, DynamicType_bool_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(wboolpb.serialize(&wbool, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -2290,7 +2290,7 @@ TEST_F(DynamicTypesTests, DynamicType_enum_unit_tests)
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -2306,7 +2306,7 @@ TEST_F(DynamicTypesTests, DynamicType_enum_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(wenumpb.serialize(&wenum, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -2413,7 +2413,7 @@ TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -2429,7 +2429,7 @@ TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(wstringpb.serialize(&wstring, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -2530,7 +2530,7 @@ TEST_F(DynamicTypesTests, DynamicType_wstring_unit_tests)
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -2546,7 +2546,7 @@ TEST_F(DynamicTypesTests, DynamicType_wstring_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(wwstringpb.serialize(&wwstring, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -2592,7 +2592,7 @@ TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
     SerializedPayload_t payload(payloadSize);
     ASSERT_TRUE(pubsubType.serialize(aliasData, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(aliasData));
 
@@ -2608,7 +2608,7 @@ TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(waliaspb.serialize(&walias, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(aliasData));
 
@@ -2975,7 +2975,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -3031,7 +3031,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(seq_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(seq_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -3110,7 +3110,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(seq_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(seq_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -3174,7 +3174,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(seq_seq_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(seq_seq_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -3247,7 +3247,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(seq_seq_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(seq_seq_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -3314,7 +3314,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(array_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(array_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -3396,7 +3396,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(array_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(array_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -3470,7 +3470,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(parent_array_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(parent_array_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -3546,7 +3546,7 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(parent_array_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(parent_array_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -3617,7 +3617,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -3694,7 +3694,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -3830,7 +3830,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps_unit_tests)
     ASSERT_TRUE(pubsubType.serialize(data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_map_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_map_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(data));
 
@@ -3848,7 +3848,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_map_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_map_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(data));
 
@@ -3903,7 +3903,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
     ASSERT_TRUE(pubsubType.serialize(struct_data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(struct_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(struct_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(struct_data));
 
@@ -3921,7 +3921,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(struct_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(struct_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(struct_data));
 
@@ -4096,7 +4096,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
     ASSERT_TRUE(pubsubType.serialize(struct_data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(child_struct_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(child_struct_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(struct_data));
 
@@ -4175,7 +4175,7 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
     ASSERT_TRUE(pubsubType.serialize(struct_data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(parent_struct_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(parent_struct_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(struct_data));
 
@@ -4193,7 +4193,7 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(parent_struct_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(parent_struct_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(struct_data));
 
@@ -4285,7 +4285,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
     ASSERT_TRUE(pubsubType.serialize(union_data, &payload));
     ASSERT_TRUE(payload.length == payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(union_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(union_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(union_data));
 
@@ -4302,7 +4302,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
     SerializedPayload_t static_payload(static_payloadSize);
     ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
     ASSERT_TRUE(static_payload.length == static_payloadSize);
-    types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(union_type);
+    DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(union_type);
     ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
     ASSERT_TRUE(data3->equals(union_data));
 
@@ -4405,7 +4405,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
     ASSERT_TRUE(pubsubType.serialize(union_data, &payload));
     EXPECT_EQ(payload.length, payloadSize);
 
-    types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
+    DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
     ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
     ASSERT_TRUE(data2->equals(union_data));
 

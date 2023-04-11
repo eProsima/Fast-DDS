@@ -36,12 +36,10 @@ using eprosima::fastdds::dds::Log;
 
 using eprosima::fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
 
-using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastdds::dds::builtin;
+using namespace eprosima::fastrtps::types::v1_3;
 
-namespace eprosima {
-namespace fastdds {
-namespace dds {
-namespace builtin {
+using eprosima::fastrtps::types::TypeObjectFactory;
 
 TypeLookupReplyListener::TypeLookupReplyListener(
         TypeLookupManager* manager)
@@ -115,8 +113,3 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
     }
     reader->getHistory()->remove_change(change);
 }
-
-} // namespace builtin
-} // namespace dds
-} // namespace fastdds
-} // namespace eprosima

@@ -86,7 +86,7 @@ public:
         waitDiscovery(); publish();
     }
 
-    eprosima::fastrtps::types::DynamicType_ptr discovered_type() const
+    eprosima::fastrtps::types::v1_3::DynamicType_ptr discovered_type() const
     {
         return disc_type_;
     }
@@ -138,7 +138,7 @@ private:
 
     eprosima::fastdds::dds::DataWriter* writer_;
 
-    eprosima::fastrtps::types::DynamicType_ptr disc_type_;
+    eprosima::fastrtps::types::v1_3::DynamicType_ptr disc_type_;
 
     eprosima::fastdds::dds::DataWriterQos writer_qos;
 
@@ -163,7 +163,7 @@ public:
                 const eprosima::fastrtps::string_255& topic,
                 const eprosima::fastrtps::types::TypeIdentifier* identifier,
                 const eprosima::fastrtps::types::TypeObject* object,
-                eprosima::fastrtps::types::DynamicType_ptr dyn_type) override;
+                eprosima::fastrtps::types::v1_3::DynamicType_ptr dyn_type) override;
 
         void on_type_information_received(
                 eprosima::fastdds::dds::DomainParticipant* participant,

@@ -40,7 +40,10 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::types::literals;
+
+// TODO Barro: fix when v1.1 sources are introduced
+using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
 
 static bool run = true;
 
@@ -253,8 +256,8 @@ int main(
         return 1;
     }
 
-    types::DynamicType_ptr dyn_type = xmlparser::XMLProfileManager::getDynamicTypeByName("TypeLookup")->build();
-    TypeSupport type(new types::DynamicPubSubType(dyn_type));
+    DynamicType_ptr dyn_type = xmlparser::XMLProfileManager::getDynamicTypeByName("TypeLookup")->build();
+    TypeSupport type(new DynamicPubSubType(dyn_type));
     type.register_type(participant);
 
     PubListener listener;
@@ -304,10 +307,10 @@ int main(
                 });
     }
 
-    types::DynamicData_ptr data(types::DynamicDataFactory::get_instance()->create_data(dyn_type));
+    DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(dyn_type));
     data->set_string_value("Hello DDS Dynamic World", 0_id);
     data->set_uint32_value(1, 1_id);
-    types::DynamicData* inner = data->loan_value(2_id);
+    DynamicData* inner = data->loan_value(2_id);
     inner->set_byte_value(10, 0_id);
     data->return_loaned_value(inner);
 

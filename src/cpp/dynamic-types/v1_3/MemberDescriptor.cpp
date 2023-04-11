@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/MemberDescriptor.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/AnnotationDescriptor.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/v1_3/MemberDescriptor.h>
+#include <fastrtps/types/v1_3/DynamicType.h>
+#include <fastrtps/types/v1_3/TypeDescriptor.h>
+#include <fastrtps/types/v1_3/AnnotationDescriptor.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
 #include <fastdds/dds/log/Log.hpp>
 
 #include <iomanip>
 
-using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
 
 MemberDescriptor::MemberDescriptor(
         MemberId id,
@@ -374,7 +374,7 @@ void MemberDescriptor::set_default_union_value(
     default_label_ = bDefault;
 }
 
-std::ostream& eprosima::fastrtps::types::operator<<( std::ostream& os, const MemberDescriptor& md)
+std::ostream& eprosima::fastrtps::types::v1_3::operator<<( std::ostream& os, const MemberDescriptor& md)
 {
     using namespace std;
 

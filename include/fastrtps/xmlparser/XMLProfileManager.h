@@ -20,9 +20,9 @@
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/xmlparser/XMLParser.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicPubSubType.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilder.h>
 
 #include <stdio.h>
 #include <string>
@@ -193,7 +193,7 @@ public:
     //!Add a new dynamic type instance along with its name.
     RTPS_DllAPI static bool insertDynamicTypeByName(
             const std::string& type_name,
-            types::DynamicTypeBuilder_ptr&& type);
+            types::v1_3::DynamicTypeBuilder_ptr&& type);
 
     //!Retrieves a transport instance by its name.
     RTPS_DllAPI static p_dynamictypebuilder_t getDynamicTypeByName(

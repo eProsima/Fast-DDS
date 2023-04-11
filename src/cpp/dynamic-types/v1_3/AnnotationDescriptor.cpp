@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/AnnotationDescriptor.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/v1_3/AnnotationDescriptor.h>
+#include <fastrtps/types/v1_3/DynamicType.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
 #include <fastdds/dds/log/Log.hpp>
 
 #include <iomanip>
 
-using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
 
 ReturnCode_t AnnotationDescriptor::copy_from(
         const AnnotationDescriptor* descriptor)
@@ -119,7 +119,7 @@ ReturnCode_t AnnotationDescriptor::set_value(
     return ReturnCode_t::RETCODE_OK;
 }
 
-std::ostream& eprosima::fastrtps::types::operator<<( std::ostream& os, const AnnotationDescriptor& ad)
+std::ostream& eprosima::fastrtps::types::v1_3::operator<<( std::ostream& os, const AnnotationDescriptor& ad)
 {
     using namespace std;
 

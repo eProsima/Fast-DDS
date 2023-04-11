@@ -12,21 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/types/AnnotationDescriptor.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/TypeDescriptor.h>
+#include <fastrtps/types/v1_3/AnnotationDescriptor.h>
+#include <fastrtps/types/v1_3/DynamicType.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/v1_3/TypeDescriptor.h>
 #include <fastrtps/types/TypesBase.h>
-
-#if defined(__has_include) && __has_include(<version>)
-#   include <version>
-#endif // if defined(__has_include) && __has_include(<version>)
+#include <fastdds/dds/log/Log.hpp>
 
 #include <iomanip>
 #include <algorithm>
 
-using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
 
 enum FSM_INPUTS
 {
@@ -697,7 +693,7 @@ MemberId TypeDescriptor::get_id_from_label(uint64_t label) const
     return MEMBER_ID_INVALID;
 }
 
-std::ostream& eprosima::fastrtps::types::operator<<(std::ostream& os, const TypeDescriptor& td)
+std::ostream& eprosima::fastrtps::types::v1_3::operator<<(std::ostream& os, const TypeDescriptor& td)
 {
     using namespace std;
 

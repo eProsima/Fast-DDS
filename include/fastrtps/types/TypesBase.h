@@ -57,6 +57,8 @@ OctetSeq operator ++(
 size_t to_size_t(
         const OctetSeq&);
 
+inline namespace xtypes_names {
+
 const std::string CONST_TRUE = "true";
 const std::string CONST_FALSE = "false";
 
@@ -110,6 +112,8 @@ const std::string TKNAME_BITSET = "bitset";
 const std::string TKNAME_SEQUENCE = "sequence";
 const std::string TKNAME_ARRAY = "array";
 const std::string TKNAME_MAP = "map";
+
+} // namespace xtypes_names
 
 // ---------- TypeKinds (begin) ------------------
 
@@ -836,12 +840,18 @@ const uint16_t TypeFlagMinimalMask = 0x0007; // Selects  M, A, F
 const uint32_t ANNOTATION_STR_VALUE_MAX_LEN = 128;
 const uint32_t ANNOTATION_OCTETSEC_VALUE_MAX_LEN = 128;
 
+namespace v1_3 {
+
 class DynamicType;
 class DynamicTypeBuilder;
 using DynamicType_ptr = std::shared_ptr<const DynamicType>;
 using DynamicType_wptr = std::weak_ptr<const DynamicType>;
 using DynamicTypeBuilder_ptr = std::shared_ptr<DynamicTypeBuilder>;
 using DynamicTypeBuilder_cptr = std::shared_ptr<const DynamicTypeBuilder>;
+
+using namespace xtypes_names;
+
+} // namespace v1_3
 
 } // namespace types
 } // namespace fastrtps

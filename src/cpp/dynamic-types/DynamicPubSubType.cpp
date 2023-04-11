@@ -13,18 +13,18 @@
 // limitations under the License.
 
 #include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicTypeMember.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/v1_3/DynamicType.h>
+#include <fastrtps/types/v1_3/DynamicTypeMember.h>
+#include <fastrtps/types/v1_3/DynamicDataFactory.h>
+#include <fastrtps/types/v1_3/DynamicData.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastcdr/Cdr.h>
 
-namespace eprosima {
-namespace fastrtps {
-namespace types {
+// TODO: fix when v1.1 files are included
+using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
 
 DynamicPubSubType::DynamicPubSubType(
         DynamicType_ptr pType)
@@ -221,7 +221,3 @@ void DynamicPubSubType::UpdateDynamicTypeInfo()
         }
     }
 }
-
-} // namespace types
-} // namespace fastrtps
-} // namespace eprosima

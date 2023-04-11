@@ -134,7 +134,7 @@ private:
     ThroughputType* throughput_data_ = nullptr;
     eprosima::fastdds::dds::TypeSupport throughput_data_type_;
     // Dynamic Data
-    eprosima::fastrtps::types::DynamicData* dynamic_data_ = nullptr;
+    eprosima::fastrtps::types::v1_3::DynamicData* dynamic_data_ = nullptr;
     eprosima::fastdds::dds::TypeSupport dynamic_pub_sub_type_;
     // QoS Profiles
     eprosima::fastdds::dds::DataWriterQos dw_qos_;

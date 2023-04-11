@@ -223,8 +223,8 @@ private:
     eprosima::fastdds::dds::TypeSupport latency_command_type_;
 
     /* Dynamic Types */
-    eprosima::fastrtps::types::DynamicData* dynamic_data_in_ = nullptr;
-    eprosima::fastrtps::types::DynamicData* dynamic_data_out_ = nullptr;
+    eprosima::fastrtps::types::v1_3::DynamicData* dynamic_data_in_ = nullptr;
+    eprosima::fastrtps::types::v1_3::DynamicData* dynamic_data_out_ = nullptr;
     eprosima::fastdds::dds::TypeSupport dynamic_pub_sub_type_;
 
     std::vector<uint32_t> data_size_pub_;

@@ -22,7 +22,10 @@
 #include <fastrtps/types/TypeDescriptor.h>
 
 using namespace eprosima::fastrtps;
+
+// TODO Barro: fix when v1.1 sources are introduced
 using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
 
 class XTypesTests : public ::testing::Test
 {

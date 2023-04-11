@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_ANNOTATION_MANAGER_H
-#define TYPES_ANNOTATION_MANAGER_H
+#ifndef TYPES_1_3_ANNOTATION_MANAGER_H
+#define TYPES_1_3_ANNOTATION_MANAGER_H
 
-#include <fastrtps/types/AnnotationDescriptor.h>
-#include <fastrtps/types/MemberId.h>
+#include <fastrtps/types/v1_3/AnnotationDescriptor.h>
+#include <fastrtps/types/v1_3/MemberId.h>
 
 #include <set>
 #include <string>
@@ -24,6 +24,7 @@
 namespace eprosima {
 namespace fastrtps {
 namespace types {
+namespace v1_3 {
 
 class AnnotationManager
 {
@@ -224,8 +225,9 @@ public:
     RTPS_DllAPI std::size_t get_annotation_count() const;
 };
 
+} // namespace v1_3
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_ANNOTATION_MANAGER_H
+#endif // TYPES_1_3_ANNOTATION_MANAGER_H

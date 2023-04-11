@@ -30,7 +30,10 @@
 #include <mutex>
 
 using namespace eprosima::fastdds::dds;
-using eprosima::fastrtps::types::ReturnCode_t;
+
+// TODO Barro: fix when v1.1 sources are introduced
+using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
 
 HelloWorldSubscriber::HelloWorldSubscriber()
     : mp_participant(nullptr)
@@ -114,16 +117,16 @@ void HelloWorldSubscriber::SubListener::on_data_available(
 
     if (dit != subscriber_->datas_.end())
     {
-        eprosima::fastrtps::types::DynamicData_ptr data = dit->second;
+        DynamicData_ptr data = dit->second;
         SampleInfo info;
         if (reader->take_next_sample(data.get(), &info) == ReturnCode_t::RETCODE_OK)
         {
             if (info.instance_state == ALIVE_INSTANCE_STATE)
             {
-                eprosima::fastrtps::types::DynamicType_ptr type = subscriber_->readers_[reader];
+                DynamicType_ptr type = subscriber_->readers_[reader];
                 this->n_samples++;
                 std::cout << "Received data of type " << type->get_name() << std::endl;
-                eprosima::fastrtps::types::DynamicDataHelper::print(data);
+                DynamicDataHelper::print(data);
             }
         }
     }
@@ -133,9 +136,9 @@ void HelloWorldSubscriber::SubListener::on_type_discovery(
         DomainParticipant*,
         const eprosima::fastrtps::rtps::SampleIdentity&,
         const eprosima::fastrtps::string_255& topic_name,
-        const eprosima::fastrtps::types::TypeIdentifier*,
-        const eprosima::fastrtps::types::TypeObject*,
-        eprosima::fastrtps::types::DynamicType_ptr dyn_type)
+        const TypeIdentifier*,
+        const TypeObject*,
+        DynamicType_ptr dyn_type)
 {
     std::cout << "Discovered type: " << dyn_type->get_name() << " from topic " << topic_name << std::endl;
     received_type_ = dyn_type;
@@ -147,7 +150,7 @@ void HelloWorldSubscriber::initialize_entities()
 {
     auto type = m_listener.received_type_;
     std::cout << "Initializing DDS entities for type: " << type->get_name() << std::endl;
-    TypeSupport m_type(new eprosima::fastrtps::types::DynamicPubSubType(type));
+    TypeSupport m_type(new DynamicPubSubType(type));
     m_type.register_type(mp_participant);
 
     if (mp_subscriber == nullptr)
@@ -181,8 +184,8 @@ void HelloWorldSubscriber::initialize_entities()
 
     topics_[reader] = topic;
     readers_[reader] = type;
-    eprosima::fastrtps::types::DynamicData_ptr data(
-        eprosima::fastrtps::types::DynamicDataFactory::get_instance()->create_data(type));
+    DynamicData_ptr data(
+        DynamicDataFactory::get_instance()->create_data(type));
     datas_[reader] = data;
 }
 

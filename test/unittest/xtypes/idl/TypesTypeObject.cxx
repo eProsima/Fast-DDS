@@ -38,6 +38,10 @@ namespace { char dummy; }
 
 using namespace eprosima::fastrtps::rtps;
 
+// TODO Barro: fix when v1.1 sources are introduced
+using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
+
 void registerTypesTypes()
 {
     TypeObjectFactory *factory = TypeObjectFactory::get_instance();

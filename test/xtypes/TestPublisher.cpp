@@ -250,7 +250,7 @@ void TestPublisher::PartListener::on_type_discovery(
         const eprosima::fastrtps::string_255& topic,
         const eprosima::fastrtps::types::TypeIdentifier*,
         const eprosima::fastrtps::types::TypeObject*,
-        eprosima::fastrtps::types::DynamicType_ptr dyn_type)
+        eprosima::fastrtps::types::v1_3::DynamicType_ptr dyn_type)
 {
     if (!parent_->using_typelookup_ || parent_->tls_callback_called_)
     {
@@ -268,8 +268,8 @@ void TestPublisher::PartListener::on_type_information_received(
         const eprosima::fastrtps::string_255 type_name,
         const eprosima::fastrtps::types::TypeInformation& type_information)
 {
-    std::function<void(const std::string&, const types::DynamicType_ptr)> callback =
-            [this, topic_name](const std::string&, const types::DynamicType_ptr type)
+    std::function<void(const std::string&, const types::v1_3::DynamicType_ptr)> callback =
+            [this, topic_name](const std::string&, const types::v1_3::DynamicType_ptr type)
             {
                 std::cout << "Callback for type: " << type->get_name() << " on topic: " << topic_name << std::endl;
                 parent_->tls_callback_called_ = true;

@@ -190,7 +190,7 @@ public:
             const fastrtps::string_255& topic,
             const fastrtps::types::TypeIdentifier* identifier,
             const fastrtps::types::TypeObject* object,
-            fastrtps::types::DynamicType_ptr dyn_type)
+            fastrtps::types::v1_3::DynamicType_ptr dyn_type)
     {
         static_cast<void>(participant);
         static_cast<void>(request_sample_id);

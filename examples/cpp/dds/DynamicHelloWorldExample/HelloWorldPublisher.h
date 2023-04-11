@@ -45,7 +45,7 @@ public:
 
 private:
 
-    eprosima::fastrtps::types::DynamicData_ptr m_Hello;
+    eprosima::fastrtps::types::v1_3::DynamicData_ptr m_Hello;
 
     eprosima::fastdds::dds::DomainParticipant* mp_participant;
 

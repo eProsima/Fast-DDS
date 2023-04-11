@@ -26,6 +26,7 @@
 namespace eprosima {
 namespace fastrtps {
 namespace types {
+namespace v1_3 {
 
 template<typename base>
 class member_id
@@ -392,6 +393,7 @@ inline MemberId operator"" _id(unsigned long long x)
 
 } // namespace literals
 
+} // namespace v1_3
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima

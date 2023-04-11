@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/TypeObject.h>
-#include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicTypeMember.h>
-#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/types/TypeNamesGenerator.h>
-#include <fastrtps/types/AnnotationDescriptor.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilder.h>
+#include <fastrtps/types/v1_3/TypeDescriptor.h>
+#include <fastrtps/types/v1_3/DynamicType.h>
+#include <fastrtps/types/v1_3/DynamicTypeMember.h>
+#include <fastrtps/types/v1_3/MemberDescriptor.h>
+#include <fastrtps/types/v1_3/AnnotationDescriptor.h>
 #include <fastdds/dds/log/Log.hpp>
 
 #include <fastdds/rtps/common/SerializedPayload.h>
@@ -32,7 +32,9 @@
 
 #include <ios>
 
-using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
+
+using eprosima::fastrtps::types::TypeObject;
 
 // explicit instatiation of tracker methods for type_tracking::complete
 
@@ -119,7 +121,7 @@ bool dynamic_tracker<type_tracking::complete>::remove(const DynamicType* type) n
 
 #ifndef NDEBUG
 // force instantiation for error checking
-template class eprosima::fastrtps::types::dynamic_tracker<type_tracking::complete>;
+template class eprosima::fastrtps::types::v1_3::dynamic_tracker<type_tracking::complete>;
 #endif
 
 // explicit instatiation of tracker methods for type_tracking::partial
@@ -199,7 +201,7 @@ bool dynamic_tracker<type_tracking::partial>::remove(const DynamicType* type) no
 
 #ifndef NDEBUG
 // force instantiation for error checking
-template class eprosima::fastrtps::types::dynamic_tracker<type_tracking::partial>;
+template class eprosima::fastrtps::types::v1_3::dynamic_tracker<type_tracking::partial>;
 #endif
 
 // explicit instatiation of tracker methods for type_tracking::none
@@ -245,7 +247,7 @@ bool dynamic_tracker<type_tracking::none>::remove(const DynamicType*) noexcept
 
 #ifndef NDEBUG
 // force instantiation for error checking
-template class eprosima::fastrtps::types::dynamic_tracker<type_tracking::none>;
+template class eprosima::fastrtps::types::v1_3::dynamic_tracker<type_tracking::none>;
 #endif
 
 // DynamicTypeBuilderFactory ancillary
@@ -2633,7 +2635,7 @@ void DynamicTypeBuilderFactory::apply_type_annotations(
 const int DynamicTypeBuilderFactory::indentation_index = std::ios_base::xalloc();
 const int DynamicTypeBuilderFactory::object_index = std::ios_base::xalloc();
 
-using namespace typekind_detail;
+using namespace eprosima::fastrtps::types::typekind_detail;
 
 #define XTYPENAME(type)                                                                            \
 const char* TypeKindName<TypeKind::type, char, std::char_traits<char>>::name = #type;              \

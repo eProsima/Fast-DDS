@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_MEMBER_DESCRIPTOR_H
-#define TYPES_MEMBER_DESCRIPTOR_H
+#ifndef TYPES_1_3_MEMBER_DESCRIPTOR_H
+#define TYPES_1_3_MEMBER_DESCRIPTOR_H
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/MemberId.h>
+#include <fastrtps/types/v1_3/MemberId.h>
 
 #include <set>
 #include <type_traits>
@@ -25,9 +25,14 @@ namespace eprosima{
 namespace fastrtps{
 namespace types{
 
+class TypeObjectFactory;
+
+namespace v1_3 {
+
 class DynamicType;
 class AnnotationDescriptor;
 
+using types::TypeKind;
 
 /**
  * This class packages together the state of a @ref DynamicTypeMember.
@@ -48,7 +53,7 @@ protected:
     friend class DynamicTypeBuilderFactory;
     friend class DynamicData;
     friend class DynamicTypeMember;
-    friend class TypeObjectFactory;
+    friend class types::TypeObjectFactory;
 
     bool is_default_value_consistent(const std::string& sDefaultValue) const;
 
@@ -299,8 +304,9 @@ public:
 //! @ref DynamicTypeMember expected `std::ostream` non-member override of `operator<<`
 RTPS_DllAPI std::ostream& operator<<( std::ostream& os, const MemberDescriptor & md);
 
+} // namespace v1_3
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_MEMBER_DESCRIPTOR_H
+#endif // TYPES_1_3_MEMBER_DESCRIPTOR_H

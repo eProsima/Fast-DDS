@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_ANNOTATION_DESCRIPTOR_H
-#define TYPES_ANNOTATION_DESCRIPTOR_H
+#ifndef TYPES_1_3_ANNOTATION_DESCRIPTOR_H
+#define TYPES_1_3_ANNOTATION_DESCRIPTOR_H
 
 #include <fastrtps/types/TypesBase.h>
 
@@ -22,6 +22,7 @@
 namespace eprosima{
 namespace fastrtps{
 namespace types{
+namespace v1_3{
 
 class MemberDescriptor;
 class DynamicType;
@@ -80,8 +81,9 @@ public:
 
 std::ostream& operator<<( std::ostream& os, const AnnotationDescriptor& md);
 
+} // namespace v1_3
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_ANNOTATION_DESCRIPTOR_H
+#endif // TYPES_1_3_ANNOTATION_DESCRIPTOR_H

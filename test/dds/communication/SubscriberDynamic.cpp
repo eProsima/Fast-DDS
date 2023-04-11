@@ -41,7 +41,10 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::types::literals;
+
+// TODO Barro: fix when v1.1 sources are introduced
+using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::types::v1_3;
 
 class ParListener : public DomainParticipantListener
 {
@@ -87,15 +90,15 @@ public:
             eprosima::fastdds::dds::DomainParticipant* participant,
             const eprosima::fastrtps::string_255 topic_name,
             const eprosima::fastrtps::string_255 type_name,
-            const eprosima::fastrtps::types::TypeInformation& type_information) override
+            const TypeInformation& type_information) override
     {
         using callback_type = std::function<void (const std::string& name,
-                        const eprosima::fastrtps::types::DynamicType_ptr type)>;
+                        const DynamicType_ptr type)>;
 
         // once it is registered do ...
         callback_type callback = [this, topic_name, type_name](
             const std::string&,
-            const types::DynamicType_ptr)
+            const DynamicType_ptr)
                 {
                     try
                     {
@@ -109,7 +112,7 @@ public:
 
         // Check if the type is already registered
         auto name = type_name.to_string();
-        types::DynamicType_ptr dummy;
+        DynamicType_ptr dummy;
 
         if (participant->find_type(name))
         {
@@ -306,11 +309,11 @@ int main(
         auto& topic_name = remote_names.first;
         auto& type_name = remote_names.second;
 
-        types::DynamicType_ptr type;
+        DynamicType_ptr type;
 
         {
-            const types::TypeIdentifier* ident =
-                    types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(type_name);
+            const TypeIdentifier* ident =
+                    TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(type_name);
 
             if (ident == nullptr)
             {
@@ -319,10 +322,10 @@ int main(
                 throw 1;
             }
 
-            const types::TypeObject* obj =
-                    types::TypeObjectFactory::get_instance()->get_type_object(ident);
+            const TypeObject* obj =
+                    TypeObjectFactory::get_instance()->get_type_object(ident);
 
-            type = types::TypeObjectFactory::get_instance()->build_dynamic_type(type_name, ident, obj);
+            type = TypeObjectFactory::get_instance()->build_dynamic_type(type_name, ident, obj);
 
             if (type == nullptr)
             {
@@ -363,8 +366,8 @@ int main(
         while ((notexit || number_samples < samples ) && listener.run_)
         {
             // loop taking samples
-            types::DynamicPubSubType pst(type);
-            types::DynamicData_ptr sample(static_cast<types::DynamicData*>(pst.createData()));
+            DynamicPubSubType pst(type);
+            DynamicData_ptr sample(static_cast<DynamicData*>(pst.createData()));
             eprosima::fastdds::dds::SampleInfo info;
 
             if (!!reader->take_next_sample(sample.get(), &info))
@@ -380,7 +383,7 @@ int main(
                     sample->get_string_value(message, 0_id);
                     sample->get_uint32_value(index, 1_id);
 
-                    types::DynamicData* inner = sample->loan_value(2_id);
+                    DynamicData* inner = sample->loan_value(2_id);
                     inner->get_byte_value(count, 0_id);
                     sample->return_loaned_value(inner);
 
