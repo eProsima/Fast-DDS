@@ -260,7 +260,7 @@ public:
         }
         catch (const std::exception& e)
         {
-            EPROSIMA_LOG_ERROR(RTPS_TRANSPORT_SHM, "Failed to create Shared Memory Manager for domain " << domain_name
+            logError(RTPS_TRANSPORT_SHM, "Failed to create Shared Memory Manager for domain " << domain_name
                                                                                                         << ": " <<
                     e.what());
             return std::shared_ptr<SharedMemManager>();
