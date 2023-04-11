@@ -39,6 +39,7 @@
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/history/IChangePool.h>
 #include <fastdds/rtps/history/IPayloadPool.h>
@@ -1050,6 +1051,16 @@ public:
      */
     bool ignore_reader(
             const GUID_t& reader_guid);
+
+    types::ReturnCode_t enable_monitor_service() const;
+
+    types::ReturnCode_t disable_monitor_service() const;
+
+    types::ReturnCode_t check_compatible_qos(
+            const fastrtps::rtps::WriterProxyData& wdata,
+            const fastrtps::rtps::ReaderProxyData& rdata,
+            fastrtps::rtps::EDP::MatchingFailureMask& reason,
+            fastdds::dds::PolicyMask& incompatible_qos) const;
 
     template <EndpointKind_t kind, octet no_key, octet with_key>
     static bool preprocess_endpoint_attributes(

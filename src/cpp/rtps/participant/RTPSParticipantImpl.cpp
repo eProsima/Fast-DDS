@@ -2575,6 +2575,28 @@ bool RTPSParticipantImpl::ignore_reader(
     return false;
 }
 
+ReturnCode_t RTPSParticipantImpl::enable_monitor_service() const
+{
+    EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "enable_monitor_service() is not supported yet");
+    return types::ReturnCode_t{types::ReturnCode_t::RETCODE_UNSUPPORTED};
+}
+
+ReturnCode_t RTPSParticipantImpl::disable_monitor_service() const
+{
+    EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "disable_monitor_service() is not supported yet");
+    return types::ReturnCode_t{types::ReturnCode_t::RETCODE_UNSUPPORTED};
+}
+
+ReturnCode_t RTPSParticipantImpl::check_compatible_qos(
+        const fastrtps::rtps::WriterProxyData &/*wdata*/,
+        const fastrtps::rtps::ReaderProxyData &/*rdata*/,
+        fastrtps::rtps::EDP::MatchingFailureMask &/*reason*/,
+        fastdds::dds::PolicyMask &/*incompatible_qos*/) const
+{
+    EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "check_compatible_qos() is not supported yet");
+    return types::ReturnCode_t{types::ReturnCode_t::RETCODE_UNSUPPORTED};
+}
+
 #ifdef FASTDDS_STATISTICS
 
 bool RTPSParticipantImpl::register_in_writer(
