@@ -195,7 +195,7 @@ DomainParticipant* DomainParticipantFactory::create_participant(
     }
     else
     {
-        delete_participant(dom_part);
+        delete dom_part_impl;
         return nullptr;
     }
 
