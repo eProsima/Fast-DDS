@@ -50,84 +50,82 @@
 #define Test_DllAPI
 #endif // _WIN32
 
-using namespace eprosima::fastrtps::types;
-
 eProsima_user_DllExport void registerTestTypes();
 
-eProsima_user_DllExport const TypeIdentifier* GetMyEnumIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMyEnumObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalMyEnumObject();
-eProsima_user_DllExport const TypeObject* GetCompleteMyEnumObject();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetMyEnumIdentifier(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMyEnumObject(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMinimalMyEnumObject();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteMyEnumObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetMyAliasEnumIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMyAliasEnumObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalMyAliasEnumObject();
-eProsima_user_DllExport const TypeObject* GetCompleteMyAliasEnumObject();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetMyAliasEnumIdentifier(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMyAliasEnumObject(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMinimalMyAliasEnumObject();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteMyAliasEnumObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetMyAliasEnum2Identifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMyAliasEnum2Object(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalMyAliasEnum2Object();
-eProsima_user_DllExport const TypeObject* GetCompleteMyAliasEnum2Object();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetMyAliasEnum2Identifier(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMyAliasEnum2Object(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMinimalMyAliasEnum2Object();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteMyAliasEnum2Object();
 
-eProsima_user_DllExport const TypeIdentifier* GetMyAliasEnum3Identifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMyAliasEnum3Object(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalMyAliasEnum3Object();
-eProsima_user_DllExport const TypeObject* GetCompleteMyAliasEnum3Object();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetMyAliasEnum3Identifier(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMyAliasEnum3Object(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMinimalMyAliasEnum3Object();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteMyAliasEnum3Object();
 
-eProsima_user_DllExport const TypeIdentifier* GetBasicStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetBasicStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalBasicStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteBasicStructObject();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetBasicStructIdentifier(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetBasicStructObject(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMinimalBasicStructObject();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteBasicStructObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetMyOctetArray500Identifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMyOctetArray500Object(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalMyOctetArray500Object();
-eProsima_user_DllExport const TypeObject* GetCompleteMyOctetArray500Object();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetMyOctetArray500Identifier(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMyOctetArray500Object(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMinimalMyOctetArray500Object();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteMyOctetArray500Object();
 
-eProsima_user_DllExport const TypeIdentifier* GetBSAlias5Identifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetBSAlias5Object(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalBSAlias5Object();
-eProsima_user_DllExport const TypeObject* GetCompleteBSAlias5Object();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetBSAlias5Identifier(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetBSAlias5Object(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMinimalBSAlias5Object();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteBSAlias5Object();
 
-eProsima_user_DllExport const TypeIdentifier* GetMA3Identifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMA3Object(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalMA3Object();
-eProsima_user_DllExport const TypeObject* GetCompleteMA3Object();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetMA3Identifier(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMA3Object(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMinimalMA3Object();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteMA3Object();
 
-eProsima_user_DllExport const TypeIdentifier* GetMyMiniArrayIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMyMiniArrayObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalMyMiniArrayObject();
-eProsima_user_DllExport const TypeObject* GetCompleteMyMiniArrayObject();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetMyMiniArrayIdentifier(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMyMiniArrayObject(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMinimalMyMiniArrayObject();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteMyMiniArrayObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetMySequenceLongIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMySequenceLongObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalMySequenceLongObject();
-eProsima_user_DllExport const TypeObject* GetCompleteMySequenceLongObject();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetMySequenceLongIdentifier(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMySequenceLongObject(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMinimalMySequenceLongObject();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteMySequenceLongObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetComplexStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetComplexStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalComplexStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteComplexStructObject();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetComplexStructIdentifier(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetComplexStructObject(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMinimalComplexStructObject();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteComplexStructObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetMyUnionIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMyUnionObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalMyUnionObject();
-eProsima_user_DllExport const TypeObject* GetCompleteMyUnionObject();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetMyUnionIdentifier(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMyUnionObject(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMinimalMyUnionObject();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteMyUnionObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetMyUnion2Identifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMyUnion2Object(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalMyUnion2Object();
-eProsima_user_DllExport const TypeObject* GetCompleteMyUnion2Object();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetMyUnion2Identifier(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMyUnion2Object(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMinimalMyUnion2Object();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteMyUnion2Object();
 
-eProsima_user_DllExport const TypeIdentifier* GetCompleteStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetCompleteStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalCompleteStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteCompleteStructObject();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetCompleteStructIdentifier(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteStructObject(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMinimalCompleteStructObject();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteCompleteStructObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetKeyedStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetKeyedStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalKeyedStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteKeyedStructObject();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetKeyedStructIdentifier(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetKeyedStructObject(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMinimalKeyedStructObject();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteKeyedStructObject();
 
 
 #endif // _FAST_DDS_GENERATED_TEST_TYPE_OBJECT_H_

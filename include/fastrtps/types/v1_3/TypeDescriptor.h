@@ -33,6 +33,7 @@ class DynamicDataHelper;
 namespace v1_3 {
 
 class DynamicType;
+class DynamicTypeBuilderFactory;
 
 using types::ReturnCode_t;
 

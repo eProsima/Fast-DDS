@@ -1750,10 +1750,8 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
         const TypeIdentifier* identifier,
         const TypeObject* object) const
 {
-    using namespace v1_3;
-
     TypeKind kind = GetTypeKindFromIdentifier(identifier);
-    TypeDescriptor descriptor(name, kind);
+    v1_3::TypeDescriptor descriptor(name, kind);
     switch (kind)
     {
         // Basic types goes as default!
@@ -1784,7 +1782,7 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             {
                 descriptor.bound_.emplace_back(identifier->string_ldefn().bound());
             }
-            descriptor.element_type_ = DynamicTypeBuilderFactory::get_instance().create_char8_type();
+            descriptor.element_type_ = v1_3::DynamicTypeBuilderFactory::get_instance().create_char8_type();
             break;
         }
         case TypeKind::TK_STRING16:
@@ -1797,7 +1795,7 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             {
                 descriptor.bound_.emplace_back(identifier->string_ldefn().bound());
             }
-            descriptor.element_type_ = DynamicTypeBuilderFactory::get_instance().create_char16_type();
+            descriptor.element_type_ = v1_3::DynamicTypeBuilderFactory::get_instance().create_char16_type();
             break;
         }
         case TypeKind::TK_SEQUENCE:
@@ -1864,12 +1862,12 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             }
             break;
         case TypeKind::TK_NONE:
-            return DynamicType_ptr(nullptr); // Maybe in discovery, return nullptr quietly.
+            return v1_3::DynamicType_ptr(nullptr); // Maybe in discovery, return nullptr quietly.
         default:
             break;
     }
 
-    DynamicTypeBuilder_ptr outputType = DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
+    v1_3::DynamicTypeBuilder_ptr outputType = v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
     //outputType->set_name(name);
     if (outputType)
     {
@@ -1884,11 +1882,9 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
         const TypeObject* object,
         const v1_3::DynamicType_ptr annotation_member_type) const
 {
-    using namespace v1_3;
-
     if (object == nullptr || object->_d() != TypeKind::EK_COMPLETE)
     {
-        return DynamicType_ptr(nullptr);
+        return v1_3::DynamicType_ptr(nullptr);
     }
 
     // Change descriptor's kind
@@ -1903,8 +1899,8 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                     get_stored_type_identifier(&object->complete().alias_type().body().common().related_type());
             descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
             descriptor.set_name(object->complete().alias_type().header().detail().type_name());
-            DynamicTypeBuilder_ptr alias_type =
-                    DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
+            v1_3::DynamicTypeBuilder_ptr alias_type =
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
 
             // Apply type's annotations
             apply_type_annotations(alias_type, object->complete().alias_type().header().detail().ann_custom());
@@ -1919,8 +1915,8 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
             }
 
-            DynamicTypeBuilder_ptr struct_type =
-                    DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
+            v1_3::DynamicTypeBuilder_ptr struct_type =
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
 
             // Apply type's annotations
             apply_type_annotations(struct_type, object->complete().struct_type().header().detail().ann_custom());
@@ -1935,7 +1931,7 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                     EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Struct) auxMem is nullptr, but original member has "
                             << (int)member->common().member_type_id()._d());
                 }
-                MemberDescriptor memDesc;
+                v1_3::MemberDescriptor memDesc;
                 memDesc.set_id(member->common().member_id());
                 memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
                 memDesc.set_name(member->detail().name());
@@ -1955,8 +1951,8 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             // bit_bound annotation effect!
             descriptor.annotation_set_bit_bound(object->complete().enumerated_type().header().common().bit_bound());
 
-            DynamicTypeBuilder_ptr enum_type =
-                    DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
+            v1_3::DynamicTypeBuilder_ptr enum_type =
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
 
             // Apply type's annotations
             apply_type_annotations(enum_type, object->complete().enumerated_type().header().detail().ann_custom());
@@ -1989,12 +1985,12 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             for (auto member = enumVector.begin(); member != enumVector.end(); ++member)
             {
                 enum_type->add_member(member->common().value(), member->detail().name());
-                apply_member_annotations(enum_type, MemberId(member->common().value()), member->detail().ann_custom());
+                apply_member_annotations(enum_type, v1_3::MemberId(member->common().value()), member->detail().ann_custom());
                 if (member->common().flags().IS_DEFAULT())
                 {
-                    AnnotationDescriptor def_flag;
+                    v1_3::AnnotationDescriptor def_flag;
                     def_flag.set_value(ANNOTATION_DEFAULT_LITERAL_ID, CONST_TRUE);
-                    enum_type->apply_annotation_to_member(MemberId(member->common().value()), def_flag);
+                    enum_type->apply_annotation_to_member(v1_3::MemberId(member->common().value()), def_flag);
                 }
             }
             return enum_type->build();
@@ -2004,10 +2000,10 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             descriptor.annotation_set_bit_bound(object->complete().bitmask_type().header().common().bit_bound());
             descriptor.bound_.emplace_back(static_cast<uint32_t>(
                         object->complete().bitmask_type().header().common().bit_bound()));
-            descriptor.element_type_ = DynamicTypeBuilderFactory::get_instance().create_bool_type();
+            descriptor.element_type_ = v1_3::DynamicTypeBuilderFactory::get_instance().create_bool_type();
 
-            DynamicTypeBuilder_ptr bitmask_type =
-                    DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
+            v1_3::DynamicTypeBuilder_ptr bitmask_type =
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
 
             // Apply type's annotations
             apply_type_annotations(bitmask_type, object->complete().bitmask_type().header().detail().ann_custom());
@@ -2015,7 +2011,7 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             const CompleteBitflagSeq& seq = object->complete().bitmask_type().flag_seq();
             for (auto member = seq.begin(); member != seq.end(); ++member)
             {
-                MemberId id{member->common().position()};
+                v1_3::MemberId id{member->common().position()};
                 bitmask_type->add_member(id, member->detail().name());
                 // member->common().position() should be already an annotation
                 apply_member_annotations(bitmask_type, id, member->detail().ann_custom());
@@ -2030,8 +2026,8 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
             }
 
-            DynamicTypeBuilder_ptr bitsetType =
-                    DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
+            v1_3::DynamicTypeBuilder_ptr bitsetType =
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
 
             // Apply type's annotations
             apply_type_annotations(bitsetType, object->complete().bitset_type().header().detail().ann_custom());
@@ -2047,20 +2043,20 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                     EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Bitset) auxMem is nullptr, but original member has "
                             << (int)member->common().holder_type());
                 }
-                MemberDescriptor memDesc;
+                v1_3::MemberDescriptor memDesc;
                 //memDesc.id_ = order++;
                 memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
                 memDesc.set_name(member->detail().name());
                 // bounds are meant for string, arrays, sequences, maps, but not for bitset!
                 // Lack in the standard?
                 bitsetType->add_member(memDesc);
-                MemberId m_id = bitsetType->get_member_id_by_name(memDesc.get_name());
+                v1_3::MemberId m_id = bitsetType->get_member_id_by_name(memDesc.get_name());
                 // member->common().position() and member->common().bitcount() should be annotations
                 apply_member_annotations(bitsetType, m_id, member->detail().ann_custom());
             }
             return bitsetType->build();
 
-            //EPROSIMA_LOG_ERROR(XTYPES, "Bitset isn't supported by DynamicType");
+            //EPROSIMA_LOG_ERROR(XTYPES, "Bitset isn't supported by v1_3::DynamicType");
             //return nullptr;
         }
         case TypeKind::TK_UNION:
@@ -2069,8 +2065,8 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                     get_stored_type_identifier(&object->complete().union_type().discriminator().common().type_id());
             descriptor.discriminator_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
 
-            DynamicTypeBuilder_ptr union_type =
-                    DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
+            v1_3::DynamicTypeBuilder_ptr union_type =
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
 
             // Apply type's annotations
             apply_type_annotations(union_type, object->complete().union_type().header().detail().ann_custom());
@@ -2085,7 +2081,7 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                     EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Union) auxMem is nullptr, but original member has "
                             << (int)member->common().type_id()._d());
                 }
-                MemberDescriptor memDesc;
+                v1_3::MemberDescriptor memDesc;
                 memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
                 //memDesc.set_index(order++);
                 memDesc.id_ = member->common().member_id();
@@ -2093,7 +2089,7 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 memDesc.set_default_union_value(member->common().member_flags().IS_DEFAULT());
                 if (descriptor.discriminator_type_->get_kind() == TypeKind::TK_ENUM)
                 {
-                    MemberDescriptor enumMember;
+                    v1_3::MemberDescriptor enumMember;
                     descriptor.discriminator_type_->get_member(enumMember, memDesc.id_);
                     memDesc.default_value_ = enumMember.get_name();
                     for (uint32_t lab : member->common().label_seq())
@@ -2117,8 +2113,8 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
         }
         case TypeKind::TK_ANNOTATION:
         {
-            DynamicTypeBuilder_ptr annotation_type =
-                    DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
+            v1_3::DynamicTypeBuilder_ptr annotation_type =
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
 
             for (const CompleteAnnotationParameter& member : object->complete().annotation_type().member_seq())
             {
@@ -2129,7 +2125,7 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                             << (int)member.common().member_type_id()._d());
                 }
 
-                MemberDescriptor mem_desc;
+                v1_3::MemberDescriptor mem_desc;
                 mem_desc.set_name(member.name());
                 if (annotation_member_type != nullptr)
                 {
@@ -2149,15 +2145,13 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
         default:
             break;
     }
-    return DynamicType_ptr(nullptr);
+    return v1_3::DynamicType_ptr(nullptr);
 }
 
 void TypeObjectFactory::apply_type_annotations(
         v1_3::DynamicTypeBuilder_ptr& type_builder,
         const AppliedAnnotationSeq& annotations) const
 {
-    using namespace v1_3;
-
     for (const AppliedAnnotation& annotation : annotations)
     {
         const TypeIdentifier* anno_id = get_stored_type_identifier(&annotation.annotation_typeid());
@@ -2166,7 +2160,7 @@ void TypeObjectFactory::apply_type_annotations(
             EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Annotation) anno_id is nullptr, but original member has "
                     << (int)annotation.annotation_typeid()._d());
         }
-        AnnotationDescriptor anno_desc;
+        v1_3::AnnotationDescriptor anno_desc;
         anno_desc.set_type(build_dynamic_type(get_type_name(anno_id), anno_id, get_type_object(anno_id)));
         const AppliedAnnotationParameterSeq& anno_params = annotation.param_seq();
         for (const AppliedAnnotationParameter& a_param : anno_params)
@@ -2183,8 +2177,6 @@ void TypeObjectFactory::apply_member_annotations(
         v1_3::MemberId member_id,
         const AppliedAnnotationSeq& annotations) const
 {
-    using namespace v1_3;
-
     for (const AppliedAnnotation& annotation : annotations)
     {
         const TypeIdentifier* anno_id = get_stored_type_identifier(&annotation.annotation_typeid());
@@ -2193,7 +2185,7 @@ void TypeObjectFactory::apply_member_annotations(
             EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Annotation) anno_id is nullptr, but original member has "
                     << (int)annotation.annotation_typeid()._d());
         }
-        AnnotationDescriptor anno_desc;
+        v1_3::AnnotationDescriptor anno_desc;
         anno_desc.set_type(build_dynamic_type(get_type_name(anno_id), anno_id, get_type_object(anno_id)));
         const AppliedAnnotationParameterSeq& anno_params = annotation.param_seq();
         for (const AppliedAnnotationParameter& a_param : anno_params)
@@ -2209,8 +2201,6 @@ std::string TypeObjectFactory::get_key_from_hash(
         const v1_3::DynamicType_ptr annotation_descriptor_type,
         const NameHash& hash) const
 {
-    using namespace v1_3;
-
     for (auto it : annotation_descriptor_type->get_all_members_by_id())
     {
         std::string name = it.second->get_name();

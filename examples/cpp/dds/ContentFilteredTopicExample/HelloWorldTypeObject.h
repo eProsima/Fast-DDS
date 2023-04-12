@@ -50,14 +50,12 @@
 #define HelloWorld_DllAPI
 #endif // _WIN32
 
-using namespace eprosima::fastrtps::types;
-
 eProsima_user_DllExport void registerHelloWorldTypes();
 
-eProsima_user_DllExport const TypeIdentifier* GetHelloWorldIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetHelloWorldObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalHelloWorldObject();
-eProsima_user_DllExport const TypeObject* GetCompleteHelloWorldObject();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetHelloWorldIdentifier(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetHelloWorldObject(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMinimalHelloWorldObject();
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteHelloWorldObject();
 
 
 #endif // _FAST_DDS_GENERATED_HELLOWORLD_TYPE_OBJECT_H_

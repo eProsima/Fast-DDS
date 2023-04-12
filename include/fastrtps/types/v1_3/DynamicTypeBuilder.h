@@ -28,6 +28,7 @@ class AnnotationDescriptor;
 class MemberDescriptor;
 class DynamicType;
 class DynamicTypeMember;
+class DynamicTypeBuilderFactory;
 
 class DynamicTypeBuilder final
     : public TypeDescriptor

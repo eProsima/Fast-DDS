@@ -33,10 +33,10 @@
 
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastdds::dds;
-
-// TODO Barro: fix when v1.1 sources are introduced
-using namespace eprosima::fastrtps::types;
 using namespace eprosima::fastrtps::types::v1_3;
+
+using eprosima::fastrtps::types::DynamicPubSubType;
+using eprosima::fastrtps::types::BOUND_UNLIMITED;
 
 LatencyTestSubscriber::LatencyTestSubscriber()
     : latency_command_type_(new TestCommandDataType())

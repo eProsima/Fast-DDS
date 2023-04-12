@@ -15,12 +15,12 @@
 #ifndef _FASTRTPS_TYPES_DYNAMICDATAHELPER_HPP_
 #define _FASTRTPS_TYPES_DYNAMICDATAHELPER_HPP_
 
-#include <fastrtps/types/v1_3/AnnotationDescriptor.h>
-#include <fastrtps/types/v1_3/TypeDescriptor.h>
-#include <fastrtps/types/v1_3/DynamicType.h>
-#include <fastrtps/types/v1_3/DynamicData.h>
-#include <fastrtps/types/v1_3/DynamicDataPtr.h>
-#include <fastrtps/types/v1_3/DynamicTypeMember.h>
+#include <fastrtps/types/v1_1/AnnotationDescriptor.h>
+#include <fastrtps/types/v1_1/TypeDescriptor.h>
+#include <fastrtps/types/v1_1/DynamicType.h>
+#include <fastrtps/types/v1_1/DynamicData.h>
+#include <fastrtps/types/v1_1/DynamicDataPtr.h>
+#include <fastrtps/types/v1_1/DynamicTypeMember.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -30,19 +30,19 @@ class DynamicDataHelper
 {
 public:
     RTPS_DllAPI static void print(
-            const v1_3::DynamicData_ptr& data);
+            const DynamicData_ptr& data);
 
     RTPS_DllAPI static void print(
-            const v1_3::DynamicData* data);
+            const DynamicData* data);
 
 protected:
     static void print_basic_element(
-            v1_3::DynamicData* data,
-            v1_3::MemberId id,
-            TypeKind kind);
+            DynamicData* data,
+            MemberId id,
+            octet kind);
 
     static void print_collection(
-            v1_3::DynamicData* data,
+            DynamicData* data,
             const std::string& tabs = "");
 
     static void fill_array_positions(
@@ -61,20 +61,20 @@ protected:
             std::vector<uint32_t>& position);
 
     static void print_basic_collection(
-            v1_3::DynamicData* data);
+            DynamicData* data);
 
     static void print_complex_collection(
-            v1_3::DynamicData* data,
+            DynamicData* data,
             const std::string& tabs = "");
 
     static void print_complex_element(
-            v1_3::DynamicData* data,
-            v1_3::MemberId id,
+            DynamicData* data,
+            MemberId id,
             const std::string& tabs = "");
 
     static void print_member(
-            v1_3::DynamicData* data,
-            const v1_3::MemberDescriptor& type,
+            DynamicData* data,
+            const DynamicTypeMember* type,
             const std::string& tabs = "");
 };
 

@@ -22,12 +22,10 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastcdr/Cdr.h>
 
-// TODO: fix when v1.1 files are included
 using namespace eprosima::fastrtps::types;
-using namespace eprosima::fastrtps::types::v1_3;
 
 DynamicPubSubType::DynamicPubSubType(
-        DynamicType_ptr pType)
+        v1_3::DynamicType_ptr pType)
     : dynamic_type_(pType)
 {
     UpdateDynamicTypeInfo();
@@ -46,13 +44,13 @@ void DynamicPubSubType::CleanDynamicType()
     dynamic_type_.reset();
 }
 
-DynamicType_ptr DynamicPubSubType::GetDynamicType() const
+v1_3::DynamicType_ptr DynamicPubSubType::GetDynamicType() const
 {
     return dynamic_type_;
 }
 
 ReturnCode_t DynamicPubSubType::SetDynamicType(
-        DynamicData_ptr pData)
+        v1_3::DynamicData_ptr pData)
 {
     if (!dynamic_type_)
     {
@@ -68,7 +66,7 @@ ReturnCode_t DynamicPubSubType::SetDynamicType(
 }
 
 ReturnCode_t DynamicPubSubType::SetDynamicType(
-        DynamicType_ptr pType)
+        v1_3::DynamicType_ptr pType)
 {
     if (!dynamic_type_)
     {
@@ -85,13 +83,13 @@ ReturnCode_t DynamicPubSubType::SetDynamicType(
 
 void* DynamicPubSubType::createData()
 {
-    return DynamicDataFactory::get_instance()->create_data(dynamic_type_);
+    return v1_3::DynamicDataFactory::get_instance()->create_data(dynamic_type_);
 }
 
 void DynamicPubSubType::deleteData(
         void* data)
 {
-    DynamicDataFactory::get_instance()->delete_data((DynamicData*)data);
+    v1_3::DynamicDataFactory::get_instance()->delete_data((v1_3::DynamicData*)data);
 }
 
 bool DynamicPubSubType::deserialize(
@@ -107,7 +105,7 @@ bool DynamicPubSubType::deserialize(
 
     try
     {
-        ((DynamicData*)data)->deserialize(deser); //Deserialize the object:
+        ((v1_3::DynamicData*)data)->deserialize(deser); //Deserialize the object:
     }
     catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
@@ -125,8 +123,8 @@ bool DynamicPubSubType::getKey(
     {
         return false;
     }
-    DynamicData* pDynamicData = (DynamicData*)data;
-    size_t keyBufferSize = static_cast<uint32_t>(DynamicData::getKeyMaxCdrSerializedSize(dynamic_type_));
+    v1_3::DynamicData* pDynamicData = (v1_3::DynamicData*)data;
+    size_t keyBufferSize = static_cast<uint32_t>(v1_3::DynamicData::getKeyMaxCdrSerializedSize(dynamic_type_));
 
     if (m_keyBuffer == nullptr)
     {
@@ -162,7 +160,7 @@ std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(
 {
     return [data]() -> uint32_t
            {
-               return (uint32_t)DynamicData::getCdrSerializedSize((DynamicData*)data) + 4 /*encapsulation*/;
+               return (uint32_t)v1_3::DynamicData::getCdrSerializedSize((v1_3::DynamicData*)data) + 4 /*encapsulation*/;
            };
 }
 
@@ -182,7 +180,7 @@ bool DynamicPubSubType::serialize(
 
     try
     {
-        ((DynamicData*)data)->serialize(ser); // Serialize the object:
+        ((v1_3::DynamicData*)data)->serialize(ser); // Serialize the object:
     }
     catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
     {
@@ -202,7 +200,7 @@ void DynamicPubSubType::UpdateDynamicTypeInfo()
         return;
     }
 
-    m_typeSize = static_cast<uint32_t>(DynamicData::getMaxCdrSerializedSize(dynamic_type_) + 4);
+    m_typeSize = static_cast<uint32_t>(v1_3::DynamicData::getMaxCdrSerializedSize(dynamic_type_) + 4);
     setName(dynamic_type_->get_name().c_str());
 
     m_isGetKeyDefined = dynamic_type_->key_annotation();
@@ -212,7 +210,7 @@ void DynamicPubSubType::UpdateDynamicTypeInfo()
         return;
     }
 
-    for (const DynamicTypeMember* pm : dynamic_type_->get_all_members())
+    for (const v1_3::DynamicTypeMember* pm : dynamic_type_->get_all_members())
     {
         assert(pm);
         if(pm->key_annotation())

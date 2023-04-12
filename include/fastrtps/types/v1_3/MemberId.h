@@ -397,7 +397,6 @@ inline MemberId operator"" _id(unsigned long long x)
 
 // Make the literals available on types
 using namespace v1_3::literals;
-using v1_3::MEMBER_ID_INVALID;
 
 } // namespace types
 } // namespace fastrtps

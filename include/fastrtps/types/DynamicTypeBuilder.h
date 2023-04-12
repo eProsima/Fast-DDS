@@ -15,7 +15,7 @@
 #ifndef TYPES_DYNAMIC_TYPE_BUILDER_H
 #define TYPES_DYNAMIC_TYPE_BUILDER_H
 
-// #include "v1_1/DynamicTypeBuilder.h"
+#include "v1_1/DynamicTypeBuilder.h"
 #include "v1_3/DynamicTypeBuilder.h"
 
 #endif // TYPES_DYNAMIC_TYPE_BUILDER_H

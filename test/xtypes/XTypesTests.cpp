@@ -44,10 +44,12 @@
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::rtps;
-
-// TODO Barro: fix when v1.1 sources are introduced
-using namespace eprosima::fastrtps::types;
 using namespace eprosima::fastrtps::types::v1_3;
+
+using eprosima::fastrtps::types::TypeObjectFactory;
+using eprosima::fastrtps::types::TypeIdentifier;
+using eprosima::fastrtps::types::TypeObject;
+using eprosima::fastrtps::types::TypeInformation;
 
 static int DOMAIN_ID_ = 10;
 

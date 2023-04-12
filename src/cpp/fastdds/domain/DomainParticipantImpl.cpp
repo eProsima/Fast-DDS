@@ -1440,14 +1440,13 @@ bool DomainParticipantImpl::register_dynamic_type_to_factories(
         const TypeSupport& type) const
 {
     // TODO Barro: Fix when v1.1 sources are reintroduced
-    using namespace eprosima::fastrtps::types;
-    using namespace eprosima::fastrtps::types::v1_3;
+    using namespace fastrtps::types;
 
     DynamicPubSubType* dpst = dynamic_cast<DynamicPubSubType*>(type.get());
     if (dpst != nullptr) // Registering a dynamic type.
     {
         TypeObjectFactory* objectFactory = TypeObjectFactory::get_instance();
-        DynamicTypeBuilderFactory& dynFactory = DynamicTypeBuilderFactory::get_instance();
+        v1_3::DynamicTypeBuilderFactory& dynFactory = v1_3::DynamicTypeBuilderFactory::get_instance();
         const TypeIdentifier* id = objectFactory->get_type_identifier_trying_complete(dpst->getName());
         if (id == nullptr)
         {
@@ -1682,7 +1681,6 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
 {
     // TODO Barro: fix when v1.1 sources are introduced
     using namespace fastrtps::types;
-    using namespace fastrtps::types::v1_3;
 
     if (get_rtps_participant() == nullptr)
     {
@@ -1693,7 +1691,7 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
     // Check if plain
     if (type_information.complete().typeid_with_size().type_id()._d() < fastrtps::types::TypeKind::EK_MINIMAL)
     {
-        DynamicType_ptr dyn = factory->build_dynamic_type(
+        v1_3::DynamicType_ptr dyn = factory->build_dynamic_type(
             type_name,
             &type_information.minimal().typeid_with_size().type_id());
 
@@ -1714,7 +1712,7 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
 
     if (obj._d() != fastrtps::types::TypeKind::TK_NONE)
     {
-        DynamicType_ptr dyn = factory->build_dynamic_type(
+        v1_3::DynamicType_ptr dyn = factory->build_dynamic_type(
             type_name,
             &type_information.complete().typeid_with_size().type_id(),
             &obj);

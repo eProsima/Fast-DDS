@@ -36,18 +36,32 @@ target_sources(xtypes INTERFACE
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicPubSubType.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationParameterValue.cpp
 
+    # version 1.1
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_1/AnnotationDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_1/DynamicData.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_1/DynamicDataFactory.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_1/DynamicDataPtr.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_1/DynamicType.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_1/DynamicTypeBuilder.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_1/DynamicTypeBuilderFactory.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_1/DynamicTypeBuilderPtr.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_1/DynamicTypeMember.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_1/DynamicTypePtr.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_1/MemberDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_1/TypeDescriptor.cpp
+
     # version 1.3
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/AnnotationManager.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/AnnotationDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/AnnotationManager.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicData.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicDataFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicType.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicDataPtr.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicType.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicTypeBuilder.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicTypeBuilderFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicTypeMember.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/TypeDescriptor.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/MemberDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/TypeDescriptor.cpp
 )
 
 # Set source files

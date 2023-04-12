@@ -45,6 +45,11 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types::v1_3;
 
+// common types
+using eprosima::fastrtps::types::DynamicPubSubType;
+using eprosima::fastrtps::types::TypeIdentifier;
+using eprosima::fastrtps::types::TypeObjectFactory;
+
 // Ancillary gtest formatters
 
 void PrintTo(const MemberDescriptor& md, std::ostream* os) {
@@ -4418,7 +4423,6 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
 TEST_F(DynamicTypesTests, DynamicType_XML_EnumStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
@@ -5105,7 +5109,6 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StructAliasWString_test)
 TEST_F(DynamicTypesTests, DynamicType_XML_ArraytStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
@@ -5136,7 +5139,6 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArraytStruct_test)
 TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
@@ -5168,7 +5170,6 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayStruct_test)
 TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayArrayStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
@@ -5269,7 +5270,6 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SequenceStruct_test)
 TEST_F(DynamicTypesTests, DynamicType_XML_SequenceSequenceStruct_test)
 {
     using namespace xmlparser;
-    using namespace types;
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);

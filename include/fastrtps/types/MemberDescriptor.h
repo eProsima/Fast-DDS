@@ -15,7 +15,7 @@
 #ifndef MEMBER_TYPE_DESCRIPTOR_H
 #define MEMBER_TYPE_DESCRIPTOR_H
 
-// #include "v1_1/MemberDescriptor.h"
+#include "v1_1/MemberDescriptor.h"
 #include "v1_3/MemberDescriptor.h"
 
 #endif // MEMBER_TYPE_DESCRIPTOR_H

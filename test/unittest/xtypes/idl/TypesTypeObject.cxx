@@ -37,10 +37,29 @@ namespace { char dummy; }
 #include <fastcdr/Cdr.h>
 
 using namespace eprosima::fastrtps::rtps;
-
-// TODO Barro: fix when v1.1 sources are introduced
-using namespace eprosima::fastrtps::types;
 using namespace eprosima::fastrtps::types::v1_3;
+
+using eprosima::fastrtps::types::TypeObjectFactory;
+using eprosima::fastrtps::types::TypeIdentifier;
+using eprosima::fastrtps::types::TypeObject;
+using eprosima::fastrtps::types::MinimalEnumeratedLiteral;
+using eprosima::fastrtps::types::MinimalEnumeratedType;
+using eprosima::fastrtps::types::CompleteEnumeratedLiteral;
+using eprosima::fastrtps::types::CompleteEnumeratedType;
+using eprosima::fastrtps::types::MinimalStructMember;
+using eprosima::fastrtps::types::MinimalStructType;
+using eprosima::fastrtps::types::CompleteStructMember;
+using eprosima::fastrtps::types::AppliedAnnotation;
+using eprosima::fastrtps::types::AppliedAnnotationParameter;
+using eprosima::fastrtps::types::AnnotationParameterValue;
+using eprosima::fastrtps::types::CompleteStructType;
+using eprosima::fastrtps::types::TypeNamesGenerator;
+using eprosima::fastrtps::types::MinimalAliasType;
+using eprosima::fastrtps::types::CompleteAliasType;
+using eprosima::fastrtps::types::MinimalUnionMember;
+using eprosima::fastrtps::types::MinimalUnionType;
+using eprosima::fastrtps::types::CompleteUnionMember;
+using eprosima::fastrtps::types::CompleteUnionType;
 
 void registerTypesTypes()
 {

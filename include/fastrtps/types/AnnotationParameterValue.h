@@ -213,6 +213,17 @@ public:
             TypeKind __d);
 
     /*!
+     * @brief This function sets the discriminator value.
+     * @param __d New value for the discriminator.
+     * @exception eprosima::fastcdr::BadParamException This exception is thrown if the new value doesn't correspond to the selected union member.
+     */
+    RTPS_DllAPI void _d(
+            octet __d)
+    {
+        _d(static_cast<TypeKind>(__d));
+    }
+
+    /*!
      * @brief This function returns the value of the discriminator.
      * @return Value of the discriminator
      */

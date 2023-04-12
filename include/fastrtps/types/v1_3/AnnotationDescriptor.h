@@ -26,6 +26,7 @@ namespace v1_3{
 
 class MemberDescriptor;
 class DynamicType;
+class DynamicTypeBuilderFactory;
 
 class AnnotationDescriptor final
 {

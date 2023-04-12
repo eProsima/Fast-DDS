@@ -58,6 +58,8 @@ public:
     RTPS_DllAPI inline void member_id(
             const v1_3::MemberId& _member_id) { m_member_id = _member_id; }
     RTPS_DllAPI inline void member_id(
+            const v1_1::MemberId& _member_id) { m_member_id = _member_id; }
+    RTPS_DllAPI inline void member_id(
             v1_3::MemberId&& _member_id) { m_member_id = std::move(_member_id); }
     RTPS_DllAPI inline const v1_3::MemberId& member_id() const { return m_member_id; }
     RTPS_DllAPI inline v1_3::MemberId& member_id() { return m_member_id; }
@@ -731,6 +733,8 @@ public:
 
     RTPS_DllAPI inline void member_id(
             const v1_3::MemberId& _member_id) { m_member_id = _member_id; }
+    RTPS_DllAPI inline void member_id(
+            const v1_1::MemberId& _member_id) { m_member_id = _member_id; }
     RTPS_DllAPI inline void member_id(
             v1_3::MemberId&& _member_id) { m_member_id = std::move(_member_id); }
     RTPS_DllAPI inline const v1_3::MemberId& member_id() const { return m_member_id; }
@@ -3776,6 +3780,8 @@ public:
 
     RTPS_DllAPI inline void holder_type(
             const TypeKind& _holder_type) { m_holder_type = _holder_type; }
+    RTPS_DllAPI inline void holder_type(
+            const octet _holder_type) { m_holder_type = static_cast<TypeKind>(_holder_type); }
     RTPS_DllAPI inline void holder_type(
             TypeKind&& _holder_type) { m_holder_type = std::move(_holder_type); }
     RTPS_DllAPI inline const TypeKind& holder_type() const { return m_holder_type; }

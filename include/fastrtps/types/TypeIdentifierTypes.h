@@ -324,7 +324,7 @@ public:
      * @param _equiv_kind New value for member equiv_kind
      */
     RTPS_DllAPI inline void equiv_kind(
-            EquivalenceKind _equiv_kind)
+            TypeKind _equiv_kind)
     {
         m_equiv_kind = _equiv_kind;
     }
@@ -333,7 +333,7 @@ public:
      * @brief This function returns the value of member equiv_kind
      * @return Value of member equiv_kind
      */
-    RTPS_DllAPI inline EquivalenceKind equiv_kind() const
+    RTPS_DllAPI inline TypeKind equiv_kind() const
     {
         return m_equiv_kind;
     }
@@ -342,7 +342,7 @@ public:
      * @brief This function returns a reference to member equiv_kind
      * @return Reference to member equiv_kind
      */
-    RTPS_DllAPI inline EquivalenceKind& equiv_kind()
+    RTPS_DllAPI inline TypeKind& equiv_kind()
     {
         return m_equiv_kind;
     }
@@ -405,7 +405,7 @@ public:
 
 private:
 
-    EquivalenceKind m_equiv_kind;
+    TypeKind m_equiv_kind;
     CollectionElementFlag m_element_flags;
 };
 /*!

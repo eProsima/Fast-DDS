@@ -15,16 +15,16 @@
 #include <gtest/gtest.h>
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
-#include <fastrtps/types/DynamicTypeMember.h>
-#include <fastrtps/types/DynamicDataFactory.h>
-#include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/v1_3/DynamicData.h>
+#include <fastrtps/types/v1_3/DynamicDataFactory.h>
+#include <fastrtps/types/v1_3/DynamicDataPtr.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilder.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/v1_3/DynamicTypeMember.h>
+#include <fastrtps/types/v1_3/MemberDescriptor.h>
+#include <fastrtps/types/v1_3/TypeDescriptor.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/DynamicData.h>
-#include <fastrtps/types/v1_3/DynamicDataPtr.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastdds/dds/log/Log.hpp>
 
@@ -34,10 +34,13 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-
-// TODO Barro: fix when v1.1 sources are introduced
-using namespace eprosima::fastrtps::types;
 using namespace eprosima::fastrtps::types::v1_3;
+
+using eprosima::fastrtps::types::TypeObjectFactory;
+using eprosima::fastrtps::types::TypeIdentifier;
+using eprosima::fastrtps::types::TypeObject;
+using eprosima::fastrtps::types::DynamicPubSubType;
+using eprosima::fastrtps::types::TypeInformation;
 
 class DynamicComplexTypesTests : public ::testing::Test
 {

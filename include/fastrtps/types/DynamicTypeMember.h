@@ -15,7 +15,7 @@
 #ifndef TYPES_DYNAMIC_TYPE_MEMBER_H
 #define TYPES_DYNAMIC_TYPE_MEMBER_H
 
-// #include "v1_1/DynamicTypeMember.h"
+#include "v1_1/DynamicTypeMember.h"
 #include "v1_3/DynamicTypeMember.h"
 
 #endif // TYPES_DYNAMIC_TYPE_MEMBER_H

@@ -262,7 +262,9 @@ void PlainCollectionHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 
 void PlainCollectionHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
-    dcdr >> reinterpret_cast<octet&>(m_equiv_kind);
+    octet kind;
+    dcdr >> kind;
+    m_equiv_kind = static_cast<TypeKind>(kind);
     dcdr >> m_element_flags;
 }
 

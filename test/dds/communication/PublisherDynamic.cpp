@@ -40,10 +40,9 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-
-// TODO Barro: fix when v1.1 sources are introduced
-using namespace eprosima::fastrtps::types;
 using namespace eprosima::fastrtps::types::v1_3;
+
+using eprosima::fastrtps::types::DynamicPubSubType;
 
 static bool run = true;
 

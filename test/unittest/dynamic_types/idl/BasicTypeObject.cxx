@@ -37,8 +37,35 @@ namespace { char dummy; }
 #include <fastcdr/Cdr.h>
 
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastrtps::types::v1_3;
 
-using eprosima::fastrtps::types::v1_3::MemberId;
+// common types
+using eprosima::fastrtps::types::TypeIdentifier;
+using eprosima::fastrtps::types::TypeObject;
+using eprosima::fastrtps::types::TypeObjectFactory;
+
+using eprosima::fastrtps::types::TypeNamesGenerator;
+using eprosima::fastrtps::types::MinimalEnumeratedLiteral;
+using eprosima::fastrtps::types::MinimalEnumeratedType;
+using eprosima::fastrtps::types::CompleteEnumeratedLiteral;
+using eprosima::fastrtps::types::CompleteEnumeratedType;
+using eprosima::fastrtps::types::MinimalAliasType;
+using eprosima::fastrtps::types::CompleteAliasType;
+using eprosima::fastrtps::types::MinimalStructMember;
+using eprosima::fastrtps::types::MinimalStructType;
+using eprosima::fastrtps::types::CompleteStructMember;
+using eprosima::fastrtps::types::CompleteStructType;
+using eprosima::fastrtps::types::MinimalBitfield;
+using eprosima::fastrtps::types::MinimalBitsetType;
+using eprosima::fastrtps::types::CompleteBitfield;
+using eprosima::fastrtps::types::AppliedAnnotation;
+using eprosima::fastrtps::types::AppliedAnnotationParameter;
+using eprosima::fastrtps::types::AnnotationParameterValue;
+using eprosima::fastrtps::types::CompleteBitsetType;
+using eprosima::fastrtps::types::MinimalUnionMember;
+using eprosima::fastrtps::types::MinimalUnionType;
+using eprosima::fastrtps::types::CompleteUnionMember;
+using eprosima::fastrtps::types::CompleteUnionType;
 
 void registerBasicTypes()
 {
@@ -878,7 +905,7 @@ const TypeObject* GetMinimalEnumStructObject()
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
-    MemberId memberId = MemberId(0);
+    MemberId memberId{0};
     MinimalStructMember mst_my_enum;
     mst_my_enum.common().member_id(memberId++);
     mst_my_enum.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported

@@ -26,8 +26,7 @@ namespace { char dummy; }
 
 #include "new_features_4_2.h"
 #include "new_features_4_2TypeObject.h"
-#include <utility>
-#include <sstream>
+
 #include <fastrtps/rtps/common/SerializedPayload.h>
 #include <fastrtps/utils/md5.h>
 #include <fastrtps/types/TypeObjectFactory.h>
@@ -36,11 +35,35 @@ namespace { char dummy; }
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>
 
-using namespace eprosima::fastrtps::rtps;
+#include <utility>
+#include <sstream>
 
-// TODO Barro: fix when v1.1 sources are introduced
-using namespace eprosima::fastrtps::types;
+using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types::v1_3;
+
+using eprosima::fastrtps::types::TypeObjectFactory;
+using eprosima::fastrtps::types::TypeIdentifier;
+using eprosima::fastrtps::types::TypeObject;
+
+using eprosima::fastrtps::types::MinimalStructMember;
+using eprosima::fastrtps::types::MinimalStructType;
+using eprosima::fastrtps::types::CompleteStructMember;
+using eprosima::fastrtps::types::AppliedAnnotation;
+using eprosima::fastrtps::types::AppliedAnnotationParameter;
+using eprosima::fastrtps::types::AnnotationParameterValue;
+using eprosima::fastrtps::types::CompleteStructType;
+using eprosima::fastrtps::types::MinimalUnionMember;
+using eprosima::fastrtps::types::MinimalUnionType;
+using eprosima::fastrtps::types::CompleteUnionMember;
+using eprosima::fastrtps::types::CompleteUnionType;
+using eprosima::fastrtps::types::MinimalBitfield;
+using eprosima::fastrtps::types::MinimalBitsetType;
+using eprosima::fastrtps::types::CompleteBitfield;
+using eprosima::fastrtps::types::CompleteBitsetType;
+using eprosima::fastrtps::types::MinimalBitflag;
+using eprosima::fastrtps::types::MinimalBitmaskType;
+using eprosima::fastrtps::types::CompleteBitflag;
+using eprosima::fastrtps::types::CompleteBitmaskType;
 
 void registernew_features_4_2Types()
 {

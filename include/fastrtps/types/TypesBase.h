@@ -177,8 +177,6 @@ enum class TypeKind : octet {
     EK_BOTH = 0xF3, // 0x1111 0011
 };
 
-using EquivalenceKind = TypeKind;
-
 inline bool operator==(octet a, TypeKind b)
 {
     return a == static_cast<octet>(b);
@@ -188,7 +186,6 @@ inline bool operator==(TypeKind a, octet b)
 {
     return b == a;
 }
-
 
 namespace typekind_detail {
 
@@ -305,6 +302,65 @@ std::basic_ostream<CharT, Traits>&
 }
 
 #undef XTYPECASE
+
+// Version 1.1 per-compilation unit globals
+
+const octet TK_NONE = static_cast<octet>(TypeKind::TK_NONE);
+const octet TK_BOOLEAN = static_cast<octet>(TypeKind::TK_BOOLEAN);
+const octet TK_BYTE = static_cast<octet>(TypeKind::TK_BYTE);
+const octet TK_INT16 = static_cast<octet>(TypeKind::TK_INT16);
+const octet TK_INT32 = static_cast<octet>(TypeKind::TK_INT32);
+const octet TK_INT64 = static_cast<octet>(TypeKind::TK_INT64);
+const octet TK_UINT16 = static_cast<octet>(TypeKind::TK_UINT16);
+const octet TK_UINT32 = static_cast<octet>(TypeKind::TK_UINT32);
+const octet TK_UINT64 = static_cast<octet>(TypeKind::TK_UINT64);
+const octet TK_FLOAT32 = static_cast<octet>(TypeKind::TK_FLOAT32);
+const octet TK_FLOAT64 = static_cast<octet>(TypeKind::TK_FLOAT64);
+const octet TK_FLOAT128 = static_cast<octet>(TypeKind::TK_FLOAT128);
+const octet TK_CHAR8 = static_cast<octet>(TypeKind::TK_CHAR8);
+const octet TK_CHAR16 = static_cast<octet>(TypeKind::TK_CHAR16);
+
+// String TKs
+const octet TK_STRING8 = static_cast<octet>(TypeKind::TK_STRING8);
+const octet TK_STRING16 = static_cast<octet>(TypeKind::TK_STRING16);
+
+// String TIs
+const octet TI_STRING8_SMALL = static_cast<octet>(TypeKind::TI_STRING8_SMALL);
+const octet TI_STRING8_LARGE = static_cast<octet>(TypeKind::TI_STRING8_LARGE);
+const octet TI_STRING16_SMALL = static_cast<octet>(TypeKind::TI_STRING16_SMALL);
+const octet TI_STRING16_LARGE = static_cast<octet>(TypeKind::TI_STRING16_LARGE);
+
+// Constructed/Named types
+const octet TK_ALIAS = static_cast<octet>(TypeKind::TK_ALIAS);
+
+// Enumerated TKs
+const octet TK_ENUM = static_cast<octet>(TypeKind::TK_ENUM);
+const octet TK_BITMASK = static_cast<octet>(TypeKind::TK_BITMASK);
+
+// Structured TKs
+const octet TK_ANNOTATION = static_cast<octet>(TypeKind::TK_ANNOTATION);
+const octet TK_STRUCTURE = static_cast<octet>(TypeKind::TK_STRUCTURE);
+const octet TK_UNION = static_cast<octet>(TypeKind::TK_UNION);
+const octet TK_BITSET = static_cast<octet>(TypeKind::TK_BITSET);
+
+// Collection TKs
+const octet TK_SEQUENCE = static_cast<octet>(TypeKind::TK_SEQUENCE);
+const octet TK_ARRAY = static_cast<octet>(TypeKind::TK_ARRAY);
+const octet TK_MAP = static_cast<octet>(TypeKind::TK_MAP);
+
+// Collection TIs
+const octet TI_PLAIN_SEQUENCE_SMALL = static_cast<octet>(TypeKind::TI_PLAIN_SEQUENCE_SMALL);
+const octet TI_PLAIN_SEQUENCE_LARGE = static_cast<octet>(TypeKind::TI_PLAIN_SEQUENCE_LARGE);
+const octet TI_PLAIN_ARRAY_SMALL = static_cast<octet>(TypeKind::TI_PLAIN_ARRAY_SMALL);
+const octet TI_PLAIN_ARRAY_LARGE = static_cast<octet>(TypeKind::TI_PLAIN_ARRAY_LARGE);
+const octet TI_PLAIN_MAP_SMALL = static_cast<octet>(TypeKind::TI_PLAIN_MAP_SMALL);
+const octet TI_PLAIN_MAP_LARGE = static_cast<octet>(TypeKind::TI_PLAIN_MAP_LARGE);
+const octet TI_STRONGLY_CONNECTED_COMPONENT = static_cast<octet>(TypeKind::TI_STRONGLY_CONNECTED_COMPONENT);
+
+// Equivalence Kinds
+const octet EK_MINIMAL = static_cast<octet>(TypeKind::EK_MINIMAL);
+const octet EK_COMPLETE = static_cast<octet>(TypeKind::EK_COMPLETE);
+const octet EK_BOTH = static_cast<octet>(TypeKind::EK_BOTH);
 
 // ---------- TypeKinds (end) ------------------
 
@@ -839,6 +895,18 @@ const uint16_t TypeFlagMinimalMask = 0x0007; // Selects  M, A, F
 // ID of a type member
 const uint32_t ANNOTATION_STR_VALUE_MAX_LEN = 128;
 const uint32_t ANNOTATION_OCTETSEC_VALUE_MAX_LEN = 128;
+
+inline namespace v1_1 {
+
+using MemberId = uint32_t;
+const MemberId MEMBER_ID_INVALID = 0x0FFFFFFF;
+
+class DynamicType;
+class DynamicTypeBuilder;
+class DynamicType_ptr;
+
+} // namespace v1_1
+
 
 namespace v1_3 {
 
