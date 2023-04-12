@@ -303,7 +303,7 @@ public:
 
     /**
      * Returns a singleton @ref DynamicTypeBuilder object
-     * @tparam kind @ref TypeKind that identifies the singleton to return
+     * @tparam kind @ref eprosima::fastrtps::types::TypeKind that identifies the singleton to return
      * @remark This method is thread-safe.
      * @remark The singleton is allocated using C++11 builtin double-checked locking lazy initialization.
      * @remark The singleton cannot be modified. In order to get a modifiable builder use @ref create_builder_copy().
@@ -323,7 +323,7 @@ public:
      * @remark This method is thread-safe.
      * @remark The singleton is allocated using C++11 builtin double-checked locking lazy initialization.
      * @remark The singleton cannot be modified. In order to get a modifiable builder use @ref create_builder_copy().
-     * @param kind @ref TypeKind that identifies the singleton to return
+     * @param kind @ref eprosima::fastrtps::types::TypeKind that identifies the singleton to return
      * @return singleton @ref DynamicTypeBuilder object
      */
     RTPS_DllAPI DynamicTypeBuilder_cptr& create_primitive_builder(TypeKind kind) noexcept;

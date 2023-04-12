@@ -120,9 +120,9 @@
 // Fallthrough macro
 #if __has_cpp_attribute(fallthrough) && \
     (__has_cpp_attribute(fallthrough) < __cplusplus || __has_cpp_attribute(fallthrough) < _MSVC_LANG)
-#    define FASTRTPS_FALLTHROUGH [[fallthrough]]
+#    define FASTRTPS_FALLTHROUGH [[fallthrough]];
 #elif defined(__GNUC__) || defined(__clang__)
-#    define FASTRTPS_FALLTHROUGH __attribute__((fallthrough))
+#    define FASTRTPS_FALLTHROUGH __attribute__((fallthrough));
 #else
 #    define FASTRTPS_FALLTHROUGH
 #endif /* if __has_cpp_attribute(fallthrough) */

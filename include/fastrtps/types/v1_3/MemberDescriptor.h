@@ -244,7 +244,7 @@ public:
      * Tests state consistency
      * @remark A MemberDescriptor shall be considered consistent if and only if all of the values
      *         of its properties are considered consistent with its collection owner
-     * @param[in] parentKind @ref TypeKind collection's owner kind
+     * @param[in] parentKind @ref eprosima::fastrtps::types::TypeKind collection's owner kind
      * @return bool `true` if consistent
      */
     RTPS_DllAPI bool is_consistent(TypeKind parentKind) const;

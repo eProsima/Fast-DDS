@@ -138,7 +138,7 @@ protected:
     void clean();
 
     friend class DynamicTypeBuilderFactory;
-    friend class TypeObjectFactory;
+    friend class types::TypeObjectFactory;
     friend class types::DynamicDataHelper;
 
     /**
@@ -339,8 +339,8 @@ public:
     RTPS_DllAPI DynamicType_ptr get_key_element_type() const;
 
     /**
-     * Returns the @ref TypeKind associated
-     * @return standard @ref TypeKind
+     * Returns the @ref eprosima::fastrtps::types::TypeKind associated
+     * @return standard @ref eprosima::fastrtps::types::TypeKind
      */
     RTPS_DllAPI TypeKind get_kind() const noexcept;
 
