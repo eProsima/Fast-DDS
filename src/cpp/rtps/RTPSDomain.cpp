@@ -602,22 +602,48 @@ uint32_t RTPSDomainImpl::getNewId()
     return m_maxRTPSParticipantID++;
 }
 
-void RTPSDomainImpl::create_participant_guid(
+bool RTPSDomainImpl::reserve_participant_id(
+        int32_t& participant_id)
+{
+    std::lock_guard<std::mutex> guard(m_mutex);
+    if (participant_id < 0)
+    {
+        participant_id = getNewId();
+    }
+    else
+    {
+        if (m_RTPSParticipantIDs[participant_id].reserved == true)
+        {
+            return false;
+        }
+        m_RTPSParticipantIDs[participant_id].reserved = true;
+    }
+
+    return true;
+}
+
+bool RTPSDomainImpl::create_participant_guid(
         int32_t& participant_id,
         GUID_t& guid)
 {
-    if (participant_id < 0)
+    bool ret_value = get_instance()->reserve_participant_id(participant_id);
+
+    if (ret_value)
     {
+<<<<<<< HEAD
         auto instance = get_instance();
         std::lock_guard<std::mutex> guard(instance->m_mutex);
         do
         {
             participant_id = instance->getNewId();
         } while (instance->m_RTPSParticipantIDs.find(participant_id) != instance->m_RTPSParticipantIDs.end());
+=======
+        guid_prefix_create(participant_id, guid.guidPrefix);
+        guid.entityId = c_EntityId_RTPSParticipant;
+>>>>>>> 3a168ed6f (Fix segfault when creating two participant with same fixed id (#3443))
     }
 
-    guid_prefix_create(participant_id, guid.guidPrefix);
-    guid.entityId = c_EntityId_RTPSParticipant;
+    return ret_value;
 }
 
 RTPSParticipantImpl* RTPSDomainImpl::find_local_participant(

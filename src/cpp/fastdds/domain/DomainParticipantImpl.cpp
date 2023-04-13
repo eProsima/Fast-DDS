@@ -124,7 +124,10 @@ DomainParticipantImpl::DomainParticipantImpl(
 
     // Pre calculate participant id and generated guid
     participant_id_ = qos_.wire_protocol().participant_id;
-    eprosima::fastrtps::rtps::RTPSDomainImpl::create_participant_guid(participant_id_, guid_);
+    if (!eprosima::fastrtps::rtps::RTPSDomainImpl::create_participant_guid(participant_id_, guid_))
+    {
+        EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Error generating GUID for participant");
+    }
 
     /* Fill physical data properties if they are found and empty */
     std::string* property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(
@@ -251,6 +254,8 @@ ReturnCode_t DomainParticipantImpl::enable()
 {
     // Should not have been previously enabled
     assert(get_rtps_participant() == nullptr);
+    // Should not have failed assigning the GUID
+    assert (guid_ != GUID_t::unknown());
 
     fastrtps::rtps::RTPSParticipantAttributes rtps_attr;
     utils::set_attributes_from_qos(rtps_attr, qos_);
