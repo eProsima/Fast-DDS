@@ -68,8 +68,10 @@ public:
      * @param [in, out] participant_id   Participant identifier for which to generate the GUID.
      *                                   When negative, it will be modified to the first non-existent participant id.
      * @param [out]     guid             GUID corresponding to participant_id
+     *
+     * @return True value if guid was created. False in other case.
      */
-    static void create_participant_guid(
+    static bool create_participant_guid(
             int32_t& participant_id,
             GUID_t& guid);
 
@@ -145,7 +147,59 @@ public:
      */
     static void file_watch_callback();
 
+<<<<<<< HEAD
     static FileWatchHandle file_watch_handle_;
+=======
+private:
+
+    /**
+     * @brief Get Id to create a RTPSParticipant.
+     *
+     * This function assumes m_mutex is already locked by the caller.
+     *
+     * @return Different ID for each call.
+     */
+    uint32_t getNewId();
+
+    bool prepare_participant_id(
+            int32_t input_id,
+            uint32_t& participant_id);
+
+    /**
+     * Reserves a participant id.
+     * @param [in, out] participant_id   Participant identifier for reservation.
+     *                                   When negative, it will be modified to the first non-reserved participant id.
+     *
+     * @return True value if reservation was possible. False in other case.
+     */
+    bool reserve_participant_id(
+            int32_t& participant_id);
+
+    uint32_t get_id_for_prefix(
+            uint32_t participant_id);
+
+    void removeRTPSParticipant_nts(
+            t_p_RTPSParticipant&);
+
+    std::shared_ptr<eprosima::detail::BoostAtExitRegistry> boost_singleton_handler_ { eprosima::detail::
+                                                                                              BoostAtExitRegistry::
+                                                                                              get_instance() };
+
+    std::mutex m_mutex;
+
+    std::vector<t_p_RTPSParticipant> m_RTPSParticipants;
+
+    struct ParticipantIDState
+    {
+        uint32_t counter = 0;
+        bool reserved = false;
+        bool used = false;
+    };
+
+    std::unordered_map<uint32_t, ParticipantIDState> m_RTPSParticipantIDs;
+
+    FileWatchHandle file_watch_handle_;
+>>>>>>> 3a168ed6f (Fix segfault when creating two participant with same fixed id (#3443))
 };
 
 } // namespace rtps

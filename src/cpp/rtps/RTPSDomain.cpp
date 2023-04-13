@@ -492,21 +492,103 @@ RTPSParticipant* RTPSDomain::clientServerEnvironmentCreationOverride(
     return nullptr;
 }
 
+<<<<<<< HEAD
 void RTPSDomainImpl::create_participant_guid(
+=======
+uint32_t RTPSDomainImpl::getNewId()
+{
+    // Get the smallest available participant ID.
+    // Settings like maxInitialPeersRange control how many participants a peer
+    // will look for on this host.
+    // Choosing the smallest value ensures peers using unicast discovery will
+    // find this participant as long as the total number of participants has
+    // not exceeded the number of peers they will look for.
+    uint32_t i = 0;
+    while (m_RTPSParticipantIDs[i].reserved || m_RTPSParticipantIDs[i].used)
+    {
+        ++i;
+    }
+    m_RTPSParticipantIDs[i].reserved = true;
+    return i;
+}
+
+bool RTPSDomainImpl::prepare_participant_id(
+        int32_t input_id,
+        uint32_t& participant_id)
+{
+    std::lock_guard<std::mutex> guard(m_mutex);
+    if (input_id < 0)
+    {
+        participant_id = getNewId();
+    }
+    else
+    {
+        participant_id = input_id;
+        if (m_RTPSParticipantIDs[participant_id].used == true)
+        {
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "RTPSParticipant with the same ID already exists");
+            return false;
+        }
+    }
+    return true;
+}
+
+uint32_t RTPSDomainImpl::get_id_for_prefix(
+        uint32_t participant_id)
+{
+    uint32_t ret = participant_id;
+    if (ret < 0x10000)
+    {
+        std::lock_guard<std::mutex> guard(m_mutex);
+        ret |= m_RTPSParticipantIDs[participant_id].counter;
+        m_RTPSParticipantIDs[participant_id].counter += 0x10000;
+    }
+
+    return ret;
+}
+
+bool RTPSDomainImpl::reserve_participant_id(
+        int32_t& participant_id)
+{
+    std::lock_guard<std::mutex> guard(m_mutex);
+    if (participant_id < 0)
+    {
+        participant_id = getNewId();
+    }
+    else
+    {
+        if (m_RTPSParticipantIDs[participant_id].reserved == true)
+        {
+            return false;
+        }
+        m_RTPSParticipantIDs[participant_id].reserved = true;
+    }
+
+    return true;
+}
+
+bool RTPSDomainImpl::create_participant_guid(
+>>>>>>> 3a168ed6f (Fix segfault when creating two participant with same fixed id (#3443))
         int32_t& participant_id,
         GUID_t& guid)
 {
-    if (participant_id < 0)
+    bool ret_value = get_instance()->reserve_participant_id(participant_id);
+
+    if (ret_value)
     {
+<<<<<<< HEAD
         std::lock_guard<std::mutex> guard(RTPSDomain::m_mutex);
         do
         {
             participant_id = RTPSDomain::getNewId();
         } while (RTPSDomain::m_RTPSParticipantIDs.find(participant_id) != RTPSDomain::m_RTPSParticipantIDs.end());
+=======
+        guid_prefix_create(participant_id, guid.guidPrefix);
+        guid.entityId = c_EntityId_RTPSParticipant;
+>>>>>>> 3a168ed6f (Fix segfault when creating two participant with same fixed id (#3443))
     }
 
-    guid_prefix_create(participant_id, guid.guidPrefix);
-    guid.entityId = c_EntityId_RTPSParticipant;
+    return ret_value;
 }
 
 RTPSParticipantImpl* RTPSDomainImpl::find_local_participant(

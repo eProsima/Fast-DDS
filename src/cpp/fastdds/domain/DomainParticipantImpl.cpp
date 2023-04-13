@@ -167,7 +167,10 @@ DomainParticipantImpl::DomainParticipantImpl(
 
     // Pre calculate participant id and generated guid
     participant_id_ = qos_.wire_protocol().participant_id;
-    eprosima::fastrtps::rtps::RTPSDomainImpl::create_participant_guid(participant_id_, guid_);
+    if (!eprosima::fastrtps::rtps::RTPSDomainImpl::create_participant_guid(participant_id_, guid_))
+    {
+        EPROSIMA_LOG_ERROR(DOMAIN_PARTICIPANT, "Error generating GUID for participant");
+    }
 
     /* Fill physical data properties if they are found and empty */
     std::string* property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(
@@ -285,7 +288,13 @@ DomainParticipantImpl::~DomainParticipantImpl()
 ReturnCode_t DomainParticipantImpl::enable()
 {
     // Should not have been previously enabled
+<<<<<<< HEAD
     assert(rtps_participant_ == nullptr);
+=======
+    assert(get_rtps_participant() == nullptr);
+    // Should not have failed assigning the GUID
+    assert (guid_ != GUID_t::unknown());
+>>>>>>> 3a168ed6f (Fix segfault when creating two participant with same fixed id (#3443))
 
     fastrtps::rtps::RTPSParticipantAttributes rtps_attr;
     set_attributes_from_qos(rtps_attr, qos_);
