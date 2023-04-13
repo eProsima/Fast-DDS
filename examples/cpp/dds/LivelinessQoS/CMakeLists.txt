@@ -21,6 +21,10 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr REQUIRED)
 endif()
 
+if(NOT foonathan_memory_FOUND)
+    find_package(foonathan_memory REQUIRED)
+endif()
+
 if(NOT fastrtps_FOUND)
     find_package(fastrtps REQUIRED)
 endif()
@@ -43,6 +47,6 @@ target_compile_definitions(DDSLivelinessQoS PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
-target_link_libraries(DDSLivelinessQoS fastrtps fastcdr)
+target_link_libraries(DDSLivelinessQoS fastrtps fastcdr foonathan_memory)
 install(TARGETS DDSLivelinessQoS
     RUNTIME DESTINATION examples/cpp/dds/LivelinessQoS/${BIN_INSTALL_DIR})

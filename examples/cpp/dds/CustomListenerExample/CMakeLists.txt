@@ -21,6 +21,10 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr REQUIRED)
 endif()
 
+if(NOT foonathan_memory_FOUND)
+    find_package(foonathan_memory REQUIRED)
+endif()
+
 if(NOT fastrtps_FOUND)
     find_package(fastrtps REQUIRED)
 endif()
@@ -44,6 +48,6 @@ target_compile_definitions(DDSCustomListenerExample PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_link_libraries(DDSCustomListenerExample fastrtps fastcdr)
+target_link_libraries(DDSCustomListenerExample fastrtps fastcdr foonathan_memory)
 install(TARGETS DDSCustomListenerExample
     RUNTIME DESTINATION examples/cpp/dds/CustomListenerExample/${BIN_INSTALL_DIR})

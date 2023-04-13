@@ -20,6 +20,10 @@ project(fast-discovery-server VERSION 1.0.1 LANGUAGES CXX)
 # Load external dependencies
 ###############################################################################
 
+if(NOT foonathan_memory_FOUND)
+    find_package(foonathan_memory REQUIRED)
+endif()
+
 if(NOT fastrtps_FOUND)
     find_package(fastrtps REQUIRED)
 endif()
@@ -71,7 +75,7 @@ target_compile_definitions(${PROJECT_NAME}
     PRIVATE FAST_SERVER_VERSION=\"${PROJECT_VERSION}\"
     PRIVATE FAST_SERVER_BINARY=\"$<TARGET_FILE_NAME:${PROJECT_NAME}>\" )
 
-target_link_libraries(${PROJECT_NAME} fastrtps fastcdr fastdds::optionparser)
+target_link_libraries(${PROJECT_NAME} fastrtps fastcdr fastdds::optionparser foonathan_memory)
 
 # Properties that change bin names depending on current config.
 # This is convenient because on installation all bins share folder

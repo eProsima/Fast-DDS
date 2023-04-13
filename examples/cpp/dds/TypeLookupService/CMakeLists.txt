@@ -21,6 +21,10 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr REQUIRED)
 endif()
 
+if(NOT foonathan_memory_FOUND)
+    find_package(foonathan_memory REQUIRED)
+endif()
+
 if(NOT fastrtps_FOUND)
     find_package(fastrtps REQUIRED)
 endif()
@@ -44,7 +48,7 @@ target_compile_definitions(TypeLookupExample PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_link_libraries(TypeLookupExample fastrtps fastcdr)
+target_link_libraries(TypeLookupExample fastrtps fastcdr foonathan_memory foonathan_memory)
 install(TARGETS TypeLookupExample
     RUNTIME DESTINATION examples/cpp/dds/TypeLookupService/${BIN_INSTALL_DIR})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/example_type_profile.xml

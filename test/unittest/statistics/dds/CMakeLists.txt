@@ -35,7 +35,7 @@ target_compile_definitions(StatisticsDomainParticipantTests PRIVATE FASTRTPS_NO_
     )
 target_include_directories(StatisticsDomainParticipantTests PRIVATE
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include ${PROJECT_SOURCE_DIR}/src/cpp)
-target_link_libraries(StatisticsDomainParticipantTests fastrtps fastcdr GTest::gtest)
+target_link_libraries(StatisticsDomainParticipantTests fastrtps fastcdr GTest::gtest foonathan_memory)
 add_gtest(StatisticsDomainParticipantTests SOURCES ${STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE})
 
 ## StatisticsQosTests

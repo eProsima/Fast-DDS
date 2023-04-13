@@ -21,6 +21,10 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr REQUIRED)
 endif()
 
+if(NOT foonathan_memory_FOUND)
+    find_package(foonathan_memory REQUIRED)
+endif()
+
 if(NOT fastrtps_FOUND)
     find_package(fastrtps REQUIRED)
 endif()
@@ -42,6 +46,6 @@ target_compile_definitions(DDSContentFilteredTopicExample PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
 target_compile_features(DDSContentFilteredTopicExample PRIVATE cxx_std_11)
-target_link_libraries(DDSContentFilteredTopicExample fastrtps fastcdr fastdds::optionparser)
+target_link_libraries(DDSContentFilteredTopicExample fastrtps fastcdr fastdds::optionparser foonathan_memory)
 install(TARGETS DDSContentFilteredTopicExample
     RUNTIME DESTINATION examples/cpp/dds/ContentFilteredTopicExample/${BIN_INSTALL_DIR})
