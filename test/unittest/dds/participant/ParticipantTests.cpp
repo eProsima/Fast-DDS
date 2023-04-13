@@ -3725,6 +3725,62 @@ TEST(ParticipantTests, UnsupportedMethods)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
+/*
+ * Regression test for redmine issue #18050.
+ *
+ * This test tries to create two participants with the same fixed id.
+ */
+TEST(ParticipantTests, TwoParticipantWithSameFixedId)
+{
+    // Test participants enabled from beginning
+    {
+        DomainParticipantQos participant_qos;
+        participant_qos.wire_protocol().participant_id = 1;
+
+        // Create the first participant
+        DomainParticipant* participant1 =
+                DomainParticipantFactory::get_instance()->create_participant(0, participant_qos);
+        ASSERT_NE(participant1, nullptr);
+
+        // Creating a second participant with the same fixed id should fail
+        DomainParticipant* participant2 =
+                DomainParticipantFactory::get_instance()->create_participant(0, participant_qos);
+        ASSERT_EQ(participant2, nullptr);
+
+        // Destroy the first participant
+        ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant1), ReturnCode_t::RETCODE_OK);
+    }
+
+    // Test participants disabled from beginning
+    {
+        DomainParticipantFactoryQos factory_qos;
+        ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->get_qos(factory_qos));
+        factory_qos.entity_factory().autoenable_created_entities = false;
+        ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->set_qos(factory_qos));
+
+        DomainParticipantQos participant_qos;
+        participant_qos.wire_protocol().participant_id = 1;
+
+        // Create the first participant
+        DomainParticipant* participant1 =
+                DomainParticipantFactory::get_instance()->create_participant(0, participant_qos);
+        ASSERT_NE(participant1, nullptr);
+
+        // Creating a second participant with the same fixed id should fail
+        DomainParticipant* participant2 =
+                DomainParticipantFactory::get_instance()->create_participant(0, participant_qos);
+        ASSERT_EQ(participant2, nullptr);
+
+        ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant1->enable());
+
+        // Destroy the first participant
+        ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant1), ReturnCode_t::RETCODE_OK);
+
+        factory_qos.entity_factory().autoenable_created_entities = true;
+        ASSERT_EQ(ReturnCode_t::RETCODE_OK, DomainParticipantFactory::get_instance()->set_qos(factory_qos));
+    }
+}
+
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima

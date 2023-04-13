@@ -85,6 +85,7 @@ protected:
     {
         participant_->impl_ = this;
 
+        guid_.guidPrefix.value[11] = 1;
         eprosima::fastrtps::TopicAttributes top_attr;
         eprosima::fastrtps::xmlparser::XMLProfileManager::getDefaultTopicAttributes(top_attr);
         default_topic_qos_.history() = top_attr.historyQos;
