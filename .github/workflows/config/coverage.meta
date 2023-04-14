@@ -1,0 +1,25 @@
+
+{
+    "names":
+    {
+        "fastrtps" :
+        {
+            "cmake-args": [
+                "-DEPROSIMA_BUILD=ON",
+                "-DINTERNAL_DEBUG=ON",
+                "-DGTEST_INDIVIDUAL=ON",
+                "-DFASTRTPS_API_TESTS=ON",
+                "-DFASTDDS_PIM_API_TESTS=ON",
+                "-DPERFORMANCE_TESTS=ON",
+                "-DSECURITY=OFF",
+                "-DCMAKE_BUILD_TYPE=Debug",
+                "-DPROFILING_TESTS=ON",
+                "-DVIDEO_TESTS=ON"
+            ]
+        },
+        "googletest-distribution" :
+        {
+            "cmake-args" : ["-Dgtest_force_shared_crt=ON"]
+        }
+    }
+}

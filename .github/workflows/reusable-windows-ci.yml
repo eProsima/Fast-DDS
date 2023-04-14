@@ -19,10 +19,6 @@ on:
         description: 'Extra arguments for ctest cli'
         required: false
         type: string
-      force-meta-branch:
-        description: 'Branch to checkout from eprosima-CI'
-        required: false
-        type: string
 
 defaults:
   run:
@@ -329,76 +325,6 @@ jobs:
           Import-Module -name ConvertBase64Strings -Prefix CI
           Install-Module powershell-yaml -Force
 
-          # Check if git is behaving
-          $checker = @{
-            Begin = {$errores = 0}
-            Process = {if($_ -is [Management.Automation.ErrorRecord] -and $_.Exception.Message -match "^(error|fatal):") {++$errores} }
-            End = { $errores -eq 0 }
-          }
-          $assert = {if($_ -is [Management.Automation.ErrorRecord] -and $_.Exception.Message -match "^(error|fatal):")
-                        { Write-Error $_ } else { Write-Output $_ } }
-
-          # Download eprosima-CI repo and checkout current branch
-          git clone https://github.com/eProsima/eprosima-CI.git eprosima-CI 2>&1 | % $assert
-          pushd eprosima-CI
-          # locally master is main
-          git symbolic-ref refs/heads/master refs/heads/main 2>&1 | % $assert
-
-          # selecting specific metas & depends
-          $repo_branch = "${{ inputs.force-meta-branch }}"
-
-          if($repo_branch)
-          {
-            # 1. Externally specified as nightlies
-            git checkout $repo_branch 2>&1 | % $assert
-          }
-          else
-          {
-            # 2. Use heuristics to choose
-            switch -regex ("${{ github.event_name }}")
-            {
-              "pull_request"
-              {
-                  # try: source branch, destination branch
-                  foreach($repo_branch in @("${{ github.head_ref }}", "${{ github.base_ref }}"))
-                  {
-                    if(git checkout $repo_branch 2>&1 | % @checker)
-                    {
-                        $choice = "taking metas & depends from branch $repo_branch"
-                        break;
-                    }
-                    else
-                    {
-                        Write-Output "eprosima-CI lacks branch $repo_branch"
-                    }
-                  }
-              }
-              "push|workflow"
-              {
-                  # use the branch that was push or was selected for the workflow
-                  $repo_branch = "${{ github.ref }}"
-                  if(git checkout $repo_branch 2>&1 | % @checker)
-                  {
-                      $choice = "taking metas & depends from branch $repo_branch"
-                  }
-                  else
-                  {
-                    Write-Output "eprosima-CI lacks branch $repo_branch"
-                  }
-              }
-            }
-
-            # On failure fallback to master
-            if(!$choice)
-            {
-              git checkout master 2>&1 | % $assert
-              $choice = "fallback: taking metas & depends from master"
-            }
-            Write-Output $choice
-          }
-
-          popd
-
           # Get action credentials for github REST API
           $secret = ConvertTo-SecureString -String "${{ secrets.GITHUB_TOKEN }}" -AsPlainText
 
@@ -409,24 +335,29 @@ jobs:
             ? Key -like "X-RateLimit*") | Out-Host
           "::endgroup::"
 
-          # download the repos file
+          # Nightly job
+          if ("${{ inputs.label }}".Contains("nightly"))
+          {
+              $depends_repos_path = ".github\workflows\config\nightly.repos"
+              $meta_path = ".github\workflows\config\nightly.meta"
+          }
+          # Either PR or manual
+          else
+          {
+              $depends_repos_path = ".github\workflows\config\default_ci.repos"
+              $meta_path = ".github\workflows\config\default_ci.meta"
+          }
+          Write-Output "Selected repos files: $depends_repos_path"
+          Write-Output "Selected metas files: $meta_path"
+
+          # Get the repository's repos file
           $repos_path = ".\src\fastrtps\fastrtps.repos"
           $repos = Get-Content $repos_path | ConvertFrom-Yaml
 
-          # merge with the provided Fast-DDS-CLI depends.repos
-          $depends_path = ".\eprosima-CI\depends.repos"
-          if(Test-Path $depends_path)
-          {
-            $depends = Get-Content $depends_path | ConvertFrom-Yaml
-
-            # Replace fastrtps.repos entries with depends.repos ones
-            $depends.repositories.GetEnumerator() |
-                    % { $repos.repositories[$_.Name] = $_.Value}
-          }
-          else
-          {
-            Write-Output "depends.repos not available in eprosima-CI"
-          }
+          # Merge with the extra dependencies .repos file
+          $depends = Get-Content $depends_repos_path | ConvertFrom-Yaml
+          $depends.repositories.GetEnumerator() |
+                  % { $repos.repositories[$_.Name] = $_.Value}
 
           # cmake --find-package has issues on unix base system
           # let's use a dummy project
@@ -454,39 +385,14 @@ jobs:
           $repos | ConvertTo-Yaml | Tee-Object -FilePath fastrtps.repos
           "::endgroup::"
 
-          # create source dir and download the sources
-          vcs import src --input fastrtps.repos --skip-existing
-
-      - name: Retrieve colcon.meta file
-        run: |
-          # Try retrieve it from the eprosima-CI
-          $meta_path = ".\eprosima-CI\colcon.meta"
-          if(Test-Path $meta_path)
-          {
-            $meta = Get-Content $meta_path | ConvertFrom-Yaml
-          }
-          else
-          {
-            Write-Output "depends.repos not available in eprosima-CI"
-
-            # generate dynamically one
-            $meta = [PSCustomObject]@{names=@{fastrtps=@{"cmake-args"=$Null}}}
-
-            $meta.names.fastrtps."cmake-args" = "-DEPROSIMA_BUILD=ON",
-                                                "-DINTERNAL_DEBUG=ON",
-                                                "-DGTEST_INDIVIDUAL=ON",
-                                                "-DFASTRTPS_API_TESTS=OFF",
-                                                "-DFASTDDS_PIM_API_TESTS=ON",
-                                                "-DPERFORMANCE_TESTS=ON",
-                                                "-DNO_TLS=ON",
-                                                "-DENABLE_WER=ON",
-                                                "-DWER_TIMEOUT_TIME=240"
-          }
-
           # Generate the meta file
           "::group::deployed colcon.meta file"
+          $meta = Get-Content $meta_path | ConvertFrom-Yaml
           $meta | ConvertTo-Json -Depth 3 | Tee-Object -FilePath ci.meta -Encoding OEM
           "::endgroup::"
+
+          # create source dir and download the sources
+          vcs import src --input fastrtps.repos --skip-existing
 
       - name: Build
         id: build

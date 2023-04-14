@@ -11,12 +11,10 @@ jobs:
       label: 'nightly-sec-windows-ci'
       cmake-args: "-DSECURITY=ON"
       ctest-args: "-LE xfail"
-      force-meta-branch: 'nightly'
 
   nightly-nosec-windows-ci:
     uses: ./.github/workflows/reusable-windows-ci.yml
     with:
-      label: 'nightly-sec-windows-ci'
+      label: 'nightly-nosec-windows-ci'
       cmake-args: "-DSECURITY=OFF"
       ctest-args: "-LE xfail"
-      force-meta-branch: 'nightly'
