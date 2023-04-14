@@ -1304,7 +1304,7 @@ bool DataWriterImpl::deadline_missed()
     auto listener = get_listener_for(notify_status);
     if (nullptr != listener)
     {
-        listener_->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
+        listener->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
         deadline_missed_status_.total_count_change = 0;
     }
     user_datawriter_->get_statuscondition().get_impl()->set_status(notify_status, true);
