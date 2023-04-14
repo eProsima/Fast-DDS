@@ -338,14 +338,14 @@ jobs:
           # Nightly job
           if ("${{ inputs.label }}".Contains("nightly"))
           {
-              $depends_repos_path = ".github\workflows\config\nightly.repos"
-              $meta_path = ".github\workflows\config\nightly.meta"
+              $depends_repos_path = ".\src\fastrtps\.github\workflows\config\nightly.repos"
+              $meta_path = ".\src\fastrtps\.github\workflows\config\nightly.meta"
           }
           # Either PR or manual
           else
           {
-              $depends_repos_path = ".github\workflows\config\default_ci.repos"
-              $meta_path = ".github\workflows\config\default_ci.meta"
+              $depends_repos_path = ".\src\fastrtps\.github\workflows\config\default_ci.repos"
+              $meta_path = ".\src\fastrtps\.github\workflows\config\default_ci.meta"
           }
           Write-Output "Selected repos files: $depends_repos_path"
           Write-Output "Selected metas files: $meta_path"
