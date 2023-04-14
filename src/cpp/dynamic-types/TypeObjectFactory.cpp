@@ -15,13 +15,13 @@
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/types/TypeNamesGenerator.h>
 #include <fastrtps/types/BuiltinAnnotationsTypeObject.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicTypeMember.h>
+#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/v1_3/AnnotationDescriptor.h>
-#include <fastrtps/types/v1_3/DynamicType.h>
-#include <fastrtps/types/v1_3/DynamicTypeBuilder.h>
-#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/v1_3/DynamicTypeMember.h>
-#include <fastrtps/types/v1_3/MemberDescriptor.h>
-#include <fastrtps/types/v1_3/TypeDescriptor.h>
 #include <fastrtps/utils/md5.h>
 #include <fastdds/dds/log/Log.hpp>
 
@@ -1745,7 +1745,19 @@ static TypeKind GetTypeKindFromIdentifier(
     }
 }
 
-v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
+v1_1::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
+        const std::string& name,
+        const TypeIdentifier* identifier,
+        const TypeObject* object) const
+{
+    // delegate into the generic API
+    v1_1::DynamicType_ptr ret;
+    build_dynamic_type(ret, name, identifier, object);
+    return ret;
+}
+
+ReturnCode_t TypeObjectFactory::build_dynamic_type(
+        v1_3::DynamicType_ptr & ret,
         const std::string& name,
         const TypeIdentifier* identifier,
         const TypeObject* object) const
@@ -1804,6 +1816,140 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             {
                 const TypeIdentifier* aux = try_get_complete(identifier->seq_sdefn().element_identifier());
                 descriptor.bound_.emplace_back(static_cast<uint32_t>(identifier->seq_sdefn().bound()));
+                build_dynamic_type(descriptor.element_type_, get_type_name(aux), aux, get_type_object(aux));
+            }
+            else
+            {
+                const TypeIdentifier* aux = try_get_complete(identifier->seq_ldefn().element_identifier());
+                descriptor.bound_.emplace_back(identifier->seq_ldefn().bound());
+                build_dynamic_type(descriptor.element_type_, get_type_name(aux), aux, get_type_object(aux));
+            }
+            break;
+        }
+        case TypeKind::TK_ARRAY:
+        {
+            if (identifier->_d() == TypeKind::TI_PLAIN_ARRAY_SMALL)
+            {
+                const TypeIdentifier* aux = try_get_complete(identifier->array_sdefn().element_identifier());
+                for (octet b : identifier->array_sdefn().array_bound_seq())
+                {
+                    descriptor.bound_.emplace_back(static_cast<uint32_t>(b));
+                }
+                build_dynamic_type(descriptor.element_type_, get_type_name(aux), aux, get_type_object(aux));
+            }
+            else
+            {
+                const TypeIdentifier* aux = identifier->array_ldefn().element_identifier();
+                descriptor.bound_ = identifier->array_ldefn().array_bound_seq();
+                build_dynamic_type(descriptor.element_type_, get_type_name(aux), aux, get_type_object(aux));
+            }
+            break;
+        }
+        case TypeKind::TK_MAP:
+        {
+            if (identifier->_d() == TypeKind::TI_PLAIN_MAP_SMALL)
+            {
+                const TypeIdentifier* aux = try_get_complete(identifier->map_sdefn().element_identifier());
+                const TypeIdentifier* aux2 = try_get_complete(identifier->map_sdefn().key_identifier());
+                descriptor.bound_.emplace_back(static_cast<uint32_t>(identifier->map_sdefn().bound()));
+                build_dynamic_type(descriptor.element_type_, get_type_name(aux), aux, get_type_object(aux));
+                build_dynamic_type(descriptor.key_element_type_, get_type_name(aux2), aux2, get_type_object(aux2));
+            }
+            else
+            {
+                const TypeIdentifier* aux = try_get_complete(identifier->map_ldefn().element_identifier());
+                const TypeIdentifier* aux2 = try_get_complete(identifier->map_ldefn().key_identifier());
+                descriptor.bound_.emplace_back(identifier->map_ldefn().bound());
+                build_dynamic_type(descriptor.element_type_, get_type_name(aux), aux, get_type_object(aux));
+                build_dynamic_type(descriptor.key_element_type_, get_type_name(aux2), aux2, get_type_object(aux2));
+            }
+            break;
+        }
+        case TypeKind::EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
+            // A MinimalTypeObject cannot instantiate a valid TypeDescriptor, but maybe the object isn't minimal
+            if (object != nullptr && object->_d() == TypeKind::EK_COMPLETE)
+            {
+                // delegate
+                return build_dynamic_type(ret, descriptor, object);
+            }
+            break;
+        case TypeKind::TK_NONE:
+            return ReturnCode_t::RETCODE_ERROR;
+        default:
+            break;
+    }
+
+    v1_3::DynamicTypeBuilder_ptr outputType = v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
+    //outputType->set_name(name);
+    if (outputType)
+    {
+        ret = outputType->build();
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_ERROR;
+}
+
+ReturnCode_t TypeObjectFactory::build_dynamic_type(
+        v1_1::DynamicType_ptr & ret,
+        const std::string& name,
+        const TypeIdentifier* identifier,
+        const TypeObject* object) const
+{
+    TypeKind kind = GetTypeKindFromIdentifier(identifier);
+    TypeDescriptor descriptor(name, static_cast<octet>(kind));
+    switch (kind)
+    {
+        // Basic types goes as default!
+        /*
+           case TK_NONE:
+           case TK_BOOLEAN:
+           case TK_BYTE:
+           case TK_INT16:
+           case TK_INT32:
+           case TK_INT64:
+           case TK_UINT16:
+           case TK_UINT32:
+           case TK_UINT64:
+           case TK_FLOAT32:
+           case TK_FLOAT64:
+           case TK_FLOAT128:
+           case TK_CHAR8:
+           case TK_CHAR16:
+            break;
+         */
+        case TK_STRING8:
+        {
+            if (identifier->_d() == TI_STRING8_SMALL)
+            {
+                descriptor.bound_.emplace_back(static_cast<uint32_t>(identifier->string_sdefn().bound()));
+            }
+            else
+            {
+                descriptor.bound_.emplace_back(identifier->string_ldefn().bound());
+            }
+            descriptor.element_type_ = DynamicTypeBuilderFactory::get_instance()->create_char8_type();
+            break;
+        }
+        case TK_STRING16:
+        {
+            if (identifier->_d() == TI_STRING16_SMALL)
+            {
+                descriptor.bound_.emplace_back(static_cast<uint32_t>(identifier->string_sdefn().bound()));
+            }
+            else
+            {
+                descriptor.bound_.emplace_back(identifier->string_ldefn().bound());
+            }
+            descriptor.element_type_ = DynamicTypeBuilderFactory::get_instance()->create_char16_type();
+            break;
+        }
+        case TK_SEQUENCE:
+        {
+            if (identifier->_d() == TI_PLAIN_SEQUENCE_SMALL)
+            {
+                const TypeIdentifier* aux = try_get_complete(identifier->seq_sdefn().element_identifier());
+                descriptor.bound_.emplace_back(static_cast<uint32_t>(identifier->seq_sdefn().bound()));
                 descriptor.element_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
             }
             else
@@ -1814,9 +1960,9 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             }
             break;
         }
-        case TypeKind::TK_ARRAY:
+        case TK_ARRAY:
         {
-            if (identifier->_d() == TypeKind::TI_PLAIN_ARRAY_SMALL)
+            if (identifier->_d() == TI_PLAIN_ARRAY_SMALL)
             {
                 const TypeIdentifier* aux = try_get_complete(identifier->array_sdefn().element_identifier());
                 for (octet b : identifier->array_sdefn().array_bound_seq())
@@ -1833,15 +1979,15 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             }
             break;
         }
-        case TypeKind::TK_MAP:
+        case TK_MAP:
         {
-            if (identifier->_d() == TypeKind::TI_PLAIN_MAP_SMALL)
+            if (identifier->_d() == TI_PLAIN_MAP_SMALL)
             {
                 const TypeIdentifier* aux = try_get_complete(identifier->map_sdefn().element_identifier());
                 const TypeIdentifier* aux2 = try_get_complete(identifier->map_sdefn().key_identifier());
                 descriptor.bound_.emplace_back(static_cast<uint32_t>(identifier->map_sdefn().bound()));
                 descriptor.element_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
-                descriptor.key_element_type_ = build_dynamic_type(get_type_name(aux2), aux2, get_type_object(aux2));
+                descriptor.key_element_type_ = build_dynamic_type(get_type_name(aux), aux2, get_type_object(aux2));
             }
             else
             {
@@ -1849,42 +1995,55 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 const TypeIdentifier* aux2 = try_get_complete(identifier->map_ldefn().key_identifier());
                 descriptor.bound_.emplace_back(identifier->map_ldefn().bound());
                 descriptor.element_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
-                descriptor.key_element_type_ = build_dynamic_type(get_type_name(aux2), aux2, get_type_object(aux2));
+                descriptor.key_element_type_ = build_dynamic_type(get_type_name(aux), aux2, get_type_object(aux2));
             }
             break;
         }
-        case TypeKind::EK_MINIMAL:
-        case TypeKind::EK_COMPLETE:
+        case EK_MINIMAL:
+        case EK_COMPLETE:
             // A MinimalTypeObject cannot instantiate a valid TypeDescriptor, but maybe the object isn't minimal
-            if (object != nullptr && object->_d() == TypeKind::EK_COMPLETE)
+            if (object != nullptr && object->_d() == EK_COMPLETE)
             {
-                return build_dynamic_type(descriptor, object);
+                return build_dynamic_type(ret, descriptor, object);
             }
             break;
-        case TypeKind::TK_NONE:
-            return v1_3::DynamicType_ptr(nullptr); // Maybe in discovery, return nullptr quietly.
+        case TK_NONE:
+            return ReturnCode_t::RETCODE_ERROR;
         default:
             break;
     }
 
-    v1_3::DynamicTypeBuilder_ptr outputType = v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
+    DynamicTypeBuilder_ptr outputType = DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
     //outputType->set_name(name);
-    if (outputType)
+    if (outputType != nullptr)
     {
-        return outputType->build();
+        ret = outputType->build();
+        return ReturnCode_t::RETCODE_OK;
     }
-    return {};
+
+    return ReturnCode_t::RETCODE_ERROR;
+}
+
+v1_1::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
+        v1_1::TypeDescriptor& descriptor,
+        const TypeObject* object,
+        const v1_1::DynamicType_ptr annotation_member_type) const
+{
+    v1_1::DynamicType_ptr ret;
+    build_dynamic_type(ret, descriptor, object, annotation_member_type);
+    return ret;
 }
 
 // TODO annotations
-v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
+ReturnCode_t TypeObjectFactory::build_dynamic_type(
+        v1_3::DynamicType_ptr& ret,
         v1_3::TypeDescriptor& descriptor,
         const TypeObject* object,
         const v1_3::DynamicType_ptr annotation_member_type) const
 {
     if (object == nullptr || object->_d() != TypeKind::EK_COMPLETE)
     {
-        return v1_3::DynamicType_ptr(nullptr);
+        return ReturnCode_t::RETCODE_ERROR;
     }
 
     // Change descriptor's kind
@@ -1897,7 +2056,7 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
         {
             const TypeIdentifier* aux =
                     get_stored_type_identifier(&object->complete().alias_type().body().common().related_type());
-            descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
+            build_dynamic_type(descriptor.base_type_, get_type_name(aux), aux, get_type_object(aux));
             descriptor.set_name(object->complete().alias_type().header().detail().type_name());
             v1_3::DynamicTypeBuilder_ptr alias_type =
                     v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
@@ -1905,14 +2064,15 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             // Apply type's annotations
             apply_type_annotations(alias_type, object->complete().alias_type().header().detail().ann_custom());
 
-            return alias_type->build();
+            ret = alias_type->build();
+            return ReturnCode_t::RETCODE_OK;
         }
         case TypeKind::TK_STRUCTURE:
         {
             const TypeIdentifier* aux = &object->complete().struct_type().header().base_type();
             if (aux->_d() == TypeKind::EK_COMPLETE)
             {
-                descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
+                build_dynamic_type(descriptor.base_type_, get_type_name(aux), aux, get_type_object(aux));
             }
 
             v1_3::DynamicTypeBuilder_ptr struct_type =
@@ -1931,9 +2091,13 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                     EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Struct) auxMem is nullptr, but original member has "
                             << (int)member->common().member_type_id()._d());
                 }
+
+                v1_3::DynamicType_ptr type;
+                build_dynamic_type(type, get_type_name(auxMem), auxMem, get_type_object(auxMem));
+
                 v1_3::MemberDescriptor memDesc;
                 memDesc.set_id(member->common().member_id());
-                memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
+                memDesc.set_type(type);
                 memDesc.set_name(member->detail().name());
 
                 struct_type->add_member(memDesc);
@@ -1944,7 +2108,8 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
 
                 apply_member_annotations(struct_type, memDesc.get_id(), member->detail().ann_custom());
             }
-            return struct_type->build();
+            ret = struct_type->build();
+            return ReturnCode_t::RETCODE_OK;
         }
         case TypeKind::TK_ENUM:
         {
@@ -1993,7 +2158,8 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                     enum_type->apply_annotation_to_member(v1_3::MemberId(member->common().value()), def_flag);
                 }
             }
-            return enum_type->build();
+            ret = enum_type->build();
+            return ReturnCode_t::RETCODE_OK;
         }
         case TypeKind::TK_BITMASK:
         {
@@ -2016,14 +2182,15 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 // member->common().position() should be already an annotation
                 apply_member_annotations(bitmask_type, id, member->detail().ann_custom());
             }
-            return bitmask_type->build();
+            ret = bitmask_type->build();
+            return ReturnCode_t::RETCODE_OK;
         }
         case TypeKind::TK_BITSET:
         {
             const TypeIdentifier* aux = &object->complete().bitset_type().header().base_type();
             if (aux->_d() == TypeKind::EK_COMPLETE)
             {
-                descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
+                build_dynamic_type(descriptor.base_type_, get_type_name(aux), aux, get_type_object(aux));
             }
 
             v1_3::DynamicTypeBuilder_ptr bitsetType =
@@ -2043,9 +2210,13 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                     EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Bitset) auxMem is nullptr, but original member has "
                             << (int)member->common().holder_type());
                 }
+
+                v1_3::DynamicType_ptr type;
+                build_dynamic_type(type, get_type_name(auxMem), auxMem, get_type_object(auxMem));
+
                 v1_3::MemberDescriptor memDesc;
                 //memDesc.id_ = order++;
-                memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
+                memDesc.set_type(type);
                 memDesc.set_name(member->detail().name());
                 // bounds are meant for string, arrays, sequences, maps, but not for bitset!
                 // Lack in the standard?
@@ -2054,16 +2225,14 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 // member->common().position() and member->common().bitcount() should be annotations
                 apply_member_annotations(bitsetType, m_id, member->detail().ann_custom());
             }
-            return bitsetType->build();
-
-            //EPROSIMA_LOG_ERROR(XTYPES, "Bitset isn't supported by v1_3::DynamicType");
-            //return nullptr;
+            ret = bitsetType->build();
+            return ReturnCode_t::RETCODE_OK;
         }
         case TypeKind::TK_UNION:
         {
             const TypeIdentifier* aux =
                     get_stored_type_identifier(&object->complete().union_type().discriminator().common().type_id());
-            descriptor.discriminator_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
+            build_dynamic_type(descriptor.discriminator_type_, get_type_name(aux), aux, get_type_object(aux));
 
             v1_3::DynamicTypeBuilder_ptr union_type =
                     v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
@@ -2081,8 +2250,12 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                     EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Union) auxMem is nullptr, but original member has "
                             << (int)member->common().type_id()._d());
                 }
+
+                v1_3::DynamicType_ptr type;
+                build_dynamic_type(type, get_type_name(auxMem), auxMem, get_type_object(auxMem));
+
                 v1_3::MemberDescriptor memDesc;
-                memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
+                memDesc.set_type(type);
                 //memDesc.set_index(order++);
                 memDesc.id_ = member->common().member_id();
                 memDesc.set_name(member->detail().name());
@@ -2109,7 +2282,8 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 apply_member_annotations(union_type, member->common().member_id(), member->detail().ann_custom());
             }
 
-            return union_type->build();
+            ret = union_type->build();
+            return ReturnCode_t::RETCODE_OK;
         }
         case TypeKind::TK_ANNOTATION:
         {
@@ -2133,19 +2307,319 @@ v1_3::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 }
                 else
                 {
-                    mem_desc.set_type(build_dynamic_type(get_type_name(aux_mem), aux_mem, get_type_object(aux_mem)));
+                    v1_3::DynamicType_ptr type;
+                    build_dynamic_type(type, get_type_name(aux_mem), aux_mem, get_type_object(aux_mem));
+                    mem_desc.set_type(type);
                 }
                 mem_desc.set_default_value(member.default_value().to_string());
                 annotation_type->add_member(mem_desc);
             }
             // Annotation inner definitions?
 
-            return annotation_type->build();
+            ret = annotation_type->build();
+            return ReturnCode_t::RETCODE_OK;
         }
         default:
             break;
     }
-    return v1_3::DynamicType_ptr(nullptr);
+    return ReturnCode_t::RETCODE_ERROR;
+}
+
+ReturnCode_t TypeObjectFactory::build_dynamic_type(
+        v1_1::DynamicType_ptr& ret,
+        v1_1::TypeDescriptor& descriptor,
+        const TypeObject* object,
+        const v1_1::DynamicType_ptr annotation_member_type) const
+{
+    if (object == nullptr || object->_d() != TypeKind::EK_COMPLETE)
+    {
+        return ReturnCode_t::RETCODE_ERROR;
+    }
+
+    // Change descriptor's kind
+    descriptor.set_kind(static_cast<octet>(object->complete()._d()));
+
+    switch (object->complete()._d())
+    {
+        // From here, we need TypeObject
+        case TK_ALIAS:
+        {
+            const TypeIdentifier* aux =
+                    get_stored_type_identifier(&object->complete().alias_type().body().common().related_type());
+            descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
+            descriptor.set_name(object->complete().alias_type().header().detail().type_name());
+            DynamicTypeBuilder_ptr alias_type =
+                    DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+
+            // Apply type's annotations
+            apply_type_annotations(alias_type, object->complete().alias_type().header().detail().ann_custom());
+
+            ret = alias_type->build();
+            return ReturnCode_t::RETCODE_OK;
+        }
+        case TK_STRUCTURE:
+        {
+            const TypeIdentifier* aux = &object->complete().struct_type().header().base_type();
+            if (aux->_d() == EK_COMPLETE)
+            {
+                descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
+            }
+
+            DynamicTypeBuilder_ptr struct_type =
+                    DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+
+            // Apply type's annotations
+            apply_type_annotations(struct_type, object->complete().struct_type().header().detail().ann_custom());
+
+            //uint32_t order = 0;
+            const CompleteStructMemberSeq& structVector = object->complete().struct_type().member_seq();
+            for (auto member = structVector.begin(); member != structVector.end(); ++member)
+            {
+                //const TypeIdentifier* auxMem = &member.common().member_type_id();
+                const TypeIdentifier* auxMem = get_stored_type_identifier(&member->common().member_type_id());
+                if (auxMem == nullptr)
+                {
+                    EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Struct) auxMem is nullptr, but original member has "
+                            << (int)member->common().member_type_id()._d());
+                }
+                MemberDescriptor memDesc;
+                memDesc.id_ = *member->common().member_id();
+                memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
+                //memDesc.set_index(order++);
+                memDesc.set_name(member->detail().name());
+                struct_type->add_member(&memDesc);
+                apply_member_annotations(struct_type, *member->common().member_id(), member->detail().ann_custom());
+            }
+            ret = struct_type->build();
+            return ReturnCode_t::RETCODE_OK;
+        }
+        case TK_ENUM:
+        {
+            // bit_bound annotation effect!
+            descriptor.annotation_set_bit_bound(object->complete().enumerated_type().header().common().bit_bound());
+
+            DynamicTypeBuilder_ptr enum_type =
+                    DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+
+            // Apply type's annotations
+            apply_type_annotations(enum_type, object->complete().enumerated_type().header().detail().ann_custom());
+            /*
+               {
+                const AppliedAnnotationSeq& annotations =
+                    object->complete().enumerated_type().header().detail().ann_custom();
+                for (const AppliedAnnotation& annotation : annotations)
+                {
+                    const TypeIdentifier* anno_id = get_stored_type_identifier(&annotation.annotation_typeid());
+                    if (anno_id == nullptr)
+                    {
+                        EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Annotation) anno_id is nullptr, but original member has "
+                            << (int)annotation.annotation_typeid()._d());
+                    }
+                    AnnotationDescriptor anno_desc;
+                    anno_desc.set_type(build_dynamic_type(get_type_name(anno_id), anno_id, get_type_object(anno_id)));
+                    const AppliedAnnotationParameterSeq& anno_params = annotation.param_seq();
+                    for (const AppliedAnnotationParameter a_param : anno_params)
+                    {
+                        std::string param_key = get_key_from_hash(anno_desc.type(), a_param.paramname_hash());
+                        anno_desc.set_value(param_key, a_param.value().to_string());
+                    }
+                    enum_type->apply_annotation(anno_desc);
+                }
+               }
+             */
+
+            const CompleteEnumeratedLiteralSeq& enumVector = object->complete().enumerated_type().literal_seq();
+            for (auto member = enumVector.begin(); member != enumVector.end(); ++member)
+            {
+                enum_type->add_empty_member(member->common().value(), member->detail().name());
+                apply_member_annotations(enum_type, member->common().value(), member->detail().ann_custom());
+                if (member->common().flags().IS_DEFAULT())
+                {
+                    AnnotationDescriptor def_flag;
+                    def_flag.set_value(ANNOTATION_DEFAULT_LITERAL_ID, CONST_TRUE);
+                    enum_type->apply_annotation_to_member(member->common().value(), def_flag);
+                }
+            }
+            ret = enum_type->build();
+            return ReturnCode_t::RETCODE_OK;
+        }
+        case TK_BITMASK:
+        {
+            descriptor.annotation_set_bit_bound(object->complete().bitmask_type().header().common().bit_bound());
+            descriptor.bound_.emplace_back(static_cast<uint32_t>(
+                        object->complete().bitmask_type().header().common().bit_bound()));
+            descriptor.element_type_ = DynamicTypeBuilderFactory::get_instance()->create_bool_type();
+
+            DynamicTypeBuilder_ptr bitmask_type =
+                    DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+
+            // Apply type's annotations
+            apply_type_annotations(bitmask_type, object->complete().bitmask_type().header().detail().ann_custom());
+
+            const CompleteBitflagSeq& seq = object->complete().bitmask_type().flag_seq();
+            for (auto member = seq.begin(); member != seq.end(); ++member)
+            {
+                bitmask_type->add_empty_member(member->common().position(), member->detail().name());
+                MemberId m_id = bitmask_type->get_member_id_by_name(member->detail().name());
+                // member->common().position() should be already an annotation
+                apply_member_annotations(bitmask_type, m_id, member->detail().ann_custom());
+            }
+            ret = bitmask_type->build();
+            return ReturnCode_t::RETCODE_OK;
+        }
+        case TK_BITSET:
+        {
+            const TypeIdentifier* aux = &object->complete().bitset_type().header().base_type();
+            if (aux->_d() == EK_COMPLETE)
+            {
+                descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
+            }
+
+            DynamicTypeBuilder_ptr bitsetType =
+                    DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+
+            // Apply type's annotations
+            apply_type_annotations(bitsetType, object->complete().bitset_type().header().detail().ann_custom());
+
+            //uint32_t order = 0;
+            const CompleteBitfieldSeq& fields = object->complete().bitset_type().field_seq();
+            for (auto member = fields.begin(); member != fields.end(); ++member)
+            {
+                //const TypeIdentifier* auxMem = &member.common().member_type_id();
+                const TypeIdentifier* auxMem = get_primitive_type_identifier(member->common().holder_type());
+                if (auxMem == nullptr)
+                {
+                    EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Bitset) auxMem is nullptr, but original member has "
+                            << (int)member->common().holder_type());
+                }
+                MemberDescriptor memDesc;
+                //memDesc.id_ = order++;
+                memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
+                memDesc.set_name(member->detail().name());
+                // bounds are meant for string, arrays, sequences, maps, but not for bitset!
+                // Lack in the standard?
+                bitsetType->add_member(&memDesc);
+                MemberId m_id = bitsetType->get_member_id_by_name(memDesc.get_name());
+                // member->common().position() and member->common().bitcount() should be annotations
+                apply_member_annotations(bitsetType, m_id, member->detail().ann_custom());
+            }
+            ret = bitsetType->build();
+            return ReturnCode_t::RETCODE_OK;
+        }
+        case TK_UNION:
+        {
+            const TypeIdentifier* aux =
+                    get_stored_type_identifier(&object->complete().union_type().discriminator().common().type_id());
+            descriptor.discriminator_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
+
+            DynamicTypeBuilder_ptr union_type =
+                    DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+
+            // Apply type's annotations
+            apply_type_annotations(union_type, object->complete().union_type().header().detail().ann_custom());
+
+            //uint32_t order = 0;
+            const CompleteUnionMemberSeq& unionVector = object->complete().union_type().member_seq();
+            for (auto member = unionVector.begin(); member != unionVector.end(); ++member)
+            {
+                const TypeIdentifier* auxMem = get_stored_type_identifier(&member->common().type_id());
+                if (auxMem == nullptr)
+                {
+                    EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Union) auxMem is nullptr, but original member has "
+                            << (int)member->common().type_id()._d());
+                }
+                MemberDescriptor memDesc;
+                memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
+                //memDesc.set_index(order++);
+                memDesc.id_ = *member->common().member_id();
+                memDesc.set_name(member->detail().name());
+                memDesc.set_default_union_value(member->common().member_flags().IS_DEFAULT());
+                if (descriptor.discriminator_type_->get_kind() == TK_ENUM)
+                {
+                    DynamicTypeMember enumMember;
+                    descriptor.discriminator_type_->get_member(enumMember, memDesc.id_);
+                    memDesc.default_value_ = enumMember.get_descriptor()->name_;
+                    for (uint32_t lab : member->common().label_seq())
+                    {
+                        memDesc.add_union_case_index(lab);
+                    }
+                }
+                else
+                {
+                    memDesc.default_value_ = std::to_string(memDesc.id_);
+                    for (uint32_t lab : member->common().label_seq())
+                    {
+                        memDesc.add_union_case_index(lab);
+                    }
+                }
+                union_type->add_member(&memDesc);
+                apply_member_annotations(union_type, *member->common().member_id(), member->detail().ann_custom());
+            }
+
+            ret = union_type->build();
+            return ReturnCode_t::RETCODE_OK;
+        }
+        case TK_ANNOTATION:
+        {
+            DynamicTypeBuilder_ptr annotation_type =
+                    DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
+
+            for (const CompleteAnnotationParameter& member : object->complete().annotation_type().member_seq())
+            {
+                const TypeIdentifier* aux_mem = get_stored_type_identifier(&member.common().member_type_id());
+                if (aux_mem == nullptr)
+                {
+                    EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Annotation) aux_mem is nullptr, but original member has "
+                            << (int)member.common().member_type_id()._d());
+                }
+
+                MemberDescriptor mem_desc;
+                mem_desc.set_name(member.name());
+                if (annotation_member_type != nullptr)
+                {
+                    mem_desc.set_type(annotation_member_type);
+                }
+                else
+                {
+                    mem_desc.set_type(build_dynamic_type(get_type_name(aux_mem), aux_mem, get_type_object(aux_mem)));
+                }
+                mem_desc.set_default_value(member.default_value().to_string());
+                annotation_type->add_member(&mem_desc);
+            }
+            // Annotation inner definitions?
+
+            ret = annotation_type->build();
+            return ReturnCode_t::RETCODE_OK;
+        }
+        default:
+            break;
+    }
+
+    return ReturnCode_t::RETCODE_ERROR;
+}
+
+void TypeObjectFactory::apply_type_annotations(
+        v1_1::DynamicTypeBuilder_ptr& type_builder,
+        const AppliedAnnotationSeq& annotations) const
+{
+    for (const AppliedAnnotation& annotation : annotations)
+    {
+        const TypeIdentifier* anno_id = get_stored_type_identifier(&annotation.annotation_typeid());
+        if (anno_id == nullptr)
+        {
+            EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Annotation) anno_id is nullptr, but original member has "
+                    << (int)annotation.annotation_typeid()._d());
+        }
+        AnnotationDescriptor anno_desc;
+        anno_desc.set_type(build_dynamic_type(get_type_name(anno_id), anno_id, get_type_object(anno_id)));
+        const AppliedAnnotationParameterSeq& anno_params = annotation.param_seq();
+        for (const AppliedAnnotationParameter& a_param : anno_params)
+        {
+            std::string param_key = get_key_from_hash(anno_desc.type(), a_param.paramname_hash());
+            anno_desc.set_value(param_key, a_param.value().to_string());
+        }
+        type_builder->apply_annotation(anno_desc);
+    }
 }
 
 void TypeObjectFactory::apply_type_annotations(
@@ -2160,8 +2634,13 @@ void TypeObjectFactory::apply_type_annotations(
             EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Annotation) anno_id is nullptr, but original member has "
                     << (int)annotation.annotation_typeid()._d());
         }
+
+        v1_3::DynamicType_ptr type;
+        build_dynamic_type(type, get_type_name(anno_id), anno_id, get_type_object(anno_id));
+
         v1_3::AnnotationDescriptor anno_desc;
-        anno_desc.set_type(build_dynamic_type(get_type_name(anno_id), anno_id, get_type_object(anno_id)));
+        anno_desc.set_type(type);
+
         const AppliedAnnotationParameterSeq& anno_params = annotation.param_seq();
         for (const AppliedAnnotationParameter& a_param : anno_params)
         {
@@ -2169,6 +2648,31 @@ void TypeObjectFactory::apply_type_annotations(
             anno_desc.set_value(param_key, a_param.value().to_string());
         }
         type_builder->apply_annotation(anno_desc);
+    }
+}
+
+void TypeObjectFactory::apply_member_annotations(
+        v1_1::DynamicTypeBuilder_ptr& parent_type_builder,
+        v1_1::MemberId member_id,
+        const AppliedAnnotationSeq& annotations) const
+{
+    for (const AppliedAnnotation& annotation : annotations)
+    {
+        const TypeIdentifier* anno_id = get_stored_type_identifier(&annotation.annotation_typeid());
+        if (anno_id == nullptr)
+        {
+            EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Annotation) anno_id is nullptr, but original member has "
+                    << (int)annotation.annotation_typeid()._d());
+        }
+        AnnotationDescriptor anno_desc;
+        anno_desc.set_type(build_dynamic_type(get_type_name(anno_id), anno_id, get_type_object(anno_id)));
+        const AppliedAnnotationParameterSeq& anno_params = annotation.param_seq();
+        for (const AppliedAnnotationParameter& a_param : anno_params)
+        {
+            std::string param_key = get_key_from_hash(anno_desc.type(), a_param.paramname_hash());
+            anno_desc.set_value(param_key, a_param.value().to_string());
+        }
+        parent_type_builder->apply_annotation_to_member(member_id, anno_desc);
     }
 }
 
@@ -2185,8 +2689,12 @@ void TypeObjectFactory::apply_member_annotations(
             EPROSIMA_LOG_WARNING(DYNAMIC_TYPES, "(Annotation) anno_id is nullptr, but original member has "
                     << (int)annotation.annotation_typeid()._d());
         }
+
+        v1_3::DynamicType_ptr type;
+        build_dynamic_type(type, get_type_name(anno_id), anno_id, get_type_object(anno_id));
+
         v1_3::AnnotationDescriptor anno_desc;
-        anno_desc.set_type(build_dynamic_type(get_type_name(anno_id), anno_id, get_type_object(anno_id)));
+        anno_desc.set_type(type);
         const AppliedAnnotationParameterSeq& anno_params = annotation.param_seq();
         for (const AppliedAnnotationParameter& a_param : anno_params)
         {
@@ -2195,6 +2703,29 @@ void TypeObjectFactory::apply_member_annotations(
         }
         parent_type_builder->apply_annotation_to_member(member_id, anno_desc);
     }
+}
+
+std::string TypeObjectFactory::get_key_from_hash(
+        const v1_1::DynamicType_ptr annotation_descriptor_type,
+        const NameHash& hash) const
+{
+    std::map<MemberId, DynamicTypeMember*> members;
+    annotation_descriptor_type->get_all_members(members);
+    for (auto it : members)
+    {
+        std::string name = it.second->get_name();
+        NameHash memberHash;
+        MD5 message_hash(name);
+        for (int i = 0; i < 4; ++i)
+        {
+            memberHash[i] = message_hash.digest[i];
+        }
+        if (memberHash == hash)
+        {
+            return name;
+        }
+    }
+    return "";
 }
 
 std::string TypeObjectFactory::get_key_from_hash(

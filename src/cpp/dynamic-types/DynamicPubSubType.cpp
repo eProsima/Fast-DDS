@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,209 +13,106 @@
 // limitations under the License.
 
 #include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/v1_3/DynamicType.h>
-#include <fastrtps/types/v1_3/DynamicTypeMember.h>
-#include <fastrtps/types/v1_3/DynamicDataFactory.h>
-#include <fastrtps/types/v1_3/DynamicData.h>
-#include <fastdds/rtps/common/SerializedPayload.h>
-#include <fastdds/rtps/common/InstanceHandle.h>
-#include <fastdds/dds/log/Log.hpp>
-#include <fastcdr/Cdr.h>
 
 using namespace eprosima::fastrtps::types;
 
 DynamicPubSubType::DynamicPubSubType(
-        v1_3::DynamicType_ptr pType)
-    : dynamic_type_(pType)
+        v1_1::DynamicType_ptr pDynamicType)
+    : v1_1::internal::DynamicPubSubType(pDynamicType)
+    , active_(version::v1_1)
 {
-    UpdateDynamicTypeInfo();
 }
 
-DynamicPubSubType::~DynamicPubSubType()
+DynamicPubSubType::DynamicPubSubType(
+        v1_3::DynamicType_ptr pDynamicType)
+    : v1_3::DynamicPubSubType(pDynamicType)
+    , active_(version::v1_3)
 {
-    if (m_keyBuffer != nullptr)
-    {
-        free(m_keyBuffer);
-    }
-}
-
-void DynamicPubSubType::CleanDynamicType()
-{
-    dynamic_type_.reset();
-}
-
-v1_3::DynamicType_ptr DynamicPubSubType::GetDynamicType() const
-{
-    return dynamic_type_;
-}
-
-ReturnCode_t DynamicPubSubType::SetDynamicType(
-        v1_3::DynamicData_ptr pData)
-{
-    if (!dynamic_type_)
-    {
-        dynamic_type_ = pData->type_;
-        UpdateDynamicTypeInfo();
-        return ReturnCode_t::RETCODE_OK;
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error Setting the dynamic type. There is already a registered type");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    }
-}
-
-ReturnCode_t DynamicPubSubType::SetDynamicType(
-        v1_3::DynamicType_ptr pType)
-{
-    if (!dynamic_type_)
-    {
-        dynamic_type_ = pType;
-        UpdateDynamicTypeInfo();
-        return ReturnCode_t::RETCODE_OK;
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error Setting the dynamic type. There is already a registered type");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    }
 }
 
 void* DynamicPubSubType::createData()
 {
-    return v1_3::DynamicDataFactory::get_instance()->create_data(dynamic_type_);
+    switch(active_)
+    {
+        case version::v1_1:
+            return v1_1::internal::DynamicPubSubType::createData();
+        case version::v1_3:
+            return v1_3::DynamicPubSubType::createData();
+    }
+
+    return nullptr;
 }
 
-void DynamicPubSubType::deleteData(
-        void* data)
+void DynamicPubSubType::deleteData (
+            void* data)
 {
-    v1_3::DynamicDataFactory::get_instance()->delete_data((v1_3::DynamicData*)data);
-}
-
-bool DynamicPubSubType::deserialize(
-        eprosima::fastrtps::rtps::SerializedPayload_t* payload,
-        void* data)
-{
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
-    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
-                                              // Deserialize encapsulation.
-    deser.read_encapsulation();
-    payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-
-    try
+    switch(active_)
     {
-        ((v1_3::DynamicData*)data)->deserialize(deser); //Deserialize the object:
+        case version::v1_1:
+            v1_1::internal::DynamicPubSubType::deleteData(data);
+            break;
+        case version::v1_3:
+            v1_3::DynamicPubSubType::deleteData(data);
+            break;
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
-    {
-        return false;
-    }
-    return true;
-}
-
-bool DynamicPubSubType::getKey(
-        void* data,
-        eprosima::fastrtps::rtps::InstanceHandle_t* handle,
-        bool force_md5)
-{
-    if (dynamic_type_ == nullptr || !m_isGetKeyDefined)
-    {
-        return false;
-    }
-    v1_3::DynamicData* pDynamicData = (v1_3::DynamicData*)data;
-    size_t keyBufferSize = static_cast<uint32_t>(v1_3::DynamicData::getKeyMaxCdrSerializedSize(dynamic_type_));
-
-    if (m_keyBuffer == nullptr)
-    {
-        m_keyBuffer = (unsigned char*)malloc(keyBufferSize > 16 ? keyBufferSize : 16);
-        memset(m_keyBuffer, 0, keyBufferSize > 16 ? keyBufferSize : 16);
-    }
-
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer, keyBufferSize);
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);     // Object that serializes the data.
-    pDynamicData->serializeKey(ser);
-    if (force_md5 || keyBufferSize > 16)
-    {
-        m_md5.init();
-        m_md5.update(m_keyBuffer, (unsigned int)ser.getSerializedDataLength());
-        m_md5.finalize();
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle->value[i] = m_md5.digest[i];
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 16; ++i)
-        {
-            handle->value[i] = m_keyBuffer[i];
-        }
-    }
-    return true;
-}
-
-std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(
-        void* data)
-{
-    return [data]() -> uint32_t
-           {
-               return (uint32_t)v1_3::DynamicData::getCdrSerializedSize((v1_3::DynamicData*)data) + 4 /*encapsulation*/;
-           };
 }
 
 bool DynamicPubSubType::serialize(
         void* data,
         eprosima::fastrtps::rtps::SerializedPayload_t* payload)
 {
-    // Object that manages the raw buffer.
-    eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
-
-    // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
-    payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
-
-    try
+    switch(active_)
     {
-        ((v1_3::DynamicData*)data)->serialize(ser); // Serialize the object:
-    }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
-    {
-        return false;
+        case version::v1_1:
+            return v1_1::internal::DynamicPubSubType::serialize(data, payload);
+        case version::v1_3:
+            return v1_3::DynamicPubSubType::serialize(data, payload);
     }
 
-    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    return true;
+    return false;
 }
 
-void DynamicPubSubType::UpdateDynamicTypeInfo()
+bool DynamicPubSubType::deserialize(
+        eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+        void* data)
 {
-    m_isGetKeyDefined = false;
-
-    if (!dynamic_type_)
+    switch(active_)
     {
-        return;
+        case version::v1_1:
+            return v1_1::internal::DynamicPubSubType::deserialize(payload, data);
+        case version::v1_3:
+            return v1_3::DynamicPubSubType::deserialize(payload, data);
     }
 
-    m_typeSize = static_cast<uint32_t>(v1_3::DynamicData::getMaxCdrSerializedSize(dynamic_type_) + 4);
-    setName(dynamic_type_->get_name().c_str());
+    return false;
+}
 
-    m_isGetKeyDefined = dynamic_type_->key_annotation();
-
-    if (m_isGetKeyDefined)
+bool DynamicPubSubType::getKey(
+        void* data,
+        eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
+        bool force_md5 /*= false*/)
+{
+    switch(active_)
     {
-        return;
+        case version::v1_1:
+            return v1_1::internal::DynamicPubSubType::getKey(data, ihandle, force_md5);
+        case version::v1_3:
+            return v1_3::DynamicPubSubType::getKey(data, ihandle, force_md5);
     }
 
-    for (const v1_3::DynamicTypeMember* pm : dynamic_type_->get_all_members())
+    return false;
+}
+
+std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(
+        void* data)
+{
+    switch(active_)
     {
-        assert(pm);
-        if(pm->key_annotation())
-        {
-            return;
-        }
+        case version::v1_1:
+            return v1_1::internal::DynamicPubSubType::getSerializedSizeProvider(data);
+        case version::v1_3:
+            return v1_3::DynamicPubSubType::getSerializedSizeProvider(data);
     }
+
+    return {};
 }

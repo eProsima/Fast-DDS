@@ -24,23 +24,24 @@ target_compile_features(xtypes INTERFACE cxx_std_11)
 
 target_sources(xtypes INTERFACE
     # common
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeIdentifier.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeIdentifierTypes.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObject.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectHashId.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeNamesGenerator.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationParameterValue.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/BuiltinAnnotationsTypeObject.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicDataHelper.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/DynamicPubSubType.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/AnnotationParameterValue.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeIdentifier.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeIdentifierTypes.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeNamesGenerator.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObject.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectFactory.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypeObjectHashId.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
 
     # version 1.1
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_1/AnnotationDescriptor.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_1/DynamicData.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_1/DynamicDataFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_1/DynamicDataPtr.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_1/DynamicPubSubType.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_1/DynamicType.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_1/DynamicTypeBuilder.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_1/DynamicTypeBuilderFactory.cpp
@@ -56,6 +57,7 @@ target_sources(xtypes INTERFACE
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicData.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicDataFactory.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicDataPtr.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicPubSubType.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicType.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicTypeBuilder.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicTypeBuilderFactory.cpp

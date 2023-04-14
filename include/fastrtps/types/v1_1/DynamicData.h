@@ -37,7 +37,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace types {
 
-class DynamicPubSubType;
 class DynamicDataHelper;
 
 // v1_1 is the default implementation but deprecated
@@ -45,6 +44,10 @@ inline namespace v1_1 {
 
 class DynamicType;
 class MemberDescriptor;
+
+namespace internal {
+class DynamicPubSubType;
+}
 
 class DynamicData
 {
@@ -179,7 +182,7 @@ protected:
     uint64_t discriminator_value_;
 
     friend class DynamicDataFactory;
-    friend class types::DynamicPubSubType;
+    friend class internal::DynamicPubSubType;
     friend class types::DynamicDataHelper;
     friend class eprosima::fastdds::dds::DDSSQLFilter::DDSFilterExpression;
 

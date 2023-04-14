@@ -76,9 +76,8 @@ void Domain::stopAll()
     }
 
     // Deletes DynamicTypes and TypeObject factories
-    //TODO Barro: uncomment when v1.1 sources are reintroduced
-    //types::v1_1::DynamicTypeBuilderFactory::delete_instance();
-    //types::v1_1::DynamicDataFactory::delete_instance();
+    types::v1_1::DynamicTypeBuilderFactory::delete_instance();
+    types::v1_1::DynamicDataFactory::delete_instance();
     types::v1_3::DynamicTypeBuilderFactory::delete_instance();
     types::v1_3::DynamicDataFactory::delete_instance();
     types::TypeObjectFactory::delete_instance();
@@ -357,36 +356,84 @@ bool Domain::registerDynamicType(
         Participant* part,
         types::DynamicPubSubType* type)
 {
-    using namespace eprosima::fastrtps::types::v1_3;
+    assert(nullptr != type);
 
     TypeObjectFactory* typeFactory = TypeObjectFactory::get_instance();
 
-    const TypeIdentifier* type_id_min = typeFactory->get_type_identifier(type->getName());
-
-    if (type_id_min == nullptr)
+    if (nullptr != typeFactory->get_type_identifier(type->getName()))
     {
-        DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
-        TypeObject typeObj;
-
-        factory.build_type_object(type->GetDynamicType()->get_descriptor(), typeObj);
-        // Minimal too
-        factory.build_type_object(type->GetDynamicType()->get_descriptor(), typeObj, false);
-        const TypeIdentifier* type_id2 = typeFactory->get_type_identifier(type->getName());
-        const TypeObject* type_obj = typeFactory->get_type_object(type->getName());
-        if (type_id2 == nullptr)
-        {
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot register dynamic type " << type->getName());
-        }
-        else
-        {
-            typeFactory->add_type_object(type->getName(), type_id2, type_obj);
-
-            // Complete, just to make sure it is generated
-            const TypeIdentifier* type_id_complete = typeFactory->get_type_identifier(type->getName(), true);
-            const TypeObject* type_obj_complete = typeFactory->get_type_object(type->getName(), true);
-            typeFactory->add_type_object(type->getName(), type_id_complete, type_obj_complete); // Add complete
-        }
+        // already there
+        return registerType(part, type);
     }
+
+    // calculate identifiers and objects
+    switch (type->GetDynamicTypeVersion())
+    {
+        case types::DynamicPubSubType::version::v1_1:
+        {
+            using namespace eprosima::fastrtps::types::v1_1;
+
+            DynamicTypeBuilderFactory* dynFactory = DynamicTypeBuilderFactory::get_instance();
+            std::map<MemberId, DynamicTypeMember*> membersMap;
+            DynamicType_ptr dtype;
+            std::vector<const MemberDescriptor*> members;
+
+            type->GetDynamicType(dtype);
+            dtype->get_all_members(membersMap);
+
+            for (auto it : membersMap)
+            {
+                members.push_back(it.second->get_descriptor());
+            }
+
+            TypeObject typeObj;
+            auto descriptor = dtype->get_type_descriptor();
+
+            // complete
+            dynFactory->build_type_object(descriptor, typeObj, &members);
+
+            // Minimal too
+            dynFactory->build_type_object(descriptor, typeObj, &members, false);
+        }
+        break;
+
+        case types::DynamicPubSubType::version::v1_3:
+        {
+            using namespace eprosima::fastrtps::types::v1_3;
+
+            DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
+            TypeObject typeObj;
+            DynamicType_ptr dtype;
+
+            type->GetDynamicType(dtype);
+            auto descriptor = dtype->get_descriptor();
+
+            // complete
+            factory.build_type_object(descriptor, typeObj);
+
+            // Minimal too
+            factory.build_type_object(descriptor, typeObj, false);
+        }
+        break;
+    }
+
+    const TypeIdentifier* type_id2 = typeFactory->get_type_identifier(type->getName());
+    const TypeObject* type_obj = typeFactory->get_type_object(type->getName());
+
+    if (type_id2 == nullptr)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot register dynamic type " << type->getName());
+    }
+    else
+    {
+        typeFactory->add_type_object(type->getName(), type_id2, type_obj);
+
+        // Complete, just to make sure it is generated
+        const TypeIdentifier* type_id_complete = typeFactory->get_type_identifier(type->getName(), true);
+        const TypeObject* type_obj_complete = typeFactory->get_type_object(type->getName(), true);
+        typeFactory->add_type_object(type->getName(), type_id_complete, type_obj_complete); // Add complete
+    }
+
     return registerType(part, type);
 }
 

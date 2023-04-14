@@ -38,12 +38,12 @@ namespace fastrtps {
 namespace types {
 
 class DynamicDataHelper;
-class DynamicPubSubType;
 
 namespace v1_3 {
 
 class DynamicType;
 class MemberDescriptor;
+class DynamicPubSubType;
 
 class DynamicData
 {
@@ -129,7 +129,7 @@ protected:
     MemberId union_id_ = MEMBER_ID_INVALID;
 
     friend class DynamicDataFactory;
-    friend class types::DynamicPubSubType;
+    friend class DynamicPubSubType;
     friend class types::DynamicDataHelper;
     friend class eprosima::fastdds::dds::DDSSQLFilter::DDSFilterExpression;
 

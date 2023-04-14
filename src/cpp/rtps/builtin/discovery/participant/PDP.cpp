@@ -1223,20 +1223,22 @@ void PDP::check_and_notify_type_discovery(
     }
 
     // Are we discovering a type?
+    ReturnCode_t res;
     DynamicType_ptr dyn_type;
+
     if (type_obj && type_obj->_d() == types::TypeKind::EK_COMPLETE) // Writer shares a Complete TypeObject
     {
-        dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
-            type_name.to_string(), type_id, type_obj);
+        res = types::TypeObjectFactory::get_instance()->build_dynamic_type(
+            dyn_type, type_name.to_string(), type_id, type_obj);
     }
     else if (type_id && type_id->_d() != types::TypeKind::TK_NONE
             && type_id->_d() < types::TypeKind::EK_MINIMAL) // Writer shares a TypeIdentifier that doesn't need TypeObject
     {
-        dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
-            type_name.to_string(), type_id);
+        res = types::TypeObjectFactory::get_instance()->build_dynamic_type(
+            dyn_type, type_name.to_string(), type_id);
     }
 
-    if (dyn_type != nullptr)
+    if (!!res)
     {
         types::DynamicPubSubType type_support(dyn_type);
 

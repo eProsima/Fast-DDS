@@ -12,24 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_1_1_DYNAMIC_PUB_SUB_TYPE_H
-#define TYPES_1_1_DYNAMIC_PUB_SUB_TYPE_H
+#ifndef TYPES_1_3_DYNAMIC_PUB_SUB_TYPE_H
+#define TYPES_1_3_DYNAMIC_PUB_SUB_TYPE_H
 
 #include <fastrtps/types/TypesBase.h>
 #include <fastdds/dds/topic/TopicDataType.hpp>
-#include <fastrtps/types/v1_1/DynamicTypePtr.h>
-#include <fastrtps/types/v1_1/DynamicDataPtr.h>
+#include <fastrtps/types/v1_3/DynamicDataPtr.h>
 #include <fastrtps/utils/md5.h>
 
 namespace eprosima {
 namespace fastrtps {
 namespace types {
-
-inline namespace v1_1 {
-
-// We need an extra namespace because v1_1 is inline (only one declaration in a compilation unit is required to make the
-// namespace inline for them all)
-namespace internal {
+namespace v1_3 {
 
 class DynamicPubSubType : public virtual eprosima::fastdds::dds::TopicDataType
 {
@@ -37,16 +31,16 @@ protected:
 
     void UpdateDynamicTypeInfo();
 
-    DynamicType_ptr dynamic_type_;
+    v1_3::DynamicType_ptr dynamic_type_;
     MD5 m_md5;
-    unsigned char* m_keyBuffer;
+    unsigned char* m_keyBuffer = nullptr;
 
 public:
 
-    RTPS_DllAPI DynamicPubSubType();
+    RTPS_DllAPI DynamicPubSubType() = default;
 
     RTPS_DllAPI DynamicPubSubType(
-            DynamicType_ptr pDynamicType);
+            v1_3::DynamicType_ptr pDynamicType);
 
     RTPS_DllAPI virtual ~DynamicPubSubType();
 
@@ -73,19 +67,18 @@ public:
 
     RTPS_DllAPI void CleanDynamicType();
 
-    RTPS_DllAPI DynamicType_ptr GetDynamicType() const;
+    RTPS_DllAPI v1_3::DynamicType_ptr GetDynamicType() const;
 
     RTPS_DllAPI ReturnCode_t SetDynamicType(
-            DynamicData_ptr pData);
+            v1_3::DynamicData_ptr pData);
 
     RTPS_DllAPI ReturnCode_t SetDynamicType(
-            DynamicType_ptr pType);
+            v1_3::DynamicType_ptr pType);
 };
 
-} // namespace internal
-} // namespace v1_1
+} // namespace v1_3
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_1_1_DYNAMIC_PUB_SUB_TYPE_H
+#endif // TYPES_1_3_DYNAMIC_PUB_SUB_TYPE_H

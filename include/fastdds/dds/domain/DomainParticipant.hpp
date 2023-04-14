@@ -869,6 +869,12 @@ public:
             const std::string& type_name,
             std::function<void(const std::string& name, const fastrtps::types::v1_3::DynamicType_ptr type)>& callback);
 
+    FASTRTPS_DEPRECATED("Dynamic types version 1.1 will be disposed. Upgrade to version 1.3.")
+    RTPS_DllAPI ReturnCode_t register_remote_type(
+            const fastrtps::types::TypeInformation& type_information,
+            const std::string& type_name,
+            std::function<void(const std::string& name, const fastrtps::types::v1_1::DynamicType_ptr type)>& callback);
+
     /**
      * Register a custom content filter factory, which can be used to create a ContentFilteredTopic.
      *

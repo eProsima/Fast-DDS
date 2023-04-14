@@ -14,7 +14,7 @@
 
 cmake_minimum_required(VERSION 3.16.3)
 
-project(DDSDynamicHelloWorldExample VERSION 1.3 LANGUAGES CXX)
+project(DDSDynamicHelloWorldExample_v1_1 VERSION 1 LANGUAGES CXX)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
@@ -38,18 +38,18 @@ endif()
 message(STATUS "Configuring HelloWorld example...")
 file(GLOB DDS_DYNAMIC_HELLOWORLD_EXAMPLE_SOURCES_CPP "*.cpp")
 
-add_executable(DDSDynamicHelloWorldExample
+add_executable(DDSDynamicHelloWorldExample_v1_1
     ${DDS_DYNAMIC_HELLOWORLD_EXAMPLE_SOURCES_CPP})
 
-target_compile_definitions(DDSDynamicHelloWorldExample PRIVATE
+target_compile_definitions(DDSDynamicHelloWorldExample_v1_1 PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
 
-target_link_libraries(DDSDynamicHelloWorldExample fastrtps fastcdr)
-install(TARGETS DDSDynamicHelloWorldExample
-    RUNTIME DESTINATION examples/cpp/dds/DynamicHelloWorldExample/${BIN_INSTALL_DIR})
+target_link_libraries(DDSDynamicHelloWorldExample_v1_1 fastrtps fastcdr)
+install(TARGETS DDSDynamicHelloWorldExample_v1_1
+    RUNTIME DESTINATION examples/cpp/dds/DynamicHelloWorldExample_v1_1/${BIN_INSTALL_DIR})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/helloworld_example_type_profile.xml
-    DESTINATION examples/cpp/dds/DynamicHelloWorldExample/${BIN_INSTALL_DIR})
+    DESTINATION examples/cpp/dds/DynamicHelloWorldExample_v1_1/${BIN_INSTALL_DIR})
 
 file(COPY helloworld_example_type_profile.xml DESTINATION ${PROJECT_BINARY_DIR})

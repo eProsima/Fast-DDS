@@ -184,6 +184,30 @@ public:
      * For example:
      * fastrtps::types::TypeIdentifier new_type_id = \*identifier;
      */
+    FASTRTPS_DEPRECATED("Dynamic types version 1.1 will be disposed. Upgrade to version 1.3.")
+    virtual void on_type_discovery(
+            DomainParticipant* participant,
+            const fastrtps::rtps::SampleIdentity& request_sample_id,
+            const fastrtps::string_255& topic,
+            const fastrtps::types::TypeIdentifier* identifier,
+            const fastrtps::types::TypeObject* object,
+            fastrtps::types::v1_1::DynamicType_ptr dyn_type)
+    {
+        static_cast<void>(participant);
+        static_cast<void>(request_sample_id);
+        static_cast<void>(topic);
+        static_cast<void>(identifier);
+        static_cast<void>(object);
+        static_cast<void>(dyn_type);
+    }
+
+    /*!
+     * This method is called when a participant discovers a new Type
+     * The ownership of all object belongs to the caller so if needs to be used after the
+     * method ends, a full copy should be perform (except for dyn_type due to its shared_ptr nature.
+     * For example:
+     * fastrtps::types::TypeIdentifier new_type_id = \*identifier;
+     */
     virtual void on_type_discovery(
             DomainParticipant* participant,
             const fastrtps::rtps::SampleIdentity& request_sample_id,

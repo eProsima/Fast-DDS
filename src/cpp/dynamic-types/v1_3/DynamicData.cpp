@@ -27,6 +27,7 @@
 #include <codecvt>
 #include <algorithm>
 
+using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::types::v1_3;
 
 template <typename Map>

@@ -457,6 +457,7 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
         const IContentFilterFactory::ParameterSeq& filter_parameters,
         IContentFilter*& filter_instance)
 {
+    using namespace eprosima::fastrtps::types::v1_3;
     using eprosima::fastrtps::types::TypeObjectFactory;
 
     static_cast<void>(data_type);
@@ -529,7 +530,8 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
             if (node)
             {
                 auto type_id = TypeObjectFactory::get_instance()->get_type_identifier(type_name, true);
-                auto dyn_type = TypeObjectFactory::get_instance()->build_dynamic_type(type_name, type_id, type_object);
+                DynamicType_ptr dyn_type;
+                TypeObjectFactory::get_instance()->build_dynamic_type(dyn_type, type_name, type_id, type_object);
                 DDSFilterExpression* expr = get_expression();
                 expr->set_type(dyn_type);
                 size_t n_params = filter_parameters.length();

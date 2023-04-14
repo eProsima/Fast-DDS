@@ -492,6 +492,11 @@ public:
     ReturnCode_t register_remote_type(
             const fastrtps::types::TypeInformation& type_information,
             const std::string& type_name,
+            std::function<void(const std::string& name, const fastrtps::types::v1_1::DynamicType_ptr type)>& callback);
+
+    ReturnCode_t register_remote_type(
+            const fastrtps::types::TypeInformation& type_information,
+            const std::string& type_name,
             std::function<void(const std::string& name, const fastrtps::types::v1_3::DynamicType_ptr type)>& callback);
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
@@ -705,6 +710,9 @@ protected:
 
     void create_instance_handle(
             InstanceHandle_t& handle);
+
+    ReturnCode_t register_dynamic_type(
+            fastrtps::types::v1_1::DynamicType_ptr dyn_type);
 
     ReturnCode_t register_dynamic_type(
             fastrtps::types::v1_3::DynamicType_ptr dyn_type);

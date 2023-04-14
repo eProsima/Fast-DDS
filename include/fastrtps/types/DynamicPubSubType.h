@@ -1,4 +1,4 @@
-// Copyright 2018 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,38 +15,69 @@
 #ifndef TYPES_DYNAMIC_PUB_SUB_TYPE_H
 #define TYPES_DYNAMIC_PUB_SUB_TYPE_H
 
-#include <fastrtps/types/TypesBase.h>
-#include <fastdds/dds/topic/TopicDataType.hpp>
-#include <fastrtps/types/v1_3/DynamicDataPtr.h>
-#include <fastrtps/utils/md5.h>
+#include "v1_1/DynamicPubSubType.h"
+#include "v1_3/DynamicPubSubType.h"
 
 namespace eprosima {
 namespace fastrtps {
 namespace types {
 
-class DynamicPubSubType : public eprosima::fastdds::dds::TopicDataType
+// DynamicPubSubType collides with v1_1::DynamicPubSubType because namespace v1_1 is inline
+class DynamicPubSubType
+    : public virtual fastdds::dds::TopicDataType
+    , protected v1_1::internal::DynamicPubSubType
+    , protected v1_3::DynamicPubSubType
 {
-protected:
-
-    void UpdateDynamicTypeInfo();
-
-    v1_3::DynamicType_ptr dynamic_type_;
-    MD5 m_md5;
-    unsigned char* m_keyBuffer = nullptr;
-
 public:
 
-    RTPS_DllAPI DynamicPubSubType() = default;
+    enum class version
+    {
+        v1_1,
+        v1_3
+    };
+
+    RTPS_DllAPI DynamicPubSubType(
+            v1_1::DynamicType_ptr pDynamicType);
 
     RTPS_DllAPI DynamicPubSubType(
             v1_3::DynamicType_ptr pDynamicType);
 
-    RTPS_DllAPI virtual ~DynamicPubSubType();
+    RTPS_DllAPI version GetDynamicTypeVersion() const
+    {
+        return active_;
+    }
 
+    RTPS_DllAPI ReturnCode_t GetDynamicType(v1_3::DynamicType_ptr& p) const
+    {
+        if (version::v1_3 == active_)
+        {
+            p = v1_3::DynamicPubSubType::GetDynamicType();
+            return ReturnCode_t::RETCODE_OK;
+        }
+
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    RTPS_DllAPI ReturnCode_t GetDynamicType(v1_1::DynamicType_ptr& p) const
+    {
+        if (version::v1_1 == active_)
+        {
+            p = v1_1::internal::DynamicPubSubType::GetDynamicType();
+            return ReturnCode_t::RETCODE_OK;
+        }
+
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    // TopicDataType overrides
     RTPS_DllAPI void* createData() override;
 
-    RTPS_DllAPI void deleteData (
+    RTPS_DllAPI void deleteData(
             void* data) override;
+
+    RTPS_DllAPI bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
 
     RTPS_DllAPI bool deserialize (
             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
@@ -60,19 +91,9 @@ public:
     RTPS_DllAPI std::function<uint32_t()> getSerializedSizeProvider(
             void* data) override;
 
-    RTPS_DllAPI bool serialize(
-            void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
+private:
 
-    RTPS_DllAPI void CleanDynamicType();
-
-    RTPS_DllAPI v1_3::DynamicType_ptr GetDynamicType() const;
-
-    RTPS_DllAPI ReturnCode_t SetDynamicType(
-            v1_3::DynamicData_ptr pData);
-
-    RTPS_DllAPI ReturnCode_t SetDynamicType(
-            v1_3::DynamicType_ptr pType);
+    version active_;
 };
 
 } // namespace types

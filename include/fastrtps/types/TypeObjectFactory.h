@@ -17,6 +17,7 @@
 
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/v1_1/DynamicTypeBuilderPtr.h>
 #include <mutex>
 
 namespace eprosima {
@@ -43,7 +44,19 @@ protected:
     mutable std::vector<TypeInformation*> informations_created_;
     std::map<std::string, std::string> aliases_; // Aliases
 
-    v1_3::DynamicType_ptr build_dynamic_type(
+    v1_1::DynamicType_ptr build_dynamic_type(
+            v1_1::TypeDescriptor& descriptor,
+            const TypeObject* object,
+            const v1_1::DynamicType_ptr annotation_member_type = {}) const;
+
+    ReturnCode_t build_dynamic_type(
+            v1_1::DynamicType_ptr& ret,
+            v1_1::TypeDescriptor& descriptor,
+            const TypeObject* object,
+            const v1_1::DynamicType_ptr annotation_member_type = {}) const;
+
+    ReturnCode_t build_dynamic_type(
+            v1_3::DynamicType_ptr& ret,
             v1_3::TypeDescriptor& descriptor,
             const TypeObject* object,
             const v1_3::DynamicType_ptr annotation_member_type = {}) const;
@@ -63,7 +76,16 @@ protected:
     void create_builtin_annotations();
 
     void apply_type_annotations(
+            v1_1::DynamicTypeBuilder_ptr& type_builder,
+            const AppliedAnnotationSeq& annotations) const;
+
+    void apply_type_annotations(
             v1_3::DynamicTypeBuilder_ptr& type_builder,
+            const AppliedAnnotationSeq& annotations) const;
+
+    void apply_member_annotations(
+            v1_1::DynamicTypeBuilder_ptr& parent_type_builder,
+            v1_1::MemberId member_id,
             const AppliedAnnotationSeq& annotations) const;
 
     void apply_member_annotations(
@@ -73,6 +95,10 @@ protected:
 
     std::string get_key_from_hash(
             const v1_3::DynamicType_ptr annotation_descriptor_type,
+            const NameHash& hash) const;
+
+    std::string get_key_from_hash(
+            const v1_1::DynamicType_ptr annotation_descriptor_type,
             const NameHash& hash) const;
 
     /**
@@ -191,7 +217,19 @@ public:
             uint32_t bound,
             bool complete = false);
 
-    RTPS_DllAPI v1_3::DynamicType_ptr build_dynamic_type(
+    RTPS_DllAPI v1_1::DynamicType_ptr build_dynamic_type(
+            const std::string& name,
+            const TypeIdentifier* identifier,
+            const TypeObject* object = nullptr) const;
+
+    RTPS_DllAPI ReturnCode_t build_dynamic_type(
+            v1_1::DynamicType_ptr & ret,
+            const std::string& name,
+            const TypeIdentifier* identifier,
+            const TypeObject* object = nullptr) const;
+
+    RTPS_DllAPI ReturnCode_t build_dynamic_type(
+            v1_3::DynamicType_ptr & ret,
             const std::string& name,
             const TypeIdentifier* identifier,
             const TypeObject* object = nullptr) const;
