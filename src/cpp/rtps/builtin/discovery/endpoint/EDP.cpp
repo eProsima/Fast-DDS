@@ -233,7 +233,10 @@ bool EDP::newLocalReaderProxyData(
     }
 
     //PAIRING
-    pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
+    if (this->mp_PDP->getRTPSParticipant()->should_match_local_endpoints())
+    {
+        pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
+    }
     pairingReader(reader, participant_guid, *reader_data);
     //DO SOME PROCESSING DEPENDING ON THE IMPLEMENTATION (SIMPLE OR STATIC)
     processLocalReaderProxyData(reader, reader_data);
@@ -365,7 +368,10 @@ bool EDP::newLocalWriterProxyData(
     }
 
     //PAIRING
-    pairing_writer_proxy_with_any_local_reader(participant_guid, writer_data);
+    if (this->mp_PDP->getRTPSParticipant()->should_match_local_endpoints())
+    {
+        pairing_writer_proxy_with_any_local_reader(participant_guid, writer_data);
+    }
     pairingWriter(writer, participant_guid, *writer_data);
     //DO SOME PROCESSING DEPENDING ON THE IMPLEMENTATION (SIMPLE OR STATIC)
     processLocalWriterProxyData(writer, writer_data);
@@ -469,7 +475,10 @@ bool EDP::updatedLocalReader(
     if (reader_data != nullptr)
     {
         processLocalReaderProxyData(reader, reader_data);
-        pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
+        if (this->mp_PDP->getRTPSParticipant()->should_match_local_endpoints())
+        {
+            pairing_reader_proxy_with_any_local_writer(participant_guid, reader_data);
+        }
         pairingReader(reader, participant_guid, *reader_data);
         return true;
     }
@@ -551,7 +560,10 @@ bool EDP::updatedLocalWriter(
     if (writer_data != nullptr)
     {
         processLocalWriterProxyData(writer, writer_data);
-        pairing_writer_proxy_with_any_local_reader(participant_guid, writer_data);
+        if (this->mp_PDP->getRTPSParticipant()->should_match_local_endpoints())
+        {
+            pairing_writer_proxy_with_any_local_reader(participant_guid, writer_data);
+        }
         pairingWriter(writer, participant_guid, *writer_data);
         return true;
     }
@@ -1065,8 +1077,13 @@ bool EDP::pairingReader(
     EPROSIMA_LOG_INFO(RTPS_EDP, rdata.guid() << " in topic: \"" << rdata.topicName() << "\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
 
-    for (ResourceLimitedVector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
-            pit != mp_PDP->ParticipantProxiesEnd(); ++pit)
+    ResourceLimitedVector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
+    if (!this->mp_PDP->getRTPSParticipant()->should_match_local_endpoints())
+    {
+        pit++;
+    }
+
+    for (;pit != mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
         for (auto& pair : *(*pit)->m_writers)
         {
@@ -1152,8 +1169,13 @@ bool EDP::pairingWriter(
     EPROSIMA_LOG_INFO(RTPS_EDP, W->getGuid() << " in topic: \"" << wdata.topicName() << "\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
 
-    for (ResourceLimitedVector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
-            pit != mp_PDP->ParticipantProxiesEnd(); ++pit)
+    ResourceLimitedVector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
+    if (!this->mp_PDP->getRTPSParticipant()->should_match_local_endpoints())
+    {
+        pit++;
+    }
+
+    for (; pit != mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
         for (auto& pair : *(*pit)->m_readers)
         {

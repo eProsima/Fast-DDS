@@ -86,6 +86,8 @@ public:
 
     MOCK_METHOD0(ParticipantProxiesEnd, ResourceLimitedVector<ParticipantProxyData*>::const_iterator());
 
+    MOCK_METHOD(RTPSParticipantImpl*, getRTPSParticipant, (), (const));
+
     ProxyPool<ReaderProxyData>& get_temporary_reader_proxies_pool()
     {
         return temp_proxy_readers;

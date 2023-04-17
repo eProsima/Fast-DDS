@@ -23,6 +23,7 @@
 #include "HelloWorldPubSubTypes.h"
 
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 
@@ -55,9 +56,13 @@ private:
 
     eprosima::fastdds::dds::Publisher* publisher_;
 
+    eprosima::fastdds::dds::Subscriber* subscriber_;
+
     eprosima::fastdds::dds::Topic* topic_;
 
     eprosima::fastdds::dds::DataWriter* writer_;
+
+    eprosima::fastdds::dds::DataReader* reader_;
 
     bool stop_;
 
@@ -84,6 +89,24 @@ private:
         bool firstConnected_;
     }
     listener_;
+
+    class SubListener : public eprosima::fastdds::dds::DataReaderListener
+    {
+    public:
+
+        SubListener()
+        {
+        }
+
+        ~SubListener() override
+        {
+        }
+
+        void on_data_available(
+                eprosima::fastdds::dds::DataReader* reader) override;
+
+    }
+    reader_listener_;
 
     void runThread(
             uint32_t number,

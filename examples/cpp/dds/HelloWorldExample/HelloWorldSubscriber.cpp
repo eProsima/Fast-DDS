@@ -50,7 +50,7 @@ bool HelloWorldSubscriber::init(
         factory->get_default_participant_qos(pqos);
     }
 
-    participant_ = factory->create_participant(0, pqos);
+    participant_ = factory->create_participant(81, pqos);
 
     if (participant_ == nullptr)
     {

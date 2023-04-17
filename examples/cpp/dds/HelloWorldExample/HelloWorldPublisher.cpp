@@ -25,6 +25,10 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 
 #include <thread>
 
@@ -54,7 +58,11 @@ bool HelloWorldPublisher::init(
         factory->get_default_participant_qos(pqos);
     }
 
-    participant_ = factory->create_participant(0, pqos);
+    pqos.properties().properties().emplace_back(
+        "fastdds.ignore_local_endpoints",
+        "true");
+
+    participant_ = factory->create_participant(81, pqos);
 
     if (participant_ == nullptr)
     {
@@ -117,7 +125,42 @@ bool HelloWorldPublisher::init(
         return false;
     }
 
+    // Create reader
+    subscriber_ = participant_->create_subscriber(
+        SUBSCRIBER_QOS_DEFAULT,
+        nullptr);
+
+    if (subscriber_ == nullptr)
+    {
+        return false;
+    }
+
+    reader_ = subscriber_->create_datareader(
+        topic_,
+        DATAREADER_QOS_DEFAULT,
+        &reader_listener_);
+
+    if (reader_ == nullptr)
+    {
+        return false;
+    }
+
     return true;
+}
+
+void HelloWorldPublisher::SubListener::on_data_available(
+        DataReader* reader)
+{
+    SampleInfo info;
+    HelloWorld hello;
+    if (reader->take_next_sample(&hello, &info) == ReturnCode_t::RETCODE_OK)
+    {
+        if (info.instance_state == ALIVE_INSTANCE_STATE)
+        {
+            // Print your structure data here.
+            std::cout << "Message " << hello.message() << " " << hello.index() << " RECEIVED" << std::endl;
+        }
+    }
 }
 
 HelloWorldPublisher::~HelloWorldPublisher()
