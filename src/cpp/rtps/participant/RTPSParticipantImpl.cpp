@@ -2585,15 +2585,6 @@ bool RTPSParticipantImpl::disable_monitor_service() const
     return false;
 }
 
-bool RTPSParticipantImpl::check_compatible_qos(
-        const WriterProxyData& /*wdata*/,
-        const ReaderProxyData& /*rdata*/,
-        EDP::MatchingFailureMask& /*reason*/,
-        fastdds::dds::PolicyMask& /*incompatible_qos*/) const
-{
-    return false;
-}
-
 #ifdef FASTDDS_STATISTICS
 
 bool RTPSParticipantImpl::register_in_writer(

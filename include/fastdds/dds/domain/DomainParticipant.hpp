@@ -967,26 +967,6 @@ public:
      */
     RTPS_DllAPI ReturnCode_t disable_monitor_service() const;
 
-    /**
-     *  Checks if two provided Proxies are QoS compatible. In case of incompatibility,
-     *  outputs the reason and the particular incompatible QoS
-     *
-     * @param wdata Reference to the WriterProxyData object.
-     * @param rdata Reference to the ReaderProxyData object.
-     * @param [out] reason On return will specify the reason of failed matching (if any).
-     * @param [out] incompatible_qos On return will specify all the QoS values that were incompatible (if any).
-     *
-     * @return RETCODE_OK if qos are compatible.
-     * @return RETCODE_ERROR if qos are incompatible. Check reason and incompatible_qos.
-     *
-     * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
-     */
-    RTPS_DllAPI ReturnCode_t check_compatible_qos(
-            const fastrtps::rtps::WriterProxyData& wdata,
-            const fastrtps::rtps::ReaderProxyData& rdata,
-            fastrtps::rtps::EDP::MatchingFailureMask& reason,
-            fastdds::dds::PolicyMask& incompatible_qos) const;
-
 protected:
 
     DomainParticipant(

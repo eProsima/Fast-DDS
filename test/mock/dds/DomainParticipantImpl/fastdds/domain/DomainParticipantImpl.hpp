@@ -629,15 +629,6 @@ public:
         return ReturnCode_t{ReturnCode_t::RETCODE_OK};
     }
 
-    ReturnCode_t check_compatible_qos(
-            const fastrtps::rtps::WriterProxyData&,
-            const fastrtps::rtps::ReaderProxyData&,
-            fastrtps::rtps::EDP::MatchingFailureMask&,
-            fastdds::dds::PolicyMask& ) const
-    {
-        return ReturnCode_t{ReturnCode_t::RETCODE_OK};
-    }
-
     virtual ReturnCode_t delete_contained_entities()
     {
         bool can_be_deleted = true;

@@ -206,15 +206,6 @@ bool RTPSParticipant::disable_monitor_service() const
     return mp_impl->disable_monitor_service();
 }
 
-bool RTPSParticipant::check_compatible_qos(
-        const WriterProxyData& wdata,
-        const ReaderProxyData& rdata,
-        EDP::MatchingFailureMask& reason,
-        fastdds::dds::PolicyMask& incompatible_qos) const
-{
-    return mp_impl->check_compatible_qos(wdata, rdata, reason, incompatible_qos);
-}
-
 #if HAVE_SECURITY
 
 bool RTPSParticipant::is_security_enabled_for_writer(

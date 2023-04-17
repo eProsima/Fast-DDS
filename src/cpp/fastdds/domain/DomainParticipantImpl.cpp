@@ -2124,15 +2124,6 @@ ReturnCode_t DomainParticipantImpl::disable_monitor_service() const
     return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
-ReturnCode_t DomainParticipantImpl::check_compatible_qos(
-        const fastrtps::rtps::WriterProxyData& /*wdata*/,
-        const fastrtps::rtps::ReaderProxyData& /*rdata*/,
-        fastrtps::rtps::EDP::MatchingFailureMask& /*reason*/,
-        fastdds::dds::PolicyMask& /*incompatible_qos*/) const
-{
-    return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
-}
-
 bool DomainParticipantImpl::set_qos(
         DomainParticipantQos& to,
         const DomainParticipantQos& from,

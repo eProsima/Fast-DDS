@@ -303,26 +303,6 @@ public:
      */
     bool disable_monitor_service() const;
 
-    /**
-     * Checks if two provided Proxies are QoS compatible. In case of incompatibility,
-     * outputs the reason and the particular incompatible QoS
-     *
-     * @param wdata Reference to the WriterProxyData object.
-     * @param rdata Reference to the ReaderProxyData object.
-     * @param [out] reason On return will specify the reason of failed matching (if any).
-     * @param [out] incompatible_qos On return will specify all the QoS values that were incompatible (if any).
-     *
-     * @return true if qos are compatible. Otherwise qos are incompatible.
-     * Check reason and incompatible_qos outputs in this latter case.
-     *
-     * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
-     */
-    bool check_compatible_qos(
-            const WriterProxyData& wdata,
-            const ReaderProxyData& rdata,
-            EDP::MatchingFailureMask& reason,
-            fastdds::dds::PolicyMask& incompatible_qos) const;
-
 #if HAVE_SECURITY
 
     /**

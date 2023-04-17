@@ -527,21 +527,6 @@ public:
     ReturnCode_t disable_monitor_service() const;
 
     /**
-     * Disables the monitor service in this DomainParticipant. Does nothing if the service was not enabled before.
-     *
-     * @return RETCODE_OK if the monitor service could be correctly disabled.
-     * @return RETCODE_NOT_ENABLED if the monitor service was not previously enabled.
-     * @return RETCODE_ERROR if the service could not be properly disabled.
-     *
-     * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
-     */
-    ReturnCode_t check_compatible_qos(
-            const fastrtps::rtps::WriterProxyData& wdata,
-            const fastrtps::rtps::ReaderProxyData& rdata,
-            fastrtps::rtps::EDP::MatchingFailureMask& reason,
-            fastdds::dds::PolicyMask& incompatible_qos) const;
-
-    /**
      * Returns the most appropriate listener to handle the callback for the given status,
      * or nullptr if there is no appropriate listener.
      */
