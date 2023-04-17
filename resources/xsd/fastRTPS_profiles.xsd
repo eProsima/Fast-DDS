@@ -824,7 +824,7 @@
     <xs:complexType name="transportDescriptorType">
         <xs:all minOccurs="0">
             <xs:element name="transport_id" type="string"/>
-            <xs:element name="type">
+            <xs:element name="type" minOccurs="0" maxOccurs="1">
                 <xs:simpleType>
                     <xs:restriction base="xs:string">
                         <xs:enumeration value="UDPv4"/>
