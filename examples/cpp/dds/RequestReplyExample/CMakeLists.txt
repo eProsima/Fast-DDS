@@ -21,10 +21,6 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr REQUIRED)
 endif()
 
-if(NOT foonathan_memory_FOUND)
-    find_package(foonathan_memory REQUIRED)
-endif()
-
 if(NOT fastrtps_FOUND)
     find_package(fastrtps REQUIRED)
 endif()
@@ -58,7 +54,7 @@ target_compile_definitions(DDSCalculatorClient PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_link_libraries(DDSCalculatorClient fastrtps fastcdr foonathan_memory)
+target_link_libraries(DDSCalculatorClient fastrtps fastcdr)
 install(TARGETS DDSCalculatorClient
     RUNTIME DESTINATION examples/cpp/dds/RequestReplyExample/${BIN_INSTALL_DIR})
 
@@ -70,6 +66,6 @@ target_compile_definitions(DDSCalculatorServer PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_link_libraries(DDSCalculatorServer fastrtps fastcdr foonathan_memory)
+target_link_libraries(DDSCalculatorServer fastrtps fastcdr)
 install(TARGETS DDSCalculatorServer
     RUNTIME DESTINATION examples/cpp/dds/RequestReplyExample/${BIN_INSTALL_DIR})

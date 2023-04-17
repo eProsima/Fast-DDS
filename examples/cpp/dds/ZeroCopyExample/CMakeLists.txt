@@ -21,10 +21,6 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr REQUIRED)
 endif()
 
-if(NOT foonathan_memory_FOUND)
-    find_package(foonathan_memory REQUIRED)
-endif()
-
 if(NOT fastrtps_FOUND)
     find_package(fastrtps REQUIRED)
 endif()
@@ -47,6 +43,6 @@ target_compile_definitions(DDSZeroCopyExample PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
-target_link_libraries(DDSZeroCopyExample fastrtps fastcdr foonathan_memory)
+target_link_libraries(DDSZeroCopyExample fastrtps fastcdr)
 install(TARGETS DDSZeroCopyExample
     RUNTIME DESTINATION examples/cpp/dds/ZeroCopyExample/${BIN_INSTALL_DIR})

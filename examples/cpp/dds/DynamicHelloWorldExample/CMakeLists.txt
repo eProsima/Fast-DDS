@@ -21,10 +21,6 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr REQUIRED)
 endif()
 
-if(NOT foonathan_memory_FOUND)
-    find_package(foonathan_memory REQUIRED)
-endif()
-
 if(NOT fastrtps_FOUND)
     find_package(fastrtps REQUIRED)
 endif()
@@ -50,7 +46,7 @@ target_compile_definitions(DDSDynamicHelloWorldExample PRIVATE
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
 
-target_link_libraries(DDSDynamicHelloWorldExample fastrtps fastcdr foonathan_memory)
+target_link_libraries(DDSDynamicHelloWorldExample fastrtps fastcdr)
 install(TARGETS DDSDynamicHelloWorldExample
     RUNTIME DESTINATION examples/cpp/dds/DynamicHelloWorldExample/${BIN_INSTALL_DIR})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/helloworld_example_type_profile.xml

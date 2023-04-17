@@ -37,7 +37,7 @@ target_include_directories(RTPSStatisticsTests PRIVATE
     ${Asio_INCLUDE_DIR}
     )
 
-target_link_libraries(RTPSStatisticsTests fastrtps fastcdr GTest::gtest GTest::gmock foonathan_memory)
+target_link_libraries(RTPSStatisticsTests fastrtps fastcdr GTest::gtest GTest::gmock)
 add_gtest(RTPSStatisticsTests SOURCES ${STATISTICS_RTPS_TESTS_SOURCE})
 if(QNX)
     target_link_libraries(RTPSStatisticsTests socket)

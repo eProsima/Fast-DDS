@@ -21,10 +21,6 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr REQUIRED)
 endif()
 
-if(NOT foonathan_memory_FOUND)
-    find_package(foonathan_memory REQUIRED)
-endif()
-
 if(NOT fastrtps_FOUND)
     find_package(fastrtps REQUIRED)
 endif()
@@ -50,6 +46,6 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     $<$<BOOL:${SHM_TRANSPORT_DEFAULT}>:SHM_TRANSPORT_BUILTIN> # Enable SHM as built-in transport
 )
 
-target_link_libraries(${PROJECT_NAME} fastrtps fastcdr fastdds::optionparser foonathan_memory)
+target_link_libraries(${PROJECT_NAME} fastrtps fastcdr fastdds::optionparser)
 install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION examples/cpp/dds/${PROJECT_NAME}/${BIN_INSTALL_DIR})

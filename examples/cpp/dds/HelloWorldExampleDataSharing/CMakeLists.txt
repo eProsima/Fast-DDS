@@ -21,10 +21,6 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr REQUIRED)
 endif()
 
-if(NOT foonathan_memory_FOUND)
-    find_package(foonathan_memory REQUIRED)
-endif()
-
 if(NOT fastrtps_FOUND)
     find_package(fastrtps REQUIRED)
 endif()
@@ -45,6 +41,6 @@ file(GLOB DDS_HELLOWORLD_EXAMPLE_DATASHARING_SOURCES_CPP "*.cpp")
 add_executable(DDSHelloWorldExampleDataSharing
     ${DDS_HELLOWORLD_EXAMPLE_DATASHARING_SOURCES_CXX}
     ${DDS_HELLOWORLD_EXAMPLE_DATASHARING_SOURCES_CPP})
-target_link_libraries(DDSHelloWorldExampleDataSharing fastrtps fastcdr foonathan_memory)
+target_link_libraries(DDSHelloWorldExampleDataSharing fastrtps fastcdr)
 install(TARGETS DDSHelloWorldExampleDataSharing
     RUNTIME DESTINATION examples/cpp/dds/HelloWorldExampleDataSharing/${BIN_INSTALL_DIR})
