@@ -261,7 +261,7 @@ public:
         catch (const std::exception& e)
         {
             logError(RTPS_TRANSPORT_SHM, "Failed to create Shared Memory Manager for domain " << domain_name
-                                                                                                        << ": " <<
+                                                                                              << ": " <<
                     e.what());
             return std::shared_ptr<SharedMemManager>();
         }
