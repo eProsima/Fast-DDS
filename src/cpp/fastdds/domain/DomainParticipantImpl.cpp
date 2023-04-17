@@ -2116,21 +2116,21 @@ bool DomainParticipantImpl::has_active_entities()
 
 ReturnCode_t DomainParticipantImpl::enable_monitor_service() const
 {
-    return rtps_participant_->enable_monitor_service();
+    return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t DomainParticipantImpl::disable_monitor_service() const
 {
-    return rtps_participant_->disable_monitor_service();
+    return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
 ReturnCode_t DomainParticipantImpl::check_compatible_qos(
-        const fastrtps::rtps::WriterProxyData& wdata,
-        const fastrtps::rtps::ReaderProxyData& rdata,
-        fastrtps::rtps::EDP::MatchingFailureMask& reason,
-        fastdds::dds::PolicyMask& incompatible_qos) const
+        const fastrtps::rtps::WriterProxyData& /*wdata*/,
+        const fastrtps::rtps::ReaderProxyData& /*rdata*/,
+        fastrtps::rtps::EDP::MatchingFailureMask& /*reason*/,
+        fastdds::dds::PolicyMask& /*incompatible_qos*/) const
 {
-    return rtps_participant_->check_compatible_qos(wdata, rdata, reason, incompatible_qos);
+    return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
 bool DomainParticipantImpl::set_qos(

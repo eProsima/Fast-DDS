@@ -957,7 +957,7 @@ public:
     RTPS_DllAPI ReturnCode_t enable_monitor_service() const;
 
     /**
-     * Disable the monitor service in this DomainParticipant. Does nothing if the service was not enabled before.
+     * Disables the monitor service in this DomainParticipant. Does nothing if the service was not enabled before.
      *
      * @return RETCODE_OK if the monitor service could be correctly disabled.
      * @return RETCODE_NOT_ENABLED if the monitor service was not previously enabled.
@@ -968,10 +968,11 @@ public:
     RTPS_DllAPI ReturnCode_t disable_monitor_service() const;
 
     /**
-     * Enables the internal monitor service in this DomainParticipant.
+     *  Checks if two provided Proxies are QoS compatible. In case of incompatibility,
+     *  outputs the reason and the particular incompatible QoS
      *
-     * @param wdata Pointer to the WriterProxyData object.
-     * @param rdata Pointer to the ReaderProxyData object.
+     * @param wdata Reference to the WriterProxyData object.
+     * @param rdata Reference to the ReaderProxyData object.
      * @param [out] reason On return will specify the reason of failed matching (if any).
      * @param [out] incompatible_qos On return will specify all the QoS values that were incompatible (if any).
      *

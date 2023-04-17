@@ -196,20 +196,20 @@ bool RTPSParticipant::ignore_reader(
     return false;
 }
 
-types::ReturnCode_t RTPSParticipant::enable_monitor_service() const
+bool RTPSParticipant::enable_monitor_service() const
 {
     return mp_impl->enable_monitor_service();
 }
 
-types::ReturnCode_t RTPSParticipant::disable_monitor_service() const
+bool RTPSParticipant::disable_monitor_service() const
 {
     return mp_impl->disable_monitor_service();
 }
 
-types::ReturnCode_t RTPSParticipant::check_compatible_qos(
-        const fastrtps::rtps::WriterProxyData& wdata,
-        const fastrtps::rtps::ReaderProxyData& rdata,
-        fastrtps::rtps::EDP::MatchingFailureMask& reason,
+bool RTPSParticipant::check_compatible_qos(
+        const WriterProxyData& wdata,
+        const ReaderProxyData& rdata,
+        EDP::MatchingFailureMask& reason,
         fastdds::dds::PolicyMask& incompatible_qos) const
 {
     return mp_impl->check_compatible_qos(wdata, rdata, reason, incompatible_qos);

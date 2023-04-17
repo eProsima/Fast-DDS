@@ -31,9 +31,6 @@
 #include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/qos/ReaderQos.h>
 #include <fastrtps/qos/WriterQos.h>
-#include <fastrtps/types/TypesBase.h>
-
-using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 
@@ -290,41 +287,40 @@ public:
     /**
      * Enables the monitor service in this RTPSParticipant.
      *
-     * @return RETCODE_OK if the monitor service could be correctly enabled.
-     * @return RETCODE_ERROR if the monitor service could not be enabled properly.
+     * @return true if the monitor service could be correctly enabled.
      *
      * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    ReturnCode_t enable_monitor_service() const;
+    bool enable_monitor_service() const;
 
     /**
-     * Disable the monitor service in this RTPSParticipant. Does nothing if the service was not enabled before.
+     * Disables the monitor service in this RTPSParticipant. Does nothing if the service was not enabled before.
      *
-     * @return RETCODE_OK if the monitor service could be correctly disabled.
-     * @return RETCODE_NOT_ENABLED if the monitor service was not previously enabled.
-     * @return RETCODE_ERROR if the service could not be properly disabled.
+     * @return true if the monitor service could be correctly disabled.
+     * @return false if the service could not be properly disabled or if the monitor service was not previously enabled.
      *
      * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    ReturnCode_t disable_monitor_service() const;
+    bool disable_monitor_service() const;
 
     /**
-     * Enables the internal monitor service in this RTPSParticipant.
+     * Checks if two provided Proxies are QoS compatible. In case of incompatibility,
+     * outputs the reason and the particular incompatible QoS
      *
-     * @param wdata Pointer to the WriterProxyData object.
-     * @param rdata Pointer to the ReaderProxyData object.
+     * @param wdata Reference to the WriterProxyData object.
+     * @param rdata Reference to the ReaderProxyData object.
      * @param [out] reason On return will specify the reason of failed matching (if any).
      * @param [out] incompatible_qos On return will specify all the QoS values that were incompatible (if any).
      *
-     * @return RETCODE_OK if qos are compatible.
-     * @return RETCODE_ERROR if qos are incompatible. Check reason and incompatible_qos.
+     * @return true if qos are compatible. Otherwise qos are incompatible.
+     * Check reason and incompatible_qos outputs in this latter case.
      *
      * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    ReturnCode_t check_compatible_qos(
-            const fastrtps::rtps::WriterProxyData& wdata,
-            const fastrtps::rtps::ReaderProxyData& rdata,
-            fastrtps::rtps::EDP::MatchingFailureMask& reason,
+    bool check_compatible_qos(
+            const WriterProxyData& wdata,
+            const ReaderProxyData& rdata,
+            EDP::MatchingFailureMask& reason,
             fastdds::dds::PolicyMask& incompatible_qos) const;
 
 #if HAVE_SECURITY
