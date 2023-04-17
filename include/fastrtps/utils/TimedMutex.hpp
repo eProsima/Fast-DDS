@@ -40,9 +40,9 @@ namespace fastrtps {
 
 class TimedMutex
 {
-// On MSVC 19.36.32528.95 `xtime` was changed into `_timespec64`.
-// See https://github.com/eProsima/Fast-DDS/issues/3451
-// See https://github.com/microsoft/STL/pull/3594
+    // On MSVC 19.36.32528.95 `xtime` was changed into `_timespec64`.
+    // See https://github.com/eProsima/Fast-DDS/issues/3451
+    // See https://github.com/microsoft/STL/pull/3594
 #if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 193632528
     using xtime = _timespec64;
 #endif  // _MSC_FULL_VER check
