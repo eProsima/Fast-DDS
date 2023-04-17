@@ -36,7 +36,6 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastdds/rtps/builtin/discovery/endpoint/EDP.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/common/SampleIdentity.h>
 #include <fastdds/rtps/common/Time_t.h>
@@ -55,8 +54,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 class ResourceEvent;
-class WriterProxyData;
-class ReaderProxyData;
 } // namespace rtps
 
 namespace types {

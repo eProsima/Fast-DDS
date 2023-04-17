@@ -243,7 +243,6 @@ target_include_directories(UDPv4Tests PRIVATE
     ${Asio_INCLUDE_DIR}
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/EDP
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
@@ -272,7 +271,6 @@ if(NOT DISABLE_UDPV6_TESTS)
         ${Asio_INCLUDE_DIR}
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-        ${PROJECT_SOURCE_DIR}/test/mock/rtps/EDP
         ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
         ${PROJECT_SOURCE_DIR}/src/cpp
         )
@@ -299,7 +297,6 @@ if(NOT DISABLE_UDPV6_TESTS)
         ${PROJECT_SOURCE_DIR}/test/mock/dds/QosPolicies
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-        ${PROJECT_SOURCE_DIR}/test/mock/rtps/EDP
         ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
         ${PROJECT_SOURCE_DIR}/src/cpp
         $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
@@ -331,7 +328,6 @@ target_include_directories(test_UDPv4Tests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/dds/QosPolicies
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/EDP
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
@@ -361,7 +357,6 @@ target_include_directories(TCPv4Tests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/dds/QosPolicies
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-    ${PROJECT_SOURCE_DIR}/test/mock/rtps/EDP
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
     ${PROJECT_SOURCE_DIR}/src/cpp
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
@@ -394,7 +389,6 @@ if(IS_THIRDPARTY_BOOST_OK)
         ${Asio_INCLUDE_DIR}
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/MessageReceiver
         ${PROJECT_SOURCE_DIR}/test/mock/rtps/ReceiverResource
-        ${PROJECT_SOURCE_DIR}/test/mock/rtps/EDP
         ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
         ${PROJECT_SOURCE_DIR}/src/cpp
         ${THIRDPARTY_BOOST_INCLUDE_DIR}
