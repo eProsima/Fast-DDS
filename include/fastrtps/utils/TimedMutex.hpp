@@ -37,8 +37,13 @@ namespace eprosima {
 namespace fastrtps {
 
 #if defined(_WIN32)
+
 class TimedMutex
 {
+#if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 193632528
+    using xtime = _timespec64;
+#endif  // _MSC_FULL_VER check
+
 public:
 
     TimedMutex()
