@@ -35,7 +35,7 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define ArraytStruct_max_cdr_typesize 28ULL;
+#define ArraytStruct_max_cdr_typesize 32ULL;
 #define SimpleUnionStruct_max_cdr_typesize 16ULL;
 
 #define WCharUnionStruct_max_cdr_typesize 16ULL;
@@ -61,7 +61,7 @@ using namespace eprosima::fastcdr::exception;
 #define BoolStruct_max_cdr_typesize 1ULL;
 #define MapMapStruct_max_cdr_typesize 52ULL;
 #define AliasAliasStruct_max_cdr_typesize 4ULL;
-#define ArrayArrayStruct_max_cdr_typesize 100ULL;
+#define ArrayArrayStruct_max_cdr_typesize 64ULL;
 #define ShortStruct_max_cdr_typesize 2ULL;
 #define MapStruct_max_cdr_typesize 20ULL;
 #define UShortStruct_max_cdr_typesize 2ULL;
@@ -3038,7 +3038,11 @@ size_t ArraytStruct::getCdrSerializedSize(
     (void)data;
     size_t initial_alignment = current_alignment;
 
-    current_alignment += ((2 * 2 * 2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
+    if ((2 * 2 * 2) > 0)
+    {
+        current_alignment += ((2 * 2 * 2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    }
 
     return current_alignment - initial_alignment;
 }
@@ -3195,7 +3199,10 @@ size_t ArrayArrayStruct::getCdrSerializedSize(
 
         for(size_t b = 0; b < data.my_array_array().at(a).size(); ++b)
         {
-                current_alignment += ((2 * 2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+                if ((2 * 2) > 0)
+                {
+                    current_alignment += ((2 * 2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+                }
         }
     }
     return current_alignment - initial_alignment;

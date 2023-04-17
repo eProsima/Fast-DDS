@@ -25,6 +25,7 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
+#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "FlowControlExample.h"
 
@@ -32,6 +33,29 @@
 #error \
     Generated FlowControlExample is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
+
+
+namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct FlowControlExample_rob
+    {
+        friend typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+    };
+
+    struct FlowControlExample_f
+    {
+        typedef char FlowControlExample::* type;
+        friend type get(
+                FlowControlExample_f);
+    };
+
+    template struct FlowControlExample_rob<FlowControlExample_f, &FlowControlExample::m_wasFast>;
+}
 
 /*!
  * @brief This class represents the TopicDataType of the type FlowControlExample defined by the user in the IDL file.
@@ -79,7 +103,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return true;
+        return 600001ULL == eprosima::fastrtps::size_of_<FlowControlExample, detail::FlowControlExample_f, char>();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN

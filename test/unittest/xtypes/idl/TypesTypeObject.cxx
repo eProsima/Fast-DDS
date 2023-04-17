@@ -41,65 +41,110 @@ using namespace eprosima::fastrtps::rtps;
 void registerTypesTypes()
 {
     TypeObjectFactory *factory = TypeObjectFactory::get_instance();
-    factory->add_type_object("MyEnum", GetMyEnumIdentifier(true),
-    GetMyEnumObject(true));
-    factory->add_type_object("MyEnum", GetMyEnumIdentifier(false),
-    GetMyEnumObject(false));
+    factory->add_type_object("MapBadElemStruct", GetMapBadElemStructIdentifier(true),
+    GetMapBadElemStructObject(true));
+    factory->add_type_object("MapBadElemStruct", GetMapBadElemStructIdentifier(false),
+    GetMapBadElemStructObject(false));
 
-    factory->add_type_object("MyBadEnum", GetMyBadEnumIdentifier(true),
-    GetMyBadEnumObject(true));
-    factory->add_type_object("MyBadEnum", GetMyBadEnumIdentifier(false),
-    GetMyBadEnumObject(false));
+    factory->add_type_object("MapStructEqual", GetMapStructEqualIdentifier(true),
+    GetMapStructEqualObject(true));
+    factory->add_type_object("MapStructEqual", GetMapStructEqualIdentifier(false),
+    GetMapStructEqualObject(false));
 
-    factory->add_type_object("MyEnumStruct", GetMyEnumStructIdentifier(true),
-    GetMyEnumStructObject(true));
-    factory->add_type_object("MyEnumStruct", GetMyEnumStructIdentifier(false),
-    GetMyEnumStructObject(false));
+    factory->add_type_object("SequenceSequenceBoundsStruct", GetSequenceSequenceBoundsStructIdentifier(true),
+    GetSequenceSequenceBoundsStructObject(true));
+    factory->add_type_object("SequenceSequenceBoundsStruct", GetSequenceSequenceBoundsStructIdentifier(false),
+    GetSequenceSequenceBoundsStructObject(false));
 
-    factory->add_type_object("MyBadEnumStruct", GetMyBadEnumStructIdentifier(true),
-    GetMyBadEnumStructObject(true));
-    factory->add_type_object("MyBadEnumStruct", GetMyBadEnumStructIdentifier(false),
-    GetMyBadEnumStructObject(false));
+    factory->add_type_object("SequenceSequenceStruct", GetSequenceSequenceStructIdentifier(true),
+    GetSequenceSequenceStructObject(true));
+    factory->add_type_object("SequenceSequenceStruct", GetSequenceSequenceStructIdentifier(false),
+    GetSequenceSequenceStructObject(false));
 
-    factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(true),
-    GetMyAliasEnumObject(true));
-    factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(false),
-    GetMyAliasEnumObject(false));
+    factory->add_type_object("SequenceBoundsStruct", GetSequenceBoundsStructIdentifier(true),
+    GetSequenceBoundsStructObject(true));
+    factory->add_type_object("SequenceBoundsStruct", GetSequenceBoundsStructIdentifier(false),
+    GetSequenceBoundsStructObject(false));
 
-    factory->add_type_object("MyAliasEnumStruct", GetMyAliasEnumStructIdentifier(true),
-    GetMyAliasEnumStructObject(true));
-    factory->add_type_object("MyAliasEnumStruct", GetMyAliasEnumStructIdentifier(false),
-    GetMyAliasEnumStructObject(false));
+    factory->add_type_object("SequenceStructEqual", GetSequenceStructEqualIdentifier(true),
+    GetSequenceStructEqualObject(true));
+    factory->add_type_object("SequenceStructEqual", GetSequenceStructEqualIdentifier(false),
+    GetSequenceStructEqualObject(false));
 
-    factory->add_type_object("BasicStruct", GetBasicStructIdentifier(true),
-    GetBasicStructObject(true));
-    factory->add_type_object("BasicStruct", GetBasicStructIdentifier(false),
-    GetBasicStructObject(false));
+    factory->add_type_object("ArraySizeStruct", GetArraySizeStructIdentifier(true),
+    GetArraySizeStructObject(true));
+    factory->add_type_object("ArraySizeStruct", GetArraySizeStructIdentifier(false),
+    GetArraySizeStructObject(false));
 
-    factory->add_type_object("BasicNamesStruct", GetBasicNamesStructIdentifier(true),
-    GetBasicNamesStructObject(true));
-    factory->add_type_object("BasicNamesStruct", GetBasicNamesStructIdentifier(false),
-    GetBasicNamesStructObject(false));
+    factory->add_type_object("ArrayStructEqual", GetArrayStructEqualIdentifier(true),
+    GetArrayStructEqualObject(true));
+    factory->add_type_object("ArrayStructEqual", GetArrayStructEqualIdentifier(false),
+    GetArrayStructEqualObject(false));
 
-    factory->add_type_object("BasicBadStruct", GetBasicBadStructIdentifier(true),
-    GetBasicBadStructObject(true));
-    factory->add_type_object("BasicBadStruct", GetBasicBadStructIdentifier(false),
-    GetBasicBadStructObject(false));
+    factory->add_type_object("LargeWStringStruct", GetLargeWStringStructIdentifier(true),
+    GetLargeWStringStructObject(true));
+    factory->add_type_object("LargeWStringStruct", GetLargeWStringStructIdentifier(false),
+    GetLargeWStringStructObject(false));
 
-    factory->add_type_object("BasicWideStruct", GetBasicWideStructIdentifier(true),
-    GetBasicWideStructObject(true));
-    factory->add_type_object("BasicWideStruct", GetBasicWideStructIdentifier(false),
-    GetBasicWideStructObject(false));
+    factory->add_type_object("StringStruct", GetStringStructIdentifier(true),
+    GetStringStructObject(true));
+    factory->add_type_object("StringStruct", GetStringStructIdentifier(false),
+    GetStringStructObject(false));
 
     factory->add_type_object("BadBasicWideStruct", GetBadBasicWideStructIdentifier(true),
     GetBadBasicWideStructObject(true));
     factory->add_type_object("BadBasicWideStruct", GetBadBasicWideStructIdentifier(false),
     GetBadBasicWideStructObject(false));
 
-    factory->add_type_object("StringStruct", GetStringStructIdentifier(true),
-    GetStringStructObject(true));
-    factory->add_type_object("StringStruct", GetStringStructIdentifier(false),
-    GetStringStructObject(false));
+    factory->add_type_object("BasicWideStruct", GetBasicWideStructIdentifier(true),
+    GetBasicWideStructObject(true));
+    factory->add_type_object("BasicWideStruct", GetBasicWideStructIdentifier(false),
+    GetBasicWideStructObject(false));
+
+    factory->add_type_object("BasicBadStruct", GetBasicBadStructIdentifier(true),
+    GetBasicBadStructObject(true));
+    factory->add_type_object("BasicBadStruct", GetBasicBadStructIdentifier(false),
+    GetBasicBadStructObject(false));
+
+    factory->add_type_object("BasicNamesStruct", GetBasicNamesStructIdentifier(true),
+    GetBasicNamesStructObject(true));
+    factory->add_type_object("BasicNamesStruct", GetBasicNamesStructIdentifier(false),
+    GetBasicNamesStructObject(false));
+
+    factory->add_type_object("BasicStruct", GetBasicStructIdentifier(true),
+    GetBasicStructObject(true));
+    factory->add_type_object("BasicStruct", GetBasicStructIdentifier(false),
+    GetBasicStructObject(false));
+
+    factory->add_type_object("MyAliasEnumStruct", GetMyAliasEnumStructIdentifier(true),
+    GetMyAliasEnumStructObject(true));
+    factory->add_type_object("MyAliasEnumStruct", GetMyAliasEnumStructIdentifier(false),
+    GetMyAliasEnumStructObject(false));
+
+    factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(true),
+    GetMyAliasEnumObject(true));
+    factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(false),
+    GetMyAliasEnumObject(false));
+
+    factory->add_type_object("MyBadEnumStruct", GetMyBadEnumStructIdentifier(true),
+    GetMyBadEnumStructObject(true));
+    factory->add_type_object("MyBadEnumStruct", GetMyBadEnumStructIdentifier(false),
+    GetMyBadEnumStructObject(false));
+
+    factory->add_type_object("MyEnumStruct", GetMyEnumStructIdentifier(true),
+    GetMyEnumStructObject(true));
+    factory->add_type_object("MyEnumStruct", GetMyEnumStructIdentifier(false),
+    GetMyEnumStructObject(false));
+
+    factory->add_type_object("MyBadEnum", GetMyBadEnumIdentifier(true),
+    GetMyBadEnumObject(true));
+    factory->add_type_object("MyBadEnum", GetMyBadEnumIdentifier(false),
+    GetMyBadEnumObject(false));
+
+    factory->add_type_object("MyEnum", GetMyEnumIdentifier(true),
+    GetMyEnumObject(true));
+    factory->add_type_object("MyEnum", GetMyEnumIdentifier(false),
+    GetMyEnumObject(false));
 
     factory->add_type_object("LargeStringStruct", GetLargeStringStructIdentifier(true),
     GetLargeStringStructObject(true));
@@ -111,20 +156,10 @@ void registerTypesTypes()
     factory->add_type_object("WStringStruct", GetWStringStructIdentifier(false),
     GetWStringStructObject(false));
 
-    factory->add_type_object("LargeWStringStruct", GetLargeWStringStructIdentifier(true),
-    GetLargeWStringStructObject(true));
-    factory->add_type_object("LargeWStringStruct", GetLargeWStringStructIdentifier(false),
-    GetLargeWStringStructObject(false));
-
     factory->add_type_object("ArrayStruct", GetArrayStructIdentifier(true),
     GetArrayStructObject(true));
     factory->add_type_object("ArrayStruct", GetArrayStructIdentifier(false),
     GetArrayStructObject(false));
-
-    factory->add_type_object("ArrayStructEqual", GetArrayStructEqualIdentifier(true),
-    GetArrayStructEqualObject(true));
-    factory->add_type_object("ArrayStructEqual", GetArrayStructEqualIdentifier(false),
-    GetArrayStructEqualObject(false));
 
     factory->add_type_object("ArrayBadStruct", GetArrayBadStructIdentifier(true),
     GetArrayBadStructObject(true));
@@ -136,60 +171,25 @@ void registerTypesTypes()
     factory->add_type_object("ArrayDimensionsStruct", GetArrayDimensionsStructIdentifier(false),
     GetArrayDimensionsStructObject(false));
 
-    factory->add_type_object("ArraySizeStruct", GetArraySizeStructIdentifier(true),
-    GetArraySizeStructObject(true));
-    factory->add_type_object("ArraySizeStruct", GetArraySizeStructIdentifier(false),
-    GetArraySizeStructObject(false));
-
     factory->add_type_object("SequenceStruct", GetSequenceStructIdentifier(true),
     GetSequenceStructObject(true));
     factory->add_type_object("SequenceStruct", GetSequenceStructIdentifier(false),
     GetSequenceStructObject(false));
-
-    factory->add_type_object("SequenceStructEqual", GetSequenceStructEqualIdentifier(true),
-    GetSequenceStructEqualObject(true));
-    factory->add_type_object("SequenceStructEqual", GetSequenceStructEqualIdentifier(false),
-    GetSequenceStructEqualObject(false));
 
     factory->add_type_object("SequenceBadStruct", GetSequenceBadStructIdentifier(true),
     GetSequenceBadStructObject(true));
     factory->add_type_object("SequenceBadStruct", GetSequenceBadStructIdentifier(false),
     GetSequenceBadStructObject(false));
 
-    factory->add_type_object("SequenceBoundsStruct", GetSequenceBoundsStructIdentifier(true),
-    GetSequenceBoundsStructObject(true));
-    factory->add_type_object("SequenceBoundsStruct", GetSequenceBoundsStructIdentifier(false),
-    GetSequenceBoundsStructObject(false));
-
-    factory->add_type_object("SequenceSequenceStruct", GetSequenceSequenceStructIdentifier(true),
-    GetSequenceSequenceStructObject(true));
-    factory->add_type_object("SequenceSequenceStruct", GetSequenceSequenceStructIdentifier(false),
-    GetSequenceSequenceStructObject(false));
-
-    factory->add_type_object("SequenceSequenceBoundsStruct", GetSequenceSequenceBoundsStructIdentifier(true),
-    GetSequenceSequenceBoundsStructObject(true));
-    factory->add_type_object("SequenceSequenceBoundsStruct", GetSequenceSequenceBoundsStructIdentifier(false),
-    GetSequenceSequenceBoundsStructObject(false));
-
     factory->add_type_object("MapStruct", GetMapStructIdentifier(true),
     GetMapStructObject(true));
     factory->add_type_object("MapStruct", GetMapStructIdentifier(false),
     GetMapStructObject(false));
 
-    factory->add_type_object("MapStructEqual", GetMapStructEqualIdentifier(true),
-    GetMapStructEqualObject(true));
-    factory->add_type_object("MapStructEqual", GetMapStructEqualIdentifier(false),
-    GetMapStructEqualObject(false));
-
     factory->add_type_object("MapBadKeyStruct", GetMapBadKeyStructIdentifier(true),
     GetMapBadKeyStructObject(true));
     factory->add_type_object("MapBadKeyStruct", GetMapBadKeyStructIdentifier(false),
     GetMapBadKeyStructObject(false));
-
-    factory->add_type_object("MapBadElemStruct", GetMapBadElemStructIdentifier(true),
-    GetMapBadElemStructObject(true));
-    factory->add_type_object("MapBadElemStruct", GetMapBadElemStructIdentifier(false),
-    GetMapBadElemStructObject(false));
 
     factory->add_type_object("MapBoundsStruct", GetMapBoundsStructIdentifier(true),
     GetMapBoundsStructObject(true));

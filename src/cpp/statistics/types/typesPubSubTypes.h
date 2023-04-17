@@ -25,6 +25,7 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
+#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "types.h"
 
@@ -41,6 +42,29 @@ namespace eprosima
         {
             namespace detail
             {
+
+                namespace detail {
+
+                    template<typename Tag, typename Tag::type M>
+                    struct EntityId_s_rob
+                    {
+                        friend typename Tag::type get(
+                                Tag)
+                        {
+                            return M;
+                        }
+                    };
+
+                    struct EntityId_s_f
+                    {
+                        typedef std::array<uint8_t, 4> EntityId_s::* type;
+                        friend type get(
+                                EntityId_s_f);
+                    };
+
+                    template struct EntityId_s_rob<EntityId_s_f, &EntityId_s::m_value>;
+                }
+
                 /*!
                  * @brief This class represents the TopicDataType of the type EntityId_s defined by the user in the IDL file.
                  * @ingroup TYPES
@@ -87,7 +111,7 @@ namespace eprosima
                 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
                     eProsima_user_DllExport inline bool is_plain() const override
                     {
-                        return true;
+                        return 4ULL == eprosima::fastrtps::size_of_<EntityId_s, detail::EntityId_s_f, std::array<uint8_t, 4>>();
                     }
 
                 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -105,6 +129,29 @@ namespace eprosima
                     MD5 m_md5;
                     unsigned char* m_keyBuffer;
                 };
+
+                namespace detail {
+
+                    template<typename Tag, typename Tag::type M>
+                    struct GuidPrefix_s_rob
+                    {
+                        friend typename Tag::type get(
+                                Tag)
+                        {
+                            return M;
+                        }
+                    };
+
+                    struct GuidPrefix_s_f
+                    {
+                        typedef std::array<uint8_t, 12> GuidPrefix_s::* type;
+                        friend type get(
+                                GuidPrefix_s_f);
+                    };
+
+                    template struct GuidPrefix_s_rob<GuidPrefix_s_f, &GuidPrefix_s::m_value>;
+                }
+
                 /*!
                  * @brief This class represents the TopicDataType of the type GuidPrefix_s defined by the user in the IDL file.
                  * @ingroup TYPES
@@ -151,7 +198,7 @@ namespace eprosima
                 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
                     eProsima_user_DllExport inline bool is_plain() const override
                     {
-                        return true;
+                        return 12ULL == eprosima::fastrtps::size_of_<GuidPrefix_s, detail::GuidPrefix_s_f, std::array<uint8_t, 12>>();
                     }
 
                 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -169,6 +216,29 @@ namespace eprosima
                     MD5 m_md5;
                     unsigned char* m_keyBuffer;
                 };
+
+                namespace detail {
+
+                    template<typename Tag, typename Tag::type M>
+                    struct GUID_s_rob
+                    {
+                        friend typename Tag::type get(
+                                Tag)
+                        {
+                            return M;
+                        }
+                    };
+
+                    struct GUID_s_f
+                    {
+                        typedef eprosima::fastdds::statistics::detail::EntityId_s GUID_s::* type;
+                        friend type get(
+                                GUID_s_f);
+                    };
+
+                    template struct GUID_s_rob<GUID_s_f, &GUID_s::m_entityId>;
+                }
+
                 /*!
                  * @brief This class represents the TopicDataType of the type GUID_s defined by the user in the IDL file.
                  * @ingroup TYPES
@@ -215,7 +285,7 @@ namespace eprosima
                 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
                     eProsima_user_DllExport inline bool is_plain() const override
                     {
-                        return true;
+                        return 16ULL == eprosima::fastrtps::size_of_<GUID_s, detail::GUID_s_f, eprosima::fastdds::statistics::detail::EntityId_s>();
                     }
 
                 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -233,6 +303,29 @@ namespace eprosima
                     MD5 m_md5;
                     unsigned char* m_keyBuffer;
                 };
+
+                namespace detail {
+
+                    template<typename Tag, typename Tag::type M>
+                    struct SequenceNumber_s_rob
+                    {
+                        friend typename Tag::type get(
+                                Tag)
+                        {
+                            return M;
+                        }
+                    };
+
+                    struct SequenceNumber_s_f
+                    {
+                        typedef uint32_t SequenceNumber_s::* type;
+                        friend type get(
+                                SequenceNumber_s_f);
+                    };
+
+                    template struct SequenceNumber_s_rob<SequenceNumber_s_f, &SequenceNumber_s::m_low>;
+                }
+
                 /*!
                  * @brief This class represents the TopicDataType of the type SequenceNumber_s defined by the user in the IDL file.
                  * @ingroup TYPES
@@ -279,7 +372,7 @@ namespace eprosima
                 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
                     eProsima_user_DllExport inline bool is_plain() const override
                     {
-                        return true;
+                        return 8ULL == eprosima::fastrtps::size_of_<SequenceNumber_s, detail::SequenceNumber_s_f, uint32_t>();
                     }
 
                 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -297,6 +390,29 @@ namespace eprosima
                     MD5 m_md5;
                     unsigned char* m_keyBuffer;
                 };
+
+                namespace detail {
+
+                    template<typename Tag, typename Tag::type M>
+                    struct SampleIdentity_s_rob
+                    {
+                        friend typename Tag::type get(
+                                Tag)
+                        {
+                            return M;
+                        }
+                    };
+
+                    struct SampleIdentity_s_f
+                    {
+                        typedef eprosima::fastdds::statistics::detail::SequenceNumber_s SampleIdentity_s::* type;
+                        friend type get(
+                                SampleIdentity_s_f);
+                    };
+
+                    template struct SampleIdentity_s_rob<SampleIdentity_s_f, &SampleIdentity_s::m_sequence_number>;
+                }
+
                 /*!
                  * @brief This class represents the TopicDataType of the type SampleIdentity_s defined by the user in the IDL file.
                  * @ingroup TYPES
@@ -343,7 +459,7 @@ namespace eprosima
                 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
                     eProsima_user_DllExport inline bool is_plain() const override
                     {
-                        return true;
+                        return 24ULL == eprosima::fastrtps::size_of_<SampleIdentity_s, detail::SampleIdentity_s_f, eprosima::fastdds::statistics::detail::SequenceNumber_s>();
                     }
 
                 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -361,6 +477,29 @@ namespace eprosima
                     MD5 m_md5;
                     unsigned char* m_keyBuffer;
                 };
+
+                namespace detail {
+
+                    template<typename Tag, typename Tag::type M>
+                    struct Locator_s_rob
+                    {
+                        friend typename Tag::type get(
+                                Tag)
+                        {
+                            return M;
+                        }
+                    };
+
+                    struct Locator_s_f
+                    {
+                        typedef std::array<uint8_t, 16> Locator_s::* type;
+                        friend type get(
+                                Locator_s_f);
+                    };
+
+                    template struct Locator_s_rob<Locator_s_f, &Locator_s::m_address>;
+                }
+
                 /*!
                  * @brief This class represents the TopicDataType of the type Locator_s defined by the user in the IDL file.
                  * @ingroup TYPES
@@ -407,7 +546,7 @@ namespace eprosima
                 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
                     eProsima_user_DllExport inline bool is_plain() const override
                     {
-                        return true;
+                        return 24ULL == eprosima::fastrtps::size_of_<Locator_s, detail::Locator_s_f, std::array<uint8_t, 16>>();
                     }
 
                 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -426,6 +565,29 @@ namespace eprosima
                     unsigned char* m_keyBuffer;
                 };
             }
+
+            namespace detail {
+
+                template<typename Tag, typename Tag::type M>
+                struct DiscoveryTime_rob
+                {
+                    friend typename Tag::type get(
+                            Tag)
+                    {
+                        return M;
+                    }
+                };
+
+                struct DiscoveryTime_f
+                {
+                    typedef std::string DiscoveryTime::* type;
+                    friend type get(
+                            DiscoveryTime_f);
+                };
+
+                template struct DiscoveryTime_rob<DiscoveryTime_f, &DiscoveryTime::m_process>;
+            }
+
             /*!
              * @brief This class represents the TopicDataType of the type DiscoveryTime defined by the user in the IDL file.
              * @ingroup TYPES
@@ -472,7 +634,7 @@ namespace eprosima
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
                 eProsima_user_DllExport inline bool is_plain() const override
                 {
-                    return false;
+                    return 820ULL == eprosima::fastrtps::size_of_<DiscoveryTime, detail::DiscoveryTime_f, std::string>();
                 }
 
             #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -490,6 +652,29 @@ namespace eprosima
                 MD5 m_md5;
                 unsigned char* m_keyBuffer;
             };
+
+            namespace detail {
+
+                template<typename Tag, typename Tag::type M>
+                struct EntityCount_rob
+                {
+                    friend typename Tag::type get(
+                            Tag)
+                    {
+                        return M;
+                    }
+                };
+
+                struct EntityCount_f
+                {
+                    typedef uint64_t EntityCount::* type;
+                    friend type get(
+                            EntityCount_f);
+                };
+
+                template struct EntityCount_rob<EntityCount_f, &EntityCount::m_count>;
+            }
+
             /*!
              * @brief This class represents the TopicDataType of the type EntityCount defined by the user in the IDL file.
              * @ingroup TYPES
@@ -536,7 +721,7 @@ namespace eprosima
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
                 eProsima_user_DllExport inline bool is_plain() const override
                 {
-                    return true;
+                    return 24ULL == eprosima::fastrtps::size_of_<EntityCount, detail::EntityCount_f, uint64_t>();
                 }
 
             #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -554,6 +739,29 @@ namespace eprosima
                 MD5 m_md5;
                 unsigned char* m_keyBuffer;
             };
+
+            namespace detail {
+
+                template<typename Tag, typename Tag::type M>
+                struct SampleIdentityCount_rob
+                {
+                    friend typename Tag::type get(
+                            Tag)
+                    {
+                        return M;
+                    }
+                };
+
+                struct SampleIdentityCount_f
+                {
+                    typedef uint64_t SampleIdentityCount::* type;
+                    friend type get(
+                            SampleIdentityCount_f);
+                };
+
+                template struct SampleIdentityCount_rob<SampleIdentityCount_f, &SampleIdentityCount::m_count>;
+            }
+
             /*!
              * @brief This class represents the TopicDataType of the type SampleIdentityCount defined by the user in the IDL file.
              * @ingroup TYPES
@@ -600,7 +808,7 @@ namespace eprosima
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
                 eProsima_user_DllExport inline bool is_plain() const override
                 {
-                    return true;
+                    return 32ULL == eprosima::fastrtps::size_of_<SampleIdentityCount, detail::SampleIdentityCount_f, uint64_t>();
                 }
 
             #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -618,6 +826,29 @@ namespace eprosima
                 MD5 m_md5;
                 unsigned char* m_keyBuffer;
             };
+
+            namespace detail {
+
+                template<typename Tag, typename Tag::type M>
+                struct Entity2LocatorTraffic_rob
+                {
+                    friend typename Tag::type get(
+                            Tag)
+                    {
+                        return M;
+                    }
+                };
+
+                struct Entity2LocatorTraffic_f
+                {
+                    typedef int16_t Entity2LocatorTraffic::* type;
+                    friend type get(
+                            Entity2LocatorTraffic_f);
+                };
+
+                template struct Entity2LocatorTraffic_rob<Entity2LocatorTraffic_f, &Entity2LocatorTraffic::m_byte_magnitude_order>;
+            }
+
             /*!
              * @brief This class represents the TopicDataType of the type Entity2LocatorTraffic defined by the user in the IDL file.
              * @ingroup TYPES
@@ -664,7 +895,7 @@ namespace eprosima
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
                 eProsima_user_DllExport inline bool is_plain() const override
                 {
-                    return true;
+                    return 58ULL == eprosima::fastrtps::size_of_<Entity2LocatorTraffic, detail::Entity2LocatorTraffic_f, int16_t>();
                 }
 
             #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -682,6 +913,29 @@ namespace eprosima
                 MD5 m_md5;
                 unsigned char* m_keyBuffer;
             };
+
+            namespace detail {
+
+                template<typename Tag, typename Tag::type M>
+                struct WriterReaderData_rob
+                {
+                    friend typename Tag::type get(
+                            Tag)
+                    {
+                        return M;
+                    }
+                };
+
+                struct WriterReaderData_f
+                {
+                    typedef float WriterReaderData::* type;
+                    friend type get(
+                            WriterReaderData_f);
+                };
+
+                template struct WriterReaderData_rob<WriterReaderData_f, &WriterReaderData::m_data>;
+            }
+
             /*!
              * @brief This class represents the TopicDataType of the type WriterReaderData defined by the user in the IDL file.
              * @ingroup TYPES
@@ -728,7 +982,7 @@ namespace eprosima
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
                 eProsima_user_DllExport inline bool is_plain() const override
                 {
-                    return true;
+                    return 36ULL == eprosima::fastrtps::size_of_<WriterReaderData, detail::WriterReaderData_f, float>();
                 }
 
             #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -746,6 +1000,29 @@ namespace eprosima
                 MD5 m_md5;
                 unsigned char* m_keyBuffer;
             };
+
+            namespace detail {
+
+                template<typename Tag, typename Tag::type M>
+                struct Locator2LocatorData_rob
+                {
+                    friend typename Tag::type get(
+                            Tag)
+                    {
+                        return M;
+                    }
+                };
+
+                struct Locator2LocatorData_f
+                {
+                    typedef float Locator2LocatorData::* type;
+                    friend type get(
+                            Locator2LocatorData_f);
+                };
+
+                template struct Locator2LocatorData_rob<Locator2LocatorData_f, &Locator2LocatorData::m_data>;
+            }
+
             /*!
              * @brief This class represents the TopicDataType of the type Locator2LocatorData defined by the user in the IDL file.
              * @ingroup TYPES
@@ -792,7 +1069,7 @@ namespace eprosima
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
                 eProsima_user_DllExport inline bool is_plain() const override
                 {
-                    return true;
+                    return 52ULL == eprosima::fastrtps::size_of_<Locator2LocatorData, detail::Locator2LocatorData_f, float>();
                 }
 
             #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -810,6 +1087,29 @@ namespace eprosima
                 MD5 m_md5;
                 unsigned char* m_keyBuffer;
             };
+
+            namespace detail {
+
+                template<typename Tag, typename Tag::type M>
+                struct EntityData_rob
+                {
+                    friend typename Tag::type get(
+                            Tag)
+                    {
+                        return M;
+                    }
+                };
+
+                struct EntityData_f
+                {
+                    typedef float EntityData::* type;
+                    friend type get(
+                            EntityData_f);
+                };
+
+                template struct EntityData_rob<EntityData_f, &EntityData::m_data>;
+            }
+
             /*!
              * @brief This class represents the TopicDataType of the type EntityData defined by the user in the IDL file.
              * @ingroup TYPES
@@ -856,7 +1156,7 @@ namespace eprosima
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
                 eProsima_user_DllExport inline bool is_plain() const override
                 {
-                    return true;
+                    return 20ULL == eprosima::fastrtps::size_of_<EntityData, detail::EntityData_f, float>();
                 }
 
             #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -874,6 +1174,29 @@ namespace eprosima
                 MD5 m_md5;
                 unsigned char* m_keyBuffer;
             };
+
+            namespace detail {
+
+                template<typename Tag, typename Tag::type M>
+                struct PhysicalData_rob
+                {
+                    friend typename Tag::type get(
+                            Tag)
+                    {
+                        return M;
+                    }
+                };
+
+                struct PhysicalData_f
+                {
+                    typedef std::string PhysicalData::* type;
+                    friend type get(
+                            PhysicalData_f);
+                };
+
+                template struct PhysicalData_rob<PhysicalData_f, &PhysicalData::m_process>;
+            }
+
             /*!
              * @brief This class represents the TopicDataType of the type PhysicalData defined by the user in the IDL file.
              * @ingroup TYPES
@@ -920,7 +1243,7 @@ namespace eprosima
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
                 eProsima_user_DllExport inline bool is_plain() const override
                 {
-                    return false;
+                    return 796ULL == eprosima::fastrtps::size_of_<PhysicalData, detail::PhysicalData_f, std::string>();
                 }
 
             #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN

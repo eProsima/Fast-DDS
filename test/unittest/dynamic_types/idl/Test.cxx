@@ -41,10 +41,10 @@ using namespace eprosima::fastcdr::exception;
 
 #define BasicStruct_max_cdr_typesize 1356ULL;
 
-#define ComplexStruct_max_cdr_typesize 82991252ULL;
+#define ComplexStruct_max_cdr_typesize 69399660ULL;
 
 
-#define CompleteStruct_max_cdr_typesize 82991516ULL;
+#define CompleteStruct_max_cdr_typesize 69399924ULL;
 
 
 
@@ -1037,9 +1037,16 @@ size_t ComplexStruct::getCdrSerializedSize(
     {
         current_alignment += BasicStruct::getCdrSerializedSize(data.my_sequence_struct().at(a), current_alignment);}
 
-    current_alignment += ((500 * 5 * 4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    if ((500 * 5 * 4) > 0)
+    {
+        current_alignment += ((500 * 5 * 4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
-    current_alignment += ((500) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    if ((500) > 0)
+    {
+        current_alignment += ((500) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
+
 
     for(size_t a = 0; a < data.my_array_struct().size(); ++a)
     {
@@ -1100,7 +1107,10 @@ size_t ComplexStruct::getCdrSerializedSize(
 
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
-            current_alignment += ((500) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+            if ((500) > 0)
+            {
+                current_alignment += ((500) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+            }
     }
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
@@ -1144,12 +1154,18 @@ size_t ComplexStruct::getCdrSerializedSize(
 
         }
     }
+    if ((42) > 0)
+    {
+        current_alignment += ((42) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    }
 
-    current_alignment += ((42) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     for(size_t a = 0; a < data.my_array_arrays().size(); ++a)
     {
-            current_alignment += ((2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            if ((2) > 0)
+            {
+                current_alignment += ((2) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+            }
     }
 
     for(size_t a = 0; a < data.my_sequences_array().size(); ++a)

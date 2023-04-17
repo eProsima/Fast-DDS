@@ -25,6 +25,7 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
+#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "sample.h"
 
@@ -32,6 +33,29 @@
 #error \
     Generated sample is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
+
+
+namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct sample_rob
+    {
+        friend typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+    };
+
+    struct sample_f
+    {
+        typedef uint8_t sample::* type;
+        friend type get(
+                sample_f);
+    };
+
+    template struct sample_rob<sample_f, &sample::m_key_value>;
+}
 
 /*!
  * @brief This class represents the TopicDataType of the type sample defined by the user in the IDL file.
@@ -79,7 +103,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return true;
+        return 2ULL == eprosima::fastrtps::size_of_<sample, detail::sample_f, uint8_t>();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN

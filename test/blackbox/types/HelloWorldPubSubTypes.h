@@ -25,6 +25,7 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
+#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "HelloWorld.h"
 
@@ -32,6 +33,29 @@
 #error \
     Generated HelloWorld is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
+
+
+namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct HelloWorld_rob
+    {
+        friend typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+    };
+
+    struct HelloWorld_f
+    {
+        typedef eprosima::fastrtps::fixed_string<128> HelloWorld::* type;
+        friend type get(
+                HelloWorld_f);
+    };
+
+    template struct HelloWorld_rob<HelloWorld_f, &HelloWorld::m_message>;
+}
 
 /*!
  * @brief This class represents the TopicDataType of the type HelloWorld defined by the user in the IDL file.
@@ -79,7 +103,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return false;
+        return 137ULL == eprosima::fastrtps::size_of_<HelloWorld, detail::HelloWorld_f, eprosima::fastrtps::fixed_string<128>>();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN

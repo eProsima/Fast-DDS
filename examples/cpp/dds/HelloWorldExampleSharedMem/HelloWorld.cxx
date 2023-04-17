@@ -34,7 +34,7 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define HelloWorld_max_cdr_typesize 1048841ULL;
+#define HelloWorld_max_cdr_typesize 1048840ULL;
 #define HelloWorld_max_key_cdr_typesize 0ULL;
 
 HelloWorld::HelloWorld()
@@ -126,7 +126,10 @@ size_t HelloWorld::getCdrSerializedSize(
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.message().size() + 1;
 
-    current_alignment += ((1048576) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    if ((1048576) > 0)
+    {
+        current_alignment += ((1048576) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
 
     return current_alignment - initial_alignment;

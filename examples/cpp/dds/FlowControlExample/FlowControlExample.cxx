@@ -34,7 +34,7 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define FlowControlExample_max_cdr_typesize 600002ULL;
+#define FlowControlExample_max_cdr_typesize 600001ULL;
 #define FlowControlExample_max_key_cdr_typesize 0ULL;
 
 FlowControlExample::FlowControlExample()
@@ -114,7 +114,10 @@ size_t FlowControlExample::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
 
-    current_alignment += ((600000) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    if ((600000) > 0)
+    {
+        current_alignment += ((600000) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 

@@ -34,7 +34,7 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define BenchMarkMedium_max_cdr_typesize 524296ULL;
+#define BenchMarkMedium_max_cdr_typesize 524292ULL;
 #define BenchMarkMedium_max_key_cdr_typesize 0ULL;
 
 BenchMarkMedium::BenchMarkMedium()
@@ -114,7 +114,10 @@ size_t BenchMarkMedium::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
 
-    current_alignment += ((524288) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    if ((524288) > 0)
+    {
+        current_alignment += ((524288) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 

@@ -25,6 +25,7 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
+#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "Test.h"
 
@@ -37,6 +38,29 @@
 typedef MyEnum MyAliasEnum;
 typedef MyAliasEnum MyAliasEnum2;
 typedef MyAliasEnum2 MyAliasEnum3;
+
+namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct BasicStruct_rob
+    {
+        friend typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+    };
+
+    struct BasicStruct_f
+    {
+        typedef std::wstring BasicStruct::* type;
+        friend type get(
+                BasicStruct_f);
+    };
+
+    template struct BasicStruct_rob<BasicStruct_f, &BasicStruct::m_my_wstring>;
+}
+
 /*!
  * @brief This class represents the TopicDataType of the type BasicStruct defined by the user in the IDL file.
  * @ingroup TEST
@@ -83,7 +107,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return false;
+        return 1356ULL == eprosima::fastrtps::size_of_<BasicStruct, detail::BasicStruct_f, std::wstring>();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -106,6 +130,29 @@ typedef std::array<BasicStruct, 5> BSAlias5;
 typedef std::array<MyAliasEnum3, 42> MA3;
 typedef std::array<int32_t, 2> MyMiniArray;
 typedef std::vector<int32_t> MySequenceLong;
+
+namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct ComplexStruct_rob
+    {
+        friend typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+    };
+
+    struct ComplexStruct_f
+    {
+        typedef std::array<MySequenceLong, 23> ComplexStruct::* type;
+        friend type get(
+                ComplexStruct_f);
+    };
+
+    template struct ComplexStruct_rob<ComplexStruct_f, &ComplexStruct::m_my_sequences_array>;
+}
+
 /*!
  * @brief This class represents the TopicDataType of the type ComplexStruct defined by the user in the IDL file.
  * @ingroup TEST
@@ -152,7 +199,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return false;
+        return 69399660ULL == eprosima::fastrtps::size_of_<ComplexStruct, detail::ComplexStruct_f, std::array<MySequenceLong, 23>>();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -171,6 +218,29 @@ public:
     unsigned char* m_keyBuffer;
 };
 
+
+
+namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct CompleteStruct_rob
+    {
+        friend typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+    };
+
+    struct CompleteStruct_f
+    {
+        typedef MyUnion2 CompleteStruct::* type;
+        friend type get(
+                CompleteStruct_f);
+    };
+
+    template struct CompleteStruct_rob<CompleteStruct_f, &CompleteStruct::m_my_union_2>;
+}
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteStruct defined by the user in the IDL file.
@@ -218,7 +288,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return false;
+        return 69399924ULL == eprosima::fastrtps::size_of_<CompleteStruct, detail::CompleteStruct_f, MyUnion2>();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -236,6 +306,29 @@ public:
     MD5 m_md5;
     unsigned char* m_keyBuffer;
 };
+
+namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct KeyedStruct_rob
+    {
+        friend typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+    };
+
+    struct KeyedStruct_f
+    {
+        typedef BasicStruct KeyedStruct::* type;
+        friend type get(
+                KeyedStruct_f);
+    };
+
+    template struct KeyedStruct_rob<KeyedStruct_f, &KeyedStruct::m_basic>;
+}
+
 /*!
  * @brief This class represents the TopicDataType of the type KeyedStruct defined by the user in the IDL file.
  * @ingroup TEST
@@ -282,7 +375,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return false;
+        return 1364ULL == eprosima::fastrtps::size_of_<KeyedStruct, detail::KeyedStruct_f, BasicStruct>();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN

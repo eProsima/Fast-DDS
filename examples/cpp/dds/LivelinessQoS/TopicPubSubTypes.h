@@ -25,6 +25,7 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
+#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "Topic.h"
 
@@ -32,6 +33,29 @@
 #error \
     Generated Topic is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
+
+
+namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct Topic_rob
+    {
+        friend typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+    };
+
+    struct Topic_f
+    {
+        typedef std::string Topic::* type;
+        friend type get(
+                Topic_f);
+    };
+
+    template struct Topic_rob<Topic_f, &Topic::m_message>;
+}
 
 /*!
  * @brief This class represents the TopicDataType of the type Topic defined by the user in the IDL file.
@@ -79,7 +103,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return false;
+        return 264ULL == eprosima::fastrtps::size_of_<Topic, detail::Topic_f, std::string>();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN

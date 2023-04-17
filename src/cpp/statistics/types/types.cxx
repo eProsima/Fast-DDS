@@ -34,36 +34,36 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define eprosima_fastdds_statistics_DiscoveryTime_max_cdr_typesize 828ULL;
-#define eprosima_fastdds_statistics_PhysicalData_max_cdr_typesize 800ULL;
+#define eprosima_fastdds_statistics_DiscoveryTime_max_cdr_typesize 820ULL;
+#define eprosima_fastdds_statistics_PhysicalData_max_cdr_typesize 796ULL;
 
-#define eprosima_fastdds_statistics_detail_Locator_s_max_cdr_typesize 25ULL;
+#define eprosima_fastdds_statistics_detail_Locator_s_max_cdr_typesize 24ULL;
 
-#define eprosima_fastdds_statistics_detail_GuidPrefix_s_max_cdr_typesize 13ULL;
-#define eprosima_fastdds_statistics_detail_SampleIdentity_s_max_cdr_typesize 28ULL;
-#define eprosima_fastdds_statistics_EntityData_max_cdr_typesize 24ULL;
-#define eprosima_fastdds_statistics_Entity2LocatorTraffic_max_cdr_typesize 66ULL;
-#define eprosima_fastdds_statistics_detail_EntityId_s_max_cdr_typesize 5ULL;
-#define eprosima_fastdds_statistics_EntityCount_max_cdr_typesize 32ULL;
-#define eprosima_fastdds_statistics_WriterReaderData_max_cdr_typesize 40ULL;
-#define eprosima_fastdds_statistics_SampleIdentityCount_max_cdr_typesize 40ULL;
-#define eprosima_fastdds_statistics_Locator2LocatorData_max_cdr_typesize 60ULL;
-#define eprosima_fastdds_statistics_detail_GUID_s_max_cdr_typesize 18ULL;
+#define eprosima_fastdds_statistics_detail_GuidPrefix_s_max_cdr_typesize 12ULL;
+#define eprosima_fastdds_statistics_detail_SampleIdentity_s_max_cdr_typesize 24ULL;
+#define eprosima_fastdds_statistics_EntityData_max_cdr_typesize 20ULL;
+#define eprosima_fastdds_statistics_Entity2LocatorTraffic_max_cdr_typesize 58ULL;
+#define eprosima_fastdds_statistics_detail_EntityId_s_max_cdr_typesize 4ULL;
+#define eprosima_fastdds_statistics_EntityCount_max_cdr_typesize 24ULL;
+#define eprosima_fastdds_statistics_WriterReaderData_max_cdr_typesize 36ULL;
+#define eprosima_fastdds_statistics_SampleIdentityCount_max_cdr_typesize 32ULL;
+#define eprosima_fastdds_statistics_Locator2LocatorData_max_cdr_typesize 52ULL;
+#define eprosima_fastdds_statistics_detail_GUID_s_max_cdr_typesize 16ULL;
 #define eprosima_fastdds_statistics_detail_SequenceNumber_s_max_cdr_typesize 8ULL;
-#define eprosima_fastdds_statistics_DiscoveryTime_max_key_cdr_typesize 36ULL;
-#define eprosima_fastdds_statistics_PhysicalData_max_key_cdr_typesize 18ULL;
+#define eprosima_fastdds_statistics_DiscoveryTime_max_key_cdr_typesize 32ULL;
+#define eprosima_fastdds_statistics_PhysicalData_max_key_cdr_typesize 16ULL;
 
 #define eprosima_fastdds_statistics_detail_Locator_s_max_key_cdr_typesize 0ULL;
 
 #define eprosima_fastdds_statistics_detail_GuidPrefix_s_max_key_cdr_typesize 0ULL;
 #define eprosima_fastdds_statistics_detail_SampleIdentity_s_max_key_cdr_typesize 0ULL;
-#define eprosima_fastdds_statistics_EntityData_max_key_cdr_typesize 18ULL;
-#define eprosima_fastdds_statistics_Entity2LocatorTraffic_max_key_cdr_typesize 45ULL;
+#define eprosima_fastdds_statistics_EntityData_max_key_cdr_typesize 16ULL;
+#define eprosima_fastdds_statistics_Entity2LocatorTraffic_max_key_cdr_typesize 40ULL;
 #define eprosima_fastdds_statistics_detail_EntityId_s_max_key_cdr_typesize 0ULL;
-#define eprosima_fastdds_statistics_EntityCount_max_key_cdr_typesize 18ULL;
-#define eprosima_fastdds_statistics_WriterReaderData_max_key_cdr_typesize 36ULL;
-#define eprosima_fastdds_statistics_SampleIdentityCount_max_key_cdr_typesize 28ULL;
-#define eprosima_fastdds_statistics_Locator2LocatorData_max_key_cdr_typesize 53ULL;
+#define eprosima_fastdds_statistics_EntityCount_max_key_cdr_typesize 16ULL;
+#define eprosima_fastdds_statistics_WriterReaderData_max_key_cdr_typesize 32ULL;
+#define eprosima_fastdds_statistics_SampleIdentityCount_max_key_cdr_typesize 24ULL;
+#define eprosima_fastdds_statistics_Locator2LocatorData_max_key_cdr_typesize 48ULL;
 #define eprosima_fastdds_statistics_detail_GUID_s_max_key_cdr_typesize 0ULL;
 #define eprosima_fastdds_statistics_detail_SequenceNumber_s_max_key_cdr_typesize 0ULL;
 
@@ -136,7 +136,10 @@ size_t eprosima::fastdds::statistics::detail::EntityId_s::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
 
-    current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    if ((4) > 0)
+    {
+        current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
     return current_alignment - initial_alignment;
 }
@@ -284,7 +287,10 @@ size_t eprosima::fastdds::statistics::detail::GuidPrefix_s::getCdrSerializedSize
     size_t initial_alignment = current_alignment;
 
 
-    current_alignment += ((12) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    if ((12) > 0)
+    {
+        current_alignment += ((12) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
     return current_alignment - initial_alignment;
 }
@@ -1021,7 +1027,10 @@ size_t eprosima::fastdds::statistics::detail::Locator_s::getCdrSerializedSize(
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
-    current_alignment += ((16) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    if ((16) > 0)
+    {
+        current_alignment += ((16) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
 
     return current_alignment - initial_alignment;

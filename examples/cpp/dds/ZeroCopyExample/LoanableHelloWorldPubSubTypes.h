@@ -25,6 +25,7 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
+#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "LoanableHelloWorld.h"
 
@@ -32,6 +33,29 @@
 #error \
     Generated LoanableHelloWorld is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
+
+
+namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct LoanableHelloWorld_rob
+    {
+        friend typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+    };
+
+    struct LoanableHelloWorld_f
+    {
+        typedef std::array<char, 256> LoanableHelloWorld::* type;
+        friend type get(
+                LoanableHelloWorld_f);
+    };
+
+    template struct LoanableHelloWorld_rob<LoanableHelloWorld_f, &LoanableHelloWorld::m_message>;
+}
 
 /*!
  * @brief This class represents the TopicDataType of the type LoanableHelloWorld defined by the user in the IDL file.
@@ -79,7 +103,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return true;
+        return 260ULL == eprosima::fastrtps::size_of_<LoanableHelloWorld, detail::LoanableHelloWorld_f, std::array<char, 256>>();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN

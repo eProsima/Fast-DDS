@@ -35,7 +35,7 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 #define StructType_max_cdr_typesize 336ULL;
-#define ContentFilterTestType_max_cdr_typesize 73112ULL;
+#define ContentFilterTestType_max_cdr_typesize 72456ULL;
 
 
 #define StructType_max_key_cdr_typesize 0ULL;
@@ -1319,40 +1319,82 @@ size_t ContentFilterTestType::getCdrSerializedSize(
 
 
     current_alignment += StructType::getCdrSerializedSize(data.struct_field(), current_alignment);
+    if ((3) > 0)
+    {
+        current_alignment += ((3) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
-    current_alignment += ((3) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    if ((3) > 0)
+    {
+        current_alignment += ((3) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
-    current_alignment += ((3) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    if ((3) > 0)
+    {
+        current_alignment += ((3) * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    }
 
-    current_alignment += ((3) * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    if ((3) > 0)
+    {
+        current_alignment += ((3) * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    }
 
-    current_alignment += ((3) * 2) + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    if ((3) > 0)
+    {
+        current_alignment += ((3) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    }
 
-    current_alignment += ((3) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    if ((3) > 0)
+    {
+        current_alignment += ((3) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    }
 
-    current_alignment += ((3) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    if ((3) > 0)
+    {
+        current_alignment += ((3) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    }
 
-    current_alignment += ((3) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    if ((3) > 0)
+    {
+        current_alignment += ((3) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    }
 
-    current_alignment += ((3) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    if ((3) > 0)
+    {
+        current_alignment += ((3) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    }
 
-    current_alignment += ((3) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    if ((3) > 0)
+    {
+        current_alignment += ((3) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    }
 
-    current_alignment += ((3) * 8) + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
+    if ((3) > 0)
+    {
+        current_alignment += ((3) * 16) + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
+    }
 
-    current_alignment += ((3) * 16) + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
+    if ((3) > 0)
+    {
+        current_alignment += ((3) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    }
 
-    current_alignment += ((3) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
     for(size_t a = 0; a < data.array_string_field().size(); ++a)
     {
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.array_string_field().at(a).size() + 1;
 
     }
+    if ((3) > 0)
+    {
+        current_alignment += ((3) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    }
 
-    current_alignment += ((3) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    if ((3) > 0)
+    {
+        current_alignment += ((3) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+    }
 
-    current_alignment += ((3) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
     for(size_t a = 0; a < data.array_struct_field().size(); ++a)
     {

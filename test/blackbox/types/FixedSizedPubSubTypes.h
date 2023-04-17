@@ -25,6 +25,7 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
+#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "FixedSized.h"
 
@@ -32,6 +33,29 @@
 #error \
     Generated FixedSized is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
+
+
+namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct FixedSized_rob
+    {
+        friend typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+    };
+
+    struct FixedSized_f
+    {
+        typedef uint16_t FixedSized::* type;
+        friend type get(
+                FixedSized_f);
+    };
+
+    template struct FixedSized_rob<FixedSized_f, &FixedSized::m_index>;
+}
 
 /*!
  * @brief This class represents the TopicDataType of the type FixedSized defined by the user in the IDL file.
@@ -79,7 +103,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return true;
+        return 2ULL == eprosima::fastrtps::size_of_<FixedSized, detail::FixedSized_f, uint16_t>();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN

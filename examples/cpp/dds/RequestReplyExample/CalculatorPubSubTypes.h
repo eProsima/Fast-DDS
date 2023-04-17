@@ -25,6 +25,7 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
+#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "Calculator.h"
 
@@ -33,6 +34,29 @@
     Generated Calculator is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
+
+
+namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct RequestType_rob
+    {
+        friend typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+    };
+
+    struct RequestType_f
+    {
+        typedef int32_t RequestType::* type;
+        friend type get(
+                RequestType_f);
+    };
+
+    template struct RequestType_rob<RequestType_f, &RequestType::m_y>;
+}
 
 /*!
  * @brief This class represents the TopicDataType of the type RequestType defined by the user in the IDL file.
@@ -80,7 +104,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return false;
+        return 12ULL == eprosima::fastrtps::size_of_<RequestType, detail::RequestType_f, int32_t>();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -98,6 +122,29 @@ public:
     MD5 m_md5;
     unsigned char* m_keyBuffer;
 };
+
+namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct ReplyType_rob
+    {
+        friend typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+    };
+
+    struct ReplyType_f
+    {
+        typedef int64_t ReplyType::* type;
+        friend type get(
+                ReplyType_f);
+    };
+
+    template struct ReplyType_rob<ReplyType_f, &ReplyType::m_z>;
+}
+
 /*!
  * @brief This class represents the TopicDataType of the type ReplyType defined by the user in the IDL file.
  * @ingroup CALCULATOR
@@ -144,7 +191,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return true;
+        return 8ULL == eprosima::fastrtps::size_of_<ReplyType, detail::ReplyType_f, int64_t>();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN

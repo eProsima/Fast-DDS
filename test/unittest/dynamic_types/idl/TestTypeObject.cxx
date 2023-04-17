@@ -41,6 +41,16 @@ using namespace eprosima::fastrtps::rtps;
 void registerTestTypes()
 {
     TypeObjectFactory *factory = TypeObjectFactory::get_instance();
+    factory->add_type_object("MA3", GetMA3Identifier(true),
+    GetMA3Object(true));
+    factory->add_type_object("MA3", GetMA3Identifier(false),
+    GetMA3Object(false));
+
+    factory->add_type_object("MyOctetArray500", GetMyOctetArray500Identifier(true),
+    GetMyOctetArray500Object(true));
+    factory->add_type_object("MyOctetArray500", GetMyOctetArray500Identifier(false),
+    GetMyOctetArray500Object(false));
+
     factory->add_type_object("MyEnum", GetMyEnumIdentifier(true),
     GetMyEnumObject(true));
     factory->add_type_object("MyEnum", GetMyEnumIdentifier(false),
@@ -66,20 +76,10 @@ void registerTestTypes()
     factory->add_type_object("BasicStruct", GetBasicStructIdentifier(false),
     GetBasicStructObject(false));
 
-    factory->add_type_object("MyOctetArray500", GetMyOctetArray500Identifier(true),
-    GetMyOctetArray500Object(true));
-    factory->add_type_object("MyOctetArray500", GetMyOctetArray500Identifier(false),
-    GetMyOctetArray500Object(false));
-
     factory->add_type_object("BSAlias5", GetBSAlias5Identifier(true),
     GetBSAlias5Object(true));
     factory->add_type_object("BSAlias5", GetBSAlias5Identifier(false),
     GetBSAlias5Object(false));
-
-    factory->add_type_object("MA3", GetMA3Identifier(true),
-    GetMA3Object(true));
-    factory->add_type_object("MA3", GetMA3Identifier(false),
-    GetMA3Object(false));
 
     factory->add_type_object("MyMiniArray", GetMyMiniArrayIdentifier(true),
     GetMyMiniArrayObject(true));

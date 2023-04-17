@@ -25,6 +25,7 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
+#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "ContentFilterTestType.h"
 
@@ -34,6 +35,29 @@
 #endif  // GEN_API_VER
 
 
+
+
+namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct StructType_rob
+    {
+        friend typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+    };
+
+    struct StructType_f
+    {
+        typedef Material StructType::* type;
+        friend type get(
+                StructType_f);
+    };
+
+    template struct StructType_rob<StructType_f, &StructType::m_enum2_field>;
+}
 
 /*!
  * @brief This class represents the TopicDataType of the type StructType defined by the user in the IDL file.
@@ -81,7 +105,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return false;
+        return 336ULL == eprosima::fastrtps::size_of_<StructType, detail::StructType_f, Material>();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -100,6 +124,29 @@ public:
     unsigned char* m_keyBuffer;
 };
 
+
+
+namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct ContentFilterTestType_rob
+    {
+        friend typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+    };
+
+    struct ContentFilterTestType_f
+    {
+        typedef std::vector<StructType> ContentFilterTestType::* type;
+        friend type get(
+                ContentFilterTestType_f);
+    };
+
+    template struct ContentFilterTestType_rob<ContentFilterTestType_f, &ContentFilterTestType::m_unbounded_sequence_struct_field>;
+}
 
 /*!
  * @brief This class represents the TopicDataType of the type ContentFilterTestType defined by the user in the IDL file.
@@ -147,7 +194,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return false;
+        return 72456ULL == eprosima::fastrtps::size_of_<ContentFilterTestType, detail::ContentFilterTestType_f, std::vector<StructType>>();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
