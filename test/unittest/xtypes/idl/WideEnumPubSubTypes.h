@@ -25,7 +25,6 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
-#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "WideEnum.h"
 
@@ -35,28 +34,6 @@
 #endif  // GEN_API_VER
 
 
-
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct MyEnumWideStruct_rob
-    {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct MyEnumWideStruct_f
-    {
-        typedef MyEnumWide MyEnumWideStruct::* type;
-        friend type get(
-                MyEnumWideStruct_f);
-    };
-
-    template struct MyEnumWideStruct_rob<MyEnumWideStruct_f, &MyEnumWideStruct::m_my_enum_wide>;
-}
 
 /*!
  * @brief This class represents the TopicDataType of the type MyEnumWideStruct defined by the user in the IDL file.
@@ -104,7 +81,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 4ULL == eprosima::fastrtps::size_of_<MyEnumWideStruct, detail::MyEnumWideStruct_f, MyEnumWide>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -121,30 +98,9 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
 
-
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct SimpleWideUnionStruct_rob
-    {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct SimpleWideUnionStruct_f
-    {
-        typedef SimpleWideUnion SimpleWideUnionStruct::* type;
-        friend type get(
-                SimpleWideUnionStruct_f);
-    };
-
-    template struct SimpleWideUnionStruct_rob<SimpleWideUnionStruct_f, &SimpleWideUnionStruct::m_my_union>;
-}
 
 /*!
  * @brief This class represents the TopicDataType of the type SimpleWideUnionStruct defined by the user in the IDL file.
@@ -192,7 +148,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 16ULL == eprosima::fastrtps::size_of_<SimpleWideUnionStruct, detail::SimpleWideUnionStruct_f, SimpleWideUnion>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -209,6 +165,7 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
 
 #endif // _FAST_DDS_GENERATED_WIDEENUM_PUBSUBTYPES_H_

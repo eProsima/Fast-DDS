@@ -25,7 +25,6 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
-#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "FilteringExample.h"
 
@@ -40,7 +39,7 @@ namespace detail {
     template<typename Tag, typename Tag::type M>
     struct FilteringExample_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -50,13 +49,12 @@ namespace detail {
     struct FilteringExample_f
     {
         typedef int32_t FilteringExample::* type;
-        friend type get(
+        friend constexpr type get(
                 FilteringExample_f);
     };
 
     template struct FilteringExample_rob<FilteringExample_f, &FilteringExample::m_sampleNumber>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type FilteringExample defined by the user in the IDL file.
  * @ingroup FILTERINGEXAMPLE
@@ -103,7 +101,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 4ULL == eprosima::fastrtps::size_of_<FilteringExample, detail::FilteringExample_f, int32_t>();
+        return 4ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -120,6 +118,12 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr size_t size_of_()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((FilteringExample*)0)->*get(detail::FilteringExample_f())))) + sizeof(int32_t);
+    }};
 
 #endif // _FAST_DDS_GENERATED_FILTERINGEXAMPLE_PUBSUBTYPES_H_

@@ -25,7 +25,6 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
-#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "OwnershipStrength.h"
 
@@ -34,28 +33,6 @@
     Generated OwnershipStrength is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
-
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct ExampleMessage_rob
-    {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct ExampleMessage_f
-    {
-        typedef std::string ExampleMessage::* type;
-        friend type get(
-                ExampleMessage_f);
-    };
-
-    template struct ExampleMessage_rob<ExampleMessage_f, &ExampleMessage::m_message>;
-}
 
 /*!
  * @brief This class represents the TopicDataType of the type ExampleMessage defined by the user in the IDL file.
@@ -103,7 +80,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 268ULL == eprosima::fastrtps::size_of_<ExampleMessage, detail::ExampleMessage_f, std::string>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -120,6 +97,7 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
 
 #endif // _FAST_DDS_GENERATED_OWNERSHIPSTRENGTH_PUBSUBTYPES_H_

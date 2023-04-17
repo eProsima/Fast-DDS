@@ -25,7 +25,6 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
-#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "HelloWorld.h"
 
@@ -34,28 +33,6 @@
     Generated HelloWorld is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
-
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct HelloWorld_rob
-    {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct HelloWorld_f
-    {
-        typedef std::array<char, 1048576> HelloWorld::* type;
-        friend type get(
-                HelloWorld_f);
-    };
-
-    template struct HelloWorld_rob<HelloWorld_f, &HelloWorld::m_data>;
-}
 
 /*!
  * @brief This class represents the TopicDataType of the type HelloWorld defined by the user in the IDL file.
@@ -103,7 +80,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 1048840ULL == eprosima::fastrtps::size_of_<HelloWorld, detail::HelloWorld_f, std::array<char, 1048576>>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -120,6 +97,7 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
 
 #endif // _FAST_DDS_GENERATED_HELLOWORLD_PUBSUBTYPES_H_

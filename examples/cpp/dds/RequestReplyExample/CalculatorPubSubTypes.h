@@ -25,7 +25,6 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
-#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "Calculator.h"
 
@@ -35,28 +34,6 @@
 #endif  // GEN_API_VER
 
 
-
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct RequestType_rob
-    {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct RequestType_f
-    {
-        typedef int32_t RequestType::* type;
-        friend type get(
-                RequestType_f);
-    };
-
-    template struct RequestType_rob<RequestType_f, &RequestType::m_y>;
-}
 
 /*!
  * @brief This class represents the TopicDataType of the type RequestType defined by the user in the IDL file.
@@ -104,7 +81,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 12ULL == eprosima::fastrtps::size_of_<RequestType, detail::RequestType_f, int32_t>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -121,6 +98,7 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
 
 namespace detail {
@@ -128,7 +106,7 @@ namespace detail {
     template<typename Tag, typename Tag::type M>
     struct ReplyType_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -138,13 +116,12 @@ namespace detail {
     struct ReplyType_f
     {
         typedef int64_t ReplyType::* type;
-        friend type get(
+        friend constexpr type get(
                 ReplyType_f);
     };
 
     template struct ReplyType_rob<ReplyType_f, &ReplyType::m_z>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type ReplyType defined by the user in the IDL file.
  * @ingroup CALCULATOR
@@ -191,7 +168,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 8ULL == eprosima::fastrtps::size_of_<ReplyType, detail::ReplyType_f, int64_t>();
+        return 8ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -208,6 +185,12 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr size_t size_of_()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((ReplyType*)0)->*get(detail::ReplyType_f())))) + sizeof(int64_t);
+    }};
 
 #endif // _FAST_DDS_GENERATED_CALCULATOR_PUBSUBTYPES_H_

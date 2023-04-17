@@ -25,7 +25,6 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
-#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "new_features_4_2.h"
 
@@ -34,28 +33,6 @@
     Generated new_features_4_2 is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
-
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct NewAliases_rob
-    {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct NewAliases_f
-    {
-        typedef std::string NewAliases::* type;
-        friend type get(
-                NewAliases_f);
-    };
-
-    template struct NewAliases_rob<NewAliases_f, &NewAliases::m_local_string>;
-}
 
 /*!
  * @brief This class represents the TopicDataType of the type NewAliases defined by the user in the IDL file.
@@ -103,7 +80,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 32ULL == eprosima::fastrtps::size_of_<NewAliases, detail::NewAliases_f, std::string>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -120,6 +97,7 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
 
 
@@ -135,7 +113,7 @@ namespace bitmodule
         template<typename Tag, typename Tag::type M>
         struct BitsetBitmask_rob
         {
-            friend typename Tag::type get(
+            friend constexpr typename Tag::type get(
                     Tag)
             {
                 return M;
@@ -145,13 +123,12 @@ namespace bitmodule
         struct BitsetBitmask_f
         {
             typedef bitmodule::MyBitMask BitsetBitmask::* type;
-            friend type get(
+            friend constexpr type get(
                     BitsetBitmask_f);
         };
 
         template struct BitsetBitmask_rob<BitsetBitmask_f, &BitsetBitmask::m_mybitmask>;
     }
-
     /*!
      * @brief This class represents the TopicDataType of the type BitsetBitmask defined by the user in the IDL file.
      * @ingroup NEW_FEATURES_4_2
@@ -198,7 +175,7 @@ namespace bitmodule
     #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
         eProsima_user_DllExport inline bool is_plain() const override
         {
-            return 17ULL == eprosima::fastrtps::size_of_<BitsetBitmask, detail::BitsetBitmask_f, bitmodule::MyBitMask>();
+            return 17ULL == size_of_();
         }
 
     #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -215,14 +192,20 @@ namespace bitmodule
 
         MD5 m_md5;
         unsigned char* m_keyBuffer;
-    };
+
+    private:
+
+        static constexpr size_t size_of_()
+        {
+            return ((::size_t) &reinterpret_cast<char const volatile&>((((BitsetBitmask*)0)->*get(detail::BitsetBitmask_f())))) + sizeof(bitmodule::MyBitMask);
+        }};
 
     namespace detail {
 
         template<typename Tag, typename Tag::type M>
         struct BM2_rob
         {
-            friend typename Tag::type get(
+            friend constexpr typename Tag::type get(
                     Tag)
             {
                 return M;
@@ -232,13 +215,12 @@ namespace bitmodule
         struct BM2_f
         {
             typedef int32_t BM2::* type;
-            friend type get(
+            friend constexpr type get(
                     BM2_f);
         };
 
         template struct BM2_rob<BM2_f, &BM2::m_mylong>;
     }
-
     /*!
      * @brief This class represents the TopicDataType of the type BM2 defined by the user in the IDL file.
      * @ingroup NEW_FEATURES_4_2
@@ -285,7 +267,7 @@ namespace bitmodule
     #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
         eProsima_user_DllExport inline bool is_plain() const override
         {
-            return 24ULL == eprosima::fastrtps::size_of_<BM2, detail::BM2_f, int32_t>();
+            return 24ULL == size_of_();
         }
 
     #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -302,29 +284,13 @@ namespace bitmodule
 
         MD5 m_md5;
         unsigned char* m_keyBuffer;
-    };
-}
 
-namespace detail {
+    private:
 
-    template<typename Tag, typename Tag::type M>
-    struct StructTest_rob
-    {
-        friend typename Tag::type get(
-                Tag)
+        static constexpr size_t size_of_()
         {
-            return M;
-        }
-    };
-
-    struct StructTest_f
-    {
-        typedef bitmodule::BM2 StructTest::* type;
-        friend type get(
-                StructTest_f);
-    };
-
-    template struct StructTest_rob<StructTest_f, &StructTest::m_myStructBits>;
+            return ((::size_t) &reinterpret_cast<char const volatile&>((((BM2*)0)->*get(detail::BM2_f())))) + sizeof(int32_t);
+        }};
 }
 
 /*!
@@ -373,7 +339,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 80ULL == eprosima::fastrtps::size_of_<StructTest, detail::StructTest_f, bitmodule::BM2>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -390,6 +356,7 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
 
 #endif // _FAST_DDS_GENERATED_NEW_FEATURES_4_2_PUBSUBTYPES_H_

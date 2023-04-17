@@ -25,7 +25,6 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
-#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "LoanableHelloWorld.h"
 
@@ -40,7 +39,7 @@ namespace detail {
     template<typename Tag, typename Tag::type M>
     struct LoanableHelloWorld_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -50,13 +49,12 @@ namespace detail {
     struct LoanableHelloWorld_f
     {
         typedef std::array<char, 256> LoanableHelloWorld::* type;
-        friend type get(
+        friend constexpr type get(
                 LoanableHelloWorld_f);
     };
 
     template struct LoanableHelloWorld_rob<LoanableHelloWorld_f, &LoanableHelloWorld::m_message>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type LoanableHelloWorld defined by the user in the IDL file.
  * @ingroup LOANABLEHELLOWORLD
@@ -103,7 +101,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 260ULL == eprosima::fastrtps::size_of_<LoanableHelloWorld, detail::LoanableHelloWorld_f, std::array<char, 256>>();
+        return 260ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -120,6 +118,12 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr size_t size_of_()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((LoanableHelloWorld*)0)->*get(detail::LoanableHelloWorld_f())))) + sizeof(std::array<char, 256>);
+    }};
 
 #endif // _FAST_DDS_GENERATED_LOANABLEHELLOWORLD_PUBSUBTYPES_H_

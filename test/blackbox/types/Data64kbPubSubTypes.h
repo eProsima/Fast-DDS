@@ -25,7 +25,6 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
-#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "Data64kb.h"
 
@@ -34,28 +33,6 @@
     Generated Data64kb is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
-
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct Data64kb_rob
-    {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct Data64kb_f
-    {
-        typedef std::vector<uint8_t> Data64kb::* type;
-        friend type get(
-                Data64kb_f);
-    };
-
-    template struct Data64kb_rob<Data64kb_f, &Data64kb::m_data>;
-}
 
 /*!
  * @brief This class represents the TopicDataType of the type Data64kb defined by the user in the IDL file.
@@ -103,7 +80,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 64000ULL == eprosima::fastrtps::size_of_<Data64kb, detail::Data64kb_f, std::vector<uint8_t>>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -120,6 +97,7 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
 
 #endif // _FAST_DDS_GENERATED_DATA64KB_PUBSUBTYPES_H_

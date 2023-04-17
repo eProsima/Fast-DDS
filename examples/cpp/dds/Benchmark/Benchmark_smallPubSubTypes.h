@@ -25,7 +25,6 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
-#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "Benchmark_small.h"
 
@@ -40,7 +39,7 @@ namespace detail {
     template<typename Tag, typename Tag::type M>
     struct BenchMarkSmall_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -50,13 +49,12 @@ namespace detail {
     struct BenchMarkSmall_f
     {
         typedef uint32_t BenchMarkSmall::* type;
-        friend type get(
+        friend constexpr type get(
                 BenchMarkSmall_f);
     };
 
     template struct BenchMarkSmall_rob<BenchMarkSmall_f, &BenchMarkSmall::m_index>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type BenchMarkSmall defined by the user in the IDL file.
  * @ingroup BENCHMARK_SMALL
@@ -103,7 +101,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 16388ULL == eprosima::fastrtps::size_of_<BenchMarkSmall, detail::BenchMarkSmall_f, uint32_t>();
+        return 16388ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -120,6 +118,12 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr size_t size_of_()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((BenchMarkSmall*)0)->*get(detail::BenchMarkSmall_f())))) + sizeof(uint32_t);
+    }};
 
 #endif // _FAST_DDS_GENERATED_BENCHMARK_SMALL_PUBSUBTYPES_H_

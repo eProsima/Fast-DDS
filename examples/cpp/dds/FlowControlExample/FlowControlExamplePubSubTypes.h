@@ -25,7 +25,6 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
-#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "FlowControlExample.h"
 
@@ -40,7 +39,7 @@ namespace detail {
     template<typename Tag, typename Tag::type M>
     struct FlowControlExample_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -50,13 +49,12 @@ namespace detail {
     struct FlowControlExample_f
     {
         typedef char FlowControlExample::* type;
-        friend type get(
+        friend constexpr type get(
                 FlowControlExample_f);
     };
 
     template struct FlowControlExample_rob<FlowControlExample_f, &FlowControlExample::m_wasFast>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type FlowControlExample defined by the user in the IDL file.
  * @ingroup FLOWCONTROLEXAMPLE
@@ -103,7 +101,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 600001ULL == eprosima::fastrtps::size_of_<FlowControlExample, detail::FlowControlExample_f, char>();
+        return 600001ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -120,6 +118,12 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr size_t size_of_()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((FlowControlExample*)0)->*get(detail::FlowControlExample_f())))) + sizeof(char);
+    }};
 
 #endif // _FAST_DDS_GENERATED_FLOWCONTROLEXAMPLE_PUBSUBTYPES_H_

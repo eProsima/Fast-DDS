@@ -25,7 +25,6 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
-#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "StringTest.h"
 
@@ -34,28 +33,6 @@
     Generated StringTest is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
-
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct StringTest_rob
-    {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct StringTest_f
-    {
-        typedef eprosima::fastrtps::fixed_string<10000> StringTest::* type;
-        friend type get(
-                StringTest_f);
-    };
-
-    template struct StringTest_rob<StringTest_f, &StringTest::m_message>;
-}
 
 /*!
  * @brief This class represents the TopicDataType of the type StringTest defined by the user in the IDL file.
@@ -103,7 +80,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 10005ULL == eprosima::fastrtps::size_of_<StringTest, detail::StringTest_f, eprosima::fastrtps::fixed_string<10000>>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -120,6 +97,7 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
 
 #endif // _FAST_DDS_GENERATED_STRINGTEST_PUBSUBTYPES_H_

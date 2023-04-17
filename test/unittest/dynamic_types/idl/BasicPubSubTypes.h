@@ -25,7 +25,6 @@
 
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
-#include <fastrtps/utils/data_sizeof.hpp>
 
 #include "Basic.h"
 
@@ -37,28 +36,6 @@
 
 typedef MyEnum MyAliasEnum;
 typedef MyAliasEnum MyAliasAliasEnum;
-
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct EnumStruct_rob
-    {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct EnumStruct_f
-    {
-        typedef MyEnum EnumStruct::* type;
-        friend type get(
-                EnumStruct_f);
-    };
-
-    template struct EnumStruct_rob<EnumStruct_f, &EnumStruct::m_my_enum>;
-}
 
 /*!
  * @brief This class represents the TopicDataType of the type EnumStruct defined by the user in the IDL file.
@@ -106,7 +83,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 4ULL == eprosima::fastrtps::size_of_<EnumStruct, detail::EnumStruct_f, MyEnum>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -123,29 +100,8 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
-
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct AliasStruct_rob
-    {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct AliasStruct_f
-    {
-        typedef MyAliasEnum AliasStruct::* type;
-        friend type get(
-                AliasStruct_f);
-    };
-
-    template struct AliasStruct_rob<AliasStruct_f, &AliasStruct::m_my_alias>;
-}
 
 /*!
  * @brief This class represents the TopicDataType of the type AliasStruct defined by the user in the IDL file.
@@ -193,7 +149,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 4ULL == eprosima::fastrtps::size_of_<AliasStruct, detail::AliasStruct_f, MyAliasEnum>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -210,29 +166,8 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
-
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct AliasAliasStruct_rob
-    {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct AliasAliasStruct_f
-    {
-        typedef MyAliasAliasEnum AliasAliasStruct::* type;
-        friend type get(
-                AliasAliasStruct_f);
-    };
-
-    template struct AliasAliasStruct_rob<AliasAliasStruct_f, &AliasAliasStruct::m_my_alias_alias>;
-}
 
 /*!
  * @brief This class represents the TopicDataType of the type AliasAliasStruct defined by the user in the IDL file.
@@ -280,7 +215,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 4ULL == eprosima::fastrtps::size_of_<AliasAliasStruct, detail::AliasAliasStruct_f, MyAliasAliasEnum>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -297,6 +232,7 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
 
 namespace detail {
@@ -304,7 +240,7 @@ namespace detail {
     template<typename Tag, typename Tag::type M>
     struct BoolStruct_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -314,13 +250,12 @@ namespace detail {
     struct BoolStruct_f
     {
         typedef bool BoolStruct::* type;
-        friend type get(
+        friend constexpr type get(
                 BoolStruct_f);
     };
 
     template struct BoolStruct_rob<BoolStruct_f, &BoolStruct::m_my_bool>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type BoolStruct defined by the user in the IDL file.
  * @ingroup BASIC
@@ -367,7 +302,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 1ULL == eprosima::fastrtps::size_of_<BoolStruct, detail::BoolStruct_f, bool>();
+        return 1ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -384,14 +319,20 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr size_t size_of_()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((BoolStruct*)0)->*get(detail::BoolStruct_f())))) + sizeof(bool);
+    }};
 
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
     struct OctetStruct_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -401,13 +342,12 @@ namespace detail {
     struct OctetStruct_f
     {
         typedef uint8_t OctetStruct::* type;
-        friend type get(
+        friend constexpr type get(
                 OctetStruct_f);
     };
 
     template struct OctetStruct_rob<OctetStruct_f, &OctetStruct::m_my_octet>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type OctetStruct defined by the user in the IDL file.
  * @ingroup BASIC
@@ -454,7 +394,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 1ULL == eprosima::fastrtps::size_of_<OctetStruct, detail::OctetStruct_f, uint8_t>();
+        return 1ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -471,14 +411,20 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr size_t size_of_()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((OctetStruct*)0)->*get(detail::OctetStruct_f())))) + sizeof(uint8_t);
+    }};
 
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
     struct ShortStruct_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -488,13 +434,12 @@ namespace detail {
     struct ShortStruct_f
     {
         typedef int16_t ShortStruct::* type;
-        friend type get(
+        friend constexpr type get(
                 ShortStruct_f);
     };
 
     template struct ShortStruct_rob<ShortStruct_f, &ShortStruct::m_my_int16>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type ShortStruct defined by the user in the IDL file.
  * @ingroup BASIC
@@ -541,7 +486,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 2ULL == eprosima::fastrtps::size_of_<ShortStruct, detail::ShortStruct_f, int16_t>();
+        return 2ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -558,14 +503,20 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr size_t size_of_()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((ShortStruct*)0)->*get(detail::ShortStruct_f())))) + sizeof(int16_t);
+    }};
 
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
     struct LongStruct_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -575,13 +526,12 @@ namespace detail {
     struct LongStruct_f
     {
         typedef int32_t LongStruct::* type;
-        friend type get(
+        friend constexpr type get(
                 LongStruct_f);
     };
 
     template struct LongStruct_rob<LongStruct_f, &LongStruct::m_my_int32>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type LongStruct defined by the user in the IDL file.
  * @ingroup BASIC
@@ -628,7 +578,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 4ULL == eprosima::fastrtps::size_of_<LongStruct, detail::LongStruct_f, int32_t>();
+        return 4ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -645,14 +595,20 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr size_t size_of_()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((LongStruct*)0)->*get(detail::LongStruct_f())))) + sizeof(int32_t);
+    }};
 
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
     struct LongLongStruct_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -662,13 +618,12 @@ namespace detail {
     struct LongLongStruct_f
     {
         typedef int64_t LongLongStruct::* type;
-        friend type get(
+        friend constexpr type get(
                 LongLongStruct_f);
     };
 
     template struct LongLongStruct_rob<LongLongStruct_f, &LongLongStruct::m_my_int64>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type LongLongStruct defined by the user in the IDL file.
  * @ingroup BASIC
@@ -715,7 +670,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 8ULL == eprosima::fastrtps::size_of_<LongLongStruct, detail::LongLongStruct_f, int64_t>();
+        return 8ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -732,14 +687,20 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr size_t size_of_()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((LongLongStruct*)0)->*get(detail::LongLongStruct_f())))) + sizeof(int64_t);
+    }};
 
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
     struct UShortStruct_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -749,13 +710,12 @@ namespace detail {
     struct UShortStruct_f
     {
         typedef uint16_t UShortStruct::* type;
-        friend type get(
+        friend constexpr type get(
                 UShortStruct_f);
     };
 
     template struct UShortStruct_rob<UShortStruct_f, &UShortStruct::m_my_uint16>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type UShortStruct defined by the user in the IDL file.
  * @ingroup BASIC
@@ -802,7 +762,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 2ULL == eprosima::fastrtps::size_of_<UShortStruct, detail::UShortStruct_f, uint16_t>();
+        return 2ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -819,14 +779,20 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr size_t size_of_()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((UShortStruct*)0)->*get(detail::UShortStruct_f())))) + sizeof(uint16_t);
+    }};
 
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
     struct ULongStruct_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -836,13 +802,12 @@ namespace detail {
     struct ULongStruct_f
     {
         typedef uint32_t ULongStruct::* type;
-        friend type get(
+        friend constexpr type get(
                 ULongStruct_f);
     };
 
     template struct ULongStruct_rob<ULongStruct_f, &ULongStruct::m_my_uint32>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type ULongStruct defined by the user in the IDL file.
  * @ingroup BASIC
@@ -889,7 +854,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 4ULL == eprosima::fastrtps::size_of_<ULongStruct, detail::ULongStruct_f, uint32_t>();
+        return 4ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -906,14 +871,20 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr size_t size_of_()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((ULongStruct*)0)->*get(detail::ULongStruct_f())))) + sizeof(uint32_t);
+    }};
 
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
     struct ULongLongStruct_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -923,13 +894,12 @@ namespace detail {
     struct ULongLongStruct_f
     {
         typedef uint64_t ULongLongStruct::* type;
-        friend type get(
+        friend constexpr type get(
                 ULongLongStruct_f);
     };
 
     template struct ULongLongStruct_rob<ULongLongStruct_f, &ULongLongStruct::m_my_uint64>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type ULongLongStruct defined by the user in the IDL file.
  * @ingroup BASIC
@@ -976,7 +946,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 8ULL == eprosima::fastrtps::size_of_<ULongLongStruct, detail::ULongLongStruct_f, uint64_t>();
+        return 8ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -993,14 +963,20 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr size_t size_of_()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((ULongLongStruct*)0)->*get(detail::ULongLongStruct_f())))) + sizeof(uint64_t);
+    }};
 
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
     struct FloatStruct_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -1010,13 +986,12 @@ namespace detail {
     struct FloatStruct_f
     {
         typedef float FloatStruct::* type;
-        friend type get(
+        friend constexpr type get(
                 FloatStruct_f);
     };
 
     template struct FloatStruct_rob<FloatStruct_f, &FloatStruct::m_my_float32>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type FloatStruct defined by the user in the IDL file.
  * @ingroup BASIC
@@ -1063,7 +1038,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 4ULL == eprosima::fastrtps::size_of_<FloatStruct, detail::FloatStruct_f, float>();
+        return 4ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1080,14 +1055,20 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr size_t size_of_()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((FloatStruct*)0)->*get(detail::FloatStruct_f())))) + sizeof(float);
+    }};
 
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
     struct DoubleStruct_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -1097,13 +1078,12 @@ namespace detail {
     struct DoubleStruct_f
     {
         typedef double DoubleStruct::* type;
-        friend type get(
+        friend constexpr type get(
                 DoubleStruct_f);
     };
 
     template struct DoubleStruct_rob<DoubleStruct_f, &DoubleStruct::m_my_float64>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type DoubleStruct defined by the user in the IDL file.
  * @ingroup BASIC
@@ -1150,7 +1130,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 8ULL == eprosima::fastrtps::size_of_<DoubleStruct, detail::DoubleStruct_f, double>();
+        return 8ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1167,14 +1147,20 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr size_t size_of_()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((DoubleStruct*)0)->*get(detail::DoubleStruct_f())))) + sizeof(double);
+    }};
 
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
     struct LongDoubleStruct_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -1184,13 +1170,12 @@ namespace detail {
     struct LongDoubleStruct_f
     {
         typedef long double LongDoubleStruct::* type;
-        friend type get(
+        friend constexpr type get(
                 LongDoubleStruct_f);
     };
 
     template struct LongDoubleStruct_rob<LongDoubleStruct_f, &LongDoubleStruct::m_my_float128>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type LongDoubleStruct defined by the user in the IDL file.
  * @ingroup BASIC
@@ -1237,7 +1222,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 16ULL == eprosima::fastrtps::size_of_<LongDoubleStruct, detail::LongDoubleStruct_f, long double>();
+        return 16ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1254,14 +1239,20 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr size_t size_of_()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((LongDoubleStruct*)0)->*get(detail::LongDoubleStruct_f())))) + sizeof(long double);
+    }};
 
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
     struct CharStruct_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -1271,13 +1262,12 @@ namespace detail {
     struct CharStruct_f
     {
         typedef char CharStruct::* type;
-        friend type get(
+        friend constexpr type get(
                 CharStruct_f);
     };
 
     template struct CharStruct_rob<CharStruct_f, &CharStruct::m_my_char>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type CharStruct defined by the user in the IDL file.
  * @ingroup BASIC
@@ -1324,7 +1314,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 1ULL == eprosima::fastrtps::size_of_<CharStruct, detail::CharStruct_f, char>();
+        return 1ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1341,14 +1331,20 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr size_t size_of_()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((CharStruct*)0)->*get(detail::CharStruct_f())))) + sizeof(char);
+    }};
 
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
     struct WCharStruct_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -1358,13 +1354,12 @@ namespace detail {
     struct WCharStruct_f
     {
         typedef wchar_t WCharStruct::* type;
-        friend type get(
+        friend constexpr type get(
                 WCharStruct_f);
     };
 
     template struct WCharStruct_rob<WCharStruct_f, &WCharStruct::m_my_wchar>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type WCharStruct defined by the user in the IDL file.
  * @ingroup BASIC
@@ -1411,7 +1406,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 4ULL == eprosima::fastrtps::size_of_<WCharStruct, detail::WCharStruct_f, wchar_t>();
+        return 4ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1428,29 +1423,13 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
 
-namespace detail {
+private:
 
-    template<typename Tag, typename Tag::type M>
-    struct StringStruct_rob
+    static constexpr size_t size_of_()
     {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct StringStruct_f
-    {
-        typedef std::string StringStruct::* type;
-        friend type get(
-                StringStruct_f);
-    };
-
-    template struct StringStruct_rob<StringStruct_f, &StringStruct::m_my_string>;
-}
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((WCharStruct*)0)->*get(detail::WCharStruct_f())))) + sizeof(wchar_t);
+    }};
 
 /*!
  * @brief This class represents the TopicDataType of the type StringStruct defined by the user in the IDL file.
@@ -1498,7 +1477,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 260ULL == eprosima::fastrtps::size_of_<StringStruct, detail::StringStruct_f, std::string>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1515,29 +1494,8 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
-
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct WStringStruct_rob
-    {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct WStringStruct_f
-    {
-        typedef std::wstring WStringStruct::* type;
-        friend type get(
-                WStringStruct_f);
-    };
-
-    template struct WStringStruct_rob<WStringStruct_f, &WStringStruct::m_my_wstring>;
-}
 
 /*!
  * @brief This class represents the TopicDataType of the type WStringStruct defined by the user in the IDL file.
@@ -1585,7 +1543,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 1024ULL == eprosima::fastrtps::size_of_<WStringStruct, detail::WStringStruct_f, std::wstring>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1602,29 +1560,8 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
-
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct LargeStringStruct_rob
-    {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct LargeStringStruct_f
-    {
-        typedef eprosima::fastrtps::fixed_string<41925> LargeStringStruct::* type;
-        friend type get(
-                LargeStringStruct_f);
-    };
-
-    template struct LargeStringStruct_rob<LargeStringStruct_f, &LargeStringStruct::m_my_large_string>;
-}
 
 /*!
  * @brief This class represents the TopicDataType of the type LargeStringStruct defined by the user in the IDL file.
@@ -1672,7 +1609,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 41930ULL == eprosima::fastrtps::size_of_<LargeStringStruct, detail::LargeStringStruct_f, eprosima::fastrtps::fixed_string<41925>>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1689,29 +1626,8 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
-
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct LargeWStringStruct_rob
-    {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct LargeWStringStruct_f
-    {
-        typedef std::wstring LargeWStringStruct::* type;
-        friend type get(
-                LargeWStringStruct_f);
-    };
-
-    template struct LargeWStringStruct_rob<LargeWStringStruct_f, &LargeWStringStruct::m_my_large_wstring>;
-}
 
 /*!
  * @brief This class represents the TopicDataType of the type LargeWStringStruct defined by the user in the IDL file.
@@ -1759,7 +1675,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 167704ULL == eprosima::fastrtps::size_of_<LargeWStringStruct, detail::LargeWStringStruct_f, std::wstring>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1776,6 +1692,7 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
 
 namespace detail {
@@ -1783,7 +1700,7 @@ namespace detail {
     template<typename Tag, typename Tag::type M>
     struct ArraytStruct_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -1793,13 +1710,12 @@ namespace detail {
     struct ArraytStruct_f
     {
         typedef std::array<std::array<std::array<int32_t, 2>, 2>, 2> ArraytStruct::* type;
-        friend type get(
+        friend constexpr type get(
                 ArraytStruct_f);
     };
 
     template struct ArraytStruct_rob<ArraytStruct_f, &ArraytStruct::m_my_array>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type ArraytStruct defined by the user in the IDL file.
  * @ingroup BASIC
@@ -1846,7 +1762,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 32ULL == eprosima::fastrtps::size_of_<ArraytStruct, detail::ArraytStruct_f, std::array<std::array<std::array<int32_t, 2>, 2>, 2>>();
+        return 32ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1863,7 +1779,13 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr size_t size_of_()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((ArraytStruct*)0)->*get(detail::ArraytStruct_f())))) + sizeof(std::array<std::array<std::array<int32_t, 2>, 2>, 2>);
+    }};
 typedef std::array<std::array<int32_t, 2>, 2> MyArray;
 
 namespace detail {
@@ -1871,7 +1793,7 @@ namespace detail {
     template<typename Tag, typename Tag::type M>
     struct ArrayArrayStruct_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -1881,13 +1803,12 @@ namespace detail {
     struct ArrayArrayStruct_f
     {
         typedef std::array<std::array<MyArray, 2>, 2> ArrayArrayStruct::* type;
-        friend type get(
+        friend constexpr type get(
                 ArrayArrayStruct_f);
     };
 
     template struct ArrayArrayStruct_rob<ArrayArrayStruct_f, &ArrayArrayStruct::m_my_array_array>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type ArrayArrayStruct defined by the user in the IDL file.
  * @ingroup BASIC
@@ -1934,7 +1855,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 64ULL == eprosima::fastrtps::size_of_<ArrayArrayStruct, detail::ArrayArrayStruct_f, std::array<std::array<MyArray, 2>, 2>>();
+        return 64ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1951,29 +1872,13 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
 
-namespace detail {
+private:
 
-    template<typename Tag, typename Tag::type M>
-    struct SequenceStruct_rob
+    static constexpr size_t size_of_()
     {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct SequenceStruct_f
-    {
-        typedef std::vector<int32_t> SequenceStruct::* type;
-        friend type get(
-                SequenceStruct_f);
-    };
-
-    template struct SequenceStruct_rob<SequenceStruct_f, &SequenceStruct::m_my_sequence>;
-}
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((ArrayArrayStruct*)0)->*get(detail::ArrayArrayStruct_f())))) + sizeof(std::array<std::array<MyArray, 2>, 2>);
+    }};
 
 /*!
  * @brief This class represents the TopicDataType of the type SequenceStruct defined by the user in the IDL file.
@@ -2021,7 +1926,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 12ULL == eprosima::fastrtps::size_of_<SequenceStruct, detail::SequenceStruct_f, std::vector<int32_t>>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -2038,29 +1943,8 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
-
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct SequenceSequenceStruct_rob
-    {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct SequenceSequenceStruct_f
-    {
-        typedef std::vector<std::vector<int32_t>> SequenceSequenceStruct::* type;
-        friend type get(
-                SequenceSequenceStruct_f);
-    };
-
-    template struct SequenceSequenceStruct_rob<SequenceSequenceStruct_f, &SequenceSequenceStruct::m_my_sequence_sequence>;
-}
 
 /*!
  * @brief This class represents the TopicDataType of the type SequenceSequenceStruct defined by the user in the IDL file.
@@ -2108,7 +1992,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 40ULL == eprosima::fastrtps::size_of_<SequenceSequenceStruct, detail::SequenceSequenceStruct_f, std::vector<std::vector<int32_t>>>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -2125,29 +2009,8 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
-
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct MapStruct_rob
-    {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct MapStruct_f
-    {
-        typedef std::map<int32_t, int32_t> MapStruct::* type;
-        friend type get(
-                MapStruct_f);
-    };
-
-    template struct MapStruct_rob<MapStruct_f, &MapStruct::m_my_map>;
-}
 
 /*!
  * @brief This class represents the TopicDataType of the type MapStruct defined by the user in the IDL file.
@@ -2195,7 +2058,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 20ULL == eprosima::fastrtps::size_of_<MapStruct, detail::MapStruct_f, std::map<int32_t, int32_t>>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -2212,29 +2075,8 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
-
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct MapMapStruct_rob
-    {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct MapMapStruct_f
-    {
-        typedef std::map<int32_t, std::map<int32_t, int32_t>> MapMapStruct::* type;
-        friend type get(
-                MapMapStruct_f);
-    };
-
-    template struct MapMapStruct_rob<MapMapStruct_f, &MapMapStruct::m_my_map_map>;
-}
 
 /*!
  * @brief This class represents the TopicDataType of the type MapMapStruct defined by the user in the IDL file.
@@ -2282,7 +2124,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 52ULL == eprosima::fastrtps::size_of_<MapMapStruct, detail::MapMapStruct_f, std::map<int32_t, std::map<int32_t, int32_t>>>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -2299,6 +2141,7 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
 
 
@@ -2307,7 +2150,7 @@ namespace detail {
     template<typename Tag, typename Tag::type M>
     struct BitsetStruct_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -2317,13 +2160,12 @@ namespace detail {
     struct BitsetStruct_f
     {
         typedef MyBitset BitsetStruct::* type;
-        friend type get(
+        friend constexpr type get(
                 BitsetStruct_f);
     };
 
     template struct BitsetStruct_rob<BitsetStruct_f, &BitsetStruct::m_a>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type BitsetStruct defined by the user in the IDL file.
  * @ingroup BASIC
@@ -2370,7 +2212,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 8ULL == eprosima::fastrtps::size_of_<BitsetStruct, detail::BitsetStruct_f, MyBitset>();
+        return 8ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -2387,14 +2229,20 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr size_t size_of_()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((BitsetStruct*)0)->*get(detail::BitsetStruct_f())))) + sizeof(MyBitset);
+    }};
 
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
     struct StructStruct_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -2404,13 +2252,12 @@ namespace detail {
     struct StructStruct_f
     {
         typedef int64_t StructStruct::* type;
-        friend type get(
+        friend constexpr type get(
                 StructStruct_f);
     };
 
     template struct StructStruct_rob<StructStruct_f, &StructStruct::m_b>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type StructStruct defined by the user in the IDL file.
  * @ingroup BASIC
@@ -2457,7 +2304,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 16ULL == eprosima::fastrtps::size_of_<StructStruct, detail::StructStruct_f, int64_t>();
+        return 16ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -2474,14 +2321,20 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr size_t size_of_()
+    {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((StructStruct*)0)->*get(detail::StructStruct_f())))) + sizeof(int64_t);
+    }};
 
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
     struct StructStructStruct_rob
     {
-        friend typename Tag::type get(
+        friend constexpr typename Tag::type get(
                 Tag)
         {
             return M;
@@ -2491,13 +2344,12 @@ namespace detail {
     struct StructStructStruct_f
     {
         typedef int64_t StructStructStruct::* type;
-        friend type get(
+        friend constexpr type get(
                 StructStructStruct_f);
     };
 
     template struct StructStructStruct_rob<StructStructStruct_f, &StructStructStruct::m_child_int64>;
 }
-
 /*!
  * @brief This class represents the TopicDataType of the type StructStructStruct defined by the user in the IDL file.
  * @ingroup BASIC
@@ -2544,7 +2396,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 24ULL == eprosima::fastrtps::size_of_<StructStructStruct, detail::StructStructStruct_f, int64_t>();
+        return 24ULL == size_of_();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -2561,32 +2413,16 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
 
+private:
 
-
-
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct SimpleUnionStruct_rob
+    static constexpr size_t size_of_()
     {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((StructStructStruct*)0)->*get(detail::StructStructStruct_f())))) + sizeof(int64_t);
+    }};
 
-    struct SimpleUnionStruct_f
-    {
-        typedef SimpleUnion SimpleUnionStruct::* type;
-        friend type get(
-                SimpleUnionStruct_f);
-    };
 
-    template struct SimpleUnionStruct_rob<SimpleUnionStruct_f, &SimpleUnionStruct::m_my_union>;
-}
+
 
 /*!
  * @brief This class represents the TopicDataType of the type SimpleUnionStruct defined by the user in the IDL file.
@@ -2634,7 +2470,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 16ULL == eprosima::fastrtps::size_of_<SimpleUnionStruct, detail::SimpleUnionStruct_f, SimpleUnion>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -2651,29 +2487,8 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
-
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct UnionUnionUnionStruct_rob
-    {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct UnionUnionUnionStruct_f
-    {
-        typedef UnionUnion UnionUnionUnionStruct::* type;
-        friend type get(
-                UnionUnionUnionStruct_f);
-    };
-
-    template struct UnionUnionUnionStruct_rob<UnionUnionUnionStruct_f, &UnionUnionUnionStruct::m_my_union>;
-}
 
 /*!
  * @brief This class represents the TopicDataType of the type UnionUnionUnionStruct defined by the user in the IDL file.
@@ -2721,7 +2536,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 16ULL == eprosima::fastrtps::size_of_<UnionUnionUnionStruct, detail::UnionUnionUnionStruct_f, UnionUnion>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -2738,29 +2553,8 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
-
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct WCharUnionStruct_rob
-    {
-        friend typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct WCharUnionStruct_f
-    {
-        typedef WCharUnion WCharUnionStruct::* type;
-        friend type get(
-                WCharUnionStruct_f);
-    };
-
-    template struct WCharUnionStruct_rob<WCharUnionStruct_f, &WCharUnionStruct::m_my_union>;
-}
 
 /*!
  * @brief This class represents the TopicDataType of the type WCharUnionStruct defined by the user in the IDL file.
@@ -2808,7 +2602,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 16ULL == eprosima::fastrtps::size_of_<WCharUnionStruct, detail::WCharUnionStruct_f, WCharUnion>();
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -2825,6 +2619,7 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
 
 #endif // _FAST_DDS_GENERATED_BASIC_PUBSUBTYPES_H_
