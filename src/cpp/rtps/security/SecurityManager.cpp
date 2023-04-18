@@ -16,6 +16,8 @@
  * @file SecurityManager.h
  */
 
+#include "fastdds/rtps/common/Guid.h"
+#include <ostream>
 #include <rtps/security/SecurityManager.h>
 
 #include <cassert>
@@ -779,6 +781,11 @@ void SecurityManager::remove_participant(
             {
                 if (rit->first.guidPrefix == participant_data.m_guid.guidPrefix)
                 {
+                    GUID_t reader{rit->first.guidPrefix, rit->first.entityId};
+                    GUID_t writer{local_writer.first.guidPrefix, local_writer.first.entityId};
+
+                    EPROSIMA_LOG_WARNING(DEBUG_REMOTE_READER, "Erasing reader " << reader <<
+                                                              " from writer " << writer << " id: 0");
                     rit = local_writer.second.associated_readers.erase(rit);
                 }
                 else
@@ -2861,11 +2868,17 @@ void SecurityManager::remove_reader(
         if (rit != local_writer->second.associated_readers.end())
         {
             crypto_plugin_->cryptokeyfactory()->unregister_datareader(std::get<1>(rit->second), exception);
+
+            GUID_t reader{rit->first.guidPrefix, rit->first.entityId};
+            GUID_t writer{local_writer->first.guidPrefix, local_writer->first.entityId};
+
+            EPROSIMA_LOG_WARNING(DEBUG_REMOTE_READER, "Erasing reader " << reader <<
+                                                              " from writer " << writer << " id: 1");
             local_writer->second.associated_readers.erase(rit);
         }
         else
         {
-            EPROSIMA_LOG_INFO(SECURITY, "Cannot find remote reader " << remote_reader_guid << std::endl);
+            EPROSIMA_LOG_WARNING(DEBUG_REMOTE_READER, "Cannot find remote reader " << remote_reader_guid << std::endl);
         }
     }
 }
@@ -2956,10 +2969,12 @@ bool SecurityManager::discovered_reader(
 
                 if (remote_reader_handle != nullptr && !remote_reader_handle->nil())
                 {
+                    GUID_t writer_g{local_writer->first.guidPrefix, local_writer->first.entityId};
                     if (is_key_exchange)
                     {
-                        EPROSIMA_LOG_INFO(SECURITY,
-                                "Process successful discovering local reader " << remote_reader_data.guid());
+                        EPROSIMA_LOG_WARNING(DEBUG_REMOTE_READER,"Associating reader " << remote_reader_data.guid() <<
+                                                                 " to local writer " << writer_g << " id: 0");
+
                         local_writer->second.associated_readers.emplace(remote_reader_data.guid(),
                                 std::make_tuple(remote_reader_data, remote_reader_handle));
                         lock.unlock();
@@ -3004,8 +3019,8 @@ bool SecurityManager::discovered_reader(
                         {
                             if (remote_participant_key == participant_->getGuid())
                             {
-                                EPROSIMA_LOG_INFO(SECURITY, "Process successful discovering local reader "
-                                        << remote_reader_data.guid());
+                                EPROSIMA_LOG_WARNING(DEBUG_REMOTE_READER,"Associating reader " << remote_reader_data.guid() <<
+                                                                         " to local writer " << writer_g << " id: 1");
                                 local_writer->second.associated_readers.emplace(remote_reader_data.guid(),
                                         std::make_tuple(remote_reader_data, remote_reader_handle));
 
@@ -3053,6 +3068,9 @@ bool SecurityManager::discovered_reader(
                                 ParticipantGenericMessage message =
                                         generate_writer_crypto_token_message(remote_participant_key,
                                                 remote_reader_data.guid(), writer_guid, local_writer_crypto_tokens);
+
+                                EPROSIMA_LOG_WARNING(DEBUG_REMOTE_READER,"Associating reader " << remote_reader_data.guid() <<
+                                                                         " to local writer " << writer_g << " id: 2");
 
                                 local_writer->second.associated_readers.emplace(remote_reader_data.guid(),
                                         std::make_tuple(remote_reader_data, remote_reader_handle));
@@ -3593,7 +3611,7 @@ bool SecurityManager::encode_writer_submessage(
             }
             else
             {
-                EPROSIMA_LOG_ERROR(SECURITY, "Cannot find remote reader " << rd_it);
+                EPROSIMA_LOG_ERROR(DEBUG_REMOTE_READER, "Cannot find remote reader " << rd_it);
             }
         }
 

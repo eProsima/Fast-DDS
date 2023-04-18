@@ -55,6 +55,8 @@ DomainParticipantFactory::DomainParticipantFactory()
     , rtps_domain_(fastrtps::rtps::RTPSDomainImpl::get_instance())
     , log_resources_(detail::get_log_resources())
 {
+    Log::SetVerbosity(Log::Kind::Info);
+    Log::SetCategoryFilter(std::regex("(DEBUG_REMOTE_READER)"));
 }
 
 DomainParticipantFactory::~DomainParticipantFactory()
