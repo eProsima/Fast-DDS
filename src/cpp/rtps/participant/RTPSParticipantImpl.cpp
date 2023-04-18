@@ -2295,6 +2295,22 @@ std::vector<std::string> RTPSParticipantImpl::getParticipantNames() const
     return participant_names;
 }
 
+std::string RTPSParticipantImpl::getParticipantName(
+        const GUID_t& partguid) const
+{
+    std::string participant_name;
+    auto pdp = mp_builtinProtocols->mp_PDP;
+    for (auto it = pdp->ParticipantProxiesBegin(); it != pdp->ParticipantProxiesEnd(); ++it)
+    {
+        if ((*it)->m_guid == partguid)
+        {
+            participant_name = (*it)->m_participantName.to_string();
+            break;
+        }
+    }
+    return participant_name;
+}
+
 void RTPSParticipantImpl::setGuid(
         GUID_t& guid)
 {

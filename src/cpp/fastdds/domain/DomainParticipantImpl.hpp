@@ -466,6 +466,9 @@ public:
 
     std::vector<std::string> get_participant_names() const;
 
+    std::string get_participant_name(
+            const fastrtps::rtps::GUID_t& partguid) const;
+
     /**
      * This method can be used when using a StaticEndpointDiscovery mechanism different that the one
      * included in FastRTPS, for example when communicating with other implementations.

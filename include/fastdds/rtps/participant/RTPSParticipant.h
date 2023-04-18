@@ -211,6 +211,14 @@ public:
     std::vector<std::string> getParticipantNames() const;
 
     /**
+     * Returns participant name corresponding to given GUID.
+     * @param partguid  GUID of participant whose name is requested.
+     * @return participant name.
+     */
+    std::string getParticipantName(
+            const GUID_t& partguid) const;
+
+    /**
      * Get a copy of the actual state of the RTPSParticipantParameters
      * @return RTPSParticipantAttributes copy of the params.
      */

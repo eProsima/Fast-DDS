@@ -120,6 +120,12 @@ std::vector<std::string> RTPSParticipant::getParticipantNames() const
     return mp_impl->getParticipantNames();
 }
 
+std::string RTPSParticipant::getParticipantName(
+        const GUID_t& partguid) const
+{
+    return mp_impl->getParticipantName(partguid);
+}
+
 const RTPSParticipantAttributes& RTPSParticipant::getRTPSParticipantAttributes() const
 {
     return mp_impl->getRTPSParticipantAttributes();
