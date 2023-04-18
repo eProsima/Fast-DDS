@@ -169,6 +169,9 @@ public:
 
     MOCK_CONST_METHOD0(getParticipantNames, std::vector<std::string>());
 
+    MOCK_CONST_METHOD1(getParticipantName, std::string(
+                const GUID_t& pguid));
+
     MOCK_METHOD2(newRemoteWriterDiscovered, bool(
                 const GUID_t& pguid,
                 int16_t userDefinedId));
