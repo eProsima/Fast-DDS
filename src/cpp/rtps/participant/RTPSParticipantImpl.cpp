@@ -2572,6 +2572,16 @@ bool RTPSParticipantImpl::ignore_reader(
     return false;
 }
 
+bool RTPSParticipantImpl::enable_monitor_service() const
+{
+    return false;
+}
+
+bool RTPSParticipantImpl::disable_monitor_service() const
+{
+    return false;
+}
+
 #ifdef FASTDDS_STATISTICS
 
 bool RTPSParticipantImpl::register_in_writer(

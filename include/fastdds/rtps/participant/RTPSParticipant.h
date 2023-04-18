@@ -23,11 +23,11 @@
 #include <cstdlib>
 #include <memory>
 
-#include <fastrtps/fastrtps_dll.h>
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/statistics/IListeners.hpp>
+#include <fastrtps/fastrtps_dll.h>
 #include <fastrtps/qos/ReaderQos.h>
 #include <fastrtps/qos/WriterQos.h>
 
@@ -282,6 +282,25 @@ public:
      */
     bool ignore_reader(
             const GUID_t& reader_guid);
+
+    /**
+     * Enables the monitor service in this RTPSParticipant.
+     *
+     * @return true if the monitor service could be correctly enabled.
+     *
+     * @note Not supported yet. Currently always returns false
+     */
+    bool enable_monitor_service() const;
+
+    /**
+     * Disables the monitor service in this RTPSParticipant. Does nothing if the service was not enabled before.
+     *
+     * @return true if the monitor service could be correctly disabled.
+     * @return false if the service could not be properly disabled or if the monitor service was not previously enabled.
+     *
+     * @note Not supported yet. Currently always returns false
+     */
+    bool disable_monitor_service() const;
 
 #if HAVE_SECURITY
 

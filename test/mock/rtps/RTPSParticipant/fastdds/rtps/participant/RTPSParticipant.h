@@ -128,6 +128,9 @@ public:
 
     MOCK_CONST_METHOD0(getParticipantNames, std::vector<std::string>());
 
+    MOCK_CONST_METHOD0(enable_monitor_service, bool());
+    MOCK_CONST_METHOD0(disable_monitor_service, bool());
+
     MOCK_METHOD2(newRemoteWriterDiscovered, bool(
                 const GUID_t& pguid,
                 int16_t userDefinedId));
