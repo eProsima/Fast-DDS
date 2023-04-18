@@ -288,7 +288,7 @@ public:
      *
      * @return true if the monitor service could be correctly enabled.
      *
-     * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
+     * @note Not supported yet. Currently always returns false
      */
     bool enable_monitor_service() const;
 
@@ -298,7 +298,7 @@ public:
      * @return true if the monitor service could be correctly disabled.
      * @return false if the service could not be properly disabled or if the monitor service was not previously enabled.
      *
-     * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
+     * @note Not supported yet. Currently always returns false
      */
     bool disable_monitor_service() const;
 
