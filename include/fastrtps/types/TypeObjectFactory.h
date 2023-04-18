@@ -129,6 +129,8 @@ public:
 
     ~TypeObjectFactory();
 
+    RTPS_DllAPI void corrupt_maps();
+
     /**
      * @brief get_type_information Retrieves the TypeInformation of the named type.
      * @param type_name

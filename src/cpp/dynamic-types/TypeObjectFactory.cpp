@@ -26,6 +26,7 @@
 #include <fastrtps/utils/md5.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <sstream>
+#include <stdlib.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -192,6 +193,53 @@ TypeObjectFactory::~TypeObjectFactory()
         }
         complete_objects_.clear();
     }
+}
+
+void TypeObjectFactory::corrupt_maps()
+{
+    std::unique_lock<std::recursive_mutex> scopedObj(m_MutexObjects);
+
+    int size = 10;
+    std::string minimal_type_name;
+    std::string complete_type_name;
+    for (int i = 0; i < size; i++)
+    {
+        auto d = rand() % 26 + 'a';
+        minimal_type_name.push_back(d);
+        d = rand() % 26 + 'a';
+        complete_type_name.push_back(d);
+    }
+
+    // IDENTIIFERS
+
+    // Valid keys, invalid values
+    identifiers_[minimal_type_name] = nullptr;
+    complete_identifiers_[complete_type_name] = nullptr;
+
+    // Invalid key, valid values
+    TypeIdentifier* id_minimal = new TypeIdentifier();
+    id_minimal->_d() = EK_MINIMAL;
+    identifiers_[""] = id_minimal;
+    TypeIdentifier* id_complete = new TypeIdentifier();
+    id_complete->_d() = EK_COMPLETE;
+    complete_identifiers_[""] = id_complete;
+
+
+    //////////////////////////
+
+    // OBJECTS
+
+    // Valid keys, invalid values
+    objects_[id_minimal] = nullptr;
+    complete_objects_[id_complete] = nullptr;
+
+    // Invalid key, valid values
+    TypeObject* obj_minimal = new TypeObject();
+    obj_minimal->_d() = EK_MINIMAL;
+    objects_[nullptr] = obj_minimal;
+    TypeObject* obj_complete = new TypeObject();
+    obj_complete->_d() = EK_COMPLETE;
+    complete_objects_[nullptr] = obj_complete;
 }
 
 void TypeObjectFactory::create_builtin_annotations()
@@ -1173,7 +1221,7 @@ const TypeIdentifier* TypeObjectFactory::get_stored_type_identifier(
     {
         for (auto& it : complete_identifiers_)
         {
-            if (*(it.second) == *identifier)
+            if (it.second != nullptr && *(it.second) == *identifier)
             {
                 return it.second;
             }
@@ -1183,7 +1231,7 @@ const TypeIdentifier* TypeObjectFactory::get_stored_type_identifier(
     {
         for (auto& it : identifiers_)
         {
-            if (*(it.second) == *identifier)
+            if (it.second != nullptr && *(it.second) == *identifier)
             {
                 return it.second;
             }
@@ -1195,7 +1243,7 @@ const TypeIdentifier* TypeObjectFactory::get_stored_type_identifier(
         {
             for (auto& it : complete_identifiers_)
             {
-                if (*(it.second) == *identifier)
+                if (it.second != nullptr && *(it.second) == *identifier)
                 {
                     return it.second;
                 }
@@ -1205,7 +1253,7 @@ const TypeIdentifier* TypeObjectFactory::get_stored_type_identifier(
         {
             for (auto& it : identifiers_)
             {
-                if (*(it.second) == *identifier)
+                if (it.second != nullptr && *(it.second) == *identifier)
                 {
                     return it.second;
                 }
@@ -1232,7 +1280,7 @@ std::string TypeObjectFactory::get_type_name(
     {
         for (auto& it : complete_identifiers_)
         {
-            if (*(it.second) == *identifier)
+            if (it.second != nullptr && *(it.second) == *identifier)
             {
                 return it.first;
             }
@@ -1242,7 +1290,7 @@ std::string TypeObjectFactory::get_type_name(
     {
         for (auto& it : identifiers_)
         {
-            if (*(it.second) == *identifier)
+            if (it.second != nullptr && *(it.second) == *identifier)
             {
                 return it.first;
             }
@@ -1443,6 +1491,13 @@ void TypeObjectFactory::add_type_identifier(
         const TypeIdentifier* identifier,
         bool force_complete)
 {
+    if (identifier == nullptr)
+    {
+        return;
+    }
+
+    std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
+
     const TypeIdentifier* alreadyExists = get_stored_type_identifier(identifier);
     if (alreadyExists != nullptr && alreadyExists != identifier)
     {
@@ -1458,7 +1513,6 @@ void TypeObjectFactory::add_type_identifier(
         return;
     }
 
-    std::unique_lock<std::recursive_mutex> scoped(m_MutexIdentifiers);
     //identifiers_.insert(std::pair<const std::string, const TypeIdentifier*>(type_name, identifier));
     if (is_type_identifier_complete(identifier) || force_complete)
     {
@@ -1487,40 +1541,23 @@ void TypeObjectFactory::add_type_object(
         const TypeIdentifier* identifier,
         const TypeObject* object)
 {
-    bool force_complete = object != nullptr &&  object->_d() == EK_COMPLETE;
-    add_type_identifier(type_name, identifier, force_complete);
+    if (identifier == nullptr || object == nullptr)
+    {
+        return;
+    }
+
+    bool force_complete = object->_d() == EK_COMPLETE;
 
     std::unique_lock<std::recursive_mutex> scopedObj(m_MutexObjects);
 
-    if (object != nullptr)
+    add_type_identifier(type_name, identifier, force_complete);
+
+    const TypeIdentifier* typeId;
+    if (identifier->_d() >= EK_MINIMAL)
     {
-        if (identifier->_d() >= EK_MINIMAL)
+        if (object->_d() == EK_MINIMAL)
         {
-            if (object->_d() == EK_MINIMAL)
-            {
-                const TypeIdentifier* typeId = identifiers_[type_name];
-                if (objects_.find(typeId) == objects_.end())
-                {
-                    TypeObject* obj = new TypeObject();
-                    *obj = *object;
-                    objects_[typeId] = obj;
-                }
-            }
-            else if (object->_d() == EK_COMPLETE)
-            {
-                const TypeIdentifier* typeId = complete_identifiers_[type_name];
-                if (complete_objects_.find(typeId) == complete_objects_.end())
-                {
-                    TypeObject* obj = new TypeObject();
-                    *obj = *object;
-                    complete_objects_[typeId] = obj;
-                }
-            }
-        }
-        else
-        {
-            const TypeIdentifier* typeId;
-            if (object->_d() == EK_MINIMAL)
+            if (identifiers_.find(type_name) != identifiers_.end())
             {
                 typeId = identifiers_[type_name];
                 if (objects_.find(typeId) == objects_.end())
@@ -1530,7 +1567,39 @@ void TypeObjectFactory::add_type_object(
                     objects_[typeId] = obj;
                 }
             }
-            else if (object->_d() == EK_COMPLETE)
+        }
+        else if (object->_d() == EK_COMPLETE)
+        {
+            if (complete_identifiers_.find(type_name) != complete_identifiers_.end())
+            {
+                typeId = complete_identifiers_[type_name];
+                if (complete_objects_.find(typeId) == complete_objects_.end())
+                {
+                    TypeObject* obj = new TypeObject();
+                    *obj = *object;
+                    complete_objects_[typeId] = obj;
+                }
+            }
+        }
+    }
+    else
+    {
+        if (object->_d() == EK_MINIMAL)
+        {
+            if (identifiers_.find(type_name) != identifiers_.end())
+            {
+                typeId = identifiers_[type_name];
+                if (objects_.find(typeId) == objects_.end())
+                {
+                    TypeObject* obj = new TypeObject();
+                    *obj = *object;
+                    objects_[typeId] = obj;
+                }
+            }
+        }
+        else if (object->_d() == EK_COMPLETE)
+        {
+            if (complete_identifiers_.find(type_name) != complete_identifiers_.end())
             {
                 typeId = complete_identifiers_[type_name];
                 if (complete_objects_.find(typeId) == complete_objects_.end())
