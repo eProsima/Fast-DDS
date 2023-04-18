@@ -333,6 +333,9 @@ public:
 
     std::vector<std::string> getParticipantNames() const;
 
+    std::string getParticipantName(
+            const GUID_t& partguid) const;
+
     /**
      * Get the participant
      * @return participant

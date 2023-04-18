@@ -1943,8 +1943,8 @@ void RTPSParticipantImpl::deleteAllUserEndpoints()
     auto removeEndpoint = [this](EndpointKind_t kind, Endpoint* p)
             {
                 return kind == WRITER
-               ? mp_builtinProtocols->removeLocalWriter((RTPSWriter*)p)
-               : mp_builtinProtocols->removeLocalReader((RTPSReader*)p);
+                       ? mp_builtinProtocols->removeLocalWriter((RTPSWriter*)p)
+                       : mp_builtinProtocols->removeLocalReader((RTPSReader*)p);
             };
 
 #if HAVE_SECURITY
@@ -2001,6 +2001,22 @@ std::vector<std::string> RTPSParticipantImpl::getParticipantNames() const
         participant_names.emplace_back((*it)->m_participantName.to_string());
     }
     return participant_names;
+}
+
+std::string RTPSParticipantImpl::getParticipantName(
+        const GUID_t& partguid) const
+{
+    std::string participant_name;
+    auto pdp = mp_builtinProtocols->mp_PDP;
+    for (auto it = pdp->ParticipantProxiesBegin(); it != pdp->ParticipantProxiesEnd(); ++it)
+    {
+        if ((*it)->m_guid == partguid)
+        {
+            participant_name = (*it)->m_participantName.to_string();
+            break;
+        }
+    }
+    return participant_name;
 }
 
 void RTPSParticipantImpl::setGuid(
