@@ -101,7 +101,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 524292ULL == size_of_();
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -121,9 +121,9 @@ public:
 
 private:
 
-    static constexpr size_t size_of_()
+    static constexpr bool is_plain_impl()
     {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((BenchMarkMedium*)0)->*get(detail::BenchMarkMedium_f())))) + sizeof(uint32_t);
+        return 524292ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((BenchMarkMedium*)0)->*get(detail::BenchMarkMedium_f())))) + sizeof(uint32_t);
     }};
 
 #endif // _FAST_DDS_GENERATED_BENCHMARK_MEDIUM_PUBSUBTYPES_H_

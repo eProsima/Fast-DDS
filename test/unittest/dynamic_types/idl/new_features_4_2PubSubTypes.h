@@ -175,7 +175,7 @@ namespace bitmodule
     #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
         eProsima_user_DllExport inline bool is_plain() const override
         {
-            return 17ULL == size_of_();
+            return is_plain_impl();
         }
 
     #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -195,9 +195,9 @@ namespace bitmodule
 
     private:
 
-        static constexpr size_t size_of_()
+        static constexpr bool is_plain_impl()
         {
-            return ((::size_t) &reinterpret_cast<char const volatile&>((((BitsetBitmask*)0)->*get(detail::BitsetBitmask_f())))) + sizeof(bitmodule::MyBitMask);
+            return 17ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((BitsetBitmask*)0)->*get(detail::BitsetBitmask_f())))) + sizeof(bitmodule::MyBitMask);
         }};
 
     namespace detail {
@@ -267,7 +267,7 @@ namespace bitmodule
     #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
         eProsima_user_DllExport inline bool is_plain() const override
         {
-            return 24ULL == size_of_();
+            return is_plain_impl();
         }
 
     #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -287,9 +287,9 @@ namespace bitmodule
 
     private:
 
-        static constexpr size_t size_of_()
+        static constexpr bool is_plain_impl()
         {
-            return ((::size_t) &reinterpret_cast<char const volatile&>((((BM2*)0)->*get(detail::BM2_f())))) + sizeof(int32_t);
+            return 24ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((BM2*)0)->*get(detail::BM2_f())))) + sizeof(int32_t);
         }};
 }
 

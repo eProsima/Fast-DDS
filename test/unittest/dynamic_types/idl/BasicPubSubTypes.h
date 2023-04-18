@@ -302,7 +302,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 1ULL == size_of_();
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -322,9 +322,9 @@ public:
 
 private:
 
-    static constexpr size_t size_of_()
+    static constexpr bool is_plain_impl()
     {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((BoolStruct*)0)->*get(detail::BoolStruct_f())))) + sizeof(bool);
+        return 1ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((BoolStruct*)0)->*get(detail::BoolStruct_f())))) + sizeof(bool);
     }};
 
 namespace detail {
@@ -394,7 +394,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 1ULL == size_of_();
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -414,9 +414,9 @@ public:
 
 private:
 
-    static constexpr size_t size_of_()
+    static constexpr bool is_plain_impl()
     {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((OctetStruct*)0)->*get(detail::OctetStruct_f())))) + sizeof(uint8_t);
+        return 1ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((OctetStruct*)0)->*get(detail::OctetStruct_f())))) + sizeof(uint8_t);
     }};
 
 namespace detail {
@@ -486,7 +486,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 2ULL == size_of_();
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -506,9 +506,9 @@ public:
 
 private:
 
-    static constexpr size_t size_of_()
+    static constexpr bool is_plain_impl()
     {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((ShortStruct*)0)->*get(detail::ShortStruct_f())))) + sizeof(int16_t);
+        return 2ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((ShortStruct*)0)->*get(detail::ShortStruct_f())))) + sizeof(int16_t);
     }};
 
 namespace detail {
@@ -578,7 +578,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 4ULL == size_of_();
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -598,9 +598,9 @@ public:
 
 private:
 
-    static constexpr size_t size_of_()
+    static constexpr bool is_plain_impl()
     {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((LongStruct*)0)->*get(detail::LongStruct_f())))) + sizeof(int32_t);
+        return 4ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((LongStruct*)0)->*get(detail::LongStruct_f())))) + sizeof(int32_t);
     }};
 
 namespace detail {
@@ -670,7 +670,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 8ULL == size_of_();
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -690,9 +690,9 @@ public:
 
 private:
 
-    static constexpr size_t size_of_()
+    static constexpr bool is_plain_impl()
     {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((LongLongStruct*)0)->*get(detail::LongLongStruct_f())))) + sizeof(int64_t);
+        return 8ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((LongLongStruct*)0)->*get(detail::LongLongStruct_f())))) + sizeof(int64_t);
     }};
 
 namespace detail {
@@ -762,7 +762,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 2ULL == size_of_();
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -782,9 +782,9 @@ public:
 
 private:
 
-    static constexpr size_t size_of_()
+    static constexpr bool is_plain_impl()
     {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((UShortStruct*)0)->*get(detail::UShortStruct_f())))) + sizeof(uint16_t);
+        return 2ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((UShortStruct*)0)->*get(detail::UShortStruct_f())))) + sizeof(uint16_t);
     }};
 
 namespace detail {
@@ -854,7 +854,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 4ULL == size_of_();
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -874,9 +874,9 @@ public:
 
 private:
 
-    static constexpr size_t size_of_()
+    static constexpr bool is_plain_impl()
     {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((ULongStruct*)0)->*get(detail::ULongStruct_f())))) + sizeof(uint32_t);
+        return 4ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((ULongStruct*)0)->*get(detail::ULongStruct_f())))) + sizeof(uint32_t);
     }};
 
 namespace detail {
@@ -946,7 +946,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 8ULL == size_of_();
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -966,9 +966,9 @@ public:
 
 private:
 
-    static constexpr size_t size_of_()
+    static constexpr bool is_plain_impl()
     {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((ULongLongStruct*)0)->*get(detail::ULongLongStruct_f())))) + sizeof(uint64_t);
+        return 8ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((ULongLongStruct*)0)->*get(detail::ULongLongStruct_f())))) + sizeof(uint64_t);
     }};
 
 namespace detail {
@@ -1038,7 +1038,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 4ULL == size_of_();
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1058,9 +1058,9 @@ public:
 
 private:
 
-    static constexpr size_t size_of_()
+    static constexpr bool is_plain_impl()
     {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((FloatStruct*)0)->*get(detail::FloatStruct_f())))) + sizeof(float);
+        return 4ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((FloatStruct*)0)->*get(detail::FloatStruct_f())))) + sizeof(float);
     }};
 
 namespace detail {
@@ -1130,7 +1130,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 8ULL == size_of_();
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1150,9 +1150,9 @@ public:
 
 private:
 
-    static constexpr size_t size_of_()
+    static constexpr bool is_plain_impl()
     {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((DoubleStruct*)0)->*get(detail::DoubleStruct_f())))) + sizeof(double);
+        return 8ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((DoubleStruct*)0)->*get(detail::DoubleStruct_f())))) + sizeof(double);
     }};
 
 namespace detail {
@@ -1222,7 +1222,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 16ULL == size_of_();
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1242,9 +1242,9 @@ public:
 
 private:
 
-    static constexpr size_t size_of_()
+    static constexpr bool is_plain_impl()
     {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((LongDoubleStruct*)0)->*get(detail::LongDoubleStruct_f())))) + sizeof(long double);
+        return 16ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((LongDoubleStruct*)0)->*get(detail::LongDoubleStruct_f())))) + sizeof(long double);
     }};
 
 namespace detail {
@@ -1314,7 +1314,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 1ULL == size_of_();
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1334,9 +1334,9 @@ public:
 
 private:
 
-    static constexpr size_t size_of_()
+    static constexpr bool is_plain_impl()
     {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((CharStruct*)0)->*get(detail::CharStruct_f())))) + sizeof(char);
+        return 1ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((CharStruct*)0)->*get(detail::CharStruct_f())))) + sizeof(char);
     }};
 
 namespace detail {
@@ -1406,7 +1406,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 4ULL == size_of_();
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1426,9 +1426,9 @@ public:
 
 private:
 
-    static constexpr size_t size_of_()
+    static constexpr bool is_plain_impl()
     {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((WCharStruct*)0)->*get(detail::WCharStruct_f())))) + sizeof(wchar_t);
+        return 4ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((WCharStruct*)0)->*get(detail::WCharStruct_f())))) + sizeof(wchar_t);
     }};
 
 /*!
@@ -1762,7 +1762,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 32ULL == size_of_();
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1782,9 +1782,9 @@ public:
 
 private:
 
-    static constexpr size_t size_of_()
+    static constexpr bool is_plain_impl()
     {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((ArraytStruct*)0)->*get(detail::ArraytStruct_f())))) + sizeof(std::array<std::array<std::array<int32_t, 2>, 2>, 2>);
+        return 32ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((ArraytStruct*)0)->*get(detail::ArraytStruct_f())))) + sizeof(std::array<std::array<std::array<int32_t, 2>, 2>, 2>);
     }};
 typedef std::array<std::array<int32_t, 2>, 2> MyArray;
 
@@ -1855,7 +1855,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 64ULL == size_of_();
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1875,9 +1875,9 @@ public:
 
 private:
 
-    static constexpr size_t size_of_()
+    static constexpr bool is_plain_impl()
     {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((ArrayArrayStruct*)0)->*get(detail::ArrayArrayStruct_f())))) + sizeof(std::array<std::array<MyArray, 2>, 2>);
+        return 64ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((ArrayArrayStruct*)0)->*get(detail::ArrayArrayStruct_f())))) + sizeof(std::array<std::array<MyArray, 2>, 2>);
     }};
 
 /*!
@@ -2212,7 +2212,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 8ULL == size_of_();
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -2232,9 +2232,9 @@ public:
 
 private:
 
-    static constexpr size_t size_of_()
+    static constexpr bool is_plain_impl()
     {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((BitsetStruct*)0)->*get(detail::BitsetStruct_f())))) + sizeof(MyBitset);
+        return 8ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((BitsetStruct*)0)->*get(detail::BitsetStruct_f())))) + sizeof(MyBitset);
     }};
 
 namespace detail {
@@ -2304,7 +2304,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 16ULL == size_of_();
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -2324,9 +2324,9 @@ public:
 
 private:
 
-    static constexpr size_t size_of_()
+    static constexpr bool is_plain_impl()
     {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((StructStruct*)0)->*get(detail::StructStruct_f())))) + sizeof(int64_t);
+        return 16ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((StructStruct*)0)->*get(detail::StructStruct_f())))) + sizeof(int64_t);
     }};
 
 namespace detail {
@@ -2396,7 +2396,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return 24ULL == size_of_();
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -2416,9 +2416,9 @@ public:
 
 private:
 
-    static constexpr size_t size_of_()
+    static constexpr bool is_plain_impl()
     {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((StructStructStruct*)0)->*get(detail::StructStructStruct_f())))) + sizeof(int64_t);
+        return 24ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((StructStructStruct*)0)->*get(detail::StructStructStruct_f())))) + sizeof(int64_t);
     }};
 
 
