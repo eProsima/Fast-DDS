@@ -196,6 +196,16 @@ bool RTPSParticipant::ignore_reader(
     return false;
 }
 
+bool RTPSParticipant::enable_monitor_service() const
+{
+    return mp_impl->enable_monitor_service();
+}
+
+bool RTPSParticipant::disable_monitor_service() const
+{
+    return mp_impl->disable_monitor_service();
+}
+
 #if HAVE_SECURITY
 
 bool RTPSParticipant::is_security_enabled_for_writer(

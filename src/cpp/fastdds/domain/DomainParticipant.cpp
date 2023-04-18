@@ -507,3 +507,13 @@ bool DomainParticipant::has_active_entities()
 {
     return impl_->has_active_entities();
 }
+
+ReturnCode_t DomainParticipant::enable_monitor_service() const
+{
+    return impl_->enable_monitor_service();
+}
+
+ReturnCode_t DomainParticipant::disable_monitor_service() const
+{
+    return impl_->disable_monitor_service();
+}
