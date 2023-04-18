@@ -35,7 +35,6 @@ using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps::types::v1_3;
 
-using eprosima::fastrtps::types::DynamicPubSubType;
 using eprosima::fastrtps::types::BOUND_UNLIMITED;
 
 LatencyTestSubscriber::LatencyTestSubscriber()

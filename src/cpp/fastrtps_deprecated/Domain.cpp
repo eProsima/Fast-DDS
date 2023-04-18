@@ -81,7 +81,7 @@ void Domain::stopAll()
     types::v1_3::DynamicTypeBuilderFactory::delete_instance();
     types::v1_3::DynamicDataFactory::delete_instance();
     types::TypeObjectFactory::delete_instance();
-    XMLProfileManager::DeleteInstance();
+    xmlparser::XMLProfileManager::DeleteInstance();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     eprosima::fastdds::dds::Log::KillThread();

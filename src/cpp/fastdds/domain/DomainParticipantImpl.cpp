@@ -1439,10 +1439,10 @@ ReturnCode_t DomainParticipantImpl::register_type(
 bool DomainParticipantImpl::register_dynamic_type_to_factories(
         const TypeSupport& type) const
 {
-    using eprosima::fastrtps::types::DynamicPubSubType;
     using eprosima::fastrtps::types::TypeObjectFactory;
     using eprosima::fastrtps::types::TypeObject;
     using eprosima::fastrtps::types::TypeIdentifier;
+    using eprosima::fastrtps::types::DynamicPubSubType;
 
     DynamicPubSubType* dpst = dynamic_cast<DynamicPubSubType*>(type.get());
 

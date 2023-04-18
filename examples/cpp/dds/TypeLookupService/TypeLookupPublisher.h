@@ -24,7 +24,7 @@
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 
 #include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/v1_3/DynamicDataPtr.h>
+#include <fastrtps/types/DynamicDataPtr.h>
 
 class TypeLookupPublisher
 {

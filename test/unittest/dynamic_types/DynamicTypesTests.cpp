@@ -46,7 +46,6 @@ using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types::v1_3;
 
 // common types
-using eprosima::fastrtps::types::DynamicPubSubType;
 using eprosima::fastrtps::types::TypeIdentifier;
 using eprosima::fastrtps::types::TypeObjectFactory;
 
@@ -4427,7 +4426,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_EnumStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("EnumStruct");
+        auto pbType = XMLProfileManager::CreateDynamicPubSubType("EnumStruct");
 
         DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4443,7 +4442,9 @@ TEST_F(DynamicTypesTests, DynamicType_XML_EnumStruct_test)
         es_builder->add_member(0_id, "my_enum", enum_builder->build());
         es_builder->set_name("EnumStruct");
 
-        ASSERT_EQ(*pbType->GetDynamicType(), *es_builder);
+        DynamicType_ptr type;
+        ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+        ASSERT_EQ(*type, *es_builder);
 
         delete(pbType);
         XMLProfileManager::DeleteInstance();
@@ -4457,7 +4458,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_AliasStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("AliasStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("AliasStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4479,8 +4480,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_AliasStruct_test)
     struct_alias_builder->set_name("AliasStruct");
     DynamicType_ptr struct_alias_type = struct_alias_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(), *struct_alias_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*struct_alias_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type, *struct_alias_type);
+    EXPECT_TRUE(type->equals(*struct_alias_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -4493,7 +4496,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_AliasAliasStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("AliasAliasStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("AliasAliasStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4517,8 +4520,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_AliasAliasStruct_test)
     aliasAliasS_builder->set_name("AliasAliasStruct");
     DynamicType_ptr aliasAliasS_type = aliasAliasS_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*aliasAliasS_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*aliasAliasS_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*aliasAliasS_type);
+    EXPECT_TRUE(type->equals(*aliasAliasS_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -4531,7 +4536,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_BoolStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("BoolStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("BoolStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4544,8 +4549,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_BoolStruct_test)
     bool_builder->set_name("BoolStruct");
     DynamicType_ptr bool_type = bool_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(), *bool_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*bool_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type, *bool_type);
+    EXPECT_TRUE(type->equals(*bool_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -4558,7 +4565,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_OctetStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("OctetStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("OctetStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4571,8 +4578,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_OctetStruct_test)
     octet_builder->set_name("OctetStruct");
     DynamicType_ptr octet_type = octet_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*octet_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*octet_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*octet_type);
+    EXPECT_TRUE(type->equals(*octet_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -4585,7 +4594,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ShortStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4598,8 +4607,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ShortStruct_test)
     int16_builder->set_name("ShortStruct");
     DynamicType_ptr int16_type = int16_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*int16_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*int16_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*int16_type);
+    EXPECT_TRUE(type->equals(*int16_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -4612,7 +4623,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LongStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("LongStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("LongStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4625,8 +4636,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LongStruct_test)
     int32_builder->set_name("LongStruct");
     DynamicType_ptr int32_type = int32_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*int32_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*int32_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*int32_type);
+    EXPECT_TRUE(type->equals(*int32_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -4639,7 +4652,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LongLongStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("LongLongStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("LongLongStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4652,8 +4665,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LongLongStruct_test)
     int64_builder->set_name("LongLongStruct");
     DynamicType_ptr int64_type = int64_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*int64_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*int64_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*int64_type);
+    EXPECT_TRUE(type->equals(*int64_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -4666,7 +4681,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_UShortStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("UShortStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("UShortStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4679,8 +4694,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_UShortStruct_test)
     uint16_builder->set_name("UShortStruct");
     DynamicType_ptr uint16_type = uint16_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*uint16_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*uint16_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*uint16_type);
+    EXPECT_TRUE(type->equals(*uint16_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -4693,7 +4710,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ULongStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ULongStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("ULongStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4706,8 +4723,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ULongStruct_test)
     uint32_builder->set_name("ULongStruct");
     DynamicType_ptr uint32_type = uint32_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*uint32_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*uint32_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*uint32_type);
+    EXPECT_TRUE(type->equals(*uint32_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -4720,7 +4739,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ULongLongStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ULongLongStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("ULongLongStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4733,8 +4752,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ULongLongStruct_test)
     uint64_builder->set_name("ULongLongStruct");
     DynamicType_ptr uint64_type = uint64_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*uint64_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*uint64_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*uint64_type);
+    EXPECT_TRUE(type->equals(*uint64_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -4747,7 +4768,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_FloatStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("FloatStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("FloatStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4760,8 +4781,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_FloatStruct_test)
     float32_builder->set_name("FloatStruct");
     DynamicType_ptr float32_type = float32_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*float32_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*float32_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*float32_type);
+    EXPECT_TRUE(type->equals(*float32_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -4774,7 +4797,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_DoubleStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("DoubleStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("DoubleStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4787,8 +4810,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_DoubleStruct_test)
     float64_builder->set_name("DoubleStruct");
     DynamicType_ptr float64_type = float64_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*float64_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*float64_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*float64_type);
+    EXPECT_TRUE(type->equals(*float64_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -4801,7 +4826,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LongDoubleStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("LongDoubleStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("LongDoubleStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4814,8 +4839,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LongDoubleStruct_test)
     float128_builder->set_name("LongDoubleStruct");
     DynamicType_ptr float128_type = float128_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*float128_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*float128_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*float128_type);
+    EXPECT_TRUE(type->equals(*float128_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -4828,7 +4855,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_CharStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("CharStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("CharStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4841,8 +4868,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_CharStruct_test)
     char8_builder->set_name("CharStruct");
     DynamicType_ptr char8_type = char8_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*char8_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*char8_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*char8_type);
+    EXPECT_TRUE(type->equals(*char8_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -4855,7 +4884,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_WCharStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("WCharStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("WCharStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4868,8 +4897,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_WCharStruct_test)
     char16_builder->set_name("WCharStruct");
     DynamicType_ptr char16_type = char16_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*char16_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*char16_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*char16_type);
+    EXPECT_TRUE(type->equals(*char16_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -4882,7 +4913,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StringStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("StringStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("StringStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4895,8 +4926,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StringStruct_test)
     string_builder->set_name("StringStruct");
     DynamicType_ptr string_type = string_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*string_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*string_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*string_type);
+    EXPECT_TRUE(type->equals(*string_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -4909,7 +4942,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_WStringStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("WStringStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("WStringStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4923,8 +4956,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_WStringStruct_test)
     wstring_builder->set_name("WStringStruct");
     DynamicType_ptr wstring_type = wstring_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*wstring_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*wstring_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*wstring_type);
+    EXPECT_TRUE(type->equals(*wstring_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -4937,7 +4972,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LargeStringStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("LargeStringStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("LargeStringStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4950,8 +4985,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LargeStringStruct_test)
     string_builder->set_name("LargeStringStruct");
     DynamicType_ptr string_type = string_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*string_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*string_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*string_type);
+    EXPECT_TRUE(type->equals(*string_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -4964,7 +5001,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LargeWStringStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("LargeWStringStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("LargeWStringStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -4979,8 +5016,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LargeWStringStruct_test)
     wstring_builder->set_name("LargeWStringStruct");
     DynamicType_ptr wstring_type = wstring_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*wstring_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*wstring_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*wstring_type);
+    EXPECT_TRUE(type->equals(*wstring_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -4993,7 +5032,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ShortStringStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStringStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStringStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -5006,8 +5045,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ShortStringStruct_test)
     string_builder->set_name("ShortStringStruct");
     DynamicType_ptr string_type = string_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*string_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*string_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*string_type);
+    EXPECT_TRUE(type->equals(*string_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -5020,7 +5061,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ShortWStringStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ShortWStringStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("ShortWStringStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -5035,8 +5076,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ShortWStringStruct_test)
     wstring_builder->set_name("ShortWStringStruct");
     DynamicType_ptr wstring_type = wstring_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*wstring_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*wstring_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*wstring_type);
+    EXPECT_TRUE(type->equals(*wstring_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -5049,7 +5092,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_AliasStringStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("StructAliasString");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("StructAliasString");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -5065,8 +5108,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_AliasStringStruct_test)
     alias_string_builder->set_name("StructAliasString");
     DynamicType_ptr alias_string_type = alias_string_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(), *alias_string_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*alias_string_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type, *alias_string_type);
+    EXPECT_TRUE(type->equals(*alias_string_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -5079,7 +5124,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StructAliasWString_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
     {
-        DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("StructAliasWString");
+        auto pbType = XMLProfileManager::CreateDynamicPubSubType("StructAliasWString");
 
         DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -5098,8 +5143,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StructAliasWString_test)
         alias_wstring_builder->set_name("StructAliasWString");
         DynamicType_ptr alias_wstring_type = alias_wstring_builder->build();
 
-        EXPECT_EQ(*pbType->GetDynamicType(), *alias_wstring_type);
-        EXPECT_TRUE(pbType->GetDynamicType()->equals(*alias_wstring_type));
+        DynamicType_ptr type;
+        ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+        EXPECT_EQ(*type, *alias_wstring_type);
+        EXPECT_TRUE(type->equals(*alias_wstring_type));
 
         delete(pbType);
         XMLProfileManager::DeleteInstance();
@@ -5113,7 +5160,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArraytStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ArraytStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("ArraytStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -5129,8 +5176,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArraytStruct_test)
     array_int32_builder->set_name("ArraytStruct");
     DynamicType_ptr array_int32_type = array_int32_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*array_int32_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*array_int32_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*array_int32_type);
+    EXPECT_TRUE(type->equals(*array_int32_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -5143,7 +5192,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ArrayArrayStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("ArrayArrayStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -5160,8 +5209,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayStruct_test)
     aas_builder->set_name("ArrayArrayStruct");
     DynamicType_ptr aas_type = aas_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(), *aas_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*aas_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type, *aas_type);
+    EXPECT_TRUE(type->equals(*aas_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -5174,7 +5225,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayArrayStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ArrayArrayArrayStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("ArrayArrayArrayStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -5233,8 +5284,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayArrayStruct_test)
     aaas_builder->set_name("ArrayArrayArrayStruct");
     DynamicType_ptr aaas_type = aaas_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(), *aaas_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*aaas_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type, *aaas_type);
+    EXPECT_TRUE(type->equals(*aaas_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -5247,7 +5300,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SequenceStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("SequenceStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("SequenceStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -5260,8 +5313,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SequenceStruct_test)
     seqs_builder->set_name("SequenceStruct");
     DynamicType_ptr seqs_type = seqs_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(), *seqs_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*seqs_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type, *seqs_type);
+    EXPECT_TRUE(type->equals(*seqs_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -5274,7 +5329,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SequenceSequenceStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("SequenceSequenceStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("SequenceSequenceStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -5291,8 +5346,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SequenceSequenceStruct_test)
     sss_builder->set_name("SequenceSequenceStruct");
     DynamicType_ptr sss_type = sss_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(), *sss_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*sss_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type, *sss_type);
+    EXPECT_TRUE(type->equals(*sss_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -5305,7 +5362,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_MapStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("MapStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("MapStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -5319,8 +5376,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_MapStruct_test)
     maps_builder->set_name("MapStruct");
     DynamicType_ptr maps_type = maps_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(), *maps_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*maps_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type, *maps_type);
+    EXPECT_TRUE(type->equals(*maps_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -5333,7 +5392,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_MapMapStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("MapMapStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("MapMapStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -5355,8 +5414,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_MapMapStruct_test)
     maps_builder->set_name("MapMapStruct");
     DynamicType_ptr maps_type = maps_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(), *maps_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*maps_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type, *maps_type);
+    EXPECT_TRUE(type->equals(*maps_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -5369,7 +5430,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StructStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("StructStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("StructStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -5379,8 +5440,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StructStruct_test)
     structs_builder->set_name("StructStruct");
     DynamicType_ptr structs_type = structs_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(), *structs_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*structs_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type, *structs_type);
+    EXPECT_TRUE(type->equals(*structs_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -5393,7 +5456,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StructStructStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("StructStructStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("StructStructStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -5408,8 +5471,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StructStructStruct_test)
     sss_builder->set_name("StructStructStruct");
     DynamicType_ptr sss_type = sss_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(), *sss_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*sss_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type, *sss_type);
+    EXPECT_TRUE(type->equals(*sss_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -5422,7 +5487,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SimpleUnionStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("SimpleUnionStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("SimpleUnionStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -5438,8 +5503,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SimpleUnionStruct_test)
     us_builder->set_name("SimpleUnionStruct");
     DynamicType_ptr us_type = us_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(), *us_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*us_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type, *us_type);
+    EXPECT_TRUE(type->equals(*us_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -5452,7 +5519,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_UnionUnionStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("UnionUnionStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("UnionUnionStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -5473,8 +5540,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_UnionUnionStruct_test)
     uus_builder->set_name("UnionUnionStruct");
     DynamicType_ptr uus_type = uus_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(), *uus_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*uus_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type, *uus_type);
+    EXPECT_TRUE(type->equals(*uus_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -5487,7 +5556,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_WCharUnionStruct_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("WCharUnionStruct");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("WCharUnionStruct");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -5501,8 +5570,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_WCharUnionStruct_test)
     us_builder->set_name("WCharUnionStruct");
     DynamicType_ptr us_type = us_builder->build();
 
-    EXPECT_EQ(*pbType->GetDynamicType(), *us_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*us_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type, *us_type);
+    EXPECT_TRUE(type->equals(*us_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -5515,8 +5586,10 @@ TEST_F(DynamicTypesTests, DynamicType_bounded_string_unit_tests)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStringStruct");
-    DynamicData* data = DynamicDataFactory::get_instance()->create_data(pbType->GetDynamicType());
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("ShortStringStruct");
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    DynamicData* data = DynamicDataFactory::get_instance()->create_data(type);
 
     // SERIALIZATION TEST
     StringStruct refData;
@@ -5546,8 +5619,10 @@ TEST_F(DynamicTypesTests, DynamicType_bounded_wstring_unit_tests)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("ShortWStringStruct");
-    DynamicData* data = DynamicDataFactory::get_instance()->create_data(pbType->GetDynamicType());
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("ShortWStringStruct");
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    DynamicData* data = DynamicDataFactory::get_instance()->create_data(type);
 
     // SERIALIZATION TEST
     StringStruct refData;
@@ -5576,7 +5651,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitset_test)
 
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("MyBitSet");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("MyBitSet");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -5634,8 +5709,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitset_test)
     DynamicType_ptr bitset_type = bitset_builder->build();
     ASSERT_TRUE(bitset_type);
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*bitset_type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*bitset_type));
+    DynamicType_ptr type;
+    ASSERT_EQ(pbType->GetDynamicType(type), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type,*bitset_type);
+    EXPECT_TRUE(type->equals(*bitset_type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();
@@ -5707,7 +5784,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
     XMLP_ret ret = XMLProfileManager::loadXMLFile(DynamicTypesTests::config_file());
     ASSERT_EQ(ret, XMLP_ret::XML_OK);
 
-    DynamicPubSubType* pbType = XMLProfileManager::CreateDynamicPubSubType("MyBitMask");
+    auto pbType = XMLProfileManager::CreateDynamicPubSubType("MyBitMask");
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
@@ -5721,8 +5798,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
     DynamicType_ptr type = builder->build();
     ASSERT_TRUE(type);
 
-    EXPECT_EQ(*pbType->GetDynamicType(),*type);
-    EXPECT_TRUE(pbType->GetDynamicType()->equals(*type));
+    DynamicType_ptr type2;
+    ASSERT_EQ(pbType->GetDynamicType(type2), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(*type2,*type);
+    EXPECT_TRUE(type2->equals(*type));
 
     delete(pbType);
     XMLProfileManager::DeleteInstance();

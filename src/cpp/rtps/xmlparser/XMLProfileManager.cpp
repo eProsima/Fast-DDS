@@ -15,6 +15,8 @@
 #include <tinyxml2.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLTree.h>
+#include <fastrtps/types/TypeObjectFactory.h>
+#include <fastrtps/types/DynamicType.h>
 #include <fastdds/dds/log/Log.hpp>
 
 #include <cstdlib>
@@ -39,7 +41,9 @@ std::map<std::string, up_replier_t> XMLProfileManager::replier_profiles_;
 std::map<std::string, XMLP_ret> XMLProfileManager::xml_files_;
 sp_transport_map_t XMLProfileManager::transport_profiles_;
 p_dynamictype_map_t XMLProfileManager::dynamic_types_;
+p_oldbackup_map_t XMLProfileManager::old_dynamic_types_;
 BaseNode* XMLProfileManager::root = nullptr;
+
 
 XMLP_ret XMLProfileManager::fillParticipantAttributes(
         const std::string& profile_name,
@@ -599,11 +603,68 @@ bool XMLProfileManager::insertDynamicTypeByName(
 p_dynamictypebuilder_t XMLProfileManager::getDynamicTypeByName(
         const std::string& type_name)
 {
+    // hit the cache
+    if (old_dynamic_types_.find(type_name) != old_dynamic_types_.end())
+    {
+        return old_dynamic_types_[type_name].get();
+    }
+
+    // query the actual map
+    types::v1_1::DynamicTypeBuilder_ptr p;
+    if( XMLP_ret::XML_OK == getDynamicTypeByName(p, type_name))
+    {
+        auto ret = p.get();
+        old_dynamic_types_[type_name] = std::move(p);
+        return ret;
+    }
+
+    return nullptr;
+}
+
+XMLP_ret XMLProfileManager::getDynamicTypeByName(
+        types::v1_1::DynamicTypeBuilder_ptr& builder,
+        const std::string& type_name)
+{
+    types::v1_3::DynamicTypeBuilder_ptr p;
+    auto res = getDynamicTypeByName(p, type_name);
+
+    if (XMLP_ret::XML_OK != res)
+    {
+        return res;
+    }
+
+    // version downgrade
+    // Get intermediate type object
+    types::TypeObject obj;
+    types::TypeIdentifier id;
+
+    types::v1_3::DynamicTypeBuilderFactory::get_instance().build_type_identifier(p->get_descriptor(), id);
+    types::v1_3::DynamicTypeBuilderFactory::get_instance().build_type_object(p->get_descriptor(), obj);
+
+    // Build old dynamic type
+    types::v1_1::DynamicType_ptr ptr;
+
+    types::TypeObjectFactory::get_instance()->build_dynamic_type(ptr, type_name, &id, &obj);
+    builder = types::v1_1::DynamicTypeBuilderFactory::get_instance()->create_custom_builder(
+            ptr->get_descriptor(),
+            ptr->get_name());
+
+    return builder ? XMLP_ret::XML_OK : XMLP_ret::XML_ERROR;
+}
+
+XMLP_ret XMLProfileManager::getDynamicTypeByName(
+        types::v1_3::DynamicTypeBuilder_ptr& builder,
+        const std::string& type_name)
+{
+    assert(builder);
+
     if (dynamic_types_.find(type_name) != dynamic_types_.end())
     {
-        return dynamic_types_[type_name].get();
+        builder = dynamic_types_[type_name];
+        return XMLP_ret::XML_OK;
     }
-    return nullptr;
+
+    return XMLP_ret::XML_ERROR;
 }
 
 XMLP_ret XMLProfileManager::extractTopicProfile(

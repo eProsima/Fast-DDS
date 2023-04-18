@@ -39,7 +39,6 @@ using namespace eprosima::fastrtps::types::v1_3;
 using eprosima::fastrtps::types::TypeObjectFactory;
 using eprosima::fastrtps::types::TypeIdentifier;
 using eprosima::fastrtps::types::TypeObject;
-using eprosima::fastrtps::types::DynamicPubSubType;
 using eprosima::fastrtps::types::TypeInformation;
 
 class DynamicComplexTypesTests : public ::testing::Test
@@ -459,7 +458,7 @@ void DynamicComplexTypesTests::init()
 {
     const TypeIdentifier* id = TypeObjectFactory::get_instance()->get_type_identifier("CompleteStruct", true);
     const TypeObject* obj = TypeObjectFactory::get_instance()->get_type_object(id);
-    m_DynAutoType = TypeObjectFactory::get_instance()->build_dynamic_type("CompleteStruct", id, obj);
+    TypeObjectFactory::get_instance()->build_dynamic_type(m_DynAutoType, "CompleteStruct", id, obj);
 
     m_DynManualType = GetCompleteStructType();
 }
@@ -532,8 +531,12 @@ TEST_F(DynamicComplexTypesTests, Conversions_Test)
     const TypeIdentifier* identifier = TypeObjectFactory::get_instance()->get_type_identifier(
         m_DynManualType->get_name(),
         true);
-    DynamicType_ptr newAutoType = TypeObjectFactory::get_instance()->build_dynamic_type(m_DynManualType->get_name(),
-                    identifier, &newObject);
+    DynamicType_ptr newAutoType;
+    TypeObjectFactory::get_instance()->build_dynamic_type(
+            newAutoType,
+            m_DynManualType->get_name(),
+            identifier,
+            &newObject);
     DynamicData* dynData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
     DynamicData* dynData2 = DynamicDataFactory::get_instance()->create_data(newAutoType);
 

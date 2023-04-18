@@ -41,7 +41,6 @@ using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types::v1_3;
 
 using eprosima::fastrtps::types::BOUND_UNLIMITED;
-using eprosima::fastrtps::types::DynamicPubSubType;
 
 // *******************************************************************************************
 // ********************************* DATA WRITER LISTENER ************************************

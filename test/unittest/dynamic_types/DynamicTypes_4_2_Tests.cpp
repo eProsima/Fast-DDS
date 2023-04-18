@@ -37,7 +37,6 @@ using namespace eprosima::fastrtps::types::v1_3;
 using eprosima::fastrtps::types::TypeObjectFactory;
 using eprosima::fastrtps::types::TypeIdentifier;
 using eprosima::fastrtps::types::TypeObject;
-using eprosima::fastrtps::types::DynamicPubSubType;
 
 class DynamicTypes_4_2_Tests : public ::testing::Test
 {
@@ -254,8 +253,9 @@ TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
     const TypeIdentifier* identifier = GetStructTestIdentifier(true);
     const TypeObject* object = GetCompleteStructTestObject();
 
-    DynamicType_ptr dyn_type =
-            TypeObjectFactory::get_instance()->build_dynamic_type("StructTest", identifier, object);
+    DynamicType_ptr dyn_type;
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK,
+            TypeObjectFactory::get_instance()->build_dynamic_type(dyn_type, "StructTest", identifier, object));
 
     TypeIdentifier conv_identifier;
     TypeObject conv_object;
@@ -313,8 +313,9 @@ TEST_F(DynamicTypes_4_2_Tests, Static_Dynamic_Values)
     const TypeIdentifier* identifier = GetStructTestIdentifier(true);
     const TypeObject* object = GetCompleteStructTestObject();
 
-    DynamicType_ptr dyn_type =
-            TypeObjectFactory::get_instance()->build_dynamic_type("StructTest", identifier, object);
+    DynamicType_ptr dyn_type;
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK,
+            TypeObjectFactory::get_instance()->build_dynamic_type(dyn_type, "StructTest", identifier, object));
 
     // Serialize static initialization with values
     StructTest struct_test;

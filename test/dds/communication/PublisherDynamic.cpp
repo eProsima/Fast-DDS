@@ -42,8 +42,6 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types::v1_3;
 
-using eprosima::fastrtps::types::DynamicPubSubType;
-
 static bool run = true;
 
 class ParListener : public DomainParticipantListener
@@ -255,7 +253,15 @@ int main(
         return 1;
     }
 
-    DynamicType_ptr dyn_type = xmlparser::XMLProfileManager::getDynamicTypeByName("TypeLookup")->build();
+    DynamicTypeBuilder_ptr dyn_build;
+    if (xmlparser::XMLP_ret::XML_OK !=
+            xmlparser::XMLProfileManager::getDynamicTypeByName(dyn_build, "TypeLookup"))
+    {
+        std::cout << "Error loading the TypeLookup type from the xml" << std::endl;
+        return 1;
+    }
+
+    auto dyn_type = dyn_build->build();
     TypeSupport type(new DynamicPubSubType(dyn_type));
     type.register_type(participant);
 

@@ -56,7 +56,15 @@ bool TypeLookupPublisher::init()
         return false;
     }
 
-    XTypes::DynamicType_ptr dyn_type = xmlparser::XMLProfileManager::getDynamicTypeByName("TypeLookup")->build();
+    XTypes::DynamicTypeBuilder_ptr dyn_build;
+    if (xmlparser::XMLP_ret::XML_OK !=
+            xmlparser::XMLProfileManager::getDynamicTypeByName(dyn_build, "TypeLookup"))
+    {
+        std::cout << "Cannot load TypeLookup type form xml profile" << std::endl;
+        return false;
+    }
+
+    auto dyn_type = dyn_build->build();
     TypeSupport m_type(new DynamicPubSubType(dyn_type));
     m_Hello = XTypes::DynamicDataFactory::get_instance()->create_data(dyn_type);
 

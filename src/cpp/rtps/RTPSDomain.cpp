@@ -36,6 +36,8 @@
 #include <rtps/transport/UDPv6Transport.h>
 #include <rtps/transport/test_UDPv4Transport.h>
 
+#include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/utils/IPLocator.h>
 #include <fastrtps/utils/System.h>
@@ -113,6 +115,15 @@ void RTPSDomainImpl::stopAll()
         instance->removeRTPSParticipant_nts(participant);
         lock.lock();
     }
+
+    // Deletes DynamicTypes and TypeObject factories
+    types::v1_1::DynamicTypeBuilderFactory::delete_instance();
+    types::v1_1::DynamicDataFactory::delete_instance();
+    types::v1_3::DynamicTypeBuilderFactory::delete_instance();
+    types::v1_3::DynamicDataFactory::delete_instance();
+    types::TypeObjectFactory::delete_instance();
+    xmlparser::XMLProfileManager::DeleteInstance();
+
     EPROSIMA_LOG_INFO(RTPS_PARTICIPANT, "RTPSParticipants deleted correctly ");
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 }

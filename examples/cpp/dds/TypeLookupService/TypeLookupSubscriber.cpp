@@ -217,10 +217,8 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                         const types::TypeObject* obj =
                                 types::TypeObjectFactory::get_instance()->get_type_object(ident);
 
-                        XTypes::DynamicType_ptr dyn_type =
-                                types::TypeObjectFactory::get_instance()->build_dynamic_type(name, ident, obj);
-
-                        if (nullptr != dyn_type)
+                        XTypes::DynamicType_ptr dyn_type;
+                        if(!!types::TypeObjectFactory::get_instance()->build_dynamic_type(dyn_type, name, ident, obj))
                         {
                             subscriber_->readers_[reader] = dyn_type;
                             XTypes::DynamicData_ptr data(

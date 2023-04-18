@@ -46,8 +46,9 @@ HelloWorldPublisher::HelloWorldPublisher()
 
 bool HelloWorldPublisher::init()
 {
-    if (eprosima::fastrtps::xmlparser::XMLP_ret::XML_OK !=
-            eprosima::fastrtps::xmlparser::XMLProfileManager::loadXMLFile("helloworld_example_type_profile.xml"))
+    using namespace eprosima::fastrtps::xmlparser;
+
+    if ( XMLP_ret::XML_OK != XMLProfileManager::loadXMLFile("helloworld_example_type_profile.xml"))
     {
         std::cout <<
             "Cannot open XML file \"helloworld_example_type_profile.xml\". Please, run the publisher from the folder "
@@ -55,8 +56,13 @@ bool HelloWorldPublisher::init()
         return false;
     }
 
-    XTypes::DynamicType_ptr dyn_type =
-            eprosima::fastrtps::xmlparser::XMLProfileManager::getDynamicTypeByName("HelloWorld")->build();
+    XTypes::DynamicTypeBuilder_ptr dyn_builder;
+    if ( XMLProfileManager::getDynamicTypeByName(dyn_builder, "HelloWorld") != XMLP_ret::XML_OK )
+    {
+        return false;
+    }
+
+    auto dyn_type = dyn_builder->build();
     TypeSupport m_type(new DynamicPubSubType(dyn_type));
     m_Hello = XTypes::DynamicDataFactory::get_instance()->create_data(dyn_type);
 

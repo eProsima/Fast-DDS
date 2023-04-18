@@ -158,7 +158,7 @@ XMLP_ret XMLParser::parseXMLTypes(
 
 XMLP_ret XMLParser::parseXMLBitvalueDynamicType(
         tinyxml2::XMLElement* p_root,
-        p_dynamictypebuilder_t p_dynamictype,
+        types::v1_3::DynamicTypeBuilder* p_dynamictype,
         uint16_t& field_position)
 {
     /*
@@ -278,7 +278,9 @@ static DynamicTypeBuilder_cptr getDiscriminatorTypeBuilder(
         return bound == 0 ? factory.create_wstring_builder() : factory.create_wstring_builder(bound);
     }
 
-    return XMLProfileManager::getDynamicTypeByName(disc)->shared_from_this();
+    DynamicTypeBuilder_ptr ret;
+    XMLProfileManager::getDynamicTypeByName(ret, disc);
+    return ret;
 }
 
 XMLP_ret XMLParser::parseXMLAliasDynamicType(
@@ -401,8 +403,9 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
     const char* baseType = p_root->Attribute(BASE_TYPE);
     if (baseType != nullptr)
     {
-        p_dynamictypebuilder_t parentType = XMLProfileManager::getDynamicTypeByName(baseType);
-        if (parentType != nullptr && parentType->get_kind() == TypeKind::TK_BITSET)
+        types::v1_3::DynamicTypeBuilder_ptr parentType;
+        XMLProfileManager::getDynamicTypeByName(parentType, baseType);
+        if (parentType && parentType->get_kind() == TypeKind::TK_BITSET)
         {
             typeBuilder = DynamicTypeBuilderFactory::get_instance().create_child_struct_builder(*parentType->build());
         }
@@ -444,7 +447,7 @@ XMLP_ret XMLParser::parseXMLBitsetDynamicType(
 
 DynamicTypeBuilder_cptr XMLParser::parseXMLBitfieldDynamicType(
         tinyxml2::XMLElement* p_root,
-        p_dynamictypebuilder_t p_dynamictype,
+        types::v1_3::DynamicTypeBuilder* p_dynamictype,
         MemberId mId,
         uint16_t& position)
 {
@@ -725,8 +728,9 @@ XMLP_ret XMLParser::parseXMLStructDynamicType(
     const char* baseType = p_root->Attribute(BASE_TYPE);
     if (baseType != nullptr)
     {
-        p_dynamictypebuilder_t parentType = XMLProfileManager::getDynamicTypeByName(baseType);
-        if (parentType != nullptr && parentType->get_kind() == TypeKind::TK_STRUCTURE)
+        types::v1_3::DynamicTypeBuilder_ptr parentType;
+        XMLProfileManager::getDynamicTypeByName(parentType, baseType);
+        if (parentType && parentType->get_kind() == TypeKind::TK_STRUCTURE)
         {
             typeBuilder = DynamicTypeBuilderFactory::get_instance().create_child_struct_builder(*parentType->build());
         }
@@ -906,7 +910,7 @@ static bool dimensionsToLabels(
 
 DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
         tinyxml2::XMLElement* p_root,
-        p_dynamictypebuilder_t p_dynamictype,
+        types::v1_3::DynamicTypeBuilder* p_dynamictype,
         MemberId mId)
 {
     return parseXMLMemberDynamicType(p_root, p_dynamictype, mId, "");
@@ -914,7 +918,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
 
 DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
         tinyxml2::XMLElement* p_root,
-        p_dynamictypebuilder_t p_dynamictype,
+        types::v1_3::DynamicTypeBuilder* p_dynamictype,
         MemberId mId,
         const std::string& values)
 {
@@ -1345,7 +1349,8 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
     }
     else // Complex type?
     {
-        p_dynamictypebuilder_t typePtr = XMLProfileManager::getDynamicTypeByName(memberType);
+        types::v1_3::DynamicTypeBuilder_ptr typePtr;
+        XMLProfileManager::getDynamicTypeByName(typePtr, memberType);
         if (!isArray)
         {
             memberBuilder = typePtr->shared_from_this();

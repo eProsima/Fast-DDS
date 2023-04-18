@@ -113,7 +113,7 @@ public:
 
 private:
 
-    eprosima::fastrtps::types::DynamicPubSubType m_type;
+    eprosima::fastrtps::types::v1_3::DynamicPubSubType m_type;
 };
 
 #endif /* HELLOWORLDSUBSCRIBER_H_ */

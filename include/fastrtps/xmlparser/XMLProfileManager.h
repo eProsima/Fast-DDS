@@ -21,8 +21,8 @@
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/types/DynamicPubSubType.h>
-#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/v1_3/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicTypeBuilder.h>
 
 #include <stdio.h>
 #include <string>
@@ -199,6 +199,13 @@ public:
     RTPS_DllAPI static p_dynamictypebuilder_t getDynamicTypeByName(
             const std::string& type_name);
 
+    RTPS_DllAPI static XMLP_ret getDynamicTypeByName(
+            types::v1_1::DynamicTypeBuilder_ptr& builder,
+            const std::string& type_name);
+
+    RTPS_DllAPI static XMLP_ret getDynamicTypeByName(
+            types::v1_3::DynamicTypeBuilder_ptr& builder,
+            const std::string& type_name);
 
     /**
      * Search for the profile specified and fill the structure.
@@ -236,6 +243,7 @@ public:
         xml_files_.clear();
         transport_profiles_.clear();
         dynamic_types_.clear();
+        old_dynamic_types_.clear();
     }
 
     /**
@@ -314,6 +322,8 @@ private:
     static sp_transport_map_t transport_profiles_;
 
     static p_dynamictype_map_t dynamic_types_;
+
+    static p_oldbackup_map_t old_dynamic_types_;
 };
 
 } /* xmlparser */

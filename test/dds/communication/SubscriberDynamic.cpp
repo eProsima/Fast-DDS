@@ -48,7 +48,6 @@ using eprosima::fastrtps::types::TypeInformation;
 using eprosima::fastrtps::types::TypeIdentifier;
 using eprosima::fastrtps::types::TypeObjectFactory;
 using eprosima::fastrtps::types::TypeObject;
-using eprosima::fastrtps::types::DynamicPubSubType;
 
 class ParListener : public DomainParticipantListener
 {
@@ -329,9 +328,7 @@ int main(
             const TypeObject* obj =
                     TypeObjectFactory::get_instance()->get_type_object(ident);
 
-            type = TypeObjectFactory::get_instance()->build_dynamic_type(type_name, ident, obj);
-
-            if (type == nullptr)
+            if (!TypeObjectFactory::get_instance()->build_dynamic_type(type, type_name, ident, obj))
             {
                 std::cout << "ERROR: DynamicType cannot be created for type: " << type_name << std::endl;
                 throw 1;

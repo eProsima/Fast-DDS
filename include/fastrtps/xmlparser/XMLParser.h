@@ -25,6 +25,8 @@
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 
+#include <fastrtps/types/v1_1/DynamicTypeBuilderPtr.h>
+
 #include <map>
 #include <stdio.h>
 #include <string>
@@ -49,8 +51,9 @@ typedef node_att_map_t::const_iterator node_att_map_cit_t;
 
 typedef std::shared_ptr<fastdds::rtps::TransportDescriptorInterface> sp_transport_t;
 typedef std::map<std::string, sp_transport_t>  sp_transport_map_t;
-typedef types::v1_3::DynamicTypeBuilder*             p_dynamictypebuilder_t;
+typedef types::v1_1::DynamicTypeBuilder*             p_dynamictypebuilder_t;
 typedef std::map<std::string, types::v1_3::DynamicTypeBuilder_ptr> p_dynamictype_map_t;
+typedef std::map<std::string, types::v1_1::DynamicTypeBuilder_ptr> p_oldbackup_map_t;
 
 typedef std::unique_ptr<ParticipantAttributes> up_participant_t;
 typedef DataNode<ParticipantAttributes>        node_participant_t;
@@ -260,23 +263,23 @@ protected:
 
     RTPS_DllAPI static types::v1_3::DynamicTypeBuilder_cptr parseXMLBitfieldDynamicType(
             tinyxml2::XMLElement* p_root,
-            p_dynamictypebuilder_t p_dynamictype,
+            types::v1_3::DynamicTypeBuilder* p_dynamictype,
             types::v1_3::MemberId mId,
             uint16_t& position);
 
     RTPS_DllAPI static XMLP_ret parseXMLBitvalueDynamicType(
             tinyxml2::XMLElement* p_root,
-            p_dynamictypebuilder_t p_dynamictype,
+            types::v1_3::DynamicTypeBuilder* p_dynamictype,
             uint16_t& position);
 
     RTPS_DllAPI static types::v1_3::DynamicTypeBuilder_cptr parseXMLMemberDynamicType(
             tinyxml2::XMLElement* p_root,
-            p_dynamictypebuilder_t p_dynamictype,
+            types::v1_3::DynamicTypeBuilder* p_dynamictype,
             types::v1_3::MemberId mId);
 
     RTPS_DllAPI static types::v1_3::DynamicTypeBuilder_cptr parseXMLMemberDynamicType(
             tinyxml2::XMLElement* p_root,
-            p_dynamictypebuilder_t p_dynamictype,
+            types::v1_3::DynamicTypeBuilder* p_dynamictype,
             types::v1_3::MemberId mId,
             const std::string& values);
 
