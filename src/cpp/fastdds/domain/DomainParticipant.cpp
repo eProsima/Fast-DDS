@@ -471,6 +471,19 @@ std::vector<std::string> DomainParticipant::get_participant_names() const
     return impl_->get_participant_names();
 }
 
+std::string DomainParticipant::get_participant_name(
+        const fastrtps::rtps::GUID_t& pguid) const
+{
+    return impl_->get_participant_name(pguid);
+}
+
+std::string DomainParticipant::get_participant_name(
+        const fastrtps::rtps::GuidPrefix_t& pguid_prefix) const
+{
+    fastrtps::rtps::GUID_t pguid(pguid_prefix, fastrtps::rtps::c_EntityId_RTPSParticipant);
+    return get_participant_name(pguid);
+}
+
 bool DomainParticipant::new_remote_endpoint_discovered(
         const fastrtps::rtps::GUID_t& partguid,
         uint16_t userId,

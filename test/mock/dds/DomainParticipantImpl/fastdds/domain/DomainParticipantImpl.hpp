@@ -356,7 +356,7 @@ public:
                 const std::string& name,
                 Topic * related_topic,
                 const std::string& filter_expression,
-                const std::vector<std::string>& expression_parameters,
+                const std::vector<std::string>&expression_parameters,
                 const char* filter_class_name));
 
     MOCK_METHOD1(delete_contentfilteredtopic, ReturnCode_t(
@@ -364,7 +364,7 @@ public:
 
     MOCK_METHOD2(register_content_filter_factory, ReturnCode_t(
                 const char* filter_class_name,
-                IContentFilterFactory* const filter_factory));
+                IContentFilterFactory * const filter_factory));
 
     MOCK_METHOD1(lookup_content_filter_factory, IContentFilterFactory * (
                 const char* filter_class_name));
@@ -557,6 +557,12 @@ public:
     std::vector<std::string> get_participant_names() const
     {
         return std::vector<std::string> {};
+    }
+
+    std::string get_participant_name(
+            const fastrtps::rtps::GUID_t& /*partguid*/) const
+    {
+        return std::string();
     }
 
     bool new_remote_endpoint_discovered(

@@ -1225,6 +1225,16 @@ std::vector<std::string> DomainParticipantImpl::get_participant_names() const
            rtps_participant_->getParticipantNames();
 }
 
+std::string DomainParticipantImpl::get_participant_name(
+        const GUID_t& partguid) const
+{
+    std::lock_guard<std::mutex> _(mtx_gs_);
+    return rtps_participant_ == nullptr ?
+           std::string()
+           :
+           rtps_participant_->getParticipantName(partguid);
+}
+
 Subscriber* DomainParticipantImpl::create_subscriber(
         const SubscriberQos& qos,
         SubscriberListener* listener,
@@ -1840,7 +1850,7 @@ bool DomainParticipantImpl::check_get_type_request(
         }
 
         fastrtps::types::TypeObjectFactory::get_instance()->add_type_object(
-                get_inner_type_name(requestId), identifier, object);
+            get_inner_type_name(requestId), identifier, object);
 
         // Child request?
         auto child_it = child_requests_.find(requestId);
