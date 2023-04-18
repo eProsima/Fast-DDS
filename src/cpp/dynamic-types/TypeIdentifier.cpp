@@ -1114,8 +1114,8 @@ bool TypeIdentifier::operator ==(
     if (this == &other)
     {
         return true;                 // Same memory!
-
     }
+
     if (this->_d() != other._d())
     {
         return false;
