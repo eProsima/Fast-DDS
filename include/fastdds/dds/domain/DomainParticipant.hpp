@@ -804,6 +804,22 @@ public:
     RTPS_DllAPI std::vector<std::string> get_participant_names() const;
 
     /**
+     * @brief Get participant name from its GUID
+     *
+     * @return Participant name
+     */
+    RTPS_DllAPI std::string get_participant_name(
+            const fastrtps::rtps::GUID_t& pguid) const;
+
+    /**
+     * @brief Get participant name from its GUID Prefix
+     *
+     * @return Participant name
+     */
+    RTPS_DllAPI std::string get_participant_name(
+            const fastrtps::rtps::GuidPrefix_t& pguid_prefix) const;
+
+    /**
      * This method can be used when using a StaticEndpointDiscovery mechanism different that the one
      * included in FastRTPS, for example when communicating with other implementations.
      * It indicates the Participant that an Endpoint from the XML has been discovered and
