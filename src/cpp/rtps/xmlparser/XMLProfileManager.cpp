@@ -17,6 +17,7 @@
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/v1_1/DynamicTypeMember.h>
 #include <fastdds/dds/log/Log.hpp>
 
 #include <cstdlib>
@@ -638,16 +639,28 @@ XMLP_ret XMLProfileManager::getDynamicTypeByName(
     types::TypeObject obj;
     types::TypeIdentifier id;
 
-    types::v1_3::DynamicTypeBuilderFactory::get_instance().build_type_identifier(p->get_descriptor(), id);
     types::v1_3::DynamicTypeBuilderFactory::get_instance().build_type_object(p->get_descriptor(), obj);
+    types::v1_3::DynamicTypeBuilderFactory::get_instance().build_type_identifier(p->get_descriptor(), id);
 
     // Build old dynamic type
     types::v1_1::DynamicType_ptr ptr;
 
-    types::TypeObjectFactory::get_instance()->build_dynamic_type(ptr, type_name, &id, &obj);
+    if (!types::TypeObjectFactory::get_instance()->build_dynamic_type(ptr, type_name, &id, &obj))
+    {
+        return XMLP_ret::XML_ERROR;
+    }
+
     builder = types::v1_1::DynamicTypeBuilderFactory::get_instance()->create_custom_builder(
             ptr->get_descriptor(),
             ptr->get_name());
+
+    // Manually add members if required
+    std::map<types::v1_1::MemberId, types::v1_1::DynamicTypeMember*> members;
+    ptr->get_all_members(members);
+    for (auto node : members)
+    {
+        builder->add_member(node.second->get_descriptor());
+    }
 
     return builder ? XMLP_ret::XML_OK : XMLP_ret::XML_ERROR;
 }

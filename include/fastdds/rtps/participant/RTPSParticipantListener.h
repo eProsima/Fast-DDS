@@ -26,6 +26,7 @@
 
 #include <fastrtps/types/TypeIdentifier.h>
 #include <fastrtps/types/TypeObject.h>
+#include <fastrtps/types/DynamicType.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -176,6 +177,23 @@ public:
             const types::TypeIdentifier* identifier,
             const types::TypeObject* object,
             types::v1_3::DynamicType_ptr dyn_type)
+    {
+        static_cast<void>(participant);
+        static_cast<void>(request_sample_id);
+        static_cast<void>(topic);
+        static_cast<void>(identifier);
+        static_cast<void>(object);
+        static_cast<void>(dyn_type);
+    }
+
+    //! Old method kept for backward compatibility with v1.1 xtypes
+    virtual void on_type_discovery(
+            RTPSParticipant* participant,
+            const SampleIdentity& request_sample_id,
+            const string_255& topic,
+            const types::TypeIdentifier* identifier,
+            const types::TypeObject* object,
+            types::v1_1::DynamicType_ptr dyn_type)
     {
         static_cast<void>(participant);
         static_cast<void>(request_sample_id);

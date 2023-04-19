@@ -415,6 +415,10 @@ bool Domain::registerDynamicType(
             factory.build_type_object(descriptor, typeObj, false);
         }
         break;
+
+        default:
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Unitialized DynamicPubSubType.");
+            return false;
     }
 
     const TypeIdentifier* type_id2 = typeFactory->get_type_identifier(type->getName());

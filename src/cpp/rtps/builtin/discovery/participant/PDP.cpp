@@ -41,8 +41,11 @@
 #include <fastdds/rtps/history/WriterHistory.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
 
-#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/types/DynamicPubSubType.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/TypeObjectFactory.h>
+#include <fastrtps/types/v1_1/DynamicTypeMember.h>
 
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/utils/IPLocator.h>
@@ -1245,6 +1248,7 @@ void PDP::check_and_notify_type_discovery(
         if (!mp_RTPSParticipant->check_type(type_name.to_string()))
         {
             // Discovering a type
+            // Call v1_3 version
             listener->on_type_discovery(
                 mp_RTPSParticipant->getUserRTPSParticipant(),
                 fastdds::dds::builtin::INVALID_SAMPLE_IDENTITY,
@@ -1252,6 +1256,35 @@ void PDP::check_and_notify_type_discovery(
                 type_id,
                 type_obj,
                 dyn_type);
+
+            // Call v1_1 version for backward compatibility
+            // Build old dynamic type
+            types::v1_1::DynamicType_ptr ptr;
+
+            if (!types::TypeObjectFactory::get_instance()->build_dynamic_type(ptr, type_name.to_string(), type_id, type_obj))
+            {
+                return;
+            }
+
+            auto builder = types::v1_1::DynamicTypeBuilderFactory::get_instance()->create_custom_builder(
+                    ptr->get_descriptor(),
+                    ptr->get_name());
+
+            // Manually add members if required
+            std::map<types::v1_1::MemberId, types::v1_1::DynamicTypeMember*> members;
+            ptr->get_all_members(members);
+            for (auto node : members)
+            {
+                builder->add_member(node.second->get_descriptor());
+            }
+
+            listener->on_type_discovery(
+                mp_RTPSParticipant->getUserRTPSParticipant(),
+                fastdds::dds::builtin::INVALID_SAMPLE_IDENTITY,
+                topic_name,
+                type_id,
+                type_obj,
+                ptr);
         }
     }
 }

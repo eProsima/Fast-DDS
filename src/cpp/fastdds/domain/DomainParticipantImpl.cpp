@@ -1510,6 +1510,10 @@ bool DomainParticipantImpl::register_dynamic_type_to_factories(
             factory.build_type_object(descriptor, typeObj, false);
         }
         break;
+
+        default:
+            EPROSIMA_LOG_ERROR(DYN_TYPES, "Unitialized DynamicPubSubType.");
+            return false;
     }
 
     const TypeIdentifier* type_id2 = objectFactory->get_type_identifier(type->getName());
@@ -1651,6 +1655,27 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_discovery(
             dyn_type);
 
         participant_->check_get_type_request(request_sample_id, identifier, object, dyn_type);
+    }
+}
+
+void DomainParticipantImpl::MyRTPSParticipantListener::on_type_discovery(
+        RTPSParticipant*,
+        const fastrtps::rtps::SampleIdentity& request_sample_id,
+        const fastrtps::string_255& topic,
+        const fastrtps::types::TypeIdentifier* identifier,
+        const fastrtps::types::TypeObject* object,
+        fastrtps::types::v1_1::DynamicType_ptr dyn_type)
+{
+    Sentry sentinel(this);
+    if (sentinel)
+    {
+        participant_->listener_->on_type_discovery(
+            participant_->participant_,
+            request_sample_id,
+            topic,
+            identifier,
+            object,
+            dyn_type);
     }
 }
 

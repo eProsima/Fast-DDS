@@ -184,7 +184,6 @@ public:
      * For example:
      * fastrtps::types::TypeIdentifier new_type_id = \*identifier;
      */
-    FASTRTPS_DEPRECATED("Dynamic types version 1.1 will be disposed. Upgrade to version 1.3.")
     virtual void on_type_discovery(
             DomainParticipant* participant,
             const fastrtps::rtps::SampleIdentity& request_sample_id,

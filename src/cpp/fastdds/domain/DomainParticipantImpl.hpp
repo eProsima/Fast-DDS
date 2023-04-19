@@ -691,6 +691,14 @@ protected:
                 const fastrtps::types::TypeObject* object,
                 fastrtps::types::v1_3::DynamicType_ptr dyn_type) override;
 
+        void on_type_discovery(
+                fastrtps::rtps::RTPSParticipant* participant,
+                const fastrtps::rtps::SampleIdentity& request_sample_id,
+                const fastrtps::string_255& topic,
+                const fastrtps::types::TypeIdentifier* identifier,
+                const fastrtps::types::TypeObject* object,
+                fastrtps::types::v1_1::DynamicType_ptr dyn_type) override;
+
         void on_type_dependencies_reply(
                 fastrtps::rtps::RTPSParticipant* participant,
                 const fastrtps::rtps::SampleIdentity& request_sample_id,

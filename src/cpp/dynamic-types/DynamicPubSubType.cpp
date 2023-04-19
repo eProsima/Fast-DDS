@@ -83,6 +83,8 @@ void* DynamicPubSubType::createData()
             return v1_1::internal::DynamicPubSubType::createData();
         case version::v1_3:
             return v1_3::DynamicPubSubType::createData();
+        default:
+            break;
     }
 
     return nullptr;
@@ -99,6 +101,8 @@ void DynamicPubSubType::deleteData (
         case version::v1_3:
             v1_3::DynamicPubSubType::deleteData(data);
             break;
+        default:
+            break;
     }
 }
 
@@ -112,6 +116,8 @@ bool DynamicPubSubType::serialize(
             return v1_1::internal::DynamicPubSubType::serialize(data, payload);
         case version::v1_3:
             return v1_3::DynamicPubSubType::serialize(data, payload);
+        default:
+            break;
     }
 
     return false;
@@ -127,6 +133,8 @@ bool DynamicPubSubType::deserialize(
             return v1_1::internal::DynamicPubSubType::deserialize(payload, data);
         case version::v1_3:
             return v1_3::DynamicPubSubType::deserialize(payload, data);
+        default:
+            break;
     }
 
     return false;
@@ -143,6 +151,8 @@ bool DynamicPubSubType::getKey(
             return v1_1::internal::DynamicPubSubType::getKey(data, ihandle, force_md5);
         case version::v1_3:
             return v1_3::DynamicPubSubType::getKey(data, ihandle, force_md5);
+        default:
+            break;
     }
 
     return false;
@@ -157,6 +167,8 @@ std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(
             return v1_1::internal::DynamicPubSubType::getSerializedSizeProvider(data);
         case version::v1_3:
             return v1_3::DynamicPubSubType::getSerializedSizeProvider(data);
+        default:
+            break;
     }
 
     return {};
