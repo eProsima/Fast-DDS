@@ -32,9 +32,12 @@ public:
 
     enum class version
     {
+        none,
         v1_1,
         v1_3
     };
+
+    RTPS_DllAPI DynamicPubSubType() = default;
 
     RTPS_DllAPI DynamicPubSubType(
             v1_1::DynamicType_ptr pDynamicType);
@@ -42,32 +45,22 @@ public:
     RTPS_DllAPI DynamicPubSubType(
             v1_3::DynamicType_ptr pDynamicType);
 
+    RTPS_DllAPI ReturnCode_t SetDynamicType(
+            v1_1::DynamicType_ptr pType);
+
+    RTPS_DllAPI ReturnCode_t SetDynamicType(
+            v1_3::DynamicType_ptr pType);
+
+    RTPS_DllAPI void CleanDynamicType();
+
     RTPS_DllAPI version GetDynamicTypeVersion() const
     {
         return active_;
     }
 
-    RTPS_DllAPI ReturnCode_t GetDynamicType(v1_3::DynamicType_ptr& p) const
-    {
-        if (version::v1_3 == active_)
-        {
-            p = v1_3::DynamicPubSubType::GetDynamicType();
-            return ReturnCode_t::RETCODE_OK;
-        }
+    RTPS_DllAPI ReturnCode_t GetDynamicType(v1_3::DynamicType_ptr& p) const;
 
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    }
-
-    RTPS_DllAPI ReturnCode_t GetDynamicType(v1_1::DynamicType_ptr& p) const
-    {
-        if (version::v1_1 == active_)
-        {
-            p = v1_1::internal::DynamicPubSubType::GetDynamicType();
-            return ReturnCode_t::RETCODE_OK;
-        }
-
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    }
+    RTPS_DllAPI ReturnCode_t GetDynamicType(v1_1::DynamicType_ptr& p) const;
 
     // TopicDataType overrides
     RTPS_DllAPI void* createData() override;
@@ -93,7 +86,7 @@ public:
 
 private:
 
-    version active_;
+    version active_ = version::none;
 };
 
 } // namespace types

@@ -30,6 +30,51 @@ DynamicPubSubType::DynamicPubSubType(
 {
 }
 
+ReturnCode_t DynamicPubSubType::SetDynamicType(
+        v1_1::DynamicType_ptr pType)
+{
+    CleanDynamicType();
+    active_ = version::v1_1;
+    return v1_1::internal::DynamicPubSubType::SetDynamicType(pType);
+}
+
+ReturnCode_t DynamicPubSubType::SetDynamicType(
+        v1_3::DynamicType_ptr pType)
+{
+    CleanDynamicType();
+    active_ = version::v1_3;
+    return v1_3::DynamicPubSubType::SetDynamicType(pType);
+}
+
+void DynamicPubSubType::CleanDynamicType()
+{
+    v1_1::internal::DynamicPubSubType::CleanDynamicType();
+    v1_3::DynamicPubSubType::CleanDynamicType();
+    active_ = version::none;
+}
+
+ReturnCode_t DynamicPubSubType::GetDynamicType(v1_3::DynamicType_ptr& p) const
+{
+    if (version::v1_3 == active_)
+    {
+        p = v1_3::DynamicPubSubType::GetDynamicType();
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+}
+
+ReturnCode_t DynamicPubSubType::GetDynamicType(v1_1::DynamicType_ptr& p) const
+{
+    if (version::v1_1 == active_)
+    {
+        p = v1_1::internal::DynamicPubSubType::GetDynamicType();
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
+}
+
 void* DynamicPubSubType::createData()
 {
     switch(active_)

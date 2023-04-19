@@ -656,8 +656,6 @@ XMLP_ret XMLProfileManager::getDynamicTypeByName(
         types::v1_3::DynamicTypeBuilder_ptr& builder,
         const std::string& type_name)
 {
-    assert(builder);
-
     if (dynamic_types_.find(type_name) != dynamic_types_.end())
     {
         builder = dynamic_types_[type_name];

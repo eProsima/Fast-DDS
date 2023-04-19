@@ -1223,7 +1223,7 @@ void PDP::check_and_notify_type_discovery(
     }
 
     // Are we discovering a type?
-    ReturnCode_t res;
+    ReturnCode_t res{ReturnCode_t::RETCODE_ERROR};
     DynamicType_ptr dyn_type;
 
     if (type_obj && type_obj->_d() == types::TypeKind::EK_COMPLETE) // Writer shares a Complete TypeObject
