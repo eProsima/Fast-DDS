@@ -54,6 +54,11 @@ namespace detail {
     };
 
     template struct AllocTestType_rob<AllocTestType_f, &AllocTestType::m_index>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr AllocTestType_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
 }
 /*!
  * @brief This class represents the TopicDataType of the type AllocTestType defined by the user in the IDL file.
@@ -123,7 +128,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 4ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((AllocTestType*)0)->*get(detail::AllocTestType_f())))) + sizeof(uint32_t);
+        return 4ULL == (detail::AllocTestType_offset_of<AllocTestType, detail::AllocTestType_f>() + sizeof(uint32_t));
     }};
 
 #endif // _FAST_DDS_GENERATED_ALLOCTESTTYPE_PUBSUBTYPES_H_

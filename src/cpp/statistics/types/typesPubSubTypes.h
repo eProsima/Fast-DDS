@@ -62,6 +62,11 @@ namespace eprosima
                     };
 
                     template struct EntityId_s_rob<EntityId_s_f, &EntityId_s::m_value>;
+
+                    template <typename T, typename Tag>
+                    inline size_t constexpr EntityId_s_offset_of() {
+                        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+                    }
                 }
                 /*!
                  * @brief This class represents the TopicDataType of the type EntityId_s defined by the user in the IDL file.
@@ -131,7 +136,7 @@ namespace eprosima
 
                     static constexpr bool is_plain_impl()
                     {
-                        return 4ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((EntityId_s*)0)->*get(detail::EntityId_s_f())))) + sizeof(std::array<uint8_t, 4>);
+                        return 4ULL == (detail::EntityId_s_offset_of<EntityId_s, detail::EntityId_s_f>() + sizeof(std::array<uint8_t, 4>));
                     }};
 
                 namespace detail {
@@ -154,6 +159,11 @@ namespace eprosima
                     };
 
                     template struct GuidPrefix_s_rob<GuidPrefix_s_f, &GuidPrefix_s::m_value>;
+
+                    template <typename T, typename Tag>
+                    inline size_t constexpr GuidPrefix_s_offset_of() {
+                        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+                    }
                 }
                 /*!
                  * @brief This class represents the TopicDataType of the type GuidPrefix_s defined by the user in the IDL file.
@@ -223,7 +233,7 @@ namespace eprosima
 
                     static constexpr bool is_plain_impl()
                     {
-                        return 12ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((GuidPrefix_s*)0)->*get(detail::GuidPrefix_s_f())))) + sizeof(std::array<uint8_t, 12>);
+                        return 12ULL == (detail::GuidPrefix_s_offset_of<GuidPrefix_s, detail::GuidPrefix_s_f>() + sizeof(std::array<uint8_t, 12>));
                     }};
 
                 namespace detail {
@@ -246,6 +256,11 @@ namespace eprosima
                     };
 
                     template struct GUID_s_rob<GUID_s_f, &GUID_s::m_entityId>;
+
+                    template <typename T, typename Tag>
+                    inline size_t constexpr GUID_s_offset_of() {
+                        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+                    }
                 }
                 /*!
                  * @brief This class represents the TopicDataType of the type GUID_s defined by the user in the IDL file.
@@ -315,7 +330,7 @@ namespace eprosima
 
                     static constexpr bool is_plain_impl()
                     {
-                        return 16ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((GUID_s*)0)->*get(detail::GUID_s_f())))) + sizeof(eprosima::fastdds::statistics::detail::EntityId_s);
+                        return 16ULL == (detail::GUID_s_offset_of<GUID_s, detail::GUID_s_f>() + sizeof(eprosima::fastdds::statistics::detail::EntityId_s));
                     }};
 
                 namespace detail {
@@ -338,6 +353,11 @@ namespace eprosima
                     };
 
                     template struct SequenceNumber_s_rob<SequenceNumber_s_f, &SequenceNumber_s::m_low>;
+
+                    template <typename T, typename Tag>
+                    inline size_t constexpr SequenceNumber_s_offset_of() {
+                        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+                    }
                 }
                 /*!
                  * @brief This class represents the TopicDataType of the type SequenceNumber_s defined by the user in the IDL file.
@@ -407,7 +427,7 @@ namespace eprosima
 
                     static constexpr bool is_plain_impl()
                     {
-                        return 8ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((SequenceNumber_s*)0)->*get(detail::SequenceNumber_s_f())))) + sizeof(uint32_t);
+                        return 8ULL == (detail::SequenceNumber_s_offset_of<SequenceNumber_s, detail::SequenceNumber_s_f>() + sizeof(uint32_t));
                     }};
 
                 namespace detail {
@@ -430,6 +450,11 @@ namespace eprosima
                     };
 
                     template struct SampleIdentity_s_rob<SampleIdentity_s_f, &SampleIdentity_s::m_sequence_number>;
+
+                    template <typename T, typename Tag>
+                    inline size_t constexpr SampleIdentity_s_offset_of() {
+                        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+                    }
                 }
                 /*!
                  * @brief This class represents the TopicDataType of the type SampleIdentity_s defined by the user in the IDL file.
@@ -499,7 +524,7 @@ namespace eprosima
 
                     static constexpr bool is_plain_impl()
                     {
-                        return 24ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((SampleIdentity_s*)0)->*get(detail::SampleIdentity_s_f())))) + sizeof(eprosima::fastdds::statistics::detail::SequenceNumber_s);
+                        return 24ULL == (detail::SampleIdentity_s_offset_of<SampleIdentity_s, detail::SampleIdentity_s_f>() + sizeof(eprosima::fastdds::statistics::detail::SequenceNumber_s));
                     }};
 
                 namespace detail {
@@ -522,6 +547,11 @@ namespace eprosima
                     };
 
                     template struct Locator_s_rob<Locator_s_f, &Locator_s::m_address>;
+
+                    template <typename T, typename Tag>
+                    inline size_t constexpr Locator_s_offset_of() {
+                        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+                    }
                 }
                 /*!
                  * @brief This class represents the TopicDataType of the type Locator_s defined by the user in the IDL file.
@@ -591,7 +621,7 @@ namespace eprosima
 
                     static constexpr bool is_plain_impl()
                     {
-                        return 24ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((Locator_s*)0)->*get(detail::Locator_s_f())))) + sizeof(std::array<uint8_t, 16>);
+                        return 24ULL == (detail::Locator_s_offset_of<Locator_s, detail::Locator_s_f>() + sizeof(std::array<uint8_t, 16>));
                     }};
             }
 
@@ -681,6 +711,11 @@ namespace eprosima
                 };
 
                 template struct EntityCount_rob<EntityCount_f, &EntityCount::m_count>;
+
+                template <typename T, typename Tag>
+                inline size_t constexpr EntityCount_offset_of() {
+                    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+                }
             }
             /*!
              * @brief This class represents the TopicDataType of the type EntityCount defined by the user in the IDL file.
@@ -750,7 +785,7 @@ namespace eprosima
 
                 static constexpr bool is_plain_impl()
                 {
-                    return 24ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((EntityCount*)0)->*get(detail::EntityCount_f())))) + sizeof(uint64_t);
+                    return 24ULL == (detail::EntityCount_offset_of<EntityCount, detail::EntityCount_f>() + sizeof(uint64_t));
                 }};
 
             namespace detail {
@@ -773,6 +808,11 @@ namespace eprosima
                 };
 
                 template struct SampleIdentityCount_rob<SampleIdentityCount_f, &SampleIdentityCount::m_count>;
+
+                template <typename T, typename Tag>
+                inline size_t constexpr SampleIdentityCount_offset_of() {
+                    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+                }
             }
             /*!
              * @brief This class represents the TopicDataType of the type SampleIdentityCount defined by the user in the IDL file.
@@ -842,7 +882,7 @@ namespace eprosima
 
                 static constexpr bool is_plain_impl()
                 {
-                    return 32ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((SampleIdentityCount*)0)->*get(detail::SampleIdentityCount_f())))) + sizeof(uint64_t);
+                    return 32ULL == (detail::SampleIdentityCount_offset_of<SampleIdentityCount, detail::SampleIdentityCount_f>() + sizeof(uint64_t));
                 }};
 
             namespace detail {
@@ -865,6 +905,11 @@ namespace eprosima
                 };
 
                 template struct Entity2LocatorTraffic_rob<Entity2LocatorTraffic_f, &Entity2LocatorTraffic::m_byte_magnitude_order>;
+
+                template <typename T, typename Tag>
+                inline size_t constexpr Entity2LocatorTraffic_offset_of() {
+                    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+                }
             }
             /*!
              * @brief This class represents the TopicDataType of the type Entity2LocatorTraffic defined by the user in the IDL file.
@@ -934,7 +979,7 @@ namespace eprosima
 
                 static constexpr bool is_plain_impl()
                 {
-                    return 58ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((Entity2LocatorTraffic*)0)->*get(detail::Entity2LocatorTraffic_f())))) + sizeof(int16_t);
+                    return 58ULL == (detail::Entity2LocatorTraffic_offset_of<Entity2LocatorTraffic, detail::Entity2LocatorTraffic_f>() + sizeof(int16_t));
                 }};
 
             namespace detail {
@@ -957,6 +1002,11 @@ namespace eprosima
                 };
 
                 template struct WriterReaderData_rob<WriterReaderData_f, &WriterReaderData::m_data>;
+
+                template <typename T, typename Tag>
+                inline size_t constexpr WriterReaderData_offset_of() {
+                    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+                }
             }
             /*!
              * @brief This class represents the TopicDataType of the type WriterReaderData defined by the user in the IDL file.
@@ -1026,7 +1076,7 @@ namespace eprosima
 
                 static constexpr bool is_plain_impl()
                 {
-                    return 36ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((WriterReaderData*)0)->*get(detail::WriterReaderData_f())))) + sizeof(float);
+                    return 36ULL == (detail::WriterReaderData_offset_of<WriterReaderData, detail::WriterReaderData_f>() + sizeof(float));
                 }};
 
             namespace detail {
@@ -1049,6 +1099,11 @@ namespace eprosima
                 };
 
                 template struct Locator2LocatorData_rob<Locator2LocatorData_f, &Locator2LocatorData::m_data>;
+
+                template <typename T, typename Tag>
+                inline size_t constexpr Locator2LocatorData_offset_of() {
+                    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+                }
             }
             /*!
              * @brief This class represents the TopicDataType of the type Locator2LocatorData defined by the user in the IDL file.
@@ -1118,7 +1173,7 @@ namespace eprosima
 
                 static constexpr bool is_plain_impl()
                 {
-                    return 52ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((Locator2LocatorData*)0)->*get(detail::Locator2LocatorData_f())))) + sizeof(float);
+                    return 52ULL == (detail::Locator2LocatorData_offset_of<Locator2LocatorData, detail::Locator2LocatorData_f>() + sizeof(float));
                 }};
 
             namespace detail {
@@ -1141,6 +1196,11 @@ namespace eprosima
                 };
 
                 template struct EntityData_rob<EntityData_f, &EntityData::m_data>;
+
+                template <typename T, typename Tag>
+                inline size_t constexpr EntityData_offset_of() {
+                    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+                }
             }
             /*!
              * @brief This class represents the TopicDataType of the type EntityData defined by the user in the IDL file.
@@ -1210,7 +1270,7 @@ namespace eprosima
 
                 static constexpr bool is_plain_impl()
                 {
-                    return 20ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((EntityData*)0)->*get(detail::EntityData_f())))) + sizeof(float);
+                    return 20ULL == (detail::EntityData_offset_of<EntityData, detail::EntityData_f>() + sizeof(float));
                 }};
 
             /*!

@@ -128,6 +128,11 @@ namespace bitmodule
         };
 
         template struct BitsetBitmask_rob<BitsetBitmask_f, &BitsetBitmask::m_mybitmask>;
+
+        template <typename T, typename Tag>
+        inline size_t constexpr BitsetBitmask_offset_of() {
+            return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+        }
     }
     /*!
      * @brief This class represents the TopicDataType of the type BitsetBitmask defined by the user in the IDL file.
@@ -197,7 +202,7 @@ namespace bitmodule
 
         static constexpr bool is_plain_impl()
         {
-            return 17ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((BitsetBitmask*)0)->*get(detail::BitsetBitmask_f())))) + sizeof(bitmodule::MyBitMask);
+            return 17ULL == (detail::BitsetBitmask_offset_of<BitsetBitmask, detail::BitsetBitmask_f>() + sizeof(bitmodule::MyBitMask));
         }};
 
     namespace detail {
@@ -220,6 +225,11 @@ namespace bitmodule
         };
 
         template struct BM2_rob<BM2_f, &BM2::m_mylong>;
+
+        template <typename T, typename Tag>
+        inline size_t constexpr BM2_offset_of() {
+            return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+        }
     }
     /*!
      * @brief This class represents the TopicDataType of the type BM2 defined by the user in the IDL file.
@@ -289,7 +299,7 @@ namespace bitmodule
 
         static constexpr bool is_plain_impl()
         {
-            return 24ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((BM2*)0)->*get(detail::BM2_f())))) + sizeof(int32_t);
+            return 24ULL == (detail::BM2_offset_of<BM2, detail::BM2_f>() + sizeof(int32_t));
         }};
 }
 

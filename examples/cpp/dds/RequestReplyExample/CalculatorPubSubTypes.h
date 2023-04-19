@@ -121,6 +121,11 @@ namespace detail {
     };
 
     template struct ReplyType_rob<ReplyType_f, &ReplyType::m_z>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr ReplyType_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
 }
 /*!
  * @brief This class represents the TopicDataType of the type ReplyType defined by the user in the IDL file.
@@ -190,7 +195,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 8ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((ReplyType*)0)->*get(detail::ReplyType_f())))) + sizeof(int64_t);
+        return 8ULL == (detail::ReplyType_offset_of<ReplyType, detail::ReplyType_f>() + sizeof(int64_t));
     }};
 
 #endif // _FAST_DDS_GENERATED_CALCULATOR_PUBSUBTYPES_H_

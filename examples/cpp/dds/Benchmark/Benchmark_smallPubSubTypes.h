@@ -54,6 +54,11 @@ namespace detail {
     };
 
     template struct BenchMarkSmall_rob<BenchMarkSmall_f, &BenchMarkSmall::m_index>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr BenchMarkSmall_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
 }
 /*!
  * @brief This class represents the TopicDataType of the type BenchMarkSmall defined by the user in the IDL file.
@@ -123,7 +128,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 16388ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((BenchMarkSmall*)0)->*get(detail::BenchMarkSmall_f())))) + sizeof(uint32_t);
+        return 16388ULL == (detail::BenchMarkSmall_offset_of<BenchMarkSmall, detail::BenchMarkSmall_f>() + sizeof(uint32_t));
     }};
 
 #endif // _FAST_DDS_GENERATED_BENCHMARK_SMALL_PUBSUBTYPES_H_

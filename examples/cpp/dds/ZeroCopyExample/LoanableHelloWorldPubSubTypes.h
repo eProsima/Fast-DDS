@@ -54,6 +54,11 @@ namespace detail {
     };
 
     template struct LoanableHelloWorld_rob<LoanableHelloWorld_f, &LoanableHelloWorld::m_message>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr LoanableHelloWorld_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
 }
 /*!
  * @brief This class represents the TopicDataType of the type LoanableHelloWorld defined by the user in the IDL file.
@@ -123,7 +128,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 260ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((LoanableHelloWorld*)0)->*get(detail::LoanableHelloWorld_f())))) + sizeof(std::array<char, 256>);
+        return 260ULL == (detail::LoanableHelloWorld_offset_of<LoanableHelloWorld, detail::LoanableHelloWorld_f>() + sizeof(std::array<char, 256>));
     }};
 
 #endif // _FAST_DDS_GENERATED_LOANABLEHELLOWORLD_PUBSUBTYPES_H_

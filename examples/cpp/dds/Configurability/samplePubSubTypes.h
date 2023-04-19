@@ -54,6 +54,11 @@ namespace detail {
     };
 
     template struct sample_rob<sample_f, &sample::m_key_value>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr sample_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
 }
 /*!
  * @brief This class represents the TopicDataType of the type sample defined by the user in the IDL file.
@@ -123,7 +128,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 2ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((sample*)0)->*get(detail::sample_f())))) + sizeof(uint8_t);
+        return 2ULL == (detail::sample_offset_of<sample, detail::sample_f>() + sizeof(uint8_t));
     }};
 
 #endif // _FAST_DDS_GENERATED_SAMPLE_PUBSUBTYPES_H_

@@ -849,6 +849,11 @@ namespace detail {
     };
 
     template struct ArrayStruct_rob<ArrayStruct_f, &ArrayStruct::m_my_array>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr ArrayStruct_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
 }
 /*!
  * @brief This class represents the TopicDataType of the type ArrayStruct defined by the user in the IDL file.
@@ -918,7 +923,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 8ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((ArrayStruct*)0)->*get(detail::ArrayStruct_f())))) + sizeof(std::array<int32_t, 2>);
+        return 8ULL == (detail::ArrayStruct_offset_of<ArrayStruct, detail::ArrayStruct_f>() + sizeof(std::array<int32_t, 2>));
     }};
 
 namespace detail {
@@ -941,6 +946,11 @@ namespace detail {
     };
 
     template struct ArrayStructEqual_rob<ArrayStructEqual_f, &ArrayStructEqual::m_my_array_equal>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr ArrayStructEqual_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
 }
 /*!
  * @brief This class represents the TopicDataType of the type ArrayStructEqual defined by the user in the IDL file.
@@ -1010,7 +1020,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 8ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((ArrayStructEqual*)0)->*get(detail::ArrayStructEqual_f())))) + sizeof(std::array<int32_t, 2>);
+        return 8ULL == (detail::ArrayStructEqual_offset_of<ArrayStructEqual, detail::ArrayStructEqual_f>() + sizeof(std::array<int32_t, 2>));
     }};
 
 namespace detail {
@@ -1033,6 +1043,11 @@ namespace detail {
     };
 
     template struct ArrayBadStruct_rob<ArrayBadStruct_f, &ArrayBadStruct::m_my_array>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr ArrayBadStruct_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
 }
 /*!
  * @brief This class represents the TopicDataType of the type ArrayBadStruct defined by the user in the IDL file.
@@ -1102,7 +1117,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 2ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((ArrayBadStruct*)0)->*get(detail::ArrayBadStruct_f())))) + sizeof(std::array<uint8_t, 2>);
+        return 2ULL == (detail::ArrayBadStruct_offset_of<ArrayBadStruct, detail::ArrayBadStruct_f>() + sizeof(std::array<uint8_t, 2>));
     }};
 
 namespace detail {
@@ -1125,6 +1140,11 @@ namespace detail {
     };
 
     template struct ArrayDimensionsStruct_rob<ArrayDimensionsStruct_f, &ArrayDimensionsStruct::m_my_array>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr ArrayDimensionsStruct_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
 }
 /*!
  * @brief This class represents the TopicDataType of the type ArrayDimensionsStruct defined by the user in the IDL file.
@@ -1194,7 +1214,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 16ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((ArrayDimensionsStruct*)0)->*get(detail::ArrayDimensionsStruct_f())))) + sizeof(std::array<std::array<int32_t, 2>, 2>);
+        return 16ULL == (detail::ArrayDimensionsStruct_offset_of<ArrayDimensionsStruct, detail::ArrayDimensionsStruct_f>() + sizeof(std::array<std::array<int32_t, 2>, 2>));
     }};
 
 namespace detail {
@@ -1217,6 +1237,11 @@ namespace detail {
     };
 
     template struct ArraySizeStruct_rob<ArraySizeStruct_f, &ArraySizeStruct::m_my_array>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr ArraySizeStruct_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
 }
 /*!
  * @brief This class represents the TopicDataType of the type ArraySizeStruct defined by the user in the IDL file.
@@ -1286,7 +1311,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 20ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((ArraySizeStruct*)0)->*get(detail::ArraySizeStruct_f())))) + sizeof(std::array<int32_t, 5>);
+        return 20ULL == (detail::ArraySizeStruct_offset_of<ArraySizeStruct, detail::ArraySizeStruct_f>() + sizeof(std::array<int32_t, 5>));
     }};
 
 /*!

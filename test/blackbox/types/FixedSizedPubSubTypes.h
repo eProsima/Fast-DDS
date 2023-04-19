@@ -54,6 +54,11 @@ namespace detail {
     };
 
     template struct FixedSized_rob<FixedSized_f, &FixedSized::m_index>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr FixedSized_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
 }
 /*!
  * @brief This class represents the TopicDataType of the type FixedSized defined by the user in the IDL file.
@@ -123,7 +128,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 2ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((FixedSized*)0)->*get(detail::FixedSized_f())))) + sizeof(uint16_t);
+        return 2ULL == (detail::FixedSized_offset_of<FixedSized, detail::FixedSized_f>() + sizeof(uint16_t));
     }};
 
 #endif // _FAST_DDS_GENERATED_FIXEDSIZED_PUBSUBTYPES_H_

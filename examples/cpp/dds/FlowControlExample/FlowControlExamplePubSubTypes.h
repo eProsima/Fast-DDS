@@ -54,6 +54,11 @@ namespace detail {
     };
 
     template struct FlowControlExample_rob<FlowControlExample_f, &FlowControlExample::m_wasFast>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr FlowControlExample_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
 }
 /*!
  * @brief This class represents the TopicDataType of the type FlowControlExample defined by the user in the IDL file.
@@ -123,7 +128,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 600001ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((FlowControlExample*)0)->*get(detail::FlowControlExample_f())))) + sizeof(char);
+        return 600001ULL == (detail::FlowControlExample_offset_of<FlowControlExample, detail::FlowControlExample_f>() + sizeof(char));
     }};
 
 #endif // _FAST_DDS_GENERATED_FLOWCONTROLEXAMPLE_PUBSUBTYPES_H_

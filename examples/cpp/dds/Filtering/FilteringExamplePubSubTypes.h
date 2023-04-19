@@ -54,6 +54,11 @@ namespace detail {
     };
 
     template struct FilteringExample_rob<FilteringExample_f, &FilteringExample::m_sampleNumber>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr FilteringExample_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
 }
 /*!
  * @brief This class represents the TopicDataType of the type FilteringExample defined by the user in the IDL file.
@@ -123,7 +128,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 4ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((FilteringExample*)0)->*get(detail::FilteringExample_f())))) + sizeof(int32_t);
+        return 4ULL == (detail::FilteringExample_offset_of<FilteringExample, detail::FilteringExample_f>() + sizeof(int32_t));
     }};
 
 #endif // _FAST_DDS_GENERATED_FILTERINGEXAMPLE_PUBSUBTYPES_H_

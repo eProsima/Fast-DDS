@@ -54,6 +54,11 @@ namespace detail {
     };
 
     template struct BenchMarkBig_rob<BenchMarkBig_f, &BenchMarkBig::m_index>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr BenchMarkBig_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
 }
 /*!
  * @brief This class represents the TopicDataType of the type BenchMarkBig defined by the user in the IDL file.
@@ -123,7 +128,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 8388612ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((BenchMarkBig*)0)->*get(detail::BenchMarkBig_f())))) + sizeof(uint32_t);
+        return 8388612ULL == (detail::BenchMarkBig_offset_of<BenchMarkBig, detail::BenchMarkBig_f>() + sizeof(uint32_t));
     }};
 
 #endif // _FAST_DDS_GENERATED_BENCHMARK_BIG_PUBSUBTYPES_H_

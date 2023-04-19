@@ -54,6 +54,11 @@ namespace detail {
     };
 
     template struct HelloWorld_rob<HelloWorld_f, &HelloWorld::m_message>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr HelloWorld_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
 }
 /*!
  * @brief This class represents the TopicDataType of the type HelloWorld defined by the user in the IDL file.
@@ -123,7 +128,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 24ULL == ((::size_t) &reinterpret_cast<char const volatile&>((((HelloWorld*)0)->*get(detail::HelloWorld_f())))) + sizeof(std::array<char, 20>);
+        return 24ULL == (detail::HelloWorld_offset_of<HelloWorld, detail::HelloWorld_f>() + sizeof(std::array<char, 20>));
     }};
 
 #endif // _FAST_DDS_GENERATED_HELLOWORLD_PUBSUBTYPES_H_
