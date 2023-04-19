@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/DynamicPubSubType.h>
+#include <fastdds/rtps/common/Types.h>
 #include <fastrtps/types/v1_3/DynamicData.h>
-#include <fastrtps/types/v1_3/MemberDescriptor.h>
+#include <fastrtps/types/v1_3/DynamicDataFactory.h>
+#include <fastrtps/types/v1_3/DynamicDataPtr.h>
+#include <fastrtps/types/v1_3/DynamicPubSubType.h>
 #include <fastrtps/types/v1_3/DynamicType.h>
 #include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/v1_3/DynamicTypeMember.h>
+#include <fastrtps/types/v1_3/MemberDescriptor.h>
 #include <fastrtps/types/v1_3/TypeDescriptor.h>
-#include <fastrtps/types/v1_3/DynamicDataFactory.h>
-#include <fastrtps/types/v1_3/DynamicDataPtr.h>
 #include <fastdds/dds/log/Log.hpp>
 
 #include <locale>
@@ -28,6 +29,7 @@
 #include <algorithm>
 
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types::v1_3;
 
 template <typename Map>

@@ -1918,7 +1918,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
            case TK_CHAR16:
             break;
          */
-        case TK_STRING8:
+        case TypeKind::TK_STRING8:
         {
             if (identifier->_d() == TI_STRING8_SMALL)
             {
@@ -1931,7 +1931,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             descriptor.element_type_ = DynamicTypeBuilderFactory::get_instance()->create_char8_type();
             break;
         }
-        case TK_STRING16:
+        case TypeKind::TK_STRING16:
         {
             if (identifier->_d() == TI_STRING16_SMALL)
             {
@@ -1944,7 +1944,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             descriptor.element_type_ = DynamicTypeBuilderFactory::get_instance()->create_char16_type();
             break;
         }
-        case TK_SEQUENCE:
+        case TypeKind::TK_SEQUENCE:
         {
             if (identifier->_d() == TI_PLAIN_SEQUENCE_SMALL)
             {
@@ -1960,7 +1960,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             }
             break;
         }
-        case TK_ARRAY:
+        case TypeKind::TK_ARRAY:
         {
             if (identifier->_d() == TI_PLAIN_ARRAY_SMALL)
             {
@@ -1979,7 +1979,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             }
             break;
         }
-        case TK_MAP:
+        case TypeKind::TK_MAP:
         {
             if (identifier->_d() == TI_PLAIN_MAP_SMALL)
             {
@@ -1999,15 +1999,15 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             }
             break;
         }
-        case EK_MINIMAL:
-        case EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
+        case TypeKind::EK_COMPLETE:
             // A MinimalTypeObject cannot instantiate a valid TypeDescriptor, but maybe the object isn't minimal
             if (object != nullptr && object->_d() == EK_COMPLETE)
             {
                 return build_dynamic_type(ret, descriptor, object);
             }
             break;
-        case TK_NONE:
+        case TypeKind::TK_NONE:
             return ReturnCode_t::RETCODE_ERROR;
         default:
             break;
@@ -2342,7 +2342,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
     switch (object->complete()._d())
     {
         // From here, we need TypeObject
-        case TK_ALIAS:
+        case TypeKind::TK_ALIAS:
         {
             const TypeIdentifier* aux =
                     get_stored_type_identifier(&object->complete().alias_type().body().common().related_type());
@@ -2357,7 +2357,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             ret = alias_type->build();
             return ReturnCode_t::RETCODE_OK;
         }
-        case TK_STRUCTURE:
+        case TypeKind::TK_STRUCTURE:
         {
             const TypeIdentifier* aux = &object->complete().struct_type().header().base_type();
             if (aux->_d() == EK_COMPLETE)
@@ -2393,7 +2393,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             ret = struct_type->build();
             return ReturnCode_t::RETCODE_OK;
         }
-        case TK_ENUM:
+        case TypeKind::TK_ENUM:
         {
             // bit_bound annotation effect!
             descriptor.annotation_set_bit_bound(object->complete().enumerated_type().header().common().bit_bound());
@@ -2443,7 +2443,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             ret = enum_type->build();
             return ReturnCode_t::RETCODE_OK;
         }
-        case TK_BITMASK:
+        case TypeKind::TK_BITMASK:
         {
             descriptor.annotation_set_bit_bound(object->complete().bitmask_type().header().common().bit_bound());
             descriptor.bound_.emplace_back(static_cast<uint32_t>(
@@ -2467,7 +2467,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             ret = bitmask_type->build();
             return ReturnCode_t::RETCODE_OK;
         }
-        case TK_BITSET:
+        case TypeKind::TK_BITSET:
         {
             const TypeIdentifier* aux = &object->complete().bitset_type().header().base_type();
             if (aux->_d() == EK_COMPLETE)
@@ -2506,7 +2506,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             ret = bitsetType->build();
             return ReturnCode_t::RETCODE_OK;
         }
-        case TK_UNION:
+        case TypeKind::TK_UNION:
         {
             const TypeIdentifier* aux =
                     get_stored_type_identifier(&object->complete().union_type().discriminator().common().type_id());
@@ -2559,7 +2559,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             ret = union_type->build();
             return ReturnCode_t::RETCODE_OK;
         }
-        case TK_ANNOTATION:
+        case TypeKind::TK_ANNOTATION:
         {
             DynamicTypeBuilder_ptr annotation_type =
                     DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);

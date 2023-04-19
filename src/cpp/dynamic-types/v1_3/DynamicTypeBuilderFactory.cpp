@@ -35,6 +35,9 @@
 using namespace eprosima::fastrtps::types::v1_3;
 
 using eprosima::fastrtps::types::TypeObject;
+using eprosima::fastrtps::types::TypeIdentifier;
+using eprosima::fastrtps::types::AnnotationParameterValue;
+using eprosima::fastrtps::types::AppliedAnnotationSeq;
 
 // explicit instatiation of tracker methods for type_tracking::complete
 
