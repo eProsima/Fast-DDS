@@ -17,7 +17,6 @@
  *
  */
 
-
 #include <algorithm>
 #include <functional>
 #include <memory>
@@ -145,6 +144,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , mp_mutex(new std::recursive_mutex())
     , is_intraprocess_only_(should_be_intraprocess_only(PParam))
     , has_shm_transport_(false)
+    , match_local_endpoints_(should_match_local_endpoints(PParam))
 {
     if (c_GuidPrefix_Unknown != persistence_guid)
     {
@@ -211,7 +211,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
         default:
             break;
     }
-
 
     // User defined transports
     for (const auto& transportDescriptor : PParam.userTransports)
@@ -407,7 +406,6 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     {
         flow_controller_factory_.register_flow_controller(*flow_controller_desc.get());
     }
-
 
 #if HAVE_SECURITY
     if (m_security_manager.is_security_active())
@@ -1483,7 +1481,6 @@ bool RTPSParticipantImpl::updateLocalReader(
  *
  *
  */
-
 
 bool RTPSParticipantImpl::existsEntityId(
         const EntityId_t& ent,
@@ -2685,6 +2682,34 @@ void RTPSParticipantImpl::set_enabled_statistics_writers_mask(
 }
 
 #endif // FASTDDS_STATISTICS
+
+bool RTPSParticipantImpl::should_match_local_endpoints(
+        const RTPSParticipantAttributes& att)
+{
+    bool should_match_local_endpoints = true;
+
+    const std::string* ignore_local_endpoints = PropertyPolicyHelper::find_property(att.properties,
+                    "fastdds.ignore_local_endpoints");
+    if (nullptr != ignore_local_endpoints)
+    {
+        if (0 == ignore_local_endpoints->compare("true"))
+        {
+            should_match_local_endpoints = false;
+        }
+        else if (0 == ignore_local_endpoints->compare("false"))
+        {
+            should_match_local_endpoints = true;
+        }
+        else
+        {
+            should_match_local_endpoints = true;
+            EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT,
+                    "Unkown value '" << *ignore_local_endpoints <<
+                    "' for property 'fastdds.ignore_local_endpoints'. Setting value to 'true'");
+        }
+    }
+    return should_match_local_endpoints;
+}
 
 } /* namespace rtps */
 } /* namespace fastrtps */
