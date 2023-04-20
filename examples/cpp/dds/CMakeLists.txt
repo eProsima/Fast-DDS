@@ -44,6 +44,7 @@ add_subdirectory(ZeroCopyExample)
 
 # Check old dynamic types APIs
 add_subdirectory(DynamicHelloWorldExample_v1_1)
+add_subdirectory(TypeLookupService_v1_1)
 
 if(SECURITY)
     add_subdirectory(SecureHelloWorldExample)

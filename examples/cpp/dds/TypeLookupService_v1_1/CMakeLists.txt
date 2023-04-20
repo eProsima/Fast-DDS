@@ -14,7 +14,7 @@
 
 cmake_minimum_required(VERSION 3.16.3)
 
-project(TypeLookupExample VERSION 1.3 LANGUAGES CXX)
+project(TypeLookupExample_v1_1 VERSION 1 LANGUAGES CXX)
 
 # Find requirements
 if(NOT fastcdr_FOUND)
@@ -37,14 +37,22 @@ endif()
 message(STATUS "Configuring TypeLookup example...")
 file(GLOB DDS_TYPELOOKUP_EXAMPLE_SOURCES_CPP "*.cpp")
 
-add_executable(TypeLookupExample
+add_executable(TypeLookupExample_v1_1
     ${DDS_TYPELOOKUP_EXAMPLE_SOURCES_CPP})
 
-target_compile_definitions(TypeLookupExample PRIVATE
+target_compile_definitions(TypeLookupExample_v1_1 PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
-target_link_libraries(TypeLookupExample fastrtps fastcdr)
+
+# Remove deprecation warnings
+target_compile_options(TypeLookupExample_v1_1 PRIVATE
+    $<$<STREQUAL:$<CXX_COMPILER_ID>,MSVC>:/wd4996>
+    $<$<IN_LIST:$<CXX_COMPILER_ID>,GNU;Clang>:-Wno-deprecated-declarations>
+)
+
+target_link_libraries(TypeLookupExample_v1_1 fastrtps fastcdr)
+
 install(TARGETS TypeLookupExample
     RUNTIME DESTINATION examples/cpp/dds/TypeLookupService/${BIN_INSTALL_DIR})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/example_type_profile.xml

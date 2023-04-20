@@ -1871,104 +1871,46 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
         const std::string& type_name,
         std::function<void(const std::string& name, const fastrtps::types::v1_1::DynamicType_ptr type)>& callback)
 {
-    using namespace fastrtps::types;
-
-    if (get_rtps_participant() == nullptr)
+    // Wrap the callback to translate the type version
+    std::function<void(const std::string& name, const fastrtps::types::v1_3::DynamicType_ptr type)> wrapper =
+        [callback](const std::string& name, const fastrtps::types::v1_3::DynamicType_ptr type)
     {
-        return ReturnCode_t::RETCODE_NOT_ENABLED;
-    }
+        using namespace fastrtps::types;
 
-    TypeObjectFactory* factory = TypeObjectFactory::get_instance();
-    // Check if plain
-    if (type_information.complete().typeid_with_size().type_id()._d() < fastrtps::types::TypeKind::EK_MINIMAL)
-    {
-        DynamicType_ptr dyn = factory->build_dynamic_type(
-            type_name,
-            &type_information.minimal().typeid_with_size().type_id());
+        // version downgrade
+        // Get intermediate type object
+        TypeObject obj;
+        TypeIdentifier id;
 
-        if (nullptr != dyn)
+        v1_3::DynamicTypeBuilderFactory::get_instance().build_type_object(type->get_descriptor(), obj);
+        v1_3::DynamicTypeBuilderFactory::get_instance().build_type_identifier(type->get_descriptor(), id);
+
+        // Build old dynamic type
+        v1_1::DynamicType_ptr ptr;
+
+        if (!TypeObjectFactory::get_instance()->build_dynamic_type(ptr, name, &id, &obj))
         {
-            //callback(type_name, dyn); // For plain types, don't call the callback
-            return register_dynamic_type(dyn);
-        }
-        // If cannot create the dynamic type, probably is because it depend on unknown types.
-        // We must continue.
-    }
-
-    // Check if already available
-    TypeObject obj;
-    factory->typelookup_get_type(
-        type_information.complete().typeid_with_size().type_id(),
-        obj);
-
-    if (obj._d() != fastrtps::types::TypeKind::TK_NONE)
-    {
-        DynamicType_ptr dyn = factory->build_dynamic_type(
-            type_name,
-            &type_information.complete().typeid_with_size().type_id(),
-            &obj);
-
-        if (nullptr != dyn)
-        {
-            //callback(type_name, dyn); // If the type is already registered, don't call the callback.
-            return register_dynamic_type(dyn);
-        }
-    }
-    else if (get_rtps_participant()->typelookup_manager() != nullptr)
-    {
-        TypeIdentifierSeq dependencies;
-        TypeIdentifierSeq retrieve_objects;
-
-        fill_pending_dependencies(type_information.complete().dependent_typeids(), dependencies, retrieve_objects);
-
-        fastrtps::rtps::SampleIdentity request_dependencies;
-        fastrtps::rtps::SampleIdentity request_objects;
-
-        // Lock now, we don't want to process the reply before we add the requests' ID to the maps.
-        std::lock_guard<std::mutex> lock(mtx_request_cb_);
-
-        // If any pending dependency exists, retrieve it.
-        if (!dependencies.empty())
-        {
-            request_dependencies = get_type_dependencies(dependencies);
+            EPROSIMA_LOG_ERROR(PARTICIPANT, "Type Discovery callback failed on downgrading to xtypes version 1.1");
+            return;
         }
 
-        // If any pending TypeObject exists, retrieve it
-        if (!retrieve_objects.empty())
+        auto builder = v1_1::DynamicTypeBuilderFactory::get_instance()->create_custom_builder(
+                ptr->get_descriptor(),
+                ptr->get_name());
+
+        // Manually add members if required
+        std::map<v1_1::MemberId, v1_1::DynamicTypeMember*> members;
+        ptr->get_all_members(members);
+        for (auto node : members)
         {
-            request_objects = get_types(retrieve_objects);
+            builder->add_member(node.second->get_descriptor());
         }
 
-        // If no more dependencies but failed to create, probably we only need the TypeObject
-        dependencies.clear(); // Reuse the same vector.
-        dependencies.push_back(type_information.complete().typeid_with_size().type_id());
-        fastrtps::rtps::SampleIdentity requestId = get_types(dependencies);
+        // do call
+        callback(name, builder->build());
+    };
 
-        // Add everything to maps
-        // TODO Barro: Fix on introducing the TypeLookup example
-        (void)callback;
-        // register_callbacks_.emplace(std::make_pair(requestId, std::make_pair(type_name, callback)));
-        std::vector<fastrtps::rtps::SampleIdentity> vector;
-        vector.push_back(requestId); // Add itself
-
-        if (builtin::INVALID_SAMPLE_IDENTITY != request_dependencies)
-        {
-            vector.push_back(request_dependencies);
-            child_requests_.emplace(std::make_pair(request_dependencies, requestId));
-        }
-
-        if (builtin::INVALID_SAMPLE_IDENTITY != request_objects)
-        {
-            vector.push_back(request_objects);
-            child_requests_.emplace(std::make_pair(request_objects, requestId));
-        }
-
-        // Move the filled vector to the map
-        parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
-
-        return ReturnCode_t::RETCODE_OK;
-    }
-    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    return register_remote_type(type_information, type_name, wrapper);
 }
 
 bool DomainParticipantImpl::check_get_type_request(
