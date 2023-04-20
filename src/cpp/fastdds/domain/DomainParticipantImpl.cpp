@@ -93,6 +93,44 @@ using fastrtps::rtps::EndpointKind_t;
 using fastrtps::rtps::ResourceEvent;
 using eprosima::fastdds::dds::Log;
 
+bool DomainParticipantImpl::version_1_3_state::find_callback(const fastrtps::rtps::SampleIdentity& id)
+{
+    return register_callbacks_.find(id) != register_callbacks_.end();
+}
+
+bool DomainParticipantImpl::version_1_1_state::find_callback(const fastrtps::rtps::SampleIdentity& id)
+{
+    return register_callbacks_.find(id) != register_callbacks_.end();
+}
+
+void DomainParticipantImpl::version_1_3_state::remove_callback(const fastrtps::rtps::SampleIdentity& id)
+{
+    register_callbacks_.erase(id);
+}
+
+void DomainParticipantImpl::version_1_1_state::remove_callback(const fastrtps::rtps::SampleIdentity& id)
+{
+    register_callbacks_.erase(id);
+}
+
+void DomainParticipantImpl::version_1_3_state::callback(const fastrtps::rtps::SampleIdentity& id)
+{
+    auto it = register_callbacks_.find(id);
+    if (it != register_callbacks_.end())
+    {
+        it->second.second(it->second.first, {}); // Everything should be already registered
+    }
+}
+
+void DomainParticipantImpl::version_1_1_state::callback(const fastrtps::rtps::SampleIdentity& id)
+{
+    auto it = register_callbacks_.find(id);
+    if (it != register_callbacks_.end())
+    {
+        it->second.second(it->second.first, {}); // Everything should be already registered
+    }
+}
+
 DomainParticipantImpl::DomainParticipantImpl(
         DomainParticipant* dp,
         DomainId_t did,
@@ -1676,6 +1714,8 @@ void DomainParticipantImpl::MyRTPSParticipantListener::on_type_discovery(
             identifier,
             object,
             dyn_type);
+
+        participant_->check_get_type_request(request_sample_id, identifier, object, dyn_type);
     }
 }
 
@@ -1842,24 +1882,24 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
         fastrtps::rtps::SampleIdentity requestId = get_types(dependencies);
 
         // Add everything to maps
-        register_callbacks_.emplace(std::make_pair(requestId, std::make_pair(type_name, callback)));
+        v13_state_.register_callbacks_.emplace(std::make_pair(requestId, std::make_pair(type_name, callback)));
         std::vector<fastrtps::rtps::SampleIdentity> vector;
         vector.push_back(requestId); // Add itself
 
         if (builtin::INVALID_SAMPLE_IDENTITY != request_dependencies)
         {
             vector.push_back(request_dependencies);
-            child_requests_.emplace(std::make_pair(request_dependencies, requestId));
+            v13_state_.child_requests_.emplace(std::make_pair(request_dependencies, requestId));
         }
 
         if (builtin::INVALID_SAMPLE_IDENTITY != request_objects)
         {
             vector.push_back(request_objects);
-            child_requests_.emplace(std::make_pair(request_objects, requestId));
+            v13_state_.child_requests_.emplace(std::make_pair(request_objects, requestId));
         }
 
         // Move the filled vector to the map
-        parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
+        v13_state_.parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
 
         return ReturnCode_t::RETCODE_OK;
     }
@@ -1871,46 +1911,102 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
         const std::string& type_name,
         std::function<void(const std::string& name, const fastrtps::types::v1_1::DynamicType_ptr type)>& callback)
 {
-    // Wrap the callback to translate the type version
-    std::function<void(const std::string& name, const fastrtps::types::v1_3::DynamicType_ptr type)> wrapper =
-        [callback](const std::string& name, const fastrtps::types::v1_3::DynamicType_ptr type)
+    using namespace fastrtps::types;
+
+    if (get_rtps_participant() == nullptr)
     {
-        using namespace fastrtps::types;
+        return ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
 
-        // version downgrade
-        // Get intermediate type object
-        TypeObject obj;
-        TypeIdentifier id;
+    TypeObjectFactory* factory = TypeObjectFactory::get_instance();
+    // Check if plain
+    if (type_information.complete().typeid_with_size().type_id()._d() < TypeKind::EK_MINIMAL)
+    {
+        DynamicType_ptr dyn = factory->build_dynamic_type(
+            type_name,
+            &type_information.minimal().typeid_with_size().type_id());
 
-        v1_3::DynamicTypeBuilderFactory::get_instance().build_type_object(type->get_descriptor(), obj);
-        v1_3::DynamicTypeBuilderFactory::get_instance().build_type_identifier(type->get_descriptor(), id);
-
-        // Build old dynamic type
-        v1_1::DynamicType_ptr ptr;
-
-        if (!TypeObjectFactory::get_instance()->build_dynamic_type(ptr, name, &id, &obj))
+        if (nullptr != dyn)
         {
-            EPROSIMA_LOG_ERROR(PARTICIPANT, "Type Discovery callback failed on downgrading to xtypes version 1.1");
-            return;
+            //callback(type_name, dyn); // For plain types, don't call the callback
+            return register_dynamic_type(dyn);
+        }
+        // If cannot create the dynamic type, probably is because it depend on unknown types.
+        // We must continue.
+    }
+
+    // Check if already available
+    TypeObject obj;
+    factory->typelookup_get_type(
+        type_information.complete().typeid_with_size().type_id(),
+        obj);
+
+    if (obj._d() != fastrtps::types::TypeKind::TK_NONE)
+    {
+        DynamicType_ptr dyn = factory->build_dynamic_type(
+            type_name,
+            &type_information.complete().typeid_with_size().type_id(),
+            &obj);
+
+        if (nullptr != dyn)
+        {
+            //callback(type_name, dyn); // If the type is already registered, don't call the callback.
+            return register_dynamic_type(dyn);
+        }
+    }
+    else if (get_rtps_participant()->typelookup_manager() != nullptr)
+    {
+        TypeIdentifierSeq dependencies;
+        TypeIdentifierSeq retrieve_objects;
+
+        fill_pending_dependencies(type_information.complete().dependent_typeids(), dependencies, retrieve_objects);
+
+        fastrtps::rtps::SampleIdentity request_dependencies;
+        fastrtps::rtps::SampleIdentity request_objects;
+
+        // Lock now, we don't want to process the reply before we add the requests' ID to the maps.
+        std::lock_guard<std::mutex> lock(mtx_request_cb_);
+
+        // If any pending dependency exists, retrieve it.
+        if (!dependencies.empty())
+        {
+            request_dependencies = get_type_dependencies(dependencies);
         }
 
-        auto builder = v1_1::DynamicTypeBuilderFactory::get_instance()->create_custom_builder(
-                ptr->get_descriptor(),
-                ptr->get_name());
-
-        // Manually add members if required
-        std::map<v1_1::MemberId, v1_1::DynamicTypeMember*> members;
-        ptr->get_all_members(members);
-        for (auto node : members)
+        // If any pending TypeObject exists, retrieve it
+        if (!retrieve_objects.empty())
         {
-            builder->add_member(node.second->get_descriptor());
+            request_objects = get_types(retrieve_objects);
         }
 
-        // do call
-        callback(name, builder->build());
-    };
+        // If no more dependencies but failed to create, probably we only need the TypeObject
+        dependencies.clear(); // Reuse the same vector.
+        dependencies.push_back(type_information.complete().typeid_with_size().type_id());
+        fastrtps::rtps::SampleIdentity requestId = get_types(dependencies);
 
-    return register_remote_type(type_information, type_name, wrapper);
+        // Add everything to maps
+        v11_state_.register_callbacks_.emplace(std::make_pair(requestId, std::make_pair(type_name, callback)));
+        std::vector<fastrtps::rtps::SampleIdentity> vector;
+        vector.push_back(requestId); // Add itself
+
+        if (builtin::INVALID_SAMPLE_IDENTITY != request_dependencies)
+        {
+            vector.push_back(request_dependencies);
+            v11_state_.child_requests_.emplace(std::make_pair(request_dependencies, requestId));
+        }
+
+        if (builtin::INVALID_SAMPLE_IDENTITY != request_objects)
+        {
+            vector.push_back(request_objects);
+            v11_state_.child_requests_.emplace(std::make_pair(request_objects, requestId));
+        }
+
+        // Move the filled vector to the map
+        v11_state_.parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
+
+        return ReturnCode_t::RETCODE_OK;
+    }
+    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
 bool DomainParticipantImpl::check_get_type_request(
@@ -1925,9 +2021,9 @@ bool DomainParticipantImpl::check_get_type_request(
         // First level request?
         std::lock_guard<std::mutex> lock(mtx_request_cb_);
 
-        auto cb_it = register_callbacks_.find(requestId);
+        auto cb_it = v13_state_.register_callbacks_.find(requestId);
 
-        if (cb_it != register_callbacks_.end())
+        if (cb_it != v13_state_.register_callbacks_.end())
         {
             const std::string& name = cb_it->second.first;
             const auto& callback = cb_it->second.second;
@@ -1948,8 +2044,8 @@ bool DomainParticipantImpl::check_get_type_request(
             // Register the received TypeObject into factory and recreate the DynamicType.
             fastrtps::types::TypeObjectFactory::get_instance()->add_type_object(name, identifier, object);
 
-            auto pending = parent_requests_.find(requestId);
-            if (pending != parent_requests_.end() && pending->second.size() < 2) // Exists and everything is solved.
+            auto pending = v13_state_.parent_requests_.find(requestId);
+            if (pending != v13_state_.parent_requests_.end() && pending->second.size() < 2) // Exists and everything is solved.
             {
                 fastrtps::types::v1_3::DynamicType_ptr dynamic;
                 auto res = fastrtps::types::TypeObjectFactory::get_instance()->build_dynamic_type(
@@ -1970,9 +2066,78 @@ bool DomainParticipantImpl::check_get_type_request(
         }
 
         // Child request?
-        auto child_it = child_requests_.find(requestId);
+        auto child_it = v13_state_.child_requests_.find(requestId);
 
-        if (child_it != child_requests_.end())
+        if (child_it != v13_state_.child_requests_.end())
+        {
+            // Register received TypeObject into factory, remove the iterator from the map and check our parent.
+            fastrtps::types::TypeObjectFactory::get_instance()->add_type_object(
+                get_inner_type_name(requestId), identifier, object);
+            remove_child_request(requestId);
+        }
+    }
+    return false;
+}
+
+bool DomainParticipantImpl::check_get_type_request(
+        const fastrtps::rtps::SampleIdentity& requestId,
+        const fastrtps::types::TypeIdentifier* identifier,
+        const fastrtps::types::TypeObject* object,
+        fastrtps::types::v1_1::DynamicType_ptr dyn_type)
+{
+    // Maybe we have a pending request?
+    if (builtin::INVALID_SAMPLE_IDENTITY != requestId)
+    {
+        // First level request?
+        std::lock_guard<std::mutex> lock(mtx_request_cb_);
+
+        auto cb_it = v11_state_.register_callbacks_.find(requestId);
+
+        if (cb_it != v11_state_.register_callbacks_.end())
+        {
+            const std::string& name = cb_it->second.first;
+            const auto& callback = cb_it->second.second;
+
+            if (nullptr != dyn_type)
+            {
+                dyn_type->set_name(name);
+                if (register_dynamic_type(dyn_type) == ReturnCode_t::RETCODE_OK)
+                {
+                    callback(name, dyn_type);
+                    remove_parent_request(requestId);
+                    return true;
+                }
+            }
+
+            // Exists the request, but the provided dyn_type isn't valid.
+            // Register the received TypeObject into factory and recreate the DynamicType.
+            fastrtps::types::TypeObjectFactory::get_instance()->add_type_object(name, identifier, object);
+
+            auto pending = v11_state_.parent_requests_.find(requestId);
+            if (pending != v11_state_.parent_requests_.end() && pending->second.size() < 2) // Exists and everything is solved.
+            {
+                fastrtps::types::DynamicType_ptr dynamic =
+                        fastrtps::types::TypeObjectFactory::get_instance()->build_dynamic_type(name, identifier,
+                                object);
+
+                if (nullptr != dynamic)
+                {
+                    if (register_dynamic_type(dynamic) == ReturnCode_t::RETCODE_OK)
+                    {
+                        callback(name, dynamic);
+                        remove_parent_request(requestId);
+                        return true;
+                    }
+                }
+            }
+            // Failed, cannot register the type yet, probably child request still pending.
+            return false;
+        }
+
+        // Child request?
+        auto child_it = v11_state_.child_requests_.find(requestId);
+
+        if (child_it != v11_state_.child_requests_.end())
         {
             // Register received TypeObject into factory, remove the iterator from the map and check our parent.
             fastrtps::types::TypeObjectFactory::get_instance()->add_type_object(
@@ -2016,115 +2181,116 @@ bool DomainParticipantImpl::check_get_dependencies_request(
 {
     using namespace fastrtps::types;
 
-    // Maybe we have a pending request?
-    if (builtin::INVALID_SAMPLE_IDENTITY != requestId)
+    for (auto state : state_col{&v11_state_, &v13_state_})
     {
-        TypeIdentifierSeq next_dependencies;
-        TypeIdentifierSeq retrieve_objects;
-
-        // First level request?
-        std::lock_guard<std::mutex> lock(mtx_request_cb_);
-
-        auto cb_it = register_callbacks_.find(requestId);
-
-        if (cb_it != register_callbacks_.end())
+        // Maybe we have a pending request?
+        if (builtin::INVALID_SAMPLE_IDENTITY != requestId)
         {
-            fill_pending_dependencies(dependencies, next_dependencies, retrieve_objects);
+            TypeIdentifierSeq next_dependencies;
+            TypeIdentifierSeq retrieve_objects;
 
-            // If any pending dependency exists, retrieve it
-            if (!next_dependencies.empty())
-            {
-                fastrtps::rtps::SampleIdentity child_request = get_type_dependencies(next_dependencies);
-                std::vector<fastrtps::rtps::SampleIdentity> vector;
-                vector.push_back(child_request);
-                parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
-                child_requests_.emplace(std::make_pair(child_request, requestId));
-            }
+            // First level request?
+            std::lock_guard<std::mutex> lock(mtx_request_cb_);
 
-            // Add received dependencies to the factory
-            for (const TypeIdentifierWithSize& tiws : dependencies)
+            if (state->find_callback(requestId))
             {
-                if (tiws.type_id()._d() >= fastrtps::types::TypeKind::EK_MINIMAL)
+                fill_pending_dependencies(dependencies, next_dependencies, retrieve_objects);
+
+                // If any pending dependency exists, retrieve it
+                if (!next_dependencies.empty())
                 {
-                    // This dependency needs a TypeObject
-                    retrieve_objects.push_back(tiws.type_id());
+                    fastrtps::rtps::SampleIdentity child_request = get_type_dependencies(next_dependencies);
+                    std::vector<fastrtps::rtps::SampleIdentity> vector;
+                    vector.push_back(child_request);
+                    state->parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
+                    state->child_requests_.emplace(std::make_pair(child_request, requestId));
                 }
-                else
+
+                // Add received dependencies to the factory
+                for (const TypeIdentifierWithSize& tiws : dependencies)
                 {
-                    TypeObjectFactory::get_instance()->add_type_identifier(
-                        get_inner_type_name(requestId), &tiws.type_id());
+                    if (tiws.type_id()._d() >= fastrtps::types::TypeKind::EK_MINIMAL)
+                    {
+                        // This dependency needs a TypeObject
+                        retrieve_objects.push_back(tiws.type_id());
+                    }
+                    else
+                    {
+                        TypeObjectFactory::get_instance()->add_type_identifier(
+                            get_inner_type_name(requestId), &tiws.type_id());
+                    }
                 }
-            }
 
-            // If any pending TypeObject exists, retrieve it
-            if (!retrieve_objects.empty())
-            {
-                fastrtps::rtps::SampleIdentity child_request = get_types(retrieve_objects);
-                std::vector<fastrtps::rtps::SampleIdentity> vector;
-                vector.push_back(child_request);
-                parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
-                child_requests_.emplace(std::make_pair(child_request, requestId));
-            }
-
-            if (next_dependencies.empty() && retrieve_objects.empty())
-            {
-                // Finished?
-                on_child_requests_finished(requestId);
-                return true;
-            }
-
-            return false;
-        }
-
-        // Child request?
-        auto child_it = child_requests_.find(requestId);
-
-        if (child_it != child_requests_.end())
-        {
-            fill_pending_dependencies(dependencies, next_dependencies, retrieve_objects);
-
-            // If any pending dependency exists, retrieve it
-            if (!next_dependencies.empty())
-            {
-                fastrtps::rtps::SampleIdentity child_request = get_type_dependencies(next_dependencies);
-                std::vector<fastrtps::rtps::SampleIdentity> vector;
-                vector.push_back(child_request);
-                parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
-                child_requests_.emplace(std::make_pair(child_request, requestId));
-            }
-
-            // Add received dependencies to the factory
-            for (const TypeIdentifierWithSize& tiws : dependencies)
-            {
-                if (tiws.type_id()._d() >= fastrtps::types::TypeKind::EK_MINIMAL)
+                // If any pending TypeObject exists, retrieve it
+                if (!retrieve_objects.empty())
                 {
-                    // This dependency needs a TypeObject
-                    retrieve_objects.push_back(tiws.type_id());
+                    fastrtps::rtps::SampleIdentity child_request = get_types(retrieve_objects);
+                    std::vector<fastrtps::rtps::SampleIdentity> vector;
+                    vector.push_back(child_request);
+                    state->parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
+                    state->child_requests_.emplace(std::make_pair(child_request, requestId));
                 }
-                else
+
+                if (next_dependencies.empty() && retrieve_objects.empty())
                 {
-                    TypeObjectFactory::get_instance()->add_type_identifier(
-                        get_inner_type_name(requestId), &tiws.type_id());
+                    // Finished?
+                    on_child_requests_finished(requestId);
+                    return true;
                 }
+
+                continue;
             }
 
-            // If any pending TypeObject exists, retrieve it
-            if (!retrieve_objects.empty())
+            // Child request?
+            auto child_it = state->child_requests_.find(requestId);
+
+            if (child_it != state->child_requests_.end())
             {
-                fastrtps::rtps::SampleIdentity child_request = get_types(retrieve_objects);
-                std::vector<fastrtps::rtps::SampleIdentity> vector;
-                vector.push_back(child_request);
-                parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
-                child_requests_.emplace(std::make_pair(child_request, requestId));
-            }
+                fill_pending_dependencies(dependencies, next_dependencies, retrieve_objects);
 
-            if (next_dependencies.empty() && retrieve_objects.empty())
-            {
-                remove_child_request(requestId);
-                return true;
-            }
+                // If any pending dependency exists, retrieve it
+                if (!next_dependencies.empty())
+                {
+                    fastrtps::rtps::SampleIdentity child_request = get_type_dependencies(next_dependencies);
+                    std::vector<fastrtps::rtps::SampleIdentity> vector;
+                    vector.push_back(child_request);
+                    state->parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
+                    state->child_requests_.emplace(std::make_pair(child_request, requestId));
+                }
 
-            return false;
+                // Add received dependencies to the factory
+                for (const TypeIdentifierWithSize& tiws : dependencies)
+                {
+                    if (tiws.type_id()._d() >= fastrtps::types::TypeKind::EK_MINIMAL)
+                    {
+                        // This dependency needs a TypeObject
+                        retrieve_objects.push_back(tiws.type_id());
+                    }
+                    else
+                    {
+                        TypeObjectFactory::get_instance()->add_type_identifier(
+                            get_inner_type_name(requestId), &tiws.type_id());
+                    }
+                }
+
+                // If any pending TypeObject exists, retrieve it
+                if (!retrieve_objects.empty())
+                {
+                    fastrtps::rtps::SampleIdentity child_request = get_types(retrieve_objects);
+                    std::vector<fastrtps::rtps::SampleIdentity> vector;
+                    vector.push_back(child_request);
+                    state->parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
+                    state->child_requests_.emplace(std::make_pair(child_request, requestId));
+                }
+
+                if (next_dependencies.empty() && retrieve_objects.empty())
+                {
+                    remove_child_request(requestId);
+                    return true;
+                }
+
+                continue;
+            }
         }
     }
     return false;
@@ -2147,76 +2313,81 @@ ReturnCode_t DomainParticipantImpl::register_dynamic_type(
 void DomainParticipantImpl::remove_parent_request(
         const fastrtps::rtps::SampleIdentity& request)
 {
-    // If a parent request if going to be deleted, delete all its children too.
-    auto cb_it = register_callbacks_.find(request);
-    auto parent_it = parent_requests_.find(request);
-
-    if (parent_requests_.end() != parent_it)
+    for (auto state : state_col{&v11_state_, &v13_state_})
     {
-        for (const fastrtps::rtps::SampleIdentity& child_id : parent_it->second)
+        // If a parent request if going to be deleted, delete all its children too.
+        auto parent_it = state->parent_requests_.find(request);
+
+        if (state->parent_requests_.end() != parent_it)
         {
-            auto child_it = child_requests_.find(child_id);
-            if (child_requests_.end() != child_it)
+            for (const fastrtps::rtps::SampleIdentity& child_id : parent_it->second)
             {
-                child_requests_.erase(child_it);
+                auto child_it = state->child_requests_.find(child_id);
+                if (state->child_requests_.end() != child_it)
+                {
+                    state->child_requests_.erase(child_it);
+                }
             }
+            state->parent_requests_.erase(parent_it);
         }
-        parent_requests_.erase(parent_it);
-    }
 
-    if (register_callbacks_.end() != cb_it)
-    {
-        register_callbacks_.erase(cb_it);
+        state->remove_callback(request);
     }
 }
 
 void DomainParticipantImpl::remove_child_request(
         const fastrtps::rtps::SampleIdentity& request)
 {
-    auto child_it = child_requests_.find(request);
-    if (child_requests_.end() != child_it)
+    for (auto state : state_col{&v11_state_, &v13_state_})
     {
-        fastrtps::rtps::SampleIdentity parent_request = child_it->second;
-        child_requests_.erase(child_it);
-
-        auto parent_it = parent_requests_.find(parent_request);
-        if (parent_requests_.end() != parent_it)
+        auto child_it = state->child_requests_.find(request);
+        if (state->child_requests_.end() != child_it)
         {
-            std::vector<fastrtps::rtps::SampleIdentity>& pending = parent_it->second;
-            pending.erase(std::find(pending.begin(), pending.end(), request));
-            if (pending.empty())
-            {
-                parent_requests_.erase(parent_it);
-            }
-        }
+            fastrtps::rtps::SampleIdentity parent_request = child_it->second;
+            state->child_requests_.erase(child_it);
 
-        on_child_requests_finished(parent_request);
+            auto parent_it = state->parent_requests_.find(parent_request);
+            if (state->parent_requests_.end() != parent_it)
+            {
+                std::vector<fastrtps::rtps::SampleIdentity>& pending = parent_it->second;
+                pending.erase(std::find(pending.begin(), pending.end(), request));
+                if (pending.empty())
+                {
+                    state->parent_requests_.erase(parent_it);
+                }
+            }
+
+            on_child_requests_finished(parent_request);
+        }
     }
 }
 
 void DomainParticipantImpl::on_child_requests_finished(
         const fastrtps::rtps::SampleIdentity& parent)
 {
-    auto pending_requests_it = parent_requests_.find(parent);
-    // Do I have no more pending childs?
-    if (parent_requests_.end() == pending_requests_it || pending_requests_it->second.empty())
+    for (auto state : state_col{&v11_state_, &v13_state_})
     {
-        // Am I a children?
-        auto child_it = child_requests_.find(parent);
-        if (child_requests_.end() != child_it)
+        auto pending_requests_it = state->parent_requests_.find(parent);
+        // Do I have no more pending childs?
+        if (state->parent_requests_.end() == pending_requests_it || pending_requests_it->second.empty())
         {
-            remove_child_request(parent);
-        }
-        else
-        {
-            // Or a top-level request?
-            auto cb_it = register_callbacks_.find(parent);
-            if (pending_requests_it->second.size() < 2)
+            // Am I a children?
+            auto child_it = state->child_requests_.find(parent);
+            if (state->child_requests_.end() != child_it)
             {
-                parent_requests_.erase(pending_requests_it);
+                remove_child_request(parent);
             }
-            cb_it->second.second(cb_it->second.first, fastrtps::types::v1_3::DynamicType_ptr(nullptr)); // Everything should be already registered
-            register_callbacks_.erase(cb_it);
+            else
+            {
+                // Or a top-level request?
+                if (pending_requests_it->second.size() < 2)
+                {
+                    state->parent_requests_.erase(pending_requests_it);
+                }
+                // Everything should be already registered
+                state->callback(parent);
+                state->remove_callback(parent);
+            }
         }
     }
 }

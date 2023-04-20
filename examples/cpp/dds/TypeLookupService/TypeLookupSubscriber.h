@@ -110,10 +110,6 @@ public:
         eprosima::fastrtps::types::TypeInformation type_info_;
     }
     m_listener;
-
-private:
-
-    eprosima::fastrtps::types::v1_3::DynamicPubSubType m_type;
 };
 
 #endif /* HELLOWORLDSUBSCRIBER_H_ */

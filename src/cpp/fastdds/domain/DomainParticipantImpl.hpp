@@ -21,10 +21,6 @@
 #define _FASTDDS_PARTICIPANTIMPL_HPP_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <atomic>
-#include <mutex>
-#include <condition_variable>
-
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/reader/StatefulReader.h>
@@ -43,6 +39,10 @@
 
 #include "fastdds/topic/DDSSQLFilter/DDSFilterFactory.hpp"
 #include <fastdds/topic/TopicProxyFactory.hpp>
+
+#include <atomic>
+#include <mutex>
+#include <condition_variable>
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -586,17 +586,49 @@ protected:
     // Mutex for requests and callbacks maps.
     std::mutex mtx_request_cb_;
 
-    // register_remote_type parent request, type_name, callback relationship.
-    std::map<fastrtps::rtps::SampleIdentity,
+    struct type_exchange_state
+    {
+        // Relationship between child and parent request
+        std::map<fastrtps::rtps::SampleIdentity, fastrtps::rtps::SampleIdentity> child_requests_;
+
+        // All parent's child requests
+        std::map<fastrtps::rtps::SampleIdentity, std::vector<fastrtps::rtps::SampleIdentity>> parent_requests_;
+
+        virtual bool find_callback(const fastrtps::rtps::SampleIdentity&) = 0;
+        virtual void callback(const fastrtps::rtps::SampleIdentity&) = 0;
+        virtual void remove_callback(const fastrtps::rtps::SampleIdentity&) = 0;
+    };
+
+    using state_col = std::initializer_list<type_exchange_state*>;
+
+    struct version_1_3_state
+        : public type_exchange_state
+    {
+        // register_remote_type parent request, type_name, callback relationship.
+        std::map<fastrtps::rtps::SampleIdentity,
             std::pair<std::string, std::function<void(
                 const std::string& name,
                 const fastrtps::types::v1_3::DynamicType_ptr)>>> register_callbacks_;
 
-    // Relationship between child and parent request
-    std::map<fastrtps::rtps::SampleIdentity, fastrtps::rtps::SampleIdentity> child_requests_;
+        bool find_callback(const fastrtps::rtps::SampleIdentity&) override;
+        void callback(const fastrtps::rtps::SampleIdentity&) override;
+        void remove_callback(const fastrtps::rtps::SampleIdentity&) override;
 
-    // All parent's child requests
-    std::map<fastrtps::rtps::SampleIdentity, std::vector<fastrtps::rtps::SampleIdentity>> parent_requests_;
+    } v13_state_;
+
+    struct version_1_1_state
+        : public type_exchange_state
+    {
+        // register_remote_type parent request, type_name, callback relationship.
+        std::map<fastrtps::rtps::SampleIdentity,
+            std::pair<std::string, std::function<void(
+                const std::string& name,
+                const fastrtps::types::v1_1::DynamicType_ptr)>>> register_callbacks_;
+
+        bool find_callback(const fastrtps::rtps::SampleIdentity&) override;
+        void callback(const fastrtps::rtps::SampleIdentity&) override;
+        void remove_callback(const fastrtps::rtps::SampleIdentity&) override;
+    } v11_state_;
 
     std::atomic<uint32_t> id_counter_;
 
@@ -733,6 +765,12 @@ protected:
             const fastrtps::types::TypeIdentifier* identifier,
             const fastrtps::types::TypeObject* object,
             fastrtps::types::v1_3::DynamicType_ptr dyn_type);
+
+    bool check_get_type_request(
+            const fastrtps::rtps::SampleIdentity& requestId,
+            const fastrtps::types::TypeIdentifier* identifier,
+            const fastrtps::types::TypeObject* object,
+            fastrtps::types::v1_1::DynamicType_ptr dyn_type);
 
     bool check_get_dependencies_request(
             const fastrtps::rtps::SampleIdentity& requestId,
