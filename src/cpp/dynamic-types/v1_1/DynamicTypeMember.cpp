@@ -22,7 +22,7 @@
 namespace eprosima {
 namespace fastrtps {
 namespace types {
-namespace v1_1 {
+inline namespace v1_1 {
 
 DynamicTypeMember::DynamicTypeMember()
     : parent_(nullptr)

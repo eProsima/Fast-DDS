@@ -34,7 +34,7 @@
 namespace eprosima {
 namespace fastrtps {
 namespace types {
-namespace v1_1 {
+inline namespace v1_1 {
 
 static std::string get_type_name(
         octet kind)
