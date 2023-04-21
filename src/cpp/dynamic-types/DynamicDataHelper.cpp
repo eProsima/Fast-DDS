@@ -153,7 +153,7 @@ void DynamicDataHelper::print_basic_element(
         }
         case TK_ENUM:
         {
-            std::cout << data->get_uint32_value(id);
+            std::cout << data->get_enum_value(id);
             break;
         }
         default:
