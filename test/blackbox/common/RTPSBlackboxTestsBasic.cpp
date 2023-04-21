@@ -1162,8 +1162,8 @@ TEST(RTPS, participant_ignore_local_endpoints_two_participants)
     // Wait for discovery
     writer.wait_discovery(1, std::chrono::seconds(1));
     reader.wait_discovery(1, std::chrono::seconds(1));
-    EXPECT_EQ(writer.get_matched(), 1);
-    EXPECT_EQ(reader.get_matched(), 1);
+    EXPECT_EQ(writer.get_matched(), 1u);
+    EXPECT_EQ(reader.get_matched(), 1u);
 
     // Send samples
     auto samples = default_helloworld_data_generator(5);
@@ -1174,7 +1174,7 @@ TEST(RTPS, participant_ignore_local_endpoints_two_participants)
 
     // Wait for reception
     reader.block_for_all(std::chrono::seconds(1));
-    EXPECT_EQ(reader.getReceivedCount(), 5);
+    EXPECT_EQ(reader.getReceivedCount(), 5u);
 
     /* Tear-down */
     eprosima::fastrtps::rtps::RTPSDomain::removeRTPSParticipant(participant_writer);

@@ -683,8 +683,8 @@ TEST(DDSBasic, participant_ignore_local_endpoints_two_participants)
     // Wait for discovery
     writer.wait_discovery(std::chrono::seconds(1));
     reader.wait_discovery(std::chrono::seconds(1));
-    EXPECT_EQ(writer.get_matched(), 1);
-    EXPECT_EQ(reader.get_matched(), 1);
+    EXPECT_EQ(writer.get_matched(), 1u);
+    EXPECT_EQ(reader.get_matched(), 1u);
 
     // Send samples
     auto samples = default_helloworld_data_generator(5);
