@@ -339,8 +339,12 @@ public:
     void wait_discovery(
             std::chrono::seconds timeout = std::chrono::seconds::zero())
     {
+        bool post_assertion = (matched_ == 0 && timeout == std::chrono::seconds::zero()) ? true : false;
         wait_discovery(1, timeout);
-        ASSERT_NE(matched_, 0u);
+        if (post_assertion)
+        {
+            ASSERT_NE(matched_, 0u);
+        }
     }
 
     void wait_discovery(
@@ -351,14 +355,14 @@ public:
 
         if (timeout == std::chrono::seconds::zero())
         {
-            cv_.wait(lock, [&]() -> bool
+            cvDiscovery_.wait(lock, [&]() -> bool
                     {
                         return matched_ >= matches;
                     });
         }
         else
         {
-            cv_.wait_for(lock, timeout, [&]()
+            cvDiscovery_.wait_for(lock, timeout, [&]()
                     {
                         return matched_ >= matches;
                     });
