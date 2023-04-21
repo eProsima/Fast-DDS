@@ -548,6 +548,13 @@ TEST(DDSBasic, IgnoreParticipant)
 
 }
 
+/**
+ * @test This test checks the ignore local endpoints feature on the RTPS layer when writer and
+ *       reader are under the same participant. Corresponds with tests:
+ *          * PART-IGNORE-LOCAL-TEST:01
+ *          * PART-IGNORE-LOCAL-TEST:02
+ *          * PART-IGNORE-LOCAL-TEST:03
+ */
 TEST(DDSBasic, participant_ignore_local_endpoints)
 {
     class CustomLogConsumer : public LogConsumer
@@ -642,6 +649,51 @@ TEST(DDSBasic, participant_ignore_local_endpoints)
         /* Tear-down */
         Log::Reset();
     }
+}
+
+/**
+ * @test This test checks the ignore local endpoints feature on the RTPS layer when writer and
+ *       reader are under the different participant. Corresponds with test:
+ *          * PART-IGNORE-LOCAL-TEST:07
+ */
+TEST(DDSBasic, participant_ignore_local_endpoints_two_participants)
+{
+    std::cout << std::endl;
+    std::cout << "---------------------------------------" << std::endl;
+    std::cout << "Running test: PART-IGNORE-LOCAL-TEST:07" << std::endl;
+    std::cout << "---------------------------------------" << std::endl;
+
+    /* Set up */
+
+    // Create the DomainParticipants with the appropriate value for the property
+    eprosima::fastrtps::rtps::PropertyPolicy property_policy;
+    property_policy.properties().emplace_back("fastdds.ignore_local_endpoints", "true");
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    writer.property_policy(property_policy);
+    reader.property_policy(property_policy);
+
+    /* Procedure */
+    // Create the DataWriter & DataReader
+    writer.init();
+    EXPECT_TRUE(writer.isInitialized());
+    reader.init();
+    EXPECT_TRUE(reader.isInitialized());
+
+    // Wait for discovery
+    writer.wait_discovery(std::chrono::seconds(1));
+    reader.wait_discovery(std::chrono::seconds(1));
+    EXPECT_EQ(writer.get_matched(), 1);
+    EXPECT_EQ(reader.get_matched(), 1);
+
+    // Send samples
+    auto samples = default_helloworld_data_generator(5);
+    reader.startReception(samples);
+    writer.send(samples);
+    EXPECT_TRUE(samples.empty());
+
+    // Wait for reception
+    EXPECT_EQ(reader.block_for_all(std::chrono::seconds(1)), 5);
 }
 
 } // namespace dds
