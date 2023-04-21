@@ -262,7 +262,7 @@ int main(
     }
 
     auto dyn_type = dyn_build->build();
-    TypeSupport type(new DynamicPubSubType(dyn_type));
+    TypeSupport type(new types::DynamicPubSubType(dyn_type));
     type.register_type(participant);
 
     PubListener listener;
