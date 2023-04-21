@@ -37,7 +37,7 @@ using eprosima::fastdds::dds::Log;
 using eprosima::fastrtps::rtps::c_EntityId_TypeLookup_reply_writer;
 
 using namespace eprosima::fastdds::dds::builtin;
-using namespace eprosima::fastrtps::types::v1_3;
+using namespace eprosima::fastrtps::types;
 
 using eprosima::fastrtps::types::TypeObjectFactory;
 
@@ -90,7 +90,15 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
                             "", // No topic_name available
                             &pair.type_identifier(),
                             &pair.type_object(),
-                            DynamicType_ptr(nullptr));
+                            v1_1::DynamicType_ptr{});
+
+                        tlm_->participant_->getListener()->on_type_discovery(
+                            tlm_->participant_->getUserRTPSParticipant(),
+                            reply.header.requestId,
+                            "", // No topic_name available
+                            &pair.type_identifier(),
+                            &pair.type_object(),
+                            v1_3::DynamicType_ptr{});
                     }
                 }
                 // TODO Call a callback once the job is done

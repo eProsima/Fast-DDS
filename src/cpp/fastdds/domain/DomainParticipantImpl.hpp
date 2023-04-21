@@ -595,7 +595,7 @@ protected:
         std::map<fastrtps::rtps::SampleIdentity, std::vector<fastrtps::rtps::SampleIdentity>> parent_requests_;
 
         virtual bool find_callback(const fastrtps::rtps::SampleIdentity&) = 0;
-        virtual void callback(const fastrtps::rtps::SampleIdentity&) = 0;
+        virtual void empty_callback(const fastrtps::rtps::SampleIdentity&) = 0;
         virtual void remove_callback(const fastrtps::rtps::SampleIdentity&) = 0;
     };
 
@@ -611,7 +611,7 @@ protected:
                 const fastrtps::types::v1_3::DynamicType_ptr)>>> register_callbacks_;
 
         bool find_callback(const fastrtps::rtps::SampleIdentity&) override;
-        void callback(const fastrtps::rtps::SampleIdentity&) override;
+        void empty_callback(const fastrtps::rtps::SampleIdentity&) override;
         void remove_callback(const fastrtps::rtps::SampleIdentity&) override;
 
     } v13_state_;
@@ -626,7 +626,7 @@ protected:
                 const fastrtps::types::v1_1::DynamicType_ptr)>>> register_callbacks_;
 
         bool find_callback(const fastrtps::rtps::SampleIdentity&) override;
-        void callback(const fastrtps::rtps::SampleIdentity&) override;
+        void empty_callback(const fastrtps::rtps::SampleIdentity&) override;
         void remove_callback(const fastrtps::rtps::SampleIdentity&) override;
     } v11_state_;
 

@@ -516,6 +516,7 @@ SampleIdentity TypeLookupManager::get_types(
         }
         type.delete_data(request);
     }
+
     return id;
 }
 

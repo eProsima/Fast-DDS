@@ -113,7 +113,7 @@ void DomainParticipantImpl::version_1_1_state::remove_callback(const fastrtps::r
     register_callbacks_.erase(id);
 }
 
-void DomainParticipantImpl::version_1_3_state::callback(const fastrtps::rtps::SampleIdentity& id)
+void DomainParticipantImpl::version_1_3_state::empty_callback(const fastrtps::rtps::SampleIdentity& id)
 {
     auto it = register_callbacks_.find(id);
     if (it != register_callbacks_.end())
@@ -122,7 +122,7 @@ void DomainParticipantImpl::version_1_3_state::callback(const fastrtps::rtps::Sa
     }
 }
 
-void DomainParticipantImpl::version_1_1_state::callback(const fastrtps::rtps::SampleIdentity& id)
+void DomainParticipantImpl::version_1_1_state::empty_callback(const fastrtps::rtps::SampleIdentity& id)
 {
     auto it = register_callbacks_.find(id);
     if (it != register_callbacks_.end())
@@ -2288,8 +2288,6 @@ bool DomainParticipantImpl::check_get_dependencies_request(
                     remove_child_request(requestId);
                     return true;
                 }
-
-                continue;
             }
         }
     }
@@ -2369,7 +2367,8 @@ void DomainParticipantImpl::on_child_requests_finished(
     {
         auto pending_requests_it = state->parent_requests_.find(parent);
         // Do I have no more pending childs?
-        if (state->parent_requests_.end() == pending_requests_it || pending_requests_it->second.empty())
+        bool missing = state->parent_requests_.end() == pending_requests_it;
+        if (missing || pending_requests_it->second.empty())
         {
             // Am I a children?
             auto child_it = state->child_requests_.find(parent);
@@ -2377,7 +2376,7 @@ void DomainParticipantImpl::on_child_requests_finished(
             {
                 remove_child_request(parent);
             }
-            else
+            else if(!missing)
             {
                 // Or a top-level request?
                 if (pending_requests_it->second.size() < 2)
@@ -2385,7 +2384,7 @@ void DomainParticipantImpl::on_child_requests_finished(
                     state->parent_requests_.erase(pending_requests_it);
                 }
                 // Everything should be already registered
-                state->callback(parent);
+                state->empty_callback(parent);
                 state->remove_callback(parent);
             }
         }
