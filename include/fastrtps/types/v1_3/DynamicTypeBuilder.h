@@ -38,9 +38,11 @@ class DynamicTypeBuilder final
 
     friend builder_allocator;
 
-    static void after_construction(DynamicType* b);
+    static void after_construction(
+            DynamicType* b);
 
-    static void before_destruction(DynamicType* b);
+    static void before_destruction(
+            DynamicType* b);
 
     // Only create objects from the associated factory
     struct use_the_create_method
@@ -57,10 +59,14 @@ class DynamicTypeBuilder final
 
     void clear();
 
-    DynamicTypeBuilder(const DynamicTypeBuilder&) = default;
-    DynamicTypeBuilder(DynamicTypeBuilder&&) = delete;
-    DynamicTypeBuilder& operator=(const DynamicTypeBuilder&) = default;
-    DynamicTypeBuilder& operator=(DynamicTypeBuilder&&) = delete;
+    DynamicTypeBuilder(
+            const DynamicTypeBuilder&) = default;
+    DynamicTypeBuilder(
+            DynamicTypeBuilder&&) = delete;
+    DynamicTypeBuilder& operator =(
+            const DynamicTypeBuilder&) = default;
+    DynamicTypeBuilder& operator =(
+            DynamicTypeBuilder&&) = delete;
 
     //! This method only adds an empty element to the members collection with the right index
     member_iterator add_empty_member(
@@ -116,8 +122,9 @@ public:
             MemberDescriptor&& descriptor) noexcept;
 
     //! Ancillary template to build inline the @ref MemberDescriptor argument
-    template<typename... Ts>
-    ReturnCode_t add_member(Ts&&... Args) noexcept
+    template<typename ... Ts>
+    ReturnCode_t add_member(
+            Ts&&... Args) noexcept
     {
         return add_member(MemberDescriptor(std::forward<Ts>(Args)...));
     }
@@ -132,7 +139,7 @@ public:
      * @remarks the @ref AnnotationDescriptor arguments will be perfect forwarded in order to avoid copies
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    template<typename... Ts>
+    template<typename ... Ts>
     ReturnCode_t apply_annotation_to_member(
             MemberId id,
             Ts&&... Args)

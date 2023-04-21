@@ -123,7 +123,7 @@ void DynamicData::create_members(
     }
     else if (type_->get_member_count() > 0)
     {
-        for(auto pm : type_->get_all_members())
+        for (auto pm : type_->get_all_members())
         {
             assert(pm);
             values_[pm->get_id()] = pData->clone_value(pm->get_id(), pm->get_kind());
@@ -311,18 +311,18 @@ bool DynamicData::equals(
                     // array, map, sequence, structure, bitset, anotation
                     return values_.size() == other->values_.size() &&
                            std::equal(
-                                values_.begin(),
-                                values_.end(),
-                                other->values_.begin(),
-                                [](const decltype(values_)::value_type& l, const decltype(values_)::value_type& r)
-                                {
-                                    DynamicData* left = (DynamicData*)l.second;
-                                    DynamicData* right = (DynamicData*)r.second;
-                                    bool res = left->equals(right);
-                                    return res;
-                                    // TODO: undo once finished debugging
-                                    // return ((DynamicData*)l.second)->equals((DynamicData*)r.second);
-                                });
+                        values_.begin(),
+                        values_.end(),
+                        other->values_.begin(),
+                        [](const decltype(values_)::value_type& l, const decltype(values_)::value_type& r)
+                        {
+                            DynamicData* left = (DynamicData*)l.second;
+                            DynamicData* right = (DynamicData*)r.second;
+                            bool res = left->equals(right);
+                            return res;
+                            // TODO: undo once finished debugging
+                            // return ((DynamicData*)l.second)->equals((DynamicData*)r.second);
+                        });
                 }
                 else
                 {
@@ -741,15 +741,15 @@ ReturnCode_t DynamicData::clear_nonkey_values()
     if (type_->is_complex_kind())
     {
 #ifdef DYNAMIC_TYPES_CHECKING
-            for (auto& e : complex_values_)
-            {
-                e.second->clear_nonkey_values();
-            }
+        for (auto& e : complex_values_)
+        {
+            e.second->clear_nonkey_values();
+        }
 #else
-            for (auto& e : values_)
-            {
-                ((DynamicData*)e.second)->clear_nonkey_values();
-            }
+        for (auto& e : values_)
+        {
+            ((DynamicData*)e.second)->clear_nonkey_values();
+        }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
     }
     else
@@ -1349,7 +1349,7 @@ void DynamicData::set_default_value(
 
     std::tie(pM, found) = type_->get_member(id);
 
-    if(!found)
+    if (!found)
     {
         return;
     }
@@ -1792,7 +1792,8 @@ ReturnCode_t DynamicData::set_int32_value(
             auto default_res = default_array_value_->get_int32_value(default_value);
 
             if (!!default_res && value == default_value)
-            { // don't add default elements
+            {
+                // don't add default elements
                 return ReturnCode_t::RETCODE_OK;
             }
 
@@ -1852,7 +1853,8 @@ ReturnCode_t DynamicData::set_int32_value(
         auto default_res = default_array_value_->get_int32_value(default_value);
 
         if (!!default_res && value == default_value)
-        { // don't add default elements
+        {
+            // don't add default elements
             return ReturnCode_t::RETCODE_OK;
         }
 
@@ -1960,7 +1962,8 @@ ReturnCode_t DynamicData::set_uint32_value(
             auto default_res = default_array_value_->get_uint32_value(default_value);
 
             if (!!default_res && value == default_value)
-            { // don't add default elements
+            {
+                // don't add default elements
                 return ReturnCode_t::RETCODE_OK;
             }
 
@@ -2019,7 +2022,8 @@ ReturnCode_t DynamicData::set_uint32_value(
         auto default_res = default_array_value_->get_uint32_value(default_value);
 
         if (!!default_res && value == default_value)
-        { // don't add default elements
+        {
+            // don't add default elements
             return ReturnCode_t::RETCODE_OK;
         }
 
@@ -2127,7 +2131,8 @@ ReturnCode_t DynamicData::set_int16_value(
             auto default_res = default_array_value_->get_int16_value(default_value);
 
             if (!!default_res && value == default_value)
-            { // don't add default elements
+            {
+                // don't add default elements
                 return ReturnCode_t::RETCODE_OK;
             }
 
@@ -2186,7 +2191,8 @@ ReturnCode_t DynamicData::set_int16_value(
         auto default_res = default_array_value_->get_int16_value(default_value);
 
         if (!!default_res && value == default_value)
-        { // don't add default elements
+        {
+            // don't add default elements
             return ReturnCode_t::RETCODE_OK;
         }
 
@@ -2294,7 +2300,8 @@ ReturnCode_t DynamicData::set_uint16_value(
             auto default_res = default_array_value_->get_uint16_value(default_value);
 
             if (!!default_res && value == default_value)
-            { // don't add default elements
+            {
+                // don't add default elements
                 return ReturnCode_t::RETCODE_OK;
             }
 
@@ -2353,7 +2360,8 @@ ReturnCode_t DynamicData::set_uint16_value(
         auto default_res = default_array_value_->get_uint16_value(default_value);
 
         if (!!default_res && value == default_value)
-        { // don't add default elements
+        {
+            // don't add default elements
             return ReturnCode_t::RETCODE_OK;
         }
 
@@ -2460,7 +2468,8 @@ ReturnCode_t DynamicData::set_int64_value(
             auto default_res = default_array_value_->get_int64_value(default_value);
 
             if (!!default_res && value == default_value)
-            { // don't add default elements
+            {
+                // don't add default elements
                 return ReturnCode_t::RETCODE_OK;
             }
 
@@ -2519,7 +2528,8 @@ ReturnCode_t DynamicData::set_int64_value(
         auto default_res = default_array_value_->get_int64_value(default_value);
 
         if (!!default_res && value == default_value)
-        { // don't add default elements
+        {
+            // don't add default elements
             return ReturnCode_t::RETCODE_OK;
         }
 
@@ -2627,7 +2637,8 @@ ReturnCode_t DynamicData::set_uint64_value(
             auto default_res = default_array_value_->get_uint64_value(default_value);
 
             if (!!default_res && value == default_value)
-            { // don't add default elements
+            {
+                // don't add default elements
                 return ReturnCode_t::RETCODE_OK;
             }
 
@@ -2686,7 +2697,8 @@ ReturnCode_t DynamicData::set_uint64_value(
         auto default_res = default_array_value_->get_uint64_value(default_value);
 
         if (!!default_res && value == default_value)
-        { // don't add default elements
+        {
+            // don't add default elements
             return ReturnCode_t::RETCODE_OK;
         }
 
@@ -2782,7 +2794,8 @@ ReturnCode_t DynamicData::set_float32_value(
             auto default_res = default_array_value_->get_float32_value(default_value);
 
             if (!!default_res && value == default_value)
-            { // don't add default elements
+            {
+                // don't add default elements
                 return ReturnCode_t::RETCODE_OK;
             }
 
@@ -2822,7 +2835,8 @@ ReturnCode_t DynamicData::set_float32_value(
         auto default_res = default_array_value_->get_float32_value(default_value);
 
         if (!!default_res && value == default_value)
-        { // don't add default elements
+        {
+            // don't add default elements
             return ReturnCode_t::RETCODE_OK;
         }
 
@@ -2918,7 +2932,8 @@ ReturnCode_t DynamicData::set_float64_value(
             auto default_res = default_array_value_->get_float64_value(default_value);
 
             if (!!default_res && value == default_value)
-            { // don't add default elements
+            {
+                // don't add default elements
                 return ReturnCode_t::RETCODE_OK;
             }
 
@@ -2957,7 +2972,8 @@ ReturnCode_t DynamicData::set_float64_value(
         auto default_res = default_array_value_->get_float64_value(default_value);
 
         if (!!default_res && value == default_value)
-        { // don't add default elements
+        {
+            // don't add default elements
             return ReturnCode_t::RETCODE_OK;
         }
 
@@ -3053,7 +3069,8 @@ ReturnCode_t DynamicData::set_float128_value(
             auto default_res = default_array_value_->get_float128_value(default_value);
 
             if (!!default_res && value == default_value)
-            { // don't add default elements
+            {
+                // don't add default elements
                 return ReturnCode_t::RETCODE_OK;
             }
 
@@ -3092,7 +3109,8 @@ ReturnCode_t DynamicData::set_float128_value(
         auto default_res = default_array_value_->get_float128_value(default_value);
 
         if (!!default_res && value == default_value)
-        { // don't add default elements
+        {
+            // don't add default elements
             return ReturnCode_t::RETCODE_OK;
         }
 
@@ -3188,7 +3206,8 @@ ReturnCode_t DynamicData::set_char8_value(
             auto default_res = default_array_value_->get_char8_value(default_value);
 
             if (!!default_res && value == default_value)
-            { // don't add default elements
+            {
+                // don't add default elements
                 return ReturnCode_t::RETCODE_OK;
             }
 
@@ -3227,7 +3246,8 @@ ReturnCode_t DynamicData::set_char8_value(
         auto default_res = default_array_value_->get_char8_value(default_value);
 
         if (!!default_res && value == default_value)
-        { // don't add default elements
+        {
+            // don't add default elements
             return ReturnCode_t::RETCODE_OK;
         }
 
@@ -3323,7 +3343,8 @@ ReturnCode_t DynamicData::set_char16_value(
             auto default_res = default_array_value_->get_char16_value(default_value);
 
             if (!!default_res && value == default_value)
-            { // don't add default elements
+            {
+                // don't add default elements
                 return ReturnCode_t::RETCODE_OK;
             }
 
@@ -3363,7 +3384,8 @@ ReturnCode_t DynamicData::set_char16_value(
         auto default_res = default_array_value_->get_char16_value(default_value);
 
         if (!!default_res && value == default_value)
-        { // don't add default elements
+        {
+            // don't add default elements
             return ReturnCode_t::RETCODE_OK;
         }
 
@@ -3471,7 +3493,8 @@ ReturnCode_t DynamicData::set_byte_value(
             auto default_res = default_array_value_->get_byte_value(default_value);
 
             if (!!default_res && value == default_value)
-            { // don't add default elements
+            {
+                // don't add default elements
                 return ReturnCode_t::RETCODE_OK;
             }
 
@@ -3530,7 +3553,8 @@ ReturnCode_t DynamicData::set_byte_value(
         auto default_res = default_array_value_->get_byte_value(default_value);
 
         if (!!default_res && value == default_value)
-        { // don't add default elements
+        {
+            // don't add default elements
             return ReturnCode_t::RETCODE_OK;
         }
 
@@ -3676,7 +3700,8 @@ ReturnCode_t DynamicData::set_bool_value(
             auto default_res = default_array_value_->get_bool_value(default_value);
 
             if (!!default_res && value == default_value)
-            { // don't add default elements
+            {
+                // don't add default elements
                 return ReturnCode_t::RETCODE_OK;
             }
 
@@ -3757,7 +3782,8 @@ ReturnCode_t DynamicData::set_bool_value(
         auto default_res = default_array_value_->get_bool_value(default_value);
 
         if (!!default_res && value == default_value)
-        { // don't add default elements
+        {
+            // don't add default elements
             return ReturnCode_t::RETCODE_OK;
         }
 
@@ -3862,7 +3888,8 @@ ReturnCode_t DynamicData::set_string_value(
             auto default_res = default_array_value_->get_string_value(default_value);
 
             if (!!default_res && value == default_value)
-            { // don't add default elements
+            {
+                // don't add default elements
                 return ReturnCode_t::RETCODE_OK;
             }
 
@@ -3910,7 +3937,8 @@ ReturnCode_t DynamicData::set_string_value(
         auto default_res = default_array_value_->get_string_value(default_value);
 
         if (!!default_res && value == default_value)
-        { // don't add default elements
+        {
+            // don't add default elements
             return ReturnCode_t::RETCODE_OK;
         }
 
@@ -4042,7 +4070,8 @@ ReturnCode_t DynamicData::set_wstring_value(
             auto default_res = default_array_value_->get_wstring_value(default_value);
 
             if (!!default_res && value == default_value)
-            { // don't add default elements
+            {
+                // don't add default elements
                 return ReturnCode_t::RETCODE_OK;
             }
 
@@ -4090,7 +4119,8 @@ ReturnCode_t DynamicData::set_wstring_value(
         auto default_res = default_array_value_->get_wstring_value(default_value);
 
         if (!!default_res && value == default_value)
-        { // don't add default elements
+        {
+            // don't add default elements
             return ReturnCode_t::RETCODE_OK;
         }
 
@@ -4175,7 +4205,7 @@ ReturnCode_t DynamicData::set_enum_value(
 #ifdef DYNAMIC_TYPES_CHECKING
     if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
     {
-        if(!type_->exists_member_by_id(value))
+        if (!type_->exists_member_by_id(value))
         {
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
@@ -4202,7 +4232,8 @@ ReturnCode_t DynamicData::set_enum_value(
             auto default_res = default_array_value_->get_enum_value(default_value);
 
             if (!!default_res && value == default_value)
-            { // don't add default elements
+            {
+                // don't add default elements
                 return ReturnCode_t::RETCODE_OK;
             }
 
@@ -4221,7 +4252,7 @@ ReturnCode_t DynamicData::set_enum_value(
         if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
         {
 
-            if(!type_->exists_member_by_id(MemberId(value)))
+            if (!type_->exists_member_by_id(MemberId(value)))
             {
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
@@ -4246,7 +4277,8 @@ ReturnCode_t DynamicData::set_enum_value(
         auto default_res = default_array_value_->get_enum_value(default_value);
 
         if (!!default_res && value == default_value)
-        { // don't add default elements
+        {
+            // don't add default elements
             return ReturnCode_t::RETCODE_OK;
         }
 
@@ -4269,7 +4301,7 @@ ReturnCode_t DynamicData::get_enum_value(
 #ifdef DYNAMIC_TYPES_CHECKING
     if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
     {
-        if(uint32_value_ >= type_->get_member_count())
+        if (uint32_value_ >= type_->get_member_count())
         {
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
@@ -4277,7 +4309,7 @@ ReturnCode_t DynamicData::get_enum_value(
         MemberDescriptor md;
         ReturnCode_t res = get_member(md, uint32_value_);
 
-        if(!!res)
+        if (!!res)
         {
             value = md.get_name();
         }
@@ -4307,7 +4339,7 @@ ReturnCode_t DynamicData::get_enum_value(
         {
             uint32_t inner_value = *((uint32_t*)itValue->second);
 
-            if(inner_value >= type_->get_member_count())
+            if (inner_value >= type_->get_member_count())
             {
                 return ReturnCode_t::RETCODE_BAD_PARAMETER;
             }
@@ -4315,7 +4347,7 @@ ReturnCode_t DynamicData::get_enum_value(
             MemberDescriptor md;
             ReturnCode_t res = type_->get_member(md, MemberId(inner_value));
 
-            if(!!res)
+            if (!!res)
             {
                 value = md.get_name();
             }
@@ -5047,7 +5079,8 @@ ReturnCode_t DynamicData::insert_map_data(
 
             outKeyId = 0u;
             if (complex_values_.size())
-            { // get largest key available
+            {
+                // get largest key available
                 outKeyId = complex_values_.rbegin()->first + 1u;
             }
             DynamicData* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
@@ -5070,7 +5103,8 @@ ReturnCode_t DynamicData::insert_map_data(
 
             outKeyId = 0u;
             if (values_.size())
-            { // get largest key available
+            {
+                // get largest key available
                 outKeyId = values_.rbegin()->first + 1u;
             }
             DynamicData* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
@@ -5120,7 +5154,8 @@ ReturnCode_t DynamicData::insert_map_data(
 
             outKeyId = 0u;
             if (complex_values_.size())
-            { // get largest key available
+            {
+                // get largest key available
                 outKeyId = complex_values_.rbegin()->first + 1u;
             }
             DynamicData* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
@@ -5142,7 +5177,8 @@ ReturnCode_t DynamicData::insert_map_data(
 
             outKey = 0u;
             if (values_.size())
-            { // get largest key available
+            {
+                // get largest key available
                 outKey = values_.rbegin()->first + 1u;
             }
             DynamicData* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
@@ -5191,7 +5227,8 @@ ReturnCode_t DynamicData::insert_map_data(
 
             outKeyId = 0u;
             if (complex_values_.size())
-            { // get largest key available
+            {
+                // get largest key available
                 outKeyId = complex_values_.rbegin()->first + 1u;
             }
             DynamicData* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
@@ -5214,7 +5251,8 @@ ReturnCode_t DynamicData::insert_map_data(
 
             outKey = 0u;
             if (values_.size())
-            { // get largest key available
+            {
+                // get largest key available
                 outKey = values_.rbegin()->first + 1u;
             }
             DynamicData* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
@@ -5324,7 +5362,8 @@ ReturnCode_t DynamicData::get_complex_value(
 {
     // Check that the type is complex and in case of dynamic containers, check that the index is valid
     if (id != MEMBER_ID_INVALID && (get_kind() == TypeKind::TK_STRUCTURE || get_kind() == TypeKind::TK_UNION ||
-            get_kind() == TypeKind::TK_SEQUENCE || get_kind() == TypeKind::TK_ARRAY || get_kind() == TypeKind::TK_MAP || get_kind() == TypeKind::TK_BITSET))
+            get_kind() == TypeKind::TK_SEQUENCE || get_kind() == TypeKind::TK_ARRAY || get_kind() == TypeKind::TK_MAP ||
+            get_kind() == TypeKind::TK_BITSET))
     {
 #ifdef DYNAMIC_TYPES_CHECKING
         auto it = complex_values_.find(id);
@@ -5357,10 +5396,12 @@ ReturnCode_t DynamicData::set_complex_value(
 {
     // Check that the type is complex and in case of dynamic containers, check that the index is valid
     if (id != MEMBER_ID_INVALID && (get_kind() == TypeKind::TK_STRUCTURE || get_kind() == TypeKind::TK_UNION ||
-            get_kind() == TypeKind::TK_SEQUENCE || get_kind() == TypeKind::TK_ARRAY || get_kind() == TypeKind::TK_MAP || get_kind() == TypeKind::TK_BITSET))
+            get_kind() == TypeKind::TK_SEQUENCE || get_kind() == TypeKind::TK_ARRAY || get_kind() == TypeKind::TK_MAP ||
+            get_kind() == TypeKind::TK_BITSET))
     {
         // With containers, check that the index is valid
-        if ((get_kind() == TypeKind::TK_SEQUENCE || get_kind() == TypeKind::TK_ARRAY || get_kind() == TypeKind::TK_MAP) &&
+        if ((get_kind() == TypeKind::TK_SEQUENCE || get_kind() == TypeKind::TK_ARRAY ||
+                get_kind() == TypeKind::TK_MAP) &&
                 id < type_->get_total_bounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
@@ -5444,7 +5485,7 @@ ReturnCode_t DynamicData::get_union_label(
     {
         value = get_union_label();
     }
-    catch(std::system_error& e)
+    catch (std::system_error& e)
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, e.what());
         return e.code().value();
@@ -5456,11 +5497,11 @@ ReturnCode_t DynamicData::get_union_label(
 uint64_t DynamicData::get_union_label() const
 {
     assert(type_);
-    if(type_->get_kind() != TypeKind::TK_UNION)
+    if (type_->get_kind() != TypeKind::TK_UNION)
     {
         throw std::system_error(
-                ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
-                "Error retrieving union label, underlying type is not an union.");
+                  ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                  "Error retrieving union label, underlying type is not an union.");
     }
 
     const DynamicTypeMember* member;
@@ -5479,29 +5520,30 @@ uint64_t DynamicData::get_union_label() const
     }
 
     throw std::system_error(
-            ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
-            "Error retrieving union label, no label associated.");
+              ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+              "Error retrieving union label, no label associated.");
 }
 
 MemberId DynamicData::get_discriminator_value() const
 {
-    if(type_->get_kind() != TypeKind::TK_UNION)
+    if (type_->get_kind() != TypeKind::TK_UNION)
     {
         throw std::system_error(
-                ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
-                "Error retrieving discriminator, underlying type is not an union.");
+                  ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                  "Error retrieving discriminator, underlying type is not an union.");
     }
 
     return union_id_;
 }
 
-ReturnCode_t DynamicData::get_discriminator_value(MemberId& id) const noexcept
+ReturnCode_t DynamicData::get_discriminator_value(
+        MemberId& id) const noexcept
 {
     try
     {
         id = get_discriminator_value();
     }
-    catch(std::system_error& e)
+    catch (std::system_error& e)
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, e.what());
         return e.code().value();
@@ -5513,7 +5555,7 @@ ReturnCode_t DynamicData::get_discriminator_value(MemberId& id) const noexcept
 ReturnCode_t DynamicData::set_discriminator_value(
         MemberId value) noexcept
 {
-    if(type_->get_kind() != TypeKind::TK_UNION)
+    if (type_->get_kind() != TypeKind::TK_UNION)
     {
         return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
     }
@@ -5577,7 +5619,7 @@ size_t DynamicData::getEmptyCdrSerializedSize(
 
 bool DynamicData::has_children() const
 {
-    switch(get_kind())
+    switch (get_kind())
     {
         case TypeKind::TK_ANNOTATION:
         case TypeKind::TK_ARRAY:
@@ -5589,5 +5631,5 @@ bool DynamicData::has_children() const
             return true;
         default:
             return false;
-    };
+    }
 }

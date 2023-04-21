@@ -51,6 +51,7 @@ class BuilderAllocator
     : public std::allocator<T>
 {
     B& factory_; /*!< Reference to the factory class which receives the callbacks */
+
 public:
 
     /**
@@ -70,15 +71,18 @@ public:
      * Stateful constructor.
      * @param [in] factory The object that provides the callbacks
      */
-    BuilderAllocator(B& factory)
+    BuilderAllocator(
+            B& factory)
         : factory_(factory)
-    {}
+    {
+    }
 
     /**
      * Callback to be invoked after construction.
      * @param [in] p object just constructed
      */
-    void after_construction(T* p)
+    void after_construction(
+            T* p)
     {
         // delegate into the reference
         factory_.after_construction(p);
@@ -94,6 +98,7 @@ public:
         // delegate into the reference
         factory_.before_destruction(p);
     }
+
 };
 
 /**
@@ -102,7 +107,7 @@ public:
  * @tparam B stateless class factory which receives the callbacks.
  */
 template<class T, class B>
-class BuilderAllocator<T,B,false>
+class BuilderAllocator<T, B, false>
     : public std::allocator<T>
 {
 public:
@@ -124,7 +129,8 @@ public:
      * static callback to be invoked after construction.
      * @param [in] p object just constructed
      */
-    void after_construction(T* p)
+    void after_construction(
+            T* p)
     {
         // delegate into static method
         B::after_construction(p);
@@ -140,6 +146,7 @@ public:
         // delegate into static method
         B::before_destruction(p);
     }
+
 };
 
 } // namespace detail

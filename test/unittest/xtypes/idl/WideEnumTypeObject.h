@@ -31,10 +31,10 @@
 #define eProsima_user_DllExport __declspec( dllexport )
 #else
 #define eProsima_user_DllExport
-#endif
+#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
 #else
 #define eProsima_user_DllExport
-#endif
+#endif // if defined(_WIN32)
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -45,30 +45,38 @@
 #endif // WideEnum_SOURCE
 #else
 #define WideEnum_DllAPI
-#endif
+#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
 #else
 #define WideEnum_DllAPI
 #endif // _WIN32
 
 eProsima_user_DllExport void registerWideEnumTypes();
 
-eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetMyEnumWideIdentifier(bool complete = false);
-eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMyEnumWideObject(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetMyEnumWideIdentifier(
+        bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMyEnumWideObject(
+        bool complete = false);
 eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMinimalMyEnumWideObject();
 eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteMyEnumWideObject();
 
-eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetMyEnumWideStructIdentifier(bool complete = false);
-eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMyEnumWideStructObject(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetMyEnumWideStructIdentifier(
+        bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMyEnumWideStructObject(
+        bool complete = false);
 eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMinimalMyEnumWideStructObject();
 eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteMyEnumWideStructObject();
 
-eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetSimpleWideUnionIdentifier(bool complete = false);
-eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetSimpleWideUnionObject(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetSimpleWideUnionIdentifier(
+        bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetSimpleWideUnionObject(
+        bool complete = false);
 eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMinimalSimpleWideUnionObject();
 eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteSimpleWideUnionObject();
 
-eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetSimpleWideUnionStructIdentifier(bool complete = false);
-eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetSimpleWideUnionStructObject(bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* GetSimpleWideUnionStructIdentifier(
+        bool complete = false);
+eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetSimpleWideUnionStructObject(
+        bool complete = false);
 eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetMinimalSimpleWideUnionStructObject();
 eProsima_user_DllExport const eprosima::fastrtps::types::TypeObject* GetCompleteSimpleWideUnionStructObject();
 

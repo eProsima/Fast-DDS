@@ -38,7 +38,7 @@ protected:
     friend class DynamicData;
 
     using MemberDescriptor::MemberDescriptor;
-    using MemberDescriptor::operator=;
+    using MemberDescriptor::operator =;
 
 public:
 
@@ -60,8 +60,8 @@ public:
 
 public:
 
-    using MemberDescriptor::operator==;
-    using MemberDescriptor::operator!=;
+    using MemberDescriptor::operator ==;
+    using MemberDescriptor::operator !=;
 
     using MemberDescriptor::get_descriptor;
 
@@ -80,7 +80,8 @@ public:
      * @remarks @ref DynamicTypeMember::equals relies on this
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    bool operator==(const DynamicTypeMember& other) const;
+    bool operator ==(
+            const DynamicTypeMember& other) const;
 
     /**
      * checks equality according to [standard] section 7.5.2.7.4 guidelines
@@ -101,11 +102,14 @@ public:
             MemberDescriptor& descriptor) const;
 
     //! more accurate that base class because it has access to annotations
-    bool is_consistent(TypeKind parentKind) const;
+    bool is_consistent(
+            TypeKind parentKind) const;
 };
 
 //! @ref DynamicTypeMember expected `std::ostream` non-member override of `operator<<`
-RTPS_DllAPI std::ostream& operator<<( std::ostream& os, const DynamicTypeMember& dm);
+RTPS_DllAPI std::ostream& operator <<(
+        std::ostream& os,
+        const DynamicTypeMember& dm);
 
 } // namespace v1_3
 } // namespace types

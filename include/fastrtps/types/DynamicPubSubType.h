@@ -59,9 +59,11 @@ public:
         return active_;
     }
 
-    RTPS_DllAPI ReturnCode_t GetDynamicType(v1_3::DynamicType_ptr& p) const;
+    RTPS_DllAPI ReturnCode_t GetDynamicType(
+            v1_3::DynamicType_ptr& p) const;
 
-    RTPS_DllAPI ReturnCode_t GetDynamicType(v1_1::DynamicType_ptr& p) const;
+    RTPS_DllAPI ReturnCode_t GetDynamicType(
+            v1_1::DynamicType_ptr& p) const;
 
     // TopicDataType overrides
     RTPS_DllAPI void* createData() override;

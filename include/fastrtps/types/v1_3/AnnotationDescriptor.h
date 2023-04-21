@@ -19,10 +19,10 @@
 
 #include <functional>
 
-namespace eprosima{
-namespace fastrtps{
-namespace types{
-namespace v1_3{
+namespace eprosima {
+namespace fastrtps {
+namespace types {
+namespace v1_3 {
 
 class MemberDescriptor;
 class DynamicType;
@@ -31,19 +31,25 @@ class DynamicTypeBuilderFactory;
 class AnnotationDescriptor final
 {
 protected:
+
     friend class DynamicTypeBuilderFactory;
 
     // Reference to the annotation type
     DynamicType_ptr type_;
-	std::map<std::string, std::string> value_;
+    std::map<std::string, std::string> value_;
 
 public:
 
-    ReturnCode_t copy_from(const AnnotationDescriptor* other);
-    bool operator==(const AnnotationDescriptor&) const;
-    bool operator!=(const AnnotationDescriptor&) const;
-    bool operator<(const AnnotationDescriptor&) const;
-    bool equals(const AnnotationDescriptor*) const;
+    ReturnCode_t copy_from(
+            const AnnotationDescriptor* other);
+    bool operator ==(
+            const AnnotationDescriptor&) const;
+    bool operator !=(
+            const AnnotationDescriptor&) const;
+    bool operator <(
+            const AnnotationDescriptor&) const;
+    bool equals(
+            const AnnotationDescriptor*) const;
     bool is_consistent() const;
     bool key_annotation() const;
 
@@ -51,9 +57,11 @@ public:
             std::string& value,
             const std::string& key) const;
 
-    ReturnCode_t get_value(std::string& value) const; // key = "value"
+    ReturnCode_t get_value(
+            std::string& value) const;                // key = "value"
 
-    ReturnCode_t get_all_value(std::map<std::string, std::string>& value) const;
+    ReturnCode_t get_all_value(
+            std::map<std::string, std::string>& value) const;
 
     const std::map<std::string, std::string>& get_all_values() const
     {
@@ -61,15 +69,17 @@ public:
     }
 
     ReturnCode_t set_value(
-        const std::string& key,
-        const std::string& value);
+            const std::string& key,
+            const std::string& value);
 
-    void set_type(const DynamicType_ptr& type)
+    void set_type(
+            const DynamicType_ptr& type)
     {
         type_ = type;
     }
 
-    void set_type(DynamicType_ptr&& type)
+    void set_type(
+            DynamicType_ptr&& type)
     {
         type_ = std::move(type);
     }
@@ -78,9 +88,12 @@ public:
     {
         return type_;
     }
+
 };
 
-std::ostream& operator<<( std::ostream& os, const AnnotationDescriptor& md);
+std::ostream& operator <<(
+        std::ostream& os,
+        const AnnotationDescriptor& md);
 
 } // namespace v1_3
 } // namespace types

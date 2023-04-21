@@ -142,7 +142,7 @@ DynamicType_ptr DynamicComplexTypesTests::GetKeyedStructType()
     {
         DynamicTypeBuilder_ptr keyedStruct_builder = m_factory.create_struct_builder();
         DynamicTypeBuilder_ptr octet_builder = m_factory.create_builder_copy(
-                *m_factory.create_byte_builder());
+            *m_factory.create_byte_builder());
         octet_builder->apply_annotation(ANNOTATION_KEY_ID, "value", "true");
         keyedStruct_builder->add_member(0_id, "key", octet_builder->build());
         keyedStruct_builder->add_member(1_id, "basic", GetBasicStructType());
@@ -343,14 +343,16 @@ DynamicType_ptr DynamicComplexTypesTests::GetComplexStructType()
         DynamicTypeBuilder_ptr seqSeqOctet_builder =
                 DynamicTypeBuilderFactory::get_instance().create_sequence_builder(*seqOctet_builder->build());
         DynamicTypeBuilder_ptr my_map_long_seq_octet_builder =
-                DynamicTypeBuilderFactory::get_instance().create_map_builder(*int32_type, *seqSeqOctet_builder->build());
+                DynamicTypeBuilderFactory::get_instance().create_map_builder(*int32_type,
+                        *seqSeqOctet_builder->build());
         DynamicType_ptr my_map_long_seq_octet_type = my_map_long_seq_octet_builder->build();
         DynamicTypeBuilder_ptr my_map_long_octet_array_500_builder =
                 DynamicTypeBuilderFactory::get_instance().create_map_builder(*int32_type, *GetMyOctetArray500Type());
         DynamicTypeBuilder_ptr map_octet_bsalias5_builder =
                 DynamicTypeBuilderFactory::get_instance().create_map_builder(*octet_type, *GetBSAlias5Type());
         DynamicTypeBuilder_ptr my_map_long_lol_type_builder =
-                DynamicTypeBuilderFactory::get_instance().create_map_builder(*int32_type, *map_octet_bsalias5_builder->build());
+                DynamicTypeBuilderFactory::get_instance().create_map_builder(*int32_type,
+                        *map_octet_bsalias5_builder->build());
         DynamicType_ptr my_small_string_8_type =
                 DynamicTypeBuilderFactory::get_instance().create_string_type(128);
         DynamicType_ptr my_small_string_16_type =
@@ -387,7 +389,8 @@ DynamicType_ptr DynamicComplexTypesTests::GetComplexStructType()
         complexStruct_builder->add_member(idx++, "my_map_octet_short", my_map_octet_short_builder->build());
         complexStruct_builder->add_member(idx++, "my_map_long_struct", my_map_long_struct_builder->build());
         complexStruct_builder->add_member(idx++, "my_map_long_seq_octet", my_map_long_seq_octet_type);
-        complexStruct_builder->add_member(idx++, "my_map_long_octet_array_500", my_map_long_octet_array_500_builder->build());
+        complexStruct_builder->add_member(idx++, "my_map_long_octet_array_500",
+                my_map_long_octet_array_500_builder->build());
         complexStruct_builder->add_member(idx++, "my_map_long_lol_type", my_map_long_lol_type_builder->build());
         complexStruct_builder->add_member(idx++, "my_small_string_8", my_small_string_8_type);
         complexStruct_builder->add_member(idx++, "my_small_string_16", my_small_string_16_type);
@@ -427,7 +430,7 @@ DynamicType_ptr DynamicComplexTypesTests::GetUnion2SwitchType()
         DynamicType_ptr int32_type = DynamicTypeBuilderFactory::get_instance().create_int32_type();
         DynamicType_ptr string_type = DynamicTypeBuilderFactory::get_instance().create_string_type();
         DynamicTypeBuilder_ptr myUnion2_builder = DynamicTypeBuilderFactory::get_instance().create_union_builder(
-                *octet_type);
+            *octet_type);
         myUnion2_builder->add_member(0_id, "uno", int32_type, "0", std::vector<uint64_t>{ 0 }, false);
         myUnion2_builder->add_member(1_id, "imString", string_type, "1", std::vector<uint64_t>{ 1 }, false);
         myUnion2_builder->add_member(2_id, "tres", int32_type, "2", std::vector<uint64_t>{ 2 }, false);
@@ -533,10 +536,10 @@ TEST_F(DynamicComplexTypesTests, Conversions_Test)
         true);
     DynamicType_ptr newAutoType;
     TypeObjectFactory::get_instance()->build_dynamic_type(
-            newAutoType,
-            m_DynManualType->get_name(),
-            identifier,
-            &newObject);
+        newAutoType,
+        m_DynManualType->get_name(),
+        identifier,
+        &newObject);
     DynamicData* dynData = DynamicDataFactory::get_instance()->create_data(m_DynManualType);
     DynamicData* dynData2 = DynamicDataFactory::get_instance()->create_data(newAutoType);
 
@@ -1253,26 +1256,26 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     EXPECT_TRUE(pbComplete.serialize(&staticData, &stPayload));
     EXPECT_TRUE(stPayload.length == payloadSize2);
 
-//       std::cout << "BEGIN" << std::endl;
-//       for (uint32_t j = 0; j < stPayload.length; j += 100)
-//       {
-//        std::cout << std::endl;
-//        for (uint32_t k = 0; k < 100; k++)
-//        {
-//            if (j + k < stPayload.length)
-//            {
-//                if ((int)stPayload.data[j + k] == 204)
-//                {
-//                    std::cout << 0 << " ";
-//                }
-//                else
-//                {
-//                    std::cout << (int)stPayload.data[j + k] << " ";
-//                }
-//            }
-//        }
-//       }
-//       std::cout << "END" << std::endl;
+    //       std::cout << "BEGIN" << std::endl;
+    //       for (uint32_t j = 0; j < stPayload.length; j += 100)
+    //       {
+    //        std::cout << std::endl;
+    //        for (uint32_t k = 0; k < 100; k++)
+    //        {
+    //            if (j + k < stPayload.length)
+    //            {
+    //                if ((int)stPayload.data[j + k] == 204)
+    //                {
+    //                    std::cout << 0 << " ";
+    //                }
+    //                else
+    //                {
+    //                    std::cout << (int)stPayload.data[j + k] << " ";
+    //                }
+    //            }
+    //        }
+    //       }
+    //       std::cout << "END" << std::endl;
 
     DynamicData_ptr dynDataFromDynamic(DynamicDataFactory::get_instance()->create_data(m_DynAutoType));
     EXPECT_TRUE(pubsubType.deserialize(&payload, dynDataFromDynamic.get()));

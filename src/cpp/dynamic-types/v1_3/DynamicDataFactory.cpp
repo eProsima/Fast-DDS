@@ -181,7 +181,8 @@ ReturnCode_t DynamicDataFactory::create_members(
     if (pType != nullptr && pData != nullptr)
     {
         pData->create_members(pType);
-        if ((pType->get_kind() == TypeKind::TK_STRUCTURE || pType->get_kind() == TypeKind::TK_BITSET) && pType->get_base_type() != nullptr)
+        if ((pType->get_kind() == TypeKind::TK_STRUCTURE || pType->get_kind() == TypeKind::TK_BITSET) &&
+                pType->get_base_type() != nullptr)
         {
             create_members(pData, pType->get_base_type());
         }

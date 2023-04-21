@@ -53,7 +53,8 @@ void DynamicPubSubType::CleanDynamicType()
     active_ = version::none;
 }
 
-ReturnCode_t DynamicPubSubType::GetDynamicType(v1_3::DynamicType_ptr& p) const
+ReturnCode_t DynamicPubSubType::GetDynamicType(
+        v1_3::DynamicType_ptr& p) const
 {
     if (version::v1_3 == active_)
     {
@@ -64,7 +65,8 @@ ReturnCode_t DynamicPubSubType::GetDynamicType(v1_3::DynamicType_ptr& p) const
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-ReturnCode_t DynamicPubSubType::GetDynamicType(v1_1::DynamicType_ptr& p) const
+ReturnCode_t DynamicPubSubType::GetDynamicType(
+        v1_1::DynamicType_ptr& p) const
 {
     if (version::v1_1 == active_)
     {
@@ -77,7 +79,7 @@ ReturnCode_t DynamicPubSubType::GetDynamicType(v1_1::DynamicType_ptr& p) const
 
 void* DynamicPubSubType::createData()
 {
-    switch(active_)
+    switch (active_)
     {
         case version::v1_1:
             return v1_1::internal::DynamicPubSubType::createData();
@@ -91,9 +93,9 @@ void* DynamicPubSubType::createData()
 }
 
 void DynamicPubSubType::deleteData (
-            void* data)
+        void* data)
 {
-    switch(active_)
+    switch (active_)
     {
         case version::v1_1:
             v1_1::internal::DynamicPubSubType::deleteData(data);
@@ -110,7 +112,7 @@ bool DynamicPubSubType::serialize(
         void* data,
         eprosima::fastrtps::rtps::SerializedPayload_t* payload)
 {
-    switch(active_)
+    switch (active_)
     {
         case version::v1_1:
             return v1_1::internal::DynamicPubSubType::serialize(data, payload);
@@ -127,7 +129,7 @@ bool DynamicPubSubType::deserialize(
         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
         void* data)
 {
-    switch(active_)
+    switch (active_)
     {
         case version::v1_1:
             return v1_1::internal::DynamicPubSubType::deserialize(payload, data);
@@ -145,7 +147,7 @@ bool DynamicPubSubType::getKey(
         eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
         bool force_md5 /*= false*/)
 {
-    switch(active_)
+    switch (active_)
     {
         case version::v1_1:
             return v1_1::internal::DynamicPubSubType::getKey(data, ihandle, force_md5);
@@ -161,7 +163,7 @@ bool DynamicPubSubType::getKey(
 std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(
         void* data)
 {
-    switch(active_)
+    switch (active_)
     {
         case version::v1_1:
             return v1_1::internal::DynamicPubSubType::getSerializedSizeProvider(data);

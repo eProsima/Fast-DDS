@@ -21,11 +21,12 @@ namespace fastrtps {
 namespace types {
 inline namespace v1_1 {
 
-DynamicTypeBuilder_ptr::DynamicTypeBuilder_ptr(DynamicTypeBuilder* pType)
+DynamicTypeBuilder_ptr::DynamicTypeBuilder_ptr(
+        DynamicTypeBuilder* pType)
     : Base(pType, [](DynamicTypeBuilder* pType)
-{
-    DynamicTypeBuilderFactory::get_instance()->delete_builder(pType);
-})
+            {
+                DynamicTypeBuilderFactory::get_instance()->delete_builder(pType);
+            })
 {
 }
 

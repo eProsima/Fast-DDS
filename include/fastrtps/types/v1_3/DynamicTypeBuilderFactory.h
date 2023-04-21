@@ -76,7 +76,7 @@ struct dynamic_tracker_data<type_tracking::complete>
  */
 template<type_tracking mode>
 class dynamic_tracker
-        : protected detail::dynamic_tracker_data<mode>
+    : protected detail::dynamic_tracker_data<mode>
 {
     friend class DynamicTypeBuilder;
     friend class DynamicTypeBuilderFactory;
@@ -86,17 +86,23 @@ class dynamic_tracker
     //! check if there are leakages
     bool is_empty() noexcept;
     //! add primitive builder
-    void add_primitive(const DynamicTypeBuilder*) noexcept;
+    void add_primitive(
+            const DynamicTypeBuilder*) noexcept;
     //! add primitive types
-    void add_primitive(const DynamicType*) noexcept;
+    void add_primitive(
+            const DynamicType*) noexcept;
     //! add new builder
-    bool add(const DynamicTypeBuilder*) noexcept;
+    bool add(
+            const DynamicTypeBuilder*) noexcept;
     //! remove builder
-    bool remove(const DynamicTypeBuilder*) noexcept;
+    bool remove(
+            const DynamicTypeBuilder*) noexcept;
     //! add new type
-    bool add(const DynamicType*) noexcept;
+    bool add(
+            const DynamicType*) noexcept;
     //! remove type
-    bool remove(const DynamicType*) noexcept;
+    bool remove(
+            const DynamicType*) noexcept;
 
     // singleton creation
     static dynamic_tracker<mode>& get_dynamic_tracker()
@@ -104,6 +110,7 @@ class dynamic_tracker
         static dynamic_tracker<mode> dynamic_tracker;
         return dynamic_tracker;
     }
+
 };
 
 #if defined(ENABLE_DYNAMIC_MEMORY_CHECK) \
@@ -112,7 +119,7 @@ class dynamic_tracker
 constexpr type_tracking selected_mode = type_tracking::complete;
 #else
 constexpr type_tracking selected_mode = type_tracking::none;
-#endif
+#endif // if defined(ENABLE_DYNAMIC_MEMORY_CHECK) && (!defined(_MSC_VER) || _MSC_VER >= 1921) && (!defined(__APPLE__) || _LIBCPP_STD_VER >= 20)
 
 class TypeDescriptor;
 class MemberDescriptor;
@@ -136,10 +143,12 @@ class DynamicTypeBuilderFactory final
     friend builder_allocator;
 
     //! allocator callback
-    void after_construction(DynamicTypeBuilder* b);
+    void after_construction(
+            DynamicTypeBuilder* b);
 
     //! allocator callback
-    void before_destruction(DynamicTypeBuilder* b);
+    void before_destruction(
+            DynamicTypeBuilder* b);
 
     // free any allocated resources
     void reset();
@@ -147,10 +156,12 @@ class DynamicTypeBuilderFactory final
     DynamicTypeBuilderFactory() = default;
 
     //! auxiliary method for primitive creation that atomically modifies the dynamic_tracker
-    RTPS_DllAPI DynamicTypeBuilder_ptr new_primitive_builder(TypeKind kind) noexcept;
+    RTPS_DllAPI DynamicTypeBuilder_ptr new_primitive_builder(
+            TypeKind kind) noexcept;
 
     //! auxiliary method for string creation that atomically modifies the dynamic_tracker
-    DynamicTypeBuilder_ptr new_unlimited_string_builder(bool large) noexcept;
+    DynamicTypeBuilder_ptr new_unlimited_string_builder(
+            bool large) noexcept;
 
     void build_alias_type_code(
             const TypeDescriptor& descriptor,
@@ -215,6 +226,7 @@ class DynamicTypeBuilderFactory final
     void apply_type_annotations(
             AppliedAnnotationSeq& annotations,
             const TypeDescriptor& descriptor) const;
+
 public:
 
     ~DynamicTypeBuilderFactory();
@@ -246,7 +258,8 @@ public:
      * @param[in] td object state to copy
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_builder(const TypeDescriptor& td) noexcept;
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_builder(
+            const TypeDescriptor& td) noexcept;
 
     /**
      * Create a new @ref DynamicTypeBuilder object based on the given @ref DynamicType object.
@@ -258,7 +271,8 @@ public:
      * @param[in] type @ref DynamicType object
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_builder_copy(const DynamicType& type) noexcept;
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_builder_copy(
+            const DynamicType& type) noexcept;
 
     /**
      * Create a new @ref DynamicTypeBuilder object based on the given @ref DynamicTypeBuilder object.
@@ -268,7 +282,8 @@ public:
      * @param[in] builder @ref DynamicTypeBuilder object
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_builder_copy(const DynamicTypeBuilder& builder) noexcept;
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_builder_copy(
+            const DynamicTypeBuilder& builder) noexcept;
 
     /**
      * Retrieve the cached @ref DynamicType object associated to a given primitive
@@ -326,7 +341,8 @@ public:
      * @param kind @ref eprosima::fastrtps::types::TypeKind that identifies the singleton to return
      * @return singleton @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_primitive_builder(TypeKind kind) noexcept;
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_primitive_builder(
+            TypeKind kind) noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_INT32>()`
     RTPS_DllAPI DynamicTypeBuilder_cptr& create_int32_builder() noexcept;

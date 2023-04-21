@@ -33,13 +33,13 @@ namespace eprosima {
 
 namespace fastcdr {
 class Cdr;
-}
+} // namespace fastcdr
 
 namespace fastdds {
 namespace dds {
 class TypeConsistencyEnforcementQosPolicy;
-}
-}
+} // namespace dds
+} // namespace fastdds
 
 namespace fastrtps {
 namespace types {
@@ -96,14 +96,14 @@ public:
      * @brief Copy assignment.
      * @param x Reference to the object TypeIdentifier that will be copied.
      */
-    RTPS_DllAPI TypeIdentifier& operator=(
+    RTPS_DllAPI TypeIdentifier& operator =(
             const TypeIdentifier& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object TypeIdentifier that will be copied.
      */
-    RTPS_DllAPI TypeIdentifier& operator=(
+    RTPS_DllAPI TypeIdentifier& operator =(
             TypeIdentifier&& x);
 
     /*!
@@ -375,7 +375,7 @@ public:
     /**
      * Equals
      * */
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const TypeIdentifier& other) const;
 
     RTPS_DllAPI bool consistent(

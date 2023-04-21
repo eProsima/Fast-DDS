@@ -21,9 +21,9 @@ using namespace eprosima::fastrtps::types::v1_3;
 DynamicData_ptr::DynamicData_ptr(
         DynamicData* pData)
     : Base(pData, [](DynamicData* pData)
-{
-    DynamicDataFactory::get_instance()->delete_data(pData);
-})
+            {
+                DynamicDataFactory::get_instance()->delete_data(pData);
+            })
 {
 }
 

@@ -44,64 +44,78 @@ public:
     // trivial construction
     member_id() = default;
 
-    member_id(const member_id& i) = default;
+    member_id(
+            const member_id& i) = default;
 
-    explicit member_id(unsigned long long i)
+    explicit member_id(
+            unsigned long long i)
         : value_(static_cast<integer_type>(i))
-    {}
+    {
+    }
 
     // support for signed construction
     template<typename type,
-             typename std::enable_if<std::is_integral<type>::value &&
-                                     std::is_signed<type>::value, bool>::type = 0>
-    explicit member_id(type i)
+            typename std::enable_if<std::is_integral<type>::value &&
+            std::is_signed<type>::value, bool>::type = 0>
+    explicit member_id(
+            type i)
         : value_(i < 0 ? 0 : i)
-    {}
+    {
+    }
 
     // interaction with integers, note invalid values propagate
-    member_id& operator=(const integer_type& i)
+    member_id& operator =(
+            const integer_type& i)
     {
         value_ = i;
         return *this;
     }
 
-    member_id& operator+=(const integer_type& i)
+    member_id& operator +=(
+            const integer_type& i)
     {
         value_ += i;
         return *this;
     }
 
-    member_id& operator-=(const integer_type& i)
+    member_id& operator -=(
+            const integer_type& i)
     {
-        if(value_ < invalid)
-        {   // only decrement valid values
+        if (value_ < invalid)
+        {
+            // only decrement valid values
             value_ -= i;
         }
         return *this;
     }
 
     // trivial assignation
-    member_id& operator=(const member_id& i) = default;
+    member_id& operator =(
+            const member_id& i) = default;
 
-    member_id& operator+=(const member_id& i)
+    member_id& operator +=(
+            const member_id& i)
     {
-        return this->operator+=(i.value_);
+        return this->operator +=(i.value_);
     }
 
-    member_id& operator-=(const member_id& i)
+    member_id& operator -=(
+            const member_id& i)
     {
-        return this->operator-=(i.value_);
+        return this->operator -=(i.value_);
     }
 
     // aritmethic
-    member_id operator+(const member_id& i) const
+    member_id operator +(
+            const member_id& i) const
     {
         member_id t(*this);
         t += i;
         return t;
     }
 
-    member_id operator-(const member_id& i) const
+    member_id operator -(
+            const member_id& i) const
     {
         member_id t(*this);
         t -= i;
@@ -109,14 +123,16 @@ public:
     }
 
     // integer aritmethic
-    member_id operator+(const integer_type& i) const
+    member_id operator +(
+            const integer_type& i) const
     {
         member_id t(*this);
         t += i;
         return t;
     }
 
-    member_id operator-(const integer_type& i) const
+    member_id operator -(
+            const integer_type& i) const
     {
         member_id t(*this);
         t -= i;
@@ -124,7 +140,8 @@ public:
     }
 
     // comparison with integers
-    bool operator==(const integer_type& i) const
+    bool operator ==(
+            const integer_type& i) const
     {
         bool a_invalid = value_ >= invalid;
         bool b_invalid = i >= invalid;
@@ -132,103 +149,117 @@ public:
         return a_invalid || b_invalid ? a_invalid && b_invalid : value_ == i;
     }
 
-    bool operator!=(const integer_type& i) const
+    bool operator !=(
+            const integer_type& i) const
     {
-        return !this->operator==(i);
+        return !this->operator ==(i);
     }
 
-    bool operator<(const integer_type& i) const
+    bool operator <(
+            const integer_type& i) const
     {
         return !(value_ >= i);
     }
 
-    bool operator>(const integer_type& i) const
+    bool operator >(
+            const integer_type& i) const
     {
         return !(value_ <= i);
     }
 
-    bool operator<=(const integer_type& i) const
+    bool operator <=(
+            const integer_type& i) const
     {
         return *this == i ? true : value_ < i;
     }
 
-    bool operator>=(const integer_type& i) const
+    bool operator >=(
+            const integer_type& i) const
     {
         return *this == i ? true : value_ > i;
     }
 
     // comparison
-    bool operator==(const member_id& i) const
+    bool operator ==(
+            const member_id& i) const
     {
-        return this->operator==(i.value_);
+        return this->operator ==(i.value_);
     }
 
-    bool operator!=(const member_id& i) const
+    bool operator !=(
+            const member_id& i) const
     {
-        return !this->operator==(i);
+        return !this->operator ==(i);
     }
 
-    bool operator<(const member_id& i) const
+    bool operator <(
+            const member_id& i) const
     {
-        return this->operator<(i.value_);
+        return this->operator <(i.value_);
     }
 
-    bool operator>(const member_id& i) const
+    bool operator >(
+            const member_id& i) const
     {
-        return this->operator>(i.value_);
+        return this->operator >(i.value_);
     }
 
-    bool operator<=(const member_id& i) const
+    bool operator <=(
+            const member_id& i) const
     {
-        return this->operator<=(i.value_);
+        return this->operator <=(i.value_);
     }
 
-    bool operator>=(const member_id& i) const
+    bool operator >=(
+            const member_id& i) const
     {
-        return this->operator>=(i.value_);
+        return this->operator >=(i.value_);
     }
 
     // prefix increment
-    member_id& operator++()
+    member_id& operator ++()
     {
         ++value_;
         return *this;
     }
 
     // postfix increment
-    member_id operator++(int)
+    member_id operator ++(
+            int)
     {
         member_id old = *this;
-        operator++();
+        operator ++();
         return old;
     }
 
     // prefix decrement
-    member_id& operator--()
+    member_id& operator --()
     {
-        if(value_ < invalid)
-        {   // only decrement valid values
+        if (value_ < invalid)
+        {
+            // only decrement valid values
             --value_;
         }
         return *this;
     }
 
     // postfix decrement
-    member_id operator--(int)
+    member_id operator --(
+            int)
     {
         member_id old = *this;
-        operator--();
+        operator --();
         return old;
     }
 
     // return integer value
-    base operator*() const
+    base operator *() const
     {
         return !*this ? invalid : static_cast<base>(value_);
     }
 
     // if() support
-    bool operator!() const
+    bool operator !() const
     {
         return value_ >= invalid;
     }
@@ -236,31 +267,38 @@ public:
     // CDR input/output support (avoid dependency using templates)
 
     template<class Cdr>
-    Cdr& serialize(Cdr& buf) const
+    Cdr& serialize(
+            Cdr& buf) const
     {
         return buf << **this;
     }
 
     template<class Cdr>
-    Cdr& deserialize(Cdr& buf)
+    Cdr& deserialize(
+            Cdr& buf)
     {
         base tmp;
         buf >> tmp;
         value_ = tmp;
         return buf;
     }
+
 };
 
 // addition
 template<class base>
-member_id<base> operator+(const member_id<base>& x, const member_id<base>& y)
+member_id<base> operator +(
+        const member_id<base>& x,
+        const member_id<base>& y)
 {
     member_id<base> mx(x);
     return mx += y;
 }
 
 template<class base>
-member_id<base> operator+(const typename member_id<base>::integer_type& x, const member_id<base>& y)
+member_id<base> operator +(
+        const typename member_id<base>::integer_type& x,
+        const member_id<base>& y)
 {
     member_id<base> mx(x);
     return mx += y;
@@ -268,14 +306,18 @@ member_id<base> operator+(const typename member_id<base>::integer_type& x, const
 
 // substraction
 template<class base>
-member_id<base> operator-(const member_id<base>& x, const member_id<base>& y)
+member_id<base> operator -(
+        const member_id<base>& x,
+        const member_id<base>& y)
 {
     member_id<base> mx(x);
     return mx -= y;
 }
 
 template<class base>
-member_id<base> operator-(const typename member_id<base>::integer_type& x, const member_id<base>& y)
+member_id<base> operator -(
+        const typename member_id<base>::integer_type& x,
+        const member_id<base>& y)
 {
     member_id<base> mx(x);
     return mx -= y;
@@ -284,37 +326,49 @@ member_id<base> operator-(const typename member_id<base>::integer_type& x, const
 // comparison
 
 template<class base>
-bool operator==(const typename member_id<base>::integer_type& x, const member_id<base>& y)
+bool operator ==(
+        const typename member_id<base>::integer_type& x,
+        const member_id<base>& y)
 {
     return y == x;
 }
 
 template<class base>
-bool operator!=(const typename member_id<base>::integer_type& x, const member_id<base>& y)
+bool operator !=(
+        const typename member_id<base>::integer_type& x,
+        const member_id<base>& y)
 {
     return y != x;
 }
 
 template<class base>
-bool operator<(const typename member_id<base>::integer_type& x, const member_id<base>& y)
+bool operator <(
+        const typename member_id<base>::integer_type& x,
+        const member_id<base>& y)
 {
     return y >= x;
 }
 
 template<class base>
-bool operator>(const typename member_id<base>::integer_type& x, const member_id<base>& y)
+bool operator >(
+        const typename member_id<base>::integer_type& x,
+        const member_id<base>& y)
 {
     return y <= x;
 }
 
 template<class base>
-bool operator<=(const typename member_id<base>::integer_type& x, const member_id<base>& y)
+bool operator <=(
+        const typename member_id<base>::integer_type& x,
+        const member_id<base>& y)
 {
     return y > x;
 }
 
 template<class base>
-bool operator>=(const typename member_id<base>::integer_type& x, const member_id<base>& y)
+bool operator >=(
+        const typename member_id<base>::integer_type& x,
+        const member_id<base>& y)
 {
     return y < x;
 }
@@ -345,7 +399,9 @@ inline const std::wstring member_id_invalid<std::wstring::value_type, std::wstri
 } // detail namespace
 
 template <class base, class CharT, class Traits>
-std::basic_istream<CharT, Traits>& operator>>(std::basic_istream<CharT, Traits>& istr, member_id<base>& x)
+std::basic_istream<CharT, Traits>& operator >>(
+        std::basic_istream<CharT, Traits>& istr,
+        member_id<base>& x)
 {
     base tmp;
     if (istr >> tmp)
@@ -355,7 +411,7 @@ std::basic_istream<CharT, Traits>& operator>>(std::basic_istream<CharT, Traits>&
     else // check if is MEMBER_ID_INVALID
     {
         istr.clear();
-        const auto & val = detail::member_id_invalid<CharT, Traits>::get();
+        const auto& val = detail::member_id_invalid<CharT, Traits>::get();
         auto res = std::mismatch(val.begin(), val.end(), std::istream_iterator<CharT, CharT, Traits>(istr));
         if (val.end() == res.first)
         {
@@ -368,9 +424,11 @@ std::basic_istream<CharT, Traits>& operator>>(std::basic_istream<CharT, Traits>&
 }
 
 template <class base, class CharT, class Traits>
-std::basic_ostream<CharT, Traits>& operator<<(std::basic_ostream<CharT, Traits>& ostr, const member_id<base>& x)
+std::basic_ostream<CharT, Traits>& operator <<(
+        std::basic_ostream<CharT, Traits>& ostr,
+        const member_id<base>& x)
 {
-    if(!x)
+    if (!x)
     {
         return ostr << detail::member_id_invalid<CharT, Traits>::get();
     }
@@ -383,10 +441,10 @@ using MemberId = member_id<uint32_t>;
 const MemberId MEMBER_ID_INVALID;
 
 // literals
-inline namespace literals
-{
+inline namespace literals {
 
-inline MemberId operator"" _id(unsigned long long x)
+inline MemberId operator "" _id(
+        unsigned long long x)
 {
     return MemberId(x);
 }

@@ -117,7 +117,8 @@ const std::string TKNAME_MAP = "map";
 
 // ---------- TypeKinds (begin) ------------------
 
-enum class TypeKind : octet {
+enum class TypeKind : octet
+{
     // invalid
     TK_NONE = 0x00,
 
@@ -177,12 +178,16 @@ enum class TypeKind : octet {
     EK_BOTH = 0xF3, // 0x1111 0011
 };
 
-inline bool operator==(octet a, TypeKind b)
+inline bool operator ==(
+        octet a,
+        TypeKind b)
 {
     return a == static_cast<octet>(b);
 }
 
-inline bool operator==(TypeKind a, octet b)
+inline bool operator ==(
+        TypeKind a,
+        octet b)
 {
     return b == a;
 }
@@ -193,17 +198,17 @@ template<TypeKind kind, class CharT, class Traits>
 struct TypeKindName {};
 
 #define XTYPENAME(type)                                                \
-template<>                                                             \
-struct TypeKindName<TypeKind::type, char, std::char_traits<char>>      \
-{                                                                      \
-    RTPS_DllAPI static const char* name;                               \
-};                                                                     \
+    template<>                                                             \
+    struct TypeKindName<TypeKind::type, char, std::char_traits<char>>      \
+    {                                                                      \
+        RTPS_DllAPI static const char* name;                               \
+    };                                                                     \
                                                                        \
-template<>                                                             \
-struct TypeKindName<TypeKind::type, wchar_t, std::char_traits<wchar_t>>\
-{                                                                      \
-    RTPS_DllAPI static const wchar_t* name;                            \
-};                                                                     \
+    template<>                                                             \
+    struct TypeKindName<TypeKind::type, wchar_t, std::char_traits<wchar_t>> \
+    {                                                                      \
+        RTPS_DllAPI static const wchar_t* name;                            \
+    };                                                                     \
 
 XTYPENAME(TK_BOOLEAN)
 XTYPENAME(TK_BYTE)
@@ -247,16 +252,18 @@ XTYPENAME(TI_STRONGLY_CONNECTED_COMPONENT)
 } // namespace typekind_detail
 
 #define XTYPECASE(type)                                                                  \
-        case TypeKind::type:                                                             \
-            name = typekind_detail::TypeKindName<TypeKind::type, CharT, Traits>::name;   \
-            break;                                                                       \
+    case TypeKind::type:                                                             \
+        name = typekind_detail::TypeKindName<TypeKind::type, CharT, Traits>::name;   \
+        break;                                                                       \
 
 template< class CharT, class Traits>
 std::basic_ostream<CharT, Traits>&
-    operator<<( std::basic_ostream<CharT, Traits>& os, TypeKind kind)
+operator <<(
+        std::basic_ostream<CharT, Traits>& os,
+        TypeKind kind)
 {
     const CharT* name = nullptr;
-    switch(kind)
+    switch (kind)
     {
         XTYPECASE(TK_BOOLEAN)
         XTYPECASE(TK_BYTE)
@@ -296,7 +303,7 @@ std::basic_ostream<CharT, Traits>&
         XTYPECASE(TI_STRONGLY_CONNECTED_COMPONENT)
         default:
             return os;
-    };
+    }
 
     return os << name;
 }
@@ -367,7 +374,8 @@ const octet EK_BOTH = static_cast<octet>(TypeKind::EK_BOTH);
 // Auxiliary metadata
 
 template<TypeKind kind>
-using is_primitive = std::conditional<(kind > TypeKind::TK_NONE && kind <= TypeKind::TK_CHAR16), std::true_type, std::false_type>;
+using is_primitive = std::conditional<(kind > TypeKind::TK_NONE && kind <= TypeKind::TK_CHAR16), std::true_type,
+                std::false_type>;
 
 template<TypeKind kind>
 using is_primitive_t = typename is_primitive<kind>::type;
@@ -468,11 +476,11 @@ public:
 // The specializations must be in the outer namespace (see N3730)
 namespace std {
 
-  template <>
-    struct is_error_code_enum<eprosima::fastrtps::types::ReturnCode_t> : true_type {};
+template <>
+struct is_error_code_enum<eprosima::fastrtps::types::ReturnCode_t> : true_type {};
 
-  template <>
-    struct is_error_code_enum<eprosima::fastrtps::types::ReturnCode_t::ReturnCodeValue> : true_type {};
+template <>
+struct is_error_code_enum<eprosima::fastrtps::types::ReturnCode_t::ReturnCodeValue> : true_type {};
 
 } // namespace std
 
@@ -490,7 +498,8 @@ struct FastDDSErrCategory : std::error_category
         return "Fast-DDS error reporting";
     }
 
-    std::string message(int ev) const
+    std::string message(
+            int ev) const
     {
         switch (ReturnCode_t(ev)())
         {
@@ -525,39 +534,42 @@ struct FastDDSErrCategory : std::error_category
                 return "Unrecognized error";
         }
     }
+
 };
 
 } // anonymous namespace
 
-inline std::error_code make_error_code(ReturnCode_t::ReturnCodeValue r)
+inline std::error_code make_error_code(
+        ReturnCode_t::ReturnCodeValue r)
 {
     static FastDDSErrCategory eprosima_fastdds;
     return { r, eprosima_fastdds };
 }
 
-inline std::error_code make_error_code(const ReturnCode_t & r)
+inline std::error_code make_error_code(
+        const ReturnCode_t& r)
 {
     return make_error_code(static_cast<ReturnCode_t::ReturnCodeValue>(r()));
 }
 
 template<class T>
 typename std::enable_if<std::is_arithmetic<T>::value
-    || std::is_same<T, ReturnCode_t::ReturnCodeValue>::value, bool>::type
+        || std::is_same<T, ReturnCode_t::ReturnCodeValue>::value, bool>::type
 operator ==(
         T a,
         const ReturnCode_t& b)
 {
-    return b.operator==(a);
+    return b.operator ==(a);
 }
 
 template<class T>
 typename std::enable_if<std::is_arithmetic<T>::value
-    || std::is_same<T, ReturnCode_t::ReturnCodeValue>::value, bool>::type
+        || std::is_same<T, ReturnCode_t::ReturnCodeValue>::value, bool>::type
 operator !=(
         T a,
         const ReturnCode_t& b)
 {
-    return b.operator!=(a);
+    return b.operator !=(a);
 }
 
 #define INDEX_INVALID UINT32_MAX

@@ -82,6 +82,7 @@ protected:
             eprosima::fastcdr::Cdr& cdr) const;
 
 public:
+
     //! TODO:BARRO move to protected on serialization refactor
     void serializeKey(
             const DynamicData& data,

@@ -612,7 +612,7 @@ p_dynamictypebuilder_t XMLProfileManager::getDynamicTypeByName(
 
     // query the actual map
     types::v1_1::DynamicTypeBuilder_ptr p;
-    if( XMLP_ret::XML_OK == getDynamicTypeByName(p, type_name))
+    if ( XMLP_ret::XML_OK == getDynamicTypeByName(p, type_name))
     {
         auto ret = p.get();
         old_dynamic_types_[type_name] = std::move(p);
@@ -651,8 +651,8 @@ XMLP_ret XMLProfileManager::getDynamicTypeByName(
     }
 
     builder = types::v1_1::DynamicTypeBuilderFactory::get_instance()->create_custom_builder(
-            ptr->get_descriptor(),
-            ptr->get_name());
+        ptr->get_descriptor(),
+        ptr->get_name());
 
     // Manually add members if required
     std::map<types::v1_1::MemberId, types::v1_1::DynamicTypeMember*> members;

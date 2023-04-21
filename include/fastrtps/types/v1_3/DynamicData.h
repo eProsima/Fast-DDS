@@ -48,6 +48,7 @@ class DynamicPubSubType;
 class DynamicData
 {
     friend class DynamicType;
+
 protected:
 
     explicit DynamicData(
@@ -787,6 +788,7 @@ public:
         }
         return value;
     }
+
     /*
      * Set a \b mask value on a bitmask
      * @param [in] value \b mask to set
@@ -1146,7 +1148,8 @@ public:
 
     RTPS_DllAPI MemberId get_discriminator_value() const;
 
-    RTPS_DllAPI ReturnCode_t get_discriminator_value(MemberId& id) const noexcept;
+    RTPS_DllAPI ReturnCode_t get_discriminator_value(
+            MemberId& id) const noexcept;
 
     RTPS_DllAPI ReturnCode_t set_discriminator_value(
             MemberId value) noexcept;

@@ -44,7 +44,8 @@ TypeObjectHashId::~TypeObjectHashId()
 {
 }
 
-TypeObjectHashId::TypeObjectHashId(const TypeObjectHashId &x)
+TypeObjectHashId::TypeObjectHashId(
+        const TypeObjectHashId& x)
 {
     m__d = x.m__d;
 
@@ -59,7 +60,8 @@ TypeObjectHashId::TypeObjectHashId(const TypeObjectHashId &x)
     }
 }
 
-TypeObjectHashId::TypeObjectHashId(TypeObjectHashId &&x)
+TypeObjectHashId::TypeObjectHashId(
+        TypeObjectHashId&& x)
 {
     m__d = x.m__d;
 
@@ -74,24 +76,8 @@ TypeObjectHashId::TypeObjectHashId(TypeObjectHashId &&x)
     }
 }
 
-TypeObjectHashId& TypeObjectHashId::operator=(const TypeObjectHashId &x)
-{
-    m__d = x.m__d;
-
-    switch (m__d)
-    {
-        case TypeKind::EK_COMPLETE:
-        case TypeKind::EK_MINIMAL:
-            memcpy(m_hash, x.m_hash, 14);
-            break;
-        default:
-            break;
-    }
-
-    return *this;
-}
-
-TypeObjectHashId& TypeObjectHashId::operator=(TypeObjectHashId &&x)
+TypeObjectHashId& TypeObjectHashId::operator =(
+        const TypeObjectHashId& x)
 {
     m__d = x.m__d;
 
@@ -108,7 +94,26 @@ TypeObjectHashId& TypeObjectHashId::operator=(TypeObjectHashId &&x)
     return *this;
 }
 
-void TypeObjectHashId::_d(TypeKind __d) // Special case to ease... sets the current active member
+TypeObjectHashId& TypeObjectHashId::operator =(
+        TypeObjectHashId&& x)
+{
+    m__d = x.m__d;
+
+    switch (m__d)
+    {
+        case TypeKind::EK_COMPLETE:
+        case TypeKind::EK_MINIMAL:
+            memcpy(m_hash, x.m_hash, 14);
+            break;
+        default:
+            break;
+    }
+
+    return *this;
+}
+
+void TypeObjectHashId::_d(
+        TypeKind __d)                   // Special case to ease... sets the current active member
 {
     switch (__d)
     {
@@ -131,13 +136,15 @@ TypeKind& TypeObjectHashId::_d()
     return m__d;
 }
 
-void TypeObjectHashId::hash(const EquivalenceHash &_hash)
+void TypeObjectHashId::hash(
+        const EquivalenceHash& _hash)
 {
     memcpy(m_hash, _hash, 14);
     m__d = TypeKind::EK_COMPLETE;
 }
 
-void TypeObjectHashId::hash(EquivalenceHash &&_hash)
+void TypeObjectHashId::hash(
+        EquivalenceHash&& _hash)
 {
     memcpy(m_hash, _hash, 14);
     m__d = TypeKind::EK_COMPLETE;
@@ -188,7 +195,9 @@ EquivalenceHash& TypeObjectHashId::hash()
 }
 
 // TODO(Ricardo) Review
-size_t TypeObjectHashId::getCdrSerializedSize(const TypeObjectHashId& data, size_t current_alignment)
+size_t TypeObjectHashId::getCdrSerializedSize(
+        const TypeObjectHashId& data,
+        size_t current_alignment)
 {
     size_t initial_alignment = current_alignment;
 
@@ -206,7 +215,8 @@ size_t TypeObjectHashId::getCdrSerializedSize(const TypeObjectHashId& data, size
     return current_alignment - initial_alignment;
 }
 
-void TypeObjectHashId::serialize(eprosima::fastcdr::Cdr &scdr) const
+void TypeObjectHashId::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << static_cast<octet>(m__d);
 
@@ -224,7 +234,8 @@ void TypeObjectHashId::serialize(eprosima::fastcdr::Cdr &scdr) const
     }
 }
 
-void TypeObjectHashId::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void TypeObjectHashId::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> reinterpret_cast<octet&>(m__d);
 
@@ -241,8 +252,6 @@ void TypeObjectHashId::deserialize(eprosima::fastcdr::Cdr &dcdr)
             break;
     }
 }
-
-
 
 } // namespace types
 } // namespace fastrtps

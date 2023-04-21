@@ -47,7 +47,7 @@ class MemberDescriptor;
 
 namespace internal {
 class DynamicPubSubType;
-}
+} // namespace internal
 
 class DynamicData
 {

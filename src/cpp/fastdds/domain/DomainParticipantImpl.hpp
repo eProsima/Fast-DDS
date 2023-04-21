@@ -594,9 +594,12 @@ protected:
         // All parent's child requests
         std::map<fastrtps::rtps::SampleIdentity, std::vector<fastrtps::rtps::SampleIdentity>> parent_requests_;
 
-        virtual bool find_callback(const fastrtps::rtps::SampleIdentity&) = 0;
-        virtual void empty_callback(const fastrtps::rtps::SampleIdentity&) = 0;
-        virtual void remove_callback(const fastrtps::rtps::SampleIdentity&) = 0;
+        virtual bool find_callback(
+                const fastrtps::rtps::SampleIdentity&) = 0;
+        virtual void empty_callback(
+                const fastrtps::rtps::SampleIdentity&) = 0;
+        virtual void remove_callback(
+                const fastrtps::rtps::SampleIdentity&) = 0;
     };
 
     using state_col = std::initializer_list<type_exchange_state*>;
@@ -606,29 +609,37 @@ protected:
     {
         // register_remote_type parent request, type_name, callback relationship.
         std::map<fastrtps::rtps::SampleIdentity,
-            std::pair<std::string, std::function<void(
-                const std::string& name,
-                const fastrtps::types::v1_3::DynamicType_ptr)>>> register_callbacks_;
+                std::pair<std::string, std::function<void(
+                    const std::string& name,
+                    const fastrtps::types::v1_3::DynamicType_ptr)>>> register_callbacks_;
 
-        bool find_callback(const fastrtps::rtps::SampleIdentity&) override;
-        void empty_callback(const fastrtps::rtps::SampleIdentity&) override;
-        void remove_callback(const fastrtps::rtps::SampleIdentity&) override;
+        bool find_callback(
+                const fastrtps::rtps::SampleIdentity&) override;
+        void empty_callback(
+                const fastrtps::rtps::SampleIdentity&) override;
+        void remove_callback(
+                const fastrtps::rtps::SampleIdentity&) override;
 
-    } v13_state_;
+    }
+    v13_state_;
 
     struct version_1_1_state
         : public type_exchange_state
     {
         // register_remote_type parent request, type_name, callback relationship.
         std::map<fastrtps::rtps::SampleIdentity,
-            std::pair<std::string, std::function<void(
-                const std::string& name,
-                const fastrtps::types::v1_1::DynamicType_ptr)>>> register_callbacks_;
+                std::pair<std::string, std::function<void(
+                    const std::string& name,
+                    const fastrtps::types::v1_1::DynamicType_ptr)>>> register_callbacks_;
 
-        bool find_callback(const fastrtps::rtps::SampleIdentity&) override;
-        void empty_callback(const fastrtps::rtps::SampleIdentity&) override;
-        void remove_callback(const fastrtps::rtps::SampleIdentity&) override;
-    } v11_state_;
+        bool find_callback(
+                const fastrtps::rtps::SampleIdentity&) override;
+        void empty_callback(
+                const fastrtps::rtps::SampleIdentity&) override;
+        void remove_callback(
+                const fastrtps::rtps::SampleIdentity&) override;
+    }
+    v11_state_;
 
     std::atomic<uint32_t> id_counter_;
 

@@ -25,9 +25,10 @@
 
 using namespace eprosima::fastrtps::types::v1_3;
 
-bool DynamicTypeMember::operator==(const DynamicTypeMember& other) const
+bool DynamicTypeMember::operator ==(
+        const DynamicTypeMember& other) const
 {
-    return get_descriptor() == other.get_descriptor() && AnnotationManager::operator==(other);
+    return get_descriptor() == other.get_descriptor() && AnnotationManager::operator ==(other);
 }
 
 bool DynamicTypeMember::equals(
@@ -53,7 +54,7 @@ std::string DynamicTypeMember::get_default_value() const
 bool DynamicTypeMember::is_consistent(
         TypeKind parentKind) const
 {
-    if(!MemberDescriptor::is_consistent(parentKind))
+    if (!MemberDescriptor::is_consistent(parentKind))
     {
         return false;
     }
@@ -63,14 +64,14 @@ bool DynamicTypeMember::is_consistent(
     // Structures and unions allow it for @external. This condition can only
     // be check in the DynamicTypeMember override
     if ((parentKind == TypeKind::TK_STRUCTURE || parentKind == TypeKind::TK_UNION) &&
-        !type_ && !annotation_is_external())
+            !type_ && !annotation_is_external())
     {
         return false;
     }
 
     // Bitset non-anonymous elements must have position and bound
     if (parentKind == TypeKind::TK_BITSET && !name_.empty() &&
-        (!annotation_is_bit_bound() || !annotation_is_position()))
+            (!annotation_is_bit_bound() || !annotation_is_position()))
     {
         return false;
     }
@@ -78,7 +79,9 @@ bool DynamicTypeMember::is_consistent(
     return true;
 }
 
-std::ostream& eprosima::fastrtps::types::v1_3::operator<<( std::ostream& os, const DynamicTypeMember& dm)
+std::ostream& eprosima::fastrtps::types::v1_3::operator <<(
+        std::ostream& os,
+        const DynamicTypeMember& dm)
 {
     using namespace std;
 
@@ -92,10 +95,10 @@ std::ostream& eprosima::fastrtps::types::v1_3::operator<<( std::ostream& os, con
         ++os.iword(DynamicTypeBuilderFactory::indentation_index);
 
         auto manips = [](ostream& os) -> ostream&
-        {
-            long indent = os.iword(DynamicTypeBuilderFactory::indentation_index);
-            return os << string(indent, '\t') << setw(10) << left;
-        };
+                {
+                    long indent = os.iword(DynamicTypeBuilderFactory::indentation_index);
+                    return os << string(indent, '\t') << setw(10) << left;
+                };
 
         os << manips << "member annotations:" << endl;
         for (const AnnotationDescriptor& d : dm.get_all_annotations())

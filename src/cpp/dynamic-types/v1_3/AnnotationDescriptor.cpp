@@ -36,7 +36,8 @@ ReturnCode_t AnnotationDescriptor::copy_from(
     return ReturnCode_t::RETCODE_OK;
 }
 
-bool AnnotationDescriptor::operator==(const AnnotationDescriptor& other) const
+bool AnnotationDescriptor::operator ==(
+        const AnnotationDescriptor& other) const
 {
     if ( type_ == other.type_ || (type_ && other.type_ && type_->equals(*other.type_)))
     {
@@ -45,12 +46,14 @@ bool AnnotationDescriptor::operator==(const AnnotationDescriptor& other) const
     return true;
 }
 
-bool AnnotationDescriptor::operator!=(const AnnotationDescriptor& other) const
+bool AnnotationDescriptor::operator !=(
+        const AnnotationDescriptor& other) const
 {
     return !(*this == other);
 }
 
-bool AnnotationDescriptor::operator<(const AnnotationDescriptor& other) const
+bool AnnotationDescriptor::operator <(
+        const AnnotationDescriptor& other) const
 {
     auto name = type_->get_name();
     auto other_name = other.type_->get_name();
@@ -119,7 +122,9 @@ ReturnCode_t AnnotationDescriptor::set_value(
     return ReturnCode_t::RETCODE_OK;
 }
 
-std::ostream& eprosima::fastrtps::types::v1_3::operator<<( std::ostream& os, const AnnotationDescriptor& ad)
+std::ostream& eprosima::fastrtps::types::v1_3::operator <<(
+        std::ostream& os,
+        const AnnotationDescriptor& ad)
 {
     using namespace std;
 
@@ -127,10 +132,10 @@ std::ostream& eprosima::fastrtps::types::v1_3::operator<<( std::ostream& os, con
     ++os.iword(DynamicTypeBuilderFactory::indentation_index);
 
     auto manips = [](ostream& os) -> ostream&
-    {
-        long indent = os.iword(DynamicTypeBuilderFactory::indentation_index);
-        return os << string(indent, '\t') << setw(10) << left;
-    };
+            {
+                long indent = os.iword(DynamicTypeBuilderFactory::indentation_index);
+                return os << string(indent, '\t') << setw(10) << left;
+            };
 
     // without type the annotation is not consistent and cannot be created
     assert(ad.type());
@@ -139,7 +144,7 @@ std::ostream& eprosima::fastrtps::types::v1_3::operator<<( std::ostream& os, con
     os << manips << "annotation:" << ad.type()->get_name() << endl;
 
     // show the map contents
-    for(auto pair : ad.get_all_values())
+    for (auto pair : ad.get_all_values())
     {
         os << manips << "\tkey:" << "'" << pair.first << "'" << endl
            << manips << "\tvalue:" << pair.second << endl;

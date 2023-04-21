@@ -213,7 +213,7 @@ void DynamicPubSubType::UpdateDynamicTypeInfo()
     for (const DynamicTypeMember* pm : dynamic_type_->get_all_members())
     {
         assert(pm);
-        if(pm->key_annotation())
+        if (pm->key_annotation())
         {
             return;
         }

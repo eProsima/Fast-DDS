@@ -223,13 +223,13 @@ public:
             const TypeObject* object = nullptr) const;
 
     RTPS_DllAPI ReturnCode_t build_dynamic_type(
-            v1_1::DynamicType_ptr & ret,
+            v1_1::DynamicType_ptr& ret,
             const std::string& name,
             const TypeIdentifier* identifier,
             const TypeObject* object = nullptr) const;
 
     RTPS_DllAPI ReturnCode_t build_dynamic_type(
-            v1_3::DynamicType_ptr & ret,
+            v1_3::DynamicType_ptr& ret,
             const std::string& name,
             const TypeIdentifier* identifier,
             const TypeObject* object = nullptr) const;

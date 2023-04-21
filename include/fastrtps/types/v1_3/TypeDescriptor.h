@@ -56,8 +56,8 @@ struct TypeDescriptorData
  *    informational purposes. Use a @ref DynamicTypeBuilder to access setters.
  */
 class TypeDescriptor
-      : protected TypeDescriptorData
-      , protected AnnotationManager
+    : protected TypeDescriptorData
+    , protected AnnotationManager
 {
 
     using TypeDescriptorData::TypeDescriptorData;
@@ -67,6 +67,7 @@ protected:
     TypeDescriptor(
             const std::string& name,
             TypeKind kind);
+
 public:
 
     //! Default constructor
@@ -74,7 +75,7 @@ public:
 
     //! Copy constructor
     RTPS_DllAPI TypeDescriptor(
-            const TypeDescriptor& other) ;
+            const TypeDescriptor& other);
 
     //! Move constructor
     RTPS_DllAPI TypeDescriptor(
@@ -87,11 +88,11 @@ public:
      * @param[in] descriptor l-value @ref TypeDescriptor reference to copy from
      * @result own @ref TypeDescriptor reference
      */
-    RTPS_DllAPI TypeDescriptor& operator=(
+    RTPS_DllAPI TypeDescriptor& operator =(
             const TypeDescriptor& descriptor) noexcept;
 
     //! Move assignment
-    RTPS_DllAPI TypeDescriptor& operator=(
+    RTPS_DllAPI TypeDescriptor& operator =(
             TypeDescriptor&& descriptor) noexcept = default;
 
     /**
@@ -115,7 +116,8 @@ protected:
 
     void refresh_indexes();
 
-    static const DynamicType& resolve_alias_type(const DynamicType& alias);
+    static const DynamicType& resolve_alias_type(
+            const DynamicType& alias);
 
     /**
      * Returns the state of the @ref DynamicType or @ref DynamicTypeBuilder object
@@ -197,7 +199,8 @@ public:
      * @param[in] label uint64_t value to query
      * @return MEMBER_ID_INVALID on failure
      */
-    MemberId get_id_from_label(uint64_t label) const;
+    MemberId get_id_from_label(
+            uint64_t label) const;
 
     /**
      * Checks if there is a member with the given name.
@@ -255,7 +258,8 @@ public:
                 The subclasses doesn't add any extra data to the state. The subclasses inherit this operator.
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
      */
-    RTPS_DllAPI bool operator==(const TypeDescriptor& descriptor) const;
+    RTPS_DllAPI bool operator ==(
+            const TypeDescriptor& descriptor) const;
 
     /**
      * Checks inequality according with the [standard] sections \b 7.5.2.7.4 \b 7.5.2.8.4
@@ -265,7 +269,8 @@ public:
                 The subclasses doesn't add any extra data to the state. The subclasses inherit this operator.
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
      */
-    RTPS_DllAPI bool operator!=(const TypeDescriptor& descriptor) const;
+    RTPS_DllAPI bool operator !=(
+            const TypeDescriptor& descriptor) const;
 
     /**
      * State comparison according with the [standard] sections \b 7.5.2.7.4 \b 7.5.2.8.4
@@ -284,7 +289,8 @@ public:
      *         members and annotations.
      * @return \b bool `true` if consistent
      */
-    RTPS_DllAPI bool is_consistent(bool type = false) const;
+    RTPS_DllAPI bool is_consistent(
+            bool type = false) const;
 
     /**
      * Checks if the kind is a primitive one according to the [standard] section \b 7.2.2.2
@@ -294,7 +300,8 @@ public:
     RTPS_DllAPI bool is_primitive() const;
 
     //! Checks if the underlying aggregate type is a subclass of the given one
-    RTPS_DllAPI bool is_subclass(const TypeDescriptor& descriptor) const;
+    RTPS_DllAPI bool is_subclass(
+            const TypeDescriptor& descriptor) const;
 
     /**
      * Getter for @b base_type property (see [standard] table 50)
@@ -413,7 +420,9 @@ public:
 };
 
 //! @ref TypeDescriptor expected `std::ostream` non-member override of `operator<<`
-RTPS_DllAPI std::ostream& operator<<(std::ostream& os, const TypeDescriptor& md);
+RTPS_DllAPI std::ostream& operator <<(
+        std::ostream& os,
+        const TypeDescriptor& md);
 
 } // namespace v1_3
 } // namespace types

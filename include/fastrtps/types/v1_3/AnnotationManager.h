@@ -34,10 +34,17 @@ class AnnotationManager
     //! auxiliary methods for setters
 
     template<typename C, typename M>
-    void annotation_set(const std::string& id, const C& c, const M& m);
+    void annotation_set(
+            const std::string& id,
+            const C& c,
+            const M& m);
 
-    void annotation_set(const std::string& id, const std::string& new_val);
-    void annotation_set(const std::string& id, const char* new_val);
+    void annotation_set(
+            const std::string& id,
+            const std::string& new_val);
+    void annotation_set(
+            const std::string& id,
+            const char* new_val);
 
 protected:
 
@@ -48,13 +55,15 @@ protected:
     }
 
     //! annotation state comparison
-    bool operator==(const AnnotationManager& other) const
+    bool operator ==(
+            const AnnotationManager& other) const
     {
         return annotation_ == other.annotation_;
     }
 
     //! retrive a specific annotation by name
-    std::pair<annotation_iterator, bool> get_annotation(const std::string& name) const;
+    std::pair<annotation_iterator, bool> get_annotation(
+            const std::string& name) const;
 
 public:
 
@@ -136,34 +145,43 @@ public:
     // Annotations setters
 
     //! sets optional annotation
-    RTPS_DllAPI void annotation_set_optional(bool optional);
+    RTPS_DllAPI void annotation_set_optional(
+            bool optional);
 
     //! sets key annotation
-    RTPS_DllAPI void annotation_set_key(bool key);
+    RTPS_DllAPI void annotation_set_key(
+            bool key);
 
     //! sets 'client must understand' annotation
-    RTPS_DllAPI void annotation_set_must_understand(bool must_understand);
+    RTPS_DllAPI void annotation_set_must_understand(
+            bool must_understand);
 
     //! sets non-serialized annotation
-    RTPS_DllAPI void annotation_set_non_serialized(bool non_serialized);
+    RTPS_DllAPI void annotation_set_non_serialized(
+            bool non_serialized);
 
     //! sets value annotation
-    RTPS_DllAPI void annotation_set_value(const std::string& value);
+    RTPS_DllAPI void annotation_set_value(
+            const std::string& value);
 
     //! sets default annotation
-    RTPS_DllAPI void annotation_set_default(const std::string& default_value);
+    RTPS_DllAPI void annotation_set_default(
+            const std::string& default_value);
 
     //! sets default-literal annotation
     RTPS_DllAPI void annotation_set_default_literal();
 
     //! sets position annotation
-    RTPS_DllAPI void annotation_set_position(uint16_t position);
+    RTPS_DllAPI void annotation_set_position(
+            uint16_t position);
 
     //! sets bit-bound annotation
-    RTPS_DllAPI void annotation_set_bit_bound(uint16_t bit_bound);
+    RTPS_DllAPI void annotation_set_bit_bound(
+            uint16_t bit_bound);
 
     //! sets extensibility annotation
-    RTPS_DllAPI void annotation_set_extensibility(const std::string& extensibility);
+    RTPS_DllAPI void annotation_set_extensibility(
+            const std::string& extensibility);
 
     //! sets mutable annotation
     RTPS_DllAPI void annotation_set_mutable();
@@ -175,10 +193,12 @@ public:
     RTPS_DllAPI void annotation_set_appendable();
 
     //! sets nested annotation
-    RTPS_DllAPI void annotation_set_nested(bool nested);
+    RTPS_DllAPI void annotation_set_nested(
+            bool nested);
 
     //! sets external annotation referencing a specific type name
-    RTPS_DllAPI void annotation_set_external(const std::string& type_name);
+    RTPS_DllAPI void annotation_set_external(
+            const std::string& type_name);
 
     /**
      * Apply the given annotation to this type (see [standard] section 7.5.2.9.5)

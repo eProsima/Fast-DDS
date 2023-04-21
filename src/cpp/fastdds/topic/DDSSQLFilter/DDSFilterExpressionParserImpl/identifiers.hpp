@@ -187,15 +187,15 @@ struct identifier_processor
                 break;
 
             case TypeKind::EK_COMPLETE:
+            {
+                const TypeObject* type_object = TypeObjectFactory::get_instance()->get_type_object(&ti);
+                if (TypeKind::TK_ENUM == type_object->complete()._d())
                 {
-                    const TypeObject* type_object = TypeObjectFactory::get_instance()->get_type_object(&ti);
-                    if (TypeKind::TK_ENUM == type_object->complete()._d())
-                    {
-                        res = DDSFilterValue::ValueKind::ENUM;
-                        break;
-                    }
+                    res = DDSFilterValue::ValueKind::ENUM;
+                    break;
                 }
-            FASTRTPS_FALLTHROUGH
+            }
+                FASTRTPS_FALLTHROUGH
             default:
                 throw parse_error("type is not primitive", pos);
         }

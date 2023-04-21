@@ -52,20 +52,22 @@ DynamicTypeBuilder::DynamicTypeBuilder(
     {
         // create on heap
         instance_ = std::make_shared<DynamicType>(
-                DynamicType::use_the_create_method{},
-                *this);
+            DynamicType::use_the_create_method{},
+            *this);
 
         // notify the tracker
         dynamic_tracker<selected_mode>::get_dynamic_tracker().add_primitive(instance_.get());
     }
 }
 
-void DynamicTypeBuilder::after_construction(DynamicType* type)
+void DynamicTypeBuilder::after_construction(
+        DynamicType* type)
 {
     dynamic_tracker<selected_mode>::get_dynamic_tracker().add(type);
 }
 
-void DynamicTypeBuilder::before_destruction(DynamicType* type)
+void DynamicTypeBuilder::before_destruction(
+        DynamicType* type)
 {
     dynamic_tracker<selected_mode>::get_dynamic_tracker().remove(type);
 }
@@ -121,15 +123,15 @@ DynamicTypeBuilder::member_iterator DynamicTypeBuilder::add_empty_member(
 }
 
 ReturnCode_t DynamicTypeBuilder::add_member(
-            MemberDescriptor&& descriptor) noexcept
+        MemberDescriptor&& descriptor) noexcept
 {
     try
     {
         if (!descriptor.is_consistent(get_kind()))
         {
             throw std::system_error(
-                    ReturnCode_t::RETCODE_BAD_PARAMETER,
-                    "Error adding member, The input descriptor isn't consistent.");
+                      ReturnCode_t::RETCODE_BAD_PARAMETER,
+                      "Error adding member, The input descriptor isn't consistent.");
         }
 
         if (get_kind() != TypeKind::TK_ANNOTATION && get_kind() != TypeKind::TK_BITMASK
@@ -140,48 +142,48 @@ ReturnCode_t DynamicTypeBuilder::add_member(
             os << "Error adding member, the current type " << (octet)get_kind() << " doesn't support members.";
 
             throw std::system_error(
-                    ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
-                    os.str());
+                      ReturnCode_t::RETCODE_PRECONDITION_NOT_MET,
+                      os.str());
         }
 
         auto member_name = descriptor.get_name();
 
         // Bitsets allow multiple empty members.
-        if( get_kind() != TypeKind::TK_BITSET && descriptor.get_name().empty())
+        if ( get_kind() != TypeKind::TK_BITSET && descriptor.get_name().empty())
         {
             throw std::system_error(
-                    ReturnCode_t::RETCODE_BAD_PARAMETER,
-                    "Error adding member, missing proper name.");
+                      ReturnCode_t::RETCODE_BAD_PARAMETER,
+                      "Error adding member, missing proper name.");
         }
 
-        if(!member_name.empty() && exists_member_by_name(member_name))
+        if (!member_name.empty() && exists_member_by_name(member_name))
         {
             throw std::system_error(
-                    ReturnCode_t::RETCODE_BAD_PARAMETER,
-                    "Error adding member, there is other member with the same name.");
+                      ReturnCode_t::RETCODE_BAD_PARAMETER,
+                      "Error adding member, there is other member with the same name.");
         }
 
         auto member_id = descriptor.get_id();
         if (member_id != MEMBER_ID_INVALID && exists_member_by_id(member_id))
         {
             throw std::system_error(
-                    ReturnCode_t::RETCODE_BAD_PARAMETER,
-                    "Error adding member, there is other member with the same id.");
+                      ReturnCode_t::RETCODE_BAD_PARAMETER,
+                      "Error adding member, there is other member with the same id.");
         }
 
         if (!check_union_configuration(descriptor))
         {
             throw std::system_error(
-                    ReturnCode_t::RETCODE_BAD_PARAMETER,
-                    "Error adding member, invalid union parameters.");
+                      ReturnCode_t::RETCODE_BAD_PARAMETER,
+                      "Error adding member, invalid union parameters.");
         }
 
         if (get_kind() == TypeKind::TK_BITMASK &&
                 descriptor.get_id() >= get_bounds(0))
         {
             throw std::system_error(
-                    ReturnCode_t::RETCODE_BAD_PARAMETER,
-                    "Error adding member, out of bounds.");
+                      ReturnCode_t::RETCODE_BAD_PARAMETER,
+                      "Error adding member, out of bounds.");
         }
 
         auto it = add_empty_member(descriptor.get_index(), member_name);
@@ -191,13 +193,14 @@ ReturnCode_t DynamicTypeBuilder::add_member(
         descriptor.index_ = newMember.index_;
         newMember = std::move(descriptor);
 
-        if(member_id == MEMBER_ID_INVALID)
+        if (member_id == MEMBER_ID_INVALID)
         {
             do
-            { // assing a new one
+            {
+                // assing a new one
                 member_id = current_member_id_;
             } // check and advance
-            while(exists_member_by_id(current_member_id_++));
+            while (exists_member_by_id(current_member_id_++));
 
             newMember.set_id(member_id);
         }
@@ -212,7 +215,7 @@ ReturnCode_t DynamicTypeBuilder::add_member(
         // invalidate type object
         instance_.reset();
     }
-    catch(std::system_error& e)
+    catch (std::system_error& e)
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, e.what());
         return e.code().value();

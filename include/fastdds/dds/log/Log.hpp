@@ -137,7 +137,7 @@ public:
     RTPS_DllAPI static void SetErrorStringFilter(
             const std::regex&);
 
-        //! Returns a copy of the current error string filter or an empty object otherwise
+    //! Returns a copy of the current error string filter or an empty object otherwise
     RTPS_DllAPI static std::regex GetErrorStringFilter();
 
     //! Returns the logging engine to configuration defaults.
@@ -186,18 +186,20 @@ public:
     struct ScopeLogs
     {
         //! Set a specific category filter
-        ScopeLogs(std::string category_filter)
+        ScopeLogs(
+                std::string category_filter)
         {
 #ifdef __cpp_lib_make_unique
             filter_ = std::make_unique<std::regex>(Log::GetCategoryFilter());
 #else
             filter_ = std::unique_ptr<std::regex>(new std::regex(Log::GetCategoryFilter()));
-#endif
+#endif // ifdef __cpp_lib_make_unique
             Log::SetCategoryFilter(std::regex{category_filter});
         }
 
         //! Set a specified level
-        ScopeLogs(Log::Kind new_verbosity = Log::Error)
+        ScopeLogs(
+                Log::Kind new_verbosity = Log::Error)
         {
             old_ = Log::GetVerbosity();
             Log::SetVerbosity(new_verbosity);

@@ -25,12 +25,12 @@ AnnotationManager::get_annotation(
 {
     annotation_iterator it = annotation_.begin();
 
-    for(; it != annotation_.end(); ++it)
+    for (; it != annotation_.end(); ++it)
     {
         const AnnotationDescriptor& d = *it;
         if ( d.type() && d.type()->get_kind() != TypeKind::TK_NONE
-             && !d.type()->get_name().empty()
-             && d.type()->get_name().compare(name) == 0)
+                && !d.type()->get_name().empty()
+                && d.type()->get_name().compare(name) == 0)
         {
             return std::make_pair(it, true);
         }
@@ -215,13 +215,16 @@ uint16_t AnnotationManager::annotation_get_bit_bound() const
  * @param M functor that modifies the annotation if present: void(AnnotationDescriptor&)
  */
 template<typename C, typename M>
-void AnnotationManager::annotation_set( const std::string& id, const C& c, const M& m)
+void AnnotationManager::annotation_set(
+        const std::string& id,
+        const C& c,
+        const M& m)
 {
     annotation_iterator it;
     bool found;
 
     std::tie(it, found) = get_annotation(id);
-    if(!found)
+    if (!found)
     {
         AnnotationDescriptor descriptor;
         descriptor.set_type(
@@ -229,7 +232,7 @@ void AnnotationManager::annotation_set( const std::string& id, const C& c, const
         m(descriptor);
         apply_annotation(descriptor);
     }
-    else if(c(*it))
+    else if (c(*it))
     {
         // Reinsert because order may be modified
         AnnotationDescriptor descriptor(std::move(*it));
@@ -243,55 +246,65 @@ void AnnotationManager::annotation_set( const std::string& id, const C& c, const
 }
 
 //! Specialization of the above template to simple values
-void AnnotationManager::annotation_set(const std::string& id, const char* new_val)
+void AnnotationManager::annotation_set(
+        const std::string& id,
+        const char* new_val)
 {
     annotation_set(
-            id,
-            [new_val](const AnnotationDescriptor& d) -> bool
-            {
-               std::string val;
-               d.get_value(val, "value");
-               return 0 != val.compare(new_val);
-            },
-            [new_val](AnnotationDescriptor& d)
-            {
-                d.set_value("value", new_val);
-            });
+        id,
+        [new_val](const AnnotationDescriptor& d) -> bool
+        {
+            std::string val;
+            d.get_value(val, "value");
+            return 0 != val.compare(new_val);
+        },
+        [new_val](AnnotationDescriptor& d)
+        {
+            d.set_value("value", new_val);
+        });
 }
 
-void AnnotationManager::annotation_set(const std::string& id, const std::string& new_val)
+void AnnotationManager::annotation_set(
+        const std::string& id,
+        const std::string& new_val)
 {
     return annotation_set(id, new_val.c_str());
 }
 
 // Annotations setters
 
-void AnnotationManager::annotation_set_optional(bool optional)
+void AnnotationManager::annotation_set_optional(
+        bool optional)
 {
     annotation_set(ANNOTATION_OPTIONAL_ID, optional ? "true" : "false");
 }
 
-void AnnotationManager::annotation_set_key(bool key)
+void AnnotationManager::annotation_set_key(
+        bool key)
 {
     annotation_set(ANNOTATION_KEY_ID, key ? "true" : "false");
 }
 
-void AnnotationManager::annotation_set_must_understand(bool must_understand)
+void AnnotationManager::annotation_set_must_understand(
+        bool must_understand)
 {
     annotation_set(ANNOTATION_MUST_UNDERSTAND_ID, must_understand ? "true" : "false");
 }
 
-void AnnotationManager::annotation_set_non_serialized(bool non_serialized)
+void AnnotationManager::annotation_set_non_serialized(
+        bool non_serialized)
 {
     annotation_set(ANNOTATION_NON_SERIALIZED_ID, non_serialized ? "true" : "false");
 }
 
-void AnnotationManager::annotation_set_value(const std::string& value)
+void AnnotationManager::annotation_set_value(
+        const std::string& value)
 {
     annotation_set(ANNOTATION_VALUE_ID, value);
 }
 
-void AnnotationManager::annotation_set_default(const std::string& default_value)
+void AnnotationManager::annotation_set_default(
+        const std::string& default_value)
 {
     annotation_set(ANNOTATION_DEFAULT_ID, default_value);
 }
@@ -301,12 +314,14 @@ void AnnotationManager::annotation_set_default_literal()
     annotation_set(ANNOTATION_DEFAULT_LITERAL_ID, "true");
 }
 
-void AnnotationManager::annotation_set_position(uint16_t position)
+void AnnotationManager::annotation_set_position(
+        uint16_t position)
 {
     annotation_set(ANNOTATION_POSITION_ID, std::to_string(position));
 }
 
-void AnnotationManager::annotation_set_bit_bound(uint16_t bit_bound)
+void AnnotationManager::annotation_set_bit_bound(
+        uint16_t bit_bound)
 {
     annotation_set(ANNOTATION_BIT_BOUND_ID, std::to_string(bit_bound));
 }
@@ -338,12 +353,14 @@ void AnnotationManager::annotation_set_nested(
     annotation_set(ANNOTATION_NESTED_ID, nested ? CONST_TRUE : CONST_FALSE);
 }
 
-void AnnotationManager::annotation_set_external(const std::string& type_name)
+void AnnotationManager::annotation_set_external(
+        const std::string& type_name)
 {
     annotation_set(ANNOTATION_EXTERNAL_ID, type_name);
 }
 
-ReturnCode_t AnnotationManager::apply_annotation(const AnnotationDescriptor& descriptor)
+ReturnCode_t AnnotationManager::apply_annotation(
+        const AnnotationDescriptor& descriptor)
 {
     if (descriptor.is_consistent())
     {
@@ -363,17 +380,17 @@ ReturnCode_t AnnotationManager::apply_annotation(
         const std::string& value)
 {
     annotation_set(
-            annotation_name,
-            [&key, &value](const AnnotationDescriptor& d) -> bool
-            {
-               std::string val;
-               d.get_value(val, key);
-               return val != value;
-            },
-            [&key, &value](AnnotationDescriptor& d)
-            {
-                d.set_value(key, value);
-            });
+        annotation_name,
+        [&key, &value](const AnnotationDescriptor& d) -> bool
+        {
+            std::string val;
+            d.get_value(val, key);
+            return val != value;
+        },
+        [&key, &value](AnnotationDescriptor& d)
+        {
+            d.set_value(key, value);
+        });
 
     return ReturnCode_t::RETCODE_OK;
 }

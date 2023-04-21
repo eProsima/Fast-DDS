@@ -100,7 +100,8 @@ ReturnCode_t MemberDescriptor::copy_from(
     return ReturnCode_t::RETCODE_OK;
 }
 
-bool MemberDescriptor::operator==(const MemberDescriptor& other) const
+bool MemberDescriptor::operator ==(
+        const MemberDescriptor& other) const
 {
     return name_ == other.name_ &&
            id_ == other.id_ &&
@@ -111,9 +112,10 @@ bool MemberDescriptor::operator==(const MemberDescriptor& other) const
            (type_ == other.type_ || (type_ && other.type_ && *type_ == *other.type_ ));
 }
 
-bool MemberDescriptor::operator!=(const MemberDescriptor& other) const
+bool MemberDescriptor::operator !=(
+        const MemberDescriptor& other) const
 {
-    return !operator==(other);
+    return !operator ==(other);
 }
 
 bool MemberDescriptor::equals(
@@ -154,7 +156,7 @@ bool MemberDescriptor::is_consistent(
     // Structures and unions allow it for @external. This condition can only
     // be check in the DynamicTypeMember override
     if ((parentKind != TypeKind::TK_BITMASK && parentKind != TypeKind::TK_ENUM &&
-         parentKind != TypeKind::TK_STRUCTURE && parentKind != TypeKind::TK_UNION) && !type_)
+            parentKind != TypeKind::TK_STRUCTURE && parentKind != TypeKind::TK_UNION) && !type_)
     {
         return false;
     }
@@ -374,7 +376,9 @@ void MemberDescriptor::set_default_union_value(
     default_label_ = bDefault;
 }
 
-std::ostream& eprosima::fastrtps::types::v1_3::operator<<( std::ostream& os, const MemberDescriptor& md)
+std::ostream& eprosima::fastrtps::types::v1_3::operator <<(
+        std::ostream& os,
+        const MemberDescriptor& md)
 {
     using namespace std;
 
@@ -384,10 +388,10 @@ std::ostream& eprosima::fastrtps::types::v1_3::operator<<( std::ostream& os, con
     auto desc = static_cast<const TypeDescriptor*>(os.pword(DynamicTypeBuilderFactory::object_index));
 
     auto manips = [](ostream& os) -> ostream&
-    {
-        long indent = os.iword(DynamicTypeBuilderFactory::indentation_index);
-        return os << string(indent, '\t') << setw(10) << left;
-    };
+            {
+                long indent = os.iword(DynamicTypeBuilderFactory::indentation_index);
+                return os << string(indent, '\t') << setw(10) << left;
+            };
 
     // TODO: Barro, add support Type details and labels
 

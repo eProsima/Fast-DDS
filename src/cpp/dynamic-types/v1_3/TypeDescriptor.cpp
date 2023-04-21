@@ -74,15 +74,15 @@ TypeDescriptor::TypeDescriptor(
 
 TypeDescriptor::TypeDescriptor(
         const TypeDescriptor& other)
-        : TypeDescriptorData(other)
+    : TypeDescriptorData(other)
 {
     refresh_indexes();
 }
 
-TypeDescriptor& TypeDescriptor::operator=(
+TypeDescriptor& TypeDescriptor::operator =(
         const TypeDescriptor& descriptor) noexcept
 {
-    TypeDescriptorData::operator=(descriptor);
+    TypeDescriptorData::operator =(descriptor);
     refresh_indexes();
     return *this;
 }
@@ -105,7 +105,8 @@ void TypeDescriptor::refresh_indexes()
     }
 }
 
-const DynamicType& TypeDescriptor::resolve_alias_type(const DynamicType& type)
+const DynamicType& TypeDescriptor::resolve_alias_type(
+        const DynamicType& type)
 {
     const DynamicType* a = &type;
 
@@ -113,7 +114,7 @@ const DynamicType& TypeDescriptor::resolve_alias_type(const DynamicType& type)
     {
         assert(a->base_type_);
         a = a->base_type_.get();
-    };
+    }
 
     return *a;
 }
@@ -139,7 +140,8 @@ ReturnCode_t TypeDescriptor::copy_from(
     return ReturnCode_t::RETCODE_OK;
 }
 
-bool TypeDescriptor::operator==(const TypeDescriptor& descriptor) const
+bool TypeDescriptor::operator ==(
+        const TypeDescriptor& descriptor) const
 {
     // Resolve alias dependencies
     const TypeDescriptor* a = this;
@@ -149,18 +151,18 @@ bool TypeDescriptor::operator==(const TypeDescriptor& descriptor) const
     {
         assert(a->base_type_);
         a = a->base_type_.get();
-    };
+    }
 
     while ( b->kind_ == TypeKind::TK_ALIAS )
     {
         assert(b->base_type_);
         b = b->base_type_.get();
-    };
+    }
 
     return a->name_ == b->name_ &&
            a->kind_ == b->kind_ &&
            a->bound_ == b->bound_ &&
-           a->AnnotationManager::operator==(*b) &&
+           a->AnnotationManager::operator ==(*b) &&
            a->members_ == b->members_ &&
            (a->base_type_ == b->base_type_ || (
                a->base_type_ &&
@@ -180,9 +182,10 @@ bool TypeDescriptor::operator==(const TypeDescriptor& descriptor) const
                *a->key_element_type_ == *b->key_element_type_));
 }
 
-bool TypeDescriptor::operator!=(const TypeDescriptor& descriptor) const
+bool TypeDescriptor::operator !=(
+        const TypeDescriptor& descriptor) const
 {
-    return !operator==(descriptor);
+    return !operator ==(descriptor);
 }
 
 bool TypeDescriptor::equals(
@@ -266,7 +269,8 @@ uint32_t TypeDescriptor::get_total_bounds() const
     return BOUND_UNLIMITED;
 }
 
-bool TypeDescriptor::is_consistent(bool type /* = false*/) const
+bool TypeDescriptor::is_consistent(
+        bool type /* = false*/) const
 {
     // Enums should have at least one member
     if (type && kind_ == TypeKind::TK_ENUM && members_.empty())
@@ -293,7 +297,8 @@ bool TypeDescriptor::is_consistent(bool type /* = false*/) const
     }
 
     // These types need one bound with the length of the field.
-    if (bound_.size() != 1 && (kind_ == TypeKind::TK_SEQUENCE || kind_ == TypeKind::TK_MAP || kind_ == TypeKind::TK_BITMASK ||
+    if (bound_.size() != 1 &&
+            (kind_ == TypeKind::TK_SEQUENCE || kind_ == TypeKind::TK_MAP || kind_ == TypeKind::TK_BITMASK ||
             kind_ == TypeKind::TK_STRING8 || kind_ == TypeKind::TK_STRING16))
     {
         return false;
@@ -306,7 +311,8 @@ bool TypeDescriptor::is_consistent(bool type /* = false*/) const
     }
 
     // ElementType is used by these types to set the "value" type of the element, otherwise it should be null.
-    if (!element_type_ && (kind_ == TypeKind::TK_ARRAY || kind_ == TypeKind::TK_SEQUENCE || kind_ == TypeKind::TK_STRING8 ||
+    if (!element_type_ &&
+            (kind_ == TypeKind::TK_ARRAY || kind_ == TypeKind::TK_SEQUENCE || kind_ == TypeKind::TK_STRING8 ||
             kind_ == TypeKind::TK_STRING16 || kind_ == TypeKind::TK_MAP || kind_ == TypeKind::TK_BITMASK))
     {
         return false;
@@ -331,7 +337,10 @@ bool TypeDescriptor::is_consistent(bool type /* = false*/) const
 
     // Check members if any
     if (type && std::any_of(members_.begin(), members_.end(),
-            [this](const DynamicTypeMember& m){ return !m.is_consistent(kind_); }))
+            [this](const DynamicTypeMember& m)
+            {
+                return !m.is_consistent(kind_);
+            }))
     {
         // inconsistencies in the use of annotations
         return false;
@@ -349,13 +358,14 @@ bool TypeDescriptor::is_primitive() const
            !element_type_ && !key_element_type_;
 }
 
-bool TypeDescriptor::is_subclass(const TypeDescriptor& descriptor) const
+bool TypeDescriptor::is_subclass(
+        const TypeDescriptor& descriptor) const
 {
     return descriptor.kind_ == TypeKind::TK_STRUCTURE &&
            kind_ == TypeKind::TK_STRUCTURE &&
            base_type_ && (
-               *base_type_ == descriptor ||
-               base_type_->is_subclass(descriptor));
+        *base_type_ == descriptor ||
+        base_type_->is_subclass(descriptor));
 }
 
 bool TypeDescriptor::is_type_name_consistent(
@@ -431,7 +441,10 @@ const std::list<const DynamicTypeMember*> TypeDescriptor::get_all_members() cons
         members_.begin(),
         members_.end(),
         std::back_inserter(res),
-        [](const DynamicTypeMember& m) { return &m; });
+        [](const DynamicTypeMember& m)
+        {
+            return &m;
+        });
 
     return res;
 }
@@ -469,8 +482,8 @@ std::map<MemberId, const DynamicTypeMember*> TypeDescriptor::get_all_members_by_
 }
 
 ReturnCode_t TypeDescriptor::get_member_by_index(
-            MemberDescriptor& member,
-            uint32_t index) const noexcept
+        MemberDescriptor& member,
+        uint32_t index) const noexcept
 {
     uint32_t offset = 0;
 
@@ -557,7 +570,7 @@ ReturnCode_t TypeDescriptor::get_member(
     bool found;
 
     std::tie(pM, found) = get_member(id);
-    if(found)
+    if (found)
     {
         member = pM->get_descriptor();
         return ReturnCode_t::RETCODE_OK;
@@ -586,7 +599,7 @@ MemberId TypeDescriptor::get_member_id_by_name(
 {
     auto it = member_by_name_.find(name);
 
-    if(it != member_by_name_.end())
+    if (it != member_by_name_.end())
     {
         return it->second->get_id();
     }
@@ -620,7 +633,7 @@ MemberId TypeDescriptor::get_member_id_at_index(
         }
     }
 
-    if(index >= (offset + members_.size()))
+    if (index >= (offset + members_.size()))
     {
         // index out of boundaries
         return MEMBER_ID_INVALID;
@@ -661,7 +674,8 @@ bool TypeDescriptor::exists_member_by_id(
     return member_by_id_.find(id) != member_by_id_.end();
 }
 
-MemberId TypeDescriptor::get_id_from_label(uint64_t label) const
+MemberId TypeDescriptor::get_id_from_label(
+        uint64_t label) const
 {
     // Check is a union
     if (TypeKind::TK_UNION != kind_)
@@ -680,7 +694,7 @@ MemberId TypeDescriptor::get_id_from_label(uint64_t label) const
     }
 
     // Check the members
-    for (auto & m : members_)
+    for (auto& m : members_)
     {
         auto& lbs = m.get_union_labels();
         auto it = lbs.find(label);
@@ -693,7 +707,9 @@ MemberId TypeDescriptor::get_id_from_label(uint64_t label) const
     return MEMBER_ID_INVALID;
 }
 
-std::ostream& eprosima::fastrtps::types::v1_3::operator<<(std::ostream& os, const TypeDescriptor& td)
+std::ostream& eprosima::fastrtps::types::v1_3::operator <<(
+        std::ostream& os,
+        const TypeDescriptor& td)
 {
     using namespace std;
 
@@ -701,10 +717,10 @@ std::ostream& eprosima::fastrtps::types::v1_3::operator<<(std::ostream& os, cons
     ++os.iword(DynamicTypeBuilderFactory::indentation_index);
 
     auto manips = [](ostream& os) -> ostream&
-    {
-        long indent = os.iword(DynamicTypeBuilderFactory::indentation_index);
-        return os << string(indent, '\t') << setw(10) << left;
-    };
+            {
+                long indent = os.iword(DynamicTypeBuilderFactory::indentation_index);
+                return os << string(indent, '\t') << setw(10) << left;
+            };
 
     // TODO: Barro, add support for bounds & annotations
 
@@ -762,7 +778,7 @@ std::ostream& eprosima::fastrtps::types::v1_3::operator<<(std::ostream& os, cons
         os.pword(DynamicTypeBuilderFactory::object_index) = (void*)&td;
 
         os << manips << "members:";
-        for(const DynamicTypeMember* m : td.get_all_members())
+        for (const DynamicTypeMember* m : td.get_all_members())
         {
             os << *m;
         }

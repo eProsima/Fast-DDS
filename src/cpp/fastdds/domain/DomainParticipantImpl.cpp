@@ -93,27 +93,32 @@ using fastrtps::rtps::EndpointKind_t;
 using fastrtps::rtps::ResourceEvent;
 using eprosima::fastdds::dds::Log;
 
-bool DomainParticipantImpl::version_1_3_state::find_callback(const fastrtps::rtps::SampleIdentity& id)
+bool DomainParticipantImpl::version_1_3_state::find_callback(
+        const fastrtps::rtps::SampleIdentity& id)
 {
     return register_callbacks_.find(id) != register_callbacks_.end();
 }
 
-bool DomainParticipantImpl::version_1_1_state::find_callback(const fastrtps::rtps::SampleIdentity& id)
+bool DomainParticipantImpl::version_1_1_state::find_callback(
+        const fastrtps::rtps::SampleIdentity& id)
 {
     return register_callbacks_.find(id) != register_callbacks_.end();
 }
 
-void DomainParticipantImpl::version_1_3_state::remove_callback(const fastrtps::rtps::SampleIdentity& id)
+void DomainParticipantImpl::version_1_3_state::remove_callback(
+        const fastrtps::rtps::SampleIdentity& id)
 {
     register_callbacks_.erase(id);
 }
 
-void DomainParticipantImpl::version_1_1_state::remove_callback(const fastrtps::rtps::SampleIdentity& id)
+void DomainParticipantImpl::version_1_1_state::remove_callback(
+        const fastrtps::rtps::SampleIdentity& id)
 {
     register_callbacks_.erase(id);
 }
 
-void DomainParticipantImpl::version_1_3_state::empty_callback(const fastrtps::rtps::SampleIdentity& id)
+void DomainParticipantImpl::version_1_3_state::empty_callback(
+        const fastrtps::rtps::SampleIdentity& id)
 {
     auto it = register_callbacks_.find(id);
     if (it != register_callbacks_.end())
@@ -122,7 +127,8 @@ void DomainParticipantImpl::version_1_3_state::empty_callback(const fastrtps::rt
     }
 }
 
-void DomainParticipantImpl::version_1_1_state::empty_callback(const fastrtps::rtps::SampleIdentity& id)
+void DomainParticipantImpl::version_1_1_state::empty_callback(
+        const fastrtps::rtps::SampleIdentity& id)
 {
     auto it = register_callbacks_.find(id);
     if (it != register_callbacks_.end())
@@ -2049,7 +2055,7 @@ bool DomainParticipantImpl::check_get_type_request(
             {
                 fastrtps::types::v1_3::DynamicType_ptr dynamic;
                 auto res = fastrtps::types::TypeObjectFactory::get_instance()->build_dynamic_type(
-                        dynamic, name, identifier, object);
+                    dynamic, name, identifier, object);
 
                 if (!!res)
                 {
@@ -2376,7 +2382,7 @@ void DomainParticipantImpl::on_child_requests_finished(
             {
                 remove_child_request(parent);
             }
-            else if(!missing)
+            else if (!missing)
             {
                 // Or a top-level request?
                 if (pending_requests_it->second.size() < 2)

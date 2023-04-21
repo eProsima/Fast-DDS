@@ -58,12 +58,12 @@ void DynamicType::clear()
 bool DynamicType::equals(
         const DynamicType& other) const
 {
-    return operator==(other);
+    return operator ==(other);
 }
 
 bool DynamicType::is_complex_kind() const
 {
-    switch(kind_)
+    switch (kind_)
     {
         case TypeKind::TK_ANNOTATION:
         case TypeKind::TK_ARRAY:
@@ -76,7 +76,7 @@ bool DynamicType::is_complex_kind() const
             return true;
         default:
             return false;
-    };
+    }
 }
 
 bool DynamicType::is_discriminator_type() const
@@ -148,7 +148,8 @@ size_t DynamicType::get_size() const
             }
         }
         default:
-            EPROSIMA_LOG_ERROR(DYN_TYPES, "Called get_size() within a non primitive type! This is a program's logic error.");
+            EPROSIMA_LOG_ERROR(DYN_TYPES,
+                    "Called get_size() within a non primitive type! This is a program's logic error.");
     }
     return 0;
 }
@@ -160,7 +161,7 @@ bool DynamicType::deserialize_discriminator(
     assert(discriminator_type_);
     uint64_t label = 0;
 
-    switch(discriminator_type_->get_kind())
+    switch (discriminator_type_->get_kind())
     {
         case TypeKind::TK_BOOLEAN:
         {
@@ -309,10 +310,10 @@ bool DynamicType::deserialize_discriminator(
                 }
             }
         }
-        FASTRTPS_FALLTHROUGH;
+            FASTRTPS_FALLTHROUGH;
         default:
             EPROSIMA_LOG_ERROR(DYN_TYPES, "DynamicData with wrong discriminator type: "
-                << discriminator_type_->get_kind());
+                    << discriminator_type_->get_kind());
             return false;
     }
 
@@ -340,8 +341,8 @@ bool DynamicType::deserialize(
 
     // check data and type are related
     assert(kind_ == data.get_kind() ||
-           kind_ == TypeKind::TK_ALIAS ||
-           data.type_->is_subclass(*this));
+            kind_ == TypeKind::TK_ALIAS ||
+            data.type_->is_subclass(*this));
 
     switch (get_kind())
     {
@@ -772,8 +773,8 @@ size_t DynamicType::getCdrSerializedSize(
 
     // check data and type are related
     assert(kind_ == data.get_kind() ||
-           kind_ == TypeKind::TK_ALIAS ||
-           data.type_->is_subclass(*this));
+            kind_ == TypeKind::TK_ALIAS ||
+            data.type_->is_subclass(*this));
 
     switch (get_kind())
     {
@@ -850,7 +851,8 @@ size_t DynamicType::getCdrSerializedSize(
         case TypeKind::TK_UNION:
         {
             // Union discriminator
-            current_alignment += MemberId::serialized_size + eprosima::fastcdr::Cdr::alignment(current_alignment, MemberId::serialized_size);
+            current_alignment += MemberId::serialized_size + eprosima::fastcdr::Cdr::alignment(current_alignment,
+                            MemberId::serialized_size);
 
             if (data.union_id_ != MEMBER_ID_INVALID)
             {
@@ -920,7 +922,8 @@ size_t DynamicType::getCdrSerializedSize(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
                 {
                     // Element Size
-                    current_alignment += element_type_->getCdrSerializedSize(*(DynamicData*)it->second, current_alignment);
+                    current_alignment += element_type_->getCdrSerializedSize(*(DynamicData*)it->second,
+                                    current_alignment);
                 }
                 else
                 {
@@ -968,7 +971,8 @@ size_t DynamicType::getCdrSerializedSize(
             for (auto it = data.values_.begin(); it != data.values_.end(); ++it)
             {
                 // Key Size
-                current_alignment += key_element_type_->getCdrSerializedSize(*(DynamicData*)it++->second, current_alignment);
+                current_alignment += key_element_type_->getCdrSerializedSize(*(DynamicData*)it++->second,
+                                current_alignment);
                 // Element Size
                 current_alignment += element_type_->getCdrSerializedSize(*(DynamicData*)it->second, current_alignment);
             }
@@ -1295,7 +1299,7 @@ void DynamicType::serialize_discriminator(
         }
     }
 
-    switch(discriminator_type_->get_kind())
+    switch (discriminator_type_->get_kind())
     {
         case TypeKind::TK_BOOLEAN:
         {
@@ -1384,10 +1388,10 @@ void DynamicType::serialize_discriminator(
                 case 4: cdr << (uint64_t)label; break;
             }
         }
-        FASTRTPS_FALLTHROUGH;
+            FASTRTPS_FALLTHROUGH;
         default:
             EPROSIMA_LOG_ERROR(DYN_TYPES, "DynamicData with wrong discriminator type: "
-                << discriminator_type_->get_kind());
+                    << discriminator_type_->get_kind());
             break;
     }
 }
@@ -1403,8 +1407,8 @@ void DynamicType::serialize(
 
     // check data and type are related
     assert(kind_ == data.get_kind() ||
-           kind_ == TypeKind::TK_ALIAS ||
-           data.type_->is_subclass(*this));
+            kind_ == TypeKind::TK_ALIAS ||
+            data.type_->is_subclass(*this));
 
     switch (get_kind())
     {

@@ -288,20 +288,20 @@ TEST_F(DynamicTypes_4_2_Tests, TypeObject_DynamicType_Conversion)
     DynamicData_ptr dyn_data_from_static(DynamicDataFactory::get_instance()->create_data(dyn_type));
     ASSERT_TRUE(pst_dynamic.deserialize(&st_payload, dyn_data_from_static.get()));
 
-//  // DEBUG Printing payloads
-//
-//    std::cout << "Payload: " << std::endl;
-//    for (int i = 0; i < payload_size; ++i)
-//    {
-//     std::cout << std::hex << (uint32_t)(payload.data[i]) << " ";
-//    }
-//    std::cout << std::endl;
-//    std::cout << "ST_Payload: " << std::endl;
-//    for (int i = 0; i < st_payload.length; ++i)
-//    {
-//     std::cout << std::hex << (uint32_t)(st_payload.data[i]) << " ";
-//    }
-//    std::cout << "--------------------------" << std::endl;
+    //  // DEBUG Printing payloads
+    //
+    //    std::cout << "Payload: " << std::endl;
+    //    for (int i = 0; i < payload_size; ++i)
+    //    {
+    //     std::cout << std::hex << (uint32_t)(payload.data[i]) << " ";
+    //    }
+    //    std::cout << std::endl;
+    //    std::cout << "ST_Payload: " << std::endl;
+    //    for (int i = 0; i < st_payload.length; ++i)
+    //    {
+    //     std::cout << std::hex << (uint32_t)(st_payload.data[i]) << " ";
+    //    }
+    //    std::cout << "--------------------------" << std::endl;
 
     EXPECT_TRUE(dyn_data_from_static->equals(dyn_data_from_dynamic.get()));
 }

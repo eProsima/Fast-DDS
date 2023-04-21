@@ -453,7 +453,8 @@ bool EDP::updatedLocalReader(
                     {
                         const types::TypeObject* type_obj =
                                 types::TypeObjectFactory::get_instance()->get_type_object(
-                            rdata->typeName().c_str(), rdata->type_id().m_type_identifier._d() == types::TypeKind::EK_COMPLETE);
+                            rdata->typeName().c_str(),
+                            rdata->type_id().m_type_identifier._d() == types::TypeKind::EK_COMPLETE);
                         if (type_obj != nullptr)
                         {
                             rdata->type().m_type_object = *type_obj;
@@ -535,7 +536,8 @@ bool EDP::updatedLocalWriter(
                     {
                         const types::TypeObject* type_obj =
                                 types::TypeObjectFactory::get_instance()->get_type_object(
-                            wdata->typeName().c_str(), wdata->type_id().m_type_identifier._d() == types::TypeKind::EK_COMPLETE);
+                            wdata->typeName().c_str(),
+                            wdata->type_id().m_type_identifier._d() == types::TypeKind::EK_COMPLETE);
                         if (type_obj != nullptr)
                         {
                             wdata->type().m_type_object = *type_obj;

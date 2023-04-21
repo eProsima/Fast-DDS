@@ -21,9 +21,9 @@
 #include <set>
 #include <type_traits>
 
-namespace eprosima{
-namespace fastrtps{
-namespace types{
+namespace eprosima {
+namespace fastrtps {
+namespace types {
 
 class TypeObjectFactory;
 
@@ -41,6 +41,7 @@ using types::TypeKind;
 class MemberDescriptor
 {
 protected:
+
     std::string name_;                  // Name of the member
     MemberId id_;                       // MemberId, it should be filled automatically when the member is added.
     DynamicType_ptr type_;              // Member's Type.
@@ -55,9 +56,11 @@ protected:
     friend class DynamicTypeMember;
     friend class types::TypeObjectFactory;
 
-    bool is_default_value_consistent(const std::string& sDefaultValue) const;
+    bool is_default_value_consistent(
+            const std::string& sDefaultValue) const;
 
-    bool is_type_name_consistent(const std::string& sName) const;
+    bool is_type_name_consistent(
+            const std::string& sName) const;
 
     //! builtin cast inherited on subclasses
     const MemberDescriptor& get_descriptor() const
@@ -71,10 +74,12 @@ public:
     RTPS_DllAPI MemberDescriptor() = default;
 
     //! Default copy constructor
-    RTPS_DllAPI MemberDescriptor(const MemberDescriptor& descriptor) = default;
+    RTPS_DllAPI MemberDescriptor(
+            const MemberDescriptor& descriptor) = default;
 
     //! Default move constructor
-    RTPS_DllAPI MemberDescriptor(MemberDescriptor&& descriptor) = default;
+    RTPS_DllAPI MemberDescriptor(
+            MemberDescriptor&& descriptor) = default;
 
     /**
      * convenience constructor
@@ -156,10 +161,12 @@ public:
      * @param[in] descriptor l-value @ref MemberDescriptor reference to copy from
      * @result own @ref MemberDescriptor reference
      */
-    RTPS_DllAPI MemberDescriptor& operator=(const MemberDescriptor& descriptor) = default;
+    RTPS_DllAPI MemberDescriptor& operator =(
+            const MemberDescriptor& descriptor) = default;
 
     //! Default move assignment
-    RTPS_DllAPI MemberDescriptor& operator=(MemberDescriptor&& descriptor) = default;
+    RTPS_DllAPI MemberDescriptor& operator =(
+            MemberDescriptor&& descriptor) = default;
 
     RTPS_DllAPI ~MemberDescriptor() = default;
 
@@ -167,12 +174,13 @@ public:
     template<
         typename C,
         typename std::enable_if<std::is_same<uint64_t, typename C::value_type>::value, bool>::type = true>
-    bool check_union_labels(C const& labels) const
+    bool check_union_labels(
+            C const& labels) const
     {
         return std::none_of(labels.begin(), labels.end(), [this](uint64_t l) -> bool
-                {
-                    return labels_.find(l) != labels_.end();
-                });
+                       {
+                           return labels_.find(l) != labels_.end();
+                       });
     }
 
     /**
@@ -181,7 +189,8 @@ public:
      * @remark The other descriptor shall not be changed by this operation
      * @return standard @ref ReturnCode_t
      */
-    RTPS_DllAPI ReturnCode_t copy_from(const MemberDescriptor& other);
+    RTPS_DllAPI ReturnCode_t copy_from(
+            const MemberDescriptor& other);
 
     /**
      * checks for equality according with [standard] section 7.5.2.7.4
@@ -190,7 +199,8 @@ public:
      * @return bool on equality
      * [standard]: https://www.omg.org/spec/dds-xtypes/1.3/ "OMG standard"
      */
-    RTPS_DllAPI bool operator==(const MemberDescriptor& other) const;
+    RTPS_DllAPI bool operator ==(
+            const MemberDescriptor& other) const;
 
     /**
      * checks for inequality according with [standard] section 7.5.2.7.4
@@ -199,7 +209,8 @@ public:
      * @return bool on inequality
      * [standard]: https://www.omg.org/spec/dds-xtypes/1.3/ "omg standard"
      */
-    RTPS_DllAPI bool operator!=(const MemberDescriptor& other) const;
+    RTPS_DllAPI bool operator !=(
+            const MemberDescriptor& other) const;
 
     /**
      * State comparison
@@ -208,7 +219,8 @@ public:
      * @return \b bool `true` on equality
      * [standard]: https://www.omg.org/spec/dds-xtypes/1.3/ "omg standard"
      */
-    RTPS_DllAPI bool equals(const MemberDescriptor& other) const;
+    RTPS_DllAPI bool equals(
+            const MemberDescriptor& other) const;
 
     //! convenient getter for the associated \b type property
     RTPS_DllAPI TypeKind get_kind() const;
@@ -223,7 +235,7 @@ public:
      * Queries the desired or actual member position in the collection.
      * @return uint32_t position
      */
-    RTPS_DllAPI  uint32_t get_index() const;
+    RTPS_DllAPI uint32_t get_index() const;
 
     /**
      * Queries the desired or actual member name
@@ -247,16 +259,19 @@ public:
      * @param[in] parentKind @ref eprosima::fastrtps::types::TypeKind collection's owner kind
      * @return bool `true` if consistent
      */
-    RTPS_DllAPI bool is_consistent(TypeKind parentKind) const;
+    RTPS_DllAPI bool is_consistent(
+            TypeKind parentKind) const;
 
     //! insert a new label for this union member
-    RTPS_DllAPI void add_union_case_index(uint64_t value);
+    RTPS_DllAPI void add_union_case_index(
+            uint64_t value);
 
     /**
      * Set member @ref MemberId
      * @param[in] id desired MemberId
      */
-    RTPS_DllAPI void set_id(MemberId id);
+    RTPS_DllAPI void set_id(
+            MemberId id);
 
     /**
      * Set member index
@@ -266,25 +281,29 @@ public:
      *         [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.7.6
      * @param[in] index uint32_t desired position
      */
-    RTPS_DllAPI void set_index(uint32_t index);
+    RTPS_DllAPI void set_index(
+            uint32_t index);
 
     /**
      * Set member name
      * @param[in] name std::string desired name
      */
-    RTPS_DllAPI void set_name(const std::string& name);
+    RTPS_DllAPI void set_name(
+            const std::string& name);
 
     /**
      * Set member type by move
      * @param[in] type @ref DynamicType r-value
      */
-    RTPS_DllAPI void set_type(DynamicType_ptr&& type);
+    RTPS_DllAPI void set_type(
+            DynamicType_ptr&& type);
 
     /**
      * Set member type by copy
      * @param[in] type @ref DynamicType l-value
      */
-    RTPS_DllAPI void set_type(const DynamicType_ptr& type);
+    RTPS_DllAPI void set_type(
+            const DynamicType_ptr& type);
 
     /**
      * Queries the desired or actual member type
@@ -292,17 +311,22 @@ public:
      */
     RTPS_DllAPI DynamicType_ptr get_type() const;
 
-    RTPS_DllAPI void set_default_union_value(bool bDefault);
+    RTPS_DllAPI void set_default_union_value(
+            bool bDefault);
 
     // setter for the \b default_value property
-    RTPS_DllAPI void set_default_value(const std::string& value)
+    RTPS_DllAPI void set_default_value(
+            const std::string& value)
     {
         default_value_ = value;
     }
+
 };
 
 //! @ref DynamicTypeMember expected `std::ostream` non-member override of `operator<<`
-RTPS_DllAPI std::ostream& operator<<( std::ostream& os, const MemberDescriptor & md);
+RTPS_DllAPI std::ostream& operator <<(
+        std::ostream& os,
+        const MemberDescriptor& md);
 
 } // namespace v1_3
 } // namespace types

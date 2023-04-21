@@ -97,14 +97,14 @@ PDP::PDP (
     , m_hasChangedLocalPDP(true)
     , mp_listener(nullptr)
     , temp_reader_proxies_({
-                allocation.locators.max_unicast_locators,
-                allocation.locators.max_multicast_locators,
-                allocation.data_limits,
-                allocation.content_filter})
+    allocation.locators.max_unicast_locators,
+    allocation.locators.max_multicast_locators,
+    allocation.data_limits,
+    allocation.content_filter})
     , temp_writer_proxies_({
-                allocation.locators.max_unicast_locators,
-                allocation.locators.max_multicast_locators,
-                allocation.data_limits})
+    allocation.locators.max_unicast_locators,
+    allocation.locators.max_multicast_locators,
+    allocation.data_limits})
     , mp_mutex(new std::recursive_mutex())
     , resend_participant_info_event_(nullptr)
 {
@@ -1261,14 +1261,15 @@ void PDP::check_and_notify_type_discovery(
             // Build old dynamic type
             types::v1_1::DynamicType_ptr ptr;
 
-            if (!types::TypeObjectFactory::get_instance()->build_dynamic_type(ptr, type_name.to_string(), type_id, type_obj))
+            if (!types::TypeObjectFactory::get_instance()->build_dynamic_type(ptr, type_name.to_string(), type_id,
+                    type_obj))
             {
                 return;
             }
 
             auto builder = types::v1_1::DynamicTypeBuilderFactory::get_instance()->create_custom_builder(
-                    ptr->get_descriptor(),
-                    ptr->get_name());
+                ptr->get_descriptor(),
+                ptr->get_name());
 
             // Manually add members if required
             std::map<types::v1_1::MemberId, types::v1_1::DynamicTypeMember*> members;

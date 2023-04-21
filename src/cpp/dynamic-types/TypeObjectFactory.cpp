@@ -1757,7 +1757,7 @@ v1_1::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
 }
 
 ReturnCode_t TypeObjectFactory::build_dynamic_type(
-        v1_3::DynamicType_ptr & ret,
+        v1_3::DynamicType_ptr& ret,
         const std::string& name,
         const TypeIdentifier* identifier,
         const TypeObject* object) const
@@ -1880,7 +1880,8 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             break;
     }
 
-    v1_3::DynamicTypeBuilder_ptr outputType = v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
+    v1_3::DynamicTypeBuilder_ptr outputType =
+            v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
     //outputType->set_name(name);
     if (outputType)
     {
@@ -1891,7 +1892,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
 }
 
 ReturnCode_t TypeObjectFactory::build_dynamic_type(
-        v1_1::DynamicType_ptr & ret,
+        v1_1::DynamicType_ptr& ret,
         const std::string& name,
         const TypeIdentifier* identifier,
         const TypeObject* object) const
@@ -2150,7 +2151,8 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             for (auto member = enumVector.begin(); member != enumVector.end(); ++member)
             {
                 enum_type->add_member(member->common().value(), member->detail().name());
-                apply_member_annotations(enum_type, v1_3::MemberId(member->common().value()), member->detail().ann_custom());
+                apply_member_annotations(enum_type, v1_3::MemberId(member->common().value()),
+                        member->detail().ann_custom());
                 if (member->common().flags().IS_DEFAULT())
                 {
                     v1_3::AnnotationDescriptor def_flag;

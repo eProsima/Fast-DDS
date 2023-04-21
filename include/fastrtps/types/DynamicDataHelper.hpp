@@ -29,6 +29,7 @@ namespace types {
 class DynamicDataHelper
 {
 public:
+
     RTPS_DllAPI static void print(
             const DynamicData_ptr& data);
 
@@ -36,6 +37,7 @@ public:
             const DynamicData* data);
 
 protected:
+
     static void print_basic_element(
             DynamicData* data,
             MemberId id,

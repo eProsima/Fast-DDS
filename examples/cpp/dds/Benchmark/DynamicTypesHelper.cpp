@@ -136,7 +136,8 @@ DynamicType_ptr DynamicTypesHelper::GetComplexStructType()
     DynamicTypeBuilder_ptr map_octet_bsalias5_builder =
             DynamicTypeBuilderFactory::get_instance().create_map_builder(*octet_type, *GetBSAlias5Type());
     DynamicTypeBuilder_ptr my_map_long_lol_type_builder =
-            DynamicTypeBuilderFactory::get_instance().create_map_builder(*int32_type, *map_octet_bsalias5_builder->build());
+            DynamicTypeBuilderFactory::get_instance().create_map_builder(*int32_type,
+                    *map_octet_bsalias5_builder->build());
     DynamicType_ptr my_small_string_8_type =
             DynamicTypeBuilderFactory::get_instance().create_string_type(128);
     DynamicType_ptr my_small_string_16_type =
@@ -174,7 +175,8 @@ DynamicType_ptr DynamicTypesHelper::GetComplexStructType()
     complexStruct_builder->add_member(idx++, "my_map_octet_short", my_map_octet_short_builder->build());
     complexStruct_builder->add_member(idx++, "my_map_long_struct", my_map_long_struct_builder->build());
     complexStruct_builder->add_member(idx++, "my_map_long_seq_octet", my_map_long_seq_octet_builder->build());
-    complexStruct_builder->add_member(idx++, "my_map_long_octet_array_500", my_map_long_octet_array_500_builder->build());
+    complexStruct_builder->add_member(idx++, "my_map_long_octet_array_500",
+            my_map_long_octet_array_500_builder->build());
     complexStruct_builder->add_member(idx++, "my_map_long_lol_type", my_map_long_lol_type_builder->build());
     complexStruct_builder->add_member(idx++, "my_small_string_8", my_small_string_8_type);
     complexStruct_builder->add_member(idx++, "my_small_string_16", my_small_string_16_type);
