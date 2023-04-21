@@ -330,6 +330,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 1ULL == (detail::BoolStruct_offset_of<BoolStruct, detail::BoolStruct_f>() + sizeof(bool));
+
     }};
 
 namespace detail {
@@ -427,6 +428,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 1ULL == (detail::OctetStruct_offset_of<OctetStruct, detail::OctetStruct_f>() + sizeof(uint8_t));
+
     }};
 
 namespace detail {
@@ -524,6 +526,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 2ULL == (detail::ShortStruct_offset_of<ShortStruct, detail::ShortStruct_f>() + sizeof(int16_t));
+
     }};
 
 namespace detail {
@@ -621,6 +624,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 4ULL == (detail::LongStruct_offset_of<LongStruct, detail::LongStruct_f>() + sizeof(int32_t));
+
     }};
 
 namespace detail {
@@ -718,6 +722,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 8ULL == (detail::LongLongStruct_offset_of<LongLongStruct, detail::LongLongStruct_f>() + sizeof(int64_t));
+
     }};
 
 namespace detail {
@@ -815,6 +820,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 2ULL == (detail::UShortStruct_offset_of<UShortStruct, detail::UShortStruct_f>() + sizeof(uint16_t));
+
     }};
 
 namespace detail {
@@ -912,6 +918,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 4ULL == (detail::ULongStruct_offset_of<ULongStruct, detail::ULongStruct_f>() + sizeof(uint32_t));
+
     }};
 
 namespace detail {
@@ -1009,6 +1016,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 8ULL == (detail::ULongLongStruct_offset_of<ULongLongStruct, detail::ULongLongStruct_f>() + sizeof(uint64_t));
+
     }};
 
 namespace detail {
@@ -1106,6 +1114,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 4ULL == (detail::FloatStruct_offset_of<FloatStruct, detail::FloatStruct_f>() + sizeof(float));
+
     }};
 
 namespace detail {
@@ -1203,6 +1212,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 8ULL == (detail::DoubleStruct_offset_of<DoubleStruct, detail::DoubleStruct_f>() + sizeof(double));
+
     }};
 
 namespace detail {
@@ -1300,6 +1310,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 16ULL == (detail::LongDoubleStruct_offset_of<LongDoubleStruct, detail::LongDoubleStruct_f>() + sizeof(long double));
+
     }};
 
 namespace detail {
@@ -1397,6 +1408,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 1ULL == (detail::CharStruct_offset_of<CharStruct, detail::CharStruct_f>() + sizeof(char));
+
     }};
 
 namespace detail {
@@ -1494,6 +1506,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 4ULL == (detail::WCharStruct_offset_of<WCharStruct, detail::WCharStruct_f>() + sizeof(wchar_t));
+
     }};
 
 /*!
@@ -1855,6 +1868,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 32ULL == (detail::ArraytStruct_offset_of<ArraytStruct, detail::ArraytStruct_f>() + sizeof(std::array<std::array<std::array<int32_t, 2>, 2>, 2>));
+
     }};
 typedef std::array<std::array<int32_t, 2>, 2> MyArray;
 
@@ -1953,6 +1967,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 64ULL == (detail::ArrayArrayStruct_offset_of<ArrayArrayStruct, detail::ArrayArrayStruct_f>() + sizeof(std::array<std::array<MyArray, 2>, 2>));
+
     }};
 
 /*!
@@ -2315,6 +2330,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 8ULL == (detail::BitsetStruct_offset_of<BitsetStruct, detail::BitsetStruct_f>() + sizeof(MyBitset));
+
     }};
 
 namespace detail {
@@ -2412,6 +2428,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 16ULL == (detail::StructStruct_offset_of<StructStruct, detail::StructStruct_f>() + sizeof(int64_t));
+
     }};
 
 namespace detail {
@@ -2509,6 +2526,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 24ULL == (detail::StructStructStruct_offset_of<StructStructStruct, detail::StructStructStruct_f>() + sizeof(int64_t));
+
     }};
 
 

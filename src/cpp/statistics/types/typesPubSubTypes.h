@@ -137,6 +137,7 @@ namespace eprosima
                     static constexpr bool is_plain_impl()
                     {
                         return 4ULL == (detail::EntityId_s_offset_of<EntityId_s, detail::EntityId_s_f>() + sizeof(std::array<uint8_t, 4>));
+
                     }};
 
                 namespace detail {
@@ -234,6 +235,7 @@ namespace eprosima
                     static constexpr bool is_plain_impl()
                     {
                         return 12ULL == (detail::GuidPrefix_s_offset_of<GuidPrefix_s, detail::GuidPrefix_s_f>() + sizeof(std::array<uint8_t, 12>));
+
                     }};
 
                 namespace detail {
@@ -331,6 +333,7 @@ namespace eprosima
                     static constexpr bool is_plain_impl()
                     {
                         return 16ULL == (detail::GUID_s_offset_of<GUID_s, detail::GUID_s_f>() + sizeof(eprosima::fastdds::statistics::detail::EntityId_s));
+
                     }};
 
                 namespace detail {
@@ -428,6 +431,7 @@ namespace eprosima
                     static constexpr bool is_plain_impl()
                     {
                         return 8ULL == (detail::SequenceNumber_s_offset_of<SequenceNumber_s, detail::SequenceNumber_s_f>() + sizeof(uint32_t));
+
                     }};
 
                 namespace detail {
@@ -525,6 +529,7 @@ namespace eprosima
                     static constexpr bool is_plain_impl()
                     {
                         return 24ULL == (detail::SampleIdentity_s_offset_of<SampleIdentity_s, detail::SampleIdentity_s_f>() + sizeof(eprosima::fastdds::statistics::detail::SequenceNumber_s));
+
                     }};
 
                 namespace detail {
@@ -622,6 +627,7 @@ namespace eprosima
                     static constexpr bool is_plain_impl()
                     {
                         return 24ULL == (detail::Locator_s_offset_of<Locator_s, detail::Locator_s_f>() + sizeof(std::array<uint8_t, 16>));
+
                     }};
             }
 
@@ -786,6 +792,7 @@ namespace eprosima
                 static constexpr bool is_plain_impl()
                 {
                     return 24ULL == (detail::EntityCount_offset_of<EntityCount, detail::EntityCount_f>() + sizeof(uint64_t));
+
                 }};
 
             namespace detail {
@@ -883,6 +890,7 @@ namespace eprosima
                 static constexpr bool is_plain_impl()
                 {
                     return 32ULL == (detail::SampleIdentityCount_offset_of<SampleIdentityCount, detail::SampleIdentityCount_f>() + sizeof(uint64_t));
+
                 }};
 
             namespace detail {
@@ -980,6 +988,7 @@ namespace eprosima
                 static constexpr bool is_plain_impl()
                 {
                     return 58ULL == (detail::Entity2LocatorTraffic_offset_of<Entity2LocatorTraffic, detail::Entity2LocatorTraffic_f>() + sizeof(int16_t));
+
                 }};
 
             namespace detail {
@@ -1077,6 +1086,7 @@ namespace eprosima
                 static constexpr bool is_plain_impl()
                 {
                     return 36ULL == (detail::WriterReaderData_offset_of<WriterReaderData, detail::WriterReaderData_f>() + sizeof(float));
+
                 }};
 
             namespace detail {
@@ -1174,6 +1184,7 @@ namespace eprosima
                 static constexpr bool is_plain_impl()
                 {
                     return 52ULL == (detail::Locator2LocatorData_offset_of<Locator2LocatorData, detail::Locator2LocatorData_f>() + sizeof(float));
+
                 }};
 
             namespace detail {
@@ -1271,6 +1282,7 @@ namespace eprosima
                 static constexpr bool is_plain_impl()
                 {
                     return 20ULL == (detail::EntityData_offset_of<EntityData, detail::EntityData_f>() + sizeof(float));
+
                 }};
 
             /*!

@@ -129,6 +129,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 16388ULL == (detail::BenchMarkSmall_offset_of<BenchMarkSmall, detail::BenchMarkSmall_f>() + sizeof(uint32_t));
+
     }};
 
 #endif // _FAST_DDS_GENERATED_BENCHMARK_SMALL_PUBSUBTYPES_H_

@@ -129,6 +129,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 2ULL == (detail::sample_offset_of<sample, detail::sample_f>() + sizeof(uint8_t));
+
     }};
 
 #endif // _FAST_DDS_GENERATED_SAMPLE_PUBSUBTYPES_H_

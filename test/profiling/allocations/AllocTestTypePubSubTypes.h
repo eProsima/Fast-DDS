@@ -129,6 +129,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 4ULL == (detail::AllocTestType_offset_of<AllocTestType, detail::AllocTestType_f>() + sizeof(uint32_t));
+
     }};
 
 #endif // _FAST_DDS_GENERATED_ALLOCTESTTYPE_PUBSUBTYPES_H_

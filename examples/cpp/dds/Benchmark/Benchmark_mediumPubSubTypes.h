@@ -129,6 +129,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 524292ULL == (detail::BenchMarkMedium_offset_of<BenchMarkMedium, detail::BenchMarkMedium_f>() + sizeof(uint32_t));
+
     }};
 
 #endif // _FAST_DDS_GENERATED_BENCHMARK_MEDIUM_PUBSUBTYPES_H_

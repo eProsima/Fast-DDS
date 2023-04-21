@@ -129,6 +129,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 260ULL == (detail::LoanableHelloWorld_offset_of<LoanableHelloWorld, detail::LoanableHelloWorld_f>() + sizeof(std::array<char, 256>));
+
     }};
 
 #endif // _FAST_DDS_GENERATED_LOANABLEHELLOWORLD_PUBSUBTYPES_H_

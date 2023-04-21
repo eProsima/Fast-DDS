@@ -924,6 +924,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 8ULL == (detail::ArrayStruct_offset_of<ArrayStruct, detail::ArrayStruct_f>() + sizeof(std::array<int32_t, 2>));
+
     }};
 
 namespace detail {
@@ -1021,6 +1022,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 8ULL == (detail::ArrayStructEqual_offset_of<ArrayStructEqual, detail::ArrayStructEqual_f>() + sizeof(std::array<int32_t, 2>));
+
     }};
 
 namespace detail {
@@ -1118,6 +1120,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 2ULL == (detail::ArrayBadStruct_offset_of<ArrayBadStruct, detail::ArrayBadStruct_f>() + sizeof(std::array<uint8_t, 2>));
+
     }};
 
 namespace detail {
@@ -1215,6 +1218,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 16ULL == (detail::ArrayDimensionsStruct_offset_of<ArrayDimensionsStruct, detail::ArrayDimensionsStruct_f>() + sizeof(std::array<std::array<int32_t, 2>, 2>));
+
     }};
 
 namespace detail {
@@ -1312,6 +1316,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 20ULL == (detail::ArraySizeStruct_offset_of<ArraySizeStruct, detail::ArraySizeStruct_f>() + sizeof(std::array<int32_t, 5>));
+
     }};
 
 /*!

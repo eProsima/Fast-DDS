@@ -129,6 +129,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 24ULL == (detail::HelloWorld_offset_of<HelloWorld, detail::HelloWorld_f>() + sizeof(std::array<char, 20>));
+
     }};
 
 #endif // _FAST_DDS_GENERATED_HELLOWORLD_PUBSUBTYPES_H_

@@ -196,6 +196,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 8ULL == (detail::ReplyType_offset_of<ReplyType, detail::ReplyType_f>() + sizeof(int64_t));
+
     }};
 
 #endif // _FAST_DDS_GENERATED_CALCULATOR_PUBSUBTYPES_H_

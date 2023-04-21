@@ -129,6 +129,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 4ULL == (detail::FilteringExample_offset_of<FilteringExample, detail::FilteringExample_f>() + sizeof(int32_t));
+
     }};
 
 #endif // _FAST_DDS_GENERATED_FILTERINGEXAMPLE_PUBSUBTYPES_H_

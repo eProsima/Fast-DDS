@@ -129,6 +129,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 2ULL == (detail::FixedSized_offset_of<FixedSized, detail::FixedSized_f>() + sizeof(uint16_t));
+
     }};
 
 #endif // _FAST_DDS_GENERATED_FIXEDSIZED_PUBSUBTYPES_H_

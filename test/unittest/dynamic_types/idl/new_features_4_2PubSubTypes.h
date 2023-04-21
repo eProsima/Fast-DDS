@@ -203,6 +203,7 @@ namespace bitmodule
         static constexpr bool is_plain_impl()
         {
             return 17ULL == (detail::BitsetBitmask_offset_of<BitsetBitmask, detail::BitsetBitmask_f>() + sizeof(bitmodule::MyBitMask));
+
         }};
 
     namespace detail {
@@ -300,6 +301,7 @@ namespace bitmodule
         static constexpr bool is_plain_impl()
         {
             return 24ULL == (detail::BM2_offset_of<BM2, detail::BM2_f>() + sizeof(int32_t));
+
         }};
 }
 

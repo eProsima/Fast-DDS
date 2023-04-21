@@ -129,6 +129,7 @@ private:
     static constexpr bool is_plain_impl()
     {
         return 600001ULL == (detail::FlowControlExample_offset_of<FlowControlExample, detail::FlowControlExample_f>() + sizeof(char));
+
     }};
 
 #endif // _FAST_DDS_GENERATED_FLOWCONTROLEXAMPLE_PUBSUBTYPES_H_
