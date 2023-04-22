@@ -595,6 +595,21 @@ public:
                 });
     }
 
+    template<class _Rep,
+            class _Period
+            >
+    size_t block_for_all(
+            const std::chrono::duration<_Rep, _Period>& max_wait)
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        cv_.wait_for(lock, max_wait, [this]() -> bool
+                {
+                    return number_samples_expected_ == current_received_count_;
+                });
+
+        return current_received_count_;
+    }
+
     void block(
             std::function<bool()> checker)
     {
@@ -615,6 +630,32 @@ public:
 
         ASSERT_GE(matched_readers_.size() + matched_writers_.size(), 2u);
         std::cout << "Discovery finished..." << std::endl;
+    }
+
+    void wait_discovery(
+            size_t matches,
+            std::chrono::seconds timeout = std::chrono::seconds::zero())
+    {
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+
+        std::cout << "Waiting discovery for " << matches << " matches..." << std::endl;
+
+        if (timeout == std::chrono::seconds::zero())
+        {
+            cv_.wait(lock, [&]()
+                    {
+                        return matched_readers_.size() >= matches && matched_writers_.size() >= matches;
+                    });
+        }
+        else
+        {
+            cv_.wait_for(lock, timeout, [&]()
+                    {
+                        return matched_readers_.size() >= matches && matched_writers_.size() >= matches;
+                    });
+        }
+
+        std::cout << "Finished waiting for discovery" << std::endl;
     }
 
     void waitRemoval()

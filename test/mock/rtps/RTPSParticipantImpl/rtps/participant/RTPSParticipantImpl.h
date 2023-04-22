@@ -308,6 +308,8 @@ public:
         return f;
     }
 
+    MOCK_METHOD(bool, should_match_local_endpoints, ());
+
 private:
 
     MockParticipantListener listener_;
