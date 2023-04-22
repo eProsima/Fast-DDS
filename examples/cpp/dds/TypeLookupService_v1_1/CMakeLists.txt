@@ -48,7 +48,7 @@ target_compile_definitions(TypeLookupExample_v1_1 PRIVATE
 # Remove deprecation warnings
 target_compile_options(TypeLookupExample_v1_1 PRIVATE
     $<$<STREQUAL:$<CXX_COMPILER_ID>,MSVC>:/wd4996>
-    $<$<IN_LIST:$<CXX_COMPILER_ID>,GNU;Clang>:-Wno-deprecated-declarations>
+    $<$<IN_LIST:$<CXX_COMPILER_ID>,GNU;Clang;AppleClang>:-Wno-deprecated-declarations>
 )
 
 target_link_libraries(TypeLookupExample_v1_1 fastrtps fastcdr)
