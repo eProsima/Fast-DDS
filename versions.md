@@ -1,6 +1,8 @@
 Forthcoming
 -----------
 
+* Added Participant ignore local endpoints feature.
+
 Version 2.10.1
 --------------
 
@@ -17,7 +19,7 @@ Version 2.10.0
 * Added ignore RTPS entity API in RTPSParticipant (ABI break on RTPS layer).
 * Overload `PDP::removeWriterProxyData` and `PDP::removeReaderProxyData` (ABI break on RTPS layer).
 * Overload RTPS discovery callbacks in RTPSParticipantListener (ABI break on RTPS layer).
-* Overload DDS discovery callbacks in DomainParticipantListener (ABI break on DDS layer). 
+* Overload DDS discovery callbacks in DomainParticipantListener (ABI break on DDS layer).
 * Added on_incompatible_type to RTPS listeners (ABI break on RTPS layer).
 * Added support for QNX 7.1 build.
 

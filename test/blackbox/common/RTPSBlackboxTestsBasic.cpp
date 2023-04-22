@@ -27,6 +27,7 @@
 #include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
+#include <fastrtps/log/Log.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
 #include "RTPSAsSocketReader.hpp"
@@ -756,7 +757,6 @@ TEST(RTPS, RemoveDisabledParticipant)
     ASSERT_TRUE(RTPSDomain::removeRTPSParticipant(rtps_participant));
 }
 
-
 /**
  * This test checks a race condition on initializing a writer's flow controller when creating
  * several RTPSWriters in parallel: https://eprosima.easyredmine.com/issues/15905
@@ -894,7 +894,6 @@ TEST(RTPS, RTPSCorrectGAPProcessing)
     ASSERT_NO_FATAL_FAILURE(native_reader.processGapMsg(writer.guid(), {0, 0}, seq_set));
 }
 
-
 class CustomReaderDataFilter : public eprosima::fastdds::rtps::IReaderDataFilter
 {
 public:
@@ -1010,6 +1009,176 @@ TEST(RTPS, best_effort_has_been_fully_delivered)
 TEST(RTPS, reliable_has_been_fully_delivered)
 {
     has_been_fully_delivered_test(ReliabilityKind_t::RELIABLE);
+}
+
+/**
+ * @test This test checks the ignore local endpoints feature on the RTPS layer when writer and
+ *       reader are under the same participant. Corresponds with tests:
+ *          * PART-IGNORE-LOCAL-TEST:04
+ *          * PART-IGNORE-LOCAL-TEST:05
+ *          * PART-IGNORE-LOCAL-TEST:06
+ */
+TEST(RTPS, participant_ignore_local_endpoints)
+{
+    class CustomLogConsumer : public LogConsumer
+    {
+    public:
+
+        void Consume(
+                const Log::Entry&) override
+        {
+            logs_consumed_++;
+            cv_.notify_all();
+        }
+
+        size_t wait_for_entries(
+                uint32_t amount,
+                const std::chrono::duration<double>& max_wait)
+        {
+            std::unique_lock<std::mutex> lock(mtx_);
+            cv_.wait_for(lock, max_wait, [this, amount]() -> bool
+                    {
+                        return logs_consumed_ > 0 && logs_consumed_.load() == amount;
+                    });
+            return logs_consumed_.load();
+        }
+
+    protected:
+
+        std::atomic<size_t> logs_consumed_{0u};
+        std::mutex mtx_;
+        std::condition_variable cv_;
+    };
+
+    struct Config
+    {
+        std::string test_id;
+        std::string property_value;
+        uint8_t log_errors;
+        uint8_t expected_matched_endpoints;
+        uint8_t sent_samples;
+        uint8_t expected_received_samples;
+    };
+
+    std::vector<Config> tests_configs = {
+        {"PART-IGNORE-LOCAL-TEST:04", "true", 0, 0, 5, 0},
+        {"PART-IGNORE-LOCAL-TEST:05", "false", 0, 1, 5, 5},
+        {"PART-IGNORE-LOCAL-TEST:06", "asdfg", 1, 1, 5, 5}
+    };
+
+    for (Config test_config : tests_configs)
+    {
+        std::cout << std::endl;
+        std::cout << "---------------------------------------" << std::endl;
+        std::cout << "Running test: " << test_config.test_id << std::endl;
+        std::cout << "---------------------------------------" << std::endl;
+
+        /* Set up */
+        Log::Reset();
+        Log::SetVerbosity(Log::Error);
+        CustomLogConsumer* log_consumer = new CustomLogConsumer();
+        std::unique_ptr<CustomLogConsumer> log_consumer_unique_ptr(log_consumer);
+        Log::RegisterConsumer(std::move(log_consumer_unique_ptr));
+
+        // Create the RTPSParticipant with the appropriate value for the property
+        eprosima::fastrtps::rtps::RTPSParticipantAttributes patt;
+        patt.properties.properties().emplace_back("fastdds.ignore_local_endpoints", test_config.property_value);
+        eprosima::fastrtps::rtps::RTPSParticipant* participant =
+                eprosima::fastrtps::rtps::RTPSDomain::createParticipant(static_cast<uint32_t>(GET_PID()) % 230, patt);
+        ASSERT_NE(participant, nullptr);
+
+        /* Procedure */
+        // Create the RTPSWriter
+        RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME, participant);
+        writer.init();
+        EXPECT_TRUE(writer.isInitialized());
+
+        // Create the RTPSReader
+        RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME, participant);
+        reader.init();
+        EXPECT_TRUE(reader.isInitialized());
+
+        // Wait for discovery
+        writer.wait_discovery(test_config.expected_matched_endpoints, std::chrono::seconds(1));
+        reader.wait_discovery(test_config.expected_matched_endpoints, std::chrono::seconds(1));
+        EXPECT_EQ(writer.get_matched(), test_config.expected_matched_endpoints);
+        EXPECT_EQ(reader.get_matched(), test_config.expected_matched_endpoints);
+
+        // Send samples
+        auto samples = default_helloworld_data_generator(test_config.sent_samples);
+        reader.expected_data(samples);
+        reader.startReception(samples.size());
+        writer.send(samples);
+        EXPECT_TRUE(samples.empty());
+
+        // Wait for reception
+        reader.block_for_all(std::chrono::seconds(1));
+        EXPECT_EQ(reader.getReceivedCount(), test_config.expected_received_samples);
+
+        // Wait for log entries
+        EXPECT_EQ(log_consumer->wait_for_entries(test_config.log_errors, std::chrono::seconds(
+                    1)), test_config.log_errors);
+
+        /* Tear-down */
+        eprosima::fastrtps::rtps::RTPSDomain::removeRTPSParticipant(participant);
+        Log::Reset();
+    }
+}
+
+/**
+ * @test This test checks the ignore local endpoints feature on the RTPS layer when writer and
+ *       reader are under the different participant. Corresponds with test:
+ *          * PART-IGNORE-LOCAL-TEST:08
+ */
+TEST(RTPS, participant_ignore_local_endpoints_two_participants)
+{
+    std::cout << std::endl;
+    std::cout << "---------------------------------------" << std::endl;
+    std::cout << "Running test: PART-IGNORE-LOCAL-TEST:08" << std::endl;
+    std::cout << "---------------------------------------" << std::endl;
+
+    /* Set up */
+    // Create the RTPSParticipants with the appropriate value for the property
+    eprosima::fastrtps::rtps::RTPSParticipantAttributes patt;
+    patt.properties.properties().emplace_back("fastdds.ignore_local_endpoints", "true");
+    eprosima::fastrtps::rtps::RTPSParticipant* participant_writer =
+            eprosima::fastrtps::rtps::RTPSDomain::createParticipant(static_cast<uint32_t>(GET_PID()) % 230, patt);
+    ASSERT_NE(participant_writer, nullptr);
+    eprosima::fastrtps::rtps::RTPSParticipant* participant_reader =
+            eprosima::fastrtps::rtps::RTPSDomain::createParticipant(static_cast<uint32_t>(GET_PID()) % 230, patt);
+    ASSERT_NE(participant_reader, nullptr);
+
+    /* Procedure */
+    // Create the RTPSWriter
+    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME, participant_writer);
+    writer.init();
+    EXPECT_TRUE(writer.isInitialized());
+
+    // Create the RTPSReader
+    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME, participant_reader);
+    reader.init();
+    EXPECT_TRUE(reader.isInitialized());
+
+    // Wait for discovery
+    writer.wait_discovery(1, std::chrono::seconds(1));
+    reader.wait_discovery(1, std::chrono::seconds(1));
+    EXPECT_EQ(writer.get_matched(), 1u);
+    EXPECT_EQ(reader.get_matched(), 1u);
+
+    // Send samples
+    auto samples = default_helloworld_data_generator(5);
+    reader.expected_data(samples);
+    reader.startReception(samples.size());
+    writer.send(samples);
+    EXPECT_TRUE(samples.empty());
+
+    // Wait for reception
+    reader.block_for_all(std::chrono::seconds(1));
+    EXPECT_EQ(reader.getReceivedCount(), 5u);
+
+    /* Tear-down */
+    eprosima::fastrtps::rtps::RTPSDomain::removeRTPSParticipant(participant_writer);
+    eprosima::fastrtps::rtps::RTPSDomain::removeRTPSParticipant(participant_reader);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

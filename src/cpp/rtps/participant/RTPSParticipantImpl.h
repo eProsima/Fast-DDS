@@ -734,6 +734,11 @@ private:
      */
     void get_default_unicast_locators();
 
+    bool match_local_endpoints_ = true;
+
+    bool should_match_local_endpoints(
+            const RTPSParticipantAttributes& att);
+
 public:
 
     const RTPSParticipantAttributes& getRTPSParticipantAttributes() const
@@ -1111,6 +1116,11 @@ public:
             uint32_t enabled_writers) override;
 
 #endif // FASTDDS_STATISTICS
+
+    bool should_match_local_endpoints()
+    {
+        return match_local_endpoints_;
+    }
 
 };
 } // namespace rtps
