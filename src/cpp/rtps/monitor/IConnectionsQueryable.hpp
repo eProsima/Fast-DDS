@@ -43,7 +43,7 @@ public:
      *
      * @param guid
      *
-     * @return true if the entity status changed.
+     * @return A copy of the entity's ConnectionList.
      */
     virtual ConnectionList get_entity_connections(
             const GUID_t& guid) = 0;

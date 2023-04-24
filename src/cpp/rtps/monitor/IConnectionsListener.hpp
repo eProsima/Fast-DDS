@@ -36,7 +36,7 @@ public:
 
     /**
      *
-     *
+     * Entity connections change callback
      *
      * @param guid
      *

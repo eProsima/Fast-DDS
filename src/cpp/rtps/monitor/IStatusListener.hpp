@@ -38,16 +38,14 @@ public:
 
     /**
      *
-     *
-     *
      * @param guid
      * @param id
      *
      * @return true if the entity status changed.
      */
-    virtual bool on_entity_status_change(
+    virtual bool on_local_entity_status_change(
             const GUID_t& guid,
-            uint32_t& id) = 0;
+            const uint32_t& id) = 0;
 
 };
 

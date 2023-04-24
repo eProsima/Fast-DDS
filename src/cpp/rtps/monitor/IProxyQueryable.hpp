@@ -39,9 +39,10 @@ public:
 
     /**
      *
-     * @param guid
+     * @param[in] guid
+     * @param[out] message 
      *
-     * @return true if the entity status changed.
+     * @return false if the entity referred to by \p guid does not exist. true otherwise.
      */
     virtual bool get_serialized_proxy(
             const GUID_t& guid,
@@ -49,12 +50,11 @@ public:
 
     /**
      *
-     * @param guid
+     * @param proxies_vector reference to the local proxies vector.
      *
-     * @return true if the entity status changed.
      */
-    virtual bool get_all_local_proxies(
-            std::vector<GUID_t>& proxies_map) = 0;
+    virtual void get_all_local_proxies(
+            std::vector<GUID_t>& proxies_vector) = 0;
 
 
 };

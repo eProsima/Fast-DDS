@@ -36,12 +36,12 @@ public:
 
     /**
      *
-     *
+     * Local entity change callback
      *
      * @param guid
      * @param is_alive
      *
-     * @return true if the entity connections changed.
+     * @return true if the entity changed.
      */
     virtual bool on_local_entity_change(
             const GUID_t& guid,

@@ -36,54 +36,54 @@ public:
 
     /**
      *
-     * @param guid
+     * @param guid GUID of the entity whose status is being asked.
      *
-     * @return true if the entity status changed.
+     * @return true if the relevant status flag is set.
      */
     virtual bool get_incompatible_qos_status(
             const GUID_t& guid) = 0;
 
     /**
      *
-     * @param guid
+     * @param guid GUID of the entity whose status is being asked.
      *
-     * @return true if the entity status changed.
+     * @return true if the relevant status flag is set.
      */
     virtual bool get_inconsistent_topic_status(
             const GUID_t& guid) = 0;
 
     /**
      *
-     * @param guid
+     * @param guid GUID of the entity whose status is being asked.
      *
-     * @return true if the entity status changed.
+     * @return true if the relevant status flag is set.
      */
     virtual bool get_liveliness_lost_status(
             const GUID_t& guid) = 0;
 
     /**
      *
-     * @param guid
+     * @param guid GUID of the entity whose status is being asked.
      *
-     * @return true if the entity status changed.
+     * @return true if the relevant status flag is set.
      */
     virtual bool get_liveliness_changed_status(
             const GUID_t& guid) = 0;
 
     /**
      *
-     * @param guid
+     * @param guid GUID of the entity whose status is being asked.
      *
-     * @return true if the entity status changed.
+     * @return true if the relevant status flag is set.
      */
     virtual bool get_deadline_missed_status(
             const GUID_t& guid) = 0;
 
     /**
      *
-     * @param guid
+     * @param guid GUID of the entity whose status is being asked.
      *
-     * @return true if the entity status changed.
+     * @return true if the relevant status flag is set.
      */
     virtual bool get_sample_lost_status(
             const GUID_t& guid) = 0;
