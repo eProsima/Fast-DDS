@@ -23,10 +23,46 @@ void DynamicDataHelper::print(
     print(data.get());
 }
 
+std::ostream& DynamicDataHelper::print(
+        std::ostream& output,
+        const DynamicData_ptr& data)
+{
+    return print(output, data.get());
+}
+
 void DynamicDataHelper::print(
         const DynamicData* data)
 {
-    std::string output = "";
+    if (nullptr != data)
+    {
+        switch (data->type_->get_kind())
+        {
+            case TK_STRUCTURE:
+            {
+                std::map<MemberId, DynamicTypeMember*> members;
+                data->type_->get_all_members(members);
+                for (auto it : members)
+                {
+                    print_member(const_cast<DynamicData*>(data), it.second);
+                }
+                break;
+            }
+            default:
+            {
+                std::cout << "Only structs are supported by DynamicDataHelper::print method." << std::endl;
+            }
+        }
+    }
+    else
+    {
+        std::cout << "<NULL>" << std::endl;
+    }
+}
+
+std::ostream& DynamicDataHelper::print(
+        std::ostream& output,
+        const DynamicData* data)
+{
     if (nullptr != data)
     {
         switch (data->type_->get_kind())
@@ -43,15 +79,15 @@ void DynamicDataHelper::print(
             }
             default:
             {
-                output.append("Only structs are supported by DynamicDataHelper::print method.\n");
+                output << "Only structs are supported by DynamicDataHelper::print method.\n";
             }
         }
     }
     else
     {
-        output.append("<NULL>\n");
+        output << "<NULL>\n";
     }
-    std::cout << output;
+    return output;
 }
 
 void DynamicDataHelper::print_basic_element(
@@ -167,83 +203,83 @@ void DynamicDataHelper::print_basic_element(
         DynamicData* data,
         MemberId id,
         TypeKind kind,
-        std::string& output)
+        std::ostream& output)
 {
     switch (kind)
     {
         case TK_NONE:
         {
-            output.append("<type not defined!>");
+            output << "<type not defined!>";
             break;
         }
         case TK_BOOLEAN:
         {
-            output.append((data->get_bool_value(id) ? "true" : "false"));
+            output << (data->get_bool_value(id) ? "true" : "false");
             break;
         }
         case TK_BYTE:
         {
-            output.append(std::to_string(static_cast<uint32_t>(data->get_byte_value(id))));
+            output  << std::to_string(static_cast<uint32_t>(data->get_byte_value(id)));
             break;
         }
         case TK_INT16:
         {
-            output.append(std::to_string(data->get_int16_value(id)));
+            output << std::to_string(data->get_int16_value(id));
             break;
         }
         case TK_INT32:
         {
-            output.append(std::to_string(data->get_int32_value(id)));
+            output << std::to_string(data->get_int32_value(id));
             break;
         }
         case TK_INT64:
         {
-            output.append(std::to_string(data->get_int64_value(id)));
+            output << std::to_string(data->get_int64_value(id));
             break;
         }
         case TK_UINT16:
         {
-            output.append(std::to_string(data->get_uint16_value(id)));
+            output << std::to_string(data->get_uint16_value(id));
             break;
         }
         case TK_UINT32:
         {
-            output.append(std::to_string(data->get_uint32_value(id)));
+            output << std::to_string(data->get_uint32_value(id));
             break;
         }
         case TK_UINT64:
         {
-            output.append(std::to_string(data->get_uint64_value(id)));
+            output << std::to_string(data->get_uint64_value(id));
             break;
         }
         case TK_FLOAT32:
         {
-            output.append(std::to_string(data->get_float32_value(id)));
+            output << std::to_string(data->get_float32_value(id));
             break;
         }
         case TK_FLOAT64:
         {
-            output.append(std::to_string(data->get_float64_value(id)));
+            output << std::to_string(data->get_float64_value(id));
             break;
         }
         case TK_FLOAT128:
         {
-            output.append(std::to_string(data->get_float128_value(id)));
+            output << std::to_string(data->get_float128_value(id));
             break;
         }
         case TK_CHAR8:
         {
-            output.append(std::to_string(data->get_char8_value(id)));
+            output << std::to_string(data->get_char8_value(id));
             break;
         }
         case TK_CHAR16:
         {
-            output.append(std::to_string(data->get_char16_value(id)));
+            output << std::to_string(data->get_char16_value(id));
             break;
         }
         case TK_STRING8:
         {
-            output.append(data->get_string_value(id));
+            output << data->get_string_value(id);
             break;
         }
         case TK_STRING16:
@@ -256,16 +292,16 @@ void DynamicDataHelper::print_basic_element(
             size_t size = data->type_->get_size();
             switch (size)
             {
-                case 1: output.append(std::to_string(data->get_uint8_value(id))); break;
-                case 2: output.append(std::to_string(data->get_uint16_value(id))); break;
-                case 3: output.append(std::to_string(data->get_uint32_value(id))); break;
-                case 4: output.append(std::to_string(data->get_uint64_value(id))); break;
+                case 1: output << std::to_string(data->get_uint8_value(id)); break;
+                case 2: output << std::to_string(data->get_uint16_value(id)); break;
+                case 3: output << std::to_string(data->get_uint32_value(id)); break;
+                case 4: output << std::to_string(data->get_uint64_value(id)); break;
             }
             break;
         }
         case TK_ENUM:
         {
-            output.append(std::to_string(data->get_uint32_value(id)));
+            output << std::to_string(data->get_uint32_value(id));
             break;
         }
         default:
@@ -319,7 +355,7 @@ void DynamicDataHelper::print_collection(
 
 void DynamicDataHelper::print_collection(
         DynamicData* data,
-        std::string& output,
+        std::ostream& output,
         const std::string& tabs)
 {
     switch (data->type_->get_element_type()->get_kind())
@@ -441,20 +477,20 @@ void DynamicDataHelper::print_basic_collection(
 
 void DynamicDataHelper::print_basic_collection(
         DynamicData* data,
-        std::string& output)
+        std::ostream& output)
 {
     if (data->type_->get_kind() == TK_SEQUENCE)
     {
         auto count = data->get_item_count();
-        output.append("[");
+        output << "[";
         for (uint32_t i = 0; i < count; ++i)
         {
             print_basic_element(data, i, data->type_->get_element_type()->get_kind(), output);
-            output.append(i == count - 1 ? "]" : ", ");
+            output << (i == count - 1 ? "]" : ", ");
         }
         if (count == 0)
         {
-            output.append("]");
+            output << "]";
         }
     }
     else
@@ -464,15 +500,15 @@ void DynamicDataHelper::print_basic_collection(
         std::vector<std::vector<uint32_t>> positions;
         fill_array_positions(bounds, positions);
 
-        output.append("[");
+        output << "[";
         for (size_t i = 0; i < positions.size(); ++i)
         {
             print_basic_element(data, data->get_array_index(positions[i]),
                     data->type_->get_element_type()->get_kind(), output);
-            output.append(i == positions.size() - 1 ? "]" : ", ");
+            output << (i == positions.size() - 1 ? "]" : ", ");
         }
     }
-    output.append("\n");
+    output << "\n";
 }
 
 void DynamicDataHelper::print_complex_collection(
@@ -514,27 +550,27 @@ void DynamicDataHelper::print_complex_collection(
 
 void DynamicDataHelper::print_complex_collection(
         DynamicData* data,
-        std::string& output,
+        std::ostream& output,
         const std::string& tabs)
 {
-    output.append("\n");
+    output << "\n";
     if (data->type_->get_kind() == TK_SEQUENCE)
     {
         auto count = data->get_item_count();
 
         for (uint32_t i = 0; i < count; ++i)
         {
-            output.append(tabs);
-            output.append("[");
-            output.append(std::to_string(i));
-            output.append("] = ");
+            output << tabs;
+            output << "[";
+            output << std::to_string(i);
+            output << "] = ";
             print_complex_element(data, i, output, tabs);
-            output.append("\n");
+            output << "\n";
         }
 
         if (count == 0)
         {
-            output.append("[]");
+            output << "[]";
         }
     }
     else
@@ -546,12 +582,12 @@ void DynamicDataHelper::print_complex_collection(
 
         for (size_t i = 0; i < positions.size(); ++i)
         {
-            output.append(tabs);
-            output.append("[");
-            output.append(std::to_string(i));
-            output.append("] = ");
+            output << tabs;
+            output << "[";
+            output << std::to_string(i);
+            output << "] = ";
             print_complex_element(data, data->get_array_index(positions[i]), output, tabs);
-            output.append("\n");
+            output << "\n";
         }
     }
 }
@@ -618,7 +654,7 @@ void DynamicDataHelper::print_complex_element(
 void DynamicDataHelper::print_complex_element(
         DynamicData* data,
         MemberId id,
-        std::string& output,
+        std::ostream& output,
         const std::string& tabs)
 {
     DynamicData* st_data = data->loan_value(id);
@@ -628,7 +664,7 @@ void DynamicDataHelper::print_complex_element(
         case TK_STRUCTURE:
         case TK_BITSET:
         {
-            output.append("<struct/bitset>\n");
+            output << "<struct/bitset>\n";
             std::map<types::MemberId, types::DynamicTypeMember*> members;
             st_data->type_->get_all_members(members);
             for (auto it : members)
@@ -639,7 +675,7 @@ void DynamicDataHelper::print_complex_element(
         }
         case TK_UNION:
         {
-            output.append("<union>\n");
+            output << "<union>\n";
             DynamicTypeMember member;
             st_data->type_->get_member(member, st_data->union_id_);
             print_member(st_data, output, &member, tabs + "\t");
@@ -653,7 +689,7 @@ void DynamicDataHelper::print_complex_element(
         }
         case TK_MAP:
         {
-            output.append("<map>\n");
+            output << "<map>\n";
             std::map<types::MemberId, types::DynamicTypeMember*> members;
             st_data->type_->get_all_members(members);
             size_t size = st_data->get_item_count();
@@ -661,10 +697,10 @@ void DynamicDataHelper::print_complex_element(
             {
                 size_t index = i * 2;
                 MemberId member_id = st_data->get_member_id_at_index(static_cast<uint32_t>(index));
-                output.append("Key: ");
+                output << "Key: ";
                 print_member(st_data, output, members[member_id], tabs + "\t");
                 member_id = data->get_member_id_at_index(static_cast<uint32_t>(index + 1));
-                output.append("Value: ");
+                output << "Value: ";
                 print_member(st_data, output, members[member_id], tabs + "\t");
             }
             break;
@@ -765,13 +801,13 @@ void DynamicDataHelper::print_member(
 
 void DynamicDataHelper::print_member(
         DynamicData* data,
-        std::string& output,
+        std::ostream& output,
         const DynamicTypeMember* type,
         const std::string& tabs)
 {
-    output.append(tabs);
-    output.append(type->get_name());
-    output.append(": ");
+    output << tabs;
+    output << type->get_name();
+    output << ": ";
     const MemberDescriptor* desc = type->get_descriptor();
     switch (desc->get_kind())
     {
@@ -795,14 +831,14 @@ void DynamicDataHelper::print_member(
         case TK_BITMASK:
         {
             print_basic_element(data, type->get_id(), desc->get_kind(), output);
-            output.append("\n");
+            output << "\n";
             break;
         }
         case TK_STRUCTURE:
         case TK_BITSET:
         {
             DynamicData* st_data = data->loan_value(type->get_id());
-            output.append("<struct/bitset>\n");
+            output << "<struct/bitset>\n";
             std::map<types::MemberId, types::DynamicTypeMember*> members;
             desc->get_type()->get_all_members(members);
             for (auto it : members)
@@ -814,7 +850,7 @@ void DynamicDataHelper::print_member(
         }
         case TK_UNION:
         {
-            output.append("<union>\n");
+            output << "<union>\n";
             DynamicData* st_data = data->loan_value(type->get_id());
             DynamicTypeMember member;
             desc->get_type()->get_member(member, data->union_id_);
@@ -831,7 +867,7 @@ void DynamicDataHelper::print_member(
         }
         case TK_MAP:
         {
-            output.append("<map>\n");
+            output << "<map>\n";
             DynamicData* st_data = data->loan_value(type->get_id());
             std::map<types::MemberId, types::DynamicTypeMember*> members;
             desc->get_type()->get_all_members(members);
@@ -840,10 +876,10 @@ void DynamicDataHelper::print_member(
             {
                 size_t index = i * 2;
                 MemberId id = data->get_member_id_at_index(static_cast<uint32_t>(index));
-                output.append("Key: ");
+                output << "Key: ";
                 print_member(st_data, output, members[id], tabs + "\t");
                 id = data->get_member_id_at_index(static_cast<uint32_t>(index + 1));
-                output.append("Value: ");
+                output << "Value: ";
                 print_member(st_data, output, members[id], tabs + "\t");
             }
             data->return_loaned_value(st_data);
