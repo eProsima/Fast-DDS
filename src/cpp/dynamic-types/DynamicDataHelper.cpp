@@ -163,7 +163,6 @@ void DynamicDataHelper::print_basic_element(
     }
 }
 
-
 void DynamicDataHelper::print_basic_element(
         DynamicData* data,
         MemberId id,
@@ -468,7 +467,8 @@ void DynamicDataHelper::print_basic_collection(
         output.append("[");
         for (size_t i = 0; i < positions.size(); ++i)
         {
-            print_basic_element(data, data->get_array_index(positions[i]), data->type_->get_element_type()->get_kind(), output);
+            print_basic_element(data, data->get_array_index(positions[i]),
+                    data->type_->get_element_type()->get_kind(), output);
             output.append(i == positions.size() - 1 ? "]" : ", ");
         }
     }
