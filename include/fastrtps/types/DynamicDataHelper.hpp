@@ -36,11 +36,21 @@ public:
             const DynamicData* data);
 
 protected:
+
+        static void print_basic_element(
+            DynamicData* data,
+            MemberId id,
+            TypeKind kind);
+
     static void print_basic_element(
             DynamicData* data,
             MemberId id,
             TypeKind kind,
             std::string& output);
+
+    static void print_collection(
+            DynamicData* data,
+            const std::string& tabs = "");
 
     static void print_collection(
             DynamicData* data,
@@ -63,8 +73,15 @@ protected:
             std::vector<uint32_t>& position);
 
     static void print_basic_collection(
+            DynamicData* data);
+
+    static void print_basic_collection(
             DynamicData* data,
             std::string& output);
+
+    static void print_complex_collection(
+            DynamicData* data,
+            const std::string& tabs = "");
 
     static void print_complex_collection(
             DynamicData* data,
@@ -74,7 +91,17 @@ protected:
     static void print_complex_element(
             DynamicData* data,
             MemberId id,
+            const std::string& tabs = "");
+
+    static void print_complex_element(
+            DynamicData* data,
+            MemberId id,
             std::string& output,
+            const std::string& tabs = "");
+
+    static void print_member(
+            DynamicData* data,
+            const DynamicTypeMember* type,
             const std::string& tabs = "");
 
     static void print_member(
