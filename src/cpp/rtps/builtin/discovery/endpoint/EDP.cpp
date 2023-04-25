@@ -191,7 +191,8 @@ bool EDP::newLocalReaderProxyData(
                     }
                 }
 
-                if (att.auto_fill_type_object)
+                // if (att.auto_fill_type_object)
+                if (false)
                 {
                     bool has_type_id = true;
                     if (att.type_id.m_type_identifier._d() == static_cast<uint8_t>(0x00))
@@ -323,7 +324,8 @@ bool EDP::newLocalWriterProxyData(
                     }
                 }
 
-                if (att.auto_fill_type_object)
+                // if (att.auto_fill_type_object)
+                if (false)
                 {
                     bool has_type_id = true;
                     if (att.type_id.m_type_identifier._d() == static_cast<uint8_t>(0x00))
@@ -435,7 +437,8 @@ bool EDP::updatedLocalReader(
                     }
                 }
 
-                if (att.auto_fill_type_object)
+                // if (att.auto_fill_type_object)
+                if (false)
                 {
 
                     if (rdata->type_id().m_type_identifier._d() == static_cast<uint8_t>(0x00))
@@ -517,7 +520,8 @@ bool EDP::updatedLocalWriter(
                     }
                 }
 
-                if (att.auto_fill_type_object)
+                // if (att.auto_fill_type_object)
+                if (false)
                 {
 
                     if (wdata->type_id().m_type_identifier._d() == static_cast<uint8_t>(0x00))
