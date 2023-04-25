@@ -897,7 +897,11 @@
         ├ rtps_dump_file                        [string]                          (ONLY available for   SHM type)
         ├ default_reception_threads             [threadSettingsType]
         ├ reception_threads                     [receptionThreadsListType]        (ONLY available for   SHM type)
-        └ dump_thread                           [threadSettingsType]              (ONLY available for   SHM type) -->
+        ├ dump_thread                           [threadSettingsType]              (ONLY available for   SHM type)
+        ├ library                               [string]                          (ONLY available for ChaningTransport type)
+        ├ create_function                       [string]                          (ONLY available for ChaningTransport type)
+        └ low_level_transport                   [string]                          (ONLY available for ChaningTransport type)
+    -->
     <!-- TODO:  How to ensure all elements are declared properly (UDP only, TCP only, etc...)? -->
     <xs:complexType name="transportDescriptorType">
         <xs:all minOccurs="0">
@@ -910,6 +914,7 @@
                         <xs:enumeration value="TCPv4"/>
                         <xs:enumeration value="TCPv6"/>
                         <xs:enumeration value="SHM"/>
+                        <xs:enumeration value="ChainingTransport"/>
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>
@@ -971,6 +976,9 @@
             <xs:element name="default_reception_threads" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="reception_threads" type="receptionThreadsListType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="dump_thread" type="threadSettingsType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="library" type="string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="create_function" type="string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="low_level_transport" type="string" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
