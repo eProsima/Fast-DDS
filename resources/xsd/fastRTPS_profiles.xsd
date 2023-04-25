@@ -819,7 +819,10 @@
         ├ segment_size             [uint32],           (ONLY available for   SHM type)
         ├ port_queue_capacity      [uint32],           (ONLY available for   SHM type)
         ├ healthy_check_timeout_ms [uint32],           (ONLY available for   SHM type)
-        └ rtps_dump_file           [string]            (ONLY available for   SHM type) -->
+        ├ rtps_dump_file           [string]            (ONLY available for              SHM type)
+        ├ library                  [string]            (ONLY available for ChaningTransport type)
+        ├ create_function          [string]            (ONLY available for ChaningTransport type)
+        └ low_level_transport      [string]            (ONLY available for ChaningTransport type) -->
     <!-- TODO:  How to ensure all elements are declared properly (UDP only, TCP only, etc...)? -->
     <xs:complexType name="transportDescriptorType">
         <xs:all minOccurs="0">
@@ -832,6 +835,7 @@
                         <xs:enumeration value="TCPv4"/>
                         <xs:enumeration value="TCPv6"/>
                         <xs:enumeration value="SHM"/>
+                        <xs:enumeration value="ChainingTransport"/>
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>
@@ -874,6 +878,9 @@
             <xs:element name="port_queue_capacity" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="healthy_check_timeout_ms" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="rtps_dump_file" type="string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="library" type="string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="create_function" type="string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="low_level_transport" type="string" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
