@@ -53,7 +53,7 @@ inline void set_statistics_entity_id(
 #if _MSC_VER
     unsigned long index;
     _BitScanReverse(&index, kind);
-    entity_id.value[2] = index + 1;
+    entity_id.value[2] = static_cast<fastrtps::rtps::octet>(index) + 1;
 #else
     entity_id.value[2] = __builtin_ctz(kind) + 1;
 #endif // if _MSC_VER
