@@ -1430,11 +1430,24 @@ ReturnCode_t DomainParticipantImpl::register_type(
     {
         if (t == type)
         {
-            return ReturnCode_t::RETCODE_OK;
+            if (t->auto_fill_type_object() == type->auto_fill_type_object() &&
+                    t->auto_fill_type_information() == type->auto_fill_type_information())
+            {
+                return ReturnCode_t::RETCODE_OK;
+            }
+            else
+            {
+                EPROSIMA_LOG_INFO(PARTICIPANT, "Reregistering type " << type_name << ".");
+                std::lock_guard<std::mutex> lock(mtx_types_);
+                types_.erase(type_name);
+            }
         }
-
-        EPROSIMA_LOG_ERROR(PARTICIPANT, "Another type with the same name '" << type_name << "' is already registered.");
-        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        else
+        {
+            EPROSIMA_LOG_ERROR(PARTICIPANT,
+                    "Another type with the same name '" << type_name << "' is already registered.");
+            return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+        }
     }
 
     EPROSIMA_LOG_INFO(PARTICIPANT, "Type " << type_name << " registered.");
