@@ -53,6 +53,10 @@ public:
 
     MOCK_METHOD0(reset_current_bytes_processed, void());
 
+    MOCK_METHOD0(get_current_endpoint, Endpoint * ());
+
+    MOCK_METHOD0(reset_current_endpoint, void());
+
     void sender(
             Endpoint*,
             const RTPSMessageSenderInterface*) const

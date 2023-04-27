@@ -252,6 +252,17 @@ public:
         return current_sent_bytes_ + full_msg_->length;
     }
 
+    Endpoint* get_current_endpoint()
+    {
+        return endpoint_;
+    }
+
+    void reset_current_endpoint()
+    {
+        endpoint_ = nullptr;
+        flush_and_reset();
+    }
+
 private:
 
     static constexpr uint32_t data_frag_header_size_ = 28;

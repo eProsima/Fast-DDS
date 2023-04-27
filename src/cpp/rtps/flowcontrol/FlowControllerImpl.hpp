@@ -1084,6 +1084,11 @@ private:
     {
         std::unique_lock<std::mutex> in_lock(async_mode.changes_interested_mutex);
         sched.unregister_writer(writer);
+        auto last_writer = async_mode.group.get_current_endpoint();
+        if (writer == last_writer)
+        {
+            async_mode.group.reset_current_endpoint();
+        }
     }
 
     template<typename PubMode = PublishMode>
@@ -1268,6 +1273,18 @@ private:
             std::unique_lock<std::mutex> lock(mutex_);
             fastrtps::rtps::CacheChange_t* change_to_process = nullptr;
 
+            auto last_writer = async_mode.group.get_current_endpoint();
+            if (last_writer)
+            {
+                // Try to lock the last used RTPSWriter before flushing the message group
+                if (!last_writer->getMutex().try_lock())
+                {
+                    continue;
+                }
+                async_mode.group.sender(nullptr, nullptr);
+                last_writer->getMutex().unlock();
+            }
+
             //Check if we have to sleep.
             {
                 std::unique_lock<std::mutex> in_lock(async_mode.changes_interested_mutex);
@@ -1370,8 +1387,6 @@ private:
 
                 change_to_process = sched.get_next_change_nts();
             }
-
-            async_mode.group.sender(nullptr, nullptr);
         }
     }
 
