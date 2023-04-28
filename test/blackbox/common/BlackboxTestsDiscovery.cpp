@@ -1884,3 +1884,28 @@ TEST(Discovery, MulticastInitialPeer)
     writer.wait_discovery();
     reader.wait_discovery();
 }
+
+//! Regression test for redmine issue 10674
+TEST(Discovery, MultipleXMLProfileLoad)
+{
+    auto participant_creation_reader = []()
+            {
+                PubSubReader<HelloWorldPubSubType> participant(TEST_TOPIC_NAME);
+                participant.init();
+                participant.wait_discovery();
+            };
+
+    auto participant_creation_writer = []()
+            {
+                PubSubWriter<HelloWorldPubSubType> participant(TEST_TOPIC_NAME);
+                participant.init();
+                participant.wait_discovery();
+            };
+
+    // Start thread creating second participant
+    std::thread thr_reader(participant_creation_reader);
+    std::thread thr_writer(participant_creation_writer);
+
+    thr_reader.join();
+    thr_writer.join();
+}
