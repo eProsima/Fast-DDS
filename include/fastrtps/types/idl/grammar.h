@@ -133,12 +133,12 @@ struct escape_sequence : sor<
 
 // LITERALS
 struct boolean_literal : sor<TAO_PEGTL_KEYWORD("true"), TAO_PEGTL_KEYWORD("false")> {};
-struct dec_literal : sor<seq<TAO_PEGTL_CHAR('-'), plus<digit>>, plus<digit>> {};
+struct dec_literal : sor<seq<range<'1', '9'>, star<digit>>, one<'0'>> {};
 struct oct_literal : seq<TAO_PEGTL_STRING("0"), plus<octal_digit>> {};
 struct hex_literal : seq<sor<TAO_PEGTL_STRING("0x"), TAO_PEGTL_STRING("0X")>, plus<xdigit>> {};
 struct integer_literal : sor<oct_literal, hex_literal, dec_literal> {};
-struct char_literal : seq<one<'\''>, sor<escape_sequence, until<'\''>>, one<'\''>> {};
-struct wide_char_literal : seq<one('L'), char_literal> {};
+struct char_literal : seq<one<'\''>, sor<escape_sequence, until<TAO_PEGTL_STRING("\'")>>, one<'\''>> {};
+struct wide_char_literal : seq<one<'L'>, char_literal> {};
 struct string_ws : sor<seq<one<'\"'>, opt<ws>, one<'\"'>>, opt<ws>> {};
 // String literals must avoid '\0' inside them. Check after parsing!
 struct substring_literal : if_must<TAO_PEGTL_STRING("\""), star<not_at<TAO_PEGTL_STRING("\"")>, any>, TAO_PEGTL_STRING("\"")> {};
@@ -193,9 +193,8 @@ struct string_type : seq<kw_string, opt<string_size>> {};
 struct wide_string_type : seq<kw_wstring, opt<wstring_size>> {};
 struct map_type; // forward declaration
 struct type_spec; // forward declaration
-struct sequence_inner_type : type_spec {};
 struct sequence_size : opt<collection_size> {};
-struct sequence_type : seq<kw_sequence, open_ang_bracket, sequence_inner_type, sequence_size, close_ang_bracket> {};
+struct sequence_type : seq<kw_sequence, open_ang_bracket, type_spec, sequence_size, close_ang_bracket> {};
 struct template_type_spec : sor<map_type, sequence_type, string_type, wide_string_type, fixed_pt_type> {};
 struct simple_type_spec : sor<base_type_spec, scoped_name> {};
 struct type_spec : seq<opt<ws>, sor<template_type_spec, simple_type_spec>, opt<ws>> {};
@@ -226,6 +225,7 @@ struct declarator : sor<array_declarator, simple_declarator> {}; // same as any_
 struct declarators : seq<declarator, star<seq<comma, declarator>>> {};
 struct any_declarator : sor<array_declarator, simple_declarator> {};
 struct any_declarators : seq<any_declarator, star<seq<comma, any_declarator>>> {};
+struct type_declarator; // forward declaration
 struct typedef_dlc : seq<kw_typedef, type_declarator> {};
 struct native_dcl : seq<kw_native, simple_declarator> {};
 struct annotation_appl; // forward declaration
@@ -234,8 +234,8 @@ struct enum_dcl : seq<kw_enum, identifier, open_brace, enumerator, star<comma, e
 struct union_forward_dcl : seq<kw_union, identifier> {};
 struct element_spec : seq<star<annotation_appl>, type_spec, declarator> {};
 struct case_label : sor<seq<kw_case, const_expr, colon>, seq<kw_default, colon>> {};
-struct case : seq<plus<case_label>, element_spec, semicolon> {};
-struct switch_body : plus<case> {};
+struct case_branch : seq<plus<case_label>, element_spec, semicolon> {};
+struct switch_body : plus<case_branch> {};
 struct switch_type_spec : sor<integer_type, char_type, boolean_type, wide_char_type, octet_type, scoped_name> {};
 struct union_def : seq<kw_union, identifier, kw_switch, open_parentheses, switch_type_spec, close_parentheses, open_brace, switch_body, close_brace> {};
 struct union_dcl : sor<union_def, union_forward_dcl> {};
