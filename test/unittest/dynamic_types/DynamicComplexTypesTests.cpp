@@ -141,7 +141,7 @@ DynamicType_ptr DynamicComplexTypesTests::GetKeyedStructType()
     if (m_KeyedStructType.get() == nullptr)
     {
         DynamicTypeBuilder_ptr keyedStruct_builder = m_factory.create_struct_builder();
-        DynamicTypeBuilder_ptr octet_builder = m_factory.create_builder_copy(
+        DynamicTypeBuilder_ptr octet_builder = m_factory.create_type(
             *m_factory.create_byte_builder());
         octet_builder->apply_annotation(ANNOTATION_KEY_ID, "value", "true");
         keyedStruct_builder->add_member(0_id, "key", octet_builder->build());

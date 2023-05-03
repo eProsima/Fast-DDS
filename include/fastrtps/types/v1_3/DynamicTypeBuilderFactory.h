@@ -252,57 +252,36 @@ public:
      * Create a new @ref DynamicTypeBuilder object based on the given @ref TypeDescriptor state.
      * @remark This method is thread-safe.
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.6 this method is
-     *         called `create_type` which is misguiding. It was renamed to simplify interface usage.
+     *         called `create_type` which is misguiding. Note it returns a builder associated with the type.
      * @remark This method will always create a new builder object. In order to access primitive static allocated
      *         ones and avoid heap overhead use the `create_xxxx_builder()` methods.
      * @param[in] td object state to copy
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_builder(
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_type(
             const TypeDescriptor& td) noexcept;
 
     /**
      * Create a new @ref DynamicTypeBuilder object based on the given @ref DynamicType object.
      * @remark This method is thread-safe.
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.7 this method is
-     *         called `create_type_copy` which is misguiding. It was renamed to simplify interface usage.
+     *         called `create_type_copy` which is misguiding. Note it returns a builder associated with the type.
      * @remark This method will always create a new builder object. In order to access primitive static allocated
      *         ones and avoid heap overhead use the `create_xxxx_builder()` methods.
      * @param[in] type @ref DynamicType object
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_builder_copy(
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_type_copy(
             const DynamicType& type) noexcept;
 
     /**
-     * Create a new @ref DynamicTypeBuilder object based on the given @ref DynamicTypeBuilder object.
-     * @remark This method is thread-safe.
-     * @remark This method will always create a new builder object. In order to access primitive static allocated
-     *         ones and avoid heap overhead use the `create_xxxx_builder()` methods.
-     * @param[in] builder @ref DynamicTypeBuilder object
-     * @return new @ref DynamicTypeBuilder object
-     */
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_builder_copy(
-            const DynamicTypeBuilder& builder) noexcept;
-
-    /**
      * Retrieve the cached @ref DynamicType object associated to a given primitive
+     * @remark This method is thread-safe.
      * @param[in] kind type identifying the primitive type to retrieve
      * @return @ref DynamicType object
      */
     RTPS_DllAPI DynamicType_ptr get_primitive_type(
             TypeKind kind) noexcept;
-
-    /**
-     * Frees any framework resources associated with the given builder.
-     * @remark This method is thread-safe.
-     * @remark RAII will prevent memory leaks even if this method is not called.
-     * @remark Non-primitive builders are tracked and this method will stop the tracking.
-     * @param[in] builder @ref DynamicTypeBuilder object whose resources to free
-     * @return standard ReturnCode_t
-     */
-    RTPS_DllAPI ReturnCode_t delete_builder(
-            const DynamicTypeBuilder& builder) noexcept;
 
     /**
      * Frees any framework resources associated with the given type according with [standard] section 7.5.2.2.10.
@@ -321,7 +300,7 @@ public:
      * @tparam kind @ref eprosima::fastrtps::types::TypeKind that identifies the singleton to return
      * @remark This method is thread-safe.
      * @remark The singleton is allocated using C++11 builtin double-checked locking lazy initialization.
-     * @remark The singleton cannot be modified. In order to get a modifiable builder use @ref create_builder_copy().
+     * @remark The singleton cannot be modified. In order to get a modifiable builder use @ref create_type().
      * @return singleton @ref DynamicTypeBuilder object
      */
     template<TypeKind kind>
@@ -337,7 +316,7 @@ public:
      * Returns a singleton @ref DynamicTypeBuilder object
      * @remark This method is thread-safe.
      * @remark The singleton is allocated using C++11 builtin double-checked locking lazy initialization.
-     * @remark The singleton cannot be modified. In order to get a modifiable builder use @ref create_builder_copy().
+     * @remark The singleton cannot be modified. In order to get a modifiable builder use @ref create_type().
      * @param kind @ref eprosima::fastrtps::types::TypeKind that identifies the singleton to return
      * @return singleton @ref DynamicTypeBuilder object
      */

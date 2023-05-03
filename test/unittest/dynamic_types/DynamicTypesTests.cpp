@@ -150,7 +150,7 @@ TEST_P(DynamicTypesPrimitiveTestsAPIs, primitives_apis_unit_tests)
     EXPECT_TRUE(factory.is_empty());
 
     // It must be possible to create a custom builder from a primitive one
-    DynamicTypeBuilder_ptr custom_builder = factory.create_builder_copy(*builder1);
+    DynamicTypeBuilder_ptr custom_builder = factory.create_type(*builder1);
     ASSERT_TRUE(custom_builder);
 
     // It must be consistent
@@ -688,13 +688,13 @@ TEST_F(DynamicTypesTests, TypeDescriptors_unit_tests)
     DynamicTypeBuilder_cptr primitive = factory.create_int32_builder();
     ASSERT_TRUE(primitive);
     // Create a modifiable builder copy
-    DynamicTypeBuilder_ptr builder = factory.create_builder_copy(*primitive);
+    DynamicTypeBuilder_ptr builder = factory.create_type(*primitive);
     ASSERT_TRUE(builder);
     EXPECT_EQ(builder->get_kind(), TypeKind::TK_INT32);
 
     // Use TypeDescriptor to capture the state
     TypeDescriptor state = *primitive;
-    DynamicTypeBuilder_ptr builder2 = factory.create_builder(state);
+    DynamicTypeBuilder_ptr builder2 = factory.create_type(state);
 
     ASSERT_TRUE(builder2);
     EXPECT_TRUE(builder->equals(*builder2));
@@ -4974,7 +4974,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_WStringStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // wstring
-    DynamicTypeBuilder_ptr string_builder = factory.create_builder_copy(*factory.create_wstring_builder());
+    DynamicTypeBuilder_ptr string_builder = factory.create_type(*factory.create_wstring_builder());
     DynamicType_ptr string_type = string_builder->build();
 
     // Struct ShortStruct
@@ -5033,7 +5033,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LargeWStringStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // wstring
-    DynamicTypeBuilder_ptr string_builder = factory.create_builder_copy(*factory.create_wstring_builder(41925));
+    DynamicTypeBuilder_ptr string_builder = factory.create_type(*factory.create_wstring_builder(41925));
     string_builder->set_name("wstringl_41925");
     DynamicType_ptr string_type = string_builder->build();
 
@@ -5093,7 +5093,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ShortWStringStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // wstring
-    DynamicTypeBuilder_ptr string_builder = factory.create_builder_copy(*factory.create_wstring_builder(15));
+    DynamicTypeBuilder_ptr string_builder = factory.create_type(*factory.create_wstring_builder(15));
     string_builder->set_name("wstrings_15");
     DynamicType_ptr string_type = string_builder->build();
 
@@ -5156,7 +5156,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StructAliasWString_test)
         DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
         // wstring
-        DynamicTypeBuilder_ptr wstring_builder = factory.create_builder_copy(
+        DynamicTypeBuilder_ptr wstring_builder = factory.create_type(
             *factory.create_wstring_type());
         DynamicType_ptr wstring_type = wstring_builder->build();
 

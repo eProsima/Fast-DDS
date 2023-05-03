@@ -1881,7 +1881,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
     }
 
     v1_3::DynamicTypeBuilder_ptr outputType =
-            v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
+            v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor);
     //outputType->set_name(name);
     if (outputType)
     {
@@ -2060,7 +2060,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             build_dynamic_type(descriptor.base_type_, get_type_name(aux), aux, get_type_object(aux));
             descriptor.set_name(object->complete().alias_type().header().detail().type_name());
             v1_3::DynamicTypeBuilder_ptr alias_type =
-                    v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor);
 
             // Apply type's annotations
             apply_type_annotations(alias_type, object->complete().alias_type().header().detail().ann_custom());
@@ -2077,7 +2077,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             }
 
             v1_3::DynamicTypeBuilder_ptr struct_type =
-                    v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor);
 
             // Apply type's annotations
             apply_type_annotations(struct_type, object->complete().struct_type().header().detail().ann_custom());
@@ -2118,7 +2118,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             descriptor.annotation_set_bit_bound(object->complete().enumerated_type().header().common().bit_bound());
 
             v1_3::DynamicTypeBuilder_ptr enum_type =
-                    v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor);
 
             // Apply type's annotations
             apply_type_annotations(enum_type, object->complete().enumerated_type().header().detail().ann_custom());
@@ -2171,7 +2171,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             descriptor.element_type_ = v1_3::DynamicTypeBuilderFactory::get_instance().create_bool_type();
 
             v1_3::DynamicTypeBuilder_ptr bitmask_type =
-                    v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor);
 
             // Apply type's annotations
             apply_type_annotations(bitmask_type, object->complete().bitmask_type().header().detail().ann_custom());
@@ -2196,7 +2196,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             }
 
             v1_3::DynamicTypeBuilder_ptr bitsetType =
-                    v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor);
 
             // Apply type's annotations
             apply_type_annotations(bitsetType, object->complete().bitset_type().header().detail().ann_custom());
@@ -2237,7 +2237,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             build_dynamic_type(descriptor.discriminator_type_, get_type_name(aux), aux, get_type_object(aux));
 
             v1_3::DynamicTypeBuilder_ptr union_type =
-                    v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor);
 
             // Apply type's annotations
             apply_type_annotations(union_type, object->complete().union_type().header().detail().ann_custom());
@@ -2290,7 +2290,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
         case TypeKind::TK_ANNOTATION:
         {
             v1_3::DynamicTypeBuilder_ptr annotation_type =
-                    v1_3::DynamicTypeBuilderFactory::get_instance().create_builder(descriptor);
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor);
 
             for (const CompleteAnnotationParameter& member : object->complete().annotation_type().member_seq())
             {

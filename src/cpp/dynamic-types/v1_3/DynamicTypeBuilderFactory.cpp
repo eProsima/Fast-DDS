@@ -371,7 +371,7 @@ void DynamicTypeBuilderFactory::before_destruction(
     dynamic_tracker<selected_mode>::get_dynamic_tracker().remove(builder);
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_builder(
+DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_type(
         const TypeDescriptor& td) noexcept
 {
     if (td.is_consistent())
@@ -389,18 +389,11 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_builder(
     return {};
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_builder_copy(
+DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_type_copy(
         const DynamicType& type) noexcept
 {
     assert(type.is_consistent());
-    return create_builder(type);
-}
-
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_builder_copy(
-        const DynamicTypeBuilder& builder) noexcept
-{
-    assert(builder.is_consistent());
-    return create_builder(builder);
+    return create_type(type);
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_alias_builder(
@@ -412,7 +405,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_alias_builder(
     descriptor.set_base_type(base_type.shared_from_this());
     descriptor.set_name(sName);
 
-    return create_builder(descriptor);
+    return create_type(descriptor);
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_array_builder(
@@ -433,7 +426,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_array_builder(
         }
     }
 
-    return create_builder(descriptor);
+    return create_type(descriptor);
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_bitmask_builder(
@@ -448,7 +441,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_bitmask_builder(
         descriptor.element_type_ = create_bool_type();
         descriptor.bound_.push_back(bound);
 
-        return create_builder(descriptor);
+        return create_type(descriptor);
     }
     else
     {
@@ -468,7 +461,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_bitset_builder(
         // TODO Review on implementation for IDL
         descriptor.set_name(GenerateTypeName(get_type_name(TypeKind::TK_BITSET)));
         descriptor.bound_.push_back(bound);
-        return create_builder(descriptor);
+        return create_type(descriptor);
     }
     else
     {
@@ -539,7 +532,7 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_annotation_primitive(
     TypeDescriptor descriptor;
     descriptor.set_kind(TypeKind::TK_ANNOTATION);
     descriptor.set_name(name);
-    return create_builder(descriptor)->build();
+    return create_type(descriptor)->build();
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_enum_builder()
@@ -548,7 +541,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_enum_builder()
     pEnumDescriptor.set_kind(TypeKind::TK_ENUM);
     // Enum currently is an alias for uint32_t
     pEnumDescriptor.set_name(GenerateTypeName(get_type_name(TypeKind::TK_UINT32)));
-    return create_builder(pEnumDescriptor);
+    return create_type(pEnumDescriptor);
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_float32_builder() noexcept
@@ -601,7 +594,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_map_builder(
             key_type.get_name(),
             value_type.get_name(),
             bound, false));
-    return create_builder(descriptor);
+    return create_type(descriptor);
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_sequence_builder(
@@ -619,7 +612,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_sequence_builder(
     descriptor.bound_.push_back(bound);
     descriptor.element_type_ = type.shared_from_this();
 
-    return create_builder(descriptor);
+    return create_type(descriptor);
 }
 
 DynamicTypeBuilder_cptr DynamicTypeBuilderFactory::create_string_builder() noexcept
@@ -644,7 +637,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_string_builder(
     TypeDescriptor descriptor(*create_string_builder());
     descriptor.set_name(TypeNamesGenerator::get_string_type_name(bound, false, true));
     descriptor.bound_[0] = bound;
-    return create_builder(descriptor);
+    return create_type(descriptor);
 }
 
 DynamicTypeBuilder_cptr DynamicTypeBuilderFactory::create_wstring_builder() noexcept
@@ -669,7 +662,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_wstring_builder(
     TypeDescriptor descriptor(*create_wstring_builder());
     descriptor.set_name(TypeNamesGenerator::get_string_type_name(bound, true, true));
     descriptor.bound_[0] = bound;
-    return create_builder(descriptor);
+    return create_type(descriptor);
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_child_struct_builder(
@@ -684,7 +677,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_child_struct_builder(
         descriptor.set_name(GenerateTypeName(get_type_name(kind)));
         descriptor.base_type_ = parent_type.shared_from_this();
 
-        return create_builder(descriptor);
+        return create_type(descriptor);
     }
     else if (kind == TypeKind::TK_ALIAS)
     {
@@ -713,7 +706,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_struct_builder() noexce
     descriptor.set_kind(TypeKind::TK_STRUCTURE);
     descriptor.set_name(GenerateTypeName(get_type_name(TypeKind::TK_STRUCTURE)));
 
-    return create_builder(descriptor);
+    return create_type(descriptor);
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_uint16_builder() noexcept
@@ -741,18 +734,11 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_union_builder(
         descriptor.set_name(GenerateTypeName(get_type_name(TypeKind::TK_UNION)));
         descriptor.discriminator_type_ = discriminator_type.shared_from_this();
 
-        return create_builder(descriptor);
+        return create_type(descriptor);
     }
 
     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building Union, invalid discriminator type");
     return {};
-}
-
-ReturnCode_t DynamicTypeBuilderFactory::delete_builder(
-        const DynamicTypeBuilder& builder) noexcept
-{
-    return dynamic_tracker<selected_mode>::get_dynamic_tracker().remove(&builder)
-            ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_ALREADY_DELETED;
 }
 
 ReturnCode_t DynamicTypeBuilderFactory::delete_type(

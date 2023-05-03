@@ -1389,7 +1389,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
             if (memberBuilder->is_primitive())
             {
                 // copy if modification is required
-                builder = factory.create_builder_copy(*memberBuilder);
+                builder = factory.create_type(*memberBuilder);
             }
             else
             {
