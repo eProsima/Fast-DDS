@@ -1885,21 +1885,53 @@ TEST(Discovery, MulticastInitialPeer)
     reader.wait_discovery();
 }
 
-//! Regression test for redmine issue 10674
+//! Regression test for redmine issue 17162
 TEST(Discovery, MultipleXMLProfileLoad)
 {
-    auto participant_creation_reader = []()
+    // These test may fail because one of the participants disappear before the other has found it.
+    // Thus, use condition variable so threads only finish once the discovery has taken place.
+    std::condition_variable cv;
+    std::mutex cv_mtx;
+    std::atomic<int> n_discoveries(0);
+
+    auto participant_creation_reader = [&]()
             {
                 PubSubReader<HelloWorldPubSubType> participant(TEST_TOPIC_NAME);
                 participant.init();
                 participant.wait_discovery();
+
+                // Notify discovery has happen
+                {
+                    std::unique_lock<std::mutex> lock(cv_mtx);
+                    n_discoveries++;
+                }
+                cv.notify_all();
+
+                std::unique_lock<std::mutex> lock(cv_mtx);
+                cv.wait(
+                    lock,
+                    [&](){ return n_discoveries >= 2; }
+                );
             };
 
-    auto participant_creation_writer = []()
+    auto participant_creation_writer = [&]()
             {
                 PubSubWriter<HelloWorldPubSubType> participant(TEST_TOPIC_NAME);
                 participant.init();
                 participant.wait_discovery();
+
+                // Notify discovery has happen
+                {
+                    std::unique_lock<std::mutex> lock(cv_mtx);
+                    n_discoveries++;
+                }
+                cv.notify_all();
+
+                std::unique_lock<std::mutex> lock(cv_mtx);
+                cv.wait(
+                    lock,
+                    [&](){ return n_discoveries >= 2; }
+                );
             };
 
     // Start thread creating second participant
