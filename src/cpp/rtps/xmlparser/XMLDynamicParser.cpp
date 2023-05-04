@@ -271,11 +271,11 @@ static DynamicTypeBuilder_cptr getDiscriminatorTypeBuilder(
     }
     else if (disc.compare(STRING) == 0)
     {
-        return bound == 0 ? factory.create_string_builder() : factory.create_string_builder(bound);
+        return bound == 0 ? factory.create_string_type() : factory.create_string_type(bound);
     }
     else if (disc.compare(WSTRING) == 0)
     {
-        return bound == 0 ? factory.create_wstring_builder() : factory.create_wstring_builder(bound);
+        return bound == 0 ? factory.create_wstring_type() : factory.create_wstring_type(bound);
     }
 
     DynamicTypeBuilder_ptr ret;
@@ -1299,7 +1299,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
     }
     else if (strncmp(memberType, STRING, 7) == 0)
     {
-        auto string_builder = factory.create_string_builder();
+        auto string_builder = factory.create_string_type();
         const char* boundStr = p_root->Attribute(STR_MAXLENGTH);
 
         if (nullptr != boundStr)
@@ -1307,7 +1307,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
             uint32_t bound = static_cast<uint32_t>(std::atoi(boundStr));
             if ( bound > 0 )
             {
-                string_builder = factory.create_string_builder(bound);
+                string_builder = factory.create_string_type(bound);
             }
         }
 
@@ -1324,7 +1324,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
     }
     else if (strncmp(memberType, WSTRING, 8) == 0)
     {
-        auto string_builder = factory.create_wstring_builder();
+        auto string_builder = factory.create_wstring_type();
         const char* boundStr = p_root->Attribute(STR_MAXLENGTH);
 
         if (nullptr != boundStr)
@@ -1332,7 +1332,7 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
             uint32_t bound = static_cast<uint32_t>(std::atoi(boundStr));
             if ( bound > 0 )
             {
-                string_builder = factory.create_wstring_builder(bound);
+                string_builder = factory.create_wstring_type(bound);
             }
         }
 

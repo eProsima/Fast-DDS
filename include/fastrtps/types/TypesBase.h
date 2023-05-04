@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <bitset>
 #include <cctype>
+#include <limits>
 #include <map>
 #include <memory>
 #include <string>
@@ -930,6 +931,8 @@ using DynamicTypeBuilder_ptr = std::shared_ptr<DynamicTypeBuilder>;
 using DynamicTypeBuilder_cptr = std::shared_ptr<const DynamicTypeBuilder>;
 
 using namespace xtypes_names;
+
+constexpr uint32_t LENGTH_UNLIMITED = std::numeric_limits<uint32_t>::max();
 
 } // namespace v1_3
 

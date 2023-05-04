@@ -615,51 +615,49 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_sequence_builder(
     return create_type(descriptor);
 }
 
-DynamicTypeBuilder_cptr DynamicTypeBuilderFactory::create_string_builder() noexcept
+DynamicTypeBuilder_cptr DynamicTypeBuilderFactory::create_string_type(
+        uint32_t bound /* = LENGTH_UNLIMITED */) noexcept
 {
     // C++11 compiler uses double-checked locking pattern to avoid concurrency issues
     static DynamicTypeBuilder_cptr unlimited_builder = { new_unlimited_string_builder(false) };
 
-    // TODO:Barro refactor unbounded to be unbounded and not 256
-    return unlimited_builder;
-}
-
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_string_builder(
-        uint32_t bound) noexcept
-{
     if ( 0 == bound )
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating bounded string with bound: " << bound);
         return {};
     }
+    else if ( LENGTH_UNLIMITED == bound )
+    {
+        // TODO:Barro refactor unbounded to be unbounded and not 256
+        return unlimited_builder;
+    }
 
     // otherwise allocate one on the heap
-    TypeDescriptor descriptor(*create_string_builder());
+    TypeDescriptor descriptor(*unlimited_builder);
     descriptor.set_name(TypeNamesGenerator::get_string_type_name(bound, false, true));
     descriptor.bound_[0] = bound;
     return create_type(descriptor);
 }
 
-DynamicTypeBuilder_cptr DynamicTypeBuilderFactory::create_wstring_builder() noexcept
+DynamicTypeBuilder_cptr DynamicTypeBuilderFactory::create_wstring_type(
+        uint32_t bound /* = LENGTH_UNLIMITED */) noexcept
 {
     // C++11 compiler uses double-checked locking pattern to avoid concurrency issues
     static DynamicTypeBuilder_cptr unlimited_builder = { new_unlimited_string_builder(true) };
 
-    // if unlimited return the cached one
-    return unlimited_builder;
-}
-
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_wstring_builder(
-        uint32_t bound) noexcept
-{
     if ( 0 == bound )
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error creating bounded wstring with bound: " << bound);
         return {};
     }
+    else if ( LENGTH_UNLIMITED == bound )
+    {
+        // TODO:Barro refactor unbounded to be unbounded and not 256
+        return unlimited_builder;
+    }
 
     // otherwise allocate one on the heap
-    TypeDescriptor descriptor(*create_wstring_builder());
+    TypeDescriptor descriptor(*unlimited_builder);
     descriptor.set_name(TypeNamesGenerator::get_string_type_name(bound, true, true));
     descriptor.bound_[0] = bound;
     return create_type(descriptor);
@@ -2603,19 +2601,19 @@ DynamicType_ptr DynamicTypeBuilderFactory::create_byte_type()
     return create_byte_builder()->build();
 }
 
-DynamicType_ptr DynamicTypeBuilderFactory::create_string_type(
-        uint32_t bound /*= MAX_STRING_LENGTH*/) noexcept
+DynamicType_ptr DynamicTypeBuilderFactory::get_string_type(
+        uint32_t bound /* = LENGTH_UNLIMITED */) noexcept
 {
-    DynamicTypeBuilder_cptr builder = bound == MAX_STRING_LENGTH
-            ? create_string_builder() : create_string_builder(bound);
+    DynamicTypeBuilder_cptr builder = bound == LENGTH_UNLIMITED
+            ? create_string_type() : create_string_type(bound);
     return builder ? builder->build() : DynamicType_ptr{};
 }
 
-DynamicType_ptr DynamicTypeBuilderFactory::create_wstring_type(
-        uint32_t bound /*= MAX_STRING_LENGTH*/) noexcept
+DynamicType_ptr DynamicTypeBuilderFactory::get_wstring_type(
+        uint32_t bound /* = LENGTH_UNLIMITED */) noexcept
 {
-    DynamicTypeBuilder_cptr builder = bound == MAX_STRING_LENGTH
-            ? create_wstring_builder() : create_wstring_builder(bound);
+    DynamicTypeBuilder_cptr builder = bound == LENGTH_UNLIMITED
+            ? create_wstring_type() : create_wstring_type(bound);
     return builder ? builder->build() : DynamicType_ptr{};
 }
 

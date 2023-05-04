@@ -282,8 +282,8 @@ DynamicType_ptr DynamicComplexTypesTests::GetBasicStructType()
         DynamicType_ptr ldouble_type = m_factory.create_float128_type();
         DynamicType_ptr char_type = m_factory.create_char8_type();
         DynamicType_ptr wchar_type = m_factory.create_char16_type();
-        DynamicType_ptr string_type = m_factory.create_string_type();
-        DynamicType_ptr wstring_type = m_factory.create_wstring_type();
+        DynamicType_ptr string_type = m_factory.get_string_type();
+        DynamicType_ptr wstring_type = m_factory.get_wstring_type();
         DynamicTypeBuilder_ptr basicStruct_builder = m_factory.create_struct_builder();
 
         // Add members to the struct.
@@ -354,15 +354,15 @@ DynamicType_ptr DynamicComplexTypesTests::GetComplexStructType()
                 DynamicTypeBuilderFactory::get_instance().create_map_builder(*int32_type,
                         *map_octet_bsalias5_builder->build());
         DynamicType_ptr my_small_string_8_type =
-                DynamicTypeBuilderFactory::get_instance().create_string_type(128);
+                DynamicTypeBuilderFactory::get_instance().get_string_type(128);
         DynamicType_ptr my_small_string_16_type =
-                DynamicTypeBuilderFactory::get_instance().create_wstring_type(64);
+                DynamicTypeBuilderFactory::get_instance().get_wstring_type(64);
         DynamicType_ptr my_large_string_8_type =
-                DynamicTypeBuilderFactory::get_instance().create_string_type(500);
+                DynamicTypeBuilderFactory::get_instance().get_string_type(500);
         DynamicType_ptr my_large_string_16_type =
-                DynamicTypeBuilderFactory::get_instance().create_wstring_type(1024);
+                DynamicTypeBuilderFactory::get_instance().get_wstring_type(1024);
         DynamicType_ptr string75_8_type =
-                DynamicTypeBuilderFactory::get_instance().create_string_type(75);
+                DynamicTypeBuilderFactory::get_instance().get_string_type(75);
         DynamicTypeBuilder_ptr my_array_string_builder =
                 DynamicTypeBuilderFactory::get_instance().create_array_builder(*string75_8_type, { 5, 5 });
 
@@ -428,7 +428,7 @@ DynamicType_ptr DynamicComplexTypesTests::GetUnion2SwitchType()
     {
         DynamicType_ptr octet_type = DynamicTypeBuilderFactory::get_instance().create_byte_type();
         DynamicType_ptr int32_type = DynamicTypeBuilderFactory::get_instance().create_int32_type();
-        DynamicType_ptr string_type = DynamicTypeBuilderFactory::get_instance().create_string_type();
+        DynamicType_ptr string_type = DynamicTypeBuilderFactory::get_instance().get_string_type();
         DynamicTypeBuilder_ptr myUnion2_builder = DynamicTypeBuilderFactory::get_instance().create_union_builder(
             *octet_type);
         myUnion2_builder->add_member(0_id, "uno", int32_type, "0", std::vector<uint64_t>{ 0 }, false);

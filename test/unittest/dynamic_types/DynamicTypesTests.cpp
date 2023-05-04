@@ -884,7 +884,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
 
     // Try to create with invalid values
     // • strings
-    DynamicTypeBuilder_cptr created_builder = factory.create_string_builder();
+    DynamicTypeBuilder_cptr created_builder = factory.create_string_type();
     ASSERT_TRUE(created_builder);
 
     DynamicType_ptr type = created_builder->build();
@@ -897,7 +897,7 @@ TEST_F(DynamicTypesTests, DynamicTypeBuilderFactory_unit_tests)
     EXPECT_EQ(type, type2); // type objects are cached
 
     // • wstrings
-    created_builder = factory.create_wstring_builder();
+    created_builder = factory.create_wstring_type();
     ASSERT_TRUE(created_builder);
 
     type = created_builder->build();
@@ -2341,16 +2341,16 @@ TEST_F(DynamicTypesTests, DynamicType_string_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr created_builder = factory.create_string_builder();
+    DynamicTypeBuilder_cptr created_builder = factory.create_string_type();
     ASSERT_TRUE(created_builder);
-    EXPECT_EQ(created_builder, factory.create_string_builder()); // unbounded builders are cached
+    EXPECT_EQ(created_builder, factory.create_string_type()); // unbounded builders are cached
     DynamicType_ptr created_type = created_builder->build();
     ASSERT_TRUE(created_type);
 
     uint32_t length = 15;
-    created_builder = factory.create_string_builder(length);
+    created_builder = factory.create_string_type(length);
     ASSERT_TRUE(created_builder);
-    EXPECT_NE(created_builder, factory.create_string_builder()); // bounded builders are not cached
+    EXPECT_NE(created_builder, factory.create_string_type()); // bounded builders are not cached
     created_type = created_builder->build();
     ASSERT_TRUE(created_type);
     DynamicData* data = DynamicDataFactory::get_instance()->create_data(created_type);
@@ -2459,16 +2459,16 @@ TEST_F(DynamicTypesTests, DynamicType_wstring_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr created_builder = factory.create_wstring_builder();
+    DynamicTypeBuilder_cptr created_builder = factory.create_wstring_type();
     ASSERT_TRUE(created_builder);
-    EXPECT_EQ(created_builder, factory.create_wstring_builder()); // unbounded builders are cached
+    EXPECT_EQ(created_builder, factory.create_wstring_type()); // unbounded builders are cached
     DynamicType_ptr created_type = created_builder->build();
     ASSERT_TRUE(created_type);
 
     uint32_t length = 15;
-    created_builder = factory.create_wstring_builder(length);
+    created_builder = factory.create_wstring_type(length);
     ASSERT_TRUE(created_builder);
-    EXPECT_NE(created_builder, factory.create_wstring_builder()); // bounded builders are not cached
+    EXPECT_NE(created_builder, factory.create_wstring_type()); // bounded builders are not cached
     created_type = created_builder->build();
     ASSERT_TRUE(created_type);
     DynamicData* data = DynamicDataFactory::get_instance()->create_data(created_type);
@@ -2764,7 +2764,7 @@ TEST_F(DynamicTypesTests, DynamicType_multi_alias_unit_tests)
     std::string name = "ALIAS";
     std::string name2 = "ALIAS2";
 
-    DynamicType_ptr base_type = factory.create_string_type(length);
+    DynamicType_ptr base_type = factory.get_string_type(length);
     ASSERT_TRUE(base_type);
 
     // alias
@@ -4945,7 +4945,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StringStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // string
-    DynamicType_ptr byte_type = factory.create_string_type();
+    DynamicType_ptr byte_type = factory.get_string_type();
 
     // Struct ShortStruct
     DynamicTypeBuilder_ptr string_builder = factory.create_struct_builder();
@@ -4974,7 +4974,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_WStringStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // wstring
-    DynamicTypeBuilder_ptr string_builder = factory.create_type(*factory.create_wstring_builder());
+    DynamicTypeBuilder_ptr string_builder = factory.create_type(*factory.create_wstring_type());
     DynamicType_ptr string_type = string_builder->build();
 
     // Struct ShortStruct
@@ -5004,7 +5004,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LargeStringStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // string
-    DynamicType_ptr byte_type = factory.create_string_type(41925);
+    DynamicType_ptr byte_type = factory.get_string_type(41925);
 
     // Struct ShortStruct
     DynamicTypeBuilder_ptr string_builder = factory.create_struct_builder();
@@ -5033,7 +5033,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LargeWStringStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // wstring
-    DynamicTypeBuilder_ptr string_builder = factory.create_type(*factory.create_wstring_builder(41925));
+    DynamicTypeBuilder_ptr string_builder = factory.create_type(*factory.create_wstring_type(41925));
     string_builder->set_name("wstringl_41925");
     DynamicType_ptr string_type = string_builder->build();
 
@@ -5064,7 +5064,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ShortStringStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // string
-    DynamicType_ptr byte_type = factory.create_string_type(15);
+    DynamicType_ptr byte_type = factory.get_string_type(15);
 
     // Struct ShortStruct
     DynamicTypeBuilder_ptr string_builder = factory.create_struct_builder();
@@ -5093,7 +5093,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ShortWStringStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // wstring
-    DynamicTypeBuilder_ptr string_builder = factory.create_type(*factory.create_wstring_builder(15));
+    DynamicTypeBuilder_ptr string_builder = factory.create_type(*factory.create_wstring_type(15));
     string_builder->set_name("wstrings_15");
     DynamicType_ptr string_type = string_builder->build();
 
@@ -5124,7 +5124,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_AliasStringStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // String
-    DynamicType_ptr string_type = factory.create_string_type();
+    DynamicType_ptr string_type = factory.get_string_type();
 
     // Alias
     DynamicType_ptr myAlias_type = factory.create_alias_type(*string_type, "MyAliasString");
@@ -5157,7 +5157,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StructAliasWString_test)
 
         // wstring
         DynamicTypeBuilder_ptr wstring_builder = factory.create_type(
-            *factory.create_wstring_type());
+            *factory.get_wstring_type());
         DynamicType_ptr wstring_type = wstring_builder->build();
 
         // Alias
