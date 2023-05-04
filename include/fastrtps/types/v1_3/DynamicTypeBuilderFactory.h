@@ -305,7 +305,7 @@ public:
      */
     template<TypeKind kind>
     typename std::enable_if<is_primitive_t<kind>::value, DynamicTypeBuilder_cptr&>::type
-    create_primitive_builder() noexcept
+    create_primitive_type() noexcept
     {
         // C++11 compiler uses double-checked locking pattern to avoid concurrency issues
         static DynamicTypeBuilder_cptr builder = { new_primitive_builder(kind) };
@@ -320,7 +320,7 @@ public:
      * @param kind @ref eprosima::fastrtps::types::TypeKind that identifies the singleton to return
      * @return singleton @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_primitive_builder(
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_primitive_type(
             TypeKind kind) noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_INT32>()`

@@ -75,7 +75,7 @@ using primitive_builder_api = DynamicTypeBuilder_cptr& (DynamicTypeBuilderFactor
 using primitive_type_api = DynamicType_ptr (DynamicTypeBuilderFactory::* )();
 
 // Testing the primitive creation APIS
-// and get_primitive_type() and create_primitive_builder()
+// and get_primitive_type() and create_primitive_type()
 class DynamicTypesPrimitiveTestsAPIs
     : public testing::TestWithParam<std::tuple<TypeKind, primitive_builder_api, primitive_type_api>>
 {
@@ -94,7 +94,7 @@ TEST_P(DynamicTypesPrimitiveTestsAPIs, primitives_apis_unit_tests)
     std::tie(kind, bapi, tapi) = GetParam();
 
     // Create the primitive builder,
-    // note that create_xxx_builder rely on create_primitive_builder<TK_xxxx>()
+    // note that create_xxx_builder rely on create_primitive_type<TK_xxxx>()
     DynamicTypeBuilder_cptr builder1 = (factory.*bapi)();
     ASSERT_TRUE(builder1);
 
@@ -110,7 +110,7 @@ TEST_P(DynamicTypesPrimitiveTestsAPIs, primitives_apis_unit_tests)
     EXPECT_EQ(builder1, builder2);
 
     // It must match the one created by the generic api
-    DynamicTypeBuilder_cptr builder3 = factory.create_primitive_builder(kind);
+    DynamicTypeBuilder_cptr builder3 = factory.create_primitive_type(kind);
     ASSERT_TRUE(builder3);
     EXPECT_EQ(builder1, builder3);
 
@@ -256,7 +256,7 @@ INSTANTIATE_TEST_SUITE_P(CheckingGetPrimitiveType,
             &DynamicTypeBuilderFactory::create_byte_builder,
             &DynamicTypeBuilderFactory::create_byte_type)));
 
-// Testing create_primitive_builder<TypeKind>
+// Testing create_primitive_type<TypeKind>
 
 // ancillary class, gtest only allows parametrized tests on types
 template<TypeKind> struct TypeKindType {};
@@ -315,12 +315,12 @@ TYPED_TEST(StaticTypesPrimitiveTests, create_primitive_template_unit_tests)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // Create the primitive builder,
-    // note that create_xxx_builder rely on create_primitive_builder<TK_xxxx>()
-    DynamicTypeBuilder_cptr builder1 = factory.create_primitive_builder<TypeParam::kind>();
+    // note that create_xxx_builder rely on create_primitive_type<TK_xxxx>()
+    DynamicTypeBuilder_cptr builder1 = factory.create_primitive_type<TypeParam::kind>();
     ASSERT_TRUE(builder1);
 
     // It must return the same builder than the runtime counterpart
-    DynamicTypeBuilder_cptr builder2 = factory.create_primitive_builder(TypeParam::kind);
+    DynamicTypeBuilder_cptr builder2 = factory.create_primitive_type(TypeParam::kind);
     ASSERT_TRUE(builder2);
     EXPECT_EQ(builder1, builder2);
 }

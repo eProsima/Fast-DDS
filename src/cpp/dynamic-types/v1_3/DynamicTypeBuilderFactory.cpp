@@ -508,22 +508,22 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::new_unlimited_string_builder(
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_bool_builder() noexcept
 {
-    return create_primitive_builder<TypeKind::TK_BOOLEAN>();
+    return create_primitive_type<TypeKind::TK_BOOLEAN>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_byte_builder() noexcept
 {
-    return create_primitive_builder<TypeKind::TK_BYTE>();
+    return create_primitive_type<TypeKind::TK_BYTE>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_char8_builder() noexcept
 {
-    return create_primitive_builder<TypeKind::TK_CHAR8>();
+    return create_primitive_type<TypeKind::TK_CHAR8>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_char16_builder() noexcept
 {
-    return create_primitive_builder<TypeKind::TK_CHAR16>();
+    return create_primitive_type<TypeKind::TK_CHAR16>();
 }
 
 DynamicType_ptr DynamicTypeBuilderFactory::create_annotation_primitive(
@@ -546,32 +546,32 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_enum_builder()
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_float32_builder() noexcept
 {
-    return create_primitive_builder<TypeKind::TK_FLOAT32>();
+    return create_primitive_type<TypeKind::TK_FLOAT32>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_float64_builder() noexcept
 {
-    return create_primitive_builder<TypeKind::TK_FLOAT64>();
+    return create_primitive_type<TypeKind::TK_FLOAT64>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_float128_builder() noexcept
 {
-    return create_primitive_builder<TypeKind::TK_FLOAT128>();
+    return create_primitive_type<TypeKind::TK_FLOAT128>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_int16_builder() noexcept
 {
-    return create_primitive_builder<TypeKind::TK_INT16>();
+    return create_primitive_type<TypeKind::TK_INT16>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_int32_builder() noexcept
 {
-    return create_primitive_builder<TypeKind::TK_INT32>();
+    return create_primitive_type<TypeKind::TK_INT32>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_int64_builder() noexcept
 {
-    return create_primitive_builder<TypeKind::TK_INT64>();
+    return create_primitive_type<TypeKind::TK_INT64>();
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_map_type(
@@ -709,17 +709,17 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_struct_builder() noexce
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_uint16_builder() noexcept
 {
-    return create_primitive_builder<TypeKind::TK_UINT16>();
+    return create_primitive_type<TypeKind::TK_UINT16>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_uint32_builder() noexcept
 {
-    return create_primitive_builder<TypeKind::TK_UINT32>();
+    return create_primitive_type<TypeKind::TK_UINT32>();
 }
 
 DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_uint64_builder() noexcept
 {
-    return create_primitive_builder<TypeKind::TK_UINT64>();
+    return create_primitive_type<TypeKind::TK_UINT64>();
 }
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_union_builder(
@@ -746,7 +746,7 @@ ReturnCode_t DynamicTypeBuilderFactory::delete_type(
             ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_ALREADY_DELETED;
 }
 
-DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_primitive_builder(
+DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_primitive_type(
         TypeKind kind) noexcept
 {
     static DynamicTypeBuilder_cptr empty_means_failure;
@@ -788,7 +788,7 @@ DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_primitive_builder(
 DynamicType_ptr DynamicTypeBuilderFactory::get_primitive_type(
         TypeKind kind) noexcept
 {
-    DynamicTypeBuilder_cptr builder = create_primitive_builder(kind);
+    DynamicTypeBuilder_cptr builder = create_primitive_type(kind);
     if (builder)
     {
         return builder->build();
