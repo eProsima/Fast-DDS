@@ -597,11 +597,11 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_map_builder(
     return create_type(descriptor);
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_sequence_builder(
+DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_sequence_type(
         const DynamicType& type,
-        uint32_t bound) noexcept
+        uint32_t bound = /* LENGTH_UNLIMITED */) noexcept
 {
-    if (bound == BOUND_UNLIMITED)
+    if (bound == LENGTH_UNLIMITED)
     {
         bound = MAX_ELEMENTS_COUNT;
     }

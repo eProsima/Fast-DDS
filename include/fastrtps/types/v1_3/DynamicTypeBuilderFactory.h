@@ -387,14 +387,14 @@ public:
     /**
      * Creates a new @ref DynamicTypeBuilder object representing a sequence
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.4 this method is
-     *         called `create_sequence_type` which is misguiding. It was renamed to simplify interface usage.
+     *         called `create_sequence_type` which is misguiding. Note it returns a builder.
      * @param[in] type @ref DynamicType which becomes the element type
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_sequence_builder(
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_sequence_type(
             const DynamicType& type,
-            uint32_t bound = MAX_ELEMENTS_COUNT) noexcept;
+            uint32_t bound = LENGTH_UNLIMITED) noexcept;
 
     /**
      * Creates a new @ref DynamicTypeBuilder object representing an array
