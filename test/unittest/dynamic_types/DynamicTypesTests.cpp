@@ -94,7 +94,7 @@ TEST_P(DynamicTypesPrimitiveTestsAPIs, primitives_apis_unit_tests)
     std::tie(kind, bapi, tapi) = GetParam();
 
     // Create the primitive builder,
-    // note that create_xxx_builder rely on create_primitive_type<TK_xxxx>()
+    // note that create_xxx_type rely on create_primitive_type<TK_xxxx>()
     DynamicTypeBuilder_cptr builder1 = (factory.*bapi)();
     ASSERT_TRUE(builder1);
 
@@ -217,44 +217,44 @@ INSTANTIATE_TEST_SUITE_P(CheckingGetPrimitiveType,
         DynamicTypesPrimitiveTestsAPIs,
         testing::Values(
             std::make_tuple(TypeKind::TK_INT32,
-            &DynamicTypeBuilderFactory::create_int32_builder,
-            &DynamicTypeBuilderFactory::create_int32_type),
+            &DynamicTypeBuilderFactory::create_int32_type,
+            &DynamicTypeBuilderFactory::get_int32_type),
             std::make_tuple(TypeKind::TK_UINT32,
-            &DynamicTypeBuilderFactory::create_uint32_builder,
-            &DynamicTypeBuilderFactory::create_uint32_type),
+            &DynamicTypeBuilderFactory::create_uint32_type,
+            &DynamicTypeBuilderFactory::get_uint32_type),
             std::make_tuple(TypeKind::TK_INT16,
-            &DynamicTypeBuilderFactory::create_int16_builder,
-            &DynamicTypeBuilderFactory::create_int16_type),
+            &DynamicTypeBuilderFactory::create_int16_type,
+            &DynamicTypeBuilderFactory::get_int16_type),
             std::make_tuple(TypeKind::TK_UINT16,
-            &DynamicTypeBuilderFactory::create_uint16_builder,
-            &DynamicTypeBuilderFactory::create_uint16_type),
+            &DynamicTypeBuilderFactory::create_uint16_type,
+            &DynamicTypeBuilderFactory::get_uint16_type),
             std::make_tuple(TypeKind::TK_INT64,
-            &DynamicTypeBuilderFactory::create_int64_builder,
-            &DynamicTypeBuilderFactory::create_int64_type),
+            &DynamicTypeBuilderFactory::create_int64_type,
+            &DynamicTypeBuilderFactory::get_int64_type),
             std::make_tuple(TypeKind::TK_UINT64,
-            &DynamicTypeBuilderFactory::create_uint64_builder,
-            &DynamicTypeBuilderFactory::create_uint64_type),
+            &DynamicTypeBuilderFactory::create_uint64_type,
+            &DynamicTypeBuilderFactory::get_uint64_type),
             std::make_tuple(TypeKind::TK_FLOAT32,
-            &DynamicTypeBuilderFactory::create_float32_builder,
-            &DynamicTypeBuilderFactory::create_float32_type),
+            &DynamicTypeBuilderFactory::create_float32_type,
+            &DynamicTypeBuilderFactory::get_float32_type),
             std::make_tuple(TypeKind::TK_FLOAT64,
-            &DynamicTypeBuilderFactory::create_float64_builder,
-            &DynamicTypeBuilderFactory::create_float64_type),
+            &DynamicTypeBuilderFactory::create_float64_type,
+            &DynamicTypeBuilderFactory::get_float64_type),
             std::make_tuple(TypeKind::TK_FLOAT128,
-            &DynamicTypeBuilderFactory::create_float128_builder,
-            &DynamicTypeBuilderFactory::create_float128_type),
+            &DynamicTypeBuilderFactory::create_float128_type,
+            &DynamicTypeBuilderFactory::get_float128_type),
             std::make_tuple(TypeKind::TK_CHAR8,
-            &DynamicTypeBuilderFactory::create_char8_builder,
-            &DynamicTypeBuilderFactory::create_char8_type),
+            &DynamicTypeBuilderFactory::create_char8_type,
+            &DynamicTypeBuilderFactory::get_char8_type),
             std::make_tuple(TypeKind::TK_CHAR16,
-            &DynamicTypeBuilderFactory::create_char16_builder,
-            &DynamicTypeBuilderFactory::create_char16_type),
+            &DynamicTypeBuilderFactory::create_char16_type,
+            &DynamicTypeBuilderFactory::get_char16_type),
             std::make_tuple(TypeKind::TK_BOOLEAN,
-            &DynamicTypeBuilderFactory::create_bool_builder,
-            &DynamicTypeBuilderFactory::create_bool_type),
+            &DynamicTypeBuilderFactory::create_bool_type,
+            &DynamicTypeBuilderFactory::get_bool_type),
             std::make_tuple(TypeKind::TK_BYTE,
-            &DynamicTypeBuilderFactory::create_byte_builder,
-            &DynamicTypeBuilderFactory::create_byte_type)));
+            &DynamicTypeBuilderFactory::create_byte_type,
+            &DynamicTypeBuilderFactory::get_byte_type)));
 
 // Testing create_primitive_type<TypeKind>
 
@@ -685,7 +685,7 @@ TEST_F(DynamicTypesTests, TypeDescriptors_unit_tests)
     // We want to create a new type based on int32_t
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
     // get static builder
-    DynamicTypeBuilder_cptr primitive = factory.create_int32_builder();
+    DynamicTypeBuilder_cptr primitive = factory.create_int32_type();
     ASSERT_TRUE(primitive);
     // Create a modifiable builder copy
     DynamicTypeBuilder_ptr builder = factory.create_type(*primitive);
@@ -754,14 +754,14 @@ TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // Create basic types
-    DynamicTypeBuilder_ptr struct_type_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr struct_type_builder = factory.create_struct_type();
     ASSERT_TRUE(struct_type_builder);
     EXPECT_TRUE(struct_type_builder->is_consistent());
     EXPECT_EQ(struct_type_builder->get_kind(), TypeKind::TK_STRUCTURE);
     EXPECT_EQ(struct_type_builder->get_member_count(), 0u);
 
     // Add members to the struct.
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->add_member(3_id, "int32", factory.create_int32_type()));
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->add_member(3_id, "int32", factory.get_int32_type()));
     EXPECT_TRUE(struct_type_builder->is_consistent());
     EXPECT_EQ(struct_type_builder->get_member_count(), 1u);
 
@@ -769,7 +769,7 @@ TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
     ASSERT_TRUE(struct_type);
     EXPECT_EQ(struct_type, struct_type_builder->build()); // Build objects are cached
 
-    ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->add_member(1_id, "int64", factory.create_int64_type()));
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->add_member(1_id, "int64", factory.get_int64_type()));
     EXPECT_TRUE(struct_type_builder->is_consistent());
     EXPECT_EQ(struct_type_builder->get_member_count(), 2u);
 
@@ -788,7 +788,7 @@ TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
     }
 
     // • checking MemberDescriptor getters
-    MemberDescriptor md1{3_id, "int32", factory.create_int32_type()};
+    MemberDescriptor md1{3_id, "int32", factory.get_int32_type()};
     md1.set_index(0); // first addition
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->get_member(md, 3_id));
 
@@ -799,7 +799,7 @@ TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
     EXPECT_EQ(md.get_type(), md1.get_type());
 
     // • checking MemberDescriptor comparison and construction
-    MemberDescriptor md2{1_id, "int64", factory.create_int64_type()};
+    MemberDescriptor md2{1_id, "int64", factory.get_int64_type()};
     md2.set_index(1); // second addition
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->get_member(md, 1_id));
     EXPECT_TRUE(md.is_consistent(struct_type_builder->get_kind()));
@@ -852,7 +852,7 @@ TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
     EXPECT_EQ(**it, md2);
 
     // • checking indexes work according with OMG standard 1.3 section 7.5.2.7.6
-    md = MemberDescriptor(7_id, "bool", factory.create_bool_type());
+    md = MemberDescriptor(7_id, "bool", factory.get_bool_type());
     md.set_index(1); // insert int the middle
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, struct_type_builder->add_member(md));
 
@@ -873,7 +873,7 @@ TEST_F(DynamicTypesTests, DynamicType_basic_unit_tests)
         EXPECT_NE(ReturnCode_t::RETCODE_OK, struct_type_builder->add_member(md));
 
         //    + duplicate id
-        md = MemberDescriptor(7_id, "dup_bool", factory.create_bool_type(), "true");
+        md = MemberDescriptor(7_id, "dup_bool", factory.get_bool_type(), "true");
         EXPECT_NE(ReturnCode_t::RETCODE_OK, struct_type_builder->add_member(md));
     }
 }
@@ -914,7 +914,7 @@ TEST_F(DynamicTypesTests, DynamicType_int32_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr created_builder = factory.create_int32_builder();
+    DynamicTypeBuilder_cptr created_builder = factory.create_int32_type();
     ASSERT_TRUE(created_builder);
     DynamicType_ptr created_type = created_builder->build();
     ASSERT_TRUE(created_type);
@@ -1013,7 +1013,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint32_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr created_builder = factory.create_uint32_builder();
+    DynamicTypeBuilder_cptr created_builder = factory.create_uint32_type();
     ASSERT_TRUE(created_builder);
     DynamicType_ptr created_type = created_builder->build();
     ASSERT_TRUE(created_type);
@@ -1112,7 +1112,7 @@ TEST_F(DynamicTypesTests, DynamicType_int16_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr created_builder = factory.create_int16_builder();
+    DynamicTypeBuilder_cptr created_builder = factory.create_int16_type();
     ASSERT_TRUE(created_builder);
     DynamicType_ptr created_type = created_builder->build();
     ASSERT_TRUE(created_type);
@@ -1211,7 +1211,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint16_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr created_builder = factory.create_uint16_builder();
+    DynamicTypeBuilder_cptr created_builder = factory.create_uint16_type();
     ASSERT_TRUE(created_builder);
     DynamicType_ptr created_type = created_builder->build();
     ASSERT_TRUE(created_type);
@@ -1310,7 +1310,7 @@ TEST_F(DynamicTypesTests, DynamicType_int64_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr created_builder = factory.create_int64_builder();
+    DynamicTypeBuilder_cptr created_builder = factory.create_int64_type();
     ASSERT_TRUE(created_builder);
     DynamicType_ptr created_type = created_builder->build();
     ASSERT_TRUE(created_type);
@@ -1409,7 +1409,7 @@ TEST_F(DynamicTypesTests, DynamicType_uint64_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr created_builder = factory.create_uint64_builder();
+    DynamicTypeBuilder_cptr created_builder = factory.create_uint64_type();
     ASSERT_TRUE(created_builder);
     DynamicType_ptr created_type = created_builder->build();
     ASSERT_TRUE(created_type);
@@ -1508,7 +1508,7 @@ TEST_F(DynamicTypesTests, DynamicType_float32_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr created_builder = factory.create_float32_builder();
+    DynamicTypeBuilder_cptr created_builder = factory.create_float32_type();
     ASSERT_TRUE(created_builder);
     DynamicType_ptr created_type = created_builder->build();
     ASSERT_TRUE(created_type);
@@ -1607,7 +1607,7 @@ TEST_F(DynamicTypesTests, DynamicType_float64_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr created_builder = factory.create_float64_builder();
+    DynamicTypeBuilder_cptr created_builder = factory.create_float64_type();
     ASSERT_TRUE(created_builder);
     DynamicType_ptr created_type = created_builder->build();
     ASSERT_TRUE(created_type);
@@ -1706,7 +1706,7 @@ TEST_F(DynamicTypesTests, DynamicType_float128_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr created_builder = factory.create_float128_builder();
+    DynamicTypeBuilder_cptr created_builder = factory.create_float128_type();
     ASSERT_TRUE(created_builder);
     DynamicType_ptr created_type = created_builder->build();
     ASSERT_TRUE(created_type);
@@ -1805,7 +1805,7 @@ TEST_F(DynamicTypesTests, DynamicType_char8_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr created_builder = factory.create_char8_builder();
+    DynamicTypeBuilder_cptr created_builder = factory.create_char8_type();
     ASSERT_TRUE(created_builder);
     DynamicType_ptr created_type = created_builder->build();
     ASSERT_TRUE(created_type);
@@ -1904,7 +1904,7 @@ TEST_F(DynamicTypesTests, DynamicType_char16_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr created_builder = factory.create_char16_builder();
+    DynamicTypeBuilder_cptr created_builder = factory.create_char16_type();
     ASSERT_TRUE(created_builder);
     DynamicType_ptr created_type = created_builder->build();
     ASSERT_TRUE(created_type);
@@ -2004,7 +2004,7 @@ TEST_F(DynamicTypesTests, DynamicType_byte_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr created_builder = factory.create_byte_builder();
+    DynamicTypeBuilder_cptr created_builder = factory.create_byte_type();
     ASSERT_TRUE(created_builder);
     DynamicType_ptr created_type = created_builder->build();
     ASSERT_TRUE(created_type);
@@ -2103,7 +2103,7 @@ TEST_F(DynamicTypesTests, DynamicType_bool_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr created_builder = factory.create_bool_builder();
+    DynamicTypeBuilder_cptr created_builder = factory.create_bool_type();
     ASSERT_TRUE(created_builder);
     DynamicType_ptr created_type = created_builder->build();
     ASSERT_TRUE(created_type);
@@ -2202,7 +2202,7 @@ TEST_F(DynamicTypesTests, DynamicType_enum_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_ptr created_builder = factory.create_enum_builder();
+    DynamicTypeBuilder_ptr created_builder = factory.create_enum_type();
     ASSERT_TRUE(created_builder);
     DynamicType_ptr created_type = created_builder->build();
     EXPECT_FALSE(created_type); // cannot instantiate an enum without members
@@ -2577,9 +2577,9 @@ TEST_F(DynamicTypesTests, DynamicType_alias_unit_tests)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     std::string name = "ALIAS";
-    DynamicTypeBuilder_cptr base_builder = factory.create_uint32_builder();
+    DynamicTypeBuilder_cptr base_builder = factory.create_uint32_type();
     ASSERT_TRUE(base_builder);
-    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_builder(*base_builder->build(), name);
+    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_type(*base_builder->build(), name);
     ASSERT_TRUE(alias_builder);
 
     DynamicType_ptr created_type = alias_builder->build();
@@ -2640,8 +2640,8 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias_unit_tests)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // • Simple struct with nested aliases
-    DynamicTypeBuilder_ptr plain_struct = factory.create_struct_builder(),
-            alias_struct = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr plain_struct = factory.create_struct_type(),
+            alias_struct = factory.create_struct_type();
     EXPECT_TRUE(plain_struct && alias_struct);
 
     for (auto& build : { plain_struct, alias_struct })
@@ -2650,15 +2650,15 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias_unit_tests)
     }
 
     //   Add members to the plain struct
-    EXPECT_EQ(plain_struct->add_member(0_id, "int32", factory.create_int32_type()), ReturnCode_t::RETCODE_OK);
-    EXPECT_EQ(plain_struct->add_member(1_id, "int64", factory.create_int64_type()), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(plain_struct->add_member(0_id, "int32", factory.get_int32_type()), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(plain_struct->add_member(1_id, "int64", factory.get_int64_type()), ReturnCode_t::RETCODE_OK);
 
     //   Add members to the alias struct
     EXPECT_EQ(alias_struct->add_member(0_id, "int32",
-            factory.create_alias_builder(*factory.create_int32_type(),
+            factory.create_alias_type(*factory.get_int32_type(),
             "int32_alias")->build()), ReturnCode_t::RETCODE_OK);
     EXPECT_EQ(alias_struct->add_member(1_id, "int64",
-            factory.create_alias_builder(*factory.create_int64_type(),
+            factory.create_alias_type(*factory.get_int64_type(),
             "int64_alias")->build()), ReturnCode_t::RETCODE_OK);
 
     //   Compare
@@ -2667,8 +2667,8 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias_unit_tests)
     EXPECT_TRUE(alias_struct->equals(*plain_struct));
 
     // • Inheritance from an alias
-    DynamicTypeBuilder_ptr child_struct = factory.create_child_struct_builder(*plain_struct->build()),
-            child_alias_struct = factory.create_child_struct_builder(*alias_struct->build());
+    DynamicTypeBuilder_ptr child_struct = factory.create_child_struct_type(*plain_struct->build()),
+            child_alias_struct = factory.create_child_struct_type(*alias_struct->build());
 
     for (auto& build : { child_struct, child_alias_struct })
     {
@@ -2699,12 +2699,12 @@ TEST_F(DynamicTypesTests, DynamicType_nested_alias_unit_tests)
         struct_name += std::to_string(*id);
 
         auto aux = nested_struct->build();
-        nested_struct = factory.create_child_struct_builder(*aux);
+        nested_struct = factory.create_child_struct_type(*aux);
         ASSERT_TRUE(nested_struct);
         EXPECT_EQ(nested_struct->add_member(id, member_name, aux), ReturnCode_t::RETCODE_OK);
 
-        aux = factory.create_alias_builder(*nested_alias_struct->build(), alias_name)->build();
-        nested_alias_struct = factory.create_child_struct_builder(*aux);
+        aux = factory.create_alias_type(*nested_alias_struct->build(), alias_name)->build();
+        nested_alias_struct = factory.create_child_struct_type(*aux);
         ASSERT_TRUE(nested_alias_struct);
         EXPECT_EQ(nested_alias_struct->add_member(id, member_name, aux), ReturnCode_t::RETCODE_OK);
 
@@ -2768,14 +2768,14 @@ TEST_F(DynamicTypesTests, DynamicType_multi_alias_unit_tests)
     ASSERT_TRUE(base_type);
 
     // alias
-    DynamicTypeBuilder_ptr base_alias_builder = factory.create_alias_builder(*base_type, name);
+    DynamicTypeBuilder_ptr base_alias_builder = factory.create_alias_type(*base_type, name);
     ASSERT_TRUE(base_alias_builder);
     DynamicType_ptr alias_type = base_alias_builder->build();
     ASSERT_TRUE(alias_type);
     EXPECT_EQ(alias_type->get_name(), name);
 
     // alias of an alias
-    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_builder(*alias_type, name2);
+    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_type(*alias_type, name2);
     ASSERT_TRUE(alias_builder);
     DynamicType_ptr created_type = alias_builder->build();
     ASSERT_TRUE(created_type);
@@ -2808,15 +2808,15 @@ TEST_F(DynamicTypesTests, DynamicType_bitset_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr base_type_builder = factory.create_byte_builder();
+    DynamicTypeBuilder_cptr base_type_builder = factory.create_byte_type();
     ASSERT_TRUE(base_type_builder);
     auto base_type = base_type_builder->build();
 
-    DynamicTypeBuilder_cptr base_type_builder2 = factory.create_uint32_builder();
+    DynamicTypeBuilder_cptr base_type_builder2 = factory.create_uint32_type();
     ASSERT_TRUE(base_type_builder2);
     auto base_type2 = base_type_builder2->build();
 
-    DynamicTypeBuilder_ptr bitset_type_builder = factory.create_bitset_builder();
+    DynamicTypeBuilder_ptr bitset_type_builder = factory.create_bitset_type();
     ASSERT_TRUE(bitset_type_builder);
 
     // Add members to the struct.
@@ -2869,7 +2869,7 @@ TEST_F(DynamicTypesTests, DynamicType_bitmask_unit_tests)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     uint32_t limit = 5;
-    DynamicTypeBuilder_ptr created_builder = factory.create_bitmask_builder(limit);
+    DynamicTypeBuilder_ptr created_builder = factory.create_bitmask_type(limit);
     ASSERT_TRUE(created_builder);
 
     // Add two members to the bitmask
@@ -3011,7 +3011,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
     uint32_t length = 2;
 
     // Then
-    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_builder();
+    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_type();
     ASSERT_TRUE(base_type_builder);
     DynamicTypeBuilder_ptr seq_type_builder = factory.create_sequence_type(*base_type_builder->build(), length);
     ASSERT_TRUE(seq_type_builder);
@@ -3148,7 +3148,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
     uint32_t sup_sequence_length = 3;
 
     // Then
-    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_builder();
+    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_type();
     ASSERT_TRUE(base_type_builder);
 
     DynamicTypeBuilder_ptr seq_type_builder = factory.create_sequence_type(
@@ -3295,11 +3295,11 @@ TEST_F(DynamicTypesTests, DynamicType_array_unit_tests)
     std::vector<uint32_t> sequence_lengths = { 2, 2, 2 };
 
     // Then
-    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_builder();
+    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_type();
     ASSERT_TRUE(base_type_builder);
     auto base_type = base_type_builder->build();
 
-    DynamicTypeBuilder_ptr array_type_builder = factory.create_array_builder(
+    DynamicTypeBuilder_ptr array_type_builder = factory.create_array_type(
         *base_type_builder->build(), sequence_lengths);
     ASSERT_TRUE(array_type_builder);
     auto array_type = array_type_builder->build();
@@ -3435,17 +3435,17 @@ TEST_F(DynamicTypesTests, DynamicType_array_of_arrays_unit_tests)
 
     std::vector<uint32_t> sequence_lengths = { 2, 2 };
 
-    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_builder();
+    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_type();
     ASSERT_TRUE(base_type_builder);
     auto base_type = base_type_builder->build();
 
-    DynamicTypeBuilder_ptr array_type_builder = factory.create_array_builder(
+    DynamicTypeBuilder_ptr array_type_builder = factory.create_array_type(
         *base_type_builder->build(), sequence_lengths);
     ASSERT_TRUE(array_type_builder);
     auto array_type = array_type_builder->build();
     ASSERT_TRUE(array_type);
 
-    DynamicTypeBuilder_ptr parent_array_type_builder = factory.create_array_builder(
+    DynamicTypeBuilder_ptr parent_array_type_builder = factory.create_array_type(
         *array_type_builder->build(), sequence_lengths);
     ASSERT_TRUE(parent_array_type_builder);
     auto parent_array_type = parent_array_type_builder->build();
@@ -3588,7 +3588,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
     uint32_t map_length = 2;
 
     // Then
-    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_builder();
+    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_type();
     ASSERT_TRUE(base_type_builder);
     auto base_type = base_type_builder->build();
 
@@ -3737,7 +3737,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps_unit_tests)
     uint32_t map_length = 2;
 
     // Then
-    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_builder();
+    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_type();
     ASSERT_TRUE(base_type_builder);
     auto base_type = base_type_builder->build();
 
@@ -3887,15 +3887,15 @@ TEST_F(DynamicTypesTests, DynamicType_structure_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_builder();
+    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_type();
     ASSERT_TRUE(base_type_builder);
     auto base_type = base_type_builder->build();
 
-    DynamicTypeBuilder_cptr base_type_builder2 = factory.create_int64_builder();
+    DynamicTypeBuilder_cptr base_type_builder2 = factory.create_int64_type();
     ASSERT_TRUE(base_type_builder2);
     auto base_type2 = base_type_builder2->build();
 
-    DynamicTypeBuilder_ptr struct_type_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr struct_type_builder = factory.create_struct_type();
     ASSERT_TRUE(struct_type_builder);
 
     // Add members to the struct.
@@ -3962,15 +3962,15 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_builder();
+    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_type();
     ASSERT_TRUE(base_type_builder);
     auto base_type = base_type_builder->build();
 
-    DynamicTypeBuilder_cptr base_type_builder2 = factory.create_int64_builder();
+    DynamicTypeBuilder_cptr base_type_builder2 = factory.create_int64_type();
     ASSERT_TRUE(base_type_builder2);
     auto base_type2 = base_type_builder2->build();
 
-    DynamicTypeBuilder_ptr struct_type_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr struct_type_builder = factory.create_struct_type();
     ASSERT_TRUE(struct_type_builder);
 
     // Add members to the struct.
@@ -3981,7 +3981,7 @@ TEST_F(DynamicTypesTests, DynamicType_structure_inheritance_unit_tests)
     ASSERT_TRUE(struct_type);
 
     // Create the child struct.
-    DynamicTypeBuilder_ptr child_struct_type_builder = factory.create_child_struct_builder(*struct_type);
+    DynamicTypeBuilder_ptr child_struct_type_builder = factory.create_child_struct_type(*struct_type);
     ASSERT_TRUE(child_struct_type_builder);
 
     // Add a new member to the child struct.
@@ -4137,15 +4137,15 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_builder();
+    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_type();
     ASSERT_TRUE(base_type_builder);
     auto base_type = base_type_builder->build();
 
-    DynamicTypeBuilder_cptr base_type_builder2 = factory.create_int64_builder();
+    DynamicTypeBuilder_cptr base_type_builder2 = factory.create_int64_type();
     ASSERT_TRUE(base_type_builder2);
     auto base_type2 = base_type_builder2->build();
 
-    DynamicTypeBuilder_ptr struct_type_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr struct_type_builder = factory.create_struct_type();
     ASSERT_TRUE(struct_type_builder);
 
     // Add members to the struct.
@@ -4156,7 +4156,7 @@ TEST_F(DynamicTypesTests, DynamicType_multi_structure_unit_tests)
     ASSERT_TRUE(struct_type);
 
     // Create the parent struct.
-    DynamicTypeBuilder_ptr parent_struct_type_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr parent_struct_type_builder = factory.create_struct_type();
     ASSERT_TRUE(parent_struct_type_builder);
 
     // Add members to the parent struct.
@@ -4237,7 +4237,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr discriminant_builder = factory.create_int32_builder();
+    DynamicTypeBuilder_cptr discriminant_builder = factory.create_int32_type();
     ASSERT_TRUE(discriminant_builder);
     auto discriminant_type = discriminant_builder->build();
     ASSERT_TRUE(discriminant_type);
@@ -4245,11 +4245,11 @@ TEST_F(DynamicTypesTests, DynamicType_union_unit_tests)
     auto member_type = discriminant_type;
     ASSERT_TRUE(member_type);
 
-    DynamicTypeBuilder_cptr another_member_builder = factory.create_int64_builder();
+    DynamicTypeBuilder_cptr another_member_builder = factory.create_int64_type();
     auto another_member_type = another_member_builder->build();
     ASSERT_TRUE(another_member_type);
 
-    DynamicTypeBuilder_ptr union_type_builder = factory.create_union_builder(*discriminant_type);
+    DynamicTypeBuilder_ptr union_type_builder = factory.create_union_type(*discriminant_type);
     ASSERT_TRUE(union_type_builder);
 
     // Add members to the union.
@@ -4347,15 +4347,15 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
 {
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_builder();
+    DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_type();
     ASSERT_TRUE(base_type_builder);
     auto base_type = base_type_builder->build();
 
-    DynamicTypeBuilder_cptr base_type_builder2 = factory.create_int64_builder();
+    DynamicTypeBuilder_cptr base_type_builder2 = factory.create_int64_type();
     ASSERT_TRUE(base_type_builder2);
     auto base_type2 = base_type_builder2->build();
 
-    DynamicTypeBuilder_ptr union_type_builder = factory.create_union_builder(*base_type);
+    DynamicTypeBuilder_ptr union_type_builder = factory.create_union_type(*base_type);
     ASSERT_TRUE(union_type_builder);
 
     // Add members to the union.
@@ -4380,7 +4380,7 @@ TEST_F(DynamicTypesTests, DynamicType_union_with_unions_unit_tests)
     auto union_type = union_type_builder->build();
     ASSERT_TRUE(union_type != nullptr);
 
-    DynamicTypeBuilder_ptr parent_union_type_builder = factory.create_union_builder(*base_type);
+    DynamicTypeBuilder_ptr parent_union_type_builder = factory.create_union_type(*base_type);
     ASSERT_TRUE(parent_union_type_builder);
 
     // Add Members to the parent union
@@ -4458,14 +4458,14 @@ TEST_F(DynamicTypesTests, DynamicType_XML_EnumStruct_test)
         DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
         // Enum
-        DynamicTypeBuilder_ptr enum_builder = factory.create_enum_builder();
+        DynamicTypeBuilder_ptr enum_builder = factory.create_enum_type();
         enum_builder->add_member(0_id, "A");
         enum_builder->add_member(1_id, "B");
         enum_builder->add_member(2_id, "C");
         enum_builder->set_name("MyEnum");
 
         // Struct EnumStruct
-        DynamicTypeBuilder_ptr es_builder = factory.create_struct_builder();
+        DynamicTypeBuilder_ptr es_builder = factory.create_struct_type();
         es_builder->add_member(0_id, "my_enum", enum_builder->build());
         es_builder->set_name("EnumStruct");
 
@@ -4490,7 +4490,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_AliasStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // Enum
-    DynamicTypeBuilder_ptr enum_builder = factory.create_enum_builder();
+    DynamicTypeBuilder_ptr enum_builder = factory.create_enum_type();
     enum_builder->add_member(0_id, "A");
     enum_builder->add_member(1_id, "B");
     enum_builder->add_member(2_id, "C");
@@ -4498,11 +4498,11 @@ TEST_F(DynamicTypesTests, DynamicType_XML_AliasStruct_test)
     DynamicType_ptr enum_type = enum_builder->build();
 
     // Alias
-    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_builder(*enum_type, "MyAliasEnum");
+    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_type(*enum_type, "MyAliasEnum");
     DynamicType_ptr alias_type = alias_builder->build();
 
     // Struct AliasStruct
-    DynamicTypeBuilder_ptr struct_alias_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr struct_alias_builder = factory.create_struct_type();
     struct_alias_builder->add_member(0_id, "my_alias", alias_type);
     struct_alias_builder->set_name("AliasStruct");
     DynamicType_ptr struct_alias_type = struct_alias_builder->build();
@@ -4528,7 +4528,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_AliasAliasStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // Enum
-    DynamicTypeBuilder_ptr enum_builder = factory.create_enum_builder();
+    DynamicTypeBuilder_ptr enum_builder = factory.create_enum_type();
     enum_builder->add_member(0_id, "A");
     enum_builder->add_member(1_id, "B");
     enum_builder->add_member(2_id, "C");
@@ -4536,13 +4536,13 @@ TEST_F(DynamicTypesTests, DynamicType_XML_AliasAliasStruct_test)
     DynamicType_ptr enum_type = enum_builder->build();
 
     // Alias and aliasalias
-    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_builder(*enum_type, "MyAliasEnum");
+    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_type(*enum_type, "MyAliasEnum");
     DynamicType_ptr alias_type = alias_builder->build();
-    DynamicTypeBuilder_ptr alias_alias_builder = factory.create_alias_builder(*alias_type, "MyAliasAliasEnum");
+    DynamicTypeBuilder_ptr alias_alias_builder = factory.create_alias_type(*alias_type, "MyAliasAliasEnum");
     DynamicType_ptr alias_alias_type = alias_alias_builder->build();
 
     // Struct AliasAliasStruct
-    DynamicTypeBuilder_ptr aliasAliasS_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr aliasAliasS_builder = factory.create_struct_type();
     aliasAliasS_builder->add_member(0_id, "my_alias_alias", alias_alias_type);
     aliasAliasS_builder->set_name("AliasAliasStruct");
     DynamicType_ptr aliasAliasS_type = aliasAliasS_builder->build();
@@ -4568,10 +4568,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_BoolStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // Boolean
-    DynamicType_ptr boolean_type = factory.create_bool_type();
+    DynamicType_ptr boolean_type = factory.get_bool_type();
 
     // Struct BoolStruct
-    DynamicTypeBuilder_ptr bool_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr bool_builder = factory.create_struct_type();
     bool_builder->add_member(0_id, "my_bool", boolean_type);
     bool_builder->set_name("BoolStruct");
     DynamicType_ptr bool_type = bool_builder->build();
@@ -4597,10 +4597,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_OctetStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // Byte
-    DynamicType_ptr byte_type = factory.create_byte_type();
+    DynamicType_ptr byte_type = factory.get_byte_type();
 
     // Struct OctetStruct
-    DynamicTypeBuilder_ptr octet_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr octet_builder = factory.create_struct_type();
     octet_builder->add_member(0_id, "my_octet", byte_type);
     octet_builder->set_name("OctetStruct");
     DynamicType_ptr octet_type = octet_builder->build();
@@ -4626,10 +4626,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ShortStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // Int16
-    DynamicType_ptr byte_type = factory.create_int16_type();
+    DynamicType_ptr byte_type = factory.get_int16_type();
 
     // Struct ShortStruct
-    DynamicTypeBuilder_ptr int16_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr int16_builder = factory.create_struct_type();
     int16_builder->add_member(0_id, "my_int16", byte_type);
     int16_builder->set_name("ShortStruct");
     DynamicType_ptr int16_type = int16_builder->build();
@@ -4655,10 +4655,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LongStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // Int32
-    DynamicType_ptr byte_type = factory.create_int32_type();
+    DynamicType_ptr byte_type = factory.get_int32_type();
 
     // Struct ShortStruct
-    DynamicTypeBuilder_ptr int32_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr int32_builder = factory.create_struct_type();
     int32_builder->add_member(0_id, "my_int32", byte_type);
     int32_builder->set_name("LongStruct");
     DynamicType_ptr int32_type = int32_builder->build();
@@ -4684,10 +4684,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LongLongStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // Int32
-    DynamicType_ptr byte_type = factory.create_int64_type();
+    DynamicType_ptr byte_type = factory.get_int64_type();
 
     // Struct ShortStruct
-    DynamicTypeBuilder_ptr int64_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr int64_builder = factory.create_struct_type();
     int64_builder->add_member(0_id, "my_int64", byte_type);
     int64_builder->set_name("LongLongStruct");
     DynamicType_ptr int64_type = int64_builder->build();
@@ -4713,10 +4713,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_UShortStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // uint16
-    DynamicType_ptr byte_type = factory.create_uint16_type();
+    DynamicType_ptr byte_type = factory.get_uint16_type();
 
     // Struct ShortStruct
-    DynamicTypeBuilder_ptr uint16_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr uint16_builder = factory.create_struct_type();
     uint16_builder->add_member(0_id, "my_uint16", byte_type);
     uint16_builder->set_name("UShortStruct");
     DynamicType_ptr uint16_type = uint16_builder->build();
@@ -4742,10 +4742,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ULongStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // uint32
-    DynamicType_ptr byte_type = factory.create_uint32_type();
+    DynamicType_ptr byte_type = factory.get_uint32_type();
 
     // Struct ShortStruct
-    DynamicTypeBuilder_ptr uint32_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr uint32_builder = factory.create_struct_type();
     uint32_builder->add_member(0_id, "my_uint32", byte_type);
     uint32_builder->set_name("ULongStruct");
     DynamicType_ptr uint32_type = uint32_builder->build();
@@ -4771,10 +4771,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ULongLongStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // uint64
-    DynamicType_ptr byte_type = factory.create_uint64_type();
+    DynamicType_ptr byte_type = factory.get_uint64_type();
 
     // Struct ShortStruct
-    DynamicTypeBuilder_ptr uint64_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr uint64_builder = factory.create_struct_type();
     uint64_builder->add_member(0_id, "my_uint64", byte_type);
     uint64_builder->set_name("ULongLongStruct");
     DynamicType_ptr uint64_type = uint64_builder->build();
@@ -4800,10 +4800,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_FloatStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // float32
-    DynamicType_ptr byte_type = factory.create_float32_type();
+    DynamicType_ptr byte_type = factory.get_float32_type();
 
     // Struct ShortStruct
-    DynamicTypeBuilder_ptr float32_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr float32_builder = factory.create_struct_type();
     float32_builder->add_member(0_id, "my_float32", byte_type);
     float32_builder->set_name("FloatStruct");
     DynamicType_ptr float32_type = float32_builder->build();
@@ -4829,10 +4829,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_DoubleStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // float64
-    DynamicType_ptr byte_type = factory.create_float64_type();
+    DynamicType_ptr byte_type = factory.get_float64_type();
 
     // Struct ShortStruct
-    DynamicTypeBuilder_ptr float64_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr float64_builder = factory.create_struct_type();
     float64_builder->add_member(0_id, "my_float64", byte_type);
     float64_builder->set_name("DoubleStruct");
     DynamicType_ptr float64_type = float64_builder->build();
@@ -4858,10 +4858,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LongDoubleStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // float128
-    DynamicType_ptr byte_type = factory.create_float128_type();
+    DynamicType_ptr byte_type = factory.get_float128_type();
 
     // Struct ShortStruct
-    DynamicTypeBuilder_ptr float128_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr float128_builder = factory.create_struct_type();
     float128_builder->add_member(0_id, "my_float128", byte_type);
     float128_builder->set_name("LongDoubleStruct");
     DynamicType_ptr float128_type = float128_builder->build();
@@ -4887,10 +4887,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_CharStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // char8
-    DynamicType_ptr byte_type = factory.create_char8_type();
+    DynamicType_ptr byte_type = factory.get_char8_type();
 
     // Struct ShortStruct
-    DynamicTypeBuilder_ptr char8_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr char8_builder = factory.create_struct_type();
     char8_builder->add_member(0_id, "my_char", byte_type);
     char8_builder->set_name("CharStruct");
     DynamicType_ptr char8_type = char8_builder->build();
@@ -4916,10 +4916,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_WCharStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // wchar
-    DynamicType_ptr byte_type = factory.create_char16_type();
+    DynamicType_ptr byte_type = factory.get_char16_type();
 
     // Struct ShortStruct
-    DynamicTypeBuilder_ptr char16_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr char16_builder = factory.create_struct_type();
     char16_builder->add_member(0_id, "my_wchar", byte_type);
     char16_builder->set_name("WCharStruct");
     DynamicType_ptr char16_type = char16_builder->build();
@@ -4948,7 +4948,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StringStruct_test)
     DynamicType_ptr byte_type = factory.get_string_type();
 
     // Struct ShortStruct
-    DynamicTypeBuilder_ptr string_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr string_builder = factory.create_struct_type();
     string_builder->add_member(0_id, "my_string", byte_type);
     string_builder->set_name("StringStruct");
     DynamicType_ptr string_type = string_builder->build();
@@ -4978,7 +4978,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_WStringStruct_test)
     DynamicType_ptr string_type = string_builder->build();
 
     // Struct ShortStruct
-    DynamicTypeBuilder_ptr wstring_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr wstring_builder = factory.create_struct_type();
     wstring_builder->add_member(0_id, "my_wstring", string_type);
     wstring_builder->set_name("WStringStruct");
     DynamicType_ptr wstring_type = wstring_builder->build();
@@ -5007,7 +5007,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LargeStringStruct_test)
     DynamicType_ptr byte_type = factory.get_string_type(41925);
 
     // Struct ShortStruct
-    DynamicTypeBuilder_ptr string_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr string_builder = factory.create_struct_type();
     string_builder->add_member(0_id, "my_large_string", byte_type);
     string_builder->set_name("LargeStringStruct");
     DynamicType_ptr string_type = string_builder->build();
@@ -5038,7 +5038,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_LargeWStringStruct_test)
     DynamicType_ptr string_type = string_builder->build();
 
     // Struct ShortStruct
-    DynamicTypeBuilder_ptr wstring_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr wstring_builder = factory.create_struct_type();
     wstring_builder->add_member(0_id, "my_large_wstring", string_type);
     wstring_builder->set_name("LargeWStringStruct");
     DynamicType_ptr wstring_type = wstring_builder->build();
@@ -5067,7 +5067,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ShortStringStruct_test)
     DynamicType_ptr byte_type = factory.get_string_type(15);
 
     // Struct ShortStruct
-    DynamicTypeBuilder_ptr string_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr string_builder = factory.create_struct_type();
     string_builder->add_member(0_id, "my_short_string", byte_type);
     string_builder->set_name("ShortStringStruct");
     DynamicType_ptr string_type = string_builder->build();
@@ -5098,7 +5098,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ShortWStringStruct_test)
     DynamicType_ptr string_type = string_builder->build();
 
     // Struct ShortStruct
-    DynamicTypeBuilder_ptr wstring_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr wstring_builder = factory.create_struct_type();
     wstring_builder->add_member(0_id, "my_short_wstring", string_type);
     wstring_builder->set_name("ShortWStringStruct");
     DynamicType_ptr wstring_type = wstring_builder->build();
@@ -5127,10 +5127,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_AliasStringStruct_test)
     DynamicType_ptr string_type = factory.get_string_type();
 
     // Alias
-    DynamicType_ptr myAlias_type = factory.create_alias_type(*string_type, "MyAliasString");
+    DynamicType_ptr myAlias_type = factory.get_alias_type(*string_type, "MyAliasString");
 
     // Struct StructAliasString
-    DynamicTypeBuilder_ptr alias_string_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr alias_string_builder = factory.create_struct_type();
     alias_string_builder->add_member(0_id, "my_alias_string", myAlias_type);
     alias_string_builder->set_name("StructAliasString");
     DynamicType_ptr alias_string_type = alias_string_builder->build();
@@ -5162,10 +5162,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StructAliasWString_test)
 
         // Alias
         DynamicType_ptr myAlias_type =
-                factory.create_alias_type(*wstring_type, "MyAliasWString");
+                factory.get_alias_type(*wstring_type, "MyAliasWString");
 
         // Struct StructAliasWString
-        DynamicTypeBuilder_ptr alias_wstring_builder = factory.create_struct_builder();
+        DynamicTypeBuilder_ptr alias_wstring_builder = factory.create_struct_type();
         alias_wstring_builder->add_member(0_id, "my_alias_wstring", myAlias_type);
         alias_wstring_builder->set_name("StructAliasWString");
         DynamicType_ptr alias_wstring_type = alias_wstring_builder->build();
@@ -5192,13 +5192,13 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArraytStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // Int32
-    DynamicType_ptr int32_type = factory.create_int32_type();
+    DynamicType_ptr int32_type = factory.get_int32_type();
 
     // Array
-    DynamicTypeBuilder_ptr array_builder = factory.create_array_builder(*int32_type, { 2, 2, 2 });
+    DynamicTypeBuilder_ptr array_builder = factory.create_array_type(*int32_type, { 2, 2, 2 });
 
     // Struct ShortWStringStruct
-    DynamicTypeBuilder_ptr array_int32_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr array_int32_builder = factory.create_struct_type();
     array_int32_builder->add_member(0_id, "my_array", array_builder->build());
     array_int32_builder->set_name("ArraytStruct");
     DynamicType_ptr array_int32_type = array_int32_builder->build();
@@ -5224,14 +5224,14 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // Typedef aka Alias
-    DynamicTypeBuilder_ptr array_builder = factory.create_array_builder(
-        *factory.create_int32_type(),
+    DynamicTypeBuilder_ptr array_builder = factory.create_array_type(
+        *factory.get_int32_type(),
         { 2, 2 });
-    DynamicTypeBuilder_ptr myArray_builder = factory.create_alias_builder(*array_builder->build(), "MyArray");
+    DynamicTypeBuilder_ptr myArray_builder = factory.create_alias_type(*array_builder->build(), "MyArray");
 
     // Struct ArrayArrayStruct
-    DynamicTypeBuilder_ptr aas_builder = factory.create_struct_builder();
-    DynamicTypeBuilder_ptr aMyArray_builder = factory.create_array_builder(*myArray_builder->build(), { 2, 2 });
+    DynamicTypeBuilder_ptr aas_builder = factory.create_struct_type();
+    DynamicTypeBuilder_ptr aMyArray_builder = factory.create_array_type(*myArray_builder->build(), { 2, 2 });
     aas_builder->add_member(0_id, "my_array_array", aMyArray_builder->build());
     aas_builder->set_name("ArrayArrayStruct");
     DynamicType_ptr aas_type = aas_builder->build();
@@ -5287,24 +5287,24 @@ TEST_F(DynamicTypesTests, DynamicType_XML_ArrayArrayArrayStruct_test)
     //           </type>
 
     // Typedef aka Alias
-    DynamicTypeBuilder_ptr array_builder = factory.create_array_builder(
-        *factory.create_int32_type(),
+    DynamicTypeBuilder_ptr array_builder = factory.create_array_type(
+        *factory.get_int32_type(),
         { 2, 2 });
-    DynamicTypeBuilder_ptr myArray_builder = factory.create_alias_builder(
+    DynamicTypeBuilder_ptr myArray_builder = factory.create_alias_type(
         *array_builder->build(),
         "MyArray");
 
     // Struct ArrayArrayStruct
-    DynamicTypeBuilder_ptr aas_builder = factory.create_struct_builder();
-    DynamicTypeBuilder_ptr aMyArray_builder = factory.create_array_builder(
+    DynamicTypeBuilder_ptr aas_builder = factory.create_struct_type();
+    DynamicTypeBuilder_ptr aMyArray_builder = factory.create_array_type(
         *myArray_builder->build(),
         { 2, 2 });
     aas_builder->add_member(0_id, "my_array_array", aMyArray_builder->build());
     aas_builder->set_name("ArrayArrayStruct");
 
     // Struct ArrayArrayArrayStruct
-    DynamicTypeBuilder_ptr aaas_builder = factory.create_struct_builder();
-    DynamicTypeBuilder_ptr aas_array_builder = factory.create_array_builder(
+    DynamicTypeBuilder_ptr aaas_builder = factory.create_struct_type();
+    DynamicTypeBuilder_ptr aas_array_builder = factory.create_array_type(
         *aas_builder->build(),
         { 2, 2 });
     aaas_builder->add_member(0_id, "my_array_array_array", aas_array_builder->build());
@@ -5332,10 +5332,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SequenceStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     DynamicTypeBuilder_ptr seq_builder = factory.create_sequence_type(
-        *factory.create_int32_type(),
+        *factory.get_int32_type(),
         2);
 
-    DynamicTypeBuilder_ptr seqs_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr seqs_builder = factory.create_struct_type();
     seqs_builder->add_member(0_id, "my_sequence", seq_builder->build());
     seqs_builder->set_name("SequenceStruct");
     DynamicType_ptr seqs_type = seqs_builder->build();
@@ -5361,13 +5361,13 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SequenceSequenceStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     DynamicTypeBuilder_ptr seq_builder = factory.create_sequence_type(
-        *factory.create_int32_type(),
+        *factory.get_int32_type(),
         2);
-    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_builder(
+    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_type(
         *seq_builder->build(),
         "my_sequence_sequence_inner");
 
-    DynamicTypeBuilder_ptr sss_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr sss_builder = factory.create_struct_type();
     DynamicTypeBuilder_ptr seq_seq_builder = factory.create_sequence_type(*alias_builder->build(), 2);
     sss_builder->add_member(0_id, "my_sequence_sequence", seq_seq_builder->build());
     sss_builder->set_name("SequenceSequenceStruct");
@@ -5394,11 +5394,11 @@ TEST_F(DynamicTypesTests, DynamicType_XML_MapStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     DynamicTypeBuilder_ptr map_builder = factory.create_map_type(
-        *factory.create_int32_type(),
-        *factory.create_int32_type(),
+        *factory.get_int32_type(),
+        *factory.get_int32_type(),
         7);
 
-    DynamicTypeBuilder_ptr maps_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr maps_builder = factory.create_struct_type();
     maps_builder->add_member(0_id, "my_map", map_builder->build());
     maps_builder->set_name("MapStruct");
     DynamicType_ptr maps_type = maps_builder->build();
@@ -5423,12 +5423,12 @@ TEST_F(DynamicTypesTests, DynamicType_XML_MapMapStruct_test)
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicType_ptr int32_type = factory.create_int32_type();
+    DynamicType_ptr int32_type = factory.get_int32_type();
     DynamicTypeBuilder_ptr map_builder = factory.create_map_type(
         *int32_type,
         *int32_type,
         2);
-    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_builder(
+    DynamicTypeBuilder_ptr alias_builder = factory.create_alias_type(
         *map_builder->build(),
         "my_map_map_inner");
     DynamicTypeBuilder_ptr map_map_builder = factory.create_map_type(
@@ -5436,7 +5436,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_MapMapStruct_test)
         *alias_builder->build(),
         2);
 
-    DynamicTypeBuilder_ptr maps_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr maps_builder = factory.create_struct_type();
     maps_builder->add_member(0_id, "my_map_map", map_map_builder->build());
     maps_builder->set_name("MapMapStruct");
     DynamicType_ptr maps_type = maps_builder->build();
@@ -5461,9 +5461,9 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StructStruct_test)
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_ptr structs_builder = factory.create_struct_builder();
-    structs_builder->add_member(0_id, "a", factory.create_int32_type());
-    structs_builder->add_member(1_id, "b", factory.create_int64_type());
+    DynamicTypeBuilder_ptr structs_builder = factory.create_struct_type();
+    structs_builder->add_member(0_id, "a", factory.get_int32_type());
+    structs_builder->add_member(1_id, "b", factory.get_int64_type());
     structs_builder->set_name("StructStruct");
     DynamicType_ptr structs_type = structs_builder->build();
 
@@ -5487,14 +5487,14 @@ TEST_F(DynamicTypesTests, DynamicType_XML_StructStructStruct_test)
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_ptr structs_builder = factory.create_struct_builder();
-    structs_builder->add_member(0_id, "a", factory.create_int32_type());
-    structs_builder->add_member(1_id, "b", factory.create_int64_type());
+    DynamicTypeBuilder_ptr structs_builder = factory.create_struct_type();
+    structs_builder->add_member(0_id, "a", factory.get_int32_type());
+    structs_builder->add_member(1_id, "b", factory.get_int64_type());
     structs_builder->set_name("StructStruct");
 
-    DynamicTypeBuilder_ptr sss_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr sss_builder = factory.create_struct_type();
     sss_builder->add_member(0_id, "child_struct", structs_builder->build());
-    sss_builder->add_member(1_id, "child_int64", factory.create_int64_type());
+    sss_builder->add_member(1_id, "child_int64", factory.get_int64_type());
     sss_builder->set_name("StructStructStruct");
     DynamicType_ptr sss_type = sss_builder->build();
 
@@ -5518,14 +5518,14 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SimpleUnionStruct_test)
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicType_ptr int32_type = factory.create_int32_type();
+    DynamicType_ptr int32_type = factory.get_int32_type();
 
-    DynamicTypeBuilder_ptr union_builder = factory.create_union_builder(*int32_type);
+    DynamicTypeBuilder_ptr union_builder = factory.create_union_type(*int32_type);
     union_builder->add_member(0_id, "first", int32_type, "", std::vector<uint64_t>{ 0 }, true);
-    union_builder->add_member(1_id, "second", factory.create_int64_type(), "", std::vector<uint64_t>{ 1 }, false);
+    union_builder->add_member(1_id, "second", factory.get_int64_type(), "", std::vector<uint64_t>{ 1 }, false);
     union_builder->set_name("SimpleUnion");
 
-    DynamicTypeBuilder_ptr us_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr us_builder = factory.create_struct_type();
     us_builder->add_member(0_id, "my_union", union_builder->build());
     us_builder->set_name("SimpleUnionStruct");
     DynamicType_ptr us_type = us_builder->build();
@@ -5550,19 +5550,19 @@ TEST_F(DynamicTypesTests, DynamicType_XML_UnionUnionStruct_test)
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicType_ptr int32_type = factory.create_int32_type();
+    DynamicType_ptr int32_type = factory.get_int32_type();
 
-    DynamicTypeBuilder_ptr union_builder = factory.create_union_builder(*int32_type);
+    DynamicTypeBuilder_ptr union_builder = factory.create_union_type(*int32_type);
     union_builder->add_member(0_id, "first", int32_type, "", std::vector<uint64_t>{ 0 }, true);
-    union_builder->add_member(1_id, "second", factory.create_int64_type(), "", std::vector<uint64_t>{ 1 }, false);
+    union_builder->add_member(1_id, "second", factory.get_int64_type(), "", std::vector<uint64_t>{ 1 }, false);
     union_builder->set_name("SimpleUnion");
 
-    DynamicTypeBuilder_ptr union_union_builder = factory.create_union_builder(*int32_type);
+    DynamicTypeBuilder_ptr union_union_builder = factory.create_union_type(*int32_type);
     union_union_builder->add_member(0_id, "first", int32_type, "", std::vector<uint64_t>{ 0 }, true);
     union_union_builder->add_member(1_id, "second", union_builder->build(), "", std::vector<uint64_t>{ 1 }, false);
     union_union_builder->set_name("UnionUnion");
 
-    DynamicTypeBuilder_ptr uus_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr uus_builder = factory.create_struct_type();
     uus_builder->add_member(0_id, "my_union", union_union_builder->build());
     uus_builder->set_name("UnionUnionStruct");
     DynamicType_ptr uus_type = uus_builder->build();
@@ -5587,12 +5587,12 @@ TEST_F(DynamicTypesTests, DynamicType_XML_WCharUnionStruct_test)
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_ptr union_builder = factory.create_union_builder(*factory.create_char16_type());
-    union_builder->add_member(0_id, "first", factory.create_int32_type(), "", std::vector<uint64_t>{ 0 }, true);
-    union_builder->add_member(1_id, "second", factory.create_int64_type(), "", std::vector<uint64_t>{ 1 }, false);
+    DynamicTypeBuilder_ptr union_builder = factory.create_union_type(*factory.get_char16_type());
+    union_builder->add_member(0_id, "first", factory.get_int32_type(), "", std::vector<uint64_t>{ 0 }, true);
+    union_builder->add_member(1_id, "second", factory.get_int64_type(), "", std::vector<uint64_t>{ 1 }, false);
     union_builder->set_name("WCharUnion");
 
-    DynamicTypeBuilder_ptr us_builder = factory.create_struct_builder();
+    DynamicTypeBuilder_ptr us_builder = factory.create_struct_type();
     us_builder->add_member(0_id, "my_union", union_builder->build());
     us_builder->set_name("WCharUnionStruct");
     DynamicType_ptr us_type = us_builder->build();
@@ -5682,10 +5682,10 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitset_test)
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    auto a_type = factory.create_char8_type();
-    auto b_type = factory.create_bool_type();
-    auto c_type = factory.create_uint16_type();
-    auto d_type = factory.create_int16_type();
+    auto a_type = factory.get_char8_type();
+    auto b_type = factory.get_bool_type();
+    auto c_type = factory.get_uint16_type();
+    auto d_type = factory.get_int16_type();
 
     /*
        XML:
@@ -5709,7 +5709,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitset_test)
      */
 
     // Bitset
-    DynamicTypeBuilder_ptr bitset_builder = factory.create_bitset_builder();
+    DynamicTypeBuilder_ptr bitset_builder = factory.create_bitset_type();
 
     bitset_builder->add_member(0_id, "a", a_type);
     bitset_builder->apply_annotation_to_member(0_id, ANNOTATION_BIT_BOUND_ID, "value", "3");
@@ -5751,13 +5751,13 @@ TEST_F(DynamicTypesTests, DynamicType_ostream_test)
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    auto a_type = factory.create_char8_type();
-    auto b_type = factory.create_bool_type();
-    auto c_type = factory.create_uint16_type();
-    auto d_type = factory.create_int16_type();
+    auto a_type = factory.get_char8_type();
+    auto b_type = factory.get_bool_type();
+    auto c_type = factory.get_uint16_type();
+    auto d_type = factory.get_int16_type();
 
     // Bitset
-    DynamicTypeBuilder_ptr bitset_builder = factory.create_bitset_builder();
+    DynamicTypeBuilder_ptr bitset_builder = factory.create_bitset_type();
 
     bitset_builder->add_member(0_id, "a", a_type);
     bitset_builder->apply_annotation_to_member(0_id, ANNOTATION_BIT_BOUND_ID, "value", "3");
@@ -5817,7 +5817,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_Bitmask_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     // Bitset
-    DynamicTypeBuilder_ptr builder = factory.create_bitmask_builder(8);
+    DynamicTypeBuilder_ptr builder = factory.create_bitmask_type(8);
     builder->add_member(0_id, "flag0");
     builder->add_member(1_id, "flag1");
     builder->add_member(2_id, "flag2");

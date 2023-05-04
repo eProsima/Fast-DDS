@@ -1794,7 +1794,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             {
                 descriptor.bound_.emplace_back(identifier->string_ldefn().bound());
             }
-            descriptor.element_type_ = v1_3::DynamicTypeBuilderFactory::get_instance().create_char8_type();
+            descriptor.element_type_ = v1_3::DynamicTypeBuilderFactory::get_instance().get_char8_type();
             break;
         }
         case TypeKind::TK_STRING16:
@@ -1807,7 +1807,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             {
                 descriptor.bound_.emplace_back(identifier->string_ldefn().bound());
             }
-            descriptor.element_type_ = v1_3::DynamicTypeBuilderFactory::get_instance().create_char16_type();
+            descriptor.element_type_ = v1_3::DynamicTypeBuilderFactory::get_instance().get_char16_type();
             break;
         }
         case TypeKind::TK_SEQUENCE:
@@ -2168,7 +2168,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             descriptor.annotation_set_bit_bound(object->complete().bitmask_type().header().common().bit_bound());
             descriptor.bound_.emplace_back(static_cast<uint32_t>(
                         object->complete().bitmask_type().header().common().bit_bound()));
-            descriptor.element_type_ = v1_3::DynamicTypeBuilderFactory::get_instance().create_bool_type();
+            descriptor.element_type_ = v1_3::DynamicTypeBuilderFactory::get_instance().get_bool_type();
 
             v1_3::DynamicTypeBuilder_ptr bitmask_type =
                     v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor);

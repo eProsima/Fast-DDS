@@ -140,9 +140,9 @@ DynamicType_ptr DynamicComplexTypesTests::GetKeyedStructType()
 {
     if (m_KeyedStructType.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr keyedStruct_builder = m_factory.create_struct_builder();
+        DynamicTypeBuilder_ptr keyedStruct_builder = m_factory.create_struct_type();
         DynamicTypeBuilder_ptr octet_builder = m_factory.create_type(
-            *m_factory.create_byte_builder());
+            *m_factory.create_byte_type());
         octet_builder->apply_annotation(ANNOTATION_KEY_ID, "value", "true");
         keyedStruct_builder->add_member(0_id, "key", octet_builder->build());
         keyedStruct_builder->add_member(1_id, "basic", GetBasicStructType());
@@ -158,7 +158,7 @@ DynamicType_ptr DynamicComplexTypesTests::GetMyEnumType()
 {
     if (m_MyEnumType.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr myEnum_builder = m_factory.create_enum_builder();
+        DynamicTypeBuilder_ptr myEnum_builder = m_factory.create_enum_type();
         myEnum_builder->set_name("MyEnum");
         myEnum_builder->add_member(0_id, "A");
         myEnum_builder->add_member(1_id, "B");
@@ -173,7 +173,7 @@ DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnumType()
 {
     if (m_MyAliasEnumType.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr myAliasEnum_builder = m_factory.create_alias_builder(*GetMyEnumType(), "MyAliasEnum");
+        DynamicTypeBuilder_ptr myAliasEnum_builder = m_factory.create_alias_type(*GetMyEnumType(), "MyAliasEnum");
         m_MyAliasEnumType = myAliasEnum_builder->build();
     }
 
@@ -184,7 +184,7 @@ DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnum2Type()
 {
     if (m_MyAliasEnum2Type.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr myAliasEnum2_builder = m_factory.create_alias_builder(
+        DynamicTypeBuilder_ptr myAliasEnum2_builder = m_factory.create_alias_type(
             *GetMyAliasEnumType(), "MyAliasEnum2");
         m_MyAliasEnum2Type = myAliasEnum2_builder->build();
     }
@@ -196,7 +196,7 @@ DynamicType_ptr DynamicComplexTypesTests::GetMyAliasEnum3Type()
 {
     if (m_MyAliasEnum3Type.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr myAliasEnum3_builder = m_factory.create_alias_builder(
+        DynamicTypeBuilder_ptr myAliasEnum3_builder = m_factory.create_alias_type(
             *GetMyAliasEnum2Type(), "MyAliasEnum3");
         m_MyAliasEnum3Type = myAliasEnum3_builder->build();
     }
@@ -208,9 +208,9 @@ DynamicType_ptr DynamicComplexTypesTests::GetMyOctetArray500Type()
 {
     if (m_MyOctetArray500.get() == nullptr)
     {
-        DynamicType_ptr octet_type = m_factory.create_byte_type();
-        DynamicTypeBuilder_ptr myOctetArray500_builder = m_factory.create_array_builder(*octet_type, { 500 });
-        m_MyOctetArray500 = m_factory.create_alias_type(*myOctetArray500_builder->build(), "MyOctetArray500");
+        DynamicType_ptr octet_type = m_factory.get_byte_type();
+        DynamicTypeBuilder_ptr myOctetArray500_builder = m_factory.create_array_type(*octet_type, { 500 });
+        m_MyOctetArray500 = m_factory.get_alias_type(*myOctetArray500_builder->build(), "MyOctetArray500");
     }
 
     return m_MyOctetArray500;
@@ -220,8 +220,8 @@ DynamicType_ptr DynamicComplexTypesTests::GetBSAlias5Type()
 {
     if (m_BSAlias5.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr bSAlias5_builder = m_factory.create_array_builder(*GetBasicStructType(), { 5 });
-        m_BSAlias5 = m_factory.create_alias_type(*bSAlias5_builder->build(), "BSAlias5");
+        DynamicTypeBuilder_ptr bSAlias5_builder = m_factory.create_array_type(*GetBasicStructType(), { 5 });
+        m_BSAlias5 = m_factory.get_alias_type(*bSAlias5_builder->build(), "BSAlias5");
     }
 
     return m_BSAlias5;
@@ -231,8 +231,8 @@ DynamicType_ptr DynamicComplexTypesTests::GetMA3Type()
 {
     if (m_MA3.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr mA3_builder = m_factory.create_array_builder(*GetMyAliasEnum3Type(), { 42 });
-        m_MA3 = m_factory.create_alias_type(*mA3_builder->build(), "MA3");
+        DynamicTypeBuilder_ptr mA3_builder = m_factory.create_array_type(*GetMyAliasEnum3Type(), { 42 });
+        m_MA3 = m_factory.get_alias_type(*mA3_builder->build(), "MA3");
     }
 
     return m_MA3;
@@ -242,9 +242,9 @@ DynamicType_ptr DynamicComplexTypesTests::GetMyMiniArrayType()
 {
     if (m_MyMiniArray.get() == nullptr)
     {
-        DynamicType_ptr int32_type = m_factory.create_int32_type();
-        DynamicTypeBuilder_ptr myMiniArray_builder = m_factory.create_array_builder(*int32_type, { 2 });
-        m_MyMiniArray = m_factory.create_alias_type(*myMiniArray_builder->build(), "MyMiniArray");
+        DynamicType_ptr int32_type = m_factory.get_int32_type();
+        DynamicTypeBuilder_ptr myMiniArray_builder = m_factory.create_array_type(*int32_type, { 2 });
+        m_MyMiniArray = m_factory.get_alias_type(*myMiniArray_builder->build(), "MyMiniArray");
     }
 
     return m_MyMiniArray;
@@ -254,9 +254,9 @@ DynamicType_ptr DynamicComplexTypesTests::GetMySequenceLongType()
 {
     if (m_MySequenceLong.get() == nullptr)
     {
-        DynamicType_ptr int32_type = m_factory.create_int32_type();
+        DynamicType_ptr int32_type = m_factory.get_int32_type();
         DynamicTypeBuilder_ptr seqLong_builder = m_factory.create_sequence_type(*int32_type);
-        DynamicTypeBuilder_ptr mySequenceLong_builder = m_factory.create_alias_builder(
+        DynamicTypeBuilder_ptr mySequenceLong_builder = m_factory.create_alias_type(
             *seqLong_builder->build(), "MySequenceLong");
         m_MySequenceLong = mySequenceLong_builder->build();
     }
@@ -269,22 +269,22 @@ DynamicType_ptr DynamicComplexTypesTests::GetBasicStructType()
     if (m_BasicStructType.get() == nullptr)
     {
         // Members
-        DynamicType_ptr bool_type = m_factory.create_bool_type();
-        DynamicType_ptr octet_type = m_factory.create_byte_type();
-        DynamicType_ptr int16_type = m_factory.create_int16_type();
-        DynamicType_ptr int32_type = m_factory.create_int32_type();
-        DynamicType_ptr int64_type = m_factory.create_int64_type();
-        DynamicType_ptr uint16_type = m_factory.create_uint16_type();
-        DynamicType_ptr uint32_type = m_factory.create_uint32_type();
-        DynamicType_ptr uint64_type = m_factory.create_uint64_type();
-        DynamicType_ptr float_type = m_factory.create_float32_type();
-        DynamicType_ptr double_type = m_factory.create_float64_type();
-        DynamicType_ptr ldouble_type = m_factory.create_float128_type();
-        DynamicType_ptr char_type = m_factory.create_char8_type();
-        DynamicType_ptr wchar_type = m_factory.create_char16_type();
+        DynamicType_ptr bool_type = m_factory.get_bool_type();
+        DynamicType_ptr octet_type = m_factory.get_byte_type();
+        DynamicType_ptr int16_type = m_factory.get_int16_type();
+        DynamicType_ptr int32_type = m_factory.get_int32_type();
+        DynamicType_ptr int64_type = m_factory.get_int64_type();
+        DynamicType_ptr uint16_type = m_factory.get_uint16_type();
+        DynamicType_ptr uint32_type = m_factory.get_uint32_type();
+        DynamicType_ptr uint64_type = m_factory.get_uint64_type();
+        DynamicType_ptr float_type = m_factory.get_float32_type();
+        DynamicType_ptr double_type = m_factory.get_float64_type();
+        DynamicType_ptr ldouble_type = m_factory.get_float128_type();
+        DynamicType_ptr char_type = m_factory.get_char8_type();
+        DynamicType_ptr wchar_type = m_factory.get_char16_type();
         DynamicType_ptr string_type = m_factory.get_string_type();
         DynamicType_ptr wstring_type = m_factory.get_wstring_type();
-        DynamicTypeBuilder_ptr basicStruct_builder = m_factory.create_struct_builder();
+        DynamicTypeBuilder_ptr basicStruct_builder = m_factory.create_struct_type();
 
         // Add members to the struct.
         int idx = 0;
@@ -316,26 +316,26 @@ DynamicType_ptr DynamicComplexTypesTests::GetComplexStructType()
     if (m_ComplexStructType.get() == nullptr)
     {
         // Members (auxiliar types are tab)
-        DynamicType_ptr octet_type = m_factory.create_byte_type();
+        DynamicType_ptr octet_type = m_factory.get_byte_type();
         DynamicTypeBuilder_ptr my_sequence_octet_builder = m_factory.create_sequence_type(*octet_type, 55);
         DynamicType_ptr my_sequence_octet_type = my_sequence_octet_builder->build();
 
         DynamicTypeBuilder_ptr my_sequence_struct_builder = m_factory.create_sequence_type(*GetBasicStructType());
         DynamicType_ptr my_sequence_struct_type = my_sequence_struct_builder->build();
 
-        DynamicType_ptr char_type = m_factory.create_char8_type();
-        DynamicTypeBuilder_ptr my_array_octet_builder = m_factory.create_array_builder(
+        DynamicType_ptr char_type = m_factory.get_char8_type();
+        DynamicTypeBuilder_ptr my_array_octet_builder = m_factory.create_array_type(
             *char_type, { 500, 5, 4 });
         DynamicType_ptr my_array_octet_type = my_array_octet_builder->build();
 
         // MyOctetArray500 is already created
         // We reuse the bounds... { 5 }
         DynamicTypeBuilder_ptr my_array_struct_builder =
-                DynamicTypeBuilderFactory::get_instance().create_array_builder(*GetBasicStructType(), { 5 });
-        DynamicType_ptr int16_type = DynamicTypeBuilderFactory::get_instance().create_int16_type();
+                DynamicTypeBuilderFactory::get_instance().create_array_type(*GetBasicStructType(), { 5 });
+        DynamicType_ptr int16_type = DynamicTypeBuilderFactory::get_instance().get_int16_type();
         DynamicTypeBuilder_ptr my_map_octet_short_builder =
                 DynamicTypeBuilderFactory::get_instance().create_map_type(*octet_type, *int16_type);
-        DynamicType_ptr int32_type = DynamicTypeBuilderFactory::get_instance().create_int32_type();
+        DynamicType_ptr int32_type = DynamicTypeBuilderFactory::get_instance().get_int32_type();
         DynamicTypeBuilder_ptr my_map_long_struct_builder =
                 DynamicTypeBuilderFactory::get_instance().create_map_type(*int32_type, *GetBasicStructType());
         DynamicTypeBuilder_ptr seqOctet_builder =
@@ -364,16 +364,16 @@ DynamicType_ptr DynamicComplexTypesTests::GetComplexStructType()
         DynamicType_ptr string75_8_type =
                 DynamicTypeBuilderFactory::get_instance().get_string_type(75);
         DynamicTypeBuilder_ptr my_array_string_builder =
-                DynamicTypeBuilderFactory::get_instance().create_array_builder(*string75_8_type, { 5, 5 });
+                DynamicTypeBuilderFactory::get_instance().create_array_type(*string75_8_type, { 5, 5 });
 
         // MA3 is already defined.
         // { 5 } being reused
         DynamicTypeBuilder_ptr my_array_arrays_builder =
-                DynamicTypeBuilderFactory::get_instance().create_array_builder(*GetMyMiniArrayType(), { 5 });
+                DynamicTypeBuilderFactory::get_instance().create_array_type(*GetMyMiniArrayType(), { 5 });
         DynamicTypeBuilder_ptr my_sequences_array_builder =
-                DynamicTypeBuilderFactory::get_instance().create_array_builder(*GetMySequenceLongType(), { 23 });
+                DynamicTypeBuilderFactory::get_instance().create_array_type(*GetMySequenceLongType(), { 23 });
         DynamicTypeBuilder_ptr complexStruct_builder =
-                DynamicTypeBuilderFactory::get_instance().create_struct_builder();
+                DynamicTypeBuilderFactory::get_instance().create_struct_type();
 
         // Add members to the struct.
         int idx = 0;
@@ -411,7 +411,7 @@ DynamicType_ptr DynamicComplexTypesTests::GetUnionSwitchType()
 {
     if (m_UnionSwitchType.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr myUnion_builder = DynamicTypeBuilderFactory::get_instance().create_union_builder(
+        DynamicTypeBuilder_ptr myUnion_builder = DynamicTypeBuilderFactory::get_instance().create_union_type(
             *GetMyEnumType());
         myUnion_builder->add_member(0_id, "basic", GetBasicStructType(), "A", std::vector<uint64_t>{ 0 }, false);
         myUnion_builder->add_member(1_id, "complex", GetComplexStructType(), "B", std::vector<uint64_t>{ 1, 2 }, false);
@@ -426,10 +426,10 @@ DynamicType_ptr DynamicComplexTypesTests::GetUnion2SwitchType()
 {
     if (!m_Union2SwitchType)
     {
-        DynamicType_ptr octet_type = DynamicTypeBuilderFactory::get_instance().create_byte_type();
-        DynamicType_ptr int32_type = DynamicTypeBuilderFactory::get_instance().create_int32_type();
+        DynamicType_ptr octet_type = DynamicTypeBuilderFactory::get_instance().get_byte_type();
+        DynamicType_ptr int32_type = DynamicTypeBuilderFactory::get_instance().get_int32_type();
         DynamicType_ptr string_type = DynamicTypeBuilderFactory::get_instance().get_string_type();
-        DynamicTypeBuilder_ptr myUnion2_builder = DynamicTypeBuilderFactory::get_instance().create_union_builder(
+        DynamicTypeBuilder_ptr myUnion2_builder = DynamicTypeBuilderFactory::get_instance().create_union_type(
             *octet_type);
         myUnion2_builder->add_member(0_id, "uno", int32_type, "0", std::vector<uint64_t>{ 0 }, false);
         myUnion2_builder->add_member(1_id, "imString", string_type, "1", std::vector<uint64_t>{ 1 }, false);
@@ -445,7 +445,7 @@ DynamicType_ptr DynamicComplexTypesTests::GetCompleteStructType()
 {
     if (m_CompleteStructType.get() == nullptr)
     {
-        DynamicTypeBuilder_ptr completeStruct_builder = m_factory.create_struct_builder();
+        DynamicTypeBuilder_ptr completeStruct_builder = m_factory.create_struct_type();
         // Add members to the struct.
         int idx = 0;
         completeStruct_builder->add_member(idx++, "my_union", GetUnionSwitchType());
@@ -554,18 +554,18 @@ TEST_F(DynamicComplexTypesTests, DynamicDiscoveryTest)
     TypeObject typeObject1, typeObject2, typeObject3;
     DynamicType_ptr type1, type2, type3;
     {
-        type1 = m_factory.create_uint16_type();
+        type1 = m_factory.get_uint16_type();
         //DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(type1));
         m_factory.build_type_object(type1->get_descriptor(), typeObject1);
     }
     {
-        type2 = m_factory.create_int16_type();
+        type2 = m_factory.get_int16_type();
         //DynamicData_ptr data2(DynamicDataFactory::get_instance()->create_data(type2));
         m_factory.build_type_object(type2->get_descriptor(), typeObject2);
     }
 
     {
-        type3 = m_factory.create_int16_type();
+        type3 = m_factory.get_int16_type();
         //DynamicData_ptr data2(DynamicDataFactory::get_instance()->create_data(type3));
         m_factory.build_type_object(type3->get_descriptor(), typeObject3);
     }
@@ -974,7 +974,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     }
     complex->return_loaned_value(my_array_struct);
 
-    DynamicType_ptr octet_type = m_factory.create_byte_type();
+    DynamicType_ptr octet_type = m_factory.get_byte_type();
     DynamicData_ptr key_oct(DynamicDataFactory::get_instance()->create_data(octet_type));
     MemberId kId;
     MemberId vId;
@@ -992,7 +992,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     //staticData.my_union().complex().my_map_octet_short()[1] = 1341;
     complex->return_loaned_value(my_map_octet_short);
 
-    DynamicType_ptr long_type = m_factory.create_int32_type();
+    DynamicType_ptr long_type = m_factory.get_int32_type();
     DynamicData_ptr key(DynamicDataFactory::get_instance()->create_data(long_type));
     DynamicData* my_map_long_struct = complex->loan_value(complex->get_member_id_by_name("my_map_long_struct"));
 
@@ -1046,9 +1046,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     DynamicData* my_map_long_seq_octet = complex->loan_value(complex->get_member_id_by_name("my_map_long_seq_octet"));
     //std::vector my_vector_octet = {1, 2, 3, 4, 5};
     //MemberId id;
-    /*DynamicType_ptr octet_type = m_factory.create_byte_type();
+    /*DynamicType_ptr octet_type = m_factory.get_byte_type();
        types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory.create_sequence_type(*octet_type);
-       types::DynamicType_ptr seqSeqOctet_builder = m_factory.create_sequence_type(seqOctet_builder->build())->build();
+       types::DynamicType_ptr seqSeqOctet_builder = m_factory.get_sequence_type(seqOctet_builder->build())->build();
        DynamicData *dataSeqOctet = seqOctet_builder->build();
        DynamicData *dataSeqSeqOctet = seqSeqOctet_builder->build();
        dataSeqOctet->insert_sequence_data(id);
@@ -1476,7 +1476,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     }
     complex->return_loaned_value(my_array_struct);
 
-    DynamicType_ptr octet_type = m_factory.create_byte_type();
+    DynamicType_ptr octet_type = m_factory.get_byte_type();
     DynamicData_ptr key_oct(DynamicDataFactory::get_instance()->create_data(octet_type));
     MemberId kId;
     MemberId vId;
@@ -1494,7 +1494,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     //staticData.my_union().complex().my_map_octet_short()[1] = 1341;
     complex->return_loaned_value(my_map_octet_short);
 
-    DynamicType_ptr long_type = m_factory.create_int32_type();
+    DynamicType_ptr long_type = m_factory.get_int32_type();
     DynamicData_ptr key(DynamicDataFactory::get_instance()->create_data(long_type));
     DynamicData* my_map_long_struct = complex->loan_value(complex->get_member_id_by_name("my_map_long_struct"));
 
@@ -1548,7 +1548,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     DynamicData* my_map_long_seq_octet = complex->loan_value(complex->get_member_id_by_name("my_map_long_seq_octet"));
     //std::vector my_vector_octet = {1, 2, 3, 4, 5};
     //MemberId id;
-    /*DynamicType_ptr octet_type = m_factory.create_byte_type();
+    /*DynamicType_ptr octet_type = m_factory.get_byte_type();
        types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory.create_sequence_type(octet_type);
        types::DynamicType_ptr seqSeqOctet_builder = m_factory.create_sequence_type(seqOctet_builder.get())->build();
        DynamicData *dataSeqOctet = seqOctet_builder->build();
@@ -1935,7 +1935,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     }
     complex->return_loaned_value(my_array_struct);
 
-    DynamicType_ptr octet_type = m_factory.create_byte_type();
+    DynamicType_ptr octet_type = m_factory.get_byte_type();
     DynamicData_ptr key_oct(DynamicDataFactory::get_instance()->create_data(octet_type));
     MemberId kId;
     MemberId vId;
@@ -1953,7 +1953,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     //staticData.my_union().complex().my_map_octet_short()[1] = 1341;
     complex->return_loaned_value(my_map_octet_short);
 
-    DynamicType_ptr long_type = m_factory.create_int32_type();
+    DynamicType_ptr long_type = m_factory.get_int32_type();
     DynamicData_ptr key(DynamicDataFactory::get_instance()->create_data(long_type));
     DynamicData* my_map_long_struct = complex->loan_value(complex->get_member_id_by_name("my_map_long_struct"));
 
@@ -2007,7 +2007,7 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     DynamicData* my_map_long_seq_octet = complex->loan_value(complex->get_member_id_by_name("my_map_long_seq_octet"));
     //std::vector my_vector_octet = {1, 2, 3, 4, 5};
     //MemberId id;
-    /*DynamicType_ptr octet_type = m_factory.create_byte_type();
+    /*DynamicType_ptr octet_type = m_factory.get_byte_type();
        types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory.create_sequence_type(octet_type);
        types::DynamicType_ptr seqSeqOctet_builder = m_factory.create_sequence_type(seqOctet_builder.get())->build();
        DynamicData *dataSeqOctet = seqOctet_builder->build();

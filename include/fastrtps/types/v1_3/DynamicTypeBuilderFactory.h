@@ -254,7 +254,7 @@ public:
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.6 this method is
      *         called `create_type` which is misguiding. Note it returns a builder associated with the type.
      * @remark This method will always create a new builder object. In order to access primitive static allocated
-     *         ones and avoid heap overhead use the `create_xxxx_builder()` methods.
+     *         ones and avoid heap overhead use the `get_xxxx_type()` methods.
      * @param[in] td object state to copy
      * @return new @ref DynamicTypeBuilder object
      */
@@ -267,7 +267,7 @@ public:
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.7 this method is
      *         called `create_type_copy` which is misguiding. Note it returns a builder associated with the type.
      * @remark This method will always create a new builder object. In order to access primitive static allocated
-     *         ones and avoid heap overhead use the `create_xxxx_builder()` methods.
+     *         ones and avoid heap overhead use the `get_xxxx_type()` methods.
      * @param[in] type @ref DynamicType object
      * @return new @ref DynamicTypeBuilder object
      */
@@ -324,43 +324,43 @@ public:
             TypeKind kind) noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_INT32>()`
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_int32_builder() noexcept;
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_int32_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_UINT32>()`
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_uint32_builder() noexcept;
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_uint32_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_INT16>()`
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_int16_builder() noexcept;
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_int16_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_UINT16>()`
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_uint16_builder() noexcept;
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_uint16_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_INT64>()`
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_int64_builder() noexcept;
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_int64_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_UINT64>()`
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_uint64_builder() noexcept;
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_uint64_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_FLOAT32>()`
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_float32_builder() noexcept;
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_float32_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_FLOAT64>()`
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_float64_builder() noexcept;
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_float64_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_FLOAT128>()`
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_float128_builder() noexcept;
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_float128_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_CHAR8>()`
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_char8_builder() noexcept;
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_char8_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_CHAR16>()`
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_char16_builder() noexcept;
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_char16_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_BOOLEAN>()`
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_bool_builder() noexcept;
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_bool_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_BYTE>()`
-    RTPS_DllAPI DynamicTypeBuilder_cptr& create_byte_builder() noexcept;
+    RTPS_DllAPI DynamicTypeBuilder_cptr& create_byte_type() noexcept;
 
     /**
      * Creates a new @ref DynamicTypeBuilder object representing a bounded string type.
@@ -404,7 +404,7 @@ public:
      * @param[in] bounds `uint32_t` representing the desired dimensions
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_array_builder(
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_array_type(
             const DynamicType& type,
             const std::vector<uint32_t>& bounds) noexcept;
 
@@ -429,7 +429,7 @@ public:
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_bitmask_builder(
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_bitmask_type(
             uint32_t bound = 32) noexcept;
 
     /**
@@ -437,7 +437,7 @@ public:
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_bitset_builder(
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_bitset_type(
             uint32_t bound = 32) noexcept;
 
     /**
@@ -446,7 +446,7 @@ public:
      * @param[in] sName new alias name
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_alias_builder(
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_alias_type(
             const DynamicType& base_type,
             const std::string& sName);
 
@@ -454,20 +454,20 @@ public:
      * Creates a new @ref DynamicTypeBuilder object representing an enum
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_enum_builder();
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_enum_type();
 
     /**
      * Returns a @ref DynamicTypeBuilder associated with a `TypeKind::TK_STRUCTURE`
      * @return @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_struct_builder() noexcept;
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_struct_type() noexcept;
 
     /**
      * Creates a new @ref DynamicTypeBuilder object representing a subclass
      * @param[in] parent_type @ref DynamicType identifying the desired superclass
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_child_struct_builder(
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_child_struct_type(
             const DynamicType& parent_type);
 
     /**
@@ -475,7 +475,7 @@ public:
      * @param[in] discriminator_type @ref DynamicType associated to the union's discriminator
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_union_builder(
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_union_type(
             const DynamicType& discriminator_type);
 
     /**
@@ -487,48 +487,48 @@ public:
             const std::string& name);
 
     //! returns type instantiation of the @ref DynamicTypeBuilderFactory::create_alias_type builder
-    RTPS_DllAPI DynamicType_ptr create_alias_type(
+    RTPS_DllAPI DynamicType_ptr get_alias_type(
             const DynamicType& base_type,
             const std::string& sName);
 
-    //! returns the cache type associated to create_int16_builder()
-    RTPS_DllAPI DynamicType_ptr create_int16_type();
+    //! returns the cache type associated to create_int16_type()
+    RTPS_DllAPI DynamicType_ptr get_int16_type();
 
-    //! returns the cache type associated to create_uint16_builder()
-    RTPS_DllAPI DynamicType_ptr create_uint16_type();
+    //! returns the cache type associated to create_uint16_type()
+    RTPS_DllAPI DynamicType_ptr get_uint16_type();
 
-    //! returns the cache type associated to create_int32_builder()
-    RTPS_DllAPI DynamicType_ptr create_int32_type();
+    //! returns the cache type associated to create_int32_type()
+    RTPS_DllAPI DynamicType_ptr get_int32_type();
 
-    //! returns the cache type associated to create_uint32_builder()
-    RTPS_DllAPI DynamicType_ptr create_uint32_type();
+    //! returns the cache type associated to create_uint32_type()
+    RTPS_DllAPI DynamicType_ptr get_uint32_type();
 
-    //! returns the cache type associated to create_int64_builder()
-    RTPS_DllAPI DynamicType_ptr create_int64_type();
+    //! returns the cache type associated to create_int64_type()
+    RTPS_DllAPI DynamicType_ptr get_int64_type();
 
-    //! returns the cache type associated to create_uint64_builder()
-    RTPS_DllAPI DynamicType_ptr create_uint64_type();
+    //! returns the cache type associated to create_uint64_type()
+    RTPS_DllAPI DynamicType_ptr get_uint64_type();
 
-    //! returns the cache type associated to create_float32_builder()
-    RTPS_DllAPI DynamicType_ptr create_float32_type();
+    //! returns the cache type associated to create_float32_type()
+    RTPS_DllAPI DynamicType_ptr get_float32_type();
 
-    //! returns the cache type associated to create_float64_builder()
-    RTPS_DllAPI DynamicType_ptr create_float64_type();
+    //! returns the cache type associated to create_float64_type()
+    RTPS_DllAPI DynamicType_ptr get_float64_type();
 
-    //! returns the cache type associated to create_float128_builder()
-    RTPS_DllAPI DynamicType_ptr create_float128_type();
+    //! returns the cache type associated to create_float128_type()
+    RTPS_DllAPI DynamicType_ptr get_float128_type();
 
-    //! returns the cache type associated to create_char8_builder()
-    RTPS_DllAPI DynamicType_ptr create_char8_type();
+    //! returns the cache type associated to create_char8_type()
+    RTPS_DllAPI DynamicType_ptr get_char8_type();
 
-    //! returns the cache type associated to create_char16_builder()
-    RTPS_DllAPI DynamicType_ptr create_char16_type();
+    //! returns the cache type associated to create_char16_type()
+    RTPS_DllAPI DynamicType_ptr get_char16_type();
 
-    //! returns the cache type associated to create_bool_builder()
-    RTPS_DllAPI DynamicType_ptr create_bool_type();
+    //! returns the cache type associated to create_bool_type()
+    RTPS_DllAPI DynamicType_ptr get_bool_type();
 
-    //! returns the cache type associated to create_byte_type()
-    RTPS_DllAPI DynamicType_ptr create_byte_type();
+    //! returns the cache type associated to get_byte_type()
+    RTPS_DllAPI DynamicType_ptr get_byte_type();
 
     //! returns the cache type associated to create_string_type()
     RTPS_DllAPI DynamicType_ptr get_string_type(
@@ -543,7 +543,7 @@ public:
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicType_ptr create_bitset_type(
+    RTPS_DllAPI DynamicType_ptr get_bitset_type(
             uint32_t bound);
 
     RTPS_DllAPI void build_type_identifier(

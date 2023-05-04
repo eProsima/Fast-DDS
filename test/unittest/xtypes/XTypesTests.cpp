@@ -740,10 +740,10 @@ TEST_F(XTypesTests, SimpleUnionCompleteCoercion)
 
 TEST_F(XTypesTests, TypeDescriptorFullyQualifiedName)
 {
-    DynamicTypeBuilder_ptr my_builder(DynamicTypeBuilderFactory::get_instance().create_struct_builder());
-    my_builder->add_member(0, "x", DynamicTypeBuilderFactory::get_instance().create_float32_type());
-    my_builder->add_member(0, "y", DynamicTypeBuilderFactory::get_instance().create_float32_type());
-    my_builder->add_member(0, "z", DynamicTypeBuilderFactory::get_instance().create_float32_type());
+    DynamicTypeBuilder_ptr my_builder(DynamicTypeBuilderFactory::get_instance().create_struct_type());
+    my_builder->add_member(0, "x", DynamicTypeBuilderFactory::get_instance().get_float32_type());
+    my_builder->add_member(0, "y", DynamicTypeBuilderFactory::get_instance().get_float32_type());
+    my_builder->add_member(0, "z", DynamicTypeBuilderFactory::get_instance().get_float32_type());
     const TypeDescriptor& my_descriptor = *my_builder;
 
     my_builder->set_name("Position");
@@ -790,10 +790,10 @@ TEST_F(XTypesTests, TypeDescriptorFullyQualifiedName)
 TEST_F(XTypesTests, MemberDescriptorFullyQualifiedName)
 {
     MemberId member_id{0};
-    DynamicTypeBuilder_ptr my_builder(DynamicTypeBuilderFactory::get_instance().create_struct_builder());
-    my_builder->add_member(member_id++, "x", DynamicTypeBuilderFactory::get_instance().create_float32_type());
-    my_builder->add_member(member_id++, "y", DynamicTypeBuilderFactory::get_instance().create_float32_type());
-    my_builder->add_member(member_id++, "z", DynamicTypeBuilderFactory::get_instance().create_float32_type());
+    DynamicTypeBuilder_ptr my_builder(DynamicTypeBuilderFactory::get_instance().create_struct_type());
+    my_builder->add_member(member_id++, "x", DynamicTypeBuilderFactory::get_instance().get_float32_type());
+    my_builder->add_member(member_id++, "y", DynamicTypeBuilderFactory::get_instance().get_float32_type());
+    my_builder->add_member(member_id++, "z", DynamicTypeBuilderFactory::get_instance().get_float32_type());
 
     my_builder->set_name("Position");
     EXPECT_EQ(ReturnCode_t::RETCODE_OK, my_builder->add_member(member_id++, "t1", my_builder->build()));
