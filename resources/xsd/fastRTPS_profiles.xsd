@@ -172,7 +172,7 @@
     <xs:complexType name="publisherProfileType">
         <xs:all>
             <xs:element name="topic" type="topicElementType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="qos" type="publisherQosPoliciesType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="qos" type="dataWriterQosPoliciesType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="times" type="writerTimesType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0" maxOccurs="1"/>
@@ -208,7 +208,7 @@
     <xs:complexType name="subscriberProfileType">
         <xs:all minOccurs="0">
             <xs:element name="topic" type="topicElementType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="qos" type="subscriberQosPoliciesType" minOccurs="0"/>
+            <xs:element name="qos" type="dataReaderQosPoliciesType" minOccurs="0"/>
             <xs:element name="times" type="readerTimesType" minOccurs="0"/>
             <xs:element name="unicastLocatorList" type="locatorListType" minOccurs="0"/>
             <xs:element name="multicastLocatorList" type="locatorListType" minOccurs="0"/>
@@ -1087,7 +1087,7 @@
         ├ reliability                 [0~1],
         ├ topicData                   [0~1],
         └ userData                    [0~1] -->
-    <xs:complexType name="publisherQosPoliciesType">
+    <xs:complexType name="dataWriterQosPoliciesType">
         <xs:all>
             <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="deadline" type="deadlineQosPolicyType" minOccurs="0" maxOccurs="1"/>
@@ -1131,7 +1131,7 @@
         ├ reliability                 [0~1],
         ├ topicData                   [0~1],
         └ userData                    [0~1] -->
-    <xs:complexType name="subscriberQosPoliciesType">
+    <xs:complexType name="dataReaderQosPoliciesType">
         <xs:all>
             <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="deadline" type="deadlineQosPolicyType" minOccurs="0" maxOccurs="1"/>
