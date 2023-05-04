@@ -399,7 +399,7 @@ public:
     /**
      * Creates a new @ref DynamicTypeBuilder object representing an array
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.1 this method is
-     *         called `create_array_type` which is misguiding. It was renamed to simplify interface usage.
+     *         called `create_array_type` which is misguiding. Note the return value is a builder.
      * @param[in] type @ref DynamicType which becomes the element type
      * @param[in] bounds `uint32_t` representing the desired dimensions
      * @return new @ref DynamicTypeBuilder object
@@ -411,21 +411,21 @@ public:
     /**
      * Creates a new @ref DynamicTypeBuilder object representing a map
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.3 this method is
-     *         called `create_map_type` which is misguiding. It was renamed to simplify interface usage.
+     *         called `create_map_type` which is misguiding. Note the return value is a builder.
      * @param[in] key_type @ref DynamicType which becomes the map's key type
      * @param[in] value_type @ref DynamicType which becomes the map's value type
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder_ptr create_map_builder(
+    RTPS_DllAPI DynamicTypeBuilder_ptr create_map_type(
             const DynamicType& key_type,
             const DynamicType& value_type,
-            uint32_t bound = MAX_ELEMENTS_COUNT) noexcept;
+            uint32_t bound = LENGTH_UNLIMITED) noexcept;
 
     /**
      * Creates a new @ref DynamicTypeBuilder object representing a bitmask
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.2 this method is
-     *         called `create_bitmask_type` which is misguiding. It was renamed to simplify interface usage.
+     *         called `create_bitmask_type` which is misguiding. Note the return value is a builder.
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilder object
      */

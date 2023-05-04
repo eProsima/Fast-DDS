@@ -255,7 +255,7 @@ DynamicType_ptr DynamicComplexTypesTests::GetMySequenceLongType()
     if (m_MySequenceLong.get() == nullptr)
     {
         DynamicType_ptr int32_type = m_factory.create_int32_type();
-        DynamicTypeBuilder_ptr seqLong_builder = m_factory.create_sequence_builder(*int32_type);
+        DynamicTypeBuilder_ptr seqLong_builder = m_factory.create_sequence_type(*int32_type);
         DynamicTypeBuilder_ptr mySequenceLong_builder = m_factory.create_alias_builder(
             *seqLong_builder->build(), "MySequenceLong");
         m_MySequenceLong = mySequenceLong_builder->build();
@@ -317,10 +317,10 @@ DynamicType_ptr DynamicComplexTypesTests::GetComplexStructType()
     {
         // Members (auxiliar types are tab)
         DynamicType_ptr octet_type = m_factory.create_byte_type();
-        DynamicTypeBuilder_ptr my_sequence_octet_builder = m_factory.create_sequence_builder(*octet_type, 55);
+        DynamicTypeBuilder_ptr my_sequence_octet_builder = m_factory.create_sequence_type(*octet_type, 55);
         DynamicType_ptr my_sequence_octet_type = my_sequence_octet_builder->build();
 
-        DynamicTypeBuilder_ptr my_sequence_struct_builder = m_factory.create_sequence_builder(*GetBasicStructType());
+        DynamicTypeBuilder_ptr my_sequence_struct_builder = m_factory.create_sequence_type(*GetBasicStructType());
         DynamicType_ptr my_sequence_struct_type = my_sequence_struct_builder->build();
 
         DynamicType_ptr char_type = m_factory.create_char8_type();
@@ -334,24 +334,24 @@ DynamicType_ptr DynamicComplexTypesTests::GetComplexStructType()
                 DynamicTypeBuilderFactory::get_instance().create_array_builder(*GetBasicStructType(), { 5 });
         DynamicType_ptr int16_type = DynamicTypeBuilderFactory::get_instance().create_int16_type();
         DynamicTypeBuilder_ptr my_map_octet_short_builder =
-                DynamicTypeBuilderFactory::get_instance().create_map_builder(*octet_type, *int16_type);
+                DynamicTypeBuilderFactory::get_instance().create_map_type(*octet_type, *int16_type);
         DynamicType_ptr int32_type = DynamicTypeBuilderFactory::get_instance().create_int32_type();
         DynamicTypeBuilder_ptr my_map_long_struct_builder =
-                DynamicTypeBuilderFactory::get_instance().create_map_builder(*int32_type, *GetBasicStructType());
+                DynamicTypeBuilderFactory::get_instance().create_map_type(*int32_type, *GetBasicStructType());
         DynamicTypeBuilder_ptr seqOctet_builder =
-                DynamicTypeBuilderFactory::get_instance().create_sequence_builder(*octet_type);
+                DynamicTypeBuilderFactory::get_instance().create_sequence_type(*octet_type);
         DynamicTypeBuilder_ptr seqSeqOctet_builder =
-                DynamicTypeBuilderFactory::get_instance().create_sequence_builder(*seqOctet_builder->build());
+                DynamicTypeBuilderFactory::get_instance().create_sequence_type(*seqOctet_builder->build());
         DynamicTypeBuilder_ptr my_map_long_seq_octet_builder =
-                DynamicTypeBuilderFactory::get_instance().create_map_builder(*int32_type,
+                DynamicTypeBuilderFactory::get_instance().create_map_type(*int32_type,
                         *seqSeqOctet_builder->build());
         DynamicType_ptr my_map_long_seq_octet_type = my_map_long_seq_octet_builder->build();
         DynamicTypeBuilder_ptr my_map_long_octet_array_500_builder =
-                DynamicTypeBuilderFactory::get_instance().create_map_builder(*int32_type, *GetMyOctetArray500Type());
+                DynamicTypeBuilderFactory::get_instance().create_map_type(*int32_type, *GetMyOctetArray500Type());
         DynamicTypeBuilder_ptr map_octet_bsalias5_builder =
-                DynamicTypeBuilderFactory::get_instance().create_map_builder(*octet_type, *GetBSAlias5Type());
+                DynamicTypeBuilderFactory::get_instance().create_map_type(*octet_type, *GetBSAlias5Type());
         DynamicTypeBuilder_ptr my_map_long_lol_type_builder =
-                DynamicTypeBuilderFactory::get_instance().create_map_builder(*int32_type,
+                DynamicTypeBuilderFactory::get_instance().create_map_type(*int32_type,
                         *map_octet_bsalias5_builder->build());
         DynamicType_ptr my_small_string_8_type =
                 DynamicTypeBuilderFactory::get_instance().get_string_type(128);
@@ -1047,8 +1047,8 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     //std::vector my_vector_octet = {1, 2, 3, 4, 5};
     //MemberId id;
     /*DynamicType_ptr octet_type = m_factory.create_byte_type();
-       types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory.create_sequence_builder(*octet_type);
-       types::DynamicType_ptr seqSeqOctet_builder = m_factory.create_sequence_builder(seqOctet_builder->build())->build();
+       types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory.create_sequence_type(*octet_type);
+       types::DynamicType_ptr seqSeqOctet_builder = m_factory.create_sequence_type(seqOctet_builder->build())->build();
        DynamicData *dataSeqOctet = seqOctet_builder->build();
        DynamicData *dataSeqSeqOctet = seqSeqOctet_builder->build();
        dataSeqOctet->insert_sequence_data(id);
@@ -1549,8 +1549,8 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     //std::vector my_vector_octet = {1, 2, 3, 4, 5};
     //MemberId id;
     /*DynamicType_ptr octet_type = m_factory.create_byte_type();
-       types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory.create_sequence_builder(octet_type);
-       types::DynamicType_ptr seqSeqOctet_builder = m_factory.create_sequence_builder(seqOctet_builder.get())->build();
+       types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory.create_sequence_type(octet_type);
+       types::DynamicType_ptr seqSeqOctet_builder = m_factory.create_sequence_type(seqOctet_builder.get())->build();
        DynamicData *dataSeqOctet = seqOctet_builder->build();
        DynamicData *dataSeqSeqOctet = seqSeqOctet_builder->build();
        dataSeqOctet->insert_sequence_data(id);
@@ -2008,8 +2008,8 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     //std::vector my_vector_octet = {1, 2, 3, 4, 5};
     //MemberId id;
     /*DynamicType_ptr octet_type = m_factory.create_byte_type();
-       types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory.create_sequence_builder(octet_type);
-       types::DynamicType_ptr seqSeqOctet_builder = m_factory.create_sequence_builder(seqOctet_builder.get())->build();
+       types::DynamicTypeBuilder_ptr seqOctet_builder = m_factory.create_sequence_type(octet_type);
+       types::DynamicType_ptr seqSeqOctet_builder = m_factory.create_sequence_type(seqOctet_builder.get())->build();
        DynamicData *dataSeqOctet = seqOctet_builder->build();
        DynamicData *dataSeqSeqOctet = seqSeqOctet_builder->build();
        dataSeqOctet->insert_sequence_data(id);

@@ -3013,7 +3013,7 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_unit_tests)
     // Then
     DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_builder();
     ASSERT_TRUE(base_type_builder);
-    DynamicTypeBuilder_ptr seq_type_builder = factory.create_sequence_builder(*base_type_builder->build(), length);
+    DynamicTypeBuilder_ptr seq_type_builder = factory.create_sequence_type(*base_type_builder->build(), length);
     ASSERT_TRUE(seq_type_builder);
     auto seq_type = seq_type_builder->build();
     ASSERT_TRUE(seq_type);
@@ -3151,13 +3151,13 @@ TEST_F(DynamicTypesTests, DynamicType_sequence_of_sequences_unit_tests)
     DynamicTypeBuilder_cptr base_type_builder = factory.create_int32_builder();
     ASSERT_TRUE(base_type_builder);
 
-    DynamicTypeBuilder_ptr seq_type_builder = factory.create_sequence_builder(
+    DynamicTypeBuilder_ptr seq_type_builder = factory.create_sequence_type(
         *base_type_builder->build(), sequence_length);
     ASSERT_TRUE(seq_type_builder);
     auto seq_type = seq_type_builder->build();
     ASSERT_TRUE(seq_type);
 
-    DynamicTypeBuilder_ptr seq_seq_type_builder = factory.create_sequence_builder(
+    DynamicTypeBuilder_ptr seq_seq_type_builder = factory.create_sequence_type(
         *seq_type_builder->build(), sup_sequence_length);
     ASSERT_TRUE(seq_seq_type_builder);
     auto seq_seq_type = seq_seq_type_builder->build();
@@ -3593,7 +3593,7 @@ TEST_F(DynamicTypesTests, DynamicType_map_unit_tests)
     auto base_type = base_type_builder->build();
 
     DynamicTypeBuilder_ptr map_type_builder =
-            factory.create_map_builder(*base_type, *base_type, map_length);
+            factory.create_map_type(*base_type, *base_type, map_length);
     ASSERT_TRUE(map_type_builder);
     auto map_type = map_type_builder->build();
     ASSERT_TRUE(map_type);
@@ -3742,13 +3742,13 @@ TEST_F(DynamicTypesTests, DynamicType_map_of_maps_unit_tests)
     auto base_type = base_type_builder->build();
 
     DynamicTypeBuilder_ptr map_type_builder =
-            factory.create_map_builder(*base_type, *base_type, map_length);
+            factory.create_map_type(*base_type, *base_type, map_length);
     ASSERT_TRUE(map_type_builder);
     auto map_type = map_type_builder->build();
     ASSERT_TRUE(map_type);
 
     DynamicTypeBuilder_ptr map_map_type_builder =
-            factory.create_map_builder(*base_type, *map_type, map_length);
+            factory.create_map_type(*base_type, *map_type, map_length);
     ASSERT_TRUE(map_map_type_builder);
     auto map_map_type = map_map_type_builder->build();
     ASSERT_TRUE(map_map_type);
@@ -5331,7 +5331,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SequenceStruct_test)
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_ptr seq_builder = factory.create_sequence_builder(
+    DynamicTypeBuilder_ptr seq_builder = factory.create_sequence_type(
         *factory.create_int32_type(),
         2);
 
@@ -5360,7 +5360,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SequenceSequenceStruct_test)
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_ptr seq_builder = factory.create_sequence_builder(
+    DynamicTypeBuilder_ptr seq_builder = factory.create_sequence_type(
         *factory.create_int32_type(),
         2);
     DynamicTypeBuilder_ptr alias_builder = factory.create_alias_builder(
@@ -5368,7 +5368,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_SequenceSequenceStruct_test)
         "my_sequence_sequence_inner");
 
     DynamicTypeBuilder_ptr sss_builder = factory.create_struct_builder();
-    DynamicTypeBuilder_ptr seq_seq_builder = factory.create_sequence_builder(*alias_builder->build(), 2);
+    DynamicTypeBuilder_ptr seq_seq_builder = factory.create_sequence_type(*alias_builder->build(), 2);
     sss_builder->add_member(0_id, "my_sequence_sequence", seq_seq_builder->build());
     sss_builder->set_name("SequenceSequenceStruct");
     DynamicType_ptr sss_type = sss_builder->build();
@@ -5393,7 +5393,7 @@ TEST_F(DynamicTypesTests, DynamicType_XML_MapStruct_test)
 
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
-    DynamicTypeBuilder_ptr map_builder = factory.create_map_builder(
+    DynamicTypeBuilder_ptr map_builder = factory.create_map_type(
         *factory.create_int32_type(),
         *factory.create_int32_type(),
         7);
@@ -5424,14 +5424,14 @@ TEST_F(DynamicTypesTests, DynamicType_XML_MapMapStruct_test)
     DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
 
     DynamicType_ptr int32_type = factory.create_int32_type();
-    DynamicTypeBuilder_ptr map_builder = factory.create_map_builder(
+    DynamicTypeBuilder_ptr map_builder = factory.create_map_type(
         *int32_type,
         *int32_type,
         2);
     DynamicTypeBuilder_ptr alias_builder = factory.create_alias_builder(
         *map_builder->build(),
         "my_map_map_inner");
-    DynamicTypeBuilder_ptr map_map_builder = factory.create_map_builder(
+    DynamicTypeBuilder_ptr map_map_builder = factory.create_map_type(
         *int32_type,
         *alias_builder->build(),
         2);

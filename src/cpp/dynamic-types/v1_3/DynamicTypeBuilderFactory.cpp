@@ -574,12 +574,12 @@ DynamicTypeBuilder_cptr& DynamicTypeBuilderFactory::create_int64_builder() noexc
     return create_primitive_builder<TypeKind::TK_INT64>();
 }
 
-DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_map_builder(
+DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_map_type(
         const DynamicType& key_type,
         const DynamicType& value_type,
-        uint32_t bound) noexcept
+        uint32_t bound /* = LENGTH_UNLIMITED */) noexcept
 {
-    if (bound == BOUND_UNLIMITED)
+    if (bound == LENGTH_UNLIMITED)
     {
         bound = MAX_ELEMENTS_COUNT;
     }
@@ -599,7 +599,7 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_map_builder(
 
 DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::create_sequence_type(
         const DynamicType& type,
-        uint32_t bound = /* LENGTH_UNLIMITED */) noexcept
+        uint32_t bound /* = LENGTH_UNLIMITED */) noexcept
 {
     if (bound == LENGTH_UNLIMITED)
     {

@@ -1015,11 +1015,11 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
 
         if (!isArray)
         {
-            memberBuilder = factory.create_sequence_builder(*contentType->build(), length);
+            memberBuilder = factory.create_sequence_type(*contentType->build(), length);
         }
         else
         {
-            DynamicTypeBuilder_ptr innerBuilder = factory.create_sequence_builder(*contentType->build(), length);
+            DynamicTypeBuilder_ptr innerBuilder = factory.create_sequence_type(*contentType->build(), length);
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
             memberBuilder = factory.create_array_builder(*innerBuilder->build(), bounds);
@@ -1101,12 +1101,12 @@ DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(
 
         if (!isArray)
         {
-            memberBuilder = factory.create_map_builder(*keyTypeBuilder->build(), *valueTypeBuilder->build(), length);
+            memberBuilder = factory.create_map_type(*keyTypeBuilder->build(), *valueTypeBuilder->build(), length);
         }
         else
         {
             DynamicTypeBuilder_ptr innerBuilder =
-                    factory.create_map_builder(*keyTypeBuilder->build(), *valueTypeBuilder->build(), length);
+                    factory.create_map_type(*keyTypeBuilder->build(), *valueTypeBuilder->build(), length);
             std::vector<uint32_t> bounds;
             dimensionsToArrayBounds(memberArray, bounds);
             memberBuilder = factory.create_array_builder(*innerBuilder->build(), bounds);
