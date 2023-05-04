@@ -13,11 +13,11 @@
 // limitations under the License.
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/types/v1_3/AnnotationDescriptor.h>
-#include <fastrtps/types/v1_3/DynamicType.h>
-#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/v1_3/DynamicTypeMember.h>
-#include <fastrtps/types/v1_3/MemberDescriptor.h>
+#include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
+#include <fastrtps/types/v1_3/DynamicType.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeMember.hpp>
+#include <fastrtps/types/v1_3/MemberDescriptor.hpp>
 
 #include <cassert>
 #include <iomanip>

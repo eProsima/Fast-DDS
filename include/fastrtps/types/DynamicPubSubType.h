@@ -16,7 +16,7 @@
 #define TYPES_DYNAMIC_PUB_SUB_TYPE_H
 
 #include "v1_1/DynamicPubSubType.h"
-#include "v1_3/DynamicPubSubType.h"
+#include "v1_3/DynamicPubSubType.hpp"
 
 namespace eprosima {
 namespace fastrtps {

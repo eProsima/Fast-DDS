@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/v1_3/DynamicDataFactory.h>
-#include <fastrtps/types/v1_3/MemberDescriptor.h>
-#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/v1_3/DynamicDataFactory.hpp>
+#include <fastrtps/types/v1_3/MemberDescriptor.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
 using namespace eprosima::fastrtps::types::v1_3;

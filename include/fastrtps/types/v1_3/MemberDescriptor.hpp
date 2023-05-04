@@ -16,7 +16,7 @@
 #define TYPES_1_3_MEMBER_DESCRIPTOR_H
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/v1_3/MemberId.h>
+#include <fastrtps/types/v1_3/MemberId.hpp>
 
 #include <set>
 #include <type_traits>

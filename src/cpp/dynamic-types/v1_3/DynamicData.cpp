@@ -13,15 +13,15 @@
 // limitations under the License.
 
 #include <fastdds/rtps/common/Types.h>
-#include <fastrtps/types/v1_3/DynamicData.h>
-#include <fastrtps/types/v1_3/DynamicDataFactory.h>
-#include <fastrtps/types/v1_3/DynamicDataPtr.h>
-#include <fastrtps/types/v1_3/DynamicPubSubType.h>
-#include <fastrtps/types/v1_3/DynamicType.h>
-#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/v1_3/DynamicTypeMember.h>
-#include <fastrtps/types/v1_3/MemberDescriptor.h>
-#include <fastrtps/types/v1_3/TypeDescriptor.h>
+#include <fastrtps/types/v1_3/DynamicData.hpp>
+#include <fastrtps/types/v1_3/DynamicDataFactory.hpp>
+#include <fastrtps/types/v1_3/DynamicDataPtr.hpp>
+#include <fastrtps/types/v1_3/DynamicPubSubType.hpp>
+#include <fastrtps/types/v1_3/DynamicType.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeMember.hpp>
+#include <fastrtps/types/v1_3/MemberDescriptor.hpp>
+#include <fastrtps/types/v1_3/TypeDescriptor.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
 #include <locale>

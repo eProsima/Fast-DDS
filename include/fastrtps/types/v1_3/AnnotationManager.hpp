@@ -15,8 +15,8 @@
 #ifndef TYPES_1_3_ANNOTATION_MANAGER_H
 #define TYPES_1_3_ANNOTATION_MANAGER_H
 
-#include <fastrtps/types/v1_3/AnnotationDescriptor.h>
-#include <fastrtps/types/v1_3/MemberId.h>
+#include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
+#include <fastrtps/types/v1_3/MemberId.hpp>
 
 #include <set>
 #include <string>

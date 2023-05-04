@@ -16,8 +16,8 @@
 #define TYPES_1_3_TYPE_DESCRIPTOR_H
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/v1_3/DynamicTypeMember.h>
-#include <fastrtps/types/v1_3/MemberId.h>
+#include <fastrtps/types/v1_3/DynamicTypeMember.hpp>
+#include <fastrtps/types/v1_3/MemberId.hpp>
 
 #include <limits>
 #include <list>

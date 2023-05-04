@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/v1_3/DynamicDataPtr.h>
-#include <fastrtps/types/v1_3/DynamicData.h>
-#include <fastrtps/types/v1_3/DynamicDataFactory.h>
+#include <fastrtps/types/v1_3/DynamicDataPtr.hpp>
+#include <fastrtps/types/v1_3/DynamicData.hpp>
+#include <fastrtps/types/v1_3/DynamicDataFactory.hpp>
 
 using namespace eprosima::fastrtps::types::v1_3;
 

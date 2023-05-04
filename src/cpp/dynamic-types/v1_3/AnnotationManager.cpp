@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/v1_3/AnnotationManager.h>
-#include <fastrtps/types/v1_3/DynamicType.h>
-#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/v1_3/AnnotationManager.hpp>
+#include <fastrtps/types/v1_3/DynamicType.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
 using namespace eprosima::fastrtps::types::v1_3;

@@ -17,7 +17,7 @@
 
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/AnnotationParameterValue.h>
-#include <fastrtps/types/v1_3/MemberId.h>
+#include <fastrtps/types/v1_3/MemberId.hpp>
 #include <fastrtps/types/TypeObjectHashId.h>
 #include <fastrtps/types/TypeIdentifier.h>
 #include <cstdint>

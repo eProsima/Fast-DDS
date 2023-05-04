@@ -16,6 +16,6 @@
 #define TYPES_TYPE_DESCRIPTOR_H
 
 #include "v1_1/TypeDescriptor.h"
-#include "v1_3/TypeDescriptor.h"
+#include "v1_3/TypeDescriptor.hpp"
 
 #endif // TYPES_TYPE_DESCRIPTOR_H

@@ -16,6 +16,6 @@
 #define TYPES_DYNAMIC_DATA_FACTORY_H
 
 #include "v1_1/DynamicDataFactory.h"
-#include "v1_3/DynamicDataFactory.h"
+#include "v1_3/DynamicDataFactory.hpp"
 
 #endif // TYPES_DYNAMIC_DATA_FACTORY_H

@@ -15,14 +15,14 @@
 #include <gtest/gtest.h>
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/v1_3/DynamicData.h>
-#include <fastrtps/types/v1_3/DynamicDataFactory.h>
-#include <fastrtps/types/v1_3/DynamicDataPtr.h>
-#include <fastrtps/types/v1_3/DynamicTypeBuilder.h>
-#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/v1_3/DynamicTypeMember.h>
-#include <fastrtps/types/v1_3/MemberDescriptor.h>
-#include <fastrtps/types/v1_3/TypeDescriptor.h>
+#include <fastrtps/types/v1_3/DynamicData.hpp>
+#include <fastrtps/types/v1_3/DynamicDataFactory.hpp>
+#include <fastrtps/types/v1_3/DynamicDataPtr.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeBuilder.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeMember.hpp>
+#include <fastrtps/types/v1_3/MemberDescriptor.hpp>
+#include <fastrtps/types/v1_3/TypeDescriptor.hpp>
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/TypeObjectFactory.h>

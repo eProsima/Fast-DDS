@@ -15,13 +15,13 @@
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/types/TypeNamesGenerator.h>
-#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/v1_3/DynamicTypeBuilder.h>
-#include <fastrtps/types/v1_3/TypeDescriptor.h>
-#include <fastrtps/types/v1_3/DynamicType.h>
-#include <fastrtps/types/v1_3/DynamicTypeMember.h>
-#include <fastrtps/types/v1_3/MemberDescriptor.h>
-#include <fastrtps/types/v1_3/AnnotationDescriptor.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeBuilder.hpp>
+#include <fastrtps/types/v1_3/TypeDescriptor.hpp>
+#include <fastrtps/types/v1_3/DynamicType.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeMember.hpp>
+#include <fastrtps/types/v1_3/MemberDescriptor.hpp>
+#include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
 #include <fastdds/rtps/common/SerializedPayload.h>

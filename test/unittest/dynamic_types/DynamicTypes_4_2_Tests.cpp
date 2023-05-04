@@ -23,7 +23,7 @@
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicData.h>
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/types/v1_3/DynamicDataPtr.h>
+#include <fastrtps/types/v1_3/DynamicDataPtr.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastcdr/exceptions/BadParamException.h>
 #include "idl/new_features_4_2PubSubTypes.h"

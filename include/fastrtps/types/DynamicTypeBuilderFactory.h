@@ -16,6 +16,6 @@
 #define TYPES_DYNAMIC_TYPE_BUILDER_FACTORY_H
 
 #include "v1_1/DynamicTypeBuilderFactory.h"
-#include "v1_3/DynamicTypeBuilderFactory.h"
+#include "v1_3/DynamicTypeBuilderFactory.hpp"
 
 #endif // TYPES_DYNAMIC_TYPE_BUILDER_FACTORY_H

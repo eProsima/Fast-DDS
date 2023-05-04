@@ -17,7 +17,7 @@
 
 #include <fastrtps/types/TypesBase.h>
 #include <fastdds/dds/topic/TopicDataType.hpp>
-#include <fastrtps/types/v1_3/DynamicDataPtr.h>
+#include <fastrtps/types/v1_3/DynamicDataPtr.hpp>
 #include <fastrtps/utils/md5.h>
 
 namespace eprosima {

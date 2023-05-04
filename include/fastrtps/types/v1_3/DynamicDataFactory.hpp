@@ -16,9 +16,9 @@
 #define TYPES_1_3_DYNAMIC_DATA_FACTORY_H
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/v1_3/DynamicTypeBuilder.h>
-#include <fastrtps/types/v1_3/DynamicType.h>
-#include <fastrtps/types/v1_3/DynamicData.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilder.hpp>
+#include <fastrtps/types/v1_3/DynamicType.hpp>
+#include <fastrtps/types/v1_3/DynamicData.hpp>
 #include <mutex>
 
 //#define DISABLE_DYNAMIC_MEMORY_CHECK

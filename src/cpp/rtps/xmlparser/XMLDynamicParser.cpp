@@ -19,9 +19,9 @@
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#include <fastrtps/types/v1_3/DynamicTypeBuilder.h>
-#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/v1_3/DynamicTypeMember.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilder.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeMember.hpp>
 
 #include <fastdds/dds/log/FileConsumer.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>

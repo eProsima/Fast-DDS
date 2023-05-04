@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/v1_3/DynamicPubSubType.h>
-#include <fastrtps/types/v1_3/DynamicType.h>
-#include <fastrtps/types/v1_3/DynamicTypeMember.h>
-#include <fastrtps/types/v1_3/DynamicDataFactory.h>
-#include <fastrtps/types/v1_3/DynamicData.h>
+#include <fastrtps/types/v1_3/DynamicPubSubType.hpp>
+#include <fastrtps/types/v1_3/DynamicType.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeMember.hpp>
+#include <fastrtps/types/v1_3/DynamicDataFactory.hpp>
+#include <fastrtps/types/v1_3/DynamicData.hpp>
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/dds/log/Log.hpp>

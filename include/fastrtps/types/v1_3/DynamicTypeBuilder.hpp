@@ -16,7 +16,7 @@
 #define TYPES_1_3_DYNAMIC_TYPE_BUILDER_H
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/types/v1_3/TypeDescriptor.h>
+#include <fastrtps/types/v1_3/TypeDescriptor.hpp>
 #include <fastrtps/utils/custom_allocators.hpp>
 
 namespace eprosima {

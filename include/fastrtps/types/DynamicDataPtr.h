@@ -16,6 +16,6 @@
 #define TYPES_DYNAMIC_DATA_PTR_H
 
 #include "v1_1/DynamicDataPtr.h"
-#include "v1_3/DynamicDataPtr.h"
+#include "v1_3/DynamicDataPtr.hpp"
 
 #endif // TYPES_DYNAMIC_DATA_PTR_H

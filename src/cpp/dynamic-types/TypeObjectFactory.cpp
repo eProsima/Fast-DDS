@@ -21,7 +21,7 @@
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/MemberDescriptor.h>
 #include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/v1_3/AnnotationDescriptor.h>
+#include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
 #include <fastrtps/utils/md5.h>
 #include <fastdds/dds/log/Log.hpp>
 
