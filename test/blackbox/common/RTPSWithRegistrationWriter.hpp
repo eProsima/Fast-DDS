@@ -398,6 +398,11 @@ public:
         return *this;
     }
 
+    const eprosima::fastrtps::rtps::GUID_t& guid() const
+    {
+        return writer_->getGuid();
+    }
+
 private:
 
     RTPSWithRegistrationWriter& operator =(

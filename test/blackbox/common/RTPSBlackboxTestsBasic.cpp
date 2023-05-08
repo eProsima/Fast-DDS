@@ -453,8 +453,8 @@ TEST_P(RTPS, RTPSAsReliableWithRegistrationAndHolesInHistory)
  */
 TEST(RTPS, RTPSCorrectGAPProcessing)
 {
-    RTPSWithRegistrationReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    RTPSWithRegistrationWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
     reader.durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
             reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
