@@ -360,6 +360,7 @@ bool SubscriberHistory::readNextData(
     std::unique_lock<RecursiveTimedMutex> lock(*mp_mutex, std::defer_lock);
     if (lock.try_lock_until(max_blocking_time))
 #else
+    (void) max_blocking_time;
     std::lock_guard<RecursiveTimedMutex> _(*mp_mutex);
 #endif  // HAVE_STRICT_REALTIME
     {
@@ -391,6 +392,7 @@ bool SubscriberHistory::takeNextData(
     std::unique_lock<RecursiveTimedMutex> lock(*mp_mutex, std::defer_lock);
     if (lock.try_lock_until(max_blocking_time))
 #else
+    (void) max_blocking_time;
     std::lock_guard<RecursiveTimedMutex> _(*mp_mutex);
 #endif  // HAVE_STRICT_REALTIME
     {
