@@ -17,18 +17,17 @@
  *
  */
 
-#include <fastrtps/types/idl/grammar.h>
-#include <fastrtps/log/Log.h>
+#include <fastrtps/types/idl/idl.h>
 
 #include <iostream>
 
-using eprosima::fastdds::dds::Log;
+using namespace eprosima::fastrtps::types;
 
 int main(
         int argc,
         char** argv)
 {
-    std::cout << "Starting " << std::endl;
+    std::cout << "Processing IDL string:" << std::endl;
     std::string idl_spec =
         R"(
         struct InnerType
@@ -37,7 +36,11 @@ int main(
             float im2;
         };
     )";
+    idl::Context context = idl::parse(idl_spec);
 
-    Log::Reset();
+    std::cout << "Processing IDL file:" << std::endl;
+    idl::Context context_file = idl::parse_file("idl/test02.idl");
+
+
     return 0;
 }

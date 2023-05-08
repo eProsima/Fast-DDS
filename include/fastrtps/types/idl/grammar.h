@@ -133,7 +133,7 @@ struct escape_sequence : sor<
 
 // LITERALS
 struct boolean_literal : sor<TAO_PEGTL_KEYWORD("true"), TAO_PEGTL_KEYWORD("false")> {};
-struct dec_literal : sor<seq<range<'1', '9'>, star<digit>>, one<'0'>> {};
+struct dec_literal : sor<seq<one<'-'>, plus<digit>>, plus<digit>> {};
 struct oct_literal : seq<TAO_PEGTL_STRING("0"), plus<octal_digit>> {};
 struct hex_literal : seq<sor<TAO_PEGTL_STRING("0x"), TAO_PEGTL_STRING("0X")>, plus<xdigit>> {};
 struct integer_literal : sor<oct_literal, hex_literal, dec_literal> {};

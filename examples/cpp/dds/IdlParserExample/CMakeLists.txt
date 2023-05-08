@@ -25,7 +25,7 @@ if(NOT fastrtps_FOUND)
     find_package(fastrtps REQUIRED)
 endif()
 
-#Check C++11
+# Check C++11
 include(CheckCXXCompilerFlag)
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     check_cxx_compiler_flag(-std=c++11 SUPPORTS_CXX11)
@@ -47,6 +47,34 @@ target_compile_definitions(IdlParserExample PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
 )
+
+# Put executable in directory where CMake files are being generated
+if(MSVC)
+    set_target_properties(IdlParserExample PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_BINARY_DIR})
+endif()
+
+# Copy IDL files
+configure_file(
+    ${PROJECT_SOURCE_DIR}/idl/test01.idl
+    ${PROJECT_BINARY_DIR}/idl/test01.idl
+    COPYONLY)
+configure_file(
+    ${PROJECT_SOURCE_DIR}/idl/test02.idl
+    ${PROJECT_BINARY_DIR}/idl/test02.idl
+    COPYONLY)
+configure_file(
+    ${PROJECT_SOURCE_DIR}/idl/test03.idl
+    ${PROJECT_BINARY_DIR}/idl/test03.idl
+    COPYONLY)
+configure_file(
+    ${PROJECT_SOURCE_DIR}/idl/test04.idl
+    ${PROJECT_BINARY_DIR}/idl/test04.idl
+    COPYONLY)
+configure_file(
+    ${PROJECT_SOURCE_DIR}/idl/include/test_include.idl
+    ${PROJECT_BINARY_DIR}/idl/include/test_include.idl
+    COPYONLY)
 
 target_link_libraries(IdlParserExample fastrtps fastcdr)
 install(TARGETS IdlParserExample
