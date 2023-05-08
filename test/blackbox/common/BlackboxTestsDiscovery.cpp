@@ -1138,11 +1138,11 @@ TEST(Discovery, ServerClientEnvironmentSetUp)
 //! Regression test for redmine issue 10674
 TEST(Discovery, MulticastInitialPeer)
 {
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
-    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
 
-    eprosima::fastdds::rtps::LocatorList peers;
-    eprosima::fastdds::rtps::Locator loc{};
+    eprosima::fastrtps::rtps::LocatorList_t peers;
+    eprosima::fastrtps::rtps::Locator_t loc{};
     loc.kind = LOCATOR_KIND_UDPv4;
     IPLocator::setIPv4(loc, "239.255.0.1");
     peers.push_back(loc);
