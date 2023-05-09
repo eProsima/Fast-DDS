@@ -76,6 +76,7 @@ endif()
 if(SYSTEM_TESTS)
     add_subdirectory(system/tools/fastdds)
     add_subdirectory(system/tools/fds)
+    add_subdirectory(system/shm)
 endif()
 
 if(EPROSIMA_BUILD_TESTS AND QNX)
