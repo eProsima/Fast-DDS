@@ -911,6 +911,52 @@ public:
             return false;
         }
 
+        static bool is_shared_mode_zombie(
+                uint32_t port_id,
+                const std::string& domain_name)
+        {
+            bool was_lock_created;
+            std::string lock_name;
+
+            try
+            {
+                // A shared port is zombie when it has a "_sl" file & the file is not locked
+                lock_name = domain_name + "_port" + std::to_string(port_id) + "_sl";
+                bool was_lock_released;
+                RobustSharedLock zombie_test(lock_name, &was_lock_created, &was_lock_released);
+                // Lock acquired, did the file exist and was release before the acquire?
+                if (!was_lock_created && was_lock_released)
+                {
+                    // Yes, is zombie
+                    return true;
+                }
+            }
+            catch (const std::exception&)
+            {
+                // Resource locked => not zombie.
+            }
+
+            return false;
+        }
+
+        static bool is_port_zombie(
+                uint32_t port_id,
+                const std::string& domain_name,
+                Port::OpenMode open_mode
+                )
+        {
+            if (open_mode == Port::OpenMode::ReadExclusive)
+            {
+                return is_zombie(port_id, domain_name);
+            }
+            else if (open_mode == Port::OpenMode::ReadShared)
+            {
+                return is_shared_mode_zombie(port_id, domain_name);
+            }
+
+            return false;
+        }
+
     }; // Port
 
     /**
@@ -1007,14 +1053,17 @@ private:
 
         try
         {
-            if (Port::is_zombie(port_id, domain_name_))
+            //if (open_mode == Port::OpenMode::ReadExclusive && Port::is_zombie(port_id, domain_name_))
+            if (Port::is_port_zombie(port_id, domain_name_, open_mode))
             {
                 EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, THREADID << "Port "
                                                                   << port_id << " Zombie. Reset the port");
 
-                SharedMemSegment::remove(port_segment_name.c_str());
-
-                throw std::runtime_error("zombie port");
+                if (open_mode != Port::OpenMode::ReadShared) 
+                {
+                    SharedMemSegment::remove(port_segment_name.c_str());
+                    throw std::runtime_error("zombie port");
+                }
             }
 
             // Try to open
