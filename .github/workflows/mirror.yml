@@ -15,7 +15,7 @@ jobs:
     steps:
     - name: Mirror action step
       id: mirror
-      uses: eProsima/eProsima-CI/external/mirror-branch-action@feature/mirror-create-pr-external-actions
+      uses: eProsima/eProsima-CI/external/mirror-branch-action@v0
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         source: 'master'
