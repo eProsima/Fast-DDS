@@ -2868,6 +2868,7 @@ bool SecurityManager::discovered_reader(
     PermissionsHandle* remote_permissions = nullptr;
     std::shared_ptr<ParticipantCryptoHandle> remote_participant_crypto_handle;
     std::shared_ptr<SecretHandle> shared_secret_handle;
+    AuthenticationStatus auth_status(AUTHENTICATION_INIT);
 
     if (!security_attributes.match(remote_reader_data.security_attributes_,
             remote_reader_data.plugin_security_attributes_))
@@ -2888,6 +2889,7 @@ bool SecurityManager::discovered_reader(
             remote_permissions = dp_it->second->get_permissions_handle();
             remote_participant_crypto_handle = dp_it->second->get_participant_crypto();
             shared_secret_handle = dp_it->second->get_shared_secret();
+            auth_status = dp_it->second->get_auth_status();
         }
     }
 
@@ -2898,13 +2900,26 @@ bool SecurityManager::discovered_reader(
     bool returned_value = true;
     SecurityException exception;
 
-    if (!is_builtin && access_plugin_ != nullptr && remote_permissions != nullptr)
+    if (!is_builtin)
     {
-        if ((returned_value = access_plugin_->check_remote_datareader(
-                    *remote_permissions, domain_id_, remote_reader_data, relay_only, exception)) == false)
+        //! Check if it is an unathenticated participant
+        if (participant_->security_attributes().allow_unauthenticated_participants &&
+                auth_status != AUTHENTICATION_NOT_AVAILABLE && auth_status != AUTHENTICATION_OK &&
+                ((remote_reader_data.security_attributes_ &= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_READ_PROTECTED) ||
+                (remote_reader_data.security_attributes_ &= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_WRITE_PROTECTED)))
         {
-            EPROSIMA_LOG_ERROR(SECURITY, "Error checking create remote reader " << remote_reader_data.guid()
-                                                                                << " (" << exception.what() << ")");
+            //!Do not match if read or write protection is enabled
+            return false;
+        }
+
+        if (access_plugin_ != nullptr && remote_permissions != nullptr)
+        {
+            if ((returned_value = access_plugin_->check_remote_datareader(
+                        *remote_permissions, domain_id_, remote_reader_data, relay_only, exception)) == false)
+            {
+                EPROSIMA_LOG_ERROR(SECURITY, "Error checking create remote reader " << remote_reader_data.guid()
+                                                                                    << " (" << exception.what() << ")");
+            }
         }
     }
 
@@ -3218,6 +3233,7 @@ bool SecurityManager::discovered_writer(
     PermissionsHandle* remote_permissions = nullptr;
     std::shared_ptr<ParticipantCryptoHandle> remote_participant_crypto_handle;
     std::shared_ptr<SecretHandle> shared_secret_handle;
+    AuthenticationStatus auth_status(AUTHENTICATION_INIT);
 
     if (!security_attributes.match(remote_writer_data.security_attributes_,
             remote_writer_data.plugin_security_attributes_))
@@ -3238,6 +3254,7 @@ bool SecurityManager::discovered_writer(
             remote_permissions = dp_it->second->get_permissions_handle();
             remote_participant_crypto_handle = dp_it->second->get_participant_crypto();
             shared_secret_handle = dp_it->second->get_shared_secret();
+            auth_status = dp_it->second->get_auth_status();
         }
     }
 
@@ -3247,13 +3264,26 @@ bool SecurityManager::discovered_writer(
     bool returned_value = true;
     SecurityException exception;
 
-    if (!is_builtin && access_plugin_ != nullptr && remote_permissions != nullptr)
+    if (!is_builtin)
     {
-        if ((returned_value = access_plugin_->check_remote_datawriter(
-                    *remote_permissions, domain_id_, remote_writer_data, exception)) == false)
+        //! Check if it is an unathenticated participant
+        if (participant_->security_attributes().allow_unauthenticated_participants &&
+                auth_status != AUTHENTICATION_NOT_AVAILABLE && auth_status != AUTHENTICATION_OK &&
+                ((remote_writer_data.security_attributes_ &= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_READ_PROTECTED) ||
+                (remote_writer_data.security_attributes_ &= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_WRITE_PROTECTED)))
         {
-            EPROSIMA_LOG_ERROR(SECURITY, "Error checking create remote writer " << remote_writer_data.guid()
-                                                                                << " (" << exception.what() << ")");
+            //!Do not match if read or write protection is enabled
+            return false;
+        }
+
+        if (access_plugin_ != nullptr && remote_permissions != nullptr)
+        {
+            if ((returned_value = access_plugin_->check_remote_datawriter(
+                        *remote_permissions, domain_id_, remote_writer_data, exception)) == false)
+            {
+                EPROSIMA_LOG_ERROR(SECURITY, "Error checking create remote writer " << remote_writer_data.guid()
+                                                                                    << " (" << exception.what() << ")");
+            }
         }
     }
 

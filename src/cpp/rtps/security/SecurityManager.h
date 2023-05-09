@@ -350,7 +350,8 @@ private:
         AUTHENTICATION_REQUEST_NOT_SEND,
         AUTHENTICATION_WAITING_REQUEST,
         AUTHENTICATION_WAITING_REPLY,
-        AUTHENTICATION_WAITING_FINAL
+        AUTHENTICATION_WAITING_FINAL,
+        AUTHENTICATION_NOT_AVAILABLE
     };
 
     class DiscoveredParticipantInfo
@@ -498,6 +499,20 @@ private:
                 Authentication* const auth_plugin,
                 const GUID_t& adjusted,
                 const GUID_t& original);
+
+        AuthenticationStatus get_auth_status() const
+        {
+            std::lock_guard<std::mutex> g(mtx_);
+            if (auth_.get() != nullptr)
+            {
+                return auth_->auth_status_;
+            }
+            else
+            {
+                return AUTHENTICATION_NOT_AVAILABLE;
+            }
+
+        }
 
     private:
 

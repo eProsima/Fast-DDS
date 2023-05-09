@@ -14,11 +14,11 @@
                         <max>230</max>
                     </id_range>
                 </domains>
-                <publish>
+                <subscribe>
                     <topics>
                         <topic>HelloWorldTopic_*</topic>
                     </topics>
-                </publish>
+                </subscribe>
             </allow_rule>
             <allow_rule>
                 <domains>
@@ -27,11 +27,11 @@
                         <max>230</max>
                     </id_range>
                 </domains>
-                <publish>
+                <subscribe>
                     <topics>
                         <topic>SecureHelloWorldTopic_*</topic>
                     </topics>
-                </publish>
+                </subscribe>
             </allow_rule>
             <default>DENY</default>
         </grant>

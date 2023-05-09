@@ -35,5 +35,39 @@
             </allow_rule>
             <default>DENY</default>
         </grant>
+        <grant name="SubscriberPermissions">
+            <subject_name>emailAddress=mainsub@eprosima.com, CN=Main Subscriber, OU=eProsima, O=eProsima, ST=MA, C=ES</subject_name>
+            <validity>
+                <not_before>2013-06-01T13:00:00</not_before>
+                <not_after>2038-06-01T13:00:00</not_after>
+            </validity>
+            <allow_rule>
+                <domains>
+                    <id_range>
+                        <min>0</min>
+                        <max>230</max>
+                    </id_range>
+                </domains>
+                <subscribe>
+                    <topics>
+                        <topic>HelloWorldTopic_*</topic>
+                    </topics>
+                </subscribe>
+            </allow_rule>
+            <allow_rule>
+                <domains>
+                    <id_range>
+                        <min>0</min>
+                        <max>230</max>
+                    </id_range>
+                </domains>
+                <subscribe>
+                    <topics>
+                        <topic>SecureHelloWorldTopic_*</topic>
+                    </topics>
+                </subscribe>
+            </allow_rule>
+            <default>DENY</default>
+        </grant>
     </permissions>
 </dds>
