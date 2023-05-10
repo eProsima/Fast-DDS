@@ -402,12 +402,25 @@ void SecurityManager::cancel_init()
 
     if (access_plugin_ != nullptr)
     {
+        if (local_permissions_handle_ != nullptr)
+        {
+            access_plugin_->return_permissions_handle(local_permissions_handle_, exception);
+        }
+
         delete access_plugin_;
         access_plugin_ = nullptr;
     }
 
-    delete authentication_plugin_;
-    authentication_plugin_ = nullptr;
+    if (authentication_plugin_ != nullptr)
+    {
+        if (local_identity_handle_ != nullptr)
+        {
+            authentication_plugin_->return_identity_handle(local_identity_handle_, exception);
+        }
+
+        delete authentication_plugin_;
+        authentication_plugin_ = nullptr;
+    }
 
     disable_security_manager();
 }
@@ -2905,10 +2918,9 @@ bool SecurityManager::discovered_reader(
         //! Check if it is an unathenticated participant
         if (participant_->security_attributes().allow_unauthenticated_participants &&
                 auth_status != AUTHENTICATION_NOT_AVAILABLE && auth_status != AUTHENTICATION_OK &&
-                ((remote_reader_data.security_attributes_ &= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_READ_PROTECTED) ||
-                (remote_reader_data.security_attributes_ &= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_WRITE_PROTECTED)))
+                (security_attributes.is_write_protected || security_attributes.is_read_protected))
         {
-            //!Do not match if read or write protection is enabled
+            //!Do not match if read or write protection is enabled for this local endpoint
             return false;
         }
 
@@ -3269,10 +3281,9 @@ bool SecurityManager::discovered_writer(
         //! Check if it is an unathenticated participant
         if (participant_->security_attributes().allow_unauthenticated_participants &&
                 auth_status != AUTHENTICATION_NOT_AVAILABLE && auth_status != AUTHENTICATION_OK &&
-                ((remote_writer_data.security_attributes_ &= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_READ_PROTECTED) ||
-                (remote_writer_data.security_attributes_ &= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_WRITE_PROTECTED)))
+                (security_attributes.is_write_protected || security_attributes.is_read_protected))
         {
-            //!Do not match if read or write protection is enabled
+            //!Do not match if read or write protection is enabled for this local endpoint
             return false;
         }
 
