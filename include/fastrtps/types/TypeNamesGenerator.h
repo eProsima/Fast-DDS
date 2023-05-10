@@ -14,6 +14,7 @@ namespace types {
 class TypeNamesGenerator
 {
 public:
+
     RTPS_DllAPI static std::string get_string_type_name(
             uint32_t bound,
             bool wide,
