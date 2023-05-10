@@ -3,6 +3,7 @@
 
 #include <fastrtps/fastrtps_dll.h>
 
+#include <cstdint>
 #include <string>
 #include <vector>
 
