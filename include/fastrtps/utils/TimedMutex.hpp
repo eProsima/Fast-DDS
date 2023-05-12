@@ -85,7 +85,7 @@ public:
     bool try_lock_until(
             const std::chrono::time_point<Clock, Duration>& abs_time)
     {
-        std::chrono::nanoseconds nsecs = abs_time - std::chrono::steady_clock::now();
+        std::chrono::nanoseconds nsecs = abs_time - Clock::now();
 
         if (0 < nsecs.count())
         {
@@ -156,7 +156,7 @@ public:
     bool try_lock_until(
             const std::chrono::time_point<Clock, Duration>& abs_time)
     {
-        std::chrono::nanoseconds nsecs = abs_time - std::chrono::steady_clock::now();
+        std::chrono::nanoseconds nsecs = abs_time - Clock::now();
         if (0 < nsecs.count())
         {
             struct timespec max_wait = {
@@ -229,7 +229,7 @@ public:
     bool try_lock_until(
             const std::chrono::time_point<Clock, Duration>& abs_time)
     {
-        std::chrono::nanoseconds nsecs = abs_time - std::chrono::steady_clock::now();
+        std::chrono::nanoseconds nsecs = abs_time - Clock::now();
         struct timespec max_wait = {
             0, 0
         };
@@ -295,7 +295,7 @@ public:
     bool try_lock_until(
             const std::chrono::time_point<Clock, Duration>& abs_time)
     {
-        std::chrono::nanoseconds nsecs = abs_time - std::chrono::steady_clock::now();
+        std::chrono::nanoseconds nsecs = abs_time - Clock::now();
         struct timespec max_wait = {
             0, 0
         };
