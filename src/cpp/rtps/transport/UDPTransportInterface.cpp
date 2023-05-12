@@ -681,12 +681,21 @@ bool UDPTransportInterface::configureInitialPeerLocator(
 {
     if (locator.port == 0)
     {
-        for (uint32_t i = 0; i < configuration()->maxInitialPeersRange; ++i)
+        if (IPLocator::isMulticast(locator))
         {
             Locator_t auxloc(locator);
-            auxloc.port = port_params.getUnicastPort(domainId, i);
-
+            auxloc.port = port_params.getMulticastPort(domainId);
             list.push_back(auxloc);
+        }
+        else
+        {
+            for (uint32_t i = 0; i < configuration()->maxInitialPeersRange; ++i)
+            {
+                Locator_t auxloc(locator);
+                auxloc.port = port_params.getUnicastPort(domainId, i);
+
+                list.push_back(auxloc);
+            }
         }
     }
     else
