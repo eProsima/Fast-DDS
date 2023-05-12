@@ -775,12 +775,13 @@ bool DataWriterImpl::deadline_missed()
     deadline_missed_status_.total_count++;
     deadline_missed_status_.total_count_change++;
     deadline_missed_status_.last_instance_handle = timer_owner_;
-    if (listener_ != nullptr)
+    StatusMask notify_status = StatusMask::offered_deadline_missed();
+    auto listener = get_listener_for(notify_status);
+    if (nullptr != listener)
     {
-        listener_->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
+        listener->on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
+        deadline_missed_status_.total_count_change = 0;
     }
-    publisher_->publisher_listener_.on_offered_deadline_missed(user_datawriter_, deadline_missed_status_);
-    deadline_missed_status_.total_count_change = 0;
 
     if (!history_.set_next_deadline(
                 timer_owner_,
