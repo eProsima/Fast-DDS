@@ -2,6 +2,8 @@ Forthcoming
 -----------
 
 * Added Participant ignore local endpoints feature.
+* Remove `FASTDDS_STATIC` CMake option.
+  Please, use `BUILD_SHARED_LIBS=OFF` instead.
 
 Version 2.10.1
 --------------
