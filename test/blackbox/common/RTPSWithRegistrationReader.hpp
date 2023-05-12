@@ -433,6 +433,11 @@ public:
 
 #endif // if HAVE_SQLITE3
 
+    eprosima::fastrtps::rtps::RTPSReader& get_native_reader() const
+    {
+        return *reader_;
+    }
+
 private:
 
     void receive_one(

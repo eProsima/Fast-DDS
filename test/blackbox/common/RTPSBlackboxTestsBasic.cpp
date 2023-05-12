@@ -448,6 +448,34 @@ TEST_P(RTPS, RTPSAsReliableWithRegistrationAndHolesInHistory)
     late_joiner.block_for_all();
 }
 
+/* Regression Test for improving gaps processing
+ *  https://github.com/eProsima/Fast-DDS/pull/3343
+ */
+TEST(RTPS, RTPSCorrectGAPProcessing)
+{
+    RTPSWithRegistrationReader<HelloWorldType> reader(TEST_TOPIC_NAME);
+    RTPSWithRegistrationWriter<HelloWorldType> writer(TEST_TOPIC_NAME);
+
+    reader.durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
+            reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.durability(eprosima::fastrtps::rtps::DurabilityKind_t::TRANSIENT_LOCAL).
+            reliability(eprosima::fastrtps::rtps::ReliabilityKind_t::RELIABLE).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.wait_discovery();
+    writer.wait_discovery();
+
+    SequenceNumberSet_t seq_set(SequenceNumber_t(0, 0));
+
+    //! GAP Message check
+    RTPSReader& native_reader = reader.get_native_reader();
+    ASSERT_NO_FATAL_FAILURE(native_reader.processGapMsg(writer.guid(), {0, 0}, seq_set));
+}
+
 
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
