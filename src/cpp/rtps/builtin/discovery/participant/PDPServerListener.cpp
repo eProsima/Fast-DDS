@@ -344,7 +344,7 @@ void PDPServerListener::onNewCacheChangeAdded(
                 // Included form symmetry with PDPListener to profit from a future updateInfoMatchesEDP override
                 if (pdp_server()->updateInfoMatchesEDP() && is_local)
                 {
-                    pdp_server()->mp_EDP->assignRemoteEndpoints(*pdata);
+                    pdp_server()->mp_EDP->assignRemoteEndpoints(*pdata, true);
                 }
             }
 

@@ -407,7 +407,8 @@ bool EDPStatic::removeLocalWriter(
 }
 
 void EDPStatic::assignRemoteEndpoints(
-        const ParticipantProxyData& pdata)
+        const ParticipantProxyData& pdata,
+        bool /*assign_secure_endpoints*/)
 {
     GUID_t persistence_guid;
 

@@ -403,12 +403,25 @@ void SecurityManager::cancel_init()
 
     if (access_plugin_ != nullptr)
     {
+        if (local_permissions_handle_ != nullptr)
+        {
+            access_plugin_->return_permissions_handle(local_permissions_handle_, exception);
+        }
+
         delete access_plugin_;
         access_plugin_ = nullptr;
     }
 
-    delete authentication_plugin_;
-    authentication_plugin_ = nullptr;
+    if (authentication_plugin_ != nullptr)
+    {
+        if (local_identity_handle_ != nullptr)
+        {
+            authentication_plugin_->return_identity_handle(local_identity_handle_, exception);
+        }
+
+        delete authentication_plugin_;
+        authentication_plugin_ = nullptr;
+    }
 
     disable_security_manager();
 }
@@ -569,7 +582,11 @@ bool SecurityManager::discovered_participant(
 
     if (authentication_plugin_ == nullptr)
     {
+<<<<<<< HEAD
         participant_->pdpsimple()->notifyAboveRemoteEndpoints(participant_data);
+=======
+        participant_->pdp()->notifyAboveRemoteEndpoints(participant_data, true);
+>>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
         return true;
     }
 
@@ -604,7 +621,7 @@ bool SecurityManager::discovered_participant(
                     resend_handshake_message_token(guid);
                     return true;
                 },
-                500)); // TODO (Ricardo) Configurable
+                DiscoveredParticipantInfo::INITIAL_RESEND_HANDSHAKE_MILLISECS)); // TODO (Ricardo) Configurable
 
         IdentityHandle* remote_identity_handle = nullptr;
 
@@ -631,6 +648,7 @@ bool SecurityManager::discovered_participant(
             case VALIDATION_PENDING_RETRY:
             // TODO(Ricardo) Send event.
             default:
+<<<<<<< HEAD
                 if (strlen(exception.what()) > 0)
                 {
                     logError(SECURITY_AUTHENTICATION, exception.what());
@@ -648,6 +666,10 @@ bool SecurityManager::discovered_participant(
                     participant_->getListener()->onParticipantAuthentication(
                         participant_->getUserRTPSParticipant(), std::move(info));
                 }
+=======
+
+                on_validation_failed(participant_data, exception);
+>>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
 
                 std::lock_guard<shared_mutex> _(mutex_);
 
@@ -844,6 +866,7 @@ bool SecurityManager::on_process_handshake(
 
     if (ret == VALIDATION_FAILED)
     {
+<<<<<<< HEAD
         // Inform user about authenticated remote participant.
         if (participant_->getListener() != nullptr)
         {
@@ -859,6 +882,9 @@ bool SecurityManager::on_process_handshake(
             logError(SECURITY_AUTHENTICATION, exception.what());
         }
 
+=======
+        on_validation_failed(participant_data, exception);
+>>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
         return false;
     }
 
@@ -2843,6 +2869,7 @@ bool SecurityManager::discovered_reader(
     PermissionsHandle* remote_permissions = nullptr;
     std::shared_ptr<ParticipantCryptoHandle> remote_participant_crypto_handle;
     std::shared_ptr<SecretHandle> shared_secret_handle;
+    AuthenticationStatus auth_status(AUTHENTICATION_INIT);
 
     if (!security_attributes.match(remote_reader_data.security_attributes_,
             remote_reader_data.plugin_security_attributes_))
@@ -2863,6 +2890,7 @@ bool SecurityManager::discovered_reader(
             remote_permissions = dp_it->second->get_permissions_handle();
             remote_participant_crypto_handle = dp_it->second->get_participant_crypto();
             shared_secret_handle = dp_it->second->get_shared_secret();
+            auth_status = dp_it->second->get_auth_status();
         }
     }
 
@@ -2873,13 +2901,30 @@ bool SecurityManager::discovered_reader(
     bool returned_value = true;
     SecurityException exception;
 
-    if (!is_builtin && access_plugin_ != nullptr && remote_permissions != nullptr)
+    if (!is_builtin)
     {
-        if ((returned_value = access_plugin_->check_remote_datareader(
-                    *remote_permissions, domain_id_, remote_reader_data, relay_only, exception)) == false)
+        //! Check if it is an unathenticated participant
+        if (participant_->security_attributes().allow_unauthenticated_participants &&
+                auth_status != AUTHENTICATION_NOT_AVAILABLE && auth_status != AUTHENTICATION_OK &&
+                (security_attributes.is_write_protected || security_attributes.is_read_protected))
         {
+<<<<<<< HEAD
             logError(SECURITY, "Error checking create remote reader " << remote_reader_data.guid()
                                                                       << " (" << exception.what() << ")");
+=======
+            //!Do not match if read or write protection is enabled for this local endpoint
+            return false;
+        }
+
+        if (access_plugin_ != nullptr && remote_permissions != nullptr)
+        {
+            if ((returned_value = access_plugin_->check_remote_datareader(
+                        *remote_permissions, domain_id_, remote_reader_data, relay_only, exception)) == false)
+            {
+                EPROSIMA_LOG_ERROR(SECURITY, "Error checking create remote reader " << remote_reader_data.guid()
+                                                                                    << " (" << exception.what() << ")");
+            }
+>>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
         }
     }
 
@@ -3189,6 +3234,7 @@ bool SecurityManager::discovered_writer(
     PermissionsHandle* remote_permissions = nullptr;
     std::shared_ptr<ParticipantCryptoHandle> remote_participant_crypto_handle;
     std::shared_ptr<SecretHandle> shared_secret_handle;
+    AuthenticationStatus auth_status(AUTHENTICATION_INIT);
 
     if (!security_attributes.match(remote_writer_data.security_attributes_,
             remote_writer_data.plugin_security_attributes_))
@@ -3209,6 +3255,7 @@ bool SecurityManager::discovered_writer(
             remote_permissions = dp_it->second->get_permissions_handle();
             remote_participant_crypto_handle = dp_it->second->get_participant_crypto();
             shared_secret_handle = dp_it->second->get_shared_secret();
+            auth_status = dp_it->second->get_auth_status();
         }
     }
 
@@ -3218,13 +3265,30 @@ bool SecurityManager::discovered_writer(
     bool returned_value = true;
     SecurityException exception;
 
-    if (!is_builtin && access_plugin_ != nullptr && remote_permissions != nullptr)
+    if (!is_builtin)
     {
-        if ((returned_value = access_plugin_->check_remote_datawriter(
-                    *remote_permissions, domain_id_, remote_writer_data, exception)) == false)
+        //! Check if it is an unathenticated participant
+        if (participant_->security_attributes().allow_unauthenticated_participants &&
+                auth_status != AUTHENTICATION_NOT_AVAILABLE && auth_status != AUTHENTICATION_OK &&
+                (security_attributes.is_write_protected || security_attributes.is_read_protected))
         {
+<<<<<<< HEAD
             logError(SECURITY, "Error checking create remote writer " << remote_writer_data.guid()
                                                                       << " (" << exception.what() << ")");
+=======
+            //!Do not match if read or write protection is enabled for this local endpoint
+            return false;
+        }
+
+        if (access_plugin_ != nullptr && remote_permissions != nullptr)
+        {
+            if ((returned_value = access_plugin_->check_remote_datawriter(
+                        *remote_permissions, domain_id_, remote_writer_data, exception)) == false)
+            {
+                EPROSIMA_LOG_ERROR(SECURITY, "Error checking create remote writer " << remote_writer_data.guid()
+                                                                                    << " (" << exception.what() << ")");
+            }
+>>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
         }
     }
 
@@ -4054,6 +4118,27 @@ bool SecurityManager::participant_authorized(
     return false;
 }
 
+<<<<<<< HEAD
+=======
+void SecurityManager::notify_participant_authorized(
+        const ParticipantProxyData& participant_data)
+{
+    participant_->pdp()->notifyAboveRemoteEndpoints(participant_data, true);
+
+    EPROSIMA_LOG_INFO(SECURITY, "Participant " << participant_data.m_guid << " authenticated");
+
+    // Inform user about authenticated remote participant.
+    if (participant_->getListener() != nullptr)
+    {
+        ParticipantAuthenticationInfo info;
+        info.status = ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT;
+        info.guid = participant_data.m_guid;
+        participant_->getListener()->onParticipantAuthentication(
+            participant_->getUserRTPSParticipant(), std::move(info));
+    }
+}
+
+>>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
 uint32_t SecurityManager::calculate_extra_size_for_rtps_message() const
 {
     auto sentry = is_security_manager_initialized();
@@ -4154,21 +4239,45 @@ void SecurityManager::resend_handshake_message_token(
 
         if (remote_participant_info)
         {
-            if (remote_participant_info->change_sequence_number_ != SequenceNumber_t::unknown())
+            if (remote_participant_info->handshake_requests_sent_ >= DiscoveredParticipantInfo::MAX_HANDSHAKE_REQUESTS)
             {
-                CacheChange_t* p_change = participant_stateless_message_writer_history_->remove_change_and_reuse(
-                    remote_participant_info->change_sequence_number_);
-                remote_participant_info->change_sequence_number_ = SequenceNumber_t::unknown();
-
-                if (p_change != nullptr)
+                SecurityException exception;
+                remote_participant_info->event_->cancel_timer();
+                on_validation_failed(dp_it->second->participant_data(), exception);
+            }
+            else
+            {
+                if (remote_participant_info->change_sequence_number_ != SequenceNumber_t::unknown())
                 {
+<<<<<<< HEAD
                     logInfo(SECURITY, "Authentication handshake resent to participant " <<
                             remote_participant_key);
                     if (participant_stateless_message_writer_history_->add_change(p_change))
+=======
+                    CacheChange_t* p_change = participant_stateless_message_writer_history_->remove_change_and_reuse(
+                        remote_participant_info->change_sequence_number_);
+                    remote_participant_info->change_sequence_number_ = SequenceNumber_t::unknown();
+
+                    if (p_change != nullptr)
+>>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
                     {
-                        remote_participant_info->change_sequence_number_ = p_change->sequenceNumber;
+                        EPROSIMA_LOG_INFO(SECURITY, "Authentication handshake resent to participant " <<
+                                remote_participant_key);
+                        if (participant_stateless_message_writer_history_->add_change(p_change))
+                        {
+                            remote_participant_info->change_sequence_number_ = p_change->sequenceNumber;
+                            remote_participant_info->handshake_requests_sent_++;
+                        }
+                        //TODO (Ricardo) What to do if not added?
                     }
-                    //TODO (Ricardo) What to do if not added?
+                }
+
+                if (remote_participant_info->auth_status_ == AUTHENTICATION_WAITING_REPLY)
+                {
+                    // Avoid DoS attack by exponentially increasing event interval
+                    auto time_ms = remote_participant_info->event_->getIntervalMilliSec();
+                    remote_participant_info->event_->update_interval_millisec(time_ms * 2);
+                    remote_participant_info->event_->restart_timer();
                 }
             }
 
@@ -4176,3 +4285,52 @@ void SecurityManager::resend_handshake_message_token(
         }
     }
 }
+<<<<<<< HEAD
+=======
+
+void SecurityManager::on_validation_failed(
+        const ParticipantProxyData& participant_data,
+        const SecurityException& exception) const
+{
+    if (participant_->security_attributes().allow_unauthenticated_participants)
+    {
+        participant_->pdp()->notifyAboveRemoteEndpoints(participant_data, false);
+    }
+
+    if (strlen(exception.what()) > 0)
+    {
+        EPROSIMA_LOG_ERROR(SECURITY_AUTHENTICATION, exception.what());
+    }
+
+    EPROSIMA_LOG_INFO(SECURITY, "Authentication failed for participant " <<
+            participant_data.m_guid);
+
+    // Inform user about authenticated remote participant.
+    if (participant_->getListener() != nullptr)
+    {
+        ParticipantAuthenticationInfo info;
+        info.status = ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT;
+        info.guid = participant_data.m_guid;
+        participant_->getListener()->onParticipantAuthentication(
+            participant_->getUserRTPSParticipant(), std::move(info));
+    }
+}
+
+bool SecurityManager::DiscoveredParticipantInfo::check_guid_comes_from(
+        Authentication* const auth_plugin,
+        const GUID_t& adjusted,
+        const GUID_t& original)
+{
+    bool ret = false;
+    if (auth_plugin != nullptr)
+    {
+        std::lock_guard<std::mutex> g(mtx_);
+
+        if (nullptr != auth_ && AuthenticationStatus::AUTHENTICATION_OK == auth_->auth_status_)
+        {
+            ret = auth_plugin->check_guid_comes_from(auth_->identity_handle_, adjusted, original);
+        }
+    }
+    return ret;
+}
+>>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))

@@ -1369,6 +1369,13 @@ ValidationResult_t PKIDH::begin_handshake_reply(
         return ValidationResult_t::VALIDATION_FAILED;
     }
 
+    //! Release the memory in case of having an old certificate
+    if (rih->cert_ != nullptr)
+    {
+        X509_free(rih->cert_);
+        rih->cert_ = nullptr;
+    }
+
     rih->cert_ = load_certificate(*cid);
 
     if (rih->cert_ == nullptr)

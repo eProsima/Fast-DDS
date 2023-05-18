@@ -97,10 +97,17 @@ public:
     void removeRemoteEndpoints(ParticipantProxyData * pdata) override;
 
     /**
-     * This method notifies EDP and WLP of the existence of a new participant.
-     * @param pdata
+     * Override to match additional endpoints to PDP. Like EDP or WLP.
+     * @param pdata Pointer to the ParticipantProxyData object.
+     * @param notify_secure_endpoints Whether to try notifying secure endpoints.
      */
+<<<<<<< HEAD
     void notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata) override;
+=======
+    void notifyAboveRemoteEndpoints(
+            const ParticipantProxyData& pdata,
+            bool notify_secure_endpoints) override;
+>>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
 
     /**
      * Activate a new Remote Endpoint that has been statically discovered.
