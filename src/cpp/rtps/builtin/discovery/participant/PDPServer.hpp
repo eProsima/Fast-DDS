@@ -134,7 +134,8 @@ public:
     void removeRemoteEndpoints(
             fastrtps::rtps::ParticipantProxyData* pdata) override;
     void notifyAboveRemoteEndpoints(
-            const fastrtps::rtps::ParticipantProxyData& pdata) override;
+            const fastrtps::rtps::ParticipantProxyData& pdata,
+            bool notify_secure_endpoints) override;
 
     //! Get filename for writer persistence database file
     std::string get_writer_persistence_file_name() const;

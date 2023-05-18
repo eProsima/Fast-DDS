@@ -106,6 +106,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/liveliness_assertion.360.xml
     ${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.360.xml COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/multiple_subs_secure_crypto_communication.py
     ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py COPYONLY)
+<<<<<<< HEAD
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_msg_crypto_besteffort_pub.xml
     ${CMAKE_CURRENT_BINARY_DIR}/secure_msg_crypto_besteffort_pub.xml COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_msg_crypto_besteffort_sub.xml
@@ -120,6 +121,71 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_submsg_crypto_besteffort_sub.x
     ${CMAKE_CURRENT_BINARY_DIR}/secure_submsg_crypto_besteffort_sub.xml COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/shm_communication_subscriber_dies_while_processing_message.xml
     ${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message.xml COPYONLY)
+=======
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_msg_crypto_besteffort_pub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_msg_crypto_besteffort_pub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_msg_crypto_besteffort_sub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_msg_crypto_besteffort_sub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_msg_submsg_crypto_besteffort_pub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_msg_submsg_crypto_besteffort_pub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_msg_submsg_crypto_besteffort_sub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_msg_submsg_crypto_besteffort_sub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_submsg_crypto_besteffort_pub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_submsg_crypto_besteffort_pub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_submsg_crypto_besteffort_sub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_submsg_crypto_besteffort_sub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/shm_communication_subscriber_dies_while_processing_message_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_pubsub_secure_crypto_communication.py
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_pubsub_secure_crypto_communication.py COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/multiple_secure_ds_pubsub_secure_crypto_communication.py
+    ${CMAKE_CURRENT_BINARY_DIR}/multiple_secure_ds_pubsub_secure_crypto_communication.py COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_msg_crypto_pub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_msg_crypto_pub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_msg_crypto_sub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_msg_crypto_sub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_msg_crypto_ds_1_sub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_msg_crypto_ds_1_sub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_no_discovery_no_rtps_protection_pub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_no_discovery_no_rtps_protection_pub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_no_discovery_no_rtps_protection_sub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_no_discovery_no_rtps_protection_sub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_no_discovery_no_rtps_protection_ds_1_sub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_no_discovery_no_rtps_protection_ds_1_sub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_no_discovery_protection_pub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_no_discovery_protection_pub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_no_discovery_protection_sub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_no_discovery_protection_sub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_no_discovery_protection_ds_1_sub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_no_discovery_protection_ds_1_sub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_no_rtps_protection_pub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_no_rtps_protection_pub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_no_rtps_protection_sub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_no_rtps_protection_sub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_ds_simple_secure_no_rtps_protection_ds_1_sub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_simple_secure_no_rtps_protection_ds_1_sub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_idx_1_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_idx_1_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_no_discovery_no_rtps_protection_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_no_discovery_no_rtps_protection_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_no_discovery_no_rtps_protection_idx_1_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_no_discovery_no_rtps_protection_idx_1_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_no_discovery_protection_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_no_discovery_protection_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_no_discovery_protection_idx_1_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_no_discovery_protection_idx_1_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_no_rtps_protection_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_no_rtps_protection_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_simple_ds_server_no_rtps_protection_idx_1_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/secure_simple_ds_server_no_rtps_protection_idx_1_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_secure_allow_unauthenticated_pub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/simple_secure_allow_unauthenticated_pub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_allow_unauthenticated_sub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/simple_allow_unauthenticated_sub_profile.xml COPYONLY)
+
+>>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
 if(SECURITY)
     configure_file(${PROJECT_SOURCE_DIR}/test/certs/maincacert.pem
         ${CMAKE_CURRENT_BINARY_DIR}/maincacert.pem COPYONLY)
@@ -135,6 +201,10 @@ if(SECURITY)
         ${CMAKE_CURRENT_BINARY_DIR}/governance_helloworld_all_enable.smime COPYONLY)
     configure_file(${PROJECT_SOURCE_DIR}/test/certs/permissions_helloworld.smime
         ${CMAKE_CURRENT_BINARY_DIR}/permissions_helloworld.smime COPYONLY)
+    configure_file(${PROJECT_SOURCE_DIR}/test/certs/governance_allow_unauth_all_disabled_access_none.smime
+        ${CMAKE_CURRENT_BINARY_DIR}/governance_allow_unauth_all_disabled_access_none.smime COPYONLY)
+    configure_file(${PROJECT_SOURCE_DIR}/test/certs/permissions_helloworld_securehelloworld.smime
+        ${CMAKE_CURRENT_BINARY_DIR}/permissions_helloworld_securehelloworld.smime COPYONLY)
 endif()
 
 if(PYTHONINTERP_FOUND)
@@ -301,6 +371,184 @@ if(PYTHONINTERP_FOUND)
             set_property(TEST SimpleCommunicationSecureSubmsgCryptoBestEffort APPEND PROPERTY ENVIRONMENT
                 "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
         endif()
+<<<<<<< HEAD
+=======
+
+        add_test(NAME SecureDiscoverServerSimplePubSubSecureMsgCrypto
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_pubsub_secure_crypto_communication.py
+            --pub $<TARGET_FILE:SimpleCommunicationPublisher>
+            --xml-pub secure_ds_simple_secure_msg_crypto_pub_profile.xml
+            --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
+            --xml-sub secure_ds_simple_secure_msg_crypto_sub_profile.xml
+            --samples 10
+            --ds $<TARGET_FILE:fast-discovery-server>
+            --xml-ds secure_simple_ds_server_profile.xml
+            --server-id 0)
+
+        # Set test with label NoMemoryCheck
+        set_property(TEST SecureDiscoverServerSimplePubSubSecureMsgCrypto PROPERTY LABELS "NoMemoryCheck")
+
+        if(WIN32)
+            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+            set_property(TEST SecureDiscoverServerSimplePubSubSecureMsgCrypto APPEND PROPERTY ENVIRONMENT
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+        endif()
+
+        add_test(NAME SecureDiscoverServerSimplePubSubSecureNoDiscoveryNoRTPSProtectionMsgCrypto
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_pubsub_secure_crypto_communication.py
+            --pub $<TARGET_FILE:SimpleCommunicationPublisher>
+            --xml-pub secure_ds_simple_secure_no_discovery_no_rtps_protection_pub_profile.xml
+            --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
+            --xml-sub secure_ds_simple_secure_no_discovery_no_rtps_protection_sub_profile.xml
+            --samples 10
+            --ds $<TARGET_FILE:fast-discovery-server>
+            --xml-ds secure_simple_ds_server_no_discovery_no_rtps_protection_profile.xml
+            --server-id 0)
+
+        # Set test with label NoMemoryCheck
+        set_property(TEST SecureDiscoverServerSimplePubSubSecureNoDiscoveryNoRTPSProtectionMsgCrypto PROPERTY LABELS "NoMemoryCheck")
+
+        if(WIN32)
+            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+            set_property(TEST SecureDiscoverServerSimplePubSubSecureNoDiscoveryNoRTPSProtectionMsgCrypto APPEND PROPERTY ENVIRONMENT
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+        endif()
+
+        add_test(NAME SecureDiscoverServerSimplePubSubSecureNoDiscoveryProtectionMsgCrypto
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_pubsub_secure_crypto_communication.py
+            --pub $<TARGET_FILE:SimpleCommunicationPublisher>
+            --xml-pub secure_ds_simple_secure_no_discovery_protection_pub_profile.xml
+            --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
+            --xml-sub secure_ds_simple_secure_no_discovery_protection_sub_profile.xml
+            --samples 10
+            --ds $<TARGET_FILE:fast-discovery-server>
+            --xml-ds secure_simple_ds_server_no_discovery_protection_profile.xml
+            --server-id 0)
+
+        # Set test with label NoMemoryCheck
+        set_property(TEST SecureDiscoverServerSimplePubSubSecureNoDiscoveryProtectionMsgCrypto PROPERTY LABELS "NoMemoryCheck")
+
+        if(WIN32)
+            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+            set_property(TEST SecureDiscoverServerSimplePubSubSecureNoDiscoveryProtectionMsgCrypto APPEND PROPERTY ENVIRONMENT
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+        endif()
+
+        add_test(NAME SecureDiscoverServerSimplePubSubSecureNoRTPSProtectionMsgCrypto
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/secure_ds_pubsub_secure_crypto_communication.py
+            --pub $<TARGET_FILE:SimpleCommunicationPublisher>
+            --xml-pub secure_ds_simple_secure_no_rtps_protection_pub_profile.xml
+            --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
+            --xml-sub secure_ds_simple_secure_no_rtps_protection_sub_profile.xml
+            --samples 10
+            --ds $<TARGET_FILE:fast-discovery-server>
+            --xml-ds secure_simple_ds_server_no_rtps_protection_profile.xml
+            --server-id 0)
+
+        # Set test with label NoMemoryCheck
+        set_property(TEST SecureDiscoverServerSimplePubSubSecureNoRTPSProtectionMsgCrypto PROPERTY LABELS "NoMemoryCheck")
+
+        if(WIN32)
+            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+            set_property(TEST SecureDiscoverServerSimplePubSubSecureNoRTPSProtectionMsgCrypto APPEND PROPERTY ENVIRONMENT
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+        endif()
+
+        add_test(NAME TwoSecureDiscoverServersSimplePubSubSecureMsgCrypto
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_secure_ds_pubsub_secure_crypto_communication.py
+            --pub $<TARGET_FILE:SimpleCommunicationPublisher>
+            --xml-pub secure_ds_simple_secure_msg_crypto_pub_profile.xml
+            --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
+            --xml-sub secure_ds_simple_secure_msg_crypto_ds_1_sub_profile.xml
+            --samples 10
+            --servers $<TARGET_FILE:fast-discovery-server> $<TARGET_FILE:fast-discovery-server>
+            --xml-servers secure_simple_ds_server_profile.xml secure_simple_ds_server_idx_1_profile.xml)
+
+        # Set test with label NoMemoryCheck
+        set_property(TEST TwoSecureDiscoverServersSimplePubSubSecureMsgCrypto PROPERTY LABELS "NoMemoryCheck")
+
+        if(WIN32)
+            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+            set_property(TEST TwoSecureDiscoverServersSimplePubSubSecureMsgCrypto APPEND PROPERTY ENVIRONMENT
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+        endif()
+
+        add_test(NAME TwoSecureDiscoverServersSimplePubSubSecureNoDiscoveryNoRTPSProtectionMsgCrypto
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_secure_ds_pubsub_secure_crypto_communication.py
+            --pub $<TARGET_FILE:SimpleCommunicationPublisher>
+            --xml-pub secure_ds_simple_secure_no_discovery_no_rtps_protection_pub_profile.xml
+            --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
+            --xml-sub secure_ds_simple_secure_no_discovery_no_rtps_protection_ds_1_sub_profile.xml
+            --samples 10
+            --servers $<TARGET_FILE:fast-discovery-server> $<TARGET_FILE:fast-discovery-server>
+            --xml-servers secure_simple_ds_server_no_discovery_no_rtps_protection_profile.xml secure_simple_ds_server_no_discovery_no_rtps_protection_idx_1_profile.xml)
+
+        # Set test with label NoMemoryCheck
+        set_property(TEST TwoSecureDiscoverServersSimplePubSubSecureNoDiscoveryNoRTPSProtectionMsgCrypto PROPERTY LABELS "NoMemoryCheck")
+
+        if(WIN32)
+            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+            set_property(TEST TwoSecureDiscoverServersSimplePubSubSecureNoDiscoveryNoRTPSProtectionMsgCrypto APPEND PROPERTY ENVIRONMENT
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+        endif()
+
+        add_test(NAME TwoSecureDiscoverServersSimplePubSubSecureNoDiscoveryProtectionMsgCrypto
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_secure_ds_pubsub_secure_crypto_communication.py
+            --pub $<TARGET_FILE:SimpleCommunicationPublisher>
+            --xml-pub secure_ds_simple_secure_no_discovery_protection_pub_profile.xml
+            --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
+            --xml-sub secure_ds_simple_secure_no_discovery_protection_ds_1_sub_profile.xml
+            --samples 10
+            --servers $<TARGET_FILE:fast-discovery-server> $<TARGET_FILE:fast-discovery-server>
+            --xml-servers secure_simple_ds_server_no_discovery_protection_profile.xml secure_simple_ds_server_no_discovery_protection_idx_1_profile.xml)
+
+        # Set test with label NoMemoryCheck
+        set_property(TEST TwoSecureDiscoverServersSimplePubSubSecureNoDiscoveryProtectionMsgCrypto PROPERTY LABELS "NoMemoryCheck")
+
+        if(WIN32)
+            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+            set_property(TEST TwoSecureDiscoverServersSimplePubSubSecureNoDiscoveryProtectionMsgCrypto APPEND PROPERTY ENVIRONMENT
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+        endif()
+
+        add_test(NAME TwoSecureDiscoverServersSimplePubSubSecureNoRTPSProtectionMsgCrypto
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_secure_ds_pubsub_secure_crypto_communication.py
+            --pub $<TARGET_FILE:SimpleCommunicationPublisher>
+            --xml-pub secure_ds_simple_secure_no_rtps_protection_pub_profile.xml
+            --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
+            --xml-sub secure_ds_simple_secure_no_rtps_protection_ds_1_sub_profile.xml
+            --samples 10
+            --servers $<TARGET_FILE:fast-discovery-server> $<TARGET_FILE:fast-discovery-server>
+            --xml-servers secure_simple_ds_server_no_rtps_protection_profile.xml secure_simple_ds_server_no_rtps_protection_idx_1_profile.xml)
+
+        # Set test with label NoMemoryCheck
+        set_property(TEST TwoSecureDiscoverServersSimplePubSubSecureNoRTPSProtectionMsgCrypto PROPERTY LABELS "NoMemoryCheck")
+
+        if(WIN32)
+            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+            set_property(TEST TwoSecureDiscoverServersSimplePubSubSecureNoRTPSProtectionMsgCrypto APPEND PROPERTY ENVIRONMENT
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+        endif()
+
+        add_test(NAME AllowUnauthenticatedSimplePubSecureNoRTPSProtectionSubNonSecure
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
+            --n-subs 1
+            --pub $<TARGET_FILE:SimpleCommunicationPublisher>
+            --xml-pub simple_secure_allow_unauthenticated_pub_profile.xml
+            --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
+            --xml-sub simple_allow_unauthenticated_sub_profile.xml
+            --samples 10)
+
+        # Set test with label NoMemoryCheck
+        set_property(TEST AllowUnauthenticatedSimplePubSecureNoRTPSProtectionSubNonSecure PROPERTY LABELS "NoMemoryCheck")
+
+        if(WIN32)
+            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+            set_property(TEST AllowUnauthenticatedSimplePubSecureNoRTPSProtectionSubNonSecure APPEND PROPERTY ENVIRONMENT
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+        endif()
+
+>>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
     endif()
 
     add_test(NAME LivelinessAssertion
