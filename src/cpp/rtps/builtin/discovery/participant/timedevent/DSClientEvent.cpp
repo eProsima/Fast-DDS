@@ -74,7 +74,7 @@ bool DSClientEvent::event()
             // Match EDP endpoints with this server if necessary
             if (!mp_EDP->areRemoteEndpointsMatched(part_proxy_data))
             {
-                mp_EDP->assignRemoteEndpoints(*(part_proxy_data));
+                mp_EDP->assignRemoteEndpoints(*(part_proxy_data), true);
             }
         }
         // If the server is not known, we need to run the event again

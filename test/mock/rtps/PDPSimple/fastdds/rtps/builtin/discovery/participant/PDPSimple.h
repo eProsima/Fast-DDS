@@ -32,17 +32,20 @@ namespace rtps {
 
 class PDPSimple
 {
-    public:
+public:
 
-        MOCK_METHOD1(notifyAboveRemoteEndpoints, void(const ParticipantProxyData&));
+    MOCK_METHOD2(notifyAboveRemoteEndpoints, void(const ParticipantProxyData&, bool));
 
-        MOCK_METHOD1(get_participant_proxy_data_serialized, CDRMessage_t(Endianness_t));
+    MOCK_METHOD1(get_participant_proxy_data_serialized, CDRMessage_t(Endianness_t));
 
-        EDP* getEDP() { return &edp_; }
+    EDP* getEDP()
+    {
+        return &edp_;
+    }
 
-    private:
+private:
 
-        EDP edp_;
+    EDP edp_;
 };
 
 } //namespace rtps

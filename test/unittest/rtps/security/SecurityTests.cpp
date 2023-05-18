@@ -222,7 +222,7 @@ void SecurityTest::final_message_process_ok(
             WillOnce(Return(true));
     //TODO(Ricardo) Verify parameter passed to notifyAboveRemoteEndpoints
     EXPECT_CALL(participant_, pdp()).Times(1).WillOnce(Return(&pdp_));
-    EXPECT_CALL(pdp_, notifyAboveRemoteEndpoints(_)).Times(1);
+    EXPECT_CALL(pdp_, notifyAboveRemoteEndpoints(_, true)).Times(1);
     EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle_), _)).Times(1).
             WillOnce(Return(shared_secret_handle));
     EXPECT_CALL(*auth_plugin_, return_sharedsecret_handle(shared_secret_handle, _)).Times(1).

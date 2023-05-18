@@ -81,10 +81,12 @@ public:
     /**
      * Assign the remote endpoints for a newly discovered RTPSParticipant.
      * @param pdata Pointer to the RTPSParticipantProxyData object.
+     * @param assign_secure_endpoints Whether to try assigning secure endpoints.
      * @return True if correct.
      */
     bool assignRemoteEndpoints(
-            const ParticipantProxyData& pdata);
+            const ParticipantProxyData& pdata,
+            bool assign_secure_endpoints);
     /**
      * Remove remote endpoints from the liveliness protocol.
      * @param pdata Pointer to the ParticipantProxyData to remove
