@@ -352,12 +352,64 @@ void PDPServer::assignRemoteEndpoints(
 }
 
 void PDPServer::notifyAboveRemoteEndpoints(
+        const ParticipantProxyData& pdata,
+        bool /*notify_secure_endpoints*/)
+{
+<<<<<<< HEAD
+    // No EDP notification needed. EDP endpoints would be match when PDP synchronization is granted
+=======
+    static_cast<void>(pdata);
+#if HAVE_SECURITY
+    match_reliable_pdp_endpoints(pdata);
+#endif // HAVE_SECURITY
+}
+
+#if HAVE_SECURITY
+bool PDPServer::pairing_remote_writer_with_local_reader_after_security(
+        const GUID_t& local_reader,
+        const WriterProxyData& remote_writer_data)
+{
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
+
+    if (local_reader == endpoints->reader.reader_->getGuid())
+    {
+        endpoints->reader.reader_->matched_writer_add(remote_writer_data);
+        return true;
+    }
+
+    return PDP::pairing_remote_writer_with_local_reader_after_security(local_reader, remote_writer_data);
+}
+
+bool PDPServer::pairing_remote_reader_with_local_writer_after_security(
+        const GUID_t& local_writer,
+        const ReaderProxyData& remote_reader_data)
+{
+    auto endpoints = static_cast<fastdds::rtps::DiscoveryServerPDPEndpoints*>(builtin_endpoints_.get());
+
+    if (local_writer == endpoints->writer.writer_->getGuid())
+    {
+        endpoints->writer.writer_->matched_reader_add(remote_reader_data);
+        return true;
+    }
+
+    return PDP::pairing_remote_reader_with_local_writer_after_security(local_writer, remote_reader_data);
+}
+
+#endif // HAVE_SECURITY
+
+void PDPServer::perform_builtin_endpoints_matching(
         const ParticipantProxyData& pdata)
 {
-    // No EDP notification needed. EDP endpoints would be match when PDP synchronization is granted
+    //Inform EDP of new RTPSParticipant data:
+    if (mp_EDP != nullptr)
+    {
+        mp_EDP->assignRemoteEndpoints(pdata, true);
+    }
+
+>>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
     if (mp_builtin->mp_WLP != nullptr)
     {
-        mp_builtin->mp_WLP->assignRemoteEndpoints(pdata);
+        mp_builtin->mp_WLP->assignRemoteEndpoints(pdata, true);
     }
 }
 

@@ -52,7 +52,8 @@ public:
     }
 
     void assignRemoteEndpoints(
-            const ParticipantProxyData& /*pdata*/) override
+            const ParticipantProxyData& /*pdata*/,
+            bool /*assign_secure_endpoints*/) override
     {
     }
 

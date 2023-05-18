@@ -196,7 +196,8 @@ bool EDPStatic::removeLocalWriter(
 }
 
 void EDPStatic::assignRemoteEndpoints(
-        const ParticipantProxyData& pdata)
+        const ParticipantProxyData& pdata,
+        bool /*assign_secure_endpoints*/)
 {
     for (ParameterPropertyList_t::const_iterator pit = pdata.m_properties.begin();
             pit != pdata.m_properties.end(); ++pit)

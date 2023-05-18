@@ -153,8 +153,12 @@ void PDPServerListener::onNewCacheChangeAdded(
                 if ( previous_lease_check_status != pdata->should_check_lease_duration
                         || parent_pdp_->updateInfoMatchesEDP())
                 {
+<<<<<<< HEAD
                     parent_pdp_->assignRemoteEndpoints(pdata);
                     parent_server_pdp_->queueParticipantForEDPMatch(pdata);
+=======
+                    pdp_server()->mp_EDP->assignRemoteEndpoints(*pdata, true);
+>>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
                 }
             }
 

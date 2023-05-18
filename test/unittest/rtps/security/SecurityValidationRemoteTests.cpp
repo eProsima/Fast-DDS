@@ -41,6 +41,7 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_ok)
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
 
+<<<<<<< HEAD
     EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
         WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_OK)));
     EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
@@ -49,6 +50,16 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_ok)
         WillOnce(Return(true));
     EXPECT_CALL(participant_, pdpsimple()).Times(1).WillOnce(Return(&pdpsimple_));
     EXPECT_CALL(pdpsimple_, notifyAboveRemoteEndpoints(_)).Times(1);
+=======
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_), _, _, _)).Times(1).
+            WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_OK)));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_, _)).Times(1).
+            WillOnce(Return(true));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle, _)).Times(1).
+            WillOnce(Return(true));
+    EXPECT_CALL(participant_, pdp()).Times(1).WillOnce(Return(&pdp_));
+    EXPECT_CALL(pdp_, notifyAboveRemoteEndpoints(_, true)).Times(1);
+>>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
 
     ParticipantAuthenticationInfo info;
     info.status = ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT;
@@ -115,6 +126,7 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
     ParticipantProxyData participant_data;
     fill_participant_key(participant_data.m_guid);
 
+<<<<<<< HEAD
     EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_),_,_,_)).Times(1).
         WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle), Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST)));
     EXPECT_CALL(*auth_plugin_, begin_handshake_request(_,_, Ref(local_identity_handle_),
@@ -137,6 +149,32 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_matched_remote_participant(Ref(local_participant_crypto_handle_),
                 Ref(remote_identity_handle),_,Ref(shared_secret_handle),_)).Times(1).
         WillOnce(Return(&participant_crypto_handle));
+=======
+    EXPECT_CALL(*auth_plugin_, validate_remote_identity_rvr(_, Ref(local_identity_handle_), _, _, _)).Times(1).
+            WillOnce(DoAll(SetArgPointee<0>(&remote_identity_handle),
+            Return(ValidationResult_t::VALIDATION_PENDING_HANDSHAKE_REQUEST)));
+    EXPECT_CALL(*auth_plugin_, begin_handshake_request(_, _, Ref(local_identity_handle_),
+            Ref(remote_identity_handle), _, _)).Times(1).
+            WillOnce(DoAll(SetArgPointee<0>(&handshake_handle),
+            Return(ValidationResult_t::VALIDATION_OK)));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_, _)).Times(1).
+            WillRepeatedly(Return(true));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle, _)).Times(1).
+            WillRepeatedly(Return(true));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle, _)).Times(1).
+            WillRepeatedly(Return(true));
+    EXPECT_CALL(participant_, pdp()).Times(2).WillRepeatedly(Return(&pdp_));
+    EXPECT_CALL(pdp_, notifyAboveRemoteEndpoints(_, true)).Times(1);
+    EXPECT_CALL(pdp_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
+    EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle), _)).Times(1).
+            WillOnce(Return(shared_secret_handle));
+    EXPECT_CALL(*auth_plugin_, return_sharedsecret_handle(shared_secret_handle, _)).Times(1).
+            WillRepeatedly(Return(true));
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_,
+            register_matched_remote_participant(Ref(*local_participant_crypto_handle_),
+            Ref(remote_identity_handle), _, Ref(*shared_secret_handle), _)).Times(1).
+            WillOnce(Return(participant_crypto_handle));
+>>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
     EXPECT_CALL(crypto_plugin_->cryptokeyexchange_, create_local_participant_crypto_tokens(_,
                 Ref(local_participant_crypto_handle_), Ref(participant_crypto_handle),_)).Times(1).
            WillOnce(Return(true)); 
@@ -275,6 +313,7 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
     EXPECT_CALL(*stateless_writer_, new_change(_,_,_)).Times(1).
         WillOnce(Return(change));
     EXPECT_CALL(*stateless_writer_->history_, add_change_mock(change)).Times(1).
+<<<<<<< HEAD
         WillOnce(Return(true));
     EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_,_)).Times(1).
         WillRepeatedly(Return(true));
@@ -292,6 +331,26 @@ TEST_F(SecurityTest, discovered_participant_validation_remote_identity_pending_h
     EXPECT_CALL(crypto_plugin_->cryptokeyfactory_, register_matched_remote_participant(Ref(local_participant_crypto_handle_),
                 Ref(remote_identity_handle),_,Ref(shared_secret_handle),_)).Times(1).
         WillOnce(Return(&participant_crypto_handle));
+=======
+            WillOnce(Return(true));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&local_identity_handle_, _)).Times(1).
+            WillRepeatedly(Return(true));
+    EXPECT_CALL(*auth_plugin_, return_identity_handle(&remote_identity_handle, _)).Times(1).
+            WillRepeatedly(Return(true));
+    EXPECT_CALL(*auth_plugin_, return_handshake_handle(&handshake_handle, _)).Times(1).
+            WillOnce(Return(true));
+    EXPECT_CALL(participant_, pdp()).Times(2).WillRepeatedly(Return(&pdp_));
+    EXPECT_CALL(pdp_, notifyAboveRemoteEndpoints(_, true)).Times(1);
+    EXPECT_CALL(pdp_, get_participant_proxy_data_serialized(BIGEND)).Times(1);
+    EXPECT_CALL(*auth_plugin_, get_shared_secret(Ref(handshake_handle), _)).Times(1).
+            WillOnce(Return(shared_secret_handle));
+    EXPECT_CALL(*auth_plugin_, return_sharedsecret_handle(shared_secret_handle, _)).Times(1).
+            WillRepeatedly(Return(true));
+    EXPECT_CALL(crypto_plugin_->cryptokeyfactory_,
+            register_matched_remote_participant(Ref(*local_participant_crypto_handle_),
+            Ref(remote_identity_handle), _, Ref(*shared_secret_handle), _)).Times(1).
+            WillOnce(Return(participant_crypto_handle));
+>>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
     EXPECT_CALL(crypto_plugin_->cryptokeyexchange_, create_local_participant_crypto_tokens(_,
                 Ref(local_participant_crypto_handle_), Ref(participant_crypto_handle),_)).Times(1).
            WillOnce(Return(true)); 
