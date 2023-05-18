@@ -440,7 +440,7 @@ void PDPServer::assignRemoteEndpoints(
     }
 
     //Inform EDP of new RTPSParticipant data:
-    notifyAboveRemoteEndpoints(*pdata);
+    notifyAboveRemoteEndpoints(*pdata, true);
 }
 
 void PDPServer::notifyAboveRemoteEndpoints(
