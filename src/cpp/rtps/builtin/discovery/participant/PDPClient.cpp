@@ -307,7 +307,7 @@ void PDPClient::assignRemoteEndpoints(
         }
     }
 
-    notifyAboveRemoteEndpoints(*pdata);
+    notifyAboveRemoteEndpoints(*pdata, true);
 }
 
 void PDPClient::notifyAboveRemoteEndpoints(
@@ -582,7 +582,7 @@ bool PDPClient::match_servers_EDP_endpoints()
             EPROSIMA_LOG_INFO(RTPS_PDP, "Client "
                     << mp_EDP->mp_PDP->getRTPSParticipant()->getGuid()
                     << " matching servers EDP endpoints");
-            mp_EDP->assignRemoteEndpoints(*svr.proxy);
+            mp_EDP->assignRemoteEndpoints(*svr.proxy, true);
         }
     }
 

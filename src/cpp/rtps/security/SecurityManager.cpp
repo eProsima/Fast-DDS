@@ -582,11 +582,7 @@ bool SecurityManager::discovered_participant(
 
     if (authentication_plugin_ == nullptr)
     {
-<<<<<<< HEAD
-        participant_->pdpsimple()->notifyAboveRemoteEndpoints(participant_data);
-=======
-        participant_->pdp()->notifyAboveRemoteEndpoints(participant_data, true);
->>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
+        participant_->pdpsimple()->notifyAboveRemoteEndpoints(participant_data, true);
         return true;
     }
 
@@ -4094,27 +4090,6 @@ bool SecurityManager::participant_authorized(
     return false;
 }
 
-<<<<<<< HEAD
-=======
-void SecurityManager::notify_participant_authorized(
-        const ParticipantProxyData& participant_data)
-{
-    participant_->pdp()->notifyAboveRemoteEndpoints(participant_data, true);
-
-    EPROSIMA_LOG_INFO(SECURITY, "Participant " << participant_data.m_guid << " authenticated");
-
-    // Inform user about authenticated remote participant.
-    if (participant_->getListener() != nullptr)
-    {
-        ParticipantAuthenticationInfo info;
-        info.status = ParticipantAuthenticationInfo::AUTHORIZED_PARTICIPANT;
-        info.guid = participant_data.m_guid;
-        participant_->getListener()->onParticipantAuthentication(
-            participant_->getUserRTPSParticipant(), std::move(info));
-    }
-}
-
->>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
 uint32_t SecurityManager::calculate_extra_size_for_rtps_message() const
 {
     auto sentry = is_security_manager_initialized();
@@ -4255,52 +4230,3 @@ void SecurityManager::resend_handshake_message_token(
         }
     }
 }
-<<<<<<< HEAD
-=======
-
-void SecurityManager::on_validation_failed(
-        const ParticipantProxyData& participant_data,
-        const SecurityException& exception) const
-{
-    if (participant_->security_attributes().allow_unauthenticated_participants)
-    {
-        participant_->pdp()->notifyAboveRemoteEndpoints(participant_data, false);
-    }
-
-    if (strlen(exception.what()) > 0)
-    {
-        EPROSIMA_LOG_ERROR(SECURITY_AUTHENTICATION, exception.what());
-    }
-
-    EPROSIMA_LOG_INFO(SECURITY, "Authentication failed for participant " <<
-            participant_data.m_guid);
-
-    // Inform user about authenticated remote participant.
-    if (participant_->getListener() != nullptr)
-    {
-        ParticipantAuthenticationInfo info;
-        info.status = ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT;
-        info.guid = participant_data.m_guid;
-        participant_->getListener()->onParticipantAuthentication(
-            participant_->getUserRTPSParticipant(), std::move(info));
-    }
-}
-
-bool SecurityManager::DiscoveredParticipantInfo::check_guid_comes_from(
-        Authentication* const auth_plugin,
-        const GUID_t& adjusted,
-        const GUID_t& original)
-{
-    bool ret = false;
-    if (auth_plugin != nullptr)
-    {
-        std::lock_guard<std::mutex> g(mtx_);
-
-        if (nullptr != auth_ && AuthenticationStatus::AUTHENTICATION_OK == auth_->auth_status_)
-        {
-            ret = auth_plugin->check_guid_comes_from(auth_->identity_handle_, adjusted, original);
-        }
-    }
-    return ret;
-}
->>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
