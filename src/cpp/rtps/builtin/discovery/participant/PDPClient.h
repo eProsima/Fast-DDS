@@ -123,7 +123,8 @@ public:
     void removeRemoteEndpoints(
             ParticipantProxyData* pdata) override;
     void notifyAboveRemoteEndpoints(
-            const ParticipantProxyData& pdata) override;
+            const ParticipantProxyData& pdata,
+            bool notify_secure_endpoints) override;
 
     /**
      * This method removes a remote RTPSParticipant and all its writers and readers.

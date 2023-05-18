@@ -506,7 +506,8 @@ void PDPClient::assignRemoteEndpoints(
 }
 
 void PDPClient::notifyAboveRemoteEndpoints(
-        const ParticipantProxyData& pdata)
+        const ParticipantProxyData& pdata,
+        bool /*notify_secure_endpoints*/)
 {
 #if HAVE_SECURITY
     if (mp_RTPSParticipant->is_secure())
@@ -575,7 +576,7 @@ void PDPClient::perform_builtin_endpoints_matching(
     // No EDP notification needed. EDP endpoints would be match when PDP synchronization is granted
     if (mp_builtin->mp_WLP != nullptr)
     {
-        mp_builtin->mp_WLP->assignRemoteEndpoints(pdata);
+        mp_builtin->mp_WLP->assignRemoteEndpoints(pdata, true);
     }
 }
 

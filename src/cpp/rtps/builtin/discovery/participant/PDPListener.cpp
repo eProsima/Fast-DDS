@@ -197,7 +197,7 @@ void PDPListener::onNewCacheChangeAdded(
 
                 if (parent_pdp_->updateInfoMatchesEDP())
                 {
-                    parent_pdp_->mp_EDP->assignRemoteEndpoints(*pdata);
+                    parent_pdp_->mp_EDP->assignRemoteEndpoints(*pdata, true);
                 }
 
                 lock.unlock();

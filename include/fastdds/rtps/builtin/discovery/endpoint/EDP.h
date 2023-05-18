@@ -103,9 +103,11 @@ public:
     /**
      * Abstract method that assigns remote endpoints when a new RTPSParticipantProxyData is discovered.
      * @param pdata Discovered ParticipantProxyData
+     * @param assign_secure_endpoints Whether to try assigning secure endpoints
      */
     virtual void assignRemoteEndpoints(
-            const ParticipantProxyData& pdata) = 0;
+            const ParticipantProxyData& pdata,
+            bool assign_secure_endpoints) = 0;
     /**
      * Remove remote endpoints from the endpoint discovery protocol
      * @param pdata Pointer to the ParticipantProxyData to remove
