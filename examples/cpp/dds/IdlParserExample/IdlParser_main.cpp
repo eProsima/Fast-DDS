@@ -17,16 +17,23 @@
  *
  */
 
+#define FASTDDS_ENFORCE_LOG_INFO
+
 #include <fastrtps/types/idl/idl.h>
+#include <fastrtps/log/Log.h>
 
 #include <iostream>
 
 using namespace eprosima::fastrtps::types;
+using eprosima::fastdds::dds::Log;
 
 int main(
         int argc,
         char** argv)
 {
+    Log::SetVerbosity(Log::Kind::Info);
+    Log::SetCategoryFilter(std::regex("IDLPARSER"));
+
     std::cout << "Processing IDL string:" << std::endl;
     std::string idl_spec =
         R"(
@@ -39,8 +46,11 @@ int main(
     idl::Context context = idl::parse(idl_spec);
 
     std::cout << "Processing IDL file:" << std::endl;
+
     idl::Context context_file = idl::parse_file("idl/test02.idl");
 
+    Log::Flush();
+    Log::Reset();
 
     return 0;
 }
