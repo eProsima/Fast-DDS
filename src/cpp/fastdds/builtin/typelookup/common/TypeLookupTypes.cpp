@@ -1204,14 +1204,15 @@ bool TypeLookup_RequestTypeSupport::serialize(
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
-        type->serialize(ser); // Serialize the object:
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
+        // Serialize the object
+        type->serialize(ser);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch(eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -1229,15 +1230,16 @@ bool TypeLookup_RequestTypeSupport::deserialize(
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
-    // Deserialize encapsulation.
-    deser.read_encapsulation();
-    payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     try
     {
-        p_type->deserialize(deser); //Deserialize the object:
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        // Deserialize the object
+        p_type->deserialize(deser);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch(eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -1302,14 +1304,15 @@ bool TypeLookup_ReplyTypeSupport::serialize(
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
-        type->serialize(ser); // Serialize the object:
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
+        // Serialize the object
+        type->serialize(ser);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch(eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -1326,15 +1329,16 @@ bool TypeLookup_ReplyTypeSupport::deserialize(
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length); 	// Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
-    // Deserialize encapsulation.
-    deser.read_encapsulation();
-    payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     try
     {
-        p_type->deserialize(deser); //Deserialize the object:
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        // Deserialize the object
+        p_type->deserialize(deser);
     }
-    catch(eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch(eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
