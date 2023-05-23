@@ -593,15 +593,21 @@ TEST(DDSContentFilter, CorrectlyHandleAliasOtherHeader)
     auto ret = type.register_type(participant);
 
     if (ret != ReturnCode_t::RETCODE_OK)
+    {
         throw std::runtime_error("Failed to register type");
+    }
 
     auto sub = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
     if (sub == nullptr)
+    {
         throw std::runtime_error("Failed to create subscriber");
+    }
 
     auto topic = participant->create_topic("TestTopic", type->getName(), TOPIC_QOS_DEFAULT);
     if (topic == nullptr)
+    {
         throw std::runtime_error("Failed to create topic");
+    }
 
     std::string expression = "uuid <> %0";
     std::vector<std::string> parameters = {"'1235'"};

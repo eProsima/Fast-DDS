@@ -64,7 +64,7 @@ class Cdr;
 
 
 namespace TestModule {
-    typedef std::string MACHINEID;
+typedef std::string MACHINEID;
 } // namespace TestModule
 
 #endif // _FAST_DDS_GENERATED_TESTINCLUDEREGRESSION3361_H_

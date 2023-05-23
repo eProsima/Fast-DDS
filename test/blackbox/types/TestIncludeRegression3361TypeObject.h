@@ -31,10 +31,10 @@
 #define eProsima_user_DllExport __declspec( dllexport )
 #else
 #define eProsima_user_DllExport
-#endif
+#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
 #else
 #define eProsima_user_DllExport
-#endif
+#endif // if defined(_WIN32)
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
@@ -45,7 +45,7 @@
 #endif // TestIncludeRegression3361_SOURCE
 #else
 #define TestIncludeRegression3361_DllAPI
-#endif
+#endif // if defined(EPROSIMA_USER_DLL_EXPORT)
 #else
 #define TestIncludeRegression3361_DllAPI
 #endif // _WIN32
@@ -55,10 +55,12 @@ using namespace eprosima::fastrtps::types;
 eProsima_user_DllExport void registerTestIncludeRegression3361Types();
 
 namespace TestModule {
-    eProsima_user_DllExport const TypeIdentifier* GetMACHINEIDIdentifier(bool complete = false);
-    eProsima_user_DllExport const TypeObject* GetMACHINEIDObject(bool complete = false);
-    eProsima_user_DllExport const TypeObject* GetMinimalMACHINEIDObject();
-    eProsima_user_DllExport const TypeObject* GetCompleteMACHINEIDObject();
+eProsima_user_DllExport const TypeIdentifier* GetMACHINEIDIdentifier(
+        bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMACHINEIDObject(
+        bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalMACHINEIDObject();
+eProsima_user_DllExport const TypeObject* GetCompleteMACHINEIDObject();
 
 } // namespace TestModule
 
