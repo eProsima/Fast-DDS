@@ -60,10 +60,6 @@
                     <kind>EXCLUSIVE</kind>
                 </ownership>
 
-                <ownershipStrength>
-                    <value>50</value>
-                </ownershipStrength>
-
                 <latencyBudget>
                     <duration>
                         <sec>1</sec>
