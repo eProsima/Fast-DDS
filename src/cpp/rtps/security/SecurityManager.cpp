@@ -2876,7 +2876,7 @@ bool SecurityManager::discovered_reader(
                         *remote_permissions, domain_id_, remote_reader_data, relay_only, exception)) == false)
             {
                 logError(SECURITY, "Error checking create remote reader " << remote_reader_data.guid()
-                                                                                    << " (" << exception.what() << ")");
+                                                                          << " (" << exception.what() << ")");
             }
         }
     }
@@ -3235,7 +3235,7 @@ bool SecurityManager::discovered_writer(
                         *remote_permissions, domain_id_, remote_writer_data, exception)) == false)
             {
                 logError(SECURITY, "Error checking create remote writer " << remote_writer_data.guid()
-                                                                                    << " (" << exception.what() << ")");
+                                                                          << " (" << exception.what() << ")");
             }
         }
     }
