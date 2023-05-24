@@ -485,6 +485,19 @@ private:
             return participant_data_;
         }
 
+        AuthenticationStatus get_auth_status() const
+        {
+            std::lock_guard<std::mutex> g(mtx_);
+            if (auth_.get() != nullptr)
+            {
+                return auth_->auth_status_;
+            }
+            else
+            {
+                return AUTHENTICATION_NOT_AVAILABLE;
+            }
+        }
+
     private:
 
         DiscoveredParticipantInfo(
