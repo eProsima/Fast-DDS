@@ -644,28 +644,8 @@ bool SecurityManager::discovered_participant(
             case VALIDATION_PENDING_RETRY:
             // TODO(Ricardo) Send event.
             default:
-<<<<<<< HEAD
-                if (strlen(exception.what()) > 0)
-                {
-                    logError(SECURITY_AUTHENTICATION, exception.what());
-                }
-
-                logInfo(SECURITY, "Authentication failed for participant " <<
-                        participant_data.m_guid);
-
-                // Inform user about authenticated remote participant.
-                if (participant_->getListener() != nullptr)
-                {
-                    ParticipantAuthenticationInfo info;
-                    info.status = ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT;
-                    info.guid = participant_data.m_guid;
-                    participant_->getListener()->onParticipantAuthentication(
-                        participant_->getUserRTPSParticipant(), std::move(info));
-                }
-=======
 
                 on_validation_failed(participant_data, exception);
->>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
 
                 std::lock_guard<shared_mutex> _(mutex_);
 
@@ -862,25 +842,7 @@ bool SecurityManager::on_process_handshake(
 
     if (ret == VALIDATION_FAILED)
     {
-<<<<<<< HEAD
-        // Inform user about authenticated remote participant.
-        if (participant_->getListener() != nullptr)
-        {
-            ParticipantAuthenticationInfo info;
-            info.status = ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT;
-            info.guid = participant_data.m_guid;
-            participant_->getListener()->onParticipantAuthentication(
-                participant_->getUserRTPSParticipant(), std::move(info));
-        }
-
-        if (strlen(exception.what()) > 0)
-        {
-            logError(SECURITY_AUTHENTICATION, exception.what());
-        }
-
-=======
         on_validation_failed(participant_data, exception);
->>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
         return false;
     }
 
@@ -2904,10 +2866,6 @@ bool SecurityManager::discovered_reader(
                 auth_status != AUTHENTICATION_NOT_AVAILABLE && auth_status != AUTHENTICATION_OK &&
                 (security_attributes.is_write_protected || security_attributes.is_read_protected))
         {
-<<<<<<< HEAD
-            logError(SECURITY, "Error checking create remote reader " << remote_reader_data.guid()
-                                                                      << " (" << exception.what() << ")");
-=======
             //!Do not match if read or write protection is enabled for this local endpoint
             return false;
         }
@@ -2917,10 +2875,9 @@ bool SecurityManager::discovered_reader(
             if ((returned_value = access_plugin_->check_remote_datareader(
                         *remote_permissions, domain_id_, remote_reader_data, relay_only, exception)) == false)
             {
-                EPROSIMA_LOG_ERROR(SECURITY, "Error checking create remote reader " << remote_reader_data.guid()
+                logError(SECURITY, "Error checking create remote reader " << remote_reader_data.guid()
                                                                                     << " (" << exception.what() << ")");
             }
->>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
         }
     }
 
@@ -3268,10 +3225,6 @@ bool SecurityManager::discovered_writer(
                 auth_status != AUTHENTICATION_NOT_AVAILABLE && auth_status != AUTHENTICATION_OK &&
                 (security_attributes.is_write_protected || security_attributes.is_read_protected))
         {
-<<<<<<< HEAD
-            logError(SECURITY, "Error checking create remote writer " << remote_writer_data.guid()
-                                                                      << " (" << exception.what() << ")");
-=======
             //!Do not match if read or write protection is enabled for this local endpoint
             return false;
         }
@@ -3281,10 +3234,9 @@ bool SecurityManager::discovered_writer(
             if ((returned_value = access_plugin_->check_remote_datawriter(
                         *remote_permissions, domain_id_, remote_writer_data, exception)) == false)
             {
-                EPROSIMA_LOG_ERROR(SECURITY, "Error checking create remote writer " << remote_writer_data.guid()
+                logError(SECURITY, "Error checking create remote writer " << remote_writer_data.guid()
                                                                                     << " (" << exception.what() << ")");
             }
->>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
         }
     }
 
@@ -4224,19 +4176,13 @@ void SecurityManager::resend_handshake_message_token(
             {
                 if (remote_participant_info->change_sequence_number_ != SequenceNumber_t::unknown())
                 {
-<<<<<<< HEAD
-                    logInfo(SECURITY, "Authentication handshake resent to participant " <<
-                            remote_participant_key);
-                    if (participant_stateless_message_writer_history_->add_change(p_change))
-=======
                     CacheChange_t* p_change = participant_stateless_message_writer_history_->remove_change_and_reuse(
                         remote_participant_info->change_sequence_number_);
                     remote_participant_info->change_sequence_number_ = SequenceNumber_t::unknown();
 
                     if (p_change != nullptr)
->>>>>>> 9adaf251b (Honor allow_unauthenticated_participants flag (#3385))
                     {
-                        EPROSIMA_LOG_INFO(SECURITY, "Authentication handshake resent to participant " <<
+                        logInfo(SECURITY, "Authentication handshake resent to participant " <<
                                 remote_participant_key);
                         if (participant_stateless_message_writer_history_->add_change(p_change))
                         {
