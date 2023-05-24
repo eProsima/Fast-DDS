@@ -2101,7 +2101,7 @@ void DomainParticipantImpl::on_child_requests_finished(
         {
             // Or a top-level request?
             // auto cb_it = register_callbacks_.find(parent);
-            if (pending_requests_it->second.size() < 2)
+            if (parent_requests_.end() != pending_requests_it && pending_requests_it->second.size() < 2)
             {
                 parent_requests_.erase(pending_requests_it);
             }
