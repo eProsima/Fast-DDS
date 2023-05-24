@@ -518,6 +518,20 @@ protected:
     std::vector<eprosima::fastrtps::rtps::GUID_t> get_readers_in_topic(
             const std::string& topic_name);
 
+    // Reconciles as-yet unassociated writers with their participants and matched readers
+    void reconcile_unassociated_writers();
+
+    // Reconciles writer information with its own participant and matched writers
+    bool reconcile_writer(
+            const eprosima::fastrtps::rtps::GUID_t& writer_guid);
+
+    // Reconciles as-yet unassociated readers with their participants and matched writers
+    void reconcile_unassociated_readers();
+
+    // Reconciles reader information with its own participant and matches remote writers
+    bool reconcile_reader(
+            const eprosima::fastrtps::rtps::GUID_t& reader_guid);
+
     ////////////////
     // Variables
 
@@ -541,6 +555,8 @@ protected:
     //  - stores the topic name (only matching criteria available)
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo> readers_;
     std::map<eprosima::fastrtps::rtps::GUID_t, DiscoveryEndpointInfo> writers_;
+    std::vector<eprosima::fastrtps::rtps::GUID_t> unassociated_readers_;
+    std::vector<eprosima::fastrtps::rtps::GUID_t> unassociated_writers_;
 
     //! Collection of topics whose related endpoints have changed and require a match recalculation
     std::vector<std::string> dirty_topics_;

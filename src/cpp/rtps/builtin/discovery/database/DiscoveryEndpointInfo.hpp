@@ -57,7 +57,7 @@ public:
     {
     }
 
-    const std::string topic()
+    const std::string topic() const
     {
         return topic_;
     }

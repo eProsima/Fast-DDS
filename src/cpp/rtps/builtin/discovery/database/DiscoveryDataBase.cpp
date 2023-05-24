@@ -590,6 +590,8 @@ void DiscoveryDataBase::create_participant_from_change_(
     else
     {
         create_new_participant_from_change_(ch, change_data);
+        reconcile_unassociated_writers();
+        reconcile_unassociated_readers();
     }
 }
 
@@ -884,41 +886,80 @@ void DiscoveryDataBase::create_writers_from_change_(
         }
         else
         {
-            EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE,
-                    "Writer " << writer_guid << " has no associated participant. Skipping");
+            EPROSIMA_LOG_WARNING(DISCOVERY_DATABASE,
+                    "Writer " << writer_guid << " (topic: " << topic_name <<
+                    ") has no associated participant. Skipping for now.");
+            unassociated_writers_.push_back(writer_guid);
             return;
         }
+        std::ignore = reconcile_writer(writer_guid);
+    }
+}
 
-        // Add writer to writers_by_topic_[topic_name]
-        add_writer_to_topic_(writer_guid, topic_name);
+bool DiscoveryDataBase::reconcile_writer(
+        const eprosima::fastrtps::rtps::GUID_t& writer_guid)
+{
+    const auto writer_it = writers_.find(writer_guid);
+    const auto endpoint_info = writer_it->second;
+    const auto topic_name = endpoint_info.topic();
 
-        // Manually set to 1 the relevant participants ACK status of the participant that sent the change. This way,
-        // we avoid backprogation of the data.
-        writer_it->second.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
+    // Add writer to writers_by_topic_[topic_name]
+    add_writer_to_topic_(writer_guid, topic_name);
 
-        // if topic is virtual, it must iterate over all readers
-        if (topic_name == virtual_topic_)
+    // Manually set to 1 the relevant participants ACK status of the participant that sent the change. This way,
+    // we avoid backpropagation of the data.
+    writer_it->second.add_or_update_ack_participant(endpoint_info.change()->writerGUID.guidPrefix, true);
+
+    // if topic is virtual, it must iterate over all readers
+    if (topic_name == virtual_topic_)
+    {
+        for (const auto& reader_it : readers_)
         {
-            for (auto reader_it : readers_)
+            match_writer_reader_(writer_guid, reader_it.first);
+        }
+    }
+    else
+    {
+        const auto readers_it = readers_by_topic_.find(topic_name);
+        if (readers_it == readers_by_topic_.end())
+        {
+            EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Topic error: " << topic_name << ". Must exist.");
+            return false;
+        }
+        for (const auto& reader : readers_it->second)
+        {
+            match_writer_reader_(writer_guid, reader);
+        }
+    }
+    // Update set of dirty_topics
+    set_dirty_topic_(topic_name);
+    return true;
+}
+
+void DiscoveryDataBase::reconcile_unassociated_writers()
+{
+    std::vector<eprosima::fastrtps::rtps::GUID_t> reconciled_writers;
+    for (const auto& writer_guid : unassociated_writers_)
+    {
+        const auto writer_part_it = participants_.find(writer_guid.guidPrefix);
+        if (writer_part_it != participants_.end())
+        {
+            if (reconcile_writer(writer_guid))
             {
-                match_writer_reader_(writer_guid, reader_it.first);
+                writer_part_it->second.add_reader(writer_guid);
+                reconciled_writers.push_back(writer_guid);
+                EPROSIMA_LOG_WARNING(DISCOVERY_DATABASE, "Writer " << writer_guid << " reconciled");
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Writer " << writer_guid << " still not reconciled");
             }
         }
-        else
-        {
-            auto readers_it = readers_by_topic_.find(topic_name);
-            if (readers_it == readers_by_topic_.end())
-            {
-                EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Topic error: " << topic_name << ". Must exist.");
-                return;
-            }
-            for (auto reader : readers_it->second)
-            {
-                match_writer_reader_(writer_guid, reader);
-            }
-        }
-        // Update set of dirty_topics
-        set_dirty_topic_(topic_name);
+    }
+    for (const auto& writer : reconciled_writers)
+    {
+        unassociated_writers_.erase(std::remove(unassociated_writers_.begin(), unassociated_writers_.end(), writer),
+                unassociated_writers_.end());
     }
 }
 
@@ -1002,41 +1043,80 @@ void DiscoveryDataBase::create_readers_from_change_(
         }
         else
         {
-            EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE,
-                    "Reader " << reader_guid << " has no associated participant. Skipping");
+            EPROSIMA_LOG_WARNING(DISCOVERY_DATABASE,
+                    "Reader " << reader_guid << " (topic: " << topic_name <<
+                    ") has no associated participant. Skipping for now.");
+            unassociated_readers_.push_back(reader_guid);
             return;
         }
+        std::ignore = reconcile_reader(reader_guid);
+    }
+}
 
-        // Add reader to readers_by_topic_[topic_name]
-        add_reader_to_topic_(reader_guid, topic_name);
+bool DiscoveryDataBase::reconcile_reader(
+        const eprosima::fastrtps::rtps::GUID_t& reader_guid)
+{
+    const auto reader_it = readers_.find(reader_guid);
+    auto endpoint_info = reader_it->second;
+    const auto topic_name = endpoint_info.topic();
 
-        // Manually set to 1 the relevant participants ACK status of the participant that sent the change. This way,
-        // we avoid backprogation of the data.
-        reader_it->second.add_or_update_ack_participant(ch->writerGUID.guidPrefix, true);
+    // Associate reader with topic
+    add_reader_to_topic_(reader_guid, topic_name);
 
-        // if topic is virtual, it must iterate over all readers
-        if (topic_name == virtual_topic_)
+    // Manually set to 1 the relevant participants ACK status of the participant that sent the change. This way,
+    // we avoid backprogation of the data.
+    endpoint_info.add_or_update_ack_participant(endpoint_info.change()->writerGUID.guidPrefix, true);
+
+    // if topic is virtual, it must iterate over all readers
+    if (topic_name == virtual_topic_)
+    {
+        for (const auto& writer_it : writers_)
         {
-            for (auto writer_it : writers_)
+            match_writer_reader_(writer_it.first, reader_guid);
+        }
+    }
+    else
+    {
+        const auto writers_it = writers_by_topic_.find(topic_name);
+        if (writers_it == writers_by_topic_.end())
+        {
+            EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Topic error: " << topic_name << ". Must exist.");
+            return false;
+        }
+        for (const auto& writer : writers_it->second)
+        {
+            match_writer_reader_(writer, reader_guid);
+        }
+    }
+    // Update set of dirty_topics
+    set_dirty_topic_(topic_name);
+    return true;
+}
+
+void DiscoveryDataBase::reconcile_unassociated_readers()
+{
+    std::vector<eprosima::fastrtps::rtps::GUID_t> reconciled_readers;
+    for (const auto& reader_guid : unassociated_readers_)
+    {
+        const auto reader_part_it = participants_.find(reader_guid.guidPrefix);
+        if (reader_part_it != participants_.end())
+        {
+            if (reconcile_reader(reader_guid))
             {
-                match_writer_reader_(writer_it.first, reader_guid);
+                reader_part_it->second.add_reader(reader_guid);
+                reconciled_readers.push_back(reader_guid);
+                EPROSIMA_LOG_WARNING(DISCOVERY_DATABASE, "Reader " << reader_guid << " reconciled");
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Reader " << reader_guid << " still not reconciled");
             }
         }
-        else
-        {
-            auto writers_it = writers_by_topic_.find(topic_name);
-            if (writers_it == writers_by_topic_.end())
-            {
-                EPROSIMA_LOG_ERROR(DISCOVERY_DATABASE, "Topic error: " << topic_name << ". Must exist.");
-                return;
-            }
-            for (auto writer : writers_it->second)
-            {
-                match_writer_reader_(writer, reader_guid);
-            }
-        }
-        // Update set of dirty_topics
-        set_dirty_topic_(topic_name);
+    }
+    for (const auto& reader : reconciled_readers)
+    {
+        unassociated_readers_.erase(std::remove(unassociated_readers_.begin(), unassociated_readers_.end(), reader),
+                unassociated_readers_.end());
     }
 }
 
