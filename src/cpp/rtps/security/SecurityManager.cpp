@@ -4058,7 +4058,7 @@ bool SecurityManager::participant_authorized(
             match_builtin_key_exchange_endpoints(participant_data);
         }
 
-        participant_->pdpsimple()->notifyAboveRemoteEndpoints(participant_data);
+        participant_->pdpsimple()->notifyAboveRemoteEndpoints(participant_data, true);
 
         EPROSIMA_LOG_INFO(SECURITY, "Participant " << participant_data.m_guid << " authenticated");
 
@@ -4228,5 +4228,33 @@ void SecurityManager::resend_handshake_message_token(
 
             dp_it->second->set_auth(remote_participant_info);
         }
+    }
+}
+
+void SecurityManager::on_validation_failed(
+        const ParticipantProxyData& participant_data,
+        const SecurityException& exception) const
+{
+    if (participant_->security_attributes().allow_unauthenticated_participants)
+    {
+        participant_->pdpsimple()->notifyAboveRemoteEndpoints(participant_data, false);
+    }
+
+    if (strlen(exception.what()) > 0)
+    {
+        EPROSIMA_LOG_ERROR(SECURITY_AUTHENTICATION, exception.what());
+    }
+
+    EPROSIMA_LOG_INFO(SECURITY, "Authentication failed for participant " <<
+            participant_data.m_guid);
+
+    // Inform user about authenticated remote participant.
+    if (participant_->getListener() != nullptr)
+    {
+        ParticipantAuthenticationInfo info;
+        info.status = ParticipantAuthenticationInfo::UNAUTHORIZED_PARTICIPANT;
+        info.guid = participant_data.m_guid;
+        participant_->getListener()->onParticipantAuthentication(
+            participant_->getUserRTPSParticipant(), std::move(info));
     }
 }
