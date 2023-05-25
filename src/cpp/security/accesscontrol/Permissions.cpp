@@ -686,6 +686,21 @@ static bool check_subject_name(
                             plug_part_attr.is_liveliness_encrypted,
                             plug_part_attr.is_liveliness_origin_authenticated);
 
+                    if (rule.allow_unauthenticated_participants)
+                    {
+                        if (ah->governance_rule_.is_rtps_protected)
+                        {
+                            exception = _SecurityException_(
+                                "allow_unauthenticated_participants cannot be enabled if rtps_protection_kind is not none");
+                            returned_value = false;
+                            break;
+                        }
+                        else
+                        {
+                            ah->governance_rule_.allow_unauthenticated_participants = true;
+                        }
+                    }
+
                     ah->governance_rule_.plugin_participant_attributes = plug_part_attr.mask();
 
                     for (auto topic_rule : rule.topic_rules)

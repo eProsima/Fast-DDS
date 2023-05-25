@@ -120,6 +120,11 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/secure_submsg_crypto_besteffort_sub.x
     ${CMAKE_CURRENT_BINARY_DIR}/secure_submsg_crypto_besteffort_sub.xml COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/shm_communication_subscriber_dies_while_processing_message.xml
     ${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_secure_allow_unauthenticated_pub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/simple_secure_allow_unauthenticated_pub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_allow_unauthenticated_sub_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/simple_allow_unauthenticated_sub_profile.xml COPYONLY)
+
 if(SECURITY)
     configure_file(${PROJECT_SOURCE_DIR}/test/certs/maincacert.pem
         ${CMAKE_CURRENT_BINARY_DIR}/maincacert.pem COPYONLY)
@@ -135,6 +140,10 @@ if(SECURITY)
         ${CMAKE_CURRENT_BINARY_DIR}/governance_helloworld_all_enable.smime COPYONLY)
     configure_file(${PROJECT_SOURCE_DIR}/test/certs/permissions_helloworld.smime
         ${CMAKE_CURRENT_BINARY_DIR}/permissions_helloworld.smime COPYONLY)
+    configure_file(${PROJECT_SOURCE_DIR}/test/certs/governance_allow_unauth_all_disabled_access_none.smime
+        ${CMAKE_CURRENT_BINARY_DIR}/governance_allow_unauth_all_disabled_access_none.smime COPYONLY)
+    configure_file(${PROJECT_SOURCE_DIR}/test/certs/permissions_helloworld_securehelloworld.smime
+        ${CMAKE_CURRENT_BINARY_DIR}/permissions_helloworld_securehelloworld.smime COPYONLY)
 endif()
 
 if(PYTHONINTERP_FOUND)
@@ -299,6 +308,24 @@ if(PYTHONINTERP_FOUND)
         if(WIN32)
             string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
             set_property(TEST SimpleCommunicationSecureSubmsgCryptoBestEffort APPEND PROPERTY ENVIRONMENT
+                "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+        endif()
+
+        add_test(NAME AllowUnauthenticatedSimplePubSecureNoRTPSProtectionSubNonSecure
+            COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/multiple_subs_secure_crypto_communication.py
+            --n-subs 1
+            --pub $<TARGET_FILE:SimpleCommunicationPublisher>
+            --xml-pub simple_secure_allow_unauthenticated_pub_profile.xml
+            --sub $<TARGET_FILE:SimpleCommunicationSubscriber>
+            --xml-sub simple_allow_unauthenticated_sub_profile.xml
+            --samples 10)
+
+        # Set test with label NoMemoryCheck
+        set_property(TEST AllowUnauthenticatedSimplePubSecureNoRTPSProtectionSubNonSecure PROPERTY LABELS "NoMemoryCheck")
+
+        if(WIN32)
+            string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+            set_property(TEST AllowUnauthenticatedSimplePubSecureNoRTPSProtectionSubNonSecure APPEND PROPERTY ENVIRONMENT
                 "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
         endif()
     endif()

@@ -36,14 +36,19 @@ typedef uint32_t PluginEndpointSecurityAttributesMask;
 
 struct PluginEndpointSecurityAttributes
 {
-    PluginEndpointSecurityAttributes() : 
-        is_submessage_encrypted(false), is_submessage_origin_authenticated(false), is_payload_encrypted(false)
-    { }
+    PluginEndpointSecurityAttributes()
+        : is_submessage_encrypted(false)
+        , is_submessage_origin_authenticated(false)
+        , is_payload_encrypted(false)
+    {
+    }
 
-    explicit PluginEndpointSecurityAttributes(const PluginEndpointSecurityAttributesMask mask) :
-        is_submessage_encrypted((mask & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED) != 0),
-        is_submessage_origin_authenticated((mask & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED) != 0),
-        is_payload_encrypted((mask & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_ENCRYPTED) != 0)
+    explicit PluginEndpointSecurityAttributes(
+            const PluginEndpointSecurityAttributesMask mask)
+        : is_submessage_encrypted((mask & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED) != 0)
+        , is_submessage_origin_authenticated((mask &
+                PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED) != 0)
+        , is_payload_encrypted((mask & PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_ENCRYPTED) != 0)
     {
     }
 
@@ -54,11 +59,21 @@ struct PluginEndpointSecurityAttributes
     inline PluginEndpointSecurityAttributesMask mask() const
     {
         PluginEndpointSecurityAttributesMask rv = PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
-        if (is_submessage_encrypted) rv |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
-        if (is_submessage_origin_authenticated) rv |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
-        if (is_payload_encrypted) rv |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_ENCRYPTED;
+        if (is_submessage_encrypted)
+        {
+            rv |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ENCRYPTED;
+        }
+        if (is_submessage_origin_authenticated)
+        {
+            rv |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_ORIGIN_AUTHENTICATED;
+        }
+        if (is_payload_encrypted)
+        {
+            rv |= PLUGIN_ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_ENCRYPTED;
+        }
         return rv;
     }
+
 };
 
 typedef uint32_t EndpointSecurityAttributesMask;
@@ -74,23 +89,30 @@ typedef uint32_t EndpointSecurityAttributesMask;
 
 struct EndpointSecurityAttributes
 {
-    EndpointSecurityAttributes() : 
-        is_read_protected(true), is_write_protected(true),
-        is_discovery_protected(false), is_liveliness_protected(false),
-        is_submessage_protected(false), is_payload_protected(false), is_key_protected(false),
-        plugin_endpoint_attributes(0UL)
-    {}
+    EndpointSecurityAttributes()
+        : is_read_protected(false)
+        , is_write_protected(false)
+        , is_discovery_protected(false)
+        , is_liveliness_protected(false)
+        , is_submessage_protected(false)
+        , is_payload_protected(false)
+        , is_key_protected(false)
+        , plugin_endpoint_attributes(0UL)
+    {
+    }
 
-    explicit EndpointSecurityAttributes(const EndpointSecurityAttributesMask mask) :
-        is_read_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_READ_PROTECTED) != 0),
-        is_write_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_WRITE_PROTECTED) != 0),
-        is_discovery_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_DISCOVERY_PROTECTED) != 0),
-        is_liveliness_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_LIVELINESS_PROTECTED) != 0),
-        is_submessage_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_PROTECTED) != 0),
-        is_payload_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_PROTECTED) != 0),
-        is_key_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_KEY_PROTECTED) != 0),
-        plugin_endpoint_attributes(0UL)
-    {}
+    explicit EndpointSecurityAttributes(
+            const EndpointSecurityAttributesMask mask)
+        : is_read_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_READ_PROTECTED) != 0)
+        , is_write_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_WRITE_PROTECTED) != 0)
+        , is_discovery_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_DISCOVERY_PROTECTED) != 0)
+        , is_liveliness_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_LIVELINESS_PROTECTED) != 0)
+        , is_submessage_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_PROTECTED) != 0)
+        , is_payload_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_PROTECTED) != 0)
+        , is_key_protected((mask & ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_KEY_PROTECTED) != 0)
+        , plugin_endpoint_attributes(0UL)
+    {
+    }
 
     bool is_read_protected;
 
@@ -111,27 +133,50 @@ struct EndpointSecurityAttributes
     inline EndpointSecurityAttributesMask mask() const
     {
         EndpointSecurityAttributesMask rv = ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_VALID;
-        if (is_read_protected) rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_READ_PROTECTED;
-        if (is_write_protected) rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_WRITE_PROTECTED;
-        if (is_discovery_protected) rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_DISCOVERY_PROTECTED;
-        if (is_liveliness_protected) rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_LIVELINESS_PROTECTED;
-        if (is_submessage_protected) rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_PROTECTED;
-        if (is_payload_protected) rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_PROTECTED;
-        if (is_key_protected) rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_KEY_PROTECTED;
+        if (is_read_protected)
+        {
+            rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_READ_PROTECTED;
+        }
+        if (is_write_protected)
+        {
+            rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_WRITE_PROTECTED;
+        }
+        if (is_discovery_protected)
+        {
+            rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_DISCOVERY_PROTECTED;
+        }
+        if (is_liveliness_protected)
+        {
+            rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_LIVELINESS_PROTECTED;
+        }
+        if (is_submessage_protected)
+        {
+            rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_SUBMESSAGE_PROTECTED;
+        }
+        if (is_payload_protected)
+        {
+            rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_PAYLOAD_PROTECTED;
+        }
+        if (is_key_protected)
+        {
+            rv |= ENDPOINT_SECURITY_ATTRIBUTES_FLAG_IS_KEY_PROTECTED;
+        }
         return rv;
     }
 
-    inline bool match(const EndpointSecurityAttributesMask remoteMask,
-        const PluginEndpointSecurityAttributesMask remotePluginMask) const
+    inline bool match(
+            const EndpointSecurityAttributesMask remoteMask,
+            const PluginEndpointSecurityAttributesMask remotePluginMask) const
     {
         return security_mask_matches(mask(), remoteMask) &&
-            security_mask_matches(plugin_endpoint_attributes, remotePluginMask);
+               security_mask_matches(plugin_endpoint_attributes, remotePluginMask);
     }
+
 };
 
-}
-}
-}
-}
+} // namespace security
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 #endif // _FASTDDS_RTPS_SECURITY_ACCESSCONTROL_ENDPOINTSECURITYATTRIBUTES_H_

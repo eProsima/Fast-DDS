@@ -52,9 +52,6 @@ public:
     MOCK_METHOD1(assignRemoteEndpoints, void(
             ParticipantProxyData* pdata));
 
-    MOCK_METHOD1(notifyAboveRemoteEndpoints, void(
-            const ParticipantProxyData& pdata));
-
     MOCK_METHOD1(removeRemoteEndpoints, void(
             const ParticipantProxyData* pdata));
 
@@ -75,6 +72,10 @@ public:
     MOCK_METHOD2(lookupWriterProxyData, bool(
             const GUID_t& writer,
             WriterProxyData& wdata));
+
+    MOCK_METHOD2(notifyAboveRemoteEndpoints, void(
+            const ParticipantProxyData& pdata,
+            bool notify_secure_endpoints));
 
     MOCK_METHOD0(ParticipantProxiesBegin, ResourceLimitedVector<ParticipantProxyData*>::const_iterator());
 
