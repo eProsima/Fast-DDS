@@ -1120,37 +1120,37 @@
         ├ destination_order           [0~1] NOT SUPPORTED YET: COMMENTED,
         ├ disablePositiveAcks         [0~1],
         ├ durability                  [0~1],
-        ├ durability_service          [0~1] NOT SUPPORTED YET: COMMENTED,
+        ├ durabilityService           [0~1] NOT SUPPORTED YET: COMMENTED,
         ├ entity_factory              [0~1] NOT SUPPORTED YET: COMMENTED,
         ├ groupData                   [0~1],
         ├ latencyBudget               [0~1],
         ├ lifespan                    [0~1],
         ├ liveliness                  [0~1],
         ├ ownership                   [0~1],
-        ├ ownershipStrength           [0~1],
         ├ partition                   [0~1],
         ├ presentation                [0~1] NOT SUPPORTED YET: COMMENTED,
         ├ reliability                 [0~1],
+        ├ timeBasedFilter             [0~1],
         ├ topicData                   [0~1],
         └ userData                    [0~1] -->
     <xs:complexType name="dataReaderQosPoliciesType">
         <xs:all>
             <xs:element name="data_sharing" type="dataSharingQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="deadline" type="deadlineQosPolicyType" minOccurs="0" maxOccurs="1"/>
-            <!-- <xs:element name="destination_order" type="destinationOrderQosPolicyType" minOccurs="0" maxOccurs="1"/> -->
+            <xs:element name="destination_order" type="destinationOrderQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="disablePositiveAcks" type="disablePositiveAcksQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="durability" type="durabilityQosPolicyType" minOccurs="0" maxOccurs="1"/>
-            <!-- <xs:element name="durability_service" type="durabilityServiceQosPolicyType" minOccurs="0" maxOccurs="1"/> -->
+            <xs:element name="durabilityService" type="durabilityServiceQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <!-- <xs:element name="entity_factory" type="entityFactoryQoSPolicyType" minOccurs="0" maxOccurs="1"/> -->
             <xs:element name="groupData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="latencyBudget" type="latencyBudgetQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="lifespan" type="lifespanQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="liveliness" type="livelinessQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="ownership" type="ownershipQosPolicyType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="ownershipStrength" type="ownershipStrengthQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="partition" type="partitionQosPolicyType" minOccurs="0" maxOccurs="1"/>
-            <!-- <xs:element name="presentation" type="presentationQosPolicyType" minOccurs="0" maxOccurs="1"/> -->
+            <xs:element name="presentation" type="presentationQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="reliability" type="reliabilityQosPolicyType" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="timeBasedFilter" type="timeBasedFilterQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="topicData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="userData" type="octectVectorQosPolicyType" minOccurs="0" maxOccurs="1"/>
         </xs:all>
