@@ -440,21 +440,22 @@ void PDPServer::assignRemoteEndpoints(
     }
 
     //Inform EDP of new RTPSParticipant data:
-    notifyAboveRemoteEndpoints(*pdata);
+    notifyAboveRemoteEndpoints(*pdata, true);
 }
 
 void PDPServer::notifyAboveRemoteEndpoints(
-        const ParticipantProxyData& pdata)
+        const ParticipantProxyData& pdata,
+        bool /*notify_secure_endpoints*/)
 {
     //Inform EDP of new RTPSParticipant data:
     if (mp_EDP != nullptr)
     {
-        mp_EDP->assignRemoteEndpoints(pdata);
+        mp_EDP->assignRemoteEndpoints(pdata, true);
     }
 
     if (mp_builtin->mp_WLP != nullptr)
     {
-        mp_builtin->mp_WLP->assignRemoteEndpoints(pdata);
+        mp_builtin->mp_WLP->assignRemoteEndpoints(pdata, true);
     }
 }
 

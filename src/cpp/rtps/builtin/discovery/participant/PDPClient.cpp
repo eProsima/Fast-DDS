@@ -290,16 +290,17 @@ void PDPClient::assignRemoteEndpoints(
         }
     }
 
-    notifyAboveRemoteEndpoints(*pdata);
+    notifyAboveRemoteEndpoints(*pdata, true);
 }
 
 void PDPClient::notifyAboveRemoteEndpoints(
-        const ParticipantProxyData& pdata)
+        const ParticipantProxyData& pdata,
+        bool /*notify_secure_endpoints*/)
 {
     // No EDP notification needed. EDP endpoints would be match when PDP synchronization is granted
     if (mp_builtin->mp_WLP != nullptr)
     {
-        mp_builtin->mp_WLP->assignRemoteEndpoints(pdata);
+        mp_builtin->mp_WLP->assignRemoteEndpoints(pdata, true);
     }
 }
 
@@ -560,7 +561,7 @@ bool PDPClient::match_servers_EDP_endpoints()
             logInfo(RTPS_PDP, "Client "
                     << mp_EDP->mp_PDP->getRTPSParticipant()->getGuid()
                     << " matching servers EDP endpoints");
-            mp_EDP->assignRemoteEndpoints(*svr.proxy);
+            mp_EDP->assignRemoteEndpoints(*svr.proxy, true);
         }
     }
 

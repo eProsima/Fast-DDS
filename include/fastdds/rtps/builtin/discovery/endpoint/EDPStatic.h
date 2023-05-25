@@ -66,9 +66,11 @@ public:
     /**
      * Abstract method that assigns remote endpoints when a new RTPSParticipantProxyData is discovered.
      * @param pdata Pointer to the ParticipantProxyData.
+     * @param assign_secure_endpoints Whether to try assigning secure endpoints
      */
     void assignRemoteEndpoints(
-            const ParticipantProxyData& pdata) override;
+            const ParticipantProxyData& pdata,
+            bool assign_secure_endpoints) override;
     /**
      * Abstract method that removes a local Reader from the discovery method
      * @param R Pointer to the Reader to remove.
