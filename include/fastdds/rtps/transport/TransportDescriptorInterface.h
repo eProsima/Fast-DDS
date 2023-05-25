@@ -17,11 +17,9 @@
 
 #include <fastrtps/fastrtps_dll.h>
 
-#ifdef _WIN32
 #include <cstdint>
-#endif // ifdef _WIN32
-#include <vector>
 #include <string>
+#include <vector>
 
 namespace eprosima {
 namespace fastdds {
