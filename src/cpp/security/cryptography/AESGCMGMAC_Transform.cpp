@@ -128,9 +128,13 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
         serialize_SecureDataHeader(serializer, keyMat.transformation_kind,
                 keyMat.sender_key_id, session_id, initialization_vector_suffix);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataHeader");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to serialize SecureDataHeader");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -145,9 +149,13 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
             return false;
         }
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataBody");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to serialize SecureDataBody");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -160,9 +168,13 @@ bool AESGCMGMAC_Transform::encode_serialized_payload(
             return false;
         }
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataTag");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to serialize SecureDataTag");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -257,7 +269,11 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
     }
     catch (eprosima::fastcdr::exception::NotEnoughMemoryException& )
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataHeader");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to serialize SecureDataHeader");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -273,9 +289,13 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
             return false;
         }
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataBody");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to serialize SecureDataBody");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -302,9 +322,13 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
         serializer << length;
         serializer.setState(current_state);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataTag");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to serialize SecureDataTag");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -395,9 +419,13 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
         serializer << length;
         serializer.setState(current_state);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataHeader");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to serialize SecureDataHeader");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -414,9 +442,13 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
             return false;
         }
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataBody");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to serialize SecureDataBody");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -444,9 +476,13 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
         serializer << length;
         serializer.setState(current_state);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataTag");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to serialize SecureDataTag");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -536,9 +572,13 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
         serializer << length;
         serializer.setState(current_state);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataHeader");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to serialize SecureDataHeader");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -555,9 +595,13 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
             return false;
         }
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataBody");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to serialize SecureDataBody");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -584,9 +628,13 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
         serializer << length;
         serializer.setState(current_state);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to serialize SecureDataTag");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to serialize SecureDataTag");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -672,9 +720,13 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
             return false;
         }
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataHeader");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to deserialize SecureDataHeader");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -701,9 +753,13 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
     {
         is_encrypted = predeserialize_SecureDataBody(decoder, body_length, body_align);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataBody header");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to deserialize SecureDataBody header");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -784,9 +840,13 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
             return false;
         }
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataTag length");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to deserialize SecureDataTag length");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -873,9 +933,13 @@ bool AESGCMGMAC_Transform::preprocess_secure_submsg(
             return false;
         }
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataHeader");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to deserialize SecureDataHeader");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -1033,9 +1097,13 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
             return false;
         }
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataHeader");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to deserialize SecureDataHeader");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -1066,9 +1134,13 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
     {
         is_encrypted = predeserialize_SecureDataBody(decoder, body_length, body_align);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataBody header");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to deserialize SecureDataBody header");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -1120,9 +1192,13 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
             return false;
         }
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataTag length");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to deserialize SecureDataTag length");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -1213,9 +1289,13 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
             return false;
         }
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataHeader");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to deserialize SecureDataHeader");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -1246,9 +1326,13 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
     {
         is_encrypted = predeserialize_SecureDataBody(decoder, body_length, body_align);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataBody header");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to deserialize SecureDataBody header");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -1300,9 +1384,13 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
             return false;
         }
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataTag length");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to deserialize SecureDataTag length");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -1368,9 +1456,13 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     {
         header = deserialize_SecureDataHeader(decoder);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataHeader");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to deserialize SecureDataHeader");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -1415,9 +1507,13 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
             body_length -= sizeof(uint32_t) + 16;
         }
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataBody header");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to deserialize SecureDataBody header");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -1428,9 +1524,13 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
     {
         deserialize_SecureDataTag(decoder, tag, {}, {}, {}, {}, {}, 0, exception);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException&)
+    catch (eprosima::fastcdr::exception::Exception&)
     {
+<<<<<<< HEAD
         logError(SECURITY_CRYPTO, "Not enough memory to deserialize SecureDataTag length");
+=======
+        EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to deserialize SecureDataTag length");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
@@ -1575,7 +1675,11 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(
         if ((output_buffer.getBufferSize() - (serializer.getCurrentPosition() - serializer.getBufferPointer())) <
                 plain_buffer_len)
         {
+<<<<<<< HEAD
             logError(SECURITY_CRYPTO, "Not enough memory to copy payload");
+=======
+            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to copy payload");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
             EVP_CIPHER_CTX_free(e_ctx);
             return false;
         }
@@ -1635,7 +1739,11 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(
         if ((output_buffer.getBufferSize() - (serializer.getCurrentPosition() - serializer.getBufferPointer())) <
                 (plain_buffer_len + (2 * cipher_block_size) - 1))
         {
+<<<<<<< HEAD
             logError(SECURITY_CRYPTO, "Not enough memory to cipher payload");
+=======
+            EPROSIMA_LOG_ERROR(SECURITY_CRYPTO, "Error in fastcdr trying to cipher payload");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
             EVP_CIPHER_CTX_free(e_ctx);
             return false;
         }
@@ -1992,7 +2100,11 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(
         // - EVP_DecryptUpdate needs at maximum: body_length + cipher_block_size.
         if (plain_buffer_len < (protected_len + cipher_block_size))
         {
+<<<<<<< HEAD
             logWarning(SECURITY_CRYPTO, "Not enough memory to decode payload");
+=======
+            EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Error in fastcdr trying to decode payload");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
             EVP_CIPHER_CTX_free(d_ctx);
             return false;
         }
@@ -2020,7 +2132,11 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(
     uint32_t cnt_len = do_encryption ? static_cast<uint32_t>(actual_size + final_size) : body_length;
     if (plain_buffer_len < cnt_len)
     {
+<<<<<<< HEAD
         logWarning(SECURITY_CRYPTO, "Not enough memory to decode payload");
+=======
+        EPROSIMA_LOG_WARNING(SECURITY_CRYPTO, "Error in fastcdr trying to decode payload");
+>>>>>>> f4000e854 (Capture all fastcdr exceptions (#3528))
         return false;
     }
 
