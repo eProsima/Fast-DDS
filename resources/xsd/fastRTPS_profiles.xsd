@@ -593,7 +593,8 @@
         ├ writerHistoryMemoryPolicy             [0~1],
         ├ readerPayloadSize                     [uint32],
         ├ writerPayloadSize                     [uint32],
-        └ mutation_tries                        [uint32]-->
+        ├ mutation_tries                        [uint32],
+        └ typelookup_config                     [0~1]-->
     <xs:complexType name="builtinAttributesType">
         <xs:all>
             <xs:element name="discovery_config" type="discoverySettingsType" minOccurs="0" maxOccurs="1"/>
@@ -608,6 +609,7 @@
             <xs:element name="readerPayloadSize" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="writerPayloadSize" type="uint32" minOccurs="0" maxOccurs="1"/>
             <xs:element name="mutation_tries" type="uint32" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="typelookup_config" type="typelookupSettingsType" minOccurs="0" maxOccurs="1"/>
         </xs:all>
     </xs:complexType>
 
@@ -698,6 +700,16 @@
                 <xs:element name="static_edp_xml_config" type="string" minOccurs="0" maxOccurs="unbounded"/>
             </xs:choice>
         </xs:sequence>
+    </xs:complexType>
+
+    <!--builtin TypeLookup Configuration:
+        ├ use_client    [bool],
+        └ use_sever     [bool]-->
+    <xs:complexType name="typelookupSettingsType">
+        <xs:all minOccurs="0">
+            <xs:element name="use_client" type="boolean"/>
+            <xs:element name="use_server" type="boolean"/>
+        </xs:all>
     </xs:complexType>
 
     <!--port:
