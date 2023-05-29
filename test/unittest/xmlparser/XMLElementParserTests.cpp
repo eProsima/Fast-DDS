@@ -1812,6 +1812,7 @@ TEST_F(XMLParserTests, getXMLDurabilityQosKind)
  *      <writerPayloadSize>
  *      <mutation_tries>
  *      <avoid_builtin_multicast>
+ *      <typelookup_config>
  * 2. Check invalid element
  */
 TEST_F(XMLParserTests, getXMLBuiltinAttributes_NegativeClauses)
@@ -1850,7 +1851,8 @@ TEST_F(XMLParserTests, getXMLBuiltinAttributes_NegativeClauses)
         "readerPayloadSize",
         "writerPayloadSize",
         "mutation_tries",
-        "avoid_builtin_multicast"
+        "avoid_builtin_multicast",
+        "typelookup_config"
     };
 
     for (std::string tag : field_vec)
@@ -3759,4 +3761,105 @@ TEST_F(XMLParserTests, getXMLOwnershipStrengthQos)
         EXPECT_EQ(XMLP_ret::XML_ERROR,
                 XMLParserTest::propertiesPolicy_wrapper(titleElement, ownership_strength_policy, ident));
     }
+}
+
+/*
+ * This test checks the positive cases of configuration through XML of the TypeLookupService.
+ * 1. Check that the XML return code is correct for the TypeLookup configuration settings.
+ * 2. Check that the flags are corretly set.
+ */
+TEST_F(XMLParserTests, getXMLTypeLookupSettings)
+{
+    uint8_t ident = 1;
+    TypeLookupSettings settings;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // XML snippet
+    const char* xml =
+            "\
+            <typelookup_config>\
+                <use_server>true</use_server>\
+                <use_client>false</use_client>\
+            </typelookup_config>\
+            ";
+
+    // Load the xml
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    // Check that the XML return code is correct for the TypeLookup settings
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLTypeLookupSettings_wrapper(titleElement, settings, ident));
+    EXPECT_TRUE(settings.use_server);
+    EXPECT_FALSE(settings.use_client);
+
+    // XML snippet
+    xml =
+            "\
+            <typelookup_config>\
+                <use_server>false</use_server>\
+                <use_client>true</use_client>\
+            </typelookup_config>\
+            ";
+
+    // Load the xml
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    // Check that the XML return code is correct for the TypeLookup settings
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParserTest::getXMLTypeLookupSettings_wrapper(titleElement, settings, ident));
+    EXPECT_FALSE(settings.use_server);
+    EXPECT_TRUE(settings.use_client);
+}
+
+/*
+ * This test checks the negative cases in the <typelookup_config> xml element.
+ * 1. Check an invalid tag of:
+ *      <use_client>
+ *      <use_server>
+ * 2. Check invalid element.
+ */
+TEST_F(XMLParserTests, getXMLTypeLookupSettings_NegativeClauses)
+{
+    uint8_t ident = 1;
+    TypeLookupSettings settings;
+    tinyxml2::XMLDocument xml_doc;
+    tinyxml2::XMLElement* titleElement;
+
+    // Parametrized XML
+    const char* xml_p =
+            "\
+            <typelookup_config>\
+                %s\
+            </typelookup_config>\
+            ";
+    char xml[1000];
+
+    const char* field_p =
+            "\
+            <%s>\
+                <bad_element> </bad_element>\
+            </%s>\
+            ";
+    char field[500];
+
+    std::vector<std::string> field_vec =
+    {
+        "use_client",
+        "use_server",
+    };
+
+    for (std::string tag : field_vec)
+    {
+        sprintf(field, field_p, tag.c_str(), tag.c_str());
+        sprintf(xml, xml_p, field);
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+        titleElement = xml_doc.RootElement();
+        EXPECT_EQ(XMLP_ret::XML_ERROR,
+                XMLParserTest::getXMLTypeLookupSettings_wrapper(titleElement, settings, ident));
+    }
+
+    // Invalid element
+    sprintf(xml, xml_p, "<bad_element> </bad_element>");
+    ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
+    titleElement = xml_doc.RootElement();
+    EXPECT_EQ(XMLP_ret::XML_ERROR,
+            XMLParserTest::getXMLTypeLookupSettings_wrapper(titleElement, settings, ident));
 }

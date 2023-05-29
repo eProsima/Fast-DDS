@@ -421,8 +421,8 @@ XMLP_ret XMLParser::getXMLTypeLookupSettings(
     /*
        <xs:complexType name="typelookupSettingsType">
         <xs:all minOccurs="0">
-          <xs:element name="useClient" type="boolType" minOccurs="0"/>
-          <xs:element name="useServer" type="boolType" minOccurs="0"/>
+          <xs:element name="use_client" type="boolType" minOccurs="0"/>
+          <xs:element name="use_server" type="boolType" minOccurs="0"/>
         </xs:all>
        </xs:complexType>
      */

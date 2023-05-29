@@ -222,6 +222,14 @@ public:
         return getXMLBuiltinAttributes(elem, builtin, ident);
     }
 
+    static XMLP_ret getXMLTypeLookupSettings_wrapper(
+            tinyxml2::XMLElement* elem,
+            TypeLookupSettings& settings,
+            uint8_t ident)
+    {
+        return getXMLTypeLookupSettings(elem, settings, ident);
+    }
+
     static XMLP_ret getXMLThroughputController_wrapper(
             tinyxml2::XMLElement* elem,
             ThroughputControllerDescriptor& throughputController,
