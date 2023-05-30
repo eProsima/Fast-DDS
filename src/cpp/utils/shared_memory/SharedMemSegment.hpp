@@ -327,9 +327,11 @@ public:
             size_t size)
         : SharedSegmentBase(name)
     {
+        boost::interprocess::permissions unrestricted_permissions;
+        unrestricted_permissions.set_unrestricted();
         segment_ = std::unique_ptr<managed_shared_memory_type>(
             new managed_shared_memory_type(boost::interprocess::create_only, name.c_str(),
-            static_cast<Offset>(size + EXTRA_SEGMENT_SIZE)));
+            static_cast<Offset>(size + EXTRA_SEGMENT_SIZE), 0, unrestricted_permissions));
     }
 
     SharedSegment(
@@ -356,8 +358,10 @@ public:
             size_t size)
         : SharedSegmentBase(name)
     {
+        boost::interprocess::permissions unrestricted_permissions;
+        unrestricted_permissions.set_unrestricted();
         segment_ = std::unique_ptr<managed_shared_memory_type>(
-            new managed_shared_memory_type(boost::interprocess::create_only, name.c_str(), static_cast<Offset>(size)));
+            new managed_shared_memory_type(boost::interprocess::create_only, name.c_str(), static_cast<Offset>(size), 0, unrestricted_permissions));
     }
 
     ~SharedSegment()
