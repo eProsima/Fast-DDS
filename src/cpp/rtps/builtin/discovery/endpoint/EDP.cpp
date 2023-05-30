@@ -160,6 +160,13 @@ bool EDP::newLocalReaderProxyData(
                     rpd->content_filter(*content_filter);
                 }
 
+                std::string* match_local_endpoint_property = PropertyPolicyHelper::find_property(
+                        reader->getAttributes().properties, "fastdds.match_local_endpoints");
+                if (nullptr != match_local_endpoint_property && *match_local_endpoint_property == "true")
+                {
+                    rpd->match_local_endpoints(true);
+                }
+
 #if HAVE_SECURITY
                 if (mp_RTPSParticipant->is_secure())
                 {
@@ -288,6 +295,14 @@ bool EDP::newLocalWriterProxyData(
                 wpd->m_qos.setQos(wqos, true);
                 wpd->userDefinedId(writer->getAttributes().getUserDefinedID());
                 wpd->persistence_guid(writer->getAttributes().persistence_guid);
+
+                std::string* match_local_endpoint_property = PropertyPolicyHelper::find_property(
+                        writer->getAttributes().properties, "fastdds.match_local_endpoints");
+                if (nullptr != match_local_endpoint_property && *match_local_endpoint_property == "true")
+                {
+                    wpd->match_local_endpoints(true);
+                }
+
 #if HAVE_SECURITY
                 if (mp_RTPSParticipant->is_secure())
                 {
