@@ -270,6 +270,22 @@ public:
         return m_typeMaxSerialized;
     }
 
+    RTPS_DllAPI void match_local_endpoints(
+            bool match_local_endpoints)
+    {
+        match_local_endpoints_ = match_local_endpoints;
+    }
+
+    RTPS_DllAPI bool match_local_endpoints() const
+    {
+        return match_local_endpoints_;
+    }
+
+    RTPS_DllAPI bool& match_local_endpoints()
+    {
+        return match_local_endpoints_;
+    }
+
     RTPS_DllAPI void topicKind(
             TopicKind_t topicKind)
     {
@@ -478,6 +494,9 @@ private:
 
     //!
     ParameterPropertyList_t m_properties;
+
+    //! Ignore local endpoints flag
+    bool match_local_endpoints_;
 };
 
 } /* namespace rtps */

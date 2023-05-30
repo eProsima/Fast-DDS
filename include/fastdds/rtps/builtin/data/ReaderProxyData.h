@@ -252,6 +252,22 @@ public:
         return content_filter_;
     }
 
+    RTPS_DllAPI void match_local_endpoints(
+            bool match_local_endpoints)
+    {
+        match_local_endpoints_ = match_local_endpoints;
+    }
+    
+    RTPS_DllAPI bool match_local_endpoints() const
+    {
+        return match_local_endpoints_;
+    }
+
+    RTPS_DllAPI bool& match_local_endpoints()
+    {
+        return match_local_endpoints_;
+    }
+
     RTPS_DllAPI void isAlive(
             bool isAlive)
     {
@@ -485,6 +501,8 @@ private:
     ParameterPropertyList_t m_properties;
     //!Information on the content filter applied by the reader.
     fastdds::rtps::ContentFilterProperty content_filter_;
+    //! Ignore local endpoints flag
+    bool match_local_endpoints_ = false;
 };
 
 } // namespace rtps
