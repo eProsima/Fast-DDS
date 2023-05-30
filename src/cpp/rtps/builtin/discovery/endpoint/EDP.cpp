@@ -162,9 +162,9 @@ bool EDP::newLocalReaderProxyData(
 
                 std::string* match_local_endpoint_property = PropertyPolicyHelper::find_property(
                         reader->getAttributes().properties, "fastdds.match_local_endpoints");
-                if (nullptr != match_local_endpoint_property && *match_local_endpoint_property == "true")
+                if (nullptr != match_local_endpoint_property && *match_local_endpoint_property == "false")
                 {
-                    rpd->match_local_endpoints(true);
+                    rpd->match_local_endpoints(false);
                 }
 
 #if HAVE_SECURITY
@@ -298,9 +298,9 @@ bool EDP::newLocalWriterProxyData(
 
                 std::string* match_local_endpoint_property = PropertyPolicyHelper::find_property(
                         writer->getAttributes().properties, "fastdds.match_local_endpoints");
-                if (nullptr != match_local_endpoint_property && *match_local_endpoint_property == "true")
+                if (nullptr != match_local_endpoint_property && *match_local_endpoint_property == "false")
                 {
-                    wpd->match_local_endpoints(true);
+                    wpd->match_local_endpoints(false);
                 }
 
 #if HAVE_SECURITY
@@ -1062,7 +1062,10 @@ bool EDP::pairingReader(
         const GUID_t& participant_guid,
         const ReaderProxyData& rdata)
 {
-    (void)participant_guid;
+    if (participant_guid.guidPrefix == rdata.guid().guidPrefix && !rdata.match_local_endpoints())
+    {
+        return true;
+    }
 
     logInfo(RTPS_EDP, rdata.guid() << " in topic: \"" << rdata.topicName() << "\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
@@ -1149,7 +1152,10 @@ bool EDP::pairingWriter(
         const GUID_t& participant_guid,
         const WriterProxyData& wdata)
 {
-    (void)participant_guid;
+    if (participant_guid.guidPrefix == wdata.guid().guidPrefix && !wdata.match_local_endpoints())
+    {
+        return true;
+    }
 
     logInfo(RTPS_EDP, W->getGuid() << " in topic: \"" << wdata.topicName() << "\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
@@ -1239,7 +1245,10 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
         const GUID_t& participant_guid,
         ReaderProxyData* rdata)
 {
-    (void)participant_guid;
+    if (participant_guid.guidPrefix == rdata->guid().guidPrefix && !rdata->match_local_endpoints())
+    {
+        return true;
+    }
 
     logInfo(RTPS_EDP, rdata->guid() << " in topic: \"" << rdata->topicName() << "\"");
 
@@ -1445,7 +1454,10 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
         const GUID_t& participant_guid,
         WriterProxyData* wdata)
 {
-    (void)participant_guid;
+    if (participant_guid.guidPrefix == wdata->guid().guidPrefix && !wdata->match_local_endpoints())
+    {
+        return true;
+    }
 
     logInfo(RTPS_EDP, wdata->guid() << " in topic: \"" << wdata->topicName() << "\"");
 
