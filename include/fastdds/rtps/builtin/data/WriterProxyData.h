@@ -496,7 +496,7 @@ private:
     ParameterPropertyList_t m_properties;
 
     //! Ignore local endpoints flag
-    bool match_local_endpoints_;
+    bool match_local_endpoints_ = true;
 };
 
 } /* namespace rtps */

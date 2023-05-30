@@ -502,7 +502,7 @@ private:
     //!Information on the content filter applied by the reader.
     fastdds::rtps::ContentFilterProperty content_filter_;
     //! Ignore local endpoints flag
-    bool match_local_endpoints_ = false;
+    bool match_local_endpoints_ = true;
 };
 
 } // namespace rtps
