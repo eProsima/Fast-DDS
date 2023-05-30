@@ -180,7 +180,11 @@ private:
         else
         {
             *was_lock_created = true;
+
+            mode_t old_mask;
+            old_mask = umask(000);
             fd = open(file_path.c_str(), O_CREAT | O_RDONLY, 0666);
+            umask(old_mask);
         }
 
         if (fd == -1)
