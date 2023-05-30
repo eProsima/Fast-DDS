@@ -108,15 +108,16 @@ bool DynamicPubSubType::deserialize(
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
             eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
-                                              // Deserialize encapsulation.
-    deser.read_encapsulation();
-    payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     try
     {
-        ((DynamicData*)data)->deserialize(deser); //Deserialize the object:
+        // Deserialize encapsulation.
+        deser.read_encapsulation();
+        payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+        //Deserialize the object:
+        ((DynamicData*)data)->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -184,14 +185,13 @@ bool DynamicPubSubType::serialize(
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
-
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         ((DynamicData*)data)->serialize(ser); // Serialize the object:
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
