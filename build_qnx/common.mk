@@ -58,7 +58,7 @@ FAST-DDS_CMAKE_ARGS = $(CMAKE_ARGS) \
                      -DQNX_INSTALL_ROOT=$(FAST-DDS_INSTALL_ROOT) \
                      -DSECURITY=ON \
                      -DCOMPILE_EXAMPLES=OFF \
-                     -DEPROSIMA_BUILD_TESTS=OFF
+                     -DEPROSIMA_BUILD_TESTS=ON
 
 CONFIGURE_ASIO = $(ASIO_ROOT)/configure --exec-prefix $(FAST-DDS_INSTALL_ROOT)/$(CPUVARDIR) --prefix $(FAST-DDS_INSTALL_ROOT)
 
@@ -106,4 +106,6 @@ clean iclean spotless:
 	@cd $(ASIO_ROOT) && make clean
 	@rm -rf build
 
+test:
+	@echo Test.
 endif
