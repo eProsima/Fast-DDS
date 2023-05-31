@@ -25,6 +25,10 @@
 #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 
 #include <thread>
 
@@ -71,29 +75,35 @@ bool HelloWorldPublisher::init()
     }
 
     // CREATE THE WRITER
-    writer_ = publisher_->create_datawriter(topic_, DATAWRITER_QOS_DEFAULT, &listener_);
+    writer_ = publisher_->create_datawriter(topic_, publisher_->get_default_datawriter_qos(), &listener_);
 
     if (writer_ == nullptr)
     {
         return false;
     }
+
+    //CREATE THE SUBSCRIBER
+    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
+
+    if (subscriber_ == nullptr)
+    {
+        return false;
+    }
+    
+    // CREATE THE READER
+    reader_ = subscriber_->create_datareader(topic_, subscriber_->get_default_datareader_qos(), &sub_listener_);
+
+    if (reader_ == nullptr)
+    {
+        return false;
+    }
+
     return true;
 }
 
 HelloWorldPublisher::~HelloWorldPublisher()
 {
-    if (writer_ != nullptr)
-    {
-        publisher_->delete_datawriter(writer_);
-    }
-    if (publisher_ != nullptr)
-    {
-        participant_->delete_publisher(publisher_);
-    }
-    if (topic_ != nullptr)
-    {
-        participant_->delete_topic(topic_);
-    }
+    participant_->delete_contained_entities();
     DomainParticipantFactory::get_instance()->delete_participant(participant_);
 }
 
@@ -149,6 +159,42 @@ void HelloWorldPublisher::runThread(
                           << " SENT" << std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
+        }
+    }
+}
+
+void HelloWorldPublisher::SubListener::on_subscription_matched(
+        DataReader*,
+        const SubscriptionMatchedStatus& info)
+{
+    if (info.current_count_change == 1)
+    {
+        matched_ = info.total_count;
+        std::cout << "Subscriber matched." << std::endl;
+    }
+    else if (info.current_count_change == -1)
+    {
+        matched_ = info.total_count;
+        std::cout << "Subscriber unmatched." << std::endl;
+    }
+    else
+    {
+        std::cout << info.current_count_change
+                  << " is not a valid value for SubscriptionMatchedStatus current count change" << std::endl;
+    }
+}
+
+void HelloWorldPublisher::SubListener::on_data_available(
+        DataReader* reader)
+{
+    SampleInfo info;
+    if (reader->take_next_sample(&hello_, &info) == ReturnCode_t::RETCODE_OK)
+    {
+        if (info.instance_state == ALIVE_INSTANCE_STATE)
+        {
+            samples_++;
+            // Print your structure data here.
+            std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
         }
     }
 }
