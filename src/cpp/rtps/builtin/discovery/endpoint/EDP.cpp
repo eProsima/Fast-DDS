@@ -1257,7 +1257,8 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                 auto temp_writer_proxy_data = get_temporary_writer_proxies_pool().get();
                 GUID_t writerGUID = w.getGuid();
 
-                if (mp_PDP->lookupWriterProxyData(writerGUID, *temp_writer_proxy_data))
+                if (mp_PDP->lookupWriterProxyData(writerGUID, *temp_writer_proxy_data) &&
+                        !(temp_writer_proxy_data.get()->match_local_endpoints()))
                 {
                     MatchingFailureMask no_match_reason;
                     fastdds::dds::PolicyMask incompatible_qos;
@@ -1466,7 +1467,8 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
                 auto temp_reader_proxy_data = get_temporary_reader_proxies_pool().get();
                 GUID_t readerGUID = r.getGuid();
 
-                if (mp_PDP->lookupReaderProxyData(readerGUID, *temp_reader_proxy_data))
+                if (mp_PDP->lookupReaderProxyData(readerGUID, *temp_reader_proxy_data) &&
+                        !(temp_reader_proxy_data.get()->match_local_endpoints()))
                 {
                     MatchingFailureMask no_match_reason;
                     fastdds::dds::PolicyMask incompatible_qos;
