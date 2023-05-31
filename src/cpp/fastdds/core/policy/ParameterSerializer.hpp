@@ -21,6 +21,7 @@
 #define FASTDDS_CORE_POLICY__PARAMETERSERIALIZER_HPP_
 
 #include "ParameterList.hpp"
+#include "fastdds/dds/log/Log.hpp"
 
 #include <fastdds/rtps/builtin/data/ContentFilterProperty.hpp>
 #include <fastdds/rtps/common/CDRMessage_t.h>
@@ -869,7 +870,7 @@ public:
                 valid = fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &num_parameters);
                 if (valid)
                 {
-                    valid = (num_parameters < 100) && (num_parameters < parameter.expression_parameters.max_size());
+                    valid = (num_parameters <= 100) && (num_parameters <= parameter.expression_parameters.max_size());
                 }
                 if (valid)
                 {
