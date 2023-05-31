@@ -86,6 +86,7 @@ WriterProxyData::WriterProxyData(
     , m_type(nullptr)
     , m_type_information(nullptr)
     , m_properties(writerInfo.m_properties)
+    , match_local_endpoints_(writerInfo.match_local_endpoints_)
 {
     if (writerInfo.m_type_id)
     {
@@ -133,6 +134,7 @@ WriterProxyData& WriterProxyData::operator =(
     persistence_guid_ = writerInfo.persistence_guid_;
     m_qos.setQos(writerInfo.m_qos, true);
     m_properties = writerInfo.m_properties;
+    match_local_endpoints_ = writerInfo.match_local_endpoints_;
 
     if (writerInfo.m_type_id)
     {
@@ -1041,6 +1043,7 @@ void WriterProxyData::clear()
     persistence_guid_ = c_Guid_Unknown;
     m_properties.clear();
     m_properties.length = 0;
+    match_local_endpoints_ = true;
 
     if (m_type_id)
     {
@@ -1071,6 +1074,7 @@ void WriterProxyData::copy(
     m_topicKind = wdata->m_topicKind;
     persistence_guid_ = wdata->persistence_guid_;
     m_properties = wdata->m_properties;
+    match_local_endpoints_ = wdata->match_local_endpoints_;
 
     if (wdata->m_type_id)
     {

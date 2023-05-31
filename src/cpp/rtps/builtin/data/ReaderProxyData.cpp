@@ -102,6 +102,7 @@ ReaderProxyData::ReaderProxyData(
     , m_type_information(nullptr)
     , m_properties(readerInfo.m_properties)
     , content_filter_(readerInfo.content_filter_)
+    , match_local_endpoints_(readerInfo.match_local_endpoints_)
 {
     if (readerInfo.m_type_id)
     {
@@ -142,6 +143,7 @@ ReaderProxyData& ReaderProxyData::operator =(
     m_qos.setQos(readerInfo.m_qos, true);
     m_properties = readerInfo.m_properties;
     content_filter_ = readerInfo.content_filter_;
+    match_local_endpoints_ = readerInfo.match_local_endpoints_;
 
     if (readerInfo.m_type_id)
     {
@@ -1068,6 +1070,7 @@ void ReaderProxyData::clear()
     content_filter_.related_topic_name = "";
     content_filter_.filter_expression = "";
     content_filter_.expression_parameters.clear();
+    match_local_endpoints_ = true;
 
     if (m_type_id)
     {
@@ -1126,6 +1129,7 @@ void ReaderProxyData::copy(
     m_topicKind = rdata->m_topicKind;
     m_properties = rdata->m_properties;
     content_filter_ = rdata->content_filter_;
+    match_local_endpoints_ = rdata->match_local_endpoints_;
 
     if (rdata->m_type_id)
     {
