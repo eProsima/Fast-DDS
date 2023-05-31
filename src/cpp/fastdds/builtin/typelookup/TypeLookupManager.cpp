@@ -567,7 +567,13 @@ bool TypeLookupManager::send_request(
         SerializedPayload_t payload;
         payload.max_size = change->serializedPayload.max_size - 4;
         payload.data = change->serializedPayload.data + 4;
-        if (valid && request_type_.serialize(&req, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION))
+
+        bool serialize_ret = request_type_.serialize(&req, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+        if (!serialize_ret)
+        {
+            payload.data = nullptr;
+        }
+        else if (valid)
         {
             change->serializedPayload.length += payload.length;
             change->serializedPayload.pos += payload.pos;
@@ -610,7 +616,13 @@ bool TypeLookupManager::send_reply(
         SerializedPayload_t payload;
         payload.max_size = change->serializedPayload.max_size - 4;
         payload.data = change->serializedPayload.data + 4;
-        if (valid && reply_type_.serialize(&rep, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION))
+
+        bool serialize_ret = reply_type_.serialize(&rep, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+        if (!serialize_ret)
+        {
+            payload.data = nullptr;
+        }
+        else if (valid)
         {
             change->serializedPayload.length += payload.length;
             change->serializedPayload.pos += payload.pos;
@@ -618,7 +630,7 @@ bool TypeLookupManager::send_reply(
             return builtin_reply_writer_history_->add_change(change);
         }
     }
-    builtin_request_writer_history_->remove_change(change);
+    builtin_reply_writer_history_->remove_change(change);
     return false;
 }
 
