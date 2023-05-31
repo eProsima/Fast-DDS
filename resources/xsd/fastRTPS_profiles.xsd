@@ -1127,7 +1127,6 @@
         ├ lifespan                    [0~1],
         ├ liveliness                  [0~1],
         ├ ownership                   [0~1],
-        ├ ownershipStrength           [0~1],
         ├ partition                   [0~1],
         ├ presentation                [0~1] NOT SUPPORTED YET: COMMENTED,
         ├ reliability                 [0~1],
@@ -1148,7 +1147,6 @@
             <xs:element name="lifespan" type="lifespanQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="liveliness" type="livelinessQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="ownership" type="ownershipQosPolicyType" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="ownershipStrength" type="ownershipStrengthQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="partition" type="partitionQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="presentation" type="presentationQosPolicyType" minOccurs="0" maxOccurs="1"/>
             <xs:element name="reliability" type="reliabilityQosPolicyType" minOccurs="0" maxOccurs="1"/>
