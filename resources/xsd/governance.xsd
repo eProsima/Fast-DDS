@@ -78,7 +78,7 @@
                 type="xs:boolean" />
             <xs:element name="enable_read_access_control"
                 type="xs:boolean" />
-            <xs:element name="enable_write_access_control"
+            <x s:element name="enable_write_access_control"
                 type="xs:boolean" />
             <xs:element name="metadata_protection_kind"
                 type="ProtectionKind" />
