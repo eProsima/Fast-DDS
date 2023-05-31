@@ -667,7 +667,7 @@ bool TypeLookupManager::send_reply(
             return builtin_reply_writer_history_->add_change(change);
         }
     }
-    builtin_request_writer_history_->remove_change(change);
+    builtin_reply_writer_history_->remove_change(change);
     return false;
 }
 
