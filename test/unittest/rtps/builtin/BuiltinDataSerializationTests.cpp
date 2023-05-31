@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "fastdds/dds/log/Log.hpp"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -1195,6 +1196,67 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_interoperability)
     ASSERT_EQ("200", out.content_filter().expression_parameters[1].to_string());
     ASSERT_EQ("100", out.content_filter().expression_parameters[2].to_string());
     ASSERT_EQ("200", out.content_filter().expression_parameters[3].to_string());
+}
+
+/*!
+ * \test Test for deserialization of messages with the maximum size of expression parameters
+ */
+TEST(BuiltinDataSerializationTests, contentfilterproperty_max_parameter_check)
+{
+    // Empty value
+    {
+        ReaderProxyData out(max_unicast_locators, max_multicast_locators);
+
+        // Perform serialization
+        CDRMessage_t msg(5000);
+        EXPECT_TRUE(fastdds::dds::ParameterList::writeEncapsulationToCDRMsg(&msg));
+        const std::string content_filtered_topic_name("CFT_TEST");
+        const std::string related_topic_name("TEST");
+        const std::string filter_class_name("MyFilterClass");
+        const std::string filter_expression("This is a custom test filter expression");
+        std::vector<std::string> expression_parameters;
+        for (int i = 0; i < 100; ++i)
+        {
+            expression_parameters.push_back("Parameter");
+        }
+
+        // Manual serialization of a ContentFilterProperty.
+        {
+            uint32_t len = manual_content_filter_cdr_serialized_size(
+                content_filtered_topic_name,
+                related_topic_name,
+                filter_class_name,
+                filter_expression,
+                expression_parameters
+                );
+            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg, fastdds::dds::PID_CONTENT_FILTER_PROPERTY));
+            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg, static_cast<uint16_t>(len - 4)));
+            // content_filtered_topic_name
+            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, content_filtered_topic_name));
+            // related_topic_name
+            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, related_topic_name));
+            // filter_class_name
+            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, filter_class_name));
+            // filter_expression
+            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, filter_expression));
+            // expression_parameters
+            // sequence length
+            uint32_t num_params = static_cast<uint32_t>(expression_parameters.size());
+            EXPECT_EQ(num_params, 100);
+            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt32(&msg, num_params));
+            // Add all parameters
+            for (const std::string& param : expression_parameters)
+            {
+                EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg, param));
+            }
+        }
+        EXPECT_TRUE(fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(&msg));
+
+        msg.pos = 0;
+        EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true));
+
+        ASSERT_EQ(100, out.content_filter().expression_parameters.size());
+    }
 }
 
 } // namespace rtps
