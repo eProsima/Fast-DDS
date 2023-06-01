@@ -295,6 +295,7 @@ set(${PROJECT_NAME}_security_source_files
     rtps/builtin/discovery/participant/DS/PDPSecurityInitiatorListener.cpp
     security/authentication/PKIDH.cpp
     security/accesscontrol/Permissions.cpp
+    security/accesscontrol/DistinguishedName.cpp
     security/cryptography/AESGCMGMAC.cpp
     security/cryptography/AESGCMGMAC_KeyExchange.cpp
     security/cryptography/AESGCMGMAC_KeyFactory.cpp
