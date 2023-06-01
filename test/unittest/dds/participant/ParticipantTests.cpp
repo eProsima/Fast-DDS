@@ -34,6 +34,7 @@
 #include <dds/topic/Topic.hpp>
 #include <fastdds/dds/builtin/topic/ParticipantBuiltinTopicData.hpp>
 #include <fastdds/dds/builtin/topic/TopicBuiltinTopicData.hpp>
+#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
@@ -3001,19 +3002,13 @@ TEST(ParticipantTests, RegisterDynamicTypeToFactoriesNotTypeIdentifier)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
-/*
- * This test create a sequence of TypeIdentifiers to call the get_types() DomainParticipant function. It should return
- * the TypeObjects associated with the TypeIdentifiers. Finally, the test checks that the writer guid prefix given by
- * the TypeObject is the same as the DomainPartipant guid prefix.
+/**
+ * Auxiliary method registering a dynamic data string into the participant
  */
-TEST(ParticipantTests, GetTypes)
+void register_dynamic_data_string(
+        DomainParticipant* participant,
+        fastrtps::types::TypeIdentifierSeq& types)
 {
-    // Create the participant
-    DomainParticipantQos pqos;
-    pqos.wire_protocol().builtin.typelookup_config.use_client = true;
-    DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, pqos);
-
     // Create the dynamic type builder
     DynamicTypeBuilder_ptr builder_string = DynamicTypeBuilderFactory::get_instance()->create_string_builder(100);
     // Create the dynamic type
@@ -3029,60 +3024,111 @@ TEST(ParticipantTests, GetTypes)
     type_string.register_type(participant);
 
     // Create the sequence of TypeIdentifiers
-    const fastrtps::types::TypeIdentifier* indentifier_string =
+    const fastrtps::types::TypeIdentifier* identifier_string =
             fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
         type_string.get_type_name());
 
-    fastrtps::types::TypeIdentifierSeq types;
-    types.push_back(*indentifier_string);
-
-    // Checks that the writer guid prefix given by the TypeObject is the same as the DomainPartipant guid prefix
-    ASSERT_EQ(participant->guid().guidPrefix, participant->get_types(types).writer_guid().guidPrefix);
-
-    // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    types.push_back(*identifier_string);
 }
 
 /*
- * This test create a sequence of TypeIdentifiers to call the get_type_dependencies() DomainParticipant function.
- * Finally, the test checks that the writer guid prefix given by the TypeObject is the same as the DomainPartipant
- * guid prefix.
+ * This test creates a sequence of TypeIdentifiers to call the get_types() DomainParticipant function.
+ * The DomainParticipant is configured to enable the client endpoints of the TypeLookup Service.
+ * The method returns the SampleIdentity of the sent request which guid prefix should be the same as the
+ * DomainParticipant one.
  */
-TEST(ParticipantTests, GetTypeDependencies)
+TEST(ParticipantTests, GetTypes_typelookup_config_client)
 {
     // Create the participant
     DomainParticipantQos pqos;
     pqos.wire_protocol().builtin.typelookup_config.use_client = true;
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, pqos);
-
-    // Create the dynamic type builder
-    DynamicTypeBuilder_ptr builder_string = DynamicTypeBuilderFactory::get_instance()->create_string_builder(100);
-    // Create the dynamic type
-    DynamicType_ptr dyn_type_string = builder_string->build();
-    TypeSupport type_string(new eprosima::fastrtps::types::DynamicPubSubType(dyn_type_string));
-    // Create the data instance
-    DynamicData_ptr data_string(DynamicDataFactory::get_instance()->create_data(dyn_type_string));
-    data_string->set_string_value("Dynamic String");
-
-    // Register the type
-    type_string->auto_fill_type_information(true);
-    type_string->auto_fill_type_object(true);
-    type_string.register_type(participant);
-
-    // Create the sequence of TypeIdentifiers
-    const fastrtps::types::TypeIdentifier* indentifier_string =
-            fastrtps::types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
-        type_string.get_type_name());
+    ASSERT_NE(nullptr, participant);
 
     fastrtps::types::TypeIdentifierSeq types;
-    types.push_back(*indentifier_string);
+    register_dynamic_data_string(participant, types);
 
     // Checks that the writer guid prefix given by the TypeObject is the same as the DomainPartipant guid prefix
-    ASSERT_EQ(participant->guid().guidPrefix, participant->get_type_dependencies(types).writer_guid().guidPrefix);
+    EXPECT_EQ(participant->guid().guidPrefix, participant->get_types(types).writer_guid().guidPrefix);
 
     // Remove the participant
-    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+    EXPECT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test creates a sequence of TypeIdentifiers to call the get_types() DomainParticipant function.
+ * The DomainParticipant is configured to enable the server endpoints of the TypeLookup Service.
+ * The method returns the SampleIdentity of the sent request which guid prefix should be the same as the
+ * DomainParticipant one.
+ */
+TEST(ParticipantTests, GetTypes_typelookup_config_server)
+{
+    // Create the participant
+    DomainParticipantQos pqos;
+    pqos.wire_protocol().builtin.typelookup_config.use_server = true;
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    ASSERT_NE(nullptr, participant);
+
+    fastrtps::types::TypeIdentifierSeq types;
+    register_dynamic_data_string(participant, types);
+
+    // Checks that the writer guid prefix given by the TypeObject is the same as the DomainPartipant guid prefix
+    EXPECT_EQ(builtin::INVALID_SAMPLE_IDENTITY, participant->get_types(types));
+
+    // Remove the participant
+    EXPECT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test creates a sequence of TypeIdentifiers to call the get_type_dependencies() DomainParticipant function.
+ * The DomainParticipant is configured to enable the client endpoints of the TypeLookup Service.
+ * The method returns the SampleIdentity of the sent request which guid prefix should be the same as the
+ * DomainParticipant one.
+ */
+TEST(ParticipantTests, GetTypeDependencies_typelookup_config_client)
+{
+    // Create the participant
+    DomainParticipantQos pqos;
+    pqos.wire_protocol().builtin.typelookup_config.use_client = true;
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    ASSERT_NE(nullptr, participant);
+
+    fastrtps::types::TypeIdentifierSeq types;
+    register_dynamic_data_string(participant, types);
+
+    // Checks that the writer guid prefix given by the TypeObject is the same as the DomainPartipant guid prefix
+    EXPECT_EQ(participant->guid().guidPrefix, participant->get_type_dependencies(types).writer_guid().guidPrefix);
+
+    // Remove the participant
+    EXPECT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
+/*
+ * This test creates a sequence of TypeIdentifiers to call the get_type_dependencies() DomainParticipant function.
+ * The DomainParticipant is configured to enable the server endpoints of the TypeLookup Service.
+ * The method returns the SampleIdentity of the sent request which guid prefix should be the same as the
+ * DomainParticipant one.
+ */
+TEST(ParticipantTests, GetTypeDependencies_typelookup_config_server)
+{
+    // Create the participant
+    DomainParticipantQos pqos;
+    pqos.wire_protocol().builtin.typelookup_config.use_server = true;
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    ASSERT_NE(nullptr, participant);
+
+    fastrtps::types::TypeIdentifierSeq types;
+    register_dynamic_data_string(participant, types);
+
+    // Checks that the writer guid prefix given by the TypeObject is the same as the DomainPartipant guid prefix
+    EXPECT_EQ(builtin::INVALID_SAMPLE_IDENTITY, participant->get_type_dependencies(types));
+
+    // Remove the participant
+    EXPECT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
 /*
