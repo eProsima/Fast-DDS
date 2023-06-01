@@ -833,18 +833,26 @@ public:
      * PublicationBuiltinTopicData or SubscriptionBuiltinTopicData, it may request the additional type
      * dependencies by invoking the getTypeDependencies operation.
      *
+     * This method sends a request through the TypeLookup Service with the sequence of TypeIdentifiers for which the
+     * DomainParticipant wants to get the dependencies, returning the SampleIdentity of the sent request.
+     * It does not wait to receive the reply with the related TypeObjects.
+     *
      * @param in TypeIdentifier sequence
-     * @return SampleIdentity
+     * @return SampleIdentity of the sent request.
      */
     RTPS_DllAPI fastrtps::rtps::SampleIdentity get_type_dependencies(
             const fastrtps::types::TypeIdentifierSeq& in) const;
 
     /**
      * A DomainParticipant may invoke the operation getTypes to retrieve the TypeObjects associated with a
-     * list of TypeIdentifiers.
+     * list of TypeIdentifiers: XTYPES v1.3 clause 7.6.3.3.4.2
+     *
+     * This method sends a request through the TypeLookup Service with the TypeIdentifiers returning the SampleIdentity
+     * of the sent request.
+     * It does not wait to receive the reply with the related TypeObjects.
      *
      * @param in TypeIdentifier sequence
-     * @return SampleIdentity
+     * @return SampleIdentity of the sent request
      */
     RTPS_DllAPI fastrtps::rtps::SampleIdentity get_types(
             const fastrtps::types::TypeIdentifierSeq& in) const;
