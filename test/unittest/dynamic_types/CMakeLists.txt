@@ -104,6 +104,27 @@ set(DYNAMIC_TYPES_4_2_TEST_SOURCE
     ${DYNAMIC_TYPES_SOURCE}
     )
 
+set(TYPELOOKUP_SERVICE_TEST_SOURCE
+    TypeLookupServiceTests.cpp
+    )
+
+# Previous to include mock directory: test proper TypeLookupManager
+add_executable(TypeLookupServiceTests ${TYPELOOKUP_SERVICE_TEST_SOURCE})
+target_compile_definitions(TypeLookupServiceTests PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(TypeLookupServiceTests PRIVATE
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp
+    )
+target_link_libraries(TypeLookupServiceTests GTest::gtest
+    $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+    $<$<BOOL:${WIN32}>:ws2_32>
+    fastrtps
+    )
+add_gtest(TypeLookupServiceTests SOURCES ${TYPELOOKUP_SERVICE_TEST_SOURCE})
+
 include_directories(mock/)
 
 add_executable(DynamicTypesTests ${DYNAMIC_TYPES_TEST_SOURCE})
