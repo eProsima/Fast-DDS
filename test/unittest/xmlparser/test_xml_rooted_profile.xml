@@ -105,6 +105,10 @@
                             </udpv4>
                         </locator>
                     </initialPeersList>
+                    <typelookup_config>
+                        <use_client>true</use_client>
+                        <use_server>true</use_server>
+                    </typelookup_config>
                 </builtin>
                 <port>
                     <portBase>12</portBase>

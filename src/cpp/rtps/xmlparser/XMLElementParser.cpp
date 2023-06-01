@@ -413,6 +413,51 @@ XMLP_ret XMLParser::getXMLDiscoverySettings(
 
 }
 
+XMLP_ret XMLParser::getXMLTypeLookupSettings(
+        tinyxml2::XMLElement* elem,
+        rtps::TypeLookupSettings& settings,
+        uint8_t ident)
+{
+    /*
+       <xs:complexType name="typelookupSettingsType">
+        <xs:all minOccurs="0">
+          <xs:element name="use_client" type="boolType" minOccurs="0"/>
+          <xs:element name="use_server" type="boolType" minOccurs="0"/>
+        </xs:all>
+       </xs:complexType>
+     */
+
+    tinyxml2::XMLElement* p_aux0 = nullptr;
+    const char* name = nullptr;
+    for (p_aux0 = elem->FirstChildElement(); p_aux0 != NULL; p_aux0 = p_aux0->NextSiblingElement())
+    {
+        name = p_aux0->Name();
+        if (strcmp(name, TYPELOOKUP_USE_SERVER) == 0)
+        {
+            //
+            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &settings.use_server, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, TYPELOOKUP_USE_CLIENT) == 0)
+        {
+            //
+            if (XMLP_ret::XML_OK != getXMLBool(p_aux0, &settings.use_client, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Invalid element found into 'typelookupSettingsType'. Name: " << name);
+            return XMLP_ret::XML_ERROR;
+        }
+    }
+
+    return XMLP_ret::XML_OK;
+}
+
 XMLP_ret XMLParser::getXMLBuiltinAttributes(
         tinyxml2::XMLElement* elem,
         BuiltinAttributes& builtin,
@@ -453,6 +498,14 @@ XMLP_ret XMLParser::getXMLBuiltinAttributes(
         {
             // discovery_config - DiscoverySettings
             if (XMLP_ret::XML_OK != getXMLDiscoverySettings(p_aux0, builtin.discovery_config, ident))
+            {
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+        else if (strcmp(name, TYPELOOKUP_CONFIG) == 0)
+        {
+            // typelookup_config - boolType
+            if (XMLP_ret::XML_OK != getXMLTypeLookupSettings(p_aux0, builtin.typelookup_config, ident))
             {
                 return XMLP_ret::XML_ERROR;
             }
