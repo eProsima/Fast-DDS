@@ -106,6 +106,10 @@ set(DYNAMIC_TYPES_4_2_TEST_SOURCE
 
 set(TYPELOOKUP_SERVICE_TEST_SOURCE
     TypeLookupServiceTests.cpp
+    idl/Test.cxx
+    idl/TestPubSubTypes.cxx
+    idl/TestTypeObject.cxx
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     )
 
 # Previous to include mock directory: test proper TypeLookupManager
