@@ -2166,6 +2166,35 @@ TEST(ParticipantTests, DeleteTopicInUse)
     ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
 }
 
+// Check that the constraints on maximum expression parameter size are honored
+TEST(ParticipantTests, ExpressionParameterLimits)
+{
+    DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
+
+    pqos.allocation().content_filter.expression_parameters.maximum = 1;
+
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant, "footype");
+
+    Topic* topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);
+
+    ContentFilteredTopic* content_filtered_topic = participant->create_contentfilteredtopic("contentfilteredtopic",
+                    topic, "", {"Parameter1", "Parameter2"});
+    ASSERT_EQ(content_filtered_topic, nullptr);
+
+    content_filtered_topic = participant->create_contentfilteredtopic("contentfilteredtopic",
+                    topic, "", {"Parameter1"});
+    ASSERT_NE(content_filtered_topic, nullptr);
+
+    ASSERT_EQ(participant->delete_contentfilteredtopic(content_filtered_topic), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
+
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(participant), ReturnCode_t::RETCODE_OK);
+}
+
 
 void set_listener_test (
         DomainParticipant* participant,
