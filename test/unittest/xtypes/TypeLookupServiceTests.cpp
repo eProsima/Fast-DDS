@@ -32,8 +32,8 @@
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 
-#include "idl/TestPubSubTypes.h"
-#include "idl/TestTypeObject.h"
+#include "idl/TypesPubSubTypes.h"
+#include "idl/TypesTypeObject.h"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
@@ -101,13 +101,13 @@ void get_available_builtin_endpoints(
 void register_types(
         TypeIdentifierSeq& types)
 {
-    registerTestTypes();
+    registerTypesTypes();
     TypeSupport basic_struct_type(new BasicStructPubSubType());
     const TypeIdentifier* type_id =
         TypeObjectFactory::get_instance()->get_type_identifier(basic_struct_type.get_type_name());
     types.push_back(*type_id);
-    TypeSupport complex_struct_type(new ComplexStructPubSubType());
-    type_id = TypeObjectFactory::get_instance()->get_type_identifier(complex_struct_type.get_type_name());
+    TypeSupport basic_wide_struct_type(new BasicWideStructPubSubType());
+    type_id = TypeObjectFactory::get_instance()->get_type_identifier(basic_wide_struct_type.get_type_name());
     types.push_back(*type_id);
 }
 
