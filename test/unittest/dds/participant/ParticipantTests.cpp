@@ -2189,6 +2189,10 @@ TEST(ParticipantTests, ExpressionParameterLimits)
                     topic, "", {"Parameter1"});
     ASSERT_NE(content_filtered_topic, nullptr);
 
+    ASSERT_EQ(fastrtps::types::ReturnCode_t::RETCODE_BAD_PARAMETER, content_filtered_topic->set_expression_parameters(
+                {"Parameter1",
+                 "Parameter2"}));
+
     ASSERT_EQ(participant->delete_contentfilteredtopic(content_filtered_topic), ReturnCode_t::RETCODE_OK);
     ASSERT_EQ(participant->delete_topic(topic), ReturnCode_t::RETCODE_OK);
 
