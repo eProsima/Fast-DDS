@@ -36,7 +36,7 @@ int main(
 
     std::cout << "Processing IDL string:" << std::endl;
     std::string idl_spec =
-        R"(
+            R"(
         struct InnerType
         {
             uint32 im1;
@@ -46,7 +46,6 @@ int main(
     idl::Context context = idl::parse(idl_spec);
 
     std::cout << "Processing IDL file:" << std::endl;
-
     idl::Context context_file = idl::parse_file("idl/test02.idl");
 
     Log::Flush();

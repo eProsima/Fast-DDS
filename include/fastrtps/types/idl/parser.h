@@ -287,12 +287,6 @@ public:
     CharType char_translation = CHAR;
     WideCharType wchar_type = WCHAR_T;
 
-    static const Context& DEFAULT_CONTEXT()
-    {
-        static const Context context;
-        return context;
-    }
-
     // Results
     bool success = false;
 
@@ -366,7 +360,7 @@ public:
     Context parse(
             const std::string& idl_string)
     {
-        Context context = Context::DEFAULT_CONTEXT();
+        Context context;
         parse(idl_string, context);
         return context;
     }
@@ -397,7 +391,7 @@ public:
     Context parse_file(
             const std::string& idl_file)
     {
-        Context context = Context::DEFAULT_CONTEXT();
+        Context context;
         parse_file(idl_file, context);
         return context;
     }
@@ -405,7 +399,7 @@ public:
     Context parse_string(
             const std::string& idl_string)
     {
-        Context context = Context::DEFAULT_CONTEXT();
+        Context context;
         parse_string(idl_string, context);
         return context;
     }
@@ -486,9 +480,9 @@ public:
             const std::string& idl_file,
             const std::vector<std::string>& includes)
     {
-        Context ctx = Context::DEFAULT_CONTEXT();
-        ctx.include_paths = includes;
-        return ctx.preprocess_file(idl_file);
+        Context context;
+        context.include_paths = includes;
+        return context.preprocess_file(idl_file);
     }
 
 private:
