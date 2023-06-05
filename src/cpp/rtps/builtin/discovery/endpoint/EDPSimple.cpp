@@ -825,7 +825,8 @@ bool EDPSimple::removeLocalReader(
 }
 
 void EDPSimple::assignRemoteEndpoints(
-        const ParticipantProxyData& pdata)
+        const ParticipantProxyData& pdata,
+        bool assign_secure_endpoints)
 {
     EPROSIMA_LOG_INFO(RTPS_EDP, "New DPD received, adding remote endpoints to our SimpleEDP endpoints");
     const NetworkFactory& network = mp_RTPSParticipant->network_factory();
@@ -890,7 +891,7 @@ void EDPSimple::assignRemoteEndpoints(
 #if HAVE_SECURITY
     auxendp = endp;
     auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_ANNOUNCER;
-    if (auxendp != 0 && publications_secure_reader_.first != nullptr)
+    if (auxendp != 0 && publications_secure_reader_.first != nullptr && assign_secure_endpoints)
     {
         temp_writer_proxy_data->guid().entityId = sedp_builtin_publications_secure_writer;
         temp_writer_proxy_data->set_persistence_entity_id(sedp_builtin_publications_secure_writer);
@@ -906,7 +907,7 @@ void EDPSimple::assignRemoteEndpoints(
 
     auxendp = endp;
     auxendp &= DISC_BUILTIN_ENDPOINT_PUBLICATION_SECURE_DETECTOR;
-    if (auxendp != 0 && publications_secure_writer_.first != nullptr)
+    if (auxendp != 0 && publications_secure_writer_.first != nullptr && assign_secure_endpoints)
     {
         temp_reader_proxy_data->guid().entityId = sedp_builtin_publications_secure_reader;
         if (!mp_RTPSParticipant->security_manager().discovered_builtin_reader(
@@ -920,7 +921,7 @@ void EDPSimple::assignRemoteEndpoints(
 
     auxendp = endp;
     auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_ANNOUNCER;
-    if (auxendp != 0 && subscriptions_secure_reader_.first != nullptr)
+    if (auxendp != 0 && subscriptions_secure_reader_.first != nullptr && assign_secure_endpoints)
     {
         temp_writer_proxy_data->guid().entityId = sedp_builtin_subscriptions_secure_writer;
         temp_writer_proxy_data->set_persistence_entity_id(sedp_builtin_subscriptions_secure_writer);
@@ -936,7 +937,7 @@ void EDPSimple::assignRemoteEndpoints(
 
     auxendp = endp;
     auxendp &= DISC_BUILTIN_ENDPOINT_SUBSCRIPTION_SECURE_DETECTOR;
-    if (auxendp != 0 && subscriptions_secure_writer_.first != nullptr)
+    if (auxendp != 0 && subscriptions_secure_writer_.first != nullptr && assign_secure_endpoints)
     {
         EPROSIMA_LOG_INFO(RTPS_EDP, "Adding SEDP Sub Reader to my Sub Writer");
         temp_reader_proxy_data->guid().entityId = sedp_builtin_subscriptions_secure_reader;
@@ -948,7 +949,10 @@ void EDPSimple::assignRemoteEndpoints(
                     subscriptions_secure_writer_.first->getGuid());
         }
     }
+#else
+    static_cast<void>(assign_secure_endpoints);
 #endif // if HAVE_SECURITY
+
 }
 
 void EDPSimple::removeRemoteEndpoints(

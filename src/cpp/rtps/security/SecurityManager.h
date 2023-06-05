@@ -350,7 +350,8 @@ private:
         AUTHENTICATION_REQUEST_NOT_SEND,
         AUTHENTICATION_WAITING_REQUEST,
         AUTHENTICATION_WAITING_REPLY,
-        AUTHENTICATION_WAITING_FINAL
+        AUTHENTICATION_WAITING_FINAL,
+        AUTHENTICATION_NOT_AVAILABLE
     };
 
     class DiscoveredParticipantInfo
@@ -368,6 +369,7 @@ private:
                 , auth_status_(auth_status)
                 , expected_sequence_number_(0)
                 , change_sequence_number_(SequenceNumber_t::unknown())
+                , handshake_requests_sent_(0)
             {
             }
 
@@ -394,6 +396,8 @@ private:
 
             EventUniquePtr event_;
 
+            uint32_t handshake_requests_sent_;
+
         private:
 
             AuthenticationInfo(
@@ -403,6 +407,9 @@ private:
     public:
 
         typedef std::unique_ptr<AuthenticationInfo> AuthUniquePtr;
+
+        static constexpr uint32_t INITIAL_RESEND_HANDSHAKE_MILLISECS = 125;
+        static constexpr uint32_t MAX_HANDSHAKE_REQUESTS = 5;
 
         DiscoveredParticipantInfo(
                 AuthenticationStatus auth_status,
@@ -492,6 +499,20 @@ private:
                 Authentication* const auth_plugin,
                 const GUID_t& adjusted,
                 const GUID_t& original);
+
+        AuthenticationStatus get_auth_status() const
+        {
+            std::lock_guard<std::mutex> g(mtx_);
+            if (auth_.get() != nullptr)
+            {
+                return auth_->auth_status_;
+            }
+            else
+            {
+                return AUTHENTICATION_NOT_AVAILABLE;
+            }
+
+        }
 
     private:
 
@@ -737,6 +758,16 @@ private:
 
     void resend_handshake_message_token(
             const GUID_t& remote_participant_key) const;
+
+    /**
+     * Determines de action to do when validation process fails
+     * @param participant_data ParticipantProxyData& exchange partner
+     * @param exception Exception to generate (if any)
+     * @return true if this participant should be considered as authenticated
+     */
+    void on_validation_failed(
+            const ParticipantProxyData& participant_data,
+            const SecurityException& exception) const;
 
     RTPSParticipantImpl* participant_;
     StatelessWriter* participant_stateless_message_writer_;
