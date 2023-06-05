@@ -68,17 +68,14 @@ macro(add_gtest)
                 list(GET GTEST_TEST_NAME 1 GTEST_GROUP_NAME)
                 list(GET GTEST_TEST_NAME 3 GTEST_TEST_NAME)
 
-                set(QNX_TESTING_ROOT ${QNX_TESTING_ROOT})
-                
-                if(QNX_TESTING_ROOT)
-                    message(STATUS \"QNX testing ROOT is '${QNX_TESTING_ROOT}'\")        
-                    string(REGEX REPLACE ${CMAKE_BINARY_DIR} ${QNX_TESTING_ROOT} CURRENT_TEST_LOCATION ${CMAKE_CURRENT_BINARY_DIR})
+                if(CMAKE_CROSSCOMPILING_EMULATOR)
+                    set(TEST_PROXY_COMMAND "${CMAKE_CROSSCOMPILING_EMULATOR};${command}")
+                else()
+                    set(TEST_PROXY_COMMAND ${command})
                 endif()
 
-                set(TEST_PROXY_COMMAND "cd;${QNX_TESTING_ROOT};&&;./qnx_test_proxy.sh;-c;${CURRENT_TEST_LOCATION}")
-
                 add_test(NAME ${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}
-                    COMMAND ${TEST_PROXY_COMMAND}
+                    COMMAND ${command}
                     --gtest_filter=${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}:*/${GTEST_GROUP_NAME}.${GTEST_TEST_NAME}/*:${GTEST_GROUP_NAME}/*.${GTEST_TEST_NAME})
 
                 # decide if disable

@@ -99,6 +99,23 @@ if(EPROSIMA_BUILD_TESTS AND QNX)
       )
 endif()
 
+if(CMAKE_CROSSCOMPILING)
+# Testing when cross-compiling is handled by using proxy scripts on the host and remote servers.
+# In this block some paths matching Fast DDS CI infrastructure are provided as defaults.
+# These can be overriden by setting the CROSSCOMPILATION_TESTING_ROOT variable.
+    if(CROSSCOMPILATION_TESTING_ROOT)
+        set(TESTING_ROOT ${CROSSCOMPILATION_TESTING_ROOT})
+    else()
+        if(QNX)
+            set(TESTING_ROOT "/data/fastdds")
+        endif()
+    endif()
+    if(QNX)
+        configure_file(${PROJECT_SOURCE_DIR}/build_qnx/qnx_local_test_proxy.sh.in ${PROJECT_BINARY_DIR}/test/qnx_local_test_proxy.sh @ONLY IMMEDIATE)
+        configure_file(${PROJECT_SOURCE_DIR}/build_qnx/qnx_test_proxy.sh.in ${PROJECT_BINARY_DIR}/test/qnx_test_proxy.sh @ONLY IMMEDIATE)
+    endif()
+endif()
+
 if (ANDROID)
     option(INSTALL_ANDROID_TESTS "Install Built Tests to Device" OFF)
     if (INSTALL_ANDROID_TESTS)
