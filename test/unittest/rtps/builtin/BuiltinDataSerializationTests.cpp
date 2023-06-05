@@ -1242,7 +1242,7 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_max_parameter_check)
             // expression_parameters
             // sequence length
             uint32_t num_params = static_cast<uint32_t>(expression_parameters.size());
-            EXPECT_EQ(num_params, 100);
+            EXPECT_EQ(num_params, 100u);
             EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt32(&msg, num_params));
             // Add all parameters
             for (const std::string& param : expression_parameters)
