@@ -84,4 +84,6 @@ else ()
     endif ()
 endif ()
 
+include("${CMAKE_CURRENT_LIST_DIR}/fastddsgen.cmake")
+
 @INCLUDE_FASTDDS_TARGETS@

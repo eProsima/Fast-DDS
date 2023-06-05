@@ -560,6 +560,10 @@ install(FILES ${PROJECT_SOURCE_DIR}/resources/xsd/fastRTPS_profiles.xsd
     COMPONENT xsd
     )
 
+install(FILES ${PROJECT_SOURCE_DIR}/cmake/packaging/fastddsgen.cmake
+    DESTINATION "lib/cmake/${PROJECT_NAME}"
+)
+
 option(INSTALL_EXAMPLES "Install example" OFF)
 
 if(INSTALL_EXAMPLES)
