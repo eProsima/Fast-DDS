@@ -32,8 +32,8 @@
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
 
-#include "idl/TypesPubSubTypes.h"
-#include "idl/TypesTypeObject.h"
+#include "idl/TypeLookupServiceTypesPubSubTypes.h"
+#include "idl/TypeLookupServiceTypesTypeObject.h"
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastdds::rtps;
@@ -101,13 +101,13 @@ void get_available_builtin_endpoints(
 void register_types(
         TypeIdentifierSeq& types)
 {
-    registerTypesTypes();
-    TypeSupport basic_struct_type(new BasicStructPubSubType());
+    registerTypeLookupServiceTypesTypes();
+    TypeSupport struct_type(new InheritanceStructPubSubType());
     const TypeIdentifier* type_id =
-        TypeObjectFactory::get_instance()->get_type_identifier(basic_struct_type.get_type_name());
+        TypeObjectFactory::get_instance()->get_type_identifier(struct_type.get_type_name());
     types.push_back(*type_id);
-    TypeSupport basic_wide_struct_type(new BasicWideStructPubSubType());
-    type_id = TypeObjectFactory::get_instance()->get_type_identifier(basic_wide_struct_type.get_type_name());
+    TypeSupport another_struct_type(new AnotherInheritanceStructPubSubType());
+    type_id = TypeObjectFactory::get_instance()->get_type_identifier(another_struct_type.get_type_name());
     types.push_back(*type_id);
 }
 
@@ -227,6 +227,10 @@ TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies_request_cl
     builtin::TypeLookup_Request request;
     deserialize_request(change, request);
     EXPECT_EQ(request.header.requestId, sample_id);
+    // SampleIdentity GUID must be the builtin request writer guid
+    StatefulWriter* request_writer = typelookup_manager->get_builtin_request_writer();
+    ASSERT_NE(nullptr, request_writer);
+    EXPECT_EQ(request.header.requestId.writer_guid(), request_writer->getGuid());
     // Service instance name: XTYPES v1.3 clause 7.6.3.3.4
     std::string instance_name = "dds.builtin.TOS.";
     std::ostringstream ret;
@@ -335,6 +339,10 @@ TEST(TypeLookupServiceTests, typelookup_service_get_types_request_client)
     builtin::TypeLookup_Request request;
     deserialize_request(change, request);
     EXPECT_EQ(request.header.requestId, sample_id);
+    // SampleIdentity GUID must be the builtin request writer guid
+    StatefulWriter* request_writer = typelookup_manager->get_builtin_request_writer();
+    ASSERT_NE(nullptr, request_writer);
+    EXPECT_EQ(request.header.requestId.writer_guid(), request_writer->getGuid());
     // Service instance name: XTYPES v1.3 clause 7.6.3.3.4
     std::string instance_name = "dds.builtin.TOS.";
     std::ostringstream ret;

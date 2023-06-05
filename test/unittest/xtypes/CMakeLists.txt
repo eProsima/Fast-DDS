@@ -21,9 +21,9 @@ endif()
 
 set(TYPELOOKUP_SERVICE_TEST_SOURCE
     TypeLookupServiceTests.cpp
-    idl/Types.cxx
-    idl/TypesPubSubTypes.cxx
-    idl/TypesTypeObject.cxx
+    idl/TypeLookupServiceTypes.cxx
+    idl/TypeLookupServiceTypesPubSubTypes.cxx
+    idl/TypeLookupServiceTypesTypeObject.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     )
 
