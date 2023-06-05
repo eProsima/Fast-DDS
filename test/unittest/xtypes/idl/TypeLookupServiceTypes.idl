@@ -1,0 +1,27 @@
+struct BasicStruct
+{
+    sequence<char> message;
+};
+
+struct StructStruct
+{
+    BasicStruct basic;
+    unsigned short index;
+};
+
+struct InheritanceStruct : BasicStruct
+{
+    unsigned short another_index;
+};
+
+struct AnotherBasicStruct
+{
+    long number;
+};
+
+typedef sequence<AnotherBasicStruct> complex_sequence;
+
+struct AnotherInheritanceStruct : StructStruct
+{
+    map<string, complex_sequence> complex_map;
+};
