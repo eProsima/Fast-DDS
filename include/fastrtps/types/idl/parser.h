@@ -15,9 +15,15 @@
 #ifndef TYPES_IDL_PARSER_H_
 #define TYPES_IDL_PARSER_H_
 
-#include "grammar.h"
+#include <fastrtps/types/idl/grammar.h>
+#include <fastrtps/types/idl/module.h>
 
 #include <fastdds/dds/log/Log.hpp>
+
+#include <fastrtps/types/v1_3/DynamicTypeBuilder.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
+
+#include "pegtl.hpp"
 
 #ifdef _MSC_VER
 #   include <cstdio>
@@ -37,6 +43,7 @@
 #include <type_traits>
 #include <vector>
 #include <mutex>
+#include <unordered_set>
 
 // mimic posix pipe APIs
 #ifdef _MSC_VER
@@ -73,6 +80,8 @@ namespace eprosima {
 namespace fastrtps {
 namespace types {
 namespace idl {
+
+using namespace tao::TAO_PEGTL_NAMESPACE;
 
 class PreprocessorContext
 {
@@ -308,16 +317,22 @@ public:
     //    return get_all_types(true);
     //}
 
-    //idl::Module& module()
-    //{
-    //    if(!module_)
-    //    {
-    //        module_ = std::make_shared<idl::Module>();
-    //    }
-    //    return *module_;
-    //}
+    Module& module()
+    {
+        if (!module_)
+        {
+            module_ = std::make_shared<Module>();
+        }
+        return *module_;
+    }
 
-    inline void clear_context();
+    void clear_context()
+    {
+        if (clear)
+        {
+            module_.reset();
+        }
+    }
 
     ~Context()
     {
@@ -327,7 +342,293 @@ public:
 private:
 
     friend class Parser;
-    //std::shared_ptr<idl::Module> module_;
+    std::shared_ptr<Module> module_;
+};
+
+
+template<typename Rule>
+struct action
+{
+};
+
+template<>
+struct action<identifier>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        // Keep the identifier for super-expression use
+        state["identifier"] = in.string();
+    }
+
+};
+
+template<>
+struct action<boolean_type>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        state["type"] = "boolean";
+    }
+
+};
+
+template<>
+struct action<signed_tiny_int>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        state["type"] = "int8";
+    }
+
+};
+
+template<>
+struct action<unsigned_tiny_int>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        state["type"] = "uint8";
+    }
+
+};
+
+template<>
+struct action<octet_type>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        state["type"] = "uint8";
+    }
+
+};
+
+template<>
+struct action<signed_short_int>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        state["type"] = "int16";
+    }
+
+};
+
+template<>
+struct action<unsigned_short_int>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        state["type"] = "uint16";
+    }
+
+};
+
+template<>
+struct action<signed_long_int>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        state["type"] = "int32";
+    }
+
+};
+
+template<>
+struct action<unsigned_long_int>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        state["type"] = "uint32";
+    }
+
+};
+
+template<>
+struct action<signed_longlong_int>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        state["type"] = "int64";
+    }
+
+};
+
+template<>
+struct action<unsigned_longlong_int>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        state["type"] = "uint64";
+    }
+
+};
+
+template<>
+struct action<float_type>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        state["type"] = "float";
+    }
+
+};
+
+template<>
+struct action<double_type>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        state["type"] = "double";
+    }
+
+};
+
+template<>
+struct action<long_double_type>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        state["type"] = "long double";
+    }
+
+};
+
+template<>
+struct action<struct_forward_dcl>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        const std::string& name = state["identifier"];
+        Module& module = ctx->module();
+        if (module.has_symbol(name, false))
+        {
+            EPROSIMA_LOG_ERROR(IDLPARSER, "Struct " << name << " was already declared.");
+            throw std::runtime_error("Struct " + name + " was already declared.");
+        }
+
+        v1_3::DynamicTypeBuilder_ptr builder =
+                v1_3::DynamicTypeBuilderFactory::get_instance().create_struct_type();
+        builder->set_name(name);
+        auto struct_type = builder->build();
+        EPROSIMA_LOG_INFO(IDLPARSER, "Found forward struct declaration: " << name);
+        module.structure(std::move(const_cast<v1_3::DynamicType&>(*struct_type)));
+    }
+
+};
+
+template<>
+struct action<union_forward_dcl>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        const std::string& name = state["identifier"];
+        Module& module = ctx->module();
+        if (module.has_symbol(name, false))
+        {
+            EPROSIMA_LOG_ERROR(IDLPARSER, "Union " << name << " was already declared.");
+            throw std::runtime_error("Union " + name + " was already declared.");
+        }
+
+        v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance();
+        v1_3::DynamicTypeBuilder_cptr discriminator = factory.create_int32_type();
+        auto discriminant_type = discriminator->build();
+        v1_3::DynamicTypeBuilder_ptr builder = factory.create_union_type(*discriminant_type);
+        builder->set_name(name);
+        auto union_type = builder->build();
+        EPROSIMA_LOG_INFO(IDLPARSER, "Found forward union declaration: " << name);
+        module.union_switch(std::move(const_cast<v1_3::DynamicType&>(*union_type)));
+    }
+
+};
+
+template<>
+struct action<const_dcl>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        // TODO
+        v1_3::DynamicType_ptr type = nullptr;
+        if (state["type"] == "boolean")
+        {
+            v1_3::DynamicTypeBuilder_cptr builder =
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_bool_type();
+            type = builder->build();
+        }
+        else if (state["type"] == "int8")
+        {
+
+        }
+        const std::string& identifier = state["identifier"];
+        std::cout << identifier << std::endl;
+    }
+
 };
 
 
@@ -342,21 +643,6 @@ public:
         return instance_;
     }
 
-    //Parser()
-    //    : parser_(idl_grammar())
-    //    , context_(nullptr)
-    //{
-    //    parser_.enable_ast();
-    //    parser_.set_logger(
-    //        std::function<void(size_t line, size_t col, const std::string & msg)>(
-    //            std::bind(
-    //                &Parser::parser_log_cb_,
-    //                this,
-    //                std::placeholders::_1,
-    //                std::placeholders::_2,
-    //                std::placeholders::_3)));
-    //}
-
     Context parse(
             const std::string& idl_string)
     {
@@ -369,22 +655,14 @@ public:
             const std::string& idl_string,
             Context& context)
     {
+        memory_input<> input_mem(idl_string, "idlparser");
+        std::map<std::string, std::string> parsing_state;
+
         context_ = &context;
-        //std::shared_ptr<peg::Ast> ast;
+        tao::TAO_PEGTL_NAMESPACE::parse<document, action>(input_mem, context_, parsing_state);
+        context_->success = true;
+        EPROSIMA_LOG_INFO(IDLPARSER, "The parsing is finished.");
 
-        //if (!parser_.parse(idl_string.c_str(), ast))
-        //{
-        //    context_->success = false;
-        //    context_->log(log::LogLevel::xDEBUG, "RESULT",
-        //        "The parser found errors while parsing.");
-        //    return false;
-        //}
-
-        //ast = parser_.optimize_ast(ast);
-        //build_on_ast(ast);
-        //context_->success = true;
-        //context_->log(log::LogLevel::xDEBUG, "RESULT",
-        //    "The parser finished.");
         return true;
     }
 
@@ -409,7 +687,6 @@ public:
             Context& context)
     {
         context_ = &context;
-        //std::shared_ptr<peg::Ast> ast;
         if (context_->preprocess)
         {
             std::string file_content = context_->preprocess_file(idl_file);
@@ -444,38 +721,6 @@ public:
     //    }
     //}
 
-    //class exception : public std::runtime_error
-    //{
-    //private:
-
-    //    std::string message_;
-    //    std::shared_ptr<peg::Ast> ast_;
-
-    //public:
-
-    //    exception(
-    //        const std::string& message,
-    //        const std::shared_ptr<peg::Ast> ast)
-    //        : std::runtime_error(
-    //            std::string("Parser exception (" + (ast->path.empty() ? "<no file>" : ast->path)
-    //                + ":" + std::to_string(ast->line)
-    //                + ":" + std::to_string(ast->column) + "): " + message))
-    //        , message_(message)
-    //        , ast_(ast)
-    //    {
-    //    }
-
-    //    const std::string& message() const
-    //    {
-    //        return message_;
-    //    }
-
-    //    const peg::Ast& ast() const
-    //    {
-    //        return *ast_;
-    //    }
-    //};
-
     static std::string preprocess(
             const std::string& idl_file,
             const std::vector<std::string>& includes)
@@ -493,16 +738,6 @@ private:
     //peg::parser parser_;
     Context* context_;
 
-    //void parser_log_cb_(
-    //    size_t l,
-    //    size_t c,
-    //    const std::string& msg
-    //) const
-    //{
-    //    context_->log(log::xDEBUG, "PEGLIB_PARSER", msg + " (" + std::to_string(
-    //        l - CPP_PEGLIB_LINE_COUNT_ERROR) + ":" + std::to_string(c) + ")");
-    //}
-
     Parser()
         : context_(nullptr)
     {
@@ -516,16 +751,9 @@ private:
             const Parser&) = delete;
     Parser& operator =(
             const Parser&) = delete;
+
 };
 
-
-void Context::clear_context()
-{
-    if (clear)
-    {
-        //module_.reset();
-    }
-}
 
 } // namespace idl
 } // namespace types

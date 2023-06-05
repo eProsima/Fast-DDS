@@ -34,6 +34,15 @@ int main(
     Log::SetVerbosity(Log::Kind::Info);
     Log::SetCategoryFilter(std::regex("IDLPARSER"));
 
+    std::cout << "Processing struct forward declaration:" << std::endl;
+    std::string test00 =
+            R"(
+        struct StructDcl;
+        union UnionDcl;
+        const boolean C_BOOL = true;
+    )";
+    idl::Context context00 = idl::parse(test00);
+
     std::cout << "Processing IDL string:" << std::endl;
     std::string idl_spec =
             R"(
