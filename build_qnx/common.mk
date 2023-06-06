@@ -59,7 +59,7 @@ FAST-DDS_CMAKE_ARGS = $(CMAKE_ARGS) \
                      -DQNX_INSTALL_ROOT=$(FAST-DDS_INSTALL_ROOT) \
                      -DSECURITY=ON \
                      -DCOMPILE_EXAMPLES=OFF \
-                     -DEPROSIMA_BUILD_TESTS=ON \
+                     -DEPROSIMA_BUILD_TESTS=OFF \
 					 -DGTEST_INDIVIDUAL=ON
 
 CONFIGURE_ASIO = $(ASIO_ROOT)/configure --exec-prefix $(FAST-DDS_INSTALL_ROOT)/$(CPUVARDIR) --prefix $(FAST-DDS_INSTALL_ROOT)
@@ -110,4 +110,9 @@ clean iclean spotless:
 
 test:
 	@echo Test.
+	@ctest --test-dir build/build_fast-dds/test --timeout 60
+
+test_filter:
+	@echo Running tests with filter $(GTEST_FILTER)
+	@ctest --test-dir build/build_fast-dds/test --timeout 60 -R $(GTEST_FILTER)
 endif

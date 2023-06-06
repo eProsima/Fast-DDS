@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# QNX Testing helper script
+#
+# This script intercepts the testing command and performs path and environment substitution.
+# Once it is set up, it calls the qnx_test_proxy.sh script on the remote with the appropiate parameters.
+
+ENV_ACCUMULATOR=""
+
+if [ ! -z "${TOPIC_RANDOM_NUMBER}" ]; then
+  ENV_ACCUMULATOR="${ENV_ACCUMULATOR} -e TOPIC_RANDOM_NUMBER=${TOPIC_RANDOM_NUMBER}"
+fi
+
+if [ ! -z "${W_UNICAST_PORT_RANDOM_NUMBER}" ]; then
+  ENV_ACCUMULATOR="${ENV_ACCUMULATOR} -e W_UNICAST_PORT_RANDOM_NUMBER=${W_UNICAST_PORT_RANDOM_NUMBER}"
+fi
+
+if [ ! -z "${R_UNICAST_PORT_RANDOM_NUMBER}" ]; then
+  ENV_ACCUMULATOR="${ENV_ACCUMULATOR} -e R_UNICAST_PORT_RANDOM_NUMBER=${R_UNICAST_PORT_RANDOM_NUMBER}"
+fi
+
+if [ ! -z "${MULTICAST_PORT_RANDOM_NUMBER}" ]; then
+  ENV_ACCUMULATOR="${ENV_ACCUMULATOR} -e MULTICAST_PORT_RANDOM_NUMBER=${MULTICAST_PORT_RANDOM_NUMBER}"
+fi
+
+REMOTE_TEST_ROOT="/data/fastdds/test"
+
+LOCAL_TEST_ROOT=@CMAKE_BINARY_DIR@/test
+
+
+TEST_COMMAND=${1}
+CORRECTED_TEST_COMMAND=${TEST_COMMAND/$LOCAL_TEST_ROOT/$REMOTE_TEST_ROOT}
+
+ENV_ACCUMULATOR="${ENV_ACCUMULATOR} -e CERTS_PATH=${REMOTE_TEST_ROOT}/certs"
+
+pushd /home/user/vm_1
+REMOTE_IP=$(mkqnximage --getip)
+popd
+
+SSH_COMMAND="sshpass -p 'root' ssh -o "StrictHostKeyChecking=no" root@$REMOTE_IP"
+
+ARG_ACCUMULATOR=""
+for i in "${@:2}"; do
+    ARG_ACCUMULATOR="${ARG_ACCUMULATOR} -a $i"
+done
+
+echo "Running $SSH_COMMAND ./qnx_test_proxy.sh -c $CORRECTED_TEST_COMMAND $ENV_ACCUMULATOR $ARG_ACCUMULATOR"
+$SSH_COMMAND ./qnx_test_proxy.sh -c $CORRECTED_TEST_COMMAND $ENV_ACCUMULATOR $ARG_ACCUMULATOR
+
+
+
+
+
