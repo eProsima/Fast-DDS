@@ -400,7 +400,7 @@ bool LatencyTestPublisher::init(
         end_time_ = std::chrono::steady_clock::now();
     }
     overhead_time_ = std::chrono::duration<double, std::micro>(end_time_ - start_time_) / 1001;
-    std::cout << "Overhead " << overhead_time_.count() << " ns" << std::endl;
+    std::cout << "Overhead " << overhead_time_.count() << " us" << std::endl;
 
     /* Create the raw_data_file and add the header */
     if (raw_data_file_ != "")
