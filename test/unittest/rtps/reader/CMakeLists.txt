@@ -62,6 +62,7 @@ set(WRITERPROXYACKNACKTESTS_SOURCE WriterProxyAcknackTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEvent.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/resources/TimedEventImpl.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     )
 
@@ -73,6 +74,7 @@ add_executable(WriterProxyAcknackTests ${WRITERPROXYACKNACKTESTS_SOURCE})
 target_compile_definitions(WriterProxyAcknackTests PRIVATE FASTRTPS_NO_LIB
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    RETURN_VALID_PARTICIPANT
     )
 target_include_directories(WriterProxyAcknackTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/reader
