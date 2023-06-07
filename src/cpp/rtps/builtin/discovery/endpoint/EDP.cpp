@@ -1062,17 +1062,16 @@ bool EDP::pairingReader(
         const GUID_t& participant_guid,
         const ReaderProxyData& rdata)
 {
-    if (participant_guid.guidPrefix == rdata.guid().guidPrefix && !rdata.match_local_endpoints())
-    {
-        return true;
-    }
-
     logInfo(RTPS_EDP, rdata.guid() << " in topic: \"" << rdata.topicName() << "\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
 
     for (ResourceLimitedVector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
             pit != mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
+        if ((*pit)->m_guid.guidPrefix == rdata.guid().guidPrefix && !rdata.match_local_endpoints())
+        {
+            continue;
+        }
         for (auto& pair : *(*pit)->m_writers)
         {
             WriterProxyData* wdatait = pair.second;
@@ -1082,7 +1081,7 @@ bool EDP::pairingReader(
             const GUID_t& reader_guid = R->getGuid();
             const GUID_t& writer_guid = wdatait->guid();
 
-            if (valid)
+            if (valid && wdatait->match_local_endpoints())
             {
 #if HAVE_SECURITY
                 if (!mp_RTPSParticipant->security_manager().discovered_writer(R->m_guid, (*pit)->m_guid,
@@ -1152,17 +1151,16 @@ bool EDP::pairingWriter(
         const GUID_t& participant_guid,
         const WriterProxyData& wdata)
 {
-    if (participant_guid.guidPrefix == wdata.guid().guidPrefix && !wdata.match_local_endpoints())
-    {
-        return true;
-    }
-
     logInfo(RTPS_EDP, W->getGuid() << " in topic: \"" << wdata.topicName() << "\"");
     std::lock_guard<std::recursive_mutex> pguard(*mp_PDP->getMutex());
 
     for (ResourceLimitedVector<ParticipantProxyData*>::const_iterator pit = mp_PDP->ParticipantProxiesBegin();
             pit != mp_PDP->ParticipantProxiesEnd(); ++pit)
     {
+        if ((*pit)->m_guid.guidPrefix == wdata.guid().guidPrefix && !wdata.match_local_endpoints())
+        {
+            continue;
+        }
         for (auto& pair : *(*pit)->m_readers)
         {
             ReaderProxyData* rdatait = pair.second;
@@ -1176,7 +1174,7 @@ bool EDP::pairingWriter(
             fastdds::dds::PolicyMask incompatible_qos;
             bool valid = valid_matching(&wdata, rdatait, no_match_reason, incompatible_qos);
 
-            if (valid)
+            if (valid && rdatait->match_local_endpoints())
             {
 #if HAVE_SECURITY
                 if (!mp_RTPSParticipant->security_manager().discovered_reader(W->getGuid(), (*pit)->m_guid,
@@ -1245,7 +1243,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
         const GUID_t& participant_guid,
         ReaderProxyData* rdata)
 {
-    if (participant_guid.guidPrefix == rdata->guid().guidPrefix && !rdata->match_local_endpoints())
+    if (mp_RTPSParticipant->getGuid().guidPrefix == rdata->guid().guidPrefix && !rdata->match_local_endpoints())
     {
         return true;
     }
@@ -1258,7 +1256,7 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                 GUID_t writerGUID = w.getGuid();
 
                 if (mp_PDP->lookupWriterProxyData(writerGUID, *temp_writer_proxy_data) &&
-                        !(temp_writer_proxy_data.get()->match_local_endpoints()))
+                    temp_writer_proxy_data.get()->match_local_endpoints())
                 {
                     MatchingFailureMask no_match_reason;
                     fastdds::dds::PolicyMask incompatible_qos;
@@ -1328,7 +1326,6 @@ bool EDP::pairing_reader_proxy_with_any_local_writer(
                 // next iteration
                 return true;
             });
-
     return true;
 }
 
@@ -1455,7 +1452,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
         const GUID_t& participant_guid,
         WriterProxyData* wdata)
 {
-    if (participant_guid.guidPrefix == wdata->guid().guidPrefix && !wdata->match_local_endpoints())
+    if (mp_RTPSParticipant->getGuid().guidPrefix == wdata->guid().guidPrefix && !wdata->match_local_endpoints())
     {
         return true;
     }
@@ -1468,7 +1465,7 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
                 GUID_t readerGUID = r.getGuid();
 
                 if (mp_PDP->lookupReaderProxyData(readerGUID, *temp_reader_proxy_data) &&
-                        !(temp_reader_proxy_data.get()->match_local_endpoints()))
+                    temp_reader_proxy_data.get()->match_local_endpoints())
                 {
                     MatchingFailureMask no_match_reason;
                     fastdds::dds::PolicyMask incompatible_qos;
@@ -1539,7 +1536,6 @@ bool EDP::pairing_writer_proxy_with_any_local_reader(
                 // keep looking
                 return true;
             });
-
     return true;
 }
 
