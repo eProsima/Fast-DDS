@@ -290,6 +290,84 @@ TEST_P(NetworkConfig, PubSubInterfaceWhitelistUnicast)
     reader.block_for_all();
 }
 
+// Regression test to check in UDP (v4) that setting the interface whitelist in one of the endpoints (writer),
+//  but not in the other, connection is established anyways
+TEST(NetworkConfig, PubSubInterfaceWhitelistPubSide)
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    std::shared_ptr<UDPTransportDescriptor> upv4_descriptor = std::make_shared<UDPv4TransportDescriptor>();
+    std::vector<IPFinder::info_IP> interfaces;
+    GetIP4s(interfaces);
+
+    // include the interfaces in the transport descriptor
+    for (const auto& interface : interfaces)
+    {
+        upv4_descriptor->interfaceWhiteList.push_back(interface.name);
+    }
+
+    // Set the transport descriptor WITH interfaces in the writer
+    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_depth(10).
+            disable_builtin_transport().
+            add_user_transport_to_pparams(upv4_descriptor).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Set the transport descriptor WITHOUT interfaces in the reader
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_depth(10).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery(std::chrono::seconds(5));
+    reader.wait_discovery(std::chrono::seconds(5));
+
+    // Check that endpoints have discovered each other
+    ASSERT_EQ(reader.get_matched(), 1);
+    ASSERT_EQ(writer.get_matched(), 1);
+}
+
+// Regression test to check in UDP (v4) that setting the interface whitelist in one of the endpoints (reader),
+//  but not in the other, connection is established anyways
+TEST(NetworkConfig, PubSubInterfaceWhitelistSubSide)
+{
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+
+    std::shared_ptr<UDPTransportDescriptor> upv4_descriptor = std::make_shared<UDPv4TransportDescriptor>();
+    std::vector<IPFinder::info_IP> interfaces;
+    GetIP4s(interfaces);
+
+    // include the interfaces in the transport descriptor
+    for (const auto& interface : interfaces)
+    {
+        upv4_descriptor->interfaceWhiteList.push_back(interface.name);
+    }
+
+    // Set the transport descriptor WITHOUT interfaces in the writer
+    writer.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_depth(10).init();
+
+    ASSERT_TRUE(writer.isInitialized());
+
+    // Set the transport descriptor WITH interfaces in the reader
+    reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_depth(10).
+            disable_builtin_transport().
+            add_user_transport_to_pparams(upv4_descriptor).init();
+
+    ASSERT_TRUE(reader.isInitialized());
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery(std::chrono::seconds(5));
+    reader.wait_discovery(std::chrono::seconds(5));
+
+    // Check that endpoints have discovered each other
+    ASSERT_EQ(reader.get_matched(), 1);
+    ASSERT_EQ(writer.get_matched(), 1);
+}
+
 TEST_P(NetworkConfig, SubGetListeningLocators)
 {
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
