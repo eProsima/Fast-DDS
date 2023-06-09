@@ -719,6 +719,47 @@ TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies)
 }
 
 // TODO: test that forces the usage of the continuation point mechanism (too many dependencies to send in one reply)
+//       Looking at the implementation, the continuation point is only enabled if there are more than 255 type
+//       dependencies (hardcoded value in TypeObjectFactory::typelookup_get_type_dependencies).
+/*
+TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies_with_continuation)
+{
+}
+*/
+
+/**
+ * Test that checks the reception of malformed getTypeDependencies requests.
+ * Cases:
+ *   1. Bad instance name
+ *   2. Service GUID in instance name does not coincide with Request Writer GUID prefix
+ *   3. Request Writer Entity ID is not the defined in the specification
+ *   4. Some of the received TypeIdentifiers is not a direct HASH
+ *   5. There is a mix between MINIMAL and COMPLETE TypeIdentifiers.
+ *   6. TODO: No SCC individual TypeIdentifier should be included.
+ */
+TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies_malformed_request_reception)
+{
+}
+
+/**
+ * Test that checks the getTypes operation.
+ */
+TEST(TypeLookupServiceTests, typelookup_service_get_types)
+{
+}
+
+/**
+ * Test that checks the reception of a malformed getTypes request.
+ * Cases:
+ *   1. Bad instance name
+ *   2. Service GUID in instance name does not coincide with Request Writer GUID prefix
+ *   3. Request Writer Entity ID is not the defined in the specification
+ *   4. Some of the received TypeIdentifiers is not a direct HASH
+ *   5. TODO: No SCC individual TypeIdentifier should be included.
+ */
+TEST(TypeLookupServiceTests, typelookup_service_get_types_malformed_request_reception)
+{
+}
 
 int main(
         int argc,
