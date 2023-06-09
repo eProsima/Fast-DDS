@@ -742,10 +742,256 @@ TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies_malformed_
 }
 
 /**
- * Test that checks the getTypes operation.
+ * Test that checks the getTypes operation receiving a request with COMPLETE TypeIdentifiers.
  */
-TEST(TypeLookupServiceTests, typelookup_service_get_types)
+TEST(TypeLookupServiceTests, typelookup_service_get_types_complete_request)
 {
+    // Create two DomainParticipants configured as client and as server
+    DomainParticipant* participant_server;
+    DomainParticipant* participant_client;
+    create_participant_typelookup_config(participant_server, false, true);
+    // Before creating the client, create listener and attach it to the Server Participant
+    ParticipantTestListener server_listener;
+    participant_server->set_listener(&server_listener);
+
+    create_participant_typelookup_config(participant_client, true, false);
+    ParticipantTestListener client_listener;
+    participant_client->set_listener(&client_listener);
+
+    server_listener.wait_discovery();
+    client_listener.wait_discovery();
+
+    std::cout << "HERE" << std::endl;
+
+    // Access Request Writer: get GUID for matching purposes
+    TypeLookupManager* typelookup_manager_client;
+    get_typelookup_manager(participant_client, typelookup_manager_client);
+    StatefulWriter* request_writer = typelookup_manager_client->get_builtin_request_writer();
+    ASSERT_NE(nullptr, request_writer);
+    GUID_t request_writer_guid = request_writer->getGuid();
+
+    // Access Request Reader
+    TypeLookupManager* typelookup_manager_service;
+    get_typelookup_manager(participant_server, typelookup_manager_service);
+    // Add custom listener to request reader to get notified about received requests
+    StatefulReader* request_reader = typelookup_manager_service->get_builtin_request_reader();
+    ASSERT_NE(nullptr, request_reader);
+    RTPSReaderListenerTest request_listener(&*typelookup_manager_service);
+    EXPECT_TRUE(request_reader->setListener(&request_listener));
+    // Access Request Reader History
+    ReaderHistory* request_reader_history = typelookup_manager_service->get_builtin_request_reader_history();
+    ASSERT_NE(nullptr, request_reader_history);
+    // Wait for matching
+    while (!request_reader->matched_writer_is_matched(request_writer_guid))
+    {
+        std::this_thread::sleep_for(std::chrono::nanoseconds(10));
+    }
+
+    // Spawn a thread to wait for sample
+    auto test = std::thread(&RTPSReaderListenerTest::wait_request, &request_listener);
+
+    // Register types
+    registerTypeLookupServiceTypesTypes();
+    TypeIdentifierSeq types;
+    types.push_back(*(TypeObjectFactory::get_instance()->get_type_identifier("InheritanceStruct", true)));
+    types.push_back(*(TypeObjectFactory::get_instance()->get_type_identifier("AnotherInheritanceStruct", true)));
+    for (auto type_id : types)
+    {
+        EXPECT_EQ(EK_COMPLETE, type_id._d());
+    }
+
+    TypeIdentifierSeq complete_type_identifiers;
+    TypeIdentifierSeq minimal_type_identifiers;
+    TypeObjectSeq complete_type_objects;
+    TypeObjectSeq minimal_type_objects;
+    get_every_type_identifier(complete_type_identifiers, minimal_type_identifiers, complete_type_objects,
+            minimal_type_objects);
+
+    // Client call getTypeDependencies operation
+    participant_client->get_types(types);
+
+    // Wait for sample reception
+    test.join();
+
+    // Wait for reply
+    // TODO: current implementation sends reply on the onNewCacheChangeAdded callback
+    //       This should be refactored so another thread is notified and takes charge of preparing and sending the
+    //       response.
+    WriterHistory* reply_writer_history = typelookup_manager_service->get_builtin_reply_writer_history();
+    ASSERT_NE(nullptr, reply_writer_history);
+    while (0 == reply_writer_history->getHistorySize())
+    {
+        std::this_thread::sleep_for(std::chrono::nanoseconds(10));
+    }
+    // Reply writer history should have one sample
+    EXPECT_EQ(1, reply_writer_history->getHistorySize());
+    CacheChange_t* change;
+    EXPECT_TRUE(reply_writer_history->get_min_change(&change));
+    ASSERT_NE(nullptr, change);
+    TypeLookup_Reply reply;
+    deserialize_reply(change, reply);
+
+    // Analyze generated reply
+    // TODO: wrong instance name
+    check_message_header(reply.header, request_writer->getGuid(), participant_server->guid());
+    // Operation discriminator
+    // TODO: wrong hash (updated in XTYPES v1.3)
+    EXPECT_EQ(reply.return_value._d(), 0x018252d3);
+    // Operation result discriminator
+    EXPECT_EQ(reply.return_value.getType()._d(), static_cast<int32_t>(ReturnCode_t::RETCODE_OK));
+    // Check TypeLookup_getTypes_Out
+    // If the request had a COMPLETE TypeIdentifiers, the types shall contain COMPLETE TypeObjects
+    // XTYPES v1.3 clause 7.6.3.3.4.2
+    EXPECT_TRUE(reply.return_value.getType().result().complete_to_minimal.empty());
+    EXPECT_EQ(types.size(), reply.return_value.getType().result().types.size());
+    EXPECT_EQ(reply.return_value.getType().result().types[0].type_identifier(), types[0]);
+    EXPECT_EQ(reply.return_value.getType().result().types[0].type_object(), complete_type_objects[2]);
+    EXPECT_EQ(reply.return_value.getType().result().types[1].type_identifier(), types[1]);
+    EXPECT_EQ(reply.return_value.getType().result().types[1].type_object(), complete_type_objects[5]);
+
+    // Reply reception cannot be checked with current implementation because the sample is removed from the history
+    // after being processed.
+
+    // Unset listeners for a clean exit
+    participant_client->set_listener(nullptr);
+    participant_server->set_listener(nullptr);
+}
+
+/**
+ * Test that checks the getTypes operation receiving a request with MINIMAL TypeIdentifiers.
+ */
+TEST(TypeLookupServiceTests, typelookup_service_get_types_minimal_request)
+{
+    // Create two DomainParticipants configured as client and as server
+    DomainParticipant* participant_server;
+    DomainParticipant* participant_client;
+    create_participant_typelookup_config(participant_server, false, true);
+    // Before creating the client, create listener and attach it to the Server Participant
+    ParticipantTestListener server_listener;
+    participant_server->set_listener(&server_listener);
+
+    create_participant_typelookup_config(participant_client, true, false);
+    ParticipantTestListener client_listener;
+    participant_client->set_listener(&client_listener);
+
+    server_listener.wait_discovery();
+    client_listener.wait_discovery();
+
+    // Access Request Writer: get GUID for matching purposes
+    TypeLookupManager* typelookup_manager_client;
+    get_typelookup_manager(participant_client, typelookup_manager_client);
+    StatefulWriter* request_writer = typelookup_manager_client->get_builtin_request_writer();
+    ASSERT_NE(nullptr, request_writer);
+    GUID_t request_writer_guid = request_writer->getGuid();
+
+    // Access Request Reader
+    TypeLookupManager* typelookup_manager_service;
+    get_typelookup_manager(participant_server, typelookup_manager_service);
+    // Add custom listener to request reader to get notified about received requests
+    StatefulReader* request_reader = typelookup_manager_service->get_builtin_request_reader();
+    ASSERT_NE(nullptr, request_reader);
+    RTPSReaderListenerTest request_listener(&*typelookup_manager_service);
+    EXPECT_TRUE(request_reader->setListener(&request_listener));
+    // Access Request Reader History
+    ReaderHistory* request_reader_history = typelookup_manager_service->get_builtin_request_reader_history();
+    ASSERT_NE(nullptr, request_reader_history);
+    // Wait for matching
+    while (!request_reader->matched_writer_is_matched(request_writer_guid))
+    {
+        std::this_thread::sleep_for(std::chrono::nanoseconds(10));
+    }
+
+    // Spawn a thread to wait for sample
+    auto test = std::thread(&RTPSReaderListenerTest::wait_request, &request_listener);
+
+    // Register types
+    TypeIdentifierSeq types;
+    register_types(types);
+    TypeIdentifierSeq complete_type_identifiers;
+    TypeIdentifierSeq minimal_type_identifiers;
+    TypeObjectSeq complete_type_objects;
+    TypeObjectSeq minimal_type_objects;
+    get_every_type_identifier(complete_type_identifiers, minimal_type_identifiers, complete_type_objects,
+            minimal_type_objects);
+
+    // Client call getTypeDependencies operation
+    participant_client->get_types(types);
+
+    // Wait for sample reception
+    test.join();
+
+    // Wait for reply
+    // TODO: current implementation sends reply on the onNewCacheChangeAdded callback
+    //       This should be refactored so another thread is notified and takes charge of preparing and sending the
+    //       response.
+    WriterHistory* reply_writer_history = typelookup_manager_service->get_builtin_reply_writer_history();
+    ASSERT_NE(nullptr, reply_writer_history);
+    while (0 == reply_writer_history->getHistorySize())
+    {
+        std::this_thread::sleep_for(std::chrono::nanoseconds(10));
+    }
+    // Reply writer history should have one sample
+    EXPECT_EQ(1, reply_writer_history->getHistorySize());
+    CacheChange_t* change;
+    EXPECT_TRUE(reply_writer_history->get_min_change(&change));
+    ASSERT_NE(nullptr, change);
+    TypeLookup_Reply reply;
+    deserialize_reply(change, reply);
+
+    // Analyze generated reply
+    // TODO: wrong instance name
+    check_message_header(reply.header, request_writer->getGuid(), participant_server->guid());
+    // Operation discriminator
+    // TODO: wrong hash (updated in XTYPES v1.3)
+    EXPECT_EQ(reply.return_value._d(), 0x018252d3);
+    // Operation result discriminator
+    EXPECT_EQ(reply.return_value.getType()._d(), static_cast<int32_t>(ReturnCode_t::RETCODE_OK));
+    // Check TypeLookup_getTypes_Out
+    // If the request had MINIMAL TypeIdentifiers the types may contain either MINIMAL or COMPLETE TypeObjects
+    // The filed complete_to_minimal shall contain the mapping from COMPLETE TypeIdentifiers to MINIMAL TypeIdentifiers
+    // for any COMPLETE TypeIdentifiers that appear within COMPLETE TypeObjects that were sent in reponse to a query for
+    // a MINIMAL TypeIdentifier.XTYPES v1.3 Clause 7.6.3.3.4.2
+    EXPECT_EQ(types.size(), reply.return_value.getType().result().types.size());
+    if (reply.return_value.getType().result().complete_to_minimal.empty())
+    {
+        // Fast DDS seems to follow this approach
+        EXPECT_EQ(reply.return_value.getType().result().types[0].type_identifier(), types[0]);
+        EXPECT_EQ(reply.return_value.getType().result().types[0].type_object(), minimal_type_objects[2]);
+        EXPECT_EQ(reply.return_value.getType().result().types[1].type_identifier(), types[1]);
+        EXPECT_EQ(reply.return_value.getType().result().types[1].type_object(), minimal_type_objects[5]);
+    }
+    else
+    {
+        EXPECT_EQ(reply.return_value.getType().result().types[0].type_identifier(), complete_type_identifiers[2]);
+        EXPECT_EQ(reply.return_value.getType().result().types[0].type_object(), complete_type_objects[2]);
+        EXPECT_EQ(reply.return_value.getType().result().types[1].type_identifier(), complete_type_identifiers[5]);
+        EXPECT_EQ(reply.return_value.getType().result().types[1].type_object(), complete_type_objects[5]);
+        // Check complete_to_minimal correct implementation
+        ASSERT_EQ(reply.return_value.getType().result().complete_to_minimal.size(), 2);
+        EXPECT_EQ(reply.return_value.getType().result().complete_to_minimal[0].type_identifier1(),
+            complete_type_identifiers[2]);
+        EXPECT_EQ(reply.return_value.getType().result().complete_to_minimal[0].type_identifier2(),
+            minimal_type_identifiers[2]);
+        EXPECT_EQ(reply.return_value.getType().result().complete_to_minimal[1].type_identifier1(),
+            complete_type_identifiers[5]);
+        EXPECT_EQ(reply.return_value.getType().result().complete_to_minimal[1].type_identifier2(),
+            minimal_type_identifiers[5]);
+    }
+
+    // TODO: If a TypeIdentifier was a SCCIdentifier, the the response shall treat the TypeObjects within the SCC
+    //       atomically. Either include all in the reply or none. XTYPES v1.3 Clause 7.6.3.3.4.2
+
+
+
+
+
+
+    // Reply reception cannot be checked with current implementation because the sample is removed from the history
+    // after being processed.
+
+    // Unset listeners for a clean exit
+    participant_client->set_listener(nullptr);
+    participant_server->set_listener(nullptr);
 }
 
 /**
