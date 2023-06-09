@@ -12,13 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <atomic>
+#include <bitset>
+#include <chrono>
+#include <condition_variable>
+#include <future>
+#include <mutex>
 #include <string>
+#include <thread>
 
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/domain/DomainParticipantListener.hpp>
 #include <fastdds/dds/domain/qos/DomainParticipantQos.hpp>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
@@ -36,10 +44,15 @@
 #include "idl/TypeLookupServiceTypesTypeObject.h"
 
 using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastdds::dds::builtin;
 using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types;
 
+/**
+ * Auxiliary class to access RTPSParticipant
+ */
 class DomainParticipantTest : public DomainParticipant
 {
 public:
@@ -48,6 +61,81 @@ public:
     {
         return impl_;
     }
+};
+
+/**
+ * Auxiliary class to implement DomainParticipant discovery callbacks
+ */
+class ParticipantTestListener : public DomainParticipantListener
+{
+public:
+
+    ParticipantTestListener()
+    {
+        matched_.store(0);
+    }
+
+    void on_participant_discovery(
+            DomainParticipant*,
+            ParticipantDiscoveryInfo&& info) override
+    {
+        if (info.status == ParticipantDiscoveryInfo::DISCOVERED_PARTICIPANT)
+        {
+            matched_++;
+        }
+        else if (info.status == ParticipantDiscoveryInfo::DROPPED_PARTICIPANT ||
+                info.status == ParticipantDiscoveryInfo::REMOVED_PARTICIPANT)
+        {
+            matched_--;
+        }
+        cv_discovery_.notify_one();
+    }
+
+    void wait_discovery()
+    {
+        std::unique_lock<std::mutex> lock(mutex_discovery_);
+        cv_discovery_.wait(lock, [&]()
+                {
+                    return matched_ > 0;
+                });
+    }
+
+private:
+
+    std::mutex mutex_discovery_;
+    std::condition_variable cv_discovery_;
+    std::atomic<unsigned int> matched_;
+
+};
+
+/**
+ * Auxiliary class to implement the RTPSReader callbacks and get notified when a request/reply is received in the
+ * service.
+ */
+class RTPSReaderListenerTest : public TypeLookupRequestListener
+{
+public:
+
+    using TypeLookupRequestListener::TypeLookupRequestListener;
+
+    void onNewCacheChangeAdded(
+            RTPSReader* reader,
+            const CacheChange_t* const change) override
+    {
+        cv_history_.notify_one();
+        TypeLookupRequestListener::onNewCacheChangeAdded(reader, change);
+    }
+
+    void wait_request()
+    {
+        std::unique_lock<std::mutex> lock(mutex_history_);
+        cv_history_.wait(lock);
+    }
+
+private:
+
+    std::mutex mutex_history_;
+    std::condition_variable cv_history_;
 
 };
 
@@ -71,7 +159,7 @@ void create_participant_typelookup_config(
 //! Given a DomainParticipant return the TypeLookup Service manager.
 void get_typelookup_manager(
         const DomainParticipant* participant,
-        builtin::TypeLookupManager*& typelookup_manager)
+        TypeLookupManager*& typelookup_manager)
 {
     const DomainParticipantTest* participant_test = static_cast<const DomainParticipantTest*>(participant);
     ASSERT_NE(nullptr, participant_test);
@@ -85,7 +173,7 @@ void get_typelookup_manager(
 
 //! Given a Typelookup Service manager return the available builtin endpoints mask
 void get_available_builtin_endpoints(
-        builtin::TypeLookupManager* typelookup_manager,
+        TypeLookupManager* typelookup_manager,
         BuiltinEndpointSet_t& available_builtin_endpoints)
 {
     BuiltinProtocols* builtin_protocols = typelookup_manager->get_builtin_protocols();
@@ -111,19 +199,115 @@ void register_types(
     types.push_back(*type_id);
 }
 
+void check_and_add_type_identifier_and_type_object(
+        const std::string& type_name,
+        TypeIdentifierSeq& type_id_sequence,
+        TypeObjectSeq& type_object_sequence,
+        bool complete)
+{
+    const TypeIdentifier* type_id = TypeObjectFactory::get_instance()->get_type_identifier(type_name, complete);
+    EXPECT_NE(nullptr, type_id);
+    EXPECT_EQ(complete ? EK_COMPLETE : EK_MINIMAL, type_id->_d());
+    type_id_sequence.push_back(*type_id);
+    const TypeObject* type_object = TypeObjectFactory::get_instance()->get_type_object(type_name, complete);
+    EXPECT_EQ(complete ? EK_COMPLETE : EK_MINIMAL, type_object->_d());
+    type_object_sequence.push_back(*type_object);
+}
+
+// Get every type identifier
+void get_every_type_identifier(
+        TypeIdentifierSeq& complete_type_ids,
+        TypeIdentifierSeq& minimal_type_ids,
+        TypeObjectSeq& complete_type_objects,
+        TypeObjectSeq& minimal_type_objects)
+{
+    // Non direct hash
+    EXPECT_EQ(nullptr, TypeObjectFactory::get_instance()->get_type_identifier("message"));
+    EXPECT_EQ(nullptr, TypeObjectFactory::get_instance()->get_type_identifier("basic"));
+    EXPECT_EQ(nullptr, TypeObjectFactory::get_instance()->get_type_identifier("index"));
+    EXPECT_EQ(nullptr, TypeObjectFactory::get_instance()->get_type_identifier("another_index"));
+    EXPECT_EQ(nullptr, TypeObjectFactory::get_instance()->get_type_identifier("number"));
+    EXPECT_EQ(nullptr, TypeObjectFactory::get_instance()->get_type_identifier("complex_map"));
+
+    // Direct hash: MINIMAL
+    check_and_add_type_identifier_and_type_object("BasicStruct", minimal_type_ids, minimal_type_objects, false);
+    check_and_add_type_identifier_and_type_object("StructStruct", minimal_type_ids, minimal_type_objects, false);
+    check_and_add_type_identifier_and_type_object("InheritanceStruct", minimal_type_ids, minimal_type_objects, false);
+    check_and_add_type_identifier_and_type_object("AnotherBasicStruct", minimal_type_ids, minimal_type_objects, false);
+    check_and_add_type_identifier_and_type_object("complex_sequence", minimal_type_ids, minimal_type_objects, false);
+    check_and_add_type_identifier_and_type_object("AnotherInheritanceStruct", minimal_type_ids, minimal_type_objects,
+            false);
+
+    // Direct hash: COMPLETE
+    check_and_add_type_identifier_and_type_object("BasicStruct", complete_type_ids, complete_type_objects, true);
+    check_and_add_type_identifier_and_type_object("StructStruct", complete_type_ids, complete_type_objects, true);
+    check_and_add_type_identifier_and_type_object("InheritanceStruct", complete_type_ids, complete_type_objects, true);
+    check_and_add_type_identifier_and_type_object("AnotherBasicStruct", complete_type_ids, complete_type_objects, true);
+    check_and_add_type_identifier_and_type_object("complex_sequence", complete_type_ids, complete_type_objects, true);
+    check_and_add_type_identifier_and_type_object("AnotherInheritanceStruct", complete_type_ids, complete_type_objects,
+            true);
+}
+
 //! Deserialize request
 void deserialize_request(
         CacheChange_t* change,
-        builtin::TypeLookup_Request& request)
+        TypeLookup_Request& request)
 {
     // Ignore first 4 bytes
     SerializedPayload_t payload;
     payload.max_size = change->serializedPayload.max_size - 4;
     payload.length = change->serializedPayload.length - 4;
     payload.data = change->serializedPayload.data + 4;
-    builtin::TypeLookup_RequestTypeSupport request_type;
+    TypeLookup_RequestTypeSupport request_type;
     EXPECT_TRUE(request_type.deserialize(&payload, &request));
     payload.data = nullptr;
+}
+
+//! Deserialize reply
+void deserialize_reply(
+        CacheChange_t* change,
+        TypeLookup_Reply& reply)
+{
+    // Ignore first 4 bytes
+    SerializedPayload_t payload;
+    payload.max_size = change->serializedPayload.max_size - 4;
+    payload.length = change->serializedPayload.length - 4;
+    payload.data = change->serializedPayload.data + 4;
+    TypeLookup_ReplyTypeSupport reply_type;
+    EXPECT_TRUE(reply_type.deserialize(&payload, &reply));
+    payload.data = nullptr;
+}
+
+//! Calculate Service instanceName
+std::string instance_name(
+        const GUID_t& participant_guid)
+{
+    std::string instance_name = "dds.builtin.TOS.";
+    std::ostringstream ret;
+    for (octet value : participant_guid.guidPrefix.value)
+    {
+        ret << std::hex << std::setfill('0') << std::setw(2) << std::nouppercase << static_cast<int>(value);
+    }
+    for (octet value : participant_guid.entityId.value)
+    {
+        ret << static_cast<int>(value);
+    }
+    return instance_name += ret.str();
+}
+
+//! Check RequestHeader
+void check_message_header(
+        const rpc::RequestHeader& header,
+        const GUID_t& request_writer_guid,
+        const GUID_t& participant_guid)
+{
+    // Sample Identity GUID must be the builtin request writer GUID
+    EXPECT_EQ(header.requestId.writer_guid(), request_writer_guid);
+    // Service instance name: XTYPES v1.3 clause 7.6.3.3.4
+    std::string instance = instance_name(participant_guid);
+    // TODO: this check fails because current implementation is including character `|` separating the guidPrefix from
+    //       the EntityId.
+    EXPECT_EQ(header.instanceName, instance);
 }
 
 /**
@@ -135,7 +319,7 @@ TEST(TypeLookupServiceTests, typelookup_service_client_endpoints_configuration)
     DomainParticipant* participant;
     create_participant_typelookup_config(participant, true, false);
     // Get TypeLookup Service Manager
-    builtin::TypeLookupManager* typelookup_manager;
+    TypeLookupManager* typelookup_manager;
     get_typelookup_manager(participant, typelookup_manager);
     // Access client endpoints
     StatefulWriter* request_writer = typelookup_manager->get_builtin_request_writer();
@@ -171,7 +355,7 @@ TEST(TypeLookupServiceTests, typelookup_service_server_endpoints_configuration)
     DomainParticipant* participant;
     create_participant_typelookup_config(participant, false, true);
     // Get TypeLookup Service Manager
-    builtin::TypeLookupManager* typelookup_manager;
+    TypeLookupManager* typelookup_manager;
     get_typelookup_manager(participant, typelookup_manager);
     // Access server endpoints
     StatefulWriter* reply_writer = typelookup_manager->get_builtin_reply_writer();
@@ -214,7 +398,7 @@ TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies_request_cl
     // Call get type dependencies operation: request is generated
     SampleIdentity sample_id = participant->get_type_dependencies(types);
     // Access request writer history
-    builtin::TypeLookupManager* typelookup_manager;
+    TypeLookupManager* typelookup_manager;
     get_typelookup_manager(participant, typelookup_manager);
     // Request writer history should have one sample: generated request
     WriterHistory* request_writer_history = typelookup_manager->get_builtin_request_writer_history();
@@ -224,28 +408,13 @@ TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies_request_cl
     EXPECT_TRUE(request_writer_history->get_min_change(&change));
     ASSERT_NE(nullptr, change);
     // Analyze request
-    builtin::TypeLookup_Request request;
+    TypeLookup_Request request;
     deserialize_request(change, request);
     EXPECT_EQ(request.header.requestId, sample_id);
-    // SampleIdentity GUID must be the builtin request writer guid
+
     StatefulWriter* request_writer = typelookup_manager->get_builtin_request_writer();
     ASSERT_NE(nullptr, request_writer);
-    EXPECT_EQ(request.header.requestId.writer_guid(), request_writer->getGuid());
-    // Service instance name: XTYPES v1.3 clause 7.6.3.3.4
-    std::string instance_name = "dds.builtin.TOS.";
-    std::ostringstream ret;
-    for (octet value : participant->guid().guidPrefix.value)
-    {
-        ret << std::hex << std::setfill('0') << std::setw(2) << std::nouppercase << static_cast<int>(value);
-    }
-    for (octet value : participant->guid().entityId.value)
-    {
-        ret << static_cast<int>(value);
-    }
-    instance_name += ret.str();
-    // TODO: this check fails because current implementation is including character `|` separating the guidPrefix from
-    //       the EntityId.
-    EXPECT_EQ(request.header.instanceName, instance_name);
+    check_message_header(request.header, request_writer->getGuid(), participant->guid());
     // Check correct discriminator
     // TODO: this check fails because the hash algorithm is updated in XTYPES v1.3 in clause 7.3.1.2.1.1
     //       Fast DDS is using the XTYPES v1.2 hash which is 0x31fbaa35
@@ -260,7 +429,7 @@ TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies_request_cl
     int_id._d() = TK_INT32;
     types.push_back(int_id);
     // TODO: This check fails because there are no sanity checks in the API implementation
-    EXPECT_EQ(builtin::INVALID_SAMPLE_IDENTITY, participant->get_type_dependencies(types));
+    EXPECT_EQ(INVALID_SAMPLE_IDENTITY, participant->get_type_dependencies(types));
 
     // The TypeIdentifiers shall be either all MINIMAL hash TypeIdentifiers or all COMPLETE hash TypeIdentifiers.
     types.pop_back();
@@ -268,7 +437,7 @@ TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies_request_cl
     complete_id._d() = EK_COMPLETE;
     types.push_back(complete_id);
     // TODO: This check fails because there are no sanity checks in the API implementation
-    EXPECT_EQ(builtin::INVALID_SAMPLE_IDENTITY, participant->get_type_dependencies(types));
+    EXPECT_EQ(INVALID_SAMPLE_IDENTITY, participant->get_type_dependencies(types));
 
     // TODO: The TypeIdentifiers shall not include identifiers for individual types in Strongly Connected Components.
     //       Instead it shall use the identifier for the whole SCC.
@@ -294,9 +463,9 @@ TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies_request_se
     // Register types
     TypeIdentifierSeq types;
     register_types(types);
-    EXPECT_EQ(builtin::INVALID_SAMPLE_IDENTITY, participant->get_type_dependencies(types));
+    EXPECT_EQ(INVALID_SAMPLE_IDENTITY, participant->get_type_dependencies(types));
     // Access TypeLookup Service server histories should be empty
-    builtin::TypeLookupManager* typelookup_manager;
+    TypeLookupManager* typelookup_manager;
     get_typelookup_manager(participant, typelookup_manager);
     ReaderHistory* request_reader_history = typelookup_manager->get_builtin_request_reader_history();
     EXPECT_NE(nullptr, request_reader_history);
@@ -326,7 +495,7 @@ TEST(TypeLookupServiceTests, typelookup_service_get_types_request_client)
     // Call get type dependencies operation: request is generated
     SampleIdentity sample_id = participant->get_types(types);
     // Access request writer history
-    builtin::TypeLookupManager* typelookup_manager;
+    TypeLookupManager* typelookup_manager;
     get_typelookup_manager(participant, typelookup_manager);
     // Request writer history should have one sample: generated request
     WriterHistory* request_writer_history = typelookup_manager->get_builtin_request_writer_history();
@@ -336,28 +505,13 @@ TEST(TypeLookupServiceTests, typelookup_service_get_types_request_client)
     EXPECT_TRUE(request_writer_history->get_min_change(&change));
     ASSERT_NE(nullptr, change);
     // Analyze request
-    builtin::TypeLookup_Request request;
+    TypeLookup_Request request;
     deserialize_request(change, request);
     EXPECT_EQ(request.header.requestId, sample_id);
-    // SampleIdentity GUID must be the builtin request writer guid
+
     StatefulWriter* request_writer = typelookup_manager->get_builtin_request_writer();
     ASSERT_NE(nullptr, request_writer);
-    EXPECT_EQ(request.header.requestId.writer_guid(), request_writer->getGuid());
-    // Service instance name: XTYPES v1.3 clause 7.6.3.3.4
-    std::string instance_name = "dds.builtin.TOS.";
-    std::ostringstream ret;
-    for (octet value : participant->guid().guidPrefix.value)
-    {
-        ret << std::hex << std::setfill('0') << std::setw(2) << std::nouppercase << static_cast<int>(value);
-    }
-    for (octet value : participant->guid().entityId.value)
-    {
-        ret << static_cast<int>(value);
-    }
-    instance_name += ret.str();
-    // TODO: this check fails because current implementation is including character `|` separating the guidPrefix from
-    //       the EntityId.
-    EXPECT_EQ(request.header.instanceName, instance_name);
+    check_message_header(request.header, request_writer->getGuid(), participant->guid());
     // Check correct discriminator
     // TODO: this check fails because the hash algorithm is updated in XTYPES v1.3 in clause 7.3.1.2.1.1
     //       Fast DDS is using the XTYPES v1.2 hash which is 0x31fbaa35
@@ -371,7 +525,7 @@ TEST(TypeLookupServiceTests, typelookup_service_get_types_request_client)
     int_id._d() = TK_INT32;
     types.push_back(int_id);
     // TODO: This check fails because there are no sanity checks in the API implementation
-    EXPECT_EQ(builtin::INVALID_SAMPLE_IDENTITY, participant->get_types(types));
+    EXPECT_EQ(INVALID_SAMPLE_IDENTITY, participant->get_types(types));
 
     // The TypeIdentifiers allows mixed MINIMAL and COMPLETE hash TypeIdentifiers.
     types.pop_back();
@@ -379,7 +533,7 @@ TEST(TypeLookupServiceTests, typelookup_service_get_types_request_client)
     complete_id._d() = EK_COMPLETE;
     types.push_back(complete_id);
     // TODO: This check fails because there are no sanity checks in the API implementation
-    EXPECT_NE(builtin::INVALID_SAMPLE_IDENTITY, participant->get_type_dependencies(types));
+    EXPECT_NE(INVALID_SAMPLE_IDENTITY, participant->get_type_dependencies(types));
 
     // TODO: The TypeIdentifiers shall not include identifiers for individual types in Strongly Connected Components.
     //       Instead it shall use the identifier for the whole SCC.
@@ -392,7 +546,6 @@ TEST(TypeLookupServiceTests, typelookup_service_get_types_request_client)
     // Server endpoints history should not have been created
     EXPECT_EQ(nullptr, typelookup_manager->get_builtin_request_reader_history());
     EXPECT_EQ(nullptr, typelookup_manager->get_builtin_reply_writer_history());
-
 }
 
 /**
@@ -406,9 +559,9 @@ TEST(TypeLookupServiceTests, typelookup_service_get_types_request_server)
     // Register types
     TypeIdentifierSeq types;
     register_types(types);
-    EXPECT_EQ(builtin::INVALID_SAMPLE_IDENTITY, participant->get_types(types));
+    EXPECT_EQ(INVALID_SAMPLE_IDENTITY, participant->get_types(types));
     // Access TypeLookup Service server histories should be empty
-    builtin::TypeLookupManager* typelookup_manager;
+    TypeLookupManager* typelookup_manager;
     get_typelookup_manager(participant, typelookup_manager);
     ReaderHistory* request_reader_history = typelookup_manager->get_builtin_request_reader_history();
     EXPECT_NE(nullptr, request_reader_history);
@@ -420,6 +573,152 @@ TEST(TypeLookupServiceTests, typelookup_service_get_types_request_server)
     EXPECT_EQ(nullptr, typelookup_manager->get_builtin_reply_reader_history());
     EXPECT_EQ(nullptr, typelookup_manager->get_builtin_request_writer_history());
 }
+
+/**
+ * Test that checks the getTypeDependencies operation.
+ */
+TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies)
+{
+    // Create two DomainParticipants configured as client and as server
+    DomainParticipant* participant_server;
+    DomainParticipant* participant_client;
+    create_participant_typelookup_config(participant_server, false, true);
+    // Before creating the client, create listener and attach it to the Server Participant
+    ParticipantTestListener server_listener;
+    participant_server->set_listener(&server_listener);
+
+    create_participant_typelookup_config(participant_client, true, false);
+    ParticipantTestListener client_listener;
+    participant_client->set_listener(&client_listener);
+
+    server_listener.wait_discovery();
+    client_listener.wait_discovery();
+
+    // Access Request Writer: get GUID for matching purposes
+    TypeLookupManager* typelookup_manager_client;
+    get_typelookup_manager(participant_client, typelookup_manager_client);
+    StatefulWriter* request_writer = typelookup_manager_client->get_builtin_request_writer();
+    ASSERT_NE(nullptr, request_writer);
+    GUID_t request_writer_guid = request_writer->getGuid();
+
+    // Access Request Reader
+    TypeLookupManager* typelookup_manager_service;
+    get_typelookup_manager(participant_server, typelookup_manager_service);
+    // Add custom listener to request reader to get notified about received requests
+    StatefulReader* request_reader = typelookup_manager_service->get_builtin_request_reader();
+    ASSERT_NE(nullptr, request_reader);
+    RTPSReaderListenerTest request_listener(&*typelookup_manager_service);
+    EXPECT_TRUE(request_reader->setListener(&request_listener));
+    // Access Request Reader History
+    ReaderHistory* request_reader_history = typelookup_manager_service->get_builtin_request_reader_history();
+    ASSERT_NE(nullptr, request_reader_history);
+    // Wait for matching
+    while (!request_reader->matched_writer_is_matched(request_writer_guid))
+    {
+        std::this_thread::sleep_for(std::chrono::nanoseconds(10));
+    }
+
+    // Spawn a thread to wait for sample
+    auto test = std::thread(&RTPSReaderListenerTest::wait_request, &request_listener);
+
+    // Register types
+    TypeIdentifierSeq types;
+    register_types(types);
+    TypeIdentifierSeq complete_type_identifiers;
+    TypeIdentifierSeq minimal_type_identifiers;
+    TypeObjectSeq complete_type_objects;
+    TypeObjectSeq minimal_type_objects;
+    get_every_type_identifier(complete_type_identifiers, minimal_type_identifiers, complete_type_objects,
+            minimal_type_objects);
+
+    // Client call getTypeDependencies operation
+    participant_client->get_type_dependencies(types);
+
+    // Wait for sample reception
+    test.join();
+
+    // Wait for reply
+    // TODO: current implementation sends reply on the onNewCacheChangeAdded callback
+    //       This should be refactored so another thread is notified and takes charge of preparing and sending the
+    //       response.
+    WriterHistory* reply_writer_history = typelookup_manager_service->get_builtin_reply_writer_history();
+    ASSERT_NE(nullptr, reply_writer_history);
+    while (0 == reply_writer_history->getHistorySize())
+    {
+        std::this_thread::sleep_for(std::chrono::nanoseconds(10));
+    }
+    // Reply writer history should have one sample
+    EXPECT_EQ(1, reply_writer_history->getHistorySize());
+    CacheChange_t* change;
+    EXPECT_TRUE(reply_writer_history->get_min_change(&change));
+    ASSERT_NE(nullptr, change);
+    TypeLookup_Reply reply;
+    deserialize_reply(change, reply);
+
+    // Analyze generated reply
+    // TODO: wrong instance name
+    check_message_header(reply.header, request_writer->getGuid(), participant_server->guid());
+    // Operation discriminator
+    // TODO: wrong hash (updated in XTYPES v1.3)
+    EXPECT_EQ(reply.return_value._d(), 0x05aafb31);
+    // Operation result discriminator
+    EXPECT_EQ(reply.return_value.getTypeDependencies()._d(), static_cast<int32_t>(ReturnCode_t::RETCODE_OK));
+    // Check TypeLookup_getTypeDependencies_Out
+    // TODO: the returned information is not according to the specification.
+    //       These checks are failing
+    EXPECT_EQ(reply.return_value.getTypeDependencies().result().dependent_typeids.size(), 4);
+    // Mask to check that the corresponding dependency is set
+    // 0x01 BasicStruct
+    // 0x02 StructStruct
+    // 0x04 InheritanceStruct
+    // 0x08 AnotherBasicStruct
+    // 0x10 complex_sequence
+    // 0x20 AnotherInheritanceStruct
+    // Final mask should be 0x1B: 0x01 & 0x02 & 0x08 & 0x10
+    std::bitset<8> type_dependency_found;
+    for (auto type : reply.return_value.getTypeDependencies().result().dependent_typeids)
+    {
+        // The field dependent_typeids shall exclusively contain of direct HASH TypeIdentifiers that are recursive
+        // dependencies from at least one of the TypeIdentifiers in the request.
+        EXPECT_PRED3([](octet kind, octet complete, octet minimal) {
+            return kind == complete || kind == minimal;}, type.type_id()._d(), EK_COMPLETE, EK_MINIMAL);
+        // TypeIdentifierWithSize
+        // TODO: typeobject_serialized_size is not correct
+        EXPECT_NE(0u, type.typeobject_serialized_size());
+        for (size_t i = 0; i < minimal_type_identifiers.size(); i++)
+        {
+            if (EK_COMPLETE == type.type_id()._d())
+            {
+                if (type.type_id() == complete_type_identifiers[i])
+                {
+                    EXPECT_EQ(type.typeobject_serialized_size(), TypeObject::getCdrSerializedSize(
+                            complete_type_objects[i]));
+                    type_dependency_found.set(i);
+                }
+            }
+            else if (EK_MINIMAL == type.type_id()._d())
+            {
+                if (type.type_id() == minimal_type_identifiers[i])
+                {
+                    EXPECT_EQ(type.typeobject_serialized_size(), TypeObject::getCdrSerializedSize(
+                            minimal_type_objects[i]));
+                    type_dependency_found.set(i);
+                }
+            }
+        }
+    }
+    EXPECT_EQ(0x1B, type_dependency_found.to_ulong());
+    EXPECT_TRUE(reply.return_value.getTypeDependencies().result().continuation_point.empty());
+
+    // Reply reception cannot be checked with current implementation because the sample is removed from the history
+    // after being processed.
+
+    // Unset listeners for a clean exit
+    participant_client->set_listener(nullptr);
+    participant_server->set_listener(nullptr);
+}
+
+// TODO: test that forces the usage of the continuation point mechanism (too many dependencies to send in one reply)
 
 int main(
         int argc,
