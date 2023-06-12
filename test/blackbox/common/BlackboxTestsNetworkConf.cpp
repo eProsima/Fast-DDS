@@ -325,8 +325,8 @@ TEST(NetworkConfig, PubSubInterfaceWhitelistPubSide)
     reader.wait_discovery(std::chrono::seconds(5));
 
     // Check that endpoints have discovered each other
-    ASSERT_EQ(reader.get_matched(), 1);
-    ASSERT_EQ(writer.get_matched(), 1);
+    ASSERT_EQ(reader.get_matched(), 1u);
+    ASSERT_EQ(writer.get_matched(), 1u);
 }
 
 // Regression test to check in UDP (v4) that setting the interface whitelist in one of the endpoints (reader),
@@ -364,8 +364,8 @@ TEST(NetworkConfig, PubSubInterfaceWhitelistSubSide)
     reader.wait_discovery(std::chrono::seconds(5));
 
     // Check that endpoints have discovered each other
-    ASSERT_EQ(reader.get_matched(), 1);
-    ASSERT_EQ(writer.get_matched(), 1);
+    ASSERT_EQ(reader.get_matched(), 1u);
+    ASSERT_EQ(writer.get_matched(), 1u);
 }
 
 TEST_P(NetworkConfig, SubGetListeningLocators)
