@@ -73,7 +73,9 @@ enum MyEnum : uint32_t
     B,
     C
 };
+
 typedef MyEnum MyAliasEnum;
+
 typedef MyAliasEnum MyAliasAliasEnum;
 /*!
  * @brief This class represents the structure EnumStruct defined by the user in the IDL file.
@@ -3087,6 +3089,7 @@ private:
     std::array<std::array<std::array<int32_t, 2>, 2>, 2> m_my_array;
 
 };
+
 typedef std::array<std::array<int32_t, 2>, 2> MyArray;
 /*!
  * @brief This class represents the structure ArrayArrayStruct defined by the user in the IDL file.

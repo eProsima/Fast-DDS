@@ -367,6 +367,7 @@ private:
     MyBadEnum m_my_enum;
 
 };
+
 typedef MyEnum MyAliasEnum;
 /*!
  * @brief This class represents the structure MyAliasEnumStruct defined by the user in the IDL file.

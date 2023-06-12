@@ -1123,11 +1123,11 @@ namespace bitmodule {
      */
     enum MyBitMask : uint8_t
     {
-        flag0 = 0x01 << 0,
-        flag1 = 0x01 << 1,
-        flag4 = 0x01 << 4,
-        flag6 = 0x01 << 6,
-        flag7 = 0x01 << 7
+        flag0 = 0x01ull << 0,
+        flag1 = 0x01ull << 1,
+        flag4 = 0x01ull << 4,
+        flag6 = 0x01ull << 6,
+        flag7 = 0x01ull << 7
     };
     /*!
      * @brief This class represents the structure BitsetBitmask defined by the user in the IDL file.

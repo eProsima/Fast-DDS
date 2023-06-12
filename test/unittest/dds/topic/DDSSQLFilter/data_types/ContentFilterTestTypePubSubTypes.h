@@ -28,10 +28,13 @@
 
 #include "ContentFilterTestType.h"
 
+
 #if !defined(GEN_API_VER) || (GEN_API_VER != 1)
 #error \
+
     Generated ContentFilterTestType is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
+
 
 
 
@@ -98,7 +101,9 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
+
 
 
 /*!
@@ -164,6 +169,7 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
 
 #endif // _FAST_DDS_GENERATED_CONTENTFILTERTESTTYPE_PUBSUBTYPES_H_

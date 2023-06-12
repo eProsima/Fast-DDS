@@ -73,8 +73,11 @@ enum MyEnum : uint32_t
     B,
     C
 };
+
 typedef MyEnum MyAliasEnum;
+
 typedef MyAliasEnum MyAliasEnum2;
+
 typedef MyAliasEnum2 MyAliasEnum3;
 /*!
  * @brief This class represents the structure BasicStruct defined by the user in the IDL file.
@@ -510,10 +513,15 @@ private:
     std::wstring m_my_wstring;
 
 };
+
 typedef std::array<uint8_t, 500> MyOctetArray500;
+
 typedef std::array<BasicStruct, 5> BSAlias5;
+
 typedef std::array<MyAliasEnum3, 42> MA3;
+
 typedef std::array<int32_t, 2> MyMiniArray;
+
 typedef std::vector<int32_t> MySequenceLong;
 /*!
  * @brief This class represents the structure ComplexStruct defined by the user in the IDL file.
