@@ -290,8 +290,8 @@ TEST_P(NetworkConfig, PubSubInterfaceWhitelistUnicast)
     reader.block_for_all();
 }
 
-// Regression test to check in UDP (v4) that setting the interface whitelist in one of the endpoints (writer),
-//  but not in the other, connection is established anyways
+// Regression test for redmine issue #18854 to check in UDP (v4) that setting the interface whitelist in one
+//  of the endpoints (writer), but not in the other, connection is established anyways
 TEST(NetworkConfig, PubSubInterfaceWhitelistPubSide)
 {
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
@@ -327,10 +327,23 @@ TEST(NetworkConfig, PubSubInterfaceWhitelistPubSide)
     // Check that endpoints have discovered each other
     ASSERT_EQ(reader.get_matched(), 1u);
     ASSERT_EQ(writer.get_matched(), 1u);
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator();
+    reader.startReception(data);
+    writer.send(data);
+
+    // Check that the sample data has been sent and received successfully
+    ASSERT_TRUE(data.empty());
+    reader.block_for_all();
 }
 
-// Regression test to check in UDP (v4) that setting the interface whitelist in one of the endpoints (reader),
-//  but not in the other, connection is established anyways
+// Regression test for redmine issue #18854 to check in UDP (v4) that setting the interface whitelist in one
+//  of the endpoints (reader), but not in the other, connection is established anyways
 TEST(NetworkConfig, PubSubInterfaceWhitelistSubSide)
 {
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
@@ -366,6 +379,19 @@ TEST(NetworkConfig, PubSubInterfaceWhitelistSubSide)
     // Check that endpoints have discovered each other
     ASSERT_EQ(reader.get_matched(), 1u);
     ASSERT_EQ(writer.get_matched(), 1u);
+
+    // Because its volatile the durability
+    // Wait for discovery.
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    auto data = default_helloworld_data_generator();
+    reader.startReception(data);
+    writer.send(data);
+
+    // Check that the sample data has been sent and received successfully
+    ASSERT_TRUE(data.empty());
+    reader.block_for_all();
 }
 
 TEST_P(NetworkConfig, SubGetListeningLocators)
