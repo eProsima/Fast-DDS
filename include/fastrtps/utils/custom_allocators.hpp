@@ -19,6 +19,7 @@
 #ifndef FASTRTPS_UTILS_CUSTOM_ALLOCATORS_HPP_
 #define FASTRTPS_UTILS_CUSTOM_ALLOCATORS_HPP_
 
+#include <atomic>
 #include <memory>
 #include <type_traits>
 
@@ -192,5 +193,141 @@ struct std::allocator_traits<eprosima::detail::BuilderAllocator<T, B, state>>
     }
 
 };
+
+namespace eprosima {
+// eprosima namespace
+namespace detail {
+
+/**
+ * The purpose of this class is providing external reference counting to dynamic objects
+ * @tparam T class to reference count
+ */
+
+template<class T>
+class external_reference_counting
+    : public std::enable_shared_from_this<T>
+{
+    //! Keeps the object alive is external references are held
+    std::shared_ptr<T> external_lock_;
+    //! External references tracker
+    std::atomic_long counter_ = {0l};
+
+protected:
+
+    long use_count() const
+    {
+        return counter_;
+    }
+
+    long add_ref()
+    {
+        long former = counter_;
+
+        if (0l == former)
+        {
+            // no former external references
+            while (!counter_.compare_exchange_strong(former, 1l))
+            {
+                if (former != 0l)
+                {
+                    // another thread was faster
+                    return add_ref();
+                }
+            }
+
+            // sync with other threads release() operations
+            std::shared_ptr<T> empty;
+            std::shared_ptr<T> inner = this->shared_from_this();
+
+            while (!std::atomic_compare_exchange_strong(
+                        &external_lock_,
+                        &empty,
+                        inner))
+            {
+                empty.reset();
+            }
+
+            return 1l;
+        }
+        else
+        {
+            // former external references
+            long new_count;
+            do
+            {
+                if (0l == former)
+                {
+                    // another thread was faster
+                    return add_ref();
+                }
+
+                new_count = former + 1;
+            }
+            while (!counter_.compare_exchange_strong(former, new_count));
+
+            return new_count;
+        }
+    }
+
+    long release()
+    {
+        long former = counter_;
+
+        // add_ref() & release() calls must be matched
+        assert(former != 0l);
+
+        if (1l == former)
+        {
+            // try remove internal lock
+            while (!counter_.compare_exchange_strong(former, 0l))
+            {
+                if (former != 1l)
+                {
+                    // another thread was faster
+                    return release();
+                }
+            }
+
+            // sync with other threads add_ref() operations
+            std::shared_ptr<T> inner = this->shared_from_this(),
+                    cmp = inner;
+
+            while (!std::atomic_compare_exchange_strong(
+                        &external_lock_,
+                        &cmp,
+                        std::shared_ptr<T>{}))
+            {
+                if (!cmp)
+                {
+                    cmp = inner;
+                }
+            }
+
+            return 0l;
+        }
+        else
+        {
+            // former external references
+            long new_count;
+            do
+            {
+                if (1l == former)
+                {
+                    // another thread was faster
+                    return release();
+                }
+
+                new_count = former - 1;
+            }
+            while (!counter_.compare_exchange_strong(former, new_count));
+
+            return new_count;
+        }
+    }
+
+};
+
+} // detail namespace
+} // eprosima namespace
 
 #endif /* FASTRTPS_UTILS_CUSTOM_ALLOCATORS_HPP_ */

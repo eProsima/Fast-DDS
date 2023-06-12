@@ -45,6 +45,87 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types::v1_3;
 
+// Testing reference counting utils
+
+class dummy
+    : public eprosima::detail::external_reference_counting<dummy>
+{
+public:
+
+    using base = eprosima::detail::external_reference_counting<dummy>;
+
+    using base::use_count;
+    using base::add_ref;
+    using base::release;
+};
+
+TEST(DynamicTypesUtilsTests, basic_reference_counting)
+{
+    const int N = 1000l;
+    auto sp = std::make_shared<dummy>();
+    dummy& a = *sp;
+
+    auto ar = [N, &a]()
+            {
+                for (int i = 0; i < N; ++i)
+                {
+                    a.add_ref();
+                }
+            };
+
+    auto rl = [N, &a]()
+            {
+                for (int i = 0; i < N; ++i)
+                {
+                    a.release();
+                }
+            };
+
+    ASSERT_EQ(a.use_count(), 0l);
+    ar();
+    ASSERT_EQ(a.use_count(), N);
+    rl();
+    ASSERT_EQ(a.use_count(), 0l);
+}
+
+TEST(DynamicTypesUtilsTests, concurrent_reference_counting)
+{
+    const int N = 1000;
+    auto sp = std::make_shared<dummy>();
+    dummy& a = *sp;
+
+    ASSERT_EQ(a.use_count(), 0l);
+
+    auto loop = [N, &a]()
+            {
+                for (int i = 0; i < N; ++i)
+                {
+                    // spin to assure overlap
+                    while (a.use_count() > 3)
+                    {
+                    }
+
+                    a.add_ref();
+                    a.release();
+                }
+            };
+
+    // Now let's test with multiple threads
+    std::thread pool[N];
+
+    for (int i = 0; i < N; ++i)
+    {
+        pool[i] = std::thread{ loop };
+    }
+
+    for (int i = 0; i < N; ++i)
+    {
+        pool[i].join();
+    }
+
+    ASSERT_EQ(a.use_count(), 0l);
+}
+
 // common types
 using eprosima::fastrtps::types::TypeIdentifier;
 using eprosima::fastrtps::types::TypeObjectFactory;
