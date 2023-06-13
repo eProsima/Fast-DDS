@@ -186,7 +186,7 @@ int main(
                 }
 
                 case optionIndex::CONNECTION_PORT:
-                    connection_port = strtol(opt.arg, nullptr, 10);
+                    connection_port = static_cast<uint16_t>(strtol(opt.arg, nullptr, 10));
                     break;
 
                 case optionIndex::CONNECTION_ADDRESS:
@@ -195,7 +195,7 @@ int main(
 
                 case optionIndex::CONNECTION_DISCOVERY_SERVER_ID:
                     id_ds_set = true;
-                    connection_ds_id = strtol(opt.arg, nullptr, 10);
+                    connection_ds_id = static_cast<uint16_t>(strtol(opt.arg, nullptr, 10));
                     break;
 
                 case optionIndex::LISTENING_PORT:
@@ -204,7 +204,7 @@ int main(
                         print_warning("server", opt.name);
                         break;
                     }
-                    listening_port = strtol(opt.arg, nullptr, 10);
+                    listening_port = static_cast<uint16_t>(strtol(opt.arg, nullptr, 10));
                     break;
 
                 case optionIndex::LISTENING_ADDRESS:
@@ -223,7 +223,7 @@ int main(
                         print_warning("server", opt.name);
                         break;
                     }
-                    listening_ds_id = strtol(opt.arg, nullptr, 10);
+                    listening_ds_id = static_cast<uint16_t>(strtol(opt.arg, nullptr, 10));
                     break;
 
                 case optionIndex::TIMEOUT:

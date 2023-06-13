@@ -192,10 +192,10 @@ const option::Descriptor usage[] = {
     {
         TOPIC,
         0,
-        "n",
+        "t",
         "topic",
         Arg::String,
-        "  -n <topic_name> \t--topic=<topic_name>  \tTopic name (Default: HelloWorldTopic)."
+        "  -t <topic_name> \t--topic=<topic_name>  \tTopic name (Default: HelloWorldTopic)."
     },
     {
         SAMPLES,
@@ -232,10 +232,10 @@ const option::Descriptor usage[] = {
     {
         TRANSPORT,
         0,
-        "t",
+        "",
         "transport",
         Arg::Transport,
-        "  -t <trans>\t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv4 by default)."
+        "  \t--transport <trans> \tUse Transport Protocol [udpv4|udpv6|shm] (UDPv4 by default)."
     },
     {
         CONNECTION_DISCOVERY_SERVER_ID,
@@ -243,7 +243,7 @@ const option::Descriptor usage[] = {
         "d",
         "discovery-server-id",
         Arg::Numeric,
-        "  -d <num>\t--discovery-server-id <num> \tId of the Discovery Server to connect with. "
+        "  -d <num>\t--connection-discovery-server-id <num> \tId of the Discovery Server to connect with. "
         "GUID will be calculated from id (0 by default)."
     },
 
@@ -252,10 +252,10 @@ const option::Descriptor usage[] = {
     {
         TOPIC,
         0,
-        "n",
+        "t",
         "topic",
         Arg::String,
-        "  -n <topic_name> \t--topic=<topic_name>  \tTopic name (Default: HelloWorldTopic)."
+        "  -t <topic_name> \t--topic=<topic_name>  \tTopic name (Default: HelloWorldTopic)."
     },
     {
         SAMPLES,
@@ -284,10 +284,10 @@ const option::Descriptor usage[] = {
     {
         TRANSPORT,
         0,
-        "t",
+        "",
         "transport",
         Arg::Transport,
-        "  -t <trans>\t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv4 by default)."
+        "  \t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv4 by default)."
     },
     {
         CONNECTION_DISCOVERY_SERVER_ID,
@@ -295,7 +295,7 @@ const option::Descriptor usage[] = {
         "d",
         "discovery-server-id",
         Arg::Numeric,
-        "  -d <num>\t--discovery-server-id <num> \tId of the Discovery Server to connect with. "
+        "  -d <num>\t--connection-discovery-server-id <num> \tId of the Discovery Server to connect with. "
         "GUID will be calculated from id (0 by default)."
     },
 
@@ -328,10 +328,10 @@ const option::Descriptor usage[] = {
     {
         TRANSPORT,
         0,
-        "t",
+        "",
         "transport",
         Arg::Transport,
-        "  -t <trans>\t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv4 by default)."
+        "  \t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv4 by default)."
     },
     {
         CONNECTION_PORT,
