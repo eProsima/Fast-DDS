@@ -251,7 +251,8 @@ int main(
         {
             HelloWorldPublisher mypub;
             if (mypub.init(topic_name, static_cast<uint32_t>(domain), static_cast<uint32_t>(num_wait_matched), async,
-                    transport, reliable, transient, hops, partitions, use_ownership, ownership_strength, participant_profile))
+                    transport, reliable, transient, hops, partitions, use_ownership, ownership_strength,
+                    participant_profile))
             {
                 mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
             }
