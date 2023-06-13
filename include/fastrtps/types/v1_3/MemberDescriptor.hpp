@@ -84,75 +84,138 @@ public:
     /**
      * convenience constructor
      * @param[in] id MemberId new member's identifier
-     * @param[in] name std::string new member's name
+     * @param[in] name new member's name
      */
-    RTPS_DllAPI MemberDescriptor(
-            MemberId id,
-            const std::string& name);
+    template<class S,
+             typename std::enable_if<
+                 std::is_constructible<std::string, S>::value,
+                 bool>::type = true>
+    MemberDescriptor(
+            const MemberId& id,
+            const S& name)
+        : name_(name)
+        , id_(id)
+    {}
 
     /**
      * convenience constructor
      * @param[in] index desired position in the collection (zero based)
-     * @param[in] name std::string new member's name
+     * @param[in] name new member's name
      */
-    RTPS_DllAPI MemberDescriptor(
+    template<class S,
+             typename std::enable_if<
+                 std::is_constructible<std::string, S>::value,
+                 bool>::type = true>
+    MemberDescriptor(
             uint32_t index,
-            const std::string& name);
+            const S& name)
+        : name_(name)
+        , index_(index)
+    {
+    }
 
     /**
      * convenience constructor
      * @param[in] index desired position in the collection (zero based)
-     * @param[in] name std::string new member's name
+     * @param[in] name new member's name
      * @param[in] type @ref DynamicType new member's type
      */
-    RTPS_DllAPI MemberDescriptor(
+    template<class S,
+             typename std::enable_if<
+                 std::is_constructible<std::string, S>::value,
+                 bool>::type = true>
+    MemberDescriptor(
             uint32_t index,
-            const std::string& name,
-            DynamicType_ptr type);
+            const S& name,
+            DynamicType_ptr type)
+        : name_(name)
+        , type_(type)
+        , index_(index)
+    {}
 
     /**
      * convenience constructor
      * @remark Default index value assures it is appended to the collection.
      * @param[in] id @ref MemberId new member's identifier
-     * @param[in] name std::string new member's name
+     * @param[in] name new member's name
      * @param[in] type @ref DynamicType new member's type
      */
-    RTPS_DllAPI MemberDescriptor(
-            MemberId id,
-            const std::string& name,
-            DynamicType_ptr type);
+    template<class S,
+             typename std::enable_if<
+                 std::is_constructible<std::string, S>::value,
+                 bool>::type = true>
+    MemberDescriptor(
+            const MemberId& id,
+            const S& name,
+            DynamicType_ptr type)
+        : name_(name)
+        , id_(id)
+        , type_(type)
+    {}
 
     /**
      * convenience constructor
      * @remark Default index value assures it is appended to the collection.
      * @param[in] id @ref MemberId new member's identifier
-     * @param[in] name std::string new member's name
+     * @param[in] name new member's name
      * @param[in] type @ref DynamicType new member's type
-     * @param[in] defaultValue std::string member default value as a string representation
+     * @param[in] defaultValue member default value as a string representation
      */
-    RTPS_DllAPI MemberDescriptor(
-            MemberId id,
-            const std::string& name,
+    template<class S1,
+             class S2,
+             typename std::enable_if<
+                 std::is_constructible<std::string, S1>::value,
+                 bool>::type = true,
+             typename std::enable_if<
+                 std::is_constructible<std::string, S2>::value,
+                 bool>::type = true>
+    MemberDescriptor(
+            const MemberId& id,
+            const S1& name,
             DynamicType_ptr type,
-            const std::string& defaultValue);
+            const S2& defaultValue)
+        : name_(name)
+        , id_(id)
+        , type_(type)
+        , default_value_(defaultValue)
+    {}
 
     /**
      * convenience constructor
      * @remark default index value assures it is appended to the collection.
      * @param[in] id @ref MemberId new member's identifier
-     * @param[in] name std::string new member's name
+     * @param[in] name new member's name
      * @param[in] type @ref DynamicType new member's type
-     * @param[in] defaultValue std::string member default value as a string representation
+     * @param[in] defaultValue member default value as a string representation
      * @param[in] unionLabels collection of label identifiers associated to this member
      * @param[in] isDefaultLabel is true if 'default' idl union case is enforced
      */
-    RTPS_DllAPI MemberDescriptor(
-            MemberId id,
-            const std::string& name,
+    template<class S1,
+             class S2,
+             class Cont,
+             typename std::enable_if<
+                 std::is_constructible<std::string, S1>::value,
+                 bool>::type = true,
+             typename std::enable_if<
+                 std::is_constructible<std::string, S2>::value,
+                 bool>::type = true,
+             typename std::enable_if<
+                 std::is_same<uint64_t, typename Cont::value_type>::value,
+                 bool>::type = true>
+    MemberDescriptor(
+            const MemberId& id,
+            const S1& name,
             DynamicType_ptr type,
-            const std::string& defaultValue,
-            const std::vector<uint64_t>& unionLabels,
-            bool isDefaultLabel);
+            const S2& defaultValue,
+            const Cont& unionLabels,
+            bool isDefaultLabel)
+        : name_(name)
+        , id_(id)
+        , type_(type)
+        , default_value_(defaultValue)
+        , labels_{unionLabels.begin(), unionLabels.end()}
+        , default_label_(isDefaultLabel)
+    {}
 
     /**
      * Default copy assignment
