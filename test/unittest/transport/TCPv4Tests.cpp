@@ -1505,7 +1505,8 @@ TEST_F(TCPv4Tests, header_read_interrumption)
 
     // Start TCP segment reception
     // Should get stuck in receive_header until channel is disabled
-    transportUnderTest.Receive(rtcp_manager, channel, buffer, receive_buffer_capacity, receive_buffer_size, msg_endian, locator);
+    transportUnderTest.Receive(rtcp_manager, channel, buffer, receive_buffer_capacity, receive_buffer_size, msg_endian,
+            locator);
     thread.join();
 }
 
