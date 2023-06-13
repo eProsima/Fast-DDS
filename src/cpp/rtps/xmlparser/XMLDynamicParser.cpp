@@ -325,7 +325,7 @@ XMLP_ret XMLParser::parseXMLAliasDynamicType(
                 (p_root->Attribute(SEQ_MAXLENGTH) != nullptr) ||
                 (p_root->Attribute(MAP_MAXLENGTH) != nullptr))
         {
-            valueBuilder = parseXMLMemberDynamicType(p_root, nullptr, MEMBER_ID_INVALID);
+            valueBuilder = parseXMLMemberDynamicType(p_root, nullptr, types::MEMBER_ID_INVALID);
         }
         else
         {

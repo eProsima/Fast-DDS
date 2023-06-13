@@ -270,7 +270,7 @@ operator !=(
 using ResponseCode = ReturnCode_t;
 
 typedef uint32_t MemberId;
-#define MEMBER_ID_INVALID 0X0FFFFFFF
+constexpr uint32_t MEMBER_ID_INVALID {0X0FFFFFFF};
 #define INDEX_INVALID UINT32_MAX
 
 const int32_t MAX_BITMASK_LENGTH = 64;
