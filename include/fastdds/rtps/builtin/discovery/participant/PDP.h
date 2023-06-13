@@ -146,7 +146,7 @@ public:
      */
     virtual void announceParticipantState(
             bool new_change,
-            bool dispose = false) = 0;
+            bool dispose = false);
 
     //!Stop the RTPSParticipantAnnouncement (only used in tests).
     virtual void stopParticipantAnnouncement();

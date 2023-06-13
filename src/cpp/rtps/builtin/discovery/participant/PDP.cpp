@@ -449,8 +449,6 @@ bool PDP::enable()
 }
 
 void PDP::announceParticipantState(
-        RTPSWriter& writer,
-        WriterHistory& history,
         bool new_change,
         bool dispose /* = false */)
 {
@@ -459,6 +457,8 @@ void PDP::announceParticipantState(
 }
 
 void PDP::announceParticipantState(
+        RTPSWriter& writer,
+        WriterHistory& history,
         bool new_change,
         bool dispose,
         WriteParams& wparams)
