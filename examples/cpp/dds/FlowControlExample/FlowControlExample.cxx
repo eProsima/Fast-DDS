@@ -34,7 +34,7 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define FlowControlExample_max_cdr_typesize 600002ULL;
+#define FlowControlExample_max_cdr_typesize 600001ULL;
 #define FlowControlExample_max_key_cdr_typesize 0ULL;
 
 FlowControlExample::FlowControlExample()

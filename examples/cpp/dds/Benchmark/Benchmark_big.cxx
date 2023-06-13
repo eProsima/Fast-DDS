@@ -34,7 +34,7 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define BenchMarkBig_max_cdr_typesize 8388616ULL;
+#define BenchMarkBig_max_cdr_typesize 8388612ULL;
 #define BenchMarkBig_max_key_cdr_typesize 0ULL;
 
 BenchMarkBig::BenchMarkBig()

@@ -4147,10 +4147,12 @@ const TypeObject* GetCompleteKeyedStructObject()
 
     cst_key.detail().name("key");
 
+
     {
         AppliedAnnotation ann;
         //ann.annotation_typeid(GetKeyIdentifier(true));
         ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("Key"));
+
             {
                 AppliedAnnotationParameter annParam;
                 MD5 message_hash("value");

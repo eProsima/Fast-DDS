@@ -28,11 +28,40 @@
 
 #include "LoanableHelloWorld.h"
 
+
 #if !defined(GEN_API_VER) || (GEN_API_VER != 1)
 #error \
+
     Generated LoanableHelloWorld is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
+
+namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct LoanableHelloWorld_rob
+    {
+        friend constexpr typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+    };
+
+    struct LoanableHelloWorld_f
+    {
+        typedef std::array<char, 256> LoanableHelloWorld::* type;
+        friend constexpr type get(
+                LoanableHelloWorld_f);
+    };
+
+    template struct LoanableHelloWorld_rob<LoanableHelloWorld_f, &LoanableHelloWorld::m_message>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr LoanableHelloWorld_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
+}
 /*!
  * @brief This class represents the TopicDataType of the type LoanableHelloWorld defined by the user in the IDL file.
  * @ingroup LOANABLEHELLOWORLD
@@ -79,7 +108,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return true;
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -96,6 +125,13 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr bool is_plain_impl()
+    {
+        return 260ULL == (detail::LoanableHelloWorld_offset_of<LoanableHelloWorld, detail::LoanableHelloWorld_f>() + sizeof(std::array<char, 256>));
+
+    }};
 
 #endif // _FAST_DDS_GENERATED_LOANABLEHELLOWORLD_PUBSUBTYPES_H_

@@ -34,7 +34,7 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define LoanableHelloWorld_max_cdr_typesize 261ULL;
+#define LoanableHelloWorld_max_cdr_typesize 260ULL;
 #define LoanableHelloWorld_max_key_cdr_typesize 0ULL;
 
 LoanableHelloWorld::LoanableHelloWorld()

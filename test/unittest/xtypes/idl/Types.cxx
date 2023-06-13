@@ -39,19 +39,19 @@ using namespace eprosima::fastcdr::exception;
 #define SequenceSequenceBoundsStruct_max_cdr_typesize 124ULL;
 
 #define MyAliasEnumStruct_max_cdr_typesize 4ULL;
-#define ArrayBadStruct_max_cdr_typesize 3ULL;
+#define ArrayBadStruct_max_cdr_typesize 2ULL;
 #define MapBadKeyStruct_max_cdr_typesize 20ULL;
 #define SimpleBadUnionStruct_max_cdr_typesize 16ULL;
 #define MyEnumStruct_max_cdr_typesize 4ULL;
 
-#define ArrayStructEqual_max_cdr_typesize 12ULL;
+#define ArrayStructEqual_max_cdr_typesize 8ULL;
 #define LargeWStringStruct_max_cdr_typesize 167704ULL;
 
 #define WStringStruct_max_cdr_typesize 1024ULL;
 #define SequenceStruct_max_cdr_typesize 12ULL;
 #define SimpleTypeUnionStruct_max_cdr_typesize 16ULL;
 
-#define ArrayDimensionsStruct_max_cdr_typesize 20ULL;
+#define ArrayDimensionsStruct_max_cdr_typesize 16ULL;
 #define SequenceSequenceStruct_max_cdr_typesize 40ULL;
 #define MapBoundsStruct_max_cdr_typesize 36ULL;
 #define SequenceStructEqual_max_cdr_typesize 12ULL;
@@ -68,9 +68,9 @@ using namespace eprosima::fastcdr::exception;
 #define SequenceBadStruct_max_cdr_typesize 6ULL;
 #define SimpleUnionNamesStruct_max_cdr_typesize 16ULL;
 #define LargeStringStruct_max_cdr_typesize 41930ULL;
-#define ArrayStruct_max_cdr_typesize 12ULL;
+#define ArrayStruct_max_cdr_typesize 8ULL;
 #define BadBasicWideStruct_max_cdr_typesize 532ULL;
-#define ArraySizeStruct_max_cdr_typesize 24ULL;
+#define ArraySizeStruct_max_cdr_typesize 20ULL;
 
 #define MapBadElemStruct_max_cdr_typesize 32ULL;
 #define SimpleUnionStructEqual_max_cdr_typesize 16ULL;
@@ -415,6 +415,7 @@ void MyBadEnumStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 
 MyAliasEnumStruct::MyAliasEnumStruct()

@@ -28,10 +28,13 @@
 
 #include "deadlinepayload.h"
 
+
 #if !defined(GEN_API_VER) || (GEN_API_VER != 1)
 #error \
+
     Generated deadlinepayload is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
+
 
 /*!
  * @brief This class represents the TopicDataType of the type HelloMsg defined by the user in the IDL file.
@@ -96,6 +99,7 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
 
 #endif // _FAST_DDS_GENERATED_DEADLINEPAYLOAD_PUBSUBTYPES_H_

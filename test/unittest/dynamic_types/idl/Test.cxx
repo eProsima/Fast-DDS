@@ -41,10 +41,10 @@ using namespace eprosima::fastcdr::exception;
 
 #define BasicStruct_max_cdr_typesize 1356ULL;
 
-#define ComplexStruct_max_cdr_typesize 82991252ULL;
+#define ComplexStruct_max_cdr_typesize 69399660ULL;
 
 
-#define CompleteStruct_max_cdr_typesize 82991516ULL;
+#define CompleteStruct_max_cdr_typesize 69399924ULL;
 
 
 
@@ -60,6 +60,9 @@ using namespace eprosima::fastcdr::exception;
 
 
 #define CompleteStruct_max_key_cdr_typesize 0ULL;
+
+
+
 
 
 
@@ -792,6 +795,11 @@ void BasicStruct::serializeKey(
 
 
 
+
+
+
+
+
 ComplexStruct::ComplexStruct()
 {
     // octet m_my_octet
@@ -1041,6 +1049,7 @@ size_t ComplexStruct::getCdrSerializedSize(
 
     current_alignment += ((500) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
+
     for(size_t a = 0; a < data.my_array_struct().size(); ++a)
     {
             current_alignment += BasicStruct::getCdrSerializedSize(data.my_array_struct().at(a), current_alignment);
@@ -1144,8 +1153,8 @@ size_t ComplexStruct::getCdrSerializedSize(
 
         }
     }
-
     current_alignment += ((42) * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
 
     for(size_t a = 0; a < data.my_array_arrays().size(); ++a)
     {

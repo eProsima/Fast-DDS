@@ -28,11 +28,40 @@
 
 #include "HelloWorld.h"
 
+
 #if !defined(GEN_API_VER) || (GEN_API_VER != 1)
 #error \
+
     Generated HelloWorld is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
+
+namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct HelloWorld_rob
+    {
+        friend constexpr typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+    };
+
+    struct HelloWorld_f
+    {
+        typedef std::array<char, 20> HelloWorld::* type;
+        friend constexpr type get(
+                HelloWorld_f);
+    };
+
+    template struct HelloWorld_rob<HelloWorld_f, &HelloWorld::m_message>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr HelloWorld_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
+}
 /*!
  * @brief This class represents the TopicDataType of the type HelloWorld defined by the user in the IDL file.
  * @ingroup HELLOWORLD
@@ -79,7 +108,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return true;
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -96,6 +125,13 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr bool is_plain_impl()
+    {
+        return 24ULL == (detail::HelloWorld_offset_of<HelloWorld, detail::HelloWorld_f>() + sizeof(std::array<char, 20>));
+
+    }};
 
 #endif // _FAST_DDS_GENERATED_HELLOWORLD_PUBSUBTYPES_H_

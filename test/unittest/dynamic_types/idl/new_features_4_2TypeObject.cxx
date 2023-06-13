@@ -473,10 +473,12 @@ const TypeObject* GetCompleteNewAliasesObject()
 
     cst_uint64_.detail().name("uint64_");
 
+
     {
         AppliedAnnotation ann;
         //ann.annotation_typeid(GetdefaultIdentifier(true));
         ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("default"));
+
             {
                 AppliedAnnotationParameter annParam;
                 MD5 message_hash("value");
@@ -510,10 +512,12 @@ const TypeObject* GetCompleteNewAliasesObject()
 
     cst_local_string.detail().name("local_string");
 
+
     {
         AppliedAnnotation ann;
         //ann.annotation_typeid(Getnon_serializedIdentifier(true));
         ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("non_serialized"));
+
             {
                 AppliedAnnotationParameter annParam;
                 MD5 message_hash("value");
@@ -2172,12 +2176,14 @@ namespace bitmodule {
             cbf_flag0.detail().ann_custom().push_back(ann);
         }
 
+
         {
             if (std::strcmp("position", "position") != 0)
             {
                 AppliedAnnotation ann;
                 //ann.annotation_typeid(GetpositionIdentifier(true));
                 ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+
                         {
                             AppliedAnnotationParameter annParam;
                             MD5 message_hash("value");
@@ -2228,12 +2234,14 @@ namespace bitmodule {
             cbf_flag1.detail().ann_custom().push_back(ann);
         }
 
+
         {
             if (std::strcmp("position", "position") != 0)
             {
                 AppliedAnnotation ann;
                 //ann.annotation_typeid(GetpositionIdentifier(true));
                 ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+
                         {
                             AppliedAnnotationParameter annParam;
                             MD5 message_hash("value");
@@ -2284,12 +2292,14 @@ namespace bitmodule {
             cbf_flag4.detail().ann_custom().push_back(ann);
         }
 
+
         {
             if (std::strcmp("position", "position") != 0)
             {
                 AppliedAnnotation ann;
                 //ann.annotation_typeid(GetpositionIdentifier(true));
                 ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+
                         {
                             AppliedAnnotationParameter annParam;
                             MD5 message_hash("value");
@@ -2340,12 +2350,14 @@ namespace bitmodule {
             cbf_flag6.detail().ann_custom().push_back(ann);
         }
 
+
         {
             if (std::strcmp("position", "position") != 0)
             {
                 AppliedAnnotation ann;
                 //ann.annotation_typeid(GetpositionIdentifier(true));
                 ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+
                         {
                             AppliedAnnotationParameter annParam;
                             MD5 message_hash("value");

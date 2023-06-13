@@ -28,11 +28,40 @@
 
 #include "FilteringExample.h"
 
+
 #if !defined(GEN_API_VER) || (GEN_API_VER != 1)
 #error \
+
     Generated FilteringExample is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
+
+namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct FilteringExample_rob
+    {
+        friend constexpr typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+    };
+
+    struct FilteringExample_f
+    {
+        typedef int32_t FilteringExample::* type;
+        friend constexpr type get(
+                FilteringExample_f);
+    };
+
+    template struct FilteringExample_rob<FilteringExample_f, &FilteringExample::m_sampleNumber>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr FilteringExample_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
+}
 /*!
  * @brief This class represents the TopicDataType of the type FilteringExample defined by the user in the IDL file.
  * @ingroup FILTERINGEXAMPLE
@@ -79,7 +108,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return true;
+        return is_plain_impl();
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -96,6 +125,13 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-};
+
+private:
+
+    static constexpr bool is_plain_impl()
+    {
+        return 4ULL == (detail::FilteringExample_offset_of<FilteringExample, detail::FilteringExample_f>() + sizeof(int32_t));
+
+    }};
 
 #endif // _FAST_DDS_GENERATED_FILTERINGEXAMPLE_PUBSUBTYPES_H_
