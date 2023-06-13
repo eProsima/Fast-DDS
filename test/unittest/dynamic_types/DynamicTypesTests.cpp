@@ -82,10 +82,13 @@ TEST(DynamicTypesUtilsTests, basic_reference_counting)
             };
 
     ASSERT_EQ(a.use_count(), 0l);
+    ASSERT_EQ(sp.use_count(), 1l);
     ar();
     ASSERT_EQ(a.use_count(), N);
+    ASSERT_EQ(sp.use_count(), 2l);
     rl();
     ASSERT_EQ(a.use_count(), 0l);
+    ASSERT_EQ(sp.use_count(), 1l);
 }
 
 TEST(DynamicTypesUtilsTests, concurrent_reference_counting)
@@ -95,6 +98,7 @@ TEST(DynamicTypesUtilsTests, concurrent_reference_counting)
     dummy& a = *sp;
 
     ASSERT_EQ(a.use_count(), 0l);
+    ASSERT_EQ(sp.use_count(), 1l);
 
     auto loop = [N, &a]()
             {
@@ -124,6 +128,7 @@ TEST(DynamicTypesUtilsTests, concurrent_reference_counting)
     }
 
     ASSERT_EQ(a.use_count(), 0l);
+    ASSERT_EQ(sp.use_count(), 1l);
 }
 
 // common types

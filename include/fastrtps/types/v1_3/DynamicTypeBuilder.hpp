@@ -32,7 +32,7 @@ class DynamicTypeBuilderFactory;
 
 class DynamicTypeBuilder final
     : public TypeDescriptor
-    , public std::enable_shared_from_this<DynamicTypeBuilder>
+    , public eprosima::detail::external_reference_counting<DynamicTypeBuilder>
 {
     using builder_allocator = eprosima::detail::BuilderAllocator<DynamicType, DynamicTypeBuilder, false>;
 

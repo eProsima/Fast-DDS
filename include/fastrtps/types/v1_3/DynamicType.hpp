@@ -16,6 +16,7 @@
 #define TYPES_1_3_DYNAMIC_TYPE_H
 
 #include <fastrtps/types/v1_3/TypeDescriptor.hpp>
+#include <fastrtps/utils/custom_allocators.hpp>
 
 namespace eprosima {
 
@@ -37,7 +38,7 @@ class DynamicTypeBuilderFactory;
 
 class DynamicType final
     : public TypeDescriptor
-    , public std::enable_shared_from_this<DynamicType>
+    , public eprosima::detail::external_reference_counting<DynamicType>
 {
     // Only create objects from the associated factory
     struct use_the_create_method

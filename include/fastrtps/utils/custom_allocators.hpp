@@ -20,6 +20,7 @@
 #define FASTRTPS_UTILS_CUSTOM_ALLOCATORS_HPP_
 
 #include <atomic>
+#include <cassert>
 #include <memory>
 #include <type_traits>
 
@@ -213,6 +214,17 @@ class external_reference_counting
     std::atomic_long counter_ = {0l};
 
 protected:
+
+    constexpr external_reference_counting() noexcept = default;
+
+    external_reference_counting(const external_reference_counting&) noexcept
+        : counter_{0}
+    {}
+
+    external_reference_counting& operator=(const external_reference_counting&) noexcept
+    {
+        return *this;
+    }
 
     long use_count() const
     {
