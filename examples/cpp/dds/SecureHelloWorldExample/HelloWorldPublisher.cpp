@@ -21,8 +21,6 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 
-#include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
-
 using namespace eprosima::fastdds::dds;
 
 HelloWorldPublisher::HelloWorldPublisher()
@@ -41,46 +39,24 @@ bool HelloWorldPublisher::init()
 
     //CREATE THE PARTICIPANT
     DomainParticipantQos pqos;
-
-    pqos.properties().properties().emplace_back(
-            "dds.sec.auth.plugin",
+    pqos.properties().properties().emplace_back("dds.sec.auth.plugin",
             "builtin.PKI-DH");
-
-    pqos.properties().properties().emplace_back(
-            "dds.sec.auth.builtin.PKI-DH.identity_ca",
+    pqos.properties().properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_ca",
             "file://certs/maincacert.pem");
-
-    pqos.properties().properties().emplace_back(
-            "dds.sec.auth.builtin.PKI-DH.identity_certificate",
+    pqos.properties().properties().emplace_back("dds.sec.auth.builtin.PKI-DH.identity_certificate",
             "file://certs/mainpubcert.pem");
-
-    pqos.properties().properties().emplace_back(
-            "dds.sec.auth.builtin.PKI-DH.private_key",
+    pqos.properties().properties().emplace_back("dds.sec.auth.builtin.PKI-DH.private_key",
             "file://certs/mainpubkey.pem");
-
-    pqos.properties().properties().emplace_back(
-            "dds.sec.access.plugin",
+    pqos.properties().properties().emplace_back("dds.sec.access.plugin",
             "builtin.Access-Permissions");
-
-    pqos.properties().properties().emplace_back(
-            "dds.sec.access.builtin.Access-Permissions.permissions_ca",
+    pqos.properties().properties().emplace_back("dds.sec.access.builtin.Access-Permissions.permissions_ca",
             "file://certs/maincacert.pem");
-
-    pqos.properties().properties().emplace_back(
-            "dds.sec.access.builtin.Access-Permissions.governance",
+    pqos.properties().properties().emplace_back("dds.sec.access.builtin.Access-Permissions.governance",
             "file://certs/governance.smime");
-
-    pqos.properties().properties().emplace_back(
-            "dds.sec.access.builtin.Access-Permissions.permissions",
+    pqos.properties().properties().emplace_back("dds.sec.access.builtin.Access-Permissions.permissions",
             "file://certs/permissions.smime");
-
-    pqos.properties().properties().emplace_back(
-            "dds.sec.crypto.plugin",
+    pqos.properties().properties().emplace_back("dds.sec.crypto.plugin",
             "builtin.AES-GCM-GMAC");
-
-    pqos.transport().use_builtin_transports = false;
-    auto udp_transport = std::make_shared<eprosima::fastdds::rtps::UDPv4TransportDescriptor>();
-    pqos.transport().user_transports.push_back(udp_transport);
 
     participant_ = DomainParticipantFactory::get_instance()->create_participant(0, pqos);
 
