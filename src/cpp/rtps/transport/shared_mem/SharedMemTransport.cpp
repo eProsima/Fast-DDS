@@ -254,6 +254,10 @@ bool SharedMemTransport::init(
     try
     {
         shared_mem_manager_ = SharedMemManager::create(SHM_MANAGER_DOMAIN);
+        if (!shared_mem_manager_)
+        {
+            return false;
+        }
         shared_mem_segment_ = shared_mem_manager_->create_segment(configuration_.segment_size(),
                         configuration_.port_queue_capacity());
 
