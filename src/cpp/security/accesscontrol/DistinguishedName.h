@@ -19,6 +19,7 @@
 #ifndef _SECURITY_ACCESSCONTROL_DISTINGUISHEDNAME_H_
 #define _SECURITY_ACCESSCONTROL_DISTINGUISHEDNAME_H_
 
+#include <array>
 #include <string>
 
 namespace eprosima {
