@@ -552,7 +552,7 @@ TEST(Discovery, EndpointRediscoveryWithTransientLocalData_2)
     // The writer will then send another 8 samples
     // The cable is plugged again, and the reader expects the reception of all (10) samples
 
-    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
+    PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME, false);
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
 
     auto testTransport = std::make_shared<test_UDPv4TransportDescriptor>();
