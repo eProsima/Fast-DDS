@@ -180,6 +180,12 @@ struct identifier_processor
                 {
                     return DDSFilterValue::ValueKind::ENUM;
                 }
+                if (TK_ALIAS == type_object->complete()._d())
+                {
+                    const TypeIdentifier& aliasedId =
+                            type_object->complete().alias_type().body().common().related_type();
+                    return get_value_kind(aliasedId, pos);
+                }
                 break;
 
         }
