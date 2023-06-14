@@ -173,13 +173,9 @@ int main(
                     {
                         transport = TransportKind::UDPv6;
                     }
-                    else if (transport_str == "shm")
-                    {
-                        transport = TransportKind::SHM;
-                    }
                     else
                     {
-                        print_warning("udpv4|udpv6|shm", opt.name);
+                        print_warning("udpv4|udpv6", opt.name);
                     }
 
                     break;

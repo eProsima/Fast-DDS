@@ -148,7 +148,7 @@ struct Arg : public option::Arg
         }
         if (msg)
         {
-            print_error("Option '", option, "' requires an IPaddress[:portnumber] argument\n");
+            print_error("Option '", option, "' requires a string argument\n");
         }
         return option::ARG_ILLEGAL;
     }
@@ -235,7 +235,7 @@ const option::Descriptor usage[] = {
         "",
         "transport",
         Arg::Transport,
-        "  \t--transport <trans> \tUse Transport Protocol [udpv4|udpv6|shm] (UDPv4 by default)."
+        "  \t--transport <trans> \tUse Transport Protocol [udpv4|udpv6] (UDPv4 by default)."
     },
     {
         CONNECTION_DISCOVERY_SERVER_ID,
