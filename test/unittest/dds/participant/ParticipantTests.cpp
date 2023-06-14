@@ -2169,14 +2169,46 @@ TEST(ParticipantTests, DeleteTopicInUse)
 // Check that the constraints on maximum expression parameter size are honored
 TEST(ParticipantTests, ExpressionParameterLimits)
 {
-    DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
 
+    DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
+    TypeSupport type(new TopicDataTypeMock());
+
+    // Testing QoS Default limit
+    DomainParticipant* participant_default_max_parameters =
+            DomainParticipantFactory::get_instance()->create_participant(0, pqos);
+    type.register_type(participant_default_max_parameters, "footype");
+
+    Topic* topic_default_max_parameters = participant_default_max_parameters->create_topic("footopic", "footype",
+                    TOPIC_QOS_DEFAULT);
+
+    std::vector<std::string> expression_parameters;
+    for (int i = 0; i < 101; i++)
+    {
+        expression_parameters.push_back("Parameter");
+    }
+
+    ContentFilteredTopic* content_filtered_topic_default_max_parameters =
+            participant_default_max_parameters->create_contentfilteredtopic("contentfilteredtopic",
+                    topic_default_max_parameters, "", expression_parameters);
+    ASSERT_EQ(content_filtered_topic_default_max_parameters, nullptr);
+
+    ContentFilteredTopic* content_filtered_topic_default_valid_parameters =
+            participant_default_max_parameters->create_contentfilteredtopic("contentfilteredtopic",
+                    topic_default_max_parameters, "", {"Parameter1", "Parameter2"});
+    ASSERT_NE(content_filtered_topic_default_valid_parameters, nullptr);
+
+    ASSERT_EQ(participant_default_max_parameters->delete_contentfilteredtopic(
+                content_filtered_topic_default_valid_parameters), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(participant_default_max_parameters->delete_topic(topic_default_max_parameters), ReturnCode_t::RETCODE_OK);
+    ASSERT_EQ(DomainParticipantFactory::get_instance()->delete_participant(
+                participant_default_max_parameters), ReturnCode_t::RETCODE_OK);
+
+    // Test user defined limits
     pqos.allocation().content_filter.expression_parameters.maximum = 1;
 
     DomainParticipant* participant =
             DomainParticipantFactory::get_instance()->create_participant(0, pqos);
 
-    TypeSupport type(new TopicDataTypeMock());
     type.register_type(participant, "footype");
 
     Topic* topic = participant->create_topic("footopic", "footype", TOPIC_QOS_DEFAULT);

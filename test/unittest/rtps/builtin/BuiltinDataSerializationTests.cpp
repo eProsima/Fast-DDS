@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "fastdds/dds/log/Log.hpp"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -1199,7 +1198,8 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_interoperability)
 }
 
 /*!
- * \test Test for deserialization of messages with the maximum size of expression parameters
+ * \test Test for deserialization of messages with expression parameters list
+ *       with sizes of 100 or greater
  */
 TEST(BuiltinDataSerializationTests, contentfilterproperty_max_parameter_check)
 {
@@ -1256,6 +1256,48 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_max_parameter_check)
         EXPECT_TRUE(out.readFromCDRMessage(&msg, network, true));
 
         ASSERT_EQ(100, out.content_filter().expression_parameters.size());
+
+        CDRMessage_t msg_fault(5000);
+        EXPECT_TRUE(fastdds::dds::ParameterList::writeEncapsulationToCDRMsg(&msg_fault));
+
+        // Manual serialization of a ContentFilterProperty.
+        {
+            uint32_t len = manual_content_filter_cdr_serialized_size(
+                content_filtered_topic_name,
+                related_topic_name,
+                filter_class_name,
+                filter_expression,
+                expression_parameters
+                );
+            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg_fault, fastdds::dds::PID_CONTENT_FILTER_PROPERTY));
+            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt16(&msg_fault, static_cast<uint16_t>(len - 4)));
+            // content_filtered_topic_name
+            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg_fault, content_filtered_topic_name));
+            // related_topic_name
+            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg_fault, related_topic_name));
+            // filter_class_name
+            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg_fault, filter_class_name));
+            // filter_expression
+            EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg_fault, filter_expression));
+            // expression_parameters
+            // sequence length
+
+            // Add the 101st parameter to the list
+            expression_parameters.push_back("Parameter");
+            uint32_t num_params = static_cast<uint32_t>(expression_parameters.size());
+            EXPECT_EQ(num_params, 101u);
+            EXPECT_TRUE(fastrtps::rtps::CDRMessage::addUInt32(&msg_fault, num_params));
+            // Add all parameters
+            for (const std::string& param : expression_parameters)
+            {
+                EXPECT_TRUE(fastrtps::rtps::CDRMessage::add_string(&msg_fault, param));
+            }
+        }
+        EXPECT_TRUE(fastdds::dds::ParameterSerializer<Parameter_t>::add_parameter_sentinel(&msg_fault));
+
+        msg_fault.pos = 0;
+        // Deserialization of messages with more than 100 parameters should fail
+        ASSERT_FALSE(out.readFromCDRMessage(&msg_fault, network, true));
     }
 }
 
