@@ -55,7 +55,8 @@ public:
             int hops,
             const std::string& partitions,
             bool use_ownership,
-            unsigned int ownership_strength);
+            unsigned int ownership_strength,
+            const std::string& profile);
 
     //! Publish a sample
     void publish();
