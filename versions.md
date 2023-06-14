@@ -4,6 +4,7 @@ Forthcoming
 * Added Participant ignore local endpoints feature.
 * Remove `FASTDDS_STATIC` CMake option.
   Please, use `BUILD_SHARED_LIBS=OFF` instead.
+* Fixed exported symbols on ContentFilteredTopic (ABI break)
 
 Version 2.10.1
 --------------
