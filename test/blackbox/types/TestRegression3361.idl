@@ -1,0 +1,10 @@
+#ifndef TEST_REGRESSION_3361
+#define TEST_REGRESSION_3361
+
+#include "TestIncludeRegression3361.idl"
+
+struct TestRegression3361 {
+	TestModule::MACHINEID uuid;
+};
+
+#endif // TEST_REGRESSION_3361

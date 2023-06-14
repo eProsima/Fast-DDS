@@ -292,6 +292,11 @@ set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
     types/KeyedData1mbPubSubTypes.cxx
     types/FixedSized.cxx
     types/FixedSizedPubSubTypes.cxx
+    types/TestIncludeRegression3361.cxx
+    types/TestIncludeRegression3361TypeObject.cxx
+    types/TestRegression3361.cxx
+    types/TestRegression3361PubSubTypes.cxx
+    types/TestRegression3361TypeObject.cxx
 
     utils/data_generators.cpp
     utils/lambda_functions.cpp
