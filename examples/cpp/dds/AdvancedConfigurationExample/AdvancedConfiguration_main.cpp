@@ -66,6 +66,7 @@ int main(
     std::string partitions = "";
     bool use_ownership = false;
     unsigned int ownership_strength = 0;
+    std::string participant_profile = "";
     //
     argc -= (argc > 0);
     argv += (argc > 0); // skip program name argv[0] if present
@@ -223,6 +224,10 @@ int main(
                 }
                 break;
 
+            case optionIndex::PROFILE:
+                participant_profile = std::string(opt.arg);
+                break;
+
             case optionIndex::UNKNOWN_OPT:
                 std::cerr << "ERROR: " << opt.name << " is not a valid argument." << std::endl;
                 option::printUsage(fwrite, stdout, usage, columns);
@@ -246,7 +251,8 @@ int main(
         {
             HelloWorldPublisher mypub;
             if (mypub.init(topic_name, static_cast<uint32_t>(domain), static_cast<uint32_t>(num_wait_matched), async,
-                    transport, reliable, transient, hops, partitions, use_ownership, ownership_strength))
+                    transport, reliable, transient, hops, partitions, use_ownership, ownership_strength,
+                    participant_profile))
             {
                 mypub.run(static_cast<uint32_t>(count), static_cast<uint32_t>(sleep));
             }
@@ -256,7 +262,7 @@ int main(
         {
             HelloWorldSubscriber mysub;
             if (mysub.init(topic_name, static_cast<uint32_t>(count), static_cast<uint32_t>(domain), transport,
-                    reliable, transient, hops, partitions, use_ownership))
+                    reliable, transient, hops, partitions, use_ownership, participant_profile))
             {
                 mysub.run(static_cast<uint32_t>(count));
             }

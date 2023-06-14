@@ -175,7 +175,8 @@ enum optionIndex
     TTL,
     PARTITIONS,
     OWNERSHIP_STRENGTH,
-    OWNERSHIP
+    OWNERSHIP,
+    PROFILE,
 };
 
 const option::Descriptor usage[] = {
@@ -229,6 +230,8 @@ const option::Descriptor usage[] = {
       "  -p <str> \t--partitions=<str> \tPartitions to match separated by ';'."
       " Single or double quotes required with multiple partitions."
       " With empty string ('') no partitions used. (Default: '')." },
+    { PROFILE, 0, "x", "--xml-profile",         Arg::String,
+      "  -x <str> \t--xml-profile <str>\tProfile name to configure DomainParticipant."},
 
     { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nDiscovery options:"},
     { TTL, 0, "", "ttl",         Arg::NumericRange<1, 255>,

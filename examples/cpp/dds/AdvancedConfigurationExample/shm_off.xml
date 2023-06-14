@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds>
+    <profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles" >
+        <transport_descriptors>
+            <transport_descriptor>
+                <transport_id>custom_udpv4_transport</transport_id>
+                <type>UDPv4</type>
+            </transport_descriptor>
+        </transport_descriptors>
+        <participant profile_name="no_shm_participant_profile">
+            <rtps>
+                <useBuiltinTransports>false</useBuiltinTransports>
+                <userTransports>
+                    <transport_id>custom_udpv4_transport</transport_id>
+                </userTransports>
+            </rtps>
+        </participant>
+    </profiles>
+</dds>
