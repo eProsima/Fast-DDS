@@ -48,7 +48,7 @@ class ContentFilteredTopic : public TopicDescription
 
 private:
 
-    RTPS_DllAPI ContentFilteredTopic(
+    ContentFilteredTopic(
             const std::string& name,
             Topic* related_topic,
             const std::string& filter_expression,
@@ -56,7 +56,7 @@ private:
 
 public:
 
-    RTPS_DllAPI virtual ~ContentFilteredTopic();
+    virtual ~ContentFilteredTopic();
 
     /**
      * @brief Getter for the related topic.
@@ -128,7 +128,7 @@ public:
      * @brief Getter for the DomainParticipant
      * @return DomainParticipant pointer
      */
-    DomainParticipant* get_participant() const override;
+    RTPS_DllAPI DomainParticipant* get_participant() const override;
 
     TopicDescriptionImpl* get_impl() const override;
 
