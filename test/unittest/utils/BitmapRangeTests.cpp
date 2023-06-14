@@ -558,7 +558,7 @@ TEST_F(BitmapRangeTests, min)
 {
     // num_bits_ == 0 return base_
     TestType uut{10, 32};
-    ASSERT_EQ(uut.min(), 10);
+    ASSERT_EQ(uut.min(), 10u);
 }
 
 TEST_F(BitmapRangeTests, min_2)
@@ -566,7 +566,7 @@ TEST_F(BitmapRangeTests, min_2)
     // num_bits_ != 0 return base_
     TestType uut{10, 32};
     uut.*& BitmapRangeExposer<TestType>::num_bits_ = 32;
-    ASSERT_EQ(uut.min(), 10);
+    ASSERT_EQ(uut.min(), 10u);
 }
 
 TEST_F(BitmapRangeTests, add)
@@ -633,7 +633,7 @@ TEST_F(BitmapRangeTests, shift_map_left)
     TestType uut{10, 32};
     uut.*& BitmapRangeExposer<TestType>::num_bits_ = 1;
     uut.base_update(1000);
-    ASSERT_EQ(1000, uut.*& BitmapRangeExposer<TestType>::base_);
+    ASSERT_EQ(1000u, uut.*& BitmapRangeExposer<TestType>::base_);
 }
 
 TEST_F(BitmapRangeTests, is_set)
@@ -676,9 +676,9 @@ TEST_F(BitmapRangeTests, base)
 {
     TestType uut{10, 32};
     uut.base(9, 100);
-    ASSERT_EQ(uut.*& BitmapRangeExposer<TestType>::base_, 9);
-    ASSERT_EQ(uut.*& BitmapRangeExposer<TestType>::range_max_, 109);
-    ASSERT_EQ(uut.*& BitmapRangeExposer<TestType>::num_bits_, 0);
+    ASSERT_EQ(uut.*& BitmapRangeExposer<TestType>::base_, 9u);
+    ASSERT_EQ(uut.*& BitmapRangeExposer<TestType>::range_max_, 109u);
+    ASSERT_EQ(uut.*& BitmapRangeExposer<TestType>::num_bits_, 0u);
 }
 
 
