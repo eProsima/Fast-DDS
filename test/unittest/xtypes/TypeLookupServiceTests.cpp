@@ -739,6 +739,39 @@ TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies_with_conti
  */
 TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies_malformed_request_reception)
 {
+    // Create DomainParticipant enabling both the TypeLookup Service server and client configuration
+    DomainParticipant* participant;
+    create_participant_typelookup_config(participant, true, true);
+    // Register types
+    TypeIdentifierSeq types;
+    register_types(types);
+    // Access request reader history
+    TypeLookupManager* typelookup_manager;
+    get_typelookup_manager(participant, typelookup_manager);
+    ReaderHistory* request_reader_history = typelookup_manager->get_builtin_request_reader_history();
+    EXPECT_NE(nullptr, request_reader_history);
+    StatefulWriter* request_writer = typelookup_manager->get_builtin_request_writer();
+    EXPECT_NE(nullptr, request_writer);
+    // Send the malformed request message
+    /* CASE 1 */
+    // Prepare sample
+    TypeLookup_Request request;
+    request.header.instanceName = "not_valid_instance_name";
+    GUID_t guid;
+    std::istringstream("000102030405060708090a0b000300c3") >> guid;
+    request.header.requestId.writer_guid(guid);
+    request.header.requestId.sequence_number({0, 1});
+    TypeLookup_getTypeDependencies_In requested_ids;
+    requested_ids.type_ids = types;
+    // Serialize sample
+    CacheChange_t* change = request_writer->new_change(
+        [&request]()
+        {
+            return static_cast<uint32_t>(TypeLookup_Request::getCdrSerializedSize(request) + 4);
+        },
+        ALIVE);
+    ASSERT_NE(nullptr, change);
+    // Check listener logic when notified
 }
 
 /**
@@ -978,13 +1011,8 @@ TEST(TypeLookupServiceTests, typelookup_service_get_types_minimal_request)
             minimal_type_identifiers[5]);
     }
 
-    // TODO: If a TypeIdentifier was a SCCIdentifier, the the response shall treat the TypeObjects within the SCC
+    // TODO: If a TypeIdentifier was a SCCIdentifier, then the response shall treat the TypeObjects within the SCC
     //       atomically. Either include all in the reply or none. XTYPES v1.3 Clause 7.6.3.3.4.2
-
-
-
-
-
 
     // Reply reception cannot be checked with current implementation because the sample is removed from the history
     // after being processed.
