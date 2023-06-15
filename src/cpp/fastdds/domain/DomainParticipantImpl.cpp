@@ -575,6 +575,21 @@ ContentFilteredTopic* DomainParticipantImpl::create_contentfilteredtopic(
         return nullptr;
     }
 
+    if (expression_parameters.size() > qos_.allocation().content_filter.expression_parameters.maximum)
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Number of expression parameters exceeds maximum allocation limit: "
+                << expression_parameters.size() << " > "
+                << qos_.allocation().content_filter.expression_parameters.maximum);
+        return nullptr;
+    }
+
+    if (expression_parameters.size() > 100)
+    {
+        EPROSIMA_LOG_ERROR(PARTICIPANT, "Number of expression parameters exceeds maximum protocol limit: "
+                << expression_parameters.size() << " > 100");
+        return nullptr;
+    }
+
     TopicProxy* topic_impl = dynamic_cast<TopicProxy*>(related_topic->get_impl());
     assert(nullptr != topic_impl);
     const TypeSupport& type = topic_impl->get_type();
