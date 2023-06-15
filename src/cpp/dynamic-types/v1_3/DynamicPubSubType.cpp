@@ -25,8 +25,8 @@
 using namespace eprosima::fastrtps::types::v1_3;
 
 DynamicPubSubType::DynamicPubSubType(
-        DynamicType_ptr pType)
-    : dynamic_type_(pType)
+        DynamicType& type)
+    : dynamic_type_(&type)
 {
     UpdateDynamicTypeInfo();
 }
@@ -50,11 +50,11 @@ DynamicType_ptr DynamicPubSubType::GetDynamicType() const
 }
 
 ReturnCode_t DynamicPubSubType::SetDynamicType(
-        DynamicData_ptr pData)
+        const DynamicData& data)
 {
     if (!dynamic_type_)
     {
-        dynamic_type_ = pData->type_;
+        dynamic_type_ = data.type_;
         UpdateDynamicTypeInfo();
         return ReturnCode_t::RETCODE_OK;
     }
@@ -66,11 +66,11 @@ ReturnCode_t DynamicPubSubType::SetDynamicType(
 }
 
 ReturnCode_t DynamicPubSubType::SetDynamicType(
-        DynamicType_ptr pType)
+        DynamicType& type)
 {
     if (!dynamic_type_)
     {
-        dynamic_type_ = pType;
+        dynamic_type_.reset(&type);
         UpdateDynamicTypeInfo();
         return ReturnCode_t::RETCODE_OK;
     }

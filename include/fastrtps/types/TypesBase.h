@@ -20,6 +20,7 @@
 #include <algorithm>
 #include <bitset>
 #include <cctype>
+#include <functional>
 #include <limits>
 #include <map>
 #include <memory>
@@ -920,22 +921,42 @@ class DynamicType_ptr;
 
 } // namespace v1_1
 
-
 namespace v1_3 {
 
 class DynamicType;
 class DynamicTypeBuilder;
-using DynamicType_ptr = std::shared_ptr<const DynamicType>;
-using DynamicType_wptr = std::weak_ptr<const DynamicType>;
-using DynamicTypeBuilder_ptr = std::shared_ptr<DynamicTypeBuilder>;
-using DynamicTypeBuilder_cptr = std::shared_ptr<const DynamicTypeBuilder>;
+
+template<class T>
+std::function<void(T*)> dynamic_object_deleter(T*);
 
 using namespace xtypes_names;
 
 constexpr uint32_t LENGTH_UNLIMITED = std::numeric_limits<uint32_t>::max();
 
 } // namespace v1_3
+} // namespace types
+} // namespace fastrtps
+} // namespace eprosima
 
+namespace std {
+
+template<> class weak_ptr<v1_3::DynamicTypeBuilder>;
+template<> class shared_ptr<v1_3::DynamicTypeBuilder>;
+template<> class weak_ptr<const v1_3::DynamicType>;
+template<> class shared_ptr<const v1_3::DynamicType>;
+
+} // namespace std
+
+namespace eprosima {
+namespace fastrtps {
+namespace types {
+namespace v1_3 {
+
+class DynamicType_ptr = std::shared_ptr<const DynamicType>;
+class DynamicTypeBuilder_ptr = std::shared_ptr<DynamicTypeBuilder>;
+class DynamicTypeBuilder_cptr = std::shared_ptr<const DynamicTypeBuilder>;
+
+} // namespace v1_3
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima

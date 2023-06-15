@@ -72,10 +72,14 @@ public:
             const std::string& key,
             const std::string& value);
 
+    template<class D,
+             typename std::enable_if<
+                 std::is_constructible<DynamicType_ptr, D>::value,
+                 bool>::type = true>
     void set_type(
-            const DynamicType_ptr& type)
+            const D& type)
     {
-        type_ = type;
+        type_.swap(DynamicType_ptr{type});
     }
 
     void set_type(

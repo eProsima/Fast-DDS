@@ -15,6 +15,7 @@
 #ifndef TYPES_1_3_DYNAMIC_TYPE_H
 #define TYPES_1_3_DYNAMIC_TYPE_H
 
+#include <fastrtps/types/v1_3/DynamicTypePtr.hpp>
 #include <fastrtps/types/v1_3/TypeDescriptor.hpp>
 #include <fastrtps/utils/custom_allocators.hpp>
 

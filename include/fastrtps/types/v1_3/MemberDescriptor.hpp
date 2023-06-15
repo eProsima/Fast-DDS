@@ -121,13 +121,17 @@ public:
      * @param[in] type @ref DynamicType new member's type
      */
     template<class S,
+             class D,
              typename std::enable_if<
                  std::is_constructible<std::string, S>::value,
+                 bool>::type = true,
+             typename std::enable_if<
+                 std::is_constructible<DynamicType_ptr, D>::value,
                  bool>::type = true>
     MemberDescriptor(
             uint32_t index,
             const S& name,
-            DynamicType_ptr type)
+            const D& type)
         : name_(name)
         , type_(type)
         , index_(index)
@@ -141,13 +145,17 @@ public:
      * @param[in] type @ref DynamicType new member's type
      */
     template<class S,
+             class D,
              typename std::enable_if<
                  std::is_constructible<std::string, S>::value,
+                 bool>::type = true,
+             typename std::enable_if<
+                 std::is_constructible<DynamicType_ptr, D>::value,
                  bool>::type = true>
     MemberDescriptor(
             const MemberId& id,
             const S& name,
-            DynamicType_ptr type)
+            const D& type)
         : name_(name)
         , id_(id)
         , type_(type)
@@ -162,9 +170,13 @@ public:
      * @param[in] defaultValue member default value as a string representation
      */
     template<class S1,
+             class D,
              class S2,
              typename std::enable_if<
                  std::is_constructible<std::string, S1>::value,
+                 bool>::type = true,
+             typename std::enable_if<
+                 std::is_constructible<DynamicType_ptr, D>::value,
                  bool>::type = true,
              typename std::enable_if<
                  std::is_constructible<std::string, S2>::value,
@@ -172,7 +184,7 @@ public:
     MemberDescriptor(
             const MemberId& id,
             const S1& name,
-            DynamicType_ptr type,
+            const D& type,
             const S2& defaultValue)
         : name_(name)
         , id_(id)
@@ -191,10 +203,14 @@ public:
      * @param[in] isDefaultLabel is true if 'default' idl union case is enforced
      */
     template<class S1,
+             class D,
              class S2,
              class Cont,
              typename std::enable_if<
                  std::is_constructible<std::string, S1>::value,
+                 bool>::type = true,
+             typename std::enable_if<
+                 std::is_constructible<DynamicType_ptr, D>::value,
                  bool>::type = true,
              typename std::enable_if<
                  std::is_constructible<std::string, S2>::value,
@@ -205,7 +221,7 @@ public:
     MemberDescriptor(
             const MemberId& id,
             const S1& name,
-            DynamicType_ptr type,
+            const D& type,
             const S2& defaultValue,
             const Cont& unionLabels,
             bool isDefaultLabel)
@@ -349,10 +365,17 @@ public:
 
     /**
      * Set member name
-     * @param[in] name std::string desired name
+     * @param[in] name desired name
      */
+    template<class S,
+             typename std::enable_if<
+                 std::is_constructible<std::string, S>::value,
+                 bool>::type = true>
     RTPS_DllAPI void set_name(
-            const std::string& name);
+            const S& name)
+    {
+        name_ = name;
+    }
 
     /**
      * Set member type by move
@@ -365,8 +388,15 @@ public:
      * Set member type by copy
      * @param[in] type @ref DynamicType l-value
      */
+    template<class D,
+             typename std::enable_if<
+                 std::is_constructible<DynamicType_ptr, D>::value,
+                 bool>::type = true>
     RTPS_DllAPI void set_type(
-            const DynamicType_ptr& type);
+            const D& type)
+    {
+        type_.swap(DynamicType_ptr{type});
+    }
 
     /**
      * Queries the desired or actual member type

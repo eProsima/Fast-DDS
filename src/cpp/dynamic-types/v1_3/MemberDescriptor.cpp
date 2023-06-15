@@ -283,22 +283,10 @@ void MemberDescriptor::set_index(
     index_ = index;
 }
 
-void MemberDescriptor::set_name(
-        const std::string& name)
-{
-    name_ = name;
-}
-
 void MemberDescriptor::set_type(
         DynamicType_ptr&& type)
 {
     type_ = std::move(type);
-}
-
-void MemberDescriptor::set_type(
-        const DynamicType_ptr& type)
-{
-    type_ = type;
 }
 
 DynamicType_ptr MemberDescriptor::get_type() const

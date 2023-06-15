@@ -224,31 +224,36 @@ ReturnCode_t DynamicTypeBuilder::add_member(
     return ReturnCode_t::RETCODE_OK;
 }
 
-DynamicType_ptr DynamicTypeBuilder::build() const
+DynamicType* DynamicTypeBuilder::build() const
 {
     // check if an instance is already available
     // and is still valid
-    if (instance_ && *this == *instance_)
+    if ( !(instance_ && *this == *instance_) && is_consistent(true))
     {
-        return instance_;
-    }
-
-    // otherwise, create a new one. Check total consistency
-    if (is_consistent(true))
-    {
-        instance_ = std::allocate_shared<DynamicType>(
-            builder_allocator{},
-            DynamicType::use_the_create_method{},
-            *this);
-        return instance_;
+        try
+        {
+            // otherwise, create a new one. Check total consistency
+            instance_ = std::allocate_shared<DynamicType>(
+                builder_allocator{},
+                DynamicType::use_the_create_method{},
+                *this);
+        }
+        catch(const std::bad_alloc& e)
+        {
+            EPROSIMA_LOG_ERROR(DYN_TYPES,
+                    "Error building type. It couldn't be allocated: " << e.what());
+            return nullptr;
+        }
     }
     else
     {
-        instance_.reset();
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building type. The current descriptor isn't consistent.");
+        instance_.reset();
+        return nullptr;
     }
 
-    return {};
+    instance_->add_ref();
+    return instance_.get();
 }
 
 bool DynamicTypeBuilder::check_union_configuration(
@@ -302,4 +307,30 @@ bool DynamicTypeBuilder::equals(
         const DynamicType& other) const
 {
     return *this == other;
+}
+
+template<>
+std::function<void(DynamicTypeBuilder*)> dynamic_object_deleter(const DynamicTypeBuilder*)
+{
+   if ( pDT != nullptr)
+   {
+        if (pDT->use_count())
+        {
+            // This is an external object
+            return [](const DynamicTypeBuilder* pDT)
+            {
+                if (pDT)
+                {
+                    const_cast<DynamicTypeBuilder*>(pDT)->release();
+                }
+            };
+        }
+        else
+        {
+            // This is an internal object
+            return std::default_delete<DynamicTypeBuilder>();
+        }
+   }
+
+   return nullptr;
 }

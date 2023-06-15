@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_DYNAMIC_TYPE_PTR_H
-#define TYPES_DYNAMIC_TYPE_PTR_H
+#ifndef TYPES_DYNAMIC_TYPE_BUILDER_PTR_H
+#define TYPES_DYNAMIC_TYPE_BUILDER_PTR_H
 
-#include "v1_1/DynamicTypePtr.h"
-#include "v1_3/DynamicTypePtr.hpp"
+#include "v1_1/DynamicTypeBuilderPtr.h"
+#include "v1_3/DynamicTypeBuilderPtr.hpp"
 
-#endif // TYPES_DYNAMIC_TYPE_PTR_H
+#endif // TYPES_DYNAMIC_TYPE_BUILDER_PTR_H

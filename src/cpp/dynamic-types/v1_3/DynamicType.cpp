@@ -1893,3 +1893,29 @@ void DynamicType::serialize_empty_data(
         }
     }
 }
+
+template<>
+std::function<void(DynamicType*)> dynamic_object_deleter(const DynamicType*)
+{
+   if ( pDT != nullptr)
+   {
+        if (pDT->use_count())
+        {
+            // This is an external object
+            return [](const DynamicType* pDT)
+            {
+                if (pDT)
+                {
+                    const_cast<DynamicType*>(pDT)->release();
+                }
+            };
+        }
+        else
+        {
+            // This is an internal object
+            return std::default_delete<DynamicType>();
+        }
+   }
+
+   return nullptr;
+}

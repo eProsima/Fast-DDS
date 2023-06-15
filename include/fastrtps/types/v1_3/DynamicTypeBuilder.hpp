@@ -168,7 +168,7 @@ public:
      *            non-const method usage.
      * @return new @ref DynamicType object reference
      */
-    RTPS_DllAPI DynamicType_ptr build() const;
+    RTPS_DllAPI DynamicType* build() const;
 
     RTPS_DllAPI ReturnCode_t copy_from(
             const DynamicTypeBuilder* other);
@@ -181,6 +181,12 @@ public:
 
     using TypeDescriptor::set_base_type;
 };
+
+template<>
+void dynamic_object_deleter(const DynamicTypeBuilder* )
+{
+    
+}
 
 } // namespace v1_3
 } // namespace types
