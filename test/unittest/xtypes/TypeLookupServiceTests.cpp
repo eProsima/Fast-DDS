@@ -737,9 +737,11 @@ TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies_with_conti
  *   5. There is a mix between MINIMAL and COMPLETE TypeIdentifiers.
  *   6. TODO: No SCC individual TypeIdentifier should be included.
  */
+/*
 TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies_malformed_request_reception)
 {
 }
+*/
 
 /**
  * Test that checks the getTypes operation receiving a request with COMPLETE TypeIdentifiers.
@@ -978,13 +980,8 @@ TEST(TypeLookupServiceTests, typelookup_service_get_types_minimal_request)
             minimal_type_identifiers[5]);
     }
 
-    // TODO: If a TypeIdentifier was a SCCIdentifier, the the response shall treat the TypeObjects within the SCC
+    // TODO: If a TypeIdentifier was a SCCIdentifier, then the response shall treat the TypeObjects within the SCC
     //       atomically. Either include all in the reply or none. XTYPES v1.3 Clause 7.6.3.3.4.2
-
-
-
-
-
 
     // Reply reception cannot be checked with current implementation because the sample is removed from the history
     // after being processed.
@@ -1003,9 +1000,11 @@ TEST(TypeLookupServiceTests, typelookup_service_get_types_minimal_request)
  *   4. Some of the received TypeIdentifiers is not a direct HASH
  *   5. TODO: No SCC individual TypeIdentifier should be included.
  */
+/*
 TEST(TypeLookupServiceTests, typelookup_service_get_types_malformed_request_reception)
 {
 }
+*/
 
 int main(
         int argc,
