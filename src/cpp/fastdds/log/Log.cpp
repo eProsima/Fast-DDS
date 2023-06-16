@@ -209,8 +209,14 @@ struct LogResources
         {
             std::unique_lock<std::mutex> guard(cv_mutex_);
             work_ = true;
+            // pessimization
+            cv_.notify_all();
+            // wait till the thread is initialized
+            cv_.wait(guard, [&]
+                    {
+                        return current_loop_;
+                    });
         }
-        cv_.notify_all();
     }
 
     //! Stops the logging_ thread. It will re-launch on the next call to QueueLog.
@@ -269,14 +275,16 @@ private:
                 logs_.Swap();
                 while (!logs_.Empty())
                 {
-                    std::unique_lock<std::mutex> configGuard(config_mutex_);
-
                     Log::Entry& entry = logs_.Front();
-                    if (preprocess(entry))
                     {
-                        for (auto& consumer : consumers_)
+                        std::unique_lock<std::mutex> configGuard(config_mutex_);
+
+                        if (preprocess(entry))
                         {
-                            consumer->Consume(entry);
+                            for (auto& consumer : consumers_)
+                            {
+                                consumer->Consume(entry);
+                            }
                         }
                     }
                     // This Pop() is also a barrier for Log::Flush wait condition
