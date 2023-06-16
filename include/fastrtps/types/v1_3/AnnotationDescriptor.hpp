@@ -16,6 +16,7 @@
 #define TYPES_1_3_ANNOTATION_DESCRIPTOR_H
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/v1_3/DynamicTypePtr.hpp>
 
 #include <functional>
 
@@ -24,8 +25,6 @@ namespace fastrtps {
 namespace types {
 namespace v1_3 {
 
-class MemberDescriptor;
-class DynamicType;
 class DynamicTypeBuilderFactory;
 
 class AnnotationDescriptor final
@@ -79,7 +78,8 @@ public:
     void set_type(
             const D& type)
     {
-        type_.swap(DynamicType_ptr{type});
+        DynamicType_ptr tmp{type};
+        type_.swap(tmp);
     }
 
     void set_type(

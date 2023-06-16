@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_1_3_DYNAMIC_TYPE_BUILDER_H
-#define TYPES_1_3_DYNAMIC_TYPE_BUILDER_H
+#ifndef TYPES_1_3_DYNAMIC_TYPE_BUILDER_HPP
+#define TYPES_1_3_DYNAMIC_TYPE_BUILDER_HPP
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderPtr.hpp>
 #include <fastrtps/types/v1_3/TypeDescriptor.hpp>
 #include <fastrtps/utils/custom_allocators.hpp>
 
@@ -49,6 +50,8 @@ class DynamicTypeBuilder final
     {
         explicit use_the_create_method() = default;
     };
+
+    friend std::function<void(const DynamicTypeBuilder*)> dynamic_object_deleter(const DynamicTypeBuilder*);
 
     MemberId current_member_id_{0};
 
@@ -182,15 +185,9 @@ public:
     using TypeDescriptor::set_base_type;
 };
 
-template<>
-void dynamic_object_deleter(const DynamicTypeBuilder* )
-{
-    
-}
-
 } // namespace v1_3
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_1_3_DYNAMIC_TYPE_BUILDER_H
+#endif // TYPES_1_3_DYNAMIC_TYPE_BUILDER_HPP

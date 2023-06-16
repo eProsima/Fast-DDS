@@ -1894,8 +1894,7 @@ void DynamicType::serialize_empty_data(
     }
 }
 
-template<>
-std::function<void(DynamicType*)> dynamic_object_deleter(const DynamicType*)
+std::function<void(const DynamicType*)> eprosima::fastrtps::types::v1_3::dynamic_object_deleter(const DynamicType* pDT)
 {
    if ( pDT != nullptr)
    {
@@ -1913,7 +1912,7 @@ std::function<void(DynamicType*)> dynamic_object_deleter(const DynamicType*)
         else
         {
             // This is an internal object
-            return std::default_delete<DynamicType>();
+            return std::default_delete<const DynamicType>();
         }
    }
 

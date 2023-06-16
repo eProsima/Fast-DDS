@@ -23,7 +23,7 @@ namespace types {
 namespace v1_3 {
 
 template<>
-std::function<void(DynamicType*)> dynamic_object_deleter(const DynamicType*);
+std::function<void(const DynamicType*)> dynamic_object_deleter(const DynamicType*);
 
 } // namespace v1_3
 } // namespace types
@@ -35,17 +35,17 @@ namespace std
 
 template<>
 class shared_ptr<const eprosima::fastrtps::types::v1_3::DynamicType>
-    : public shared_ptr<void>
+    : public shared_ptr<const void>
 {
 public:
 
     using element_type = const eprosima::fastrtps::types::v1_3::DynamicType;
-    using base = shared_ptr<void>;
+    using base = shared_ptr<const void>;
 
     constexpr shared_ptr() = default;
 
-    explicit shared_ptr(const eprosima::fastrtps::types::v1_3::DynamicType* pA)
-        : base(const_cast<eprosima::fastrtps::types::v1_3::DynamicType*>(pA), dynamic_object_deleter<element_type>) {}
+    explicit shared_ptr(const element_type* pA)
+        : base(pA, dynamic_object_deleter(pA)) {}
 
     shared_ptr(const shared_ptr& r) noexcept
         : base(r) {}
@@ -55,9 +55,9 @@ public:
 
     template< class Y >
     shared_ptr(const shared_ptr<Y>& r, element_type* ptr) noexcept
-        : base(r, const_cast<eprosima::fastrtps::types::v1_3::DynamicType*>(ptr)) {}
+        : base(r, ptr) {}
 
-    template <class T, enable_if_t<is_convertible<element_type, T>::value, int> = 0>
+    template <class T, enable_if_t<is_convertible<T*, element_type*>::value, int> = 0>
     explicit shared_ptr(const weak_ptr<T>& r)
         : base(r) {}
 
@@ -76,10 +76,9 @@ public:
         base::reset();
     }
 
-    void reset(const eprosima::fastrtps::types::v1_3::DynamicType* pA)
+    void reset(element_type* pA)
     {
-        base::reset(const_cast<eprosima::fastrtps::types::v1_3::DynamicType*>(pA),
-                dynamic_object_deleter<element_type>);
+        base::reset(pA, dynamic_object_deleter(pA));
     }
 
     element_type* get() const noexcept
@@ -87,12 +86,12 @@ public:
         return static_cast<element_type*>(base::get());
     }
 
-    const eprosima::fastrtps::types::v1_3::DynamicType& operator*() const noexcept
+    element_type& operator*() const noexcept
     {
         return *get();
     }
 
-    const eprosima::fastrtps::types::v1_3::DynamicType* operator->() const noexcept
+    element_type* operator->() const noexcept
     {
         return get();
     }
@@ -112,17 +111,17 @@ public:
     shared_ptr(const shared_ptr& r) noexcept
         : base(r) {}
 
-    shared_ptr(shared_ptr<eprosima::fastrtps::types::v1_3::DynamicType>&& r) noexcept
+    shared_ptr(shared_ptr&& r) noexcept
         : base(move(r)) {}
 
-    explicit shared_ptr(eprosima::fastrtps::types::v1_3::DynamicType* pA)
+    explicit shared_ptr(element_type* pA)
         : base(pA) {}
 
     template< class Y >
     shared_ptr(const shared_ptr<Y>& r, element_type* ptr) noexcept
         : base(r, ptr) {}
 
-    template <class T, enable_if_t<is_convertible<element_type, T>::value, int> = 0>
+    template <class T, enable_if_t<is_convertible<T*, element_type*>::value, int> = 0>
     explicit shared_ptr(const weak_ptr<T>& r)
         : base(r) {}
 
@@ -136,17 +135,17 @@ public:
         return static_cast<shared_ptr&>(base::operator=(move(r)));
     }
 
-    eprosima::fastrtps::types::v1_3::DynamicType* get() const noexcept
+    element_type* get() const noexcept
     {
-        return const_cast<eprosima::fastrtps::types::v1_3::DynamicType*>(base::get());
+        return const_cast<element_type*>(base::get());
     }
 
-    eprosima::fastrtps::types::v1_3::DynamicType& operator*() const noexcept
+    element_type& operator*() const noexcept
     {
-        return const_cast<eprosima::fastrtps::types::v1_3::DynamicType&>(*get());
+        return const_cast<element_type&>(*get());
     }
 
-    eprosima::fastrtps::types::v1_3::DynamicType* operator->() const noexcept
+    element_type* operator->() const noexcept
     {
         return get();
     }
@@ -154,12 +153,12 @@ public:
 
 template<>
 class weak_ptr<const eprosima::fastrtps::types::v1_3::DynamicType>
-    : public weak_ptr<void>
+    : public weak_ptr<const void>
 {
 public:
 
     using element_type = const eprosima::fastrtps::types::v1_3::DynamicType;
-    using base = weak_ptr<void>;
+    using base = weak_ptr<const void>;
 
     constexpr weak_ptr() noexcept = default;
 
@@ -169,22 +168,24 @@ public:
     weak_ptr(weak_ptr&& r) noexcept
         : base(move(r)) {}
 
-    weak_ptr(const shared_ptr<const eprosima::fastrtps::types::v1_3::DynamicType>& r) noexcept
-        : base(const_pointer_cast<eprosima::fastrtps::types::v1_3::DynamicType>(r)) {}
+    weak_ptr(const shared_ptr<element_type>& r) noexcept
+        : base(r) {}
 
-    weak_ptr& operator=( const weak_ptr& r) noexcept
+    weak_ptr& operator=(const weak_ptr& r) noexcept
     {
-        return static_cast<weak_ptr&>(base::operator=(r));
+        base::operator=(r);
+        return *this;
     }
 
-    weak_ptr& operator=( weak_ptr&& r) noexcept
+    weak_ptr& operator=(weak_ptr&& r) noexcept
     {
-        return static_cast<weak_ptr&>(base::operator=(move(r)));
+        base::operator=(move(r));
+        return *this;
     }
 
-    shared_ptr<const eprosima::fastrtps::types::v1_3::DynamicType> lock() const noexcept
+    shared_ptr<element_type> lock() const noexcept
     {
-        return static_pointer_cast<const eprosima::fastrtps::types::v1_3::DynamicType>(base::lock());
+        return static_pointer_cast<element_type>(base::lock());
     }
 };
 
@@ -197,18 +198,32 @@ public:
     using element_type = eprosima::fastrtps::types::v1_3::DynamicType;
     using base = weak_ptr<const eprosima::fastrtps::types::v1_3::DynamicType>;
 
+    constexpr weak_ptr() noexcept = default;
+
     weak_ptr(const weak_ptr& r) noexcept
         : base(r) {}
 
     weak_ptr(weak_ptr&& r) noexcept
         : base(move(r)) {}
 
-    weak_ptr(const shared_ptr<eprosima::fastrtps::types::v1_3::DynamicType>& r) noexcept
+    weak_ptr(const shared_ptr<element_type>& r) noexcept
         : base(r) {}
 
-    shared_ptr<eprosima::fastrtps::types::v1_3::DynamicType> lock() const noexcept
+    weak_ptr& operator=(const weak_ptr& r) noexcept
     {
-        return const_pointer_cast<eprosima::fastrtps::types::v1_3::DynamicType>(base::lock());
+        base::operator=(r);
+        return *this;
+    }
+
+    weak_ptr& operator=(weak_ptr&& r) noexcept
+    {
+        base::operator=(move(r));
+        return *this;
+    }
+
+    shared_ptr<element_type> lock() const noexcept
+    {
+        return const_pointer_cast<element_type>(base::lock());
     }
 };
 

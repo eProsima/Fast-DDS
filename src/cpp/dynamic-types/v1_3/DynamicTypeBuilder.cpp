@@ -309,8 +309,8 @@ bool DynamicTypeBuilder::equals(
     return *this == other;
 }
 
-template<>
-std::function<void(DynamicTypeBuilder*)> dynamic_object_deleter(const DynamicTypeBuilder*)
+std::function<void(const DynamicTypeBuilder*)> eprosima::fastrtps::types::v1_3::dynamic_object_deleter(
+        const DynamicTypeBuilder* pDT)
 {
    if ( pDT != nullptr)
    {
@@ -328,7 +328,7 @@ std::function<void(DynamicTypeBuilder*)> dynamic_object_deleter(const DynamicTyp
         else
         {
             // This is an internal object
-            return std::default_delete<DynamicTypeBuilder>();
+            return std::default_delete<const DynamicTypeBuilder>();
         }
    }
 

@@ -16,6 +16,7 @@
 #define TYPES_1_3_MEMBER_DESCRIPTOR_H
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/v1_3/DynamicTypePtr.hpp>
 #include <fastrtps/types/v1_3/MemberId.hpp>
 
 #include <set>
@@ -29,7 +30,6 @@ class TypeObjectFactory;
 
 namespace v1_3 {
 
-class DynamicType;
 class AnnotationDescriptor;
 
 using types::TypeKind;
@@ -395,7 +395,8 @@ public:
     RTPS_DllAPI void set_type(
             const D& type)
     {
-        type_.swap(DynamicType_ptr{type});
+        DynamicType_ptr tmp{type};
+        type_.swap(tmp);
     }
 
     /**

@@ -16,6 +16,7 @@
 #define TYPES_1_3_DYNAMIC_DATA_H
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/v1_3/DynamicType.hpp>
 #include <fastrtps/types/v1_3/DynamicDataPtr.hpp>
 #include <fastrtps/types/v1_3/MemberId.hpp>
 

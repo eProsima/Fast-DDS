@@ -25,7 +25,7 @@ DynamicPubSubType::DynamicPubSubType(
 
 DynamicPubSubType::DynamicPubSubType(
         v1_3::DynamicType_ptr pDynamicType)
-    : v1_3::DynamicPubSubType(pDynamicType)
+    : v1_3::DynamicPubSubType(*pDynamicType)
     , active_(version::v1_3)
 {
 }
@@ -43,7 +43,7 @@ ReturnCode_t DynamicPubSubType::SetDynamicType(
 {
     CleanDynamicType();
     active_ = version::v1_3;
-    return v1_3::DynamicPubSubType::SetDynamicType(pType);
+    return v1_3::DynamicPubSubType::SetDynamicType(*pType);
 }
 
 void DynamicPubSubType::CleanDynamicType()

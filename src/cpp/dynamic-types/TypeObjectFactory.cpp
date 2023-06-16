@@ -1794,7 +1794,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             {
                 descriptor.bound_.emplace_back(identifier->string_ldefn().bound());
             }
-            descriptor.element_type_ = v1_3::DynamicTypeBuilderFactory::get_instance().get_char8_type();
+            descriptor.element_type_.reset(v1_3::DynamicTypeBuilderFactory::get_instance().get_char8_type());
             break;
         }
         case TypeKind::TK_STRING16:
@@ -1807,7 +1807,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             {
                 descriptor.bound_.emplace_back(identifier->string_ldefn().bound());
             }
-            descriptor.element_type_ = v1_3::DynamicTypeBuilderFactory::get_instance().get_char16_type();
+            descriptor.element_type_.reset(v1_3::DynamicTypeBuilderFactory::get_instance().get_char16_type());
             break;
         }
         case TypeKind::TK_SEQUENCE:
@@ -1880,12 +1880,11 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             break;
     }
 
-    v1_3::DynamicTypeBuilder_ptr outputType =
-            v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor);
+    v1_3::DynamicTypeBuilder_ptr outputType(v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor));
     //outputType->set_name(name);
     if (outputType)
     {
-        ret = outputType->build();
+        ret.reset(outputType->build());
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_ERROR;
@@ -2059,13 +2058,13 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
                     get_stored_type_identifier(&object->complete().alias_type().body().common().related_type());
             build_dynamic_type(descriptor.base_type_, get_type_name(aux), aux, get_type_object(aux));
             descriptor.set_name(object->complete().alias_type().header().detail().type_name());
-            v1_3::DynamicTypeBuilder_ptr alias_type =
-                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor);
+            v1_3::DynamicTypeBuilder_ptr alias_type{
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor)};
 
             // Apply type's annotations
             apply_type_annotations(alias_type, object->complete().alias_type().header().detail().ann_custom());
 
-            ret = alias_type->build();
+            ret.reset(alias_type->build());
             return ReturnCode_t::RETCODE_OK;
         }
         case TypeKind::TK_STRUCTURE:
@@ -2076,8 +2075,8 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
                 build_dynamic_type(descriptor.base_type_, get_type_name(aux), aux, get_type_object(aux));
             }
 
-            v1_3::DynamicTypeBuilder_ptr struct_type =
-                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor);
+            v1_3::DynamicTypeBuilder_ptr struct_type{
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor)};
 
             // Apply type's annotations
             apply_type_annotations(struct_type, object->complete().struct_type().header().detail().ann_custom());
@@ -2109,7 +2108,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
 
                 apply_member_annotations(struct_type, memDesc.get_id(), member->detail().ann_custom());
             }
-            ret = struct_type->build();
+            ret.reset(struct_type->build());
             return ReturnCode_t::RETCODE_OK;
         }
         case TypeKind::TK_ENUM:
@@ -2117,8 +2116,8 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             // bit_bound annotation effect!
             descriptor.annotation_set_bit_bound(object->complete().enumerated_type().header().common().bit_bound());
 
-            v1_3::DynamicTypeBuilder_ptr enum_type =
-                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor);
+            v1_3::DynamicTypeBuilder_ptr enum_type{
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor)};
 
             // Apply type's annotations
             apply_type_annotations(enum_type, object->complete().enumerated_type().header().detail().ann_custom());
@@ -2160,7 +2159,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
                     enum_type->apply_annotation_to_member(v1_3::MemberId(member->common().value()), def_flag);
                 }
             }
-            ret = enum_type->build();
+            ret.reset(enum_type->build());
             return ReturnCode_t::RETCODE_OK;
         }
         case TypeKind::TK_BITMASK:
@@ -2168,10 +2167,10 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             descriptor.annotation_set_bit_bound(object->complete().bitmask_type().header().common().bit_bound());
             descriptor.bound_.emplace_back(static_cast<uint32_t>(
                         object->complete().bitmask_type().header().common().bit_bound()));
-            descriptor.element_type_ = v1_3::DynamicTypeBuilderFactory::get_instance().get_bool_type();
+            descriptor.element_type_.reset(v1_3::DynamicTypeBuilderFactory::get_instance().get_bool_type());
 
-            v1_3::DynamicTypeBuilder_ptr bitmask_type =
-                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor);
+            v1_3::DynamicTypeBuilder_ptr bitmask_type{
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor)};
 
             // Apply type's annotations
             apply_type_annotations(bitmask_type, object->complete().bitmask_type().header().detail().ann_custom());
@@ -2184,7 +2183,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
                 // member->common().position() should be already an annotation
                 apply_member_annotations(bitmask_type, id, member->detail().ann_custom());
             }
-            ret = bitmask_type->build();
+            ret.reset(bitmask_type->build());
             return ReturnCode_t::RETCODE_OK;
         }
         case TypeKind::TK_BITSET:
@@ -2195,8 +2194,8 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
                 build_dynamic_type(descriptor.base_type_, get_type_name(aux), aux, get_type_object(aux));
             }
 
-            v1_3::DynamicTypeBuilder_ptr bitsetType =
-                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor);
+            v1_3::DynamicTypeBuilder_ptr bitsetType{
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor)};
 
             // Apply type's annotations
             apply_type_annotations(bitsetType, object->complete().bitset_type().header().detail().ann_custom());
@@ -2227,7 +2226,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
                 // member->common().position() and member->common().bitcount() should be annotations
                 apply_member_annotations(bitsetType, m_id, member->detail().ann_custom());
             }
-            ret = bitsetType->build();
+            ret.reset(bitsetType->build());
             return ReturnCode_t::RETCODE_OK;
         }
         case TypeKind::TK_UNION:
@@ -2236,8 +2235,8 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
                     get_stored_type_identifier(&object->complete().union_type().discriminator().common().type_id());
             build_dynamic_type(descriptor.discriminator_type_, get_type_name(aux), aux, get_type_object(aux));
 
-            v1_3::DynamicTypeBuilder_ptr union_type =
-                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor);
+            v1_3::DynamicTypeBuilder_ptr union_type{
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor)};
 
             // Apply type's annotations
             apply_type_annotations(union_type, object->complete().union_type().header().detail().ann_custom());
@@ -2284,13 +2283,13 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
                 apply_member_annotations(union_type, member->common().member_id(), member->detail().ann_custom());
             }
 
-            ret = union_type->build();
+            ret.reset(union_type->build());
             return ReturnCode_t::RETCODE_OK;
         }
         case TypeKind::TK_ANNOTATION:
         {
-            v1_3::DynamicTypeBuilder_ptr annotation_type =
-                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor);
+            v1_3::DynamicTypeBuilder_ptr annotation_type{
+                    v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor)};
 
             for (const CompleteAnnotationParameter& member : object->complete().annotation_type().member_seq())
             {
@@ -2318,7 +2317,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             }
             // Annotation inner definitions?
 
-            ret = annotation_type->build();
+            ret.reset(annotation_type->build());
             return ReturnCode_t::RETCODE_OK;
         }
         default:

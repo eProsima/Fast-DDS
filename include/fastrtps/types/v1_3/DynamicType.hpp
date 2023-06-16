@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_1_3_DYNAMIC_TYPE_H
-#define TYPES_1_3_DYNAMIC_TYPE_H
+#ifndef TYPES_1_3_DYNAMIC_TYPE_HPP
+#define TYPES_1_3_DYNAMIC_TYPE_HPP
 
 #include <fastrtps/types/v1_3/DynamicTypePtr.hpp>
 #include <fastrtps/types/v1_3/TypeDescriptor.hpp>
@@ -46,6 +46,8 @@ class DynamicType final
     {
         explicit use_the_create_method() = default;
     };
+
+    friend std::function<void(const DynamicType*)> dynamic_object_deleter(const DynamicType*);
 
 public:
 
@@ -138,4 +140,4 @@ public:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_1_3_DYNAMIC_TYPE_H
+#endif // TYPES_1_3_DYNAMIC_TYPE_HPP
