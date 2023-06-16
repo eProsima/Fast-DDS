@@ -449,6 +449,19 @@ public:
         return initialized_;
     }
 
+    bool delete_datareader()
+    {
+        ReturnCode_t ret(ReturnCode_t::RETCODE_ERROR);
+
+        if (subscriber_ && datareader_)
+        {
+            ret = subscriber_->delete_datareader(datareader_);
+            datareader_ = nullptr;
+        }
+
+        return (ReturnCode_t::RETCODE_OK == ret);
+    }
+
     virtual void destroy()
     {
         if (participant_ != nullptr)
@@ -948,6 +961,13 @@ public:
     PubSubReader& disable_builtin_transport()
     {
         participant_qos_.transport().use_builtin_transports = false;
+        return *this;
+    }
+
+    PubSubReader& set_wire_protocol_qos(
+            const eprosima::fastdds::dds::WireProtocolConfigQos& qos)
+    {
+        participant_qos_.wire_protocol() = qos;
         return *this;
     }
 
