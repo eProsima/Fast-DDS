@@ -33,7 +33,7 @@ public:
             uint32_t size,
             CacheChange_t& cache_change) override
     {
-        return (size > 0u) && do_get_payload(size, cache_change, true);
+        return do_get_payload(size, cache_change, true);
     }
 
     bool release_payload(
