@@ -205,7 +205,7 @@ private:
     #endif // _MSC_VER
     }
 
-};
+}; // class PreprocessorContext
 
 // preprocessing using pipes
 template<>
@@ -299,6 +299,9 @@ public:
     // Results
     bool success = false;
 
+    v1_3::DynamicType_ptr get_type(
+            std::map<std::string, std::string>& state);
+
     //std::map<std::string, DynamicType::Ptr> get_all_types(
     //        bool scope = false)
     //{
@@ -330,6 +333,7 @@ public:
     {
         if (clear)
         {
+            parser_.reset();
             module_.reset();
         }
     }
@@ -342,8 +346,9 @@ public:
 private:
 
     friend class Parser;
+    std::shared_ptr<Parser> parser_;
     std::shared_ptr<Module> module_;
-};
+}; // class Context
 
 
 template<typename Rule>
@@ -549,6 +554,132 @@ struct action<long_double_type>
 };
 
 template<>
+struct action<char_type>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        switch (ctx->char_translation)
+        {
+            case Context::CHAR:
+                state["type"] = "char";
+            case Context::UINT8:
+                state["type"] = "uint8";
+            case Context::INT8:
+                state["type"] = "int8";
+            default:
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid char type " << ctx->char_translation);
+                state["type"] = "char";
+        }
+    }
+
+};
+
+template<>
+struct action<wide_char_type>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        switch (ctx->wchar_type)
+        {
+            case Context::WCHAR_T:
+                state["type"] = "wchar";
+            case Context::CHAR16_T:
+                state["type"] = "char16";
+            default:
+                EPROSIMA_LOG_ERROR(IDLPARSER, "Invalid wchar type " << ctx->char_translation);
+                state["type"] = "wchar";
+        }
+    }
+
+};
+
+template<>
+struct action<positive_int_const>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        state["positive_int_const"] = in.string();
+    }
+
+};
+
+template<>
+struct action<string_size>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        if (state.count("positive_int_const"))
+        {
+            state["string_size"] = state["positive_int_const"];
+            state.erase("positive_int_const");
+        }
+    }
+
+};
+
+template<>
+struct action<string_type>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        state["type"] = "string";
+    }
+
+};
+
+template<>
+struct action<wstring_size>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        if (state.count("positive_int_const"))
+        {
+            state["wstring_size"] = state["positive_int_const"];
+            state.erase("positive_int_const");
+        }
+    }
+
+};
+
+template<>
+struct action<wide_string_type>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state)
+    {
+        state["type"] = "wstring";
+    }
+
+};
+
+template<>
 struct action<struct_forward_dcl>
 {
     template<typename Input>
@@ -613,18 +744,7 @@ struct action<const_dcl>
             Context* ctx,
             std::map<std::string, std::string>& state)
     {
-        // TODO
-        v1_3::DynamicType_ptr type = nullptr;
-        if (state["type"] == "boolean")
-        {
-            v1_3::DynamicTypeBuilder_cptr builder =
-                    v1_3::DynamicTypeBuilderFactory::get_instance().create_bool_type();
-            type = builder->build();
-        }
-        else if (state["type"] == "int8")
-        {
-
-        }
+        v1_3::DynamicType_ptr type = ctx->get_type(state);
         const std::string& identifier = state["identifier"];
         std::cout << identifier << std::endl;
     }
@@ -637,9 +757,9 @@ class Parser
 {
 public:
 
-    static Parser& instance()
+    static std::shared_ptr<Parser> instance()
     {
-        static Parser instance_;
+        static std::shared_ptr<Parser> instance_(new Parser);
         return instance_;
     }
 
@@ -658,6 +778,7 @@ public:
         memory_input<> input_mem(idl_string, "idlparser");
         std::map<std::string, std::string> parsing_state;
 
+        context.parser_ = shared_from_this();
         context_ = &context;
         tao::TAO_PEGTL_NAMESPACE::parse<document, action>(input_mem, context_, parsing_state);
         context_->success = true;
@@ -686,6 +807,7 @@ public:
             const std::string& idl_file,
             Context& context)
     {
+        context.parser_ = shared_from_this();
         context_ = &context;
         if (context_->preprocess)
         {
@@ -702,6 +824,8 @@ public:
             const std::string& idl_string,
             Context& context)
     {
+        context.parser_ = shared_from_this();
+
         if (context.preprocess)
         {
             return parse(context.preprocess_string(idl_string), context);
@@ -732,7 +856,7 @@ public:
 
 private:
 
-    //friend struct Context; // TODO is this needed?
+    friend struct Context;
     //using LabelsCaseMemberPair = std::pair<std::vector<std::string>, Member>;
 
     //peg::parser parser_;
@@ -743,17 +867,126 @@ private:
     {
     }
 
-    ~Parser()
-    {
-    }
-
     Parser(
             const Parser&) = delete;
     Parser& operator =(
             const Parser&) = delete;
 
-};
+    v1_3::DynamicType_ptr type_spec(
+            std::map<std::string, std::string>& state)
+    {
+        v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance();
+        v1_3::DynamicTypeBuilder_cptr builder = nullptr;
+        v1_3::DynamicType_ptr type = nullptr;
 
+        if (state["type"] == "boolean")
+        {
+            builder = factory.create_bool_type();
+            type = builder->build();
+        }
+        else if (state["type"] == "int8") // TODO
+        {
+            builder = factory.create_byte_type();
+            type = builder->build();
+        }
+        else if (state["type"] == "uint8")
+        {
+            builder = factory.create_byte_type();
+            type = builder->build();
+        }
+        else if (state["type"] == "int16")
+        {
+            builder = factory.create_int16_type();
+            type = builder->build();
+        }
+        else if (state["type"] == "uint16")
+        {
+            builder = factory.create_uint16_type();
+            type = builder->build();
+        }
+        else if (state["type"] == "int32")
+        {
+            builder = factory.create_int32_type();
+            type = builder->build();
+        }
+        else if (state["type"] == "uint32")
+        {
+            builder = factory.create_uint32_type();
+            type = builder->build();
+        }
+        else if (state["type"] == "int64")
+        {
+            builder = factory.create_int64_type();
+            type = builder->build();
+        }
+        else if (state["type"] == "uint64")
+        {
+            builder = factory.create_uint64_type();
+            type = builder->build();
+        }
+        else if (state["type"] == "float")
+        {
+            builder = factory.create_float32_type();
+            type = builder->build();
+        }
+        else if (state["type"] == "double")
+        {
+            builder = factory.create_float64_type();
+            type = builder->build();
+        }
+        else if (state["type"] == "long double")
+        {
+            builder = factory.create_float128_type();
+            type = builder->build();
+        }
+        else if (state["type"] == "char")
+        {
+            builder = factory.create_char8_type();
+            type = builder->build();
+        }
+        else if (state["type"] == "wchar" || state["type"] == "char16")
+        {
+            builder = factory.create_char16_type();
+            type = builder->build();
+        }
+        else if (state["type"] == "string")
+        {
+            if (state.count("string_size"))
+            {
+                builder = factory.create_string_type(std::atoi(state["string_size"].c_str()));
+                state.erase("string_size");
+            }
+            else
+            {
+                builder = factory.create_string_type();
+            }
+            type = builder->build();
+        }
+        else if (state["type"] == "wstring")
+        {
+            if (state.count("wstring_size"))
+            {
+                builder = factory.create_wstring_type(std::atoi(state["wstring_size"].c_str()));
+                state.erase("wstring_size");
+            }
+            else
+            {
+                builder = factory.create_wstring_type();
+            }
+            type = builder->build();
+        }
+
+        return type;
+    }
+
+}; // class Parser
+
+
+v1_3::DynamicType_ptr Context::get_type(
+        std::map<std::string, std::string>& state)
+{
+    return parser_->type_spec(state);
+}
 
 } // namespace idl
 } // namespace types

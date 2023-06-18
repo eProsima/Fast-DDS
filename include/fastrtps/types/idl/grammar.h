@@ -157,7 +157,7 @@ struct literal : sor<
                       char_literal, wide_char_literal, string_literal, wide_string_literal
                     > {};
 
-struct scoped_name : seq<sor<seq<identifier, double_colon, scoped_name>, seq<double_colon, scoped_name>, identifier>> {};
+struct scoped_name : sor<seq<identifier, double_colon, scoped_name>, seq<double_colon, scoped_name>, identifier> {};
 
 // TYPES
 struct float_type : kw_float {};

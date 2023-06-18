@@ -31,7 +31,7 @@ namespace idl {
 inline Context parse(
         const std::string& idl)
 {
-    return Parser::instance().parse_string(idl);
+    return Parser::instance()->parse_string(idl);
 }
 
 /// \brief Same as parse() but it receives an existant context.
@@ -40,7 +40,7 @@ inline Context& parse(
         const std::string& idl,
         Context& context)
 {
-    Parser::instance().parse_string(idl.c_str(), context);
+    Parser::instance()->parse_string(idl.c_str(), context);
     return context;
 }
 
@@ -49,7 +49,7 @@ inline Context& parse(
 inline Context parse_file(
         const std::string& idl_file)
 {
-    return Parser::instance().parse_file(idl_file);
+    return Parser::instance()->parse_file(idl_file);
 }
 
 /// \brief Same as parse() but it receives a path file where the IDL is located,
@@ -58,7 +58,7 @@ inline Context& parse_file(
         const std::string& idl_file,
         Context& context)
 {
-    Parser::instance().parse_file(idl_file.c_str(), context);
+    Parser::instance()->parse_file(idl_file.c_str(), context);
     return context;
 }
 
