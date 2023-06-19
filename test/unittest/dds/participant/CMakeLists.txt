@@ -18,7 +18,6 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/../profiles/test_xml_profile.xml
 
 set(PARTICIPANTTESTS_SOURCE
         ParticipantTests.cpp
-        ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     )
 
 if(WIN32)
