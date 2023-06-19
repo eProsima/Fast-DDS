@@ -201,23 +201,14 @@ jobs:
           'build', 'googletest', 'gtest.log' | del -Recurse -Force
 
       - name: Install OpenSSL
+        uses: eProsima/eprosima-CI/windows/install_openssl@v0
+
+      - name: Update OpenSSL environment variables
         run: |
-          # Windows host has only the binaries installed, we need the headers too
-          # download the last installer
-          $uri = 'https://slproweb.com' +
-            ((iwr 'https://slproweb.com/products/Win32OpenSSL.html').links |
-            sls 'href=\"(.*download/Win64OpenSSL-1_1_1.*\.exe)\"').matches.Groups.value[-1]
-            iwr -Uri $uri -OutFile "$Env:TMP\Win64OpenSSL.exe"
-
-          # Do install
-          & "$Env:TMP\Win64OpenSSL.exe" /silent /verysilent /sp- /suppressmsgboxes;
-
           # Update the environment
-          "OPENSSL64_ROOT=$Env:ProgramFiles\OpenSSL-Win64" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+          "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
 
-          # Wait for the installation to be fulfill
-          Get-Process Win??OpenSSL -ErrorAction SilentlyContinue | Wait-Process
-          del "$Env:TMP\Win64OpenSSL.exe"
+          dir $Env:ProgramW6432\OpenSSL
 
       - name: Update known hosts file for DNS resolver testing
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
@@ -277,8 +268,8 @@ jobs:
 
           cd $deploy_dir
 
-          nmake .\Makefile.mak OPENSSL_DIR=$Env:OPENSSL64_ROOT BUILD_FOR=WIN64
-          $config = ls -Path $Env:OPENSSL64_ROOT -Recurse -Include openssl.cnf;
+          nmake .\Makefile.mak OPENSSL_DIR="$Env:OPENSSL64_ROOT" BUILD_FOR=WIN64
+          $config = ls -Path "$Env:OPENSSL64_ROOT" -Recurse -Include openssl.cnf;
           $libp11_path = Join-Path $deploy_dir src
           'LibP11_ROOT_64=' + $libp11_path | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
 
