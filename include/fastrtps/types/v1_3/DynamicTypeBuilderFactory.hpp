@@ -280,7 +280,7 @@ public:
      * @param[in] kind type identifying the primitive type to retrieve
      * @return @ref DynamicType object
      */
-    RTPS_DllAPI DynamicType* get_primitive_type(
+    RTPS_DllAPI const DynamicType* get_primitive_type(
             TypeKind kind) noexcept;
 
     /**
@@ -470,7 +470,7 @@ public:
      * Creates a new @ref DynamicTypeBuilder object representing an enum
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder* create_enum_type();
+    RTPS_DllAPI const DynamicTypeBuilder* create_enum_type();
 
     /**
      * Returns a @ref DynamicTypeBuilder associated with a `TypeKind::TK_STRUCTURE`
@@ -499,59 +499,59 @@ public:
      * @param[in] name string annotation identifier
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicType* create_annotation_primitive(
+    RTPS_DllAPI const DynamicType* create_annotation_primitive(
             const std::string& name);
 
     //! returns type instantiation of the @ref DynamicTypeBuilderFactory::create_alias_type builder
-    RTPS_DllAPI DynamicType* get_alias_type(
+    RTPS_DllAPI const DynamicType* get_alias_type(
             const DynamicType& base_type,
             const std::string& sName);
 
     //! returns the cache type associated to create_int16_type()
-    RTPS_DllAPI DynamicType* get_int16_type();
+    RTPS_DllAPI const DynamicType* get_int16_type();
 
     //! returns the cache type associated to create_uint16_type()
-    RTPS_DllAPI DynamicType* get_uint16_type();
+    RTPS_DllAPI const DynamicType* get_uint16_type();
 
     //! returns the cache type associated to create_int32_type()
-    RTPS_DllAPI DynamicType* get_int32_type();
+    RTPS_DllAPI const DynamicType* get_int32_type();
 
     //! returns the cache type associated to create_uint32_type()
-    RTPS_DllAPI DynamicType* get_uint32_type();
+    RTPS_DllAPI const DynamicType* get_uint32_type();
 
     //! returns the cache type associated to create_int64_type()
-    RTPS_DllAPI DynamicType* get_int64_type();
+    RTPS_DllAPI const DynamicType* get_int64_type();
 
     //! returns the cache type associated to create_uint64_type()
-    RTPS_DllAPI DynamicType* get_uint64_type();
+    RTPS_DllAPI const DynamicType* get_uint64_type();
 
     //! returns the cache type associated to create_float32_type()
-    RTPS_DllAPI DynamicType* get_float32_type();
+    RTPS_DllAPI const DynamicType* get_float32_type();
 
     //! returns the cache type associated to create_float64_type()
-    RTPS_DllAPI DynamicType* get_float64_type();
+    RTPS_DllAPI const DynamicType* get_float64_type();
 
     //! returns the cache type associated to create_float128_type()
-    RTPS_DllAPI DynamicType* get_float128_type();
+    RTPS_DllAPI const DynamicType* get_float128_type();
 
     //! returns the cache type associated to create_char8_type()
-    RTPS_DllAPI DynamicType* get_char8_type();
+    RTPS_DllAPI const DynamicType* get_char8_type();
 
     //! returns the cache type associated to create_char16_type()
-    RTPS_DllAPI DynamicType* get_char16_type();
+    RTPS_DllAPI const DynamicType* get_char16_type();
 
     //! returns the cache type associated to create_bool_type()
-    RTPS_DllAPI DynamicType* get_bool_type();
+    RTPS_DllAPI const DynamicType* get_bool_type();
 
     //! returns the cache type associated to get_byte_type()
-    RTPS_DllAPI DynamicType* get_byte_type();
+    RTPS_DllAPI const DynamicType* get_byte_type();
 
     //! returns the cache type associated to create_string_type()
-    RTPS_DllAPI DynamicType* get_string_type(
+    RTPS_DllAPI const DynamicType* get_string_type(
             uint32_t bound = LENGTH_UNLIMITED) noexcept;
 
     //! returns the cache type associated to create_wstring_type()
-    RTPS_DllAPI DynamicType* get_wstring_type(
+    RTPS_DllAPI const DynamicType* get_wstring_type(
             uint32_t bound = LENGTH_UNLIMITED) noexcept;
 
     /**
@@ -559,7 +559,7 @@ public:
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicType* get_bitset_type(
+    RTPS_DllAPI const DynamicType* get_bitset_type(
             uint32_t bound);
 
     RTPS_DllAPI void build_type_identifier(

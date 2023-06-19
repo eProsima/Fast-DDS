@@ -224,7 +224,7 @@ ReturnCode_t DynamicTypeBuilder::add_member(
     return ReturnCode_t::RETCODE_OK;
 }
 
-DynamicType* DynamicTypeBuilder::build() const
+const DynamicType* DynamicTypeBuilder::build() const
 {
     // check if an instance is already available
     // and is still valid
@@ -333,4 +333,16 @@ std::function<void(const DynamicTypeBuilder*)> eprosima::fastrtps::types::v1_3::
    }
 
    return nullptr;
+}
+
+ReturnCode_t DynamicTypeBuilder::delete_type(
+        const DynamicType* type) noexcept
+{
+    if (type != nullptr)
+    {
+        type->release();
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }

@@ -952,7 +952,7 @@ namespace fastrtps {
 namespace types {
 namespace v1_3 {
 
-using DynamicType_ptr = std::shared_ptr<DynamicType>;
+using DynamicType_ptr = std::shared_ptr<const DynamicType>;
 using DynamicTypeBuilder_ptr = std::shared_ptr<DynamicTypeBuilder>;
 using DynamicTypeBuilder_cptr = std::shared_ptr<const DynamicTypeBuilder>;
 

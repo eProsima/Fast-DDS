@@ -45,6 +45,9 @@ class DynamicTypeBuilder final
     static void before_destruction(
             DynamicType* b);
 
+    static ReturnCode_t delete_type(
+            const DynamicType* type) noexcept;
+
     // Only create objects from the associated factory
     struct use_the_create_method
     {
@@ -171,7 +174,7 @@ public:
      *            non-const method usage.
      * @return new @ref DynamicType object reference
      */
-    RTPS_DllAPI DynamicType* build() const;
+    RTPS_DllAPI const DynamicType* build() const;
 
     RTPS_DllAPI ReturnCode_t copy_from(
             const DynamicTypeBuilder* other);

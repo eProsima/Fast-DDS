@@ -88,7 +88,7 @@ DynamicData* DynamicDataFactory::create_data(
 {
     if (pBuilder != nullptr && pBuilder->is_consistent())
     {
-        DynamicType_ptr pType = pBuilder->build();
+        DynamicType_ptr pType{pBuilder->build()};
         return create_data(pType);
     }
     else

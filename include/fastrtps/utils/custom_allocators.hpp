@@ -206,12 +206,12 @@ namespace detail {
 
 template<class T>
 class external_reference_counting
-    : public std::enable_shared_from_this<T>
+    : public std::enable_shared_from_this<const T>
 {
     //! Keeps the object alive is external references are held
-    std::shared_ptr<T> external_lock_;
+    mutable std::shared_ptr<const T> external_lock_;
     //! External references tracker
-    std::atomic_long counter_ = {0l};
+    mutable std::atomic_long counter_ = {0l};
 
 protected:
 
@@ -231,7 +231,7 @@ protected:
         return counter_;
     }
 
-    long add_ref()
+    long add_ref() const
     {
         long former = counter_;
 
@@ -248,8 +248,8 @@ protected:
             }
 
             // sync with other threads release() operations
-            std::shared_ptr<T> empty;
-            std::shared_ptr<T> inner = this->shared_from_this();
+            std::shared_ptr<const T> empty;
+            std::shared_ptr<const T> inner = this->shared_from_this();
 
             while (!std::atomic_compare_exchange_strong(
                         &external_lock_,
@@ -281,7 +281,7 @@ protected:
         }
     }
 
-    long release()
+    long release() const
     {
         long former = counter_;
 
@@ -301,13 +301,13 @@ protected:
             }
 
             // sync with other threads add_ref() operations
-            std::shared_ptr<T> inner = this->shared_from_this(),
+            std::shared_ptr<const T> inner = this->shared_from_this(),
                     cmp = inner;
 
             while (!std::atomic_compare_exchange_strong(
                         &external_lock_,
                         &cmp,
-                        std::shared_ptr<T>{}))
+                        std::shared_ptr<const T>{}))
             {
                 if (!cmp)
                 {

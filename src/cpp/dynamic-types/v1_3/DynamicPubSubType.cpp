@@ -25,7 +25,7 @@
 using namespace eprosima::fastrtps::types::v1_3;
 
 DynamicPubSubType::DynamicPubSubType(
-        DynamicType& type)
+        const DynamicType& type)
     : dynamic_type_(&type)
 {
     UpdateDynamicTypeInfo();
@@ -66,7 +66,7 @@ ReturnCode_t DynamicPubSubType::SetDynamicType(
 }
 
 ReturnCode_t DynamicPubSubType::SetDynamicType(
-        DynamicType& type)
+        const DynamicType& type)
 {
     if (!dynamic_type_)
     {

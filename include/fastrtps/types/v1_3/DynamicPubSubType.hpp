@@ -41,7 +41,7 @@ public:
     RTPS_DllAPI DynamicPubSubType() = default;
 
     RTPS_DllAPI DynamicPubSubType(
-            v1_3::DynamicType& type);
+            const v1_3::DynamicType& type);
 
     RTPS_DllAPI virtual ~DynamicPubSubType();
 
@@ -74,7 +74,7 @@ public:
             const v1_3::DynamicData& data);
 
     RTPS_DllAPI ReturnCode_t SetDynamicType(
-            v1_3::DynamicType& type);
+            const v1_3::DynamicType& type);
 };
 
 } // namespace v1_3
