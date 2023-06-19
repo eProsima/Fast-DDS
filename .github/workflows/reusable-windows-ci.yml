@@ -208,8 +208,6 @@ jobs:
           # Update the environment
           "OPENSSL64_ROOT=$Env:ProgramW6432\OpenSSL" | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
 
-          dir $Env:ProgramW6432\OpenSSL
-
       - name: Update known hosts file for DNS resolver testing
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-test') }}
         run: |
