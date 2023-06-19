@@ -22,8 +22,7 @@ namespace fastrtps {
 namespace types {
 namespace v1_3 {
 
-template<>
-std::function<void(const DynamicType*)> dynamic_object_deleter(const DynamicType*);
+RTPS_DllAPI void (*dynamic_object_deleter(const DynamicType* ))(const DynamicType*);
 
 } // namespace v1_3
 } // namespace types
@@ -57,7 +56,7 @@ public:
     shared_ptr(const shared_ptr<Y>& r, element_type* ptr) noexcept
         : base(r, ptr) {}
 
-    template <class T, enable_if_t<is_convertible<T*, element_type*>::value, int> = 0>
+    template <class T, typename enable_if<is_convertible<T*, element_type*>::value, int>::type = 0>
     explicit shared_ptr(const weak_ptr<T>& r)
         : base(r) {}
 
@@ -121,7 +120,7 @@ public:
     shared_ptr(const shared_ptr<Y>& r, element_type* ptr) noexcept
         : base(r, ptr) {}
 
-    template <class T, enable_if_t<is_convertible<T*, element_type*>::value, int> = 0>
+    template <class T, typename enable_if<is_convertible<T*, element_type*>::value, int>::type = 0>
     explicit shared_ptr(const weak_ptr<T>& r)
         : base(r) {}
 

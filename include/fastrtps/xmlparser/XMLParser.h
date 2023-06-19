@@ -263,23 +263,26 @@ protected:
 
     RTPS_DllAPI static types::v1_3::DynamicTypeBuilder_cptr parseXMLBitfieldDynamicType(
             tinyxml2::XMLElement* p_root,
-            types::v1_3::DynamicTypeBuilder* p_dynamictype,
+            types::v1_3::DynamicTypeBuilder& builder,
             types::v1_3::MemberId mId,
             uint16_t& position);
 
     RTPS_DllAPI static XMLP_ret parseXMLBitvalueDynamicType(
             tinyxml2::XMLElement* p_root,
-            types::v1_3::DynamicTypeBuilder* p_dynamictype,
+            types::v1_3::DynamicTypeBuilder& builder,
             uint16_t& position);
 
     RTPS_DllAPI static types::v1_3::DynamicTypeBuilder_cptr parseXMLMemberDynamicType(
+            tinyxml2::XMLElement* p_root);
+
+    RTPS_DllAPI static types::v1_3::DynamicTypeBuilder_cptr parseXMLMemberDynamicType(
             tinyxml2::XMLElement* p_root,
-            types::v1_3::DynamicTypeBuilder* p_dynamictype,
+            types::v1_3::DynamicTypeBuilder& p_dynamictype,
             types::v1_3::MemberId mId);
 
     RTPS_DllAPI static types::v1_3::DynamicTypeBuilder_cptr parseXMLMemberDynamicType(
             tinyxml2::XMLElement* p_root,
-            types::v1_3::DynamicTypeBuilder* p_dynamictype,
+            types::v1_3::DynamicTypeBuilder& p_dynamictype,
             types::v1_3::MemberId mId,
             const std::string& values);
 

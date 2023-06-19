@@ -1894,25 +1894,35 @@ void DynamicType::serialize_empty_data(
     }
 }
 
-std::function<void(const DynamicType*)> eprosima::fastrtps::types::v1_3::dynamic_object_deleter(const DynamicType* pDT)
+void DynamicType::external_dynamic_object_deleter(const DynamicType* pDT)
+{
+    if (pDT)
+    {
+        pDT->release();
+    }
+}
+
+void DynamicType::internal_dynamic_object_deleter(const DynamicType* pDT)
+{
+    if (pDT)
+    {
+        std::default_delete<const DynamicType> del;
+        del(pDT);
+    }
+}
+
+void (*eprosima::fastrtps::types::v1_3::dynamic_object_deleter(
+        const DynamicType* pDT))(const DynamicType*)
 {
    if ( pDT != nullptr)
    {
         if (pDT->use_count())
         {
-            // This is an external object
-            return [](const DynamicType* pDT)
-            {
-                if (pDT)
-                {
-                    const_cast<DynamicType*>(pDT)->release();
-                }
-            };
+            return DynamicType::external_dynamic_object_deleter;
         }
         else
         {
-            // This is an internal object
-            return std::default_delete<const DynamicType>();
+            return DynamicType::internal_dynamic_object_deleter;
         }
    }
 

@@ -45,12 +45,20 @@ public:
     RTPS_DllAPI DynamicPubSubType(
             v1_3::DynamicType_ptr pDynamicType);
 
+    RTPS_DllAPI DynamicPubSubType(
+            const v1_3::DynamicType& type)
+        : v1_3::DynamicPubSubType(type)
+    {}
+
     FASTRTPS_DEPRECATED("Dynamic types version 1.1 will be disposed. Upgrade to version 1.3.")
     RTPS_DllAPI ReturnCode_t SetDynamicType(
             v1_1::DynamicType_ptr pType);
 
     RTPS_DllAPI ReturnCode_t SetDynamicType(
             v1_3::DynamicType_ptr pType);
+
+    RTPS_DllAPI ReturnCode_t SetDynamicType(
+            const v1_3::DynamicType& type);
 
     RTPS_DllAPI void CleanDynamicType();
 

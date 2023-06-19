@@ -309,32 +309,6 @@ bool DynamicTypeBuilder::equals(
     return *this == other;
 }
 
-std::function<void(const DynamicTypeBuilder*)> eprosima::fastrtps::types::v1_3::dynamic_object_deleter(
-        const DynamicTypeBuilder* pDT)
-{
-   if ( pDT != nullptr)
-   {
-        if (pDT->use_count())
-        {
-            // This is an external object
-            return [](const DynamicTypeBuilder* pDT)
-            {
-                if (pDT)
-                {
-                    const_cast<DynamicTypeBuilder*>(pDT)->release();
-                }
-            };
-        }
-        else
-        {
-            // This is an internal object
-            return std::default_delete<const DynamicTypeBuilder>();
-        }
-   }
-
-   return nullptr;
-}
-
 ReturnCode_t DynamicTypeBuilder::delete_type(
         const DynamicType* type) noexcept
 {
@@ -345,4 +319,47 @@ ReturnCode_t DynamicTypeBuilder::delete_type(
     }
 
     return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+}
+
+const DynamicType* DynamicTypeBuilder::create_copy(
+        const DynamicType& type) noexcept
+{
+    // increase external reference counting
+    type.add_ref();
+    return &type;
+}
+
+void DynamicTypeBuilder::external_dynamic_object_deleter(const DynamicTypeBuilder* pDT)
+{
+    if (pDT)
+    {
+        pDT->release();
+    }
+}
+
+void DynamicTypeBuilder::internal_dynamic_object_deleter(const DynamicTypeBuilder* pDT)
+{
+    if (pDT)
+    {
+        std::default_delete<const DynamicTypeBuilder> del;
+        del(pDT);
+    }
+}
+
+void (*eprosima::fastrtps::types::v1_3::dynamic_object_deleter(
+        const DynamicTypeBuilder* pDT))(const DynamicTypeBuilder*)
+{
+   if ( pDT != nullptr)
+   {
+        if (pDT->use_count())
+        {
+            return DynamicTypeBuilder::external_dynamic_object_deleter;
+        }
+        else
+        {
+            return DynamicTypeBuilder::internal_dynamic_object_deleter;
+        }
+   }
+
+   return nullptr;
 }

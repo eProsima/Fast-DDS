@@ -12,21 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastcdr/Cdr.h>
+
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastrtps/types/v1_3/DynamicData.hpp>
+#include <fastrtps/types/v1_3/DynamicDataFactory.hpp>
 #include <fastrtps/types/v1_3/DynamicPubSubType.hpp>
 #include <fastrtps/types/v1_3/DynamicType.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
 #include <fastrtps/types/v1_3/DynamicTypeMember.hpp>
-#include <fastrtps/types/v1_3/DynamicDataFactory.hpp>
-#include <fastrtps/types/v1_3/DynamicData.hpp>
-#include <fastdds/rtps/common/SerializedPayload.h>
-#include <fastdds/rtps/common/InstanceHandle.h>
-#include <fastdds/dds/log/Log.hpp>
-#include <fastcdr/Cdr.h>
 
 using namespace eprosima::fastrtps::types::v1_3;
 
 DynamicPubSubType::DynamicPubSubType(
         const DynamicType& type)
-    : dynamic_type_(&type)
+    : dynamic_type_(DynamicTypeBuilderFactory::get_instance().create_copy(type))
 {
     UpdateDynamicTypeInfo();
 }
@@ -70,7 +72,7 @@ ReturnCode_t DynamicPubSubType::SetDynamicType(
 {
     if (!dynamic_type_)
     {
-        dynamic_type_.reset(&type);
+        dynamic_type_.reset(DynamicTypeBuilderFactory::get_instance().create_copy(type));
         UpdateDynamicTypeInfo();
         return ReturnCode_t::RETCODE_OK;
     }
@@ -119,7 +121,7 @@ bool DynamicPubSubType::getKey(
         eprosima::fastrtps::rtps::InstanceHandle_t* handle,
         bool force_md5)
 {
-    if (dynamic_type_ == nullptr || !m_isGetKeyDefined)
+    if (!dynamic_type_ || !m_isGetKeyDefined)
     {
         return false;
     }

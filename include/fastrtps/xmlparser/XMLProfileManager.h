@@ -256,7 +256,7 @@ public:
     {
         if (dynamic_types_.find(type_name) != dynamic_types_.end())
         {
-            return new types::DynamicPubSubType(dynamic_types_[type_name]->build());
+            return new types::DynamicPubSubType(*dynamic_types_[type_name]->build());
         }
         return nullptr;
     }

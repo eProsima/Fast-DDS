@@ -399,6 +399,12 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_type(
     return {};
 }
 
+const DynamicType* DynamicTypeBuilderFactory::create_copy(
+        const DynamicType& type) noexcept
+{
+    return DynamicTypeBuilder::create_copy(type);
+}
+
 DynamicTypeBuilder* DynamicTypeBuilderFactory::create_type_copy(
         const DynamicType& type) noexcept
 {
@@ -565,7 +571,7 @@ const DynamicType* DynamicTypeBuilderFactory::create_annotation_primitive(
     return DynamicTypeBuilder_ptr{create_type(descriptor)}->build();
 }
 
-const DynamicTypeBuilder* DynamicTypeBuilderFactory::create_enum_type()
+DynamicTypeBuilder* DynamicTypeBuilderFactory::create_enum_type()
 {
     TypeDescriptor pEnumDescriptor;
     pEnumDescriptor.set_kind(TypeKind::TK_ENUM);

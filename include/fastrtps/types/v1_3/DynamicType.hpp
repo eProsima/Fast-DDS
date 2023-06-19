@@ -47,7 +47,9 @@ class DynamicType final
         explicit use_the_create_method() = default;
     };
 
-    friend std::function<void(const DynamicType*)> dynamic_object_deleter(const DynamicType*);
+    static void external_dynamic_object_deleter(const DynamicType*);
+    static void internal_dynamic_object_deleter(const DynamicType*);
+    friend void (*dynamic_object_deleter(const DynamicType* ))(const DynamicType*);
 
 public:
 

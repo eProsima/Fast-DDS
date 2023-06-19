@@ -275,6 +275,17 @@ public:
             const DynamicType& type) noexcept;
 
     /**
+     * Create a new @ref DynamicType object based on the given @ref DynamicType object.
+     * @remark This method is thread-safe.
+     * @remark This method will always create a new object. In order to access primitive static allocated
+     *         ones and avoid heap overhead use the `get_xxxx_type()` methods.
+     * @param[in] type @ref DynamicType object
+     * @return new @ref DynamicType object copy
+     */
+    RTPS_DllAPI const DynamicType* create_copy(
+            const DynamicType& type) noexcept;
+
+    /**
      * Retrieve the cached @ref DynamicType object associated to a given primitive
      * @remark This method is thread-safe.
      * @param[in] kind type identifying the primitive type to retrieve
@@ -470,7 +481,7 @@ public:
      * Creates a new @ref DynamicTypeBuilder object representing an enum
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI const DynamicTypeBuilder* create_enum_type();
+    RTPS_DllAPI DynamicTypeBuilder* create_enum_type();
 
     /**
      * Returns a @ref DynamicTypeBuilder associated with a `TypeKind::TK_STRUCTURE`

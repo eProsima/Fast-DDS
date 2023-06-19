@@ -926,9 +926,6 @@ namespace v1_3 {
 class DynamicType;
 class DynamicTypeBuilder;
 
-template<class T>
-std::function<void(const T*)> dynamic_object_deleter(const T*);
-
 using namespace xtypes_names;
 
 constexpr uint32_t LENGTH_UNLIMITED = std::numeric_limits<uint32_t>::max();

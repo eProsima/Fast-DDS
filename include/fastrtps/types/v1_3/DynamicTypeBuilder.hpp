@@ -48,13 +48,18 @@ class DynamicTypeBuilder final
     static ReturnCode_t delete_type(
             const DynamicType* type) noexcept;
 
+    static const DynamicType* create_copy(
+            const DynamicType& type) noexcept;
+
     // Only create objects from the associated factory
     struct use_the_create_method
     {
         explicit use_the_create_method() = default;
     };
 
-    friend std::function<void(const DynamicTypeBuilder*)> dynamic_object_deleter(const DynamicTypeBuilder*);
+    static void external_dynamic_object_deleter(const DynamicTypeBuilder*);
+    static void internal_dynamic_object_deleter(const DynamicTypeBuilder*);
+    friend void (*dynamic_object_deleter(const DynamicTypeBuilder* ))(const DynamicTypeBuilder*);
 
     MemberId current_member_id_{0};
 
