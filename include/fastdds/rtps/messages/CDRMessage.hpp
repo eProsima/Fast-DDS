@@ -88,6 +88,10 @@ inline bool CDRMessage::readData(
         octet* o,
         uint32_t length)
 {
+    if (msg == nullptr || o == nullptr)
+    {
+        return false;
+    }
     if (msg->pos + length > msg->length)
     {
         return false;
@@ -95,8 +99,8 @@ inline bool CDRMessage::readData(
     if (length > 0)
     {
         memcpy(o, &msg->buffer[msg->pos], length);
+        msg->pos += length;
     }
-    msg->pos += length;
     return true;
 }
 
@@ -467,6 +471,10 @@ inline bool CDRMessage::addData(
         const octet* data,
         const uint32_t length)
 {
+    if (msg == nullptr || data == nullptr)
+    {
+        return false;
+    }
     if (msg->pos + length > msg->max_size)
     {
         return false;
@@ -474,9 +482,9 @@ inline bool CDRMessage::addData(
     if (length > 0)
     {
         memcpy(&msg->buffer[msg->pos], data, length);
+        msg->pos += length;
+        msg->length += length;
     }
-    msg->pos += length;
-    msg->length += length;
     return true;
 }
 
