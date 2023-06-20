@@ -36,9 +36,12 @@ namespace security {
  *
  * ASN.1 representation of DistinguishedNames
  * DistinguishedName ::= RDNSequence
+ *
  * RDNSequence ::= SEQUENCE OF RelativeDistinguishedName
+ *
  * RelativeDistinguishedName ::= SET SIZE (1..MAX) OF
  * AttributeTypeAndValue
+ *
  * AttributeTypeAndValue ::= SEQUENCE {
  * type  AttributeType,
  * value AttributeValue }
@@ -63,7 +66,7 @@ using DistinguishedName = std::string;
  * Follow RFC 2253: https://datatracker.ietf.org/doc/html/rfc2253
  * The idea here is that comparing 2 DistinguishedNames is not as trivial as comparing 2 strings,
  * nor comparing its values splitting the string.
- * The comparison must be a complex function that takes into account many specific details.
+ * The comparison must be a complex function that takes into account many specific detail.
  *
  * So far, Fast DDS gives 2 strings (in some format that we assume is the correct one) and this compares
  * whether the two strings refer to the same DistinguishedName.
@@ -74,7 +77,7 @@ using DistinguishedName = std::string;
  * @warning this function does not correctly fulfilled all requirements of RFC 2253.
  * Requirements that are not fulfilled:
  * - multi-attribute
- * - types accept oid
+ * - types accept void
  * - assumes that input is a well formed DistinguishedName following rfc2253
  * @todo make this function complete (probably better by implementing DistinguishedName class).
  *
@@ -89,8 +92,17 @@ bool rfc2253_string_compare(
         const DistinguishedName& name2);
 
 
-namespace details {
+namespace detail {
 
+/**
+ * @brief Struct that stores a const char* and a size, referencing a string without dynamic allocation.
+ *
+ * This struct is only an auxiliary class to implement \c rfc2253_string_compare .
+ * This class is not meant to be used outside this function.
+ *
+ * The necessity of this class is due to comparing two key-value format strings without allocate heap memory.
+ * Thus, it implements string formatter functions only using char ptr and size.
+ */
 struct Attribute
 {
     Attribute() = default;
@@ -137,6 +149,9 @@ struct Attribute
     const char* value {nullptr};
     size_t length {0};
 };
+
+//! To string method for Attribute
+std::ostream& operator<<(std::ostream& os, const Attribute& att);
 
 /**
  * @brief This class is only used to compare 2 DistinguishedName.
@@ -191,7 +206,7 @@ protected:
     size_t size_ {0};
 };
 
-} //namespace details
+} //namespace detail
 
 } //namespace security
 } //namespace rtps

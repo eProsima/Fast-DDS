@@ -28,7 +28,7 @@ namespace fastrtps {
 namespace rtps {
 namespace security {
 
-namespace details {
+namespace detail {
 
 Attribute::Attribute(
         const DistinguishedName& name)
@@ -216,12 +216,16 @@ Attribute Attribute::cut(
     return res;
 }
 
+std::ostream& operator<<(std::ostream& os, const Attribute& att)
+{
+    os.write(att.value, att.length);
+    return os;
+}
+
 bool DistinguishedNameSpecialized::compare(
         const DistinguishedName& name1,
         const DistinguishedName& name2) noexcept
 {
-    DistinguishedNameSpecialized dns1(name1);
-    DistinguishedNameSpecialized dns2(name2);
     return DistinguishedNameSpecialized(name1) == DistinguishedNameSpecialized(name2);
 }
 
@@ -374,13 +378,13 @@ bool DistinguishedNameSpecialized::operator ==(
     return true;
 }
 
-} //namespace details
+} //namespace detail
 
 bool rfc2253_string_compare(
         const DistinguishedName& name1,
         const DistinguishedName& name2)
 {
-    return details::DistinguishedNameSpecialized::compare(name1, name2);
+    return detail::DistinguishedNameSpecialized::compare(name1, name2);
 }
 
 } //namespace security
