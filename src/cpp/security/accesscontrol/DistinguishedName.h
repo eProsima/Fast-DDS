@@ -100,8 +100,9 @@ namespace detail {
  * This struct is only an auxiliary class to implement \c rfc2253_string_compare .
  * This class is not meant to be used outside this function.
  *
- * The necessity of this class is due to comparing two key-value format strings without allocate heap memory.
- * Thus, it implements string formatter functions only using char ptr and size.
+ * The necessity of this class arises from the need to compare two key-value format strings without
+ * allocating heap memory.
+ * Thus, it implements string formatter functions (cut, trim, find) only using char ptr and size.
  */
 struct Attribute
 {
@@ -169,10 +170,10 @@ public:
 
     enum class ErrorCase
     {
-        ok,
-        empty,
-        max_value,
-        no_type_value_format,
+        OK,
+        EMPTY,
+        MAX_VALUE,
+        NO_TYPE_VALUE_FORMAT,
     };
 
     using Type = Attribute;
