@@ -84,12 +84,12 @@ DynamicData* DynamicDataFactory::create_copy(
 }
 
 DynamicData* DynamicDataFactory::create_data(
-        DynamicTypeBuilder* pBuilder)
+        const DynamicTypeBuilder& builder)
 {
-    if (pBuilder != nullptr && pBuilder->is_consistent())
+    if (builder.is_consistent())
     {
-        DynamicType_ptr pType{pBuilder->build()};
-        return create_data(pType);
+        DynamicType_ptr type{builder.build()};
+        return create_data(*type);
     }
     else
     {
@@ -99,24 +99,25 @@ DynamicData* DynamicDataFactory::create_data(
 }
 
 DynamicData* DynamicDataFactory::create_data(
-        DynamicType_ptr pType)
+        const DynamicType& type)
 {
-    if (pType != nullptr && pType->is_consistent())
+    if (type.is_consistent())
     {
         try
         {
             DynamicData* newData = nullptr;
             // ALIAS types create a DynamicData based on the base type and renames it with the name of the ALIAS.
-            if (pType->get_base_type())
+            DynamicType_ptr base_type{type.get_base_type()};
+            if (base_type)
             {
-                if (pType->get_kind() == TypeKind::TK_ALIAS)
+                if (type.get_kind() == TypeKind::TK_ALIAS)
                 {
-                    newData = create_data(pType->get_base_type());
-                    // newData->set_type_name(pType->get_name());
+                    newData = create_data(*base_type);
+                    // newData->set_type_name(type.get_name());
                 }
-                else if (pType->get_kind() == TypeKind::TK_STRUCTURE || pType->get_kind() == TypeKind::TK_BITSET)
+                else if (type.get_kind() == TypeKind::TK_STRUCTURE || type.get_kind() == TypeKind::TK_BITSET)
                 {
-                    newData = new DynamicData(pType);
+                    newData = new DynamicData(type);
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
                     {
                         std::unique_lock<std::recursive_mutex> scoped(mutex_);
@@ -127,7 +128,7 @@ DynamicData* DynamicDataFactory::create_data(
             }
             else
             {
-                newData = new DynamicData(pType);
+                newData = new DynamicData(type);
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
                 {
                     std::unique_lock<std::recursive_mutex> scoped(mutex_);
@@ -136,9 +137,9 @@ DynamicData* DynamicDataFactory::create_data(
 #endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
 
                 // Enums must have a default value
-                if (pType->get_kind() == TypeKind::TK_ENUM)
+                if (type.get_kind() == TypeKind::TK_ENUM)
                 {
-                    MemberId id = pType->get_member_id_at_index(0);
+                    MemberId id = type.get_member_id_at_index(0);
                     // enums cannot be instantiated without members
                     assert(MEMBER_ID_INVALID != id);
                     // initialize the enum
@@ -146,9 +147,10 @@ DynamicData* DynamicDataFactory::create_data(
                 }
 
                 // Arrays must have created every members for serialization.
-                if (pType->get_kind() == TypeKind::TK_ARRAY)
+                if (type.get_kind() == TypeKind::TK_ARRAY)
                 {
-                    DynamicData* defaultArrayData = new DynamicData(pType->get_element_type());
+                    DynamicType_ptr element_type{type.get_element_type()};
+                    DynamicData* defaultArrayData = new DynamicData(*element_type);
                     assert(nullptr != defaultArrayData);
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
                     {
@@ -178,13 +180,13 @@ ReturnCode_t DynamicDataFactory::create_members(
         DynamicData* pData,
         DynamicType_ptr pType)
 {
-    if (pType != nullptr && pData != nullptr)
+    if (pType && pData != nullptr)
     {
-        pData->create_members(pType);
-        if ((pType->get_kind() == TypeKind::TK_STRUCTURE || pType->get_kind() == TypeKind::TK_BITSET) &&
-                pType->get_base_type() != nullptr)
+        pData->create_members(*pType);
+        DynamicType_ptr base_type {pType->get_base_type()};
+        if ((pType->get_kind() == TypeKind::TK_STRUCTURE || pType->get_kind() == TypeKind::TK_BITSET) && base_type)
         {
-            create_members(pData, pType->get_base_type());
+            create_members(pData, base_type);
         }
         return ReturnCode_t::RETCODE_OK;
     }

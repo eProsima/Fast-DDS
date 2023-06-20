@@ -52,10 +52,10 @@ public:
     RTPS_DllAPI static ReturnCode_t delete_instance();
 
     RTPS_DllAPI DynamicData* create_data(
-            DynamicTypeBuilder* pBuilder);
+            const DynamicTypeBuilder& builder);
 
     RTPS_DllAPI DynamicData* create_data(
-            DynamicType_ptr pType);
+            const DynamicType& pType);
 
     RTPS_DllAPI DynamicData* create_copy(
             const DynamicData* pData);
