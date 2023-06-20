@@ -587,12 +587,11 @@ jobs:
 
           }
 
-          if($failed)
-          {
-            # list crash dumps files ordered by date to hint how pid maps to test number
-            $dumpfolder = gi (gi "HKLM:\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps").GetValue('DumpFolder')
+          $dumpfolder = gi (gi "HKLM:\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps").GetValue('DumpFolder')
 
-            # upload too:
+          if(ls -Path $dumpfolder -Filter *.dmp)
+          {
+            # upload:
             # 1. the pdb/dll files associated to the library
             $libs = gci -Path ./build/* -R -Include "fast*.pdb", "fast*.dll", "fast*.exe"
             $libs | Move-Item -Destination $dumpfolder
