@@ -239,19 +239,19 @@ DistinguishedNameSpecialized::DistinguishedNameSpecialized(
 
     switch (res)
     {
-        case ErrorCase::max_value:
+        case ErrorCase::MAX_VALUE:
             EPROSIMA_LOG_ERROR(
                 SECURITY,
                 "DistinguishedName " << name << " have more type-values attributes than allowed.");
             break;
 
-        case ErrorCase::empty:
+        case ErrorCase::EMPTY:
             EPROSIMA_LOG_ERROR(
                 SECURITY,
                 "DistinguishedName " << name << " has an empty field.");
             break;
 
-        case ErrorCase::no_type_value_format:
+        case ErrorCase::NO_TYPE_VALUE_FORMAT:
             EPROSIMA_LOG_ERROR(
                 SECURITY,
                 "DistinguishedName " << name << " has incorrect format.");
@@ -270,13 +270,13 @@ DistinguishedNameSpecialized::ErrorCase DistinguishedNameSpecialized::find_and_a
     // If input has finished, stop
     if (!rest.is_set())
     {
-        return ErrorCase::empty;
+        return ErrorCase::EMPTY;
     }
 
     // If this object is already full, failure (no exception to follow fast policy)
     if (size() >= MAX_VALUES_)
     {
-        return ErrorCase::max_value;
+        return ErrorCase::MAX_VALUE;
     }
 
     //////////////////////////////////////////
@@ -289,7 +289,7 @@ DistinguishedNameSpecialized::ErrorCase DistinguishedNameSpecialized::find_and_a
     index = rest.find('=', found);
     if (!found)
     {
-        return ErrorCase::no_type_value_format;
+        return ErrorCase::NO_TYPE_VALUE_FORMAT;
     }
     Attribute type = Attribute::cut(rest, 0, index);
     rest.cut(index + 1);
@@ -301,7 +301,7 @@ DistinguishedNameSpecialized::ErrorCase DistinguishedNameSpecialized::find_and_a
     {
         // Last element found, add it and finish
         add_type_values(type, rest);
-        return ErrorCase::ok;
+        return ErrorCase::OK;
     }
 
     // If it is not the last one, continue

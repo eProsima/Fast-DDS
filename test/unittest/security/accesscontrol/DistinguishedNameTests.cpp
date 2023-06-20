@@ -139,8 +139,8 @@ TEST(DistinguishedNameTests, attribute_compare)
         // Same string
         {
             const char* cc1 = "Hello";
-            details::Attribute att1(cc1);
-            details::Attribute att2(cc1);
+            detail::Attribute att1(cc1);
+            detail::Attribute att2(cc1);
             ASSERT_EQ(att1, att2)
                 << att1.value << " != " << att2.value;
         }
@@ -149,8 +149,8 @@ TEST(DistinguishedNameTests, attribute_compare)
         {
             const char* cc1 = " He  llo   ";
             const char* cc2 = " He  llo   ";
-            details::Attribute att1(cc1);
-            details::Attribute att2(cc2);
+            detail::Attribute att1(cc1);
+            detail::Attribute att2(cc2);
             ASSERT_EQ(att1, att2)
                 << att1.value << " != " << att2.value;
         }
@@ -159,8 +159,8 @@ TEST(DistinguishedNameTests, attribute_compare)
         {
             const char* cc1 = "Hello,";
             const char* cc2 = "Hello\\,";
-            details::Attribute att1(cc1);
-            details::Attribute att2(cc2);
+            detail::Attribute att1(cc1);
+            detail::Attribute att2(cc2);
             ASSERT_EQ(att1, att2)
                 << att1.value << " != " << att2.value;
         }
@@ -169,8 +169,8 @@ TEST(DistinguishedNameTests, attribute_compare)
         {
             const char* cc1 = "\"Hello\"";
             const char* cc2 = "Hello";
-            details::Attribute att1(cc1);
-            details::Attribute att2(cc2);
+            detail::Attribute att1(cc1);
+            detail::Attribute att2(cc2);
             ASSERT_EQ(att1, att2)
                 << att1.value << " != " << att2.value;
         }
@@ -181,8 +181,8 @@ TEST(DistinguishedNameTests, attribute_compare)
         {
             const char* cc1 = "/pub";
             const char* cc2 = "/sub";
-            details::Attribute att1(cc1);
-            details::Attribute att2(cc2);
+            detail::Attribute att1(cc1);
+            detail::Attribute att2(cc2);
             ASSERT_NE(att1, att2)
                 << att1.value << " == " << att2.value;
         }
@@ -190,8 +190,8 @@ TEST(DistinguishedNameTests, attribute_compare)
         {
             const char* cc1 = "/pub";
             const char* cc2 = " /pub";
-            details::Attribute att1(cc1);
-            details::Attribute att2(cc2);
+            detail::Attribute att1(cc1);
+            detail::Attribute att2(cc2);
             ASSERT_NE(att1, att2)
                 << att1.value << " == " << att2.value;
         }
@@ -199,8 +199,8 @@ TEST(DistinguishedNameTests, attribute_compare)
         {
             const char* cc1 = "Hello\\.";
             const char* cc2 = "Hello\\,";
-            details::Attribute att1(cc1);
-            details::Attribute att2(cc2);
+            detail::Attribute att1(cc1);
+            detail::Attribute att2(cc2);
             ASSERT_NE(att1, att2)
                 << att1.value << " == " << att2.value;
         }
@@ -216,9 +216,9 @@ TEST(DistinguishedNameTests, trim_blank_spaces)
     {
         const char* cc1 = "Hello";
         const char* cc2 = "Hello";
-        details::Attribute att1(cc1);
+        detail::Attribute att1(cc1);
         att1.trim_blank_spaces();
-        details::Attribute att2(cc2);
+        detail::Attribute att2(cc2);
         ASSERT_EQ(att1, att2)
             << att1.value << " != " << att2.value;
     }
@@ -227,9 +227,9 @@ TEST(DistinguishedNameTests, trim_blank_spaces)
     {
         const char* cc1 = " Hello";
         const char* cc2 = "Hello";
-        details::Attribute att1(cc1);
+        detail::Attribute att1(cc1);
         att1.trim_blank_spaces();
-        details::Attribute att2(cc2);
+        detail::Attribute att2(cc2);
         ASSERT_EQ(att1, att2)
             << att1.value << " != " << att2.value;
     }
@@ -238,9 +238,9 @@ TEST(DistinguishedNameTests, trim_blank_spaces)
     {
         const char* cc1 = "   Hello";
         const char* cc2 = "Hello";
-        details::Attribute att1(cc1);
+        detail::Attribute att1(cc1);
         att1.trim_blank_spaces();
-        details::Attribute att2(cc2);
+        detail::Attribute att2(cc2);
         ASSERT_EQ(att1, att2)
             << att1.value << " != " << att2.value;
     }
@@ -255,9 +255,9 @@ TEST(DistinguishedNameTests, trim_back_blank_spaces)
     {
         const char* cc1 = "Hello";
         const char* cc2 = "Hello";
-        details::Attribute att1(cc1);
+        detail::Attribute att1(cc1);
         att1.trim_back_blank_spaces();
-        details::Attribute att2(cc2);
+        detail::Attribute att2(cc2);
         ASSERT_EQ(att1, att2)
             << att1.value << " != " << att2.value;
     }
@@ -266,9 +266,9 @@ TEST(DistinguishedNameTests, trim_back_blank_spaces)
     {
         const char* cc1 = "Hello ";
         const char* cc2 = "Hello";
-        details::Attribute att1(cc1);
+        detail::Attribute att1(cc1);
         att1.trim_back_blank_spaces();
-        details::Attribute att2(cc2);
+        detail::Attribute att2(cc2);
         ASSERT_EQ(att1, att2)
             << att1.value << " != " << att2.value;
     }
@@ -277,9 +277,9 @@ TEST(DistinguishedNameTests, trim_back_blank_spaces)
     {
         const char* cc1 = "Hello   ";
         const char* cc2 = "Hello";
-        details::Attribute att1(cc1);
+        detail::Attribute att1(cc1);
         att1.trim_back_blank_spaces();
-        details::Attribute att2(cc2);
+        detail::Attribute att2(cc2);
         ASSERT_EQ(att1, att2)
             << att1.value << " != " << att2.value;
     }
