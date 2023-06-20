@@ -604,7 +604,7 @@ jobs:
             $exes | ? basename -in $test_bin | Move-Item -Destination $dumpfolder
 
             # 3. Enable source indexing to reported pdb files
-            & src/fastrtps/cmake/modules/add_source_listing.ps1 `
+            & src/fastrtps/.github/workflows/utils/add_source_listing.ps1 `
               -pdbs (ls $dumpfolder -Filter *.pdb | ? Name -notmatch fastrtps).FullName
 
             "::group::Crash dump files"
