@@ -2153,8 +2153,6 @@ TEST_F(SHMTransportTests, dump_file)
 
 TEST_F(SHMTransportTests, named_mutex_concurrent_open_create)
 {
-    const std::string domain_name("SHMTests");
-
     auto shared_mem_manager = SharedMemManager::create(domain_name);
     SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
     MockPortSharedMemGlobal port_mocker;
@@ -2181,8 +2179,6 @@ TEST_F(SHMTransportTests, named_mutex_concurrent_open_create)
 
 TEST_F(SHMTransportTests, named_mutex_concurrent_open)
 {
-    const std::string domain_name("SHMTests");
-
     auto shared_mem_manager = SharedMemManager::create(domain_name);
     SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
     MockPortSharedMemGlobal port_mocker;
