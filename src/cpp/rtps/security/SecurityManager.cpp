@@ -202,7 +202,7 @@ bool SecurityManager::init(
                     }
                     else
                     {
-                        logInfo(SECURITY, msg);
+                        EPROSIMA_LOG_INFO(SECURITY, msg);
                     }
                 };
 
