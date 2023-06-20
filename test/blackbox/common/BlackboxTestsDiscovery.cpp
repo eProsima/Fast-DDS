@@ -1910,8 +1910,11 @@ TEST(Discovery, MultipleXMLProfileLoad)
                 std::unique_lock<std::mutex> lock(cv_mtx);
                 cv.wait(
                     lock,
-                    [&](){ return n_discoveries >= 2; }
-                );
+                    [&]()
+                    {
+                        return n_discoveries >= 2;
+                    }
+                    );
             };
 
     auto participant_creation_writer = [&]()
@@ -1930,8 +1933,11 @@ TEST(Discovery, MultipleXMLProfileLoad)
                 std::unique_lock<std::mutex> lock(cv_mtx);
                 cv.wait(
                     lock,
-                    [&](){ return n_discoveries >= 2; }
-                );
+                    [&]()
+                    {
+                        return n_discoveries >= 2;
+                    }
+                    );
             };
 
     // Start thread creating second participant
