@@ -198,8 +198,28 @@ foreach(STATIC_DISC_XML_TEST_COMPLETE_PATH ${STATIC_DISC_XML_TEST})
     # copy the file from src to build folders
     configure_file(
         ${STATIC_DISC_XML_TEST_COMPLETE_PATH}                                             # from full src path
-        ${CMAKE_CURRENT_BINARY_DIR}/xml_static_disc_docs/test/${STATIC_DISC_XML_TEST}.xml # to relative build path
+        ${CMAKE_CURRENT_BINARY_DIR}/xml_static_disc_docs/test/system/${STATIC_DISC_XML_TEST}.xml # to relative build path
         COPYONLY)
+endforeach()
+
+# Copy the sampled test files over to the build directory
+file(GLOB_RECURSE STATIC_DISC_XML_SAMPLED_TEST ${CMAKE_CURRENT_SOURCE_DIR}/../../../blackbox/*_static_disc.xml.in)
+
+# set the expected CMake variables for the samples
+set(TOPIC_RANDOM_NUMBER "123")
+set(W_UNICAST_PORT_RANDOM_NUMBER "456")
+set(R_UNICAST_PORT_RANDOM_NUMBER "654")
+set(MULTICAST_PORT_RANDOM_NUMBER "789")
+
+# for each xml file detected in examples folder
+foreach(STATIC_DISC_XML_SAMPLED_TEST_COMPLETE_PATH ${STATIC_DISC_XML_SAMPLED_TEST})
+    # obtain the file name
+    get_filename_component(STATIC_DISC_XML_SAMPLED_TEST ${STATIC_DISC_XML_SAMPLED_TEST_COMPLETE_PATH} NAME_WE)
+    # copy the file from src to build folders
+    configure_file(
+        ${STATIC_DISC_XML_SAMPLED_TEST_COMPLETE_PATH}                                                 # from full src path
+        ${CMAKE_CURRENT_BINARY_DIR}/xml_static_disc_docs/test/blackbox/${STATIC_DISC_XML_SAMPLED_TEST}.xml # to relative build path
+        )
 endforeach()
 
 # Define test
