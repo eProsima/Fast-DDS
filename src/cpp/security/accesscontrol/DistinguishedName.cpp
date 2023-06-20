@@ -216,7 +216,9 @@ Attribute Attribute::cut(
     return res;
 }
 
-std::ostream& operator<<(std::ostream& os, const Attribute& att)
+std::ostream& operator <<(
+        std::ostream& os,
+        const Attribute& att)
 {
     os.write(att.value, att.length);
     return os;

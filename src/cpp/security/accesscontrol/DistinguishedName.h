@@ -152,7 +152,9 @@ struct Attribute
 };
 
 //! To string method for Attribute
-std::ostream& operator<<(std::ostream& os, const Attribute& att);
+std::ostream& operator <<(
+        std::ostream& os,
+        const Attribute& att);
 
 /**
  * @brief This class is only used to compare 2 DistinguishedName.
