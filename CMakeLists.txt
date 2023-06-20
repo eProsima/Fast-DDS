@@ -554,8 +554,13 @@ install(FILES ${PROJECT_SOURCE_DIR}/LICENSE
     COMPONENT licenses
     )
 
-# Install xml validator
+# Install xml validators
 install(FILES ${PROJECT_SOURCE_DIR}/resources/xsd/fastRTPS_profiles.xsd
+    DESTINATION ${DATA_INSTALL_DIR}
+    COMPONENT xsd
+    )
+
+install(FILES ${PROJECT_SOURCE_DIR}/resources/xsd/fastdds_static_discovery.xsd
     DESTINATION ${DATA_INSTALL_DIR}
     COMPONENT xsd
     )
