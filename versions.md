@@ -6,6 +6,7 @@ Forthcoming
   Please, use `BUILD_SHARED_LIBS=OFF` instead.
 * Fixed exported symbols on ContentFilteredTopic (ABI break)
 * Deprecated the DDS:Crypto:AES-GCM-GMAC plugin configuration through the DomainParticipant PropertyPolicyQos (security vulnerability).
+* `DomainParticipantListener::on_participant_discovery` changed behavior (fix API break in 2.10.0).
 
 Version 2.10.1
 --------------
