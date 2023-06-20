@@ -5,6 +5,7 @@ Forthcoming
 * Remove `FASTDDS_STATIC` CMake option.
   Please, use `BUILD_SHARED_LIBS=OFF` instead.
 * Fixed exported symbols on ContentFilteredTopic (ABI break)
+* Deprecated the DDS:Crypto:AES-GCM-GMAC plugin configuration when DDS:Access:Permissions plugin was not previously configured.
 
 Version 2.10.1
 --------------
