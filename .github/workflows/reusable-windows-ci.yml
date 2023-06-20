@@ -610,12 +610,15 @@ jobs:
             "::group::Crash dump files"
             gci $dumpfolder | Sort-Object LastWriteTime
             "::endgroup::"
-
+          }
+          
+          if($failed)
+          {
             $msg = "$failed test(s) failed"
             "TestErrors=" + $msg | Out-File $Env:GITHUB_OUTPUT -Append
             Write-Error $msg;
           }
-
+          
           # Avoid disturbing exit code 1 message
           $LASTEXITCODE=0
 
