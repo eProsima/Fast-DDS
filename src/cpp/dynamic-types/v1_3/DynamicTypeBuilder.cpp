@@ -51,10 +51,15 @@ DynamicTypeBuilder::DynamicTypeBuilder(
     if (is_static)
     {
         // create on heap
+#if _MSC_VER >= 1921
         instance_ = std::make_shared<DynamicType>(
             DynamicType::use_the_create_method{},
             *this);
-
+#else
+        instance_.reset(new DynamicType(
+            DynamicType::use_the_create_method{},
+            *this));
+#endif
         // notify the tracker
         dynamic_tracker<selected_mode>::get_dynamic_tracker().add_primitive(instance_.get());
     }
@@ -232,11 +237,24 @@ const DynamicType* DynamicTypeBuilder::build() const
     {
         try
         {
+            builder_allocator al;
             // otherwise, create a new one. Check total consistency
+#if _MSC_VER >= 1921
+            // msvc v142 can allocate on a single block
             instance_ = std::allocate_shared<DynamicType>(
-                builder_allocator{},
+                al,
                 DynamicType::use_the_create_method{},
                 *this);
+#else
+            using traits = std::allocator_traits<builder_allocator>;
+            auto new_instance = al.allocate(sizeof(DynamicType));
+            traits::construct(
+                al,
+                new_instance,
+                DynamicType::use_the_create_method{},
+                *this);
+            instance_.reset(new_instance);
+#endif
         }
         catch(const std::bad_alloc& e)
         {
@@ -329,7 +347,7 @@ const DynamicType* DynamicTypeBuilder::create_copy(
     return &type;
 }
 
-void DynamicTypeBuilder::external_dynamic_object_deleter(const DynamicTypeBuilder* pDT)
+void DynamicTypeBuilder::external_dynamic_object_deleter(const DynamicType* pDT)
 {
     if (pDT)
     {
@@ -337,17 +355,21 @@ void DynamicTypeBuilder::external_dynamic_object_deleter(const DynamicTypeBuilde
     }
 }
 
-void DynamicTypeBuilder::internal_dynamic_object_deleter(const DynamicTypeBuilder* pDT)
+void DynamicTypeBuilder::internal_dynamic_object_deleter(const DynamicType* pDT)
 {
     if (pDT)
     {
-        std::default_delete<const DynamicTypeBuilder> del;
-        del(pDT);
+        using traits = std::allocator_traits<builder_allocator>;
+        builder_allocator al;
+        DynamicType* p = const_cast<DynamicType*>(pDT);
+
+        traits::destroy(al, p);
+        al.deallocate(p, sizeof(DynamicType));
     }
 }
 
 void (*eprosima::fastrtps::types::v1_3::dynamic_object_deleter(
-        const DynamicTypeBuilder* pDT))(const DynamicTypeBuilder*)
+        const DynamicType* pDT))(const DynamicType*)
 {
    if ( pDT != nullptr)
    {
