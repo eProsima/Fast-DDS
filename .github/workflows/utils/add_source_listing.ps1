@@ -14,6 +14,13 @@
 #
 # @file add_source_listing.ps1
 #
+# Preconditions:
+#  In order for the algorithm to work with github pull request the associated repos
+#  must enable the tracking of the pull request references. This can be set globally in
+#  the CI as:
+#      git config --global remote.origin.fetch '+refs/pull/*:refs/remotes/origin/pull/*'
+#  Note actions/checkout preempts it and may be force locally in the repo as:
+#      git config --local remote.origin.fetch '+refs/pull/*:refs/remotes/origin/pull/*'; git fetch origin
 
 Param(
 [Parameter(Mandatory=$true,
@@ -55,6 +62,8 @@ else
     $pdbstr = Resolve-Path "$kitspath/*/x64/srcsrv/pdbstr.exe"
     $srctool = Resolve-Path "$kitspath/*/x64/srcsrv/srctool.exe"
 }
+
+Write-Verbose "Framework tools: '$pdbstr' '$srctool'"
 
 $ErrorActionPreference = 'SilentlyContinue'
 
@@ -142,18 +151,53 @@ class Repositories {
         $dir.replace("\","/")
 
         $new.commit = git -C $dir log -n1 --pretty=format:'%h' 2>$null
+
+        if($new.commit)
+        {
+            Write-Verbose "Found new repo commit: git -C $dir log -n1 --pretty=format:'%h' => $($new.commit)"
+        }
+
         if($new.commit -eq $null) { return $false }
         # Find out the repo
         $branches = git -C $dir branch -r --contains $new.commit
+
+        if($branches)
+        {
+            Write-Verbose "Commit branches: git -C $dir branch -r --contains $($new.commit) => $branches"
+        }
+
         # get associated repos
         $candidates = $branches | sls '^\s*(?<remote>\w+)/' | select -ExpandProperty Matches |
             select -ExpandProperty Groups | ? name -eq 'remote' | sort | unique |
             select -ExpandProperty Value
+
         # filter out repo list
-        $new.name = ((git -C $dir remote -v |
-            sls "^(?<remote>\w+)\s+https://github.com/(?<repo>\S+).git").Matches |
-            % { [PSCustomObject]@{ repo = [String]$_.Groups['repo']; remote = [String]$_.Groups['remote']}} |
-            ? remote -in $candidates | Select -First 1).repo
+        $repositories = (git -C $dir remote -v |
+            sls "^(?<remote>\w+)\s+https://github.com/((?<repo>\S+)\.git|(?<repo>\S+))").Matches | select -Unique |
+            % { [PSCustomObject]@{ repo = [String]$_.Groups['repo']; remote = [String]$_.Groups['remote']}}
+
+        Write-Verbose "Repos available: $($repositories.remote)"
+
+        $new.name = ($repositories | ? remote -in $candidates | Select -First 1).repo
+
+        # on error fallback to origin
+        if($new.name)
+        {
+            Write-Verbose "Chosen repo: $($new.name)"
+        }
+        else
+        {
+            if ('origin' -in $repositories.remote)
+            {
+                $new.name = ($repositories | ? remote -eq 'origin' | Select -First 1).repo
+            }
+            else
+            {
+                $new.name = $repositories[0].repo
+            }
+
+            Write-Verbose "Cannot track commit: falling back to $($new.name)"
+        }
 
         # get the path
         $new.path = git -C $dir rev-parse --show-toplevel
@@ -183,6 +227,8 @@ $repos = New-Object -TypeName Repositories
 # Script to process the files into entries
 $process = {
 
+    Write-Verbose "Processing file: $_"
+
     $entry = @{}
     # keep the file as id
     $entry.id = $_
@@ -190,6 +236,7 @@ $process = {
     # Check if the file should be excluded
     if($excludes.Exclude($_))
     {
+        Write-Verbose "Excluding file using database: $_"
         return
     }
 
@@ -208,6 +255,7 @@ $process = {
         {
             # If there is no repo ignore and update exclude
             $excludes.Add($_)
+            Write-Verbose "Excluding file for lack of repo: $_"
             return
         }
     }
@@ -219,6 +267,7 @@ $process = {
     # propagate
     $entry = [PSCustomObject]$entry
     Write-Output $entry
+    Write-Verbose "New path entry: $entry"
 }
 
 foreach ($pdbfile in $pdbs)
@@ -259,4 +308,5 @@ SRCSRV: source files ---------------------------------------
 
     # incorporate the stream into the file
     & $pdbstr -w "-p:$pdbfile" -s:srcsrv "-i:$tmp"
+    Write-Verbose "Stream check: & `"$pdbstr`" -r -p:`"$pdbfile`" -s:srcsrv"
 }
