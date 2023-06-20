@@ -10,12 +10,10 @@
             <reliabilityQos>RELIABLE_RELIABILITY_QOS</reliabilityQos>
             <unicastLocator
                 address="127.0.0.1"
-                 port="@W_UNICAST_PORT_RANDOM_NUMBER@">
-            </unicastLocator>
+                 port="@W_UNICAST_PORT_RANDOM_NUMBER@"/>
             <multicastLocator
                 address="127.0.0.1"
-                 port="@MULTICAST_PORT_RANDOM_NUMBER@">
-            </multicastLocator>
+                 port="@MULTICAST_PORT_RANDOM_NUMBER@"/>
             <durabilityQos>TRANSIENT_LOCAL_DURABILITY_QOS</durabilityQos>
         </writer>
     </participant>
