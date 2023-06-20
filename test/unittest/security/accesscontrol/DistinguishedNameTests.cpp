@@ -20,7 +20,7 @@
 
 using namespace eprosima::fastrtps::rtps::security;
 
-namespace test{
+namespace test {
 
 /*
  * This struct join multiple DistinguishedNames in string format that refer to the same entity.

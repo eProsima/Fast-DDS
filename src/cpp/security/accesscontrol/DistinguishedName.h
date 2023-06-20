@@ -95,13 +95,17 @@ struct Attribute
 {
     Attribute() = default;
 
-    Attribute(const DistinguishedName& name);
+    Attribute(
+            const DistinguishedName& name);
 
-    Attribute(const char* name);
+    Attribute(
+            const char* name);
 
     bool is_set() const noexcept;
 
-    size_t cut(size_t ini, size_t fin = 0) noexcept;
+    size_t cut(
+            size_t ini,
+            size_t fin = 0) noexcept;
 
     size_t trim_blank_spaces();
 
@@ -109,17 +113,26 @@ struct Attribute
 
     size_t clear() noexcept;
 
-    size_t find(char c) const noexcept;
+    size_t find(
+            char c) const noexcept;
 
-    size_t find(char c, bool& result) const noexcept;
+    size_t find(
+            char c,
+            bool& result) const noexcept;
 
-    bool found(const size_t& find_result) const noexcept;
+    bool found(
+            const size_t& find_result) const noexcept;
 
-    bool operator==(const Attribute& other) const noexcept;
+    bool operator ==(
+            const Attribute& other) const noexcept;
 
-    bool operator!=(const Attribute& other) const noexcept;
+    bool operator !=(
+            const Attribute& other) const noexcept;
 
-    static Attribute cut(const Attribute& att, size_t ini, size_t fin = 0) noexcept;
+    static Attribute cut(
+            const Attribute& att,
+            size_t ini,
+            size_t fin = 0) noexcept;
 
     const char* value {nullptr};
     size_t length {0};
@@ -135,7 +148,9 @@ class DistinguishedNameSpecialized
 {
 public:
 
-    static bool compare(const DistinguishedName& name1, const DistinguishedName& name2) noexcept;
+    static bool compare(
+            const DistinguishedName& name1,
+            const DistinguishedName& name2) noexcept;
 
     enum class ErrorCase
     {
@@ -148,17 +163,23 @@ public:
     using Type = Attribute;
     using Value = Attribute;
 
-    DistinguishedNameSpecialized(const DistinguishedName& name) noexcept;
+    DistinguishedNameSpecialized(
+            const DistinguishedName& name) noexcept;
 
-    ErrorCase find_and_add_type_values(const Attribute& input) noexcept;
+    ErrorCase find_and_add_type_values(
+            const Attribute& input) noexcept;
 
-    void add_type_values(const Attribute& type, const Attribute& value) noexcept;
+    void add_type_values(
+            const Attribute& type,
+            const Attribute& value) noexcept;
 
     size_t size() const noexcept;
 
-    Value get_attribute(const Type& type) const noexcept;
+    Value get_attribute(
+            const Type& type) const noexcept;
 
-    bool operator==(const DistinguishedNameSpecialized& other) const noexcept;
+    bool operator ==(
+            const DistinguishedNameSpecialized& other) const noexcept;
 
 protected:
 

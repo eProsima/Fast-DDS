@@ -30,14 +30,16 @@ namespace security {
 
 namespace details {
 
-Attribute::Attribute(const DistinguishedName& name)
+Attribute::Attribute(
+        const DistinguishedName& name)
     : value(name.c_str())
     , length(name.size())
 {
     // Do nothing
 }
 
-Attribute::Attribute(const char* name)
+Attribute::Attribute(
+        const char* name)
     : value(name)
 {
     size_t i = 0;
@@ -53,7 +55,9 @@ bool Attribute::is_set() const noexcept
     return length > 0;
 }
 
-size_t Attribute::cut(size_t ini, size_t fin /*= 0*/) noexcept
+size_t Attribute::cut(
+        size_t ini,
+        size_t fin /*= 0*/) noexcept
 {
     // If cut greater than actual size, return empty string
     if (ini >= length || fin > length)
@@ -96,7 +100,7 @@ size_t Attribute::trim_back_blank_spaces()
 {
     size_t i = length;
     // NOTE: using -1 because size_t cannot be lower than 0, so comparison i >= 0 make no sense
-    while (i > 0 && value[i-1] == ' ')
+    while (i > 0 && value[i - 1] == ' ')
     {
         i--;
     }
@@ -111,7 +115,8 @@ size_t Attribute::clear() noexcept
     return aux;
 }
 
-size_t Attribute::find(char c) const noexcept
+size_t Attribute::find(
+        char c) const noexcept
 {
     size_t i = 0;
     bool in_quotes = false;
@@ -137,19 +142,23 @@ size_t Attribute::find(char c) const noexcept
     return i;
 }
 
-size_t Attribute::find(char c, bool& result) const noexcept
+size_t Attribute::find(
+        char c,
+        bool& result) const noexcept
 {
     auto res = find(c);
     result = found(res);
     return res;
 }
 
-bool Attribute::found(const size_t& find_result) const noexcept
+bool Attribute::found(
+        const size_t& find_result) const noexcept
 {
     return find_result < length;
 }
 
-bool Attribute::operator==(const Attribute& other) const noexcept
+bool Attribute::operator ==(
+        const Attribute& other) const noexcept
 {
     // Compare char to char
     // scaped chars with \ must be taken into account, and " must be ignored
@@ -191,56 +200,64 @@ bool Attribute::operator==(const Attribute& other) const noexcept
     }
 }
 
-bool Attribute::operator!=(const Attribute& other) const noexcept
+bool Attribute::operator !=(
+        const Attribute& other) const noexcept
 {
-    return !operator==(other);
+    return !operator ==(other);
 }
 
-Attribute Attribute::cut(const Attribute& att, size_t ini, size_t fin /*= 0*/) noexcept
+Attribute Attribute::cut(
+        const Attribute& att,
+        size_t ini,
+        size_t fin /*= 0*/) noexcept
 {
     Attribute res {att};
     res.cut(ini, fin);
     return res;
 }
 
-bool DistinguishedNameSpecialized::compare(const DistinguishedName& name1, const DistinguishedName& name2) noexcept
+bool DistinguishedNameSpecialized::compare(
+        const DistinguishedName& name1,
+        const DistinguishedName& name2) noexcept
 {
     DistinguishedNameSpecialized dns1(name1);
     DistinguishedNameSpecialized dns2(name2);
     return DistinguishedNameSpecialized(name1) == DistinguishedNameSpecialized(name2);
 }
 
-DistinguishedNameSpecialized::DistinguishedNameSpecialized(const DistinguishedName& name) noexcept
+DistinguishedNameSpecialized::DistinguishedNameSpecialized(
+        const DistinguishedName& name) noexcept
 {
     // Create it by recursive function
     auto res = find_and_add_type_values(name);
 
     switch (res)
     {
-    case ErrorCase::max_value:
-        EPROSIMA_LOG_ERROR(
-            SECURITY,
-            "DistinguishedName " << name << " have more type-values attributes than allowed.");
-        break;
+        case ErrorCase::max_value:
+            EPROSIMA_LOG_ERROR(
+                SECURITY,
+                "DistinguishedName " << name << " have more type-values attributes than allowed.");
+            break;
 
-    case ErrorCase::empty:
-        EPROSIMA_LOG_ERROR(
-            SECURITY,
-            "DistinguishedName " << name << " has an empty field.");
-        break;
+        case ErrorCase::empty:
+            EPROSIMA_LOG_ERROR(
+                SECURITY,
+                "DistinguishedName " << name << " has an empty field.");
+            break;
 
-    case ErrorCase::no_type_value_format:
-        EPROSIMA_LOG_ERROR(
-            SECURITY,
-            "DistinguishedName " << name << " has incorrect format.");
-        break;
+        case ErrorCase::no_type_value_format:
+            EPROSIMA_LOG_ERROR(
+                SECURITY,
+                "DistinguishedName " << name << " has incorrect format.");
+            break;
 
-    default:
-        break;
+        default:
+            break;
     }
 }
 
-DistinguishedNameSpecialized::ErrorCase DistinguishedNameSpecialized::find_and_add_type_values(const Attribute& input) noexcept
+DistinguishedNameSpecialized::ErrorCase DistinguishedNameSpecialized::find_and_add_type_values(
+        const Attribute& input) noexcept
 {
     Attribute rest = input;
     rest.trim_blank_spaces();
@@ -269,7 +286,7 @@ DistinguishedNameSpecialized::ErrorCase DistinguishedNameSpecialized::find_and_a
         return ErrorCase::no_type_value_format;
     }
     Attribute type = Attribute::cut(rest, 0, index);
-    rest.cut(index+1);
+    rest.cut(index + 1);
 
     //////////////////////////////////////////
     // Find first ,
@@ -283,7 +300,7 @@ DistinguishedNameSpecialized::ErrorCase DistinguishedNameSpecialized::find_and_a
 
     // If it is not the last one, continue
     Attribute value = Attribute::cut(rest, 0, index);
-    rest.cut(index+1);
+    rest.cut(index + 1);
 
     // Add values
     add_type_values(type, value);
@@ -293,7 +310,9 @@ DistinguishedNameSpecialized::ErrorCase DistinguishedNameSpecialized::find_and_a
     return find_and_add_type_values(rest);
 }
 
-void DistinguishedNameSpecialized::add_type_values(const Attribute& type, const Attribute& value) noexcept
+void DistinguishedNameSpecialized::add_type_values(
+        const Attribute& type,
+        const Attribute& value) noexcept
 {
     // NOTE: storing values before trimming them avoids one copy
 
@@ -317,7 +336,8 @@ size_t DistinguishedNameSpecialized::size() const noexcept
     return size_;
 }
 
-DistinguishedNameSpecialized::Value DistinguishedNameSpecialized::get_attribute(const Type& type) const noexcept
+DistinguishedNameSpecialized::Value DistinguishedNameSpecialized::get_attribute(
+        const Type& type) const noexcept
 {
     for (size_t i = 0; i < size_; ++i)
     {
@@ -334,7 +354,8 @@ DistinguishedNameSpecialized::Value DistinguishedNameSpecialized::get_attribute(
     return Value();
 }
 
-bool DistinguishedNameSpecialized::operator==(const DistinguishedNameSpecialized& other) const noexcept
+bool DistinguishedNameSpecialized::operator ==(
+        const DistinguishedNameSpecialized& other) const noexcept
 {
     if (this->size() != other.size())
     {
