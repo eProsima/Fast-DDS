@@ -357,7 +357,11 @@ bool SecurityManager::init(
                 }
             }
 
-            throw exception;
+            // NOTE: This makes Participant creation fails, in some occasions without any info of what happened.
+            // However, it has been decided to leave it this way.
+            // For future developers struggling with security debugging issues, remember that the exception variable
+            // at this point has relevant information.
+            throw false;
         }
         else
         {
