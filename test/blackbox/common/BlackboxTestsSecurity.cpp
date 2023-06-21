@@ -807,6 +807,8 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_rtps_ok_same_participant)
             "builtin.AES-GCM-GMAC"));
     property_policy.properties().emplace_back("rtps.participant.rtps_protection_kind", "ENCRYPT");
 
+    wreader.pub_history_depth(10).sub_history_depth(10).sub_reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .sub_durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS);
     wreader.property_policy(property_policy).init();
 
     ASSERT_TRUE(wreader.isInitialized());
@@ -1241,7 +1243,8 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_submessage_ok_same_partici
     pub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
     sub_property_policy.properties().emplace_back("rtps.endpoint.submessage_protection_kind", "ENCRYPT");
 
-    wreader.sub_history_depth(10).sub_reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    wreader.pub_history_depth(10).sub_history_depth(10).sub_reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .sub_durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS);
     wreader.property_policy(property_policy).
             pub_property_policy(pub_property_policy).
             sub_property_policy(sub_property_policy).init();
@@ -1690,7 +1693,8 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_payload_ok_same_participan
     pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
-    wreader.sub_history_depth(10).sub_reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
+    wreader.pub_history_depth(10).sub_history_depth(10).sub_reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .sub_durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS);
     wreader.property_policy(property_policy).
             pub_property_policy(pub_property_policy).
             sub_property_policy(sub_property_policy).init();
@@ -1730,10 +1734,8 @@ TEST_P(Security, BuiltinAuthenticationAndCryptoPlugin_payload_ok_same_participan
     pub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
     sub_property_policy.properties().emplace_back("rtps.endpoint.payload_protection_kind", "ENCRYPT");
 
-    wreader.sub_history_depth(10).sub_reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
-    wreader.pub_history_depth(10).pub_reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS);
-    wreader.sub_durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
-    wreader.pub_durability_kind(eprosima::fastrtps::TRANSIENT_LOCAL_DURABILITY_QOS);
+    wreader.pub_history_depth(10).sub_history_depth(10).sub_reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS)
+            .sub_durability_kind(eprosima::fastdds::dds::DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS);
     wreader.property_policy(property_policy).
             pub_property_policy(pub_property_policy).
             sub_property_policy(sub_property_policy).init();
