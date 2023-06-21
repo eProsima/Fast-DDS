@@ -61,6 +61,7 @@ public:
     {
         return impl_;
     }
+
 };
 
 /**
@@ -192,7 +193,7 @@ void register_types(
     registerTypeLookupServiceTypesTypes();
     TypeSupport struct_type(new InheritanceStructPubSubType());
     const TypeIdentifier* type_id =
-        TypeObjectFactory::get_instance()->get_type_identifier(struct_type.get_type_name());
+            TypeObjectFactory::get_instance()->get_type_identifier(struct_type.get_type_name());
     types.push_back(*type_id);
     TypeSupport another_struct_type(new AnotherInheritanceStructPubSubType());
     type_id = TypeObjectFactory::get_instance()->get_type_identifier(another_struct_type.get_type_name());
@@ -680,8 +681,10 @@ TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies)
     {
         // The field dependent_typeids shall exclusively contain of direct HASH TypeIdentifiers that are recursive
         // dependencies from at least one of the TypeIdentifiers in the request.
-        EXPECT_PRED3([](octet kind, octet complete, octet minimal) {
-            return kind == complete || kind == minimal;}, type.type_id()._d(), EK_COMPLETE, EK_MINIMAL);
+        EXPECT_PRED3([](octet kind, octet complete, octet minimal)
+                {
+                    return kind == complete || kind == minimal;
+                }, type.type_id()._d(), EK_COMPLETE, EK_MINIMAL);
         // TypeIdentifierWithSize
         // TODO: typeobject_serialized_size is not correct
         EXPECT_NE(0u, type.typeobject_serialized_size());
@@ -692,7 +695,7 @@ TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies)
                 if (type.type_id() == complete_type_identifiers[i])
                 {
                     EXPECT_EQ(type.typeobject_serialized_size(), TypeObject::getCdrSerializedSize(
-                            complete_type_objects[i]));
+                                complete_type_objects[i]));
                     type_dependency_found.set(i);
                 }
             }
@@ -701,7 +704,7 @@ TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies)
                 if (type.type_id() == minimal_type_identifiers[i])
                 {
                     EXPECT_EQ(type.typeobject_serialized_size(), TypeObject::getCdrSerializedSize(
-                            minimal_type_objects[i]));
+                                minimal_type_objects[i]));
                     type_dependency_found.set(i);
                 }
             }
@@ -722,10 +725,10 @@ TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies)
 //       Looking at the implementation, the continuation point is only enabled if there are more than 255 type
 //       dependencies (hardcoded value in TypeObjectFactory::typelookup_get_type_dependencies).
 /*
-TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies_with_continuation)
-{
-}
-*/
+   TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies_with_continuation)
+   {
+   }
+ */
 
 /**
  * Test that checks the reception of malformed getTypeDependencies requests.
@@ -738,10 +741,10 @@ TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies_with_conti
  *   6. TODO: No SCC individual TypeIdentifier should be included.
  */
 /*
-TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies_malformed_request_reception)
-{
-}
-*/
+   TEST(TypeLookupServiceTests, typelookup_service_get_type_dependencies_malformed_request_reception)
+   {
+   }
+ */
 
 /**
  * Test that checks the getTypes operation receiving a request with COMPLETE TypeIdentifiers.
@@ -971,13 +974,13 @@ TEST(TypeLookupServiceTests, typelookup_service_get_types_minimal_request)
         // Check complete_to_minimal correct implementation
         ASSERT_EQ(reply.return_value.getType().result().complete_to_minimal.size(), 2);
         EXPECT_EQ(reply.return_value.getType().result().complete_to_minimal[0].type_identifier1(),
-            complete_type_identifiers[2]);
+                complete_type_identifiers[2]);
         EXPECT_EQ(reply.return_value.getType().result().complete_to_minimal[0].type_identifier2(),
-            minimal_type_identifiers[2]);
+                minimal_type_identifiers[2]);
         EXPECT_EQ(reply.return_value.getType().result().complete_to_minimal[1].type_identifier1(),
-            complete_type_identifiers[5]);
+                complete_type_identifiers[5]);
         EXPECT_EQ(reply.return_value.getType().result().complete_to_minimal[1].type_identifier2(),
-            minimal_type_identifiers[5]);
+                minimal_type_identifiers[5]);
     }
 
     // TODO: If a TypeIdentifier was a SCCIdentifier, then the response shall treat the TypeObjects within the SCC
@@ -1001,10 +1004,10 @@ TEST(TypeLookupServiceTests, typelookup_service_get_types_minimal_request)
  *   5. TODO: No SCC individual TypeIdentifier should be included.
  */
 /*
-TEST(TypeLookupServiceTests, typelookup_service_get_types_malformed_request_reception)
-{
-}
-*/
+   TEST(TypeLookupServiceTests, typelookup_service_get_types_malformed_request_reception)
+   {
+   }
+ */
 
 int main(
         int argc,

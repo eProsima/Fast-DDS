@@ -167,7 +167,7 @@ public:
 
     /**
      * @brief Send a request for the dependencies of the given TypeIdentifiers.
-     * 
+     *
      * @param in Sequence of TypeIdentifiers for which the participant wants to get the dependencies.
      * @return fastrtps::rtps::SampleIdentity of the sent request.
      */
@@ -176,7 +176,7 @@ public:
 
     /**
      * @brief Send a request for the TypeObjects of the given TypeIdentifiers.
-     * 
+     *
      * @param in Sequence of TypeIdentifiers for which the participant wants to get the related TypeObjects.
      * @return fastrtps::rtps::SampleIdentity of the sent request.
      */
