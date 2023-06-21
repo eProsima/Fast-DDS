@@ -15,8 +15,8 @@
 #include <fastrtps/types/TypeObject.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/types/TypeNamesGenerator.h>
-#include <fastrtps/types/v1_3/DynamicTypeBuilder.hpp>
 #include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeBuilder.hpp>
 #include <fastrtps/types/v1_3/TypeDescriptor.hpp>
 #include <fastrtps/types/v1_3/DynamicType.hpp>
 #include <fastrtps/types/v1_3/DynamicTypeMember.hpp>
@@ -378,27 +378,10 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_type(
     {
         if (td.is_consistent())
         {
-            std::shared_ptr<DynamicTypeBuilder> sp;
-            auto & al = DynamicTypeBuilderFactory::get_instance().get_allocator();
-
-#if _MSC_VER >= 1921
-            // msvc v142 can allocate on a single block
-            sp = std::allocate_shared<DynamicTypeBuilder>(
-                al,
+            auto sp = std::allocate_shared<DynamicTypeBuilder>(
+                get_allocator(),
                 DynamicTypeBuilder::use_the_create_method{},
                 td);
-#else
-            using traits = std::allocator_traits<builder_allocator>;
-            auto new_instance = al.allocate(sizeof(DynamicTypeBuilder));
-            traits::construct(
-                al,
-                new_instance,
-                DynamicTypeBuilder::use_the_create_method{},
-                td);
-
-            sp.reset(new_instance);
-#endif
-
             // Keep alive on external references
             sp->add_ref();
             return sp.get();
@@ -512,20 +495,10 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::new_primitive_builder(
     try
     {
         // create on heap
-        DynamicTypeBuilder_ptr builder ;
-        TypeDescriptor td{GenerateTypeName(get_type_name(kind)), kind};
-
-#if _MSC_VER >= 1921
-        builder = std::make_shared<DynamicTypeBuilder>(
+        DynamicTypeBuilder_ptr builder = std::make_shared<DynamicTypeBuilder>(
             DynamicTypeBuilder::use_the_create_method{},
-            td,
+            TypeDescriptor{GenerateTypeName(get_type_name(kind)), kind},
             true);         // will be a static object
-#else
-        builder.reset(new DynamicTypeBuilder(
-            DynamicTypeBuilder::use_the_create_method{},
-            td,
-            true));         // will be a static object
-#endif
         // notify the tracker
         dynamic_tracker<selected_mode>::get_dynamic_tracker().add_primitive(builder.get());
         return builder;
@@ -551,21 +524,11 @@ DynamicTypeBuilder_ptr DynamicTypeBuilderFactory::new_unlimited_string_builder(
 
     try
     {
-        DynamicTypeBuilder_ptr builder;
-
-#if _MSC_VER >= 1921
         // create on heap
-        builder = std::make_shared<DynamicTypeBuilder>(
+        DynamicTypeBuilder_ptr builder = std::make_shared<DynamicTypeBuilder>(
             DynamicTypeBuilder::use_the_create_method{},
             descriptor,
             true);         // will be a static object
-#else
-        builder.reset(new DynamicTypeBuilder(
-            DynamicTypeBuilder::use_the_create_method{},
-            descriptor,
-            true));         // will be a static object
-#endif
-
         // notify the tracker
         dynamic_tracker<selected_mode>::get_dynamic_tracker().add_primitive(builder.get());
         return builder;
@@ -2745,45 +2708,6 @@ void DynamicTypeBuilderFactory::apply_type_annotations(
         }
         annotations.push_back(ann);
     }
-}
-
-void DynamicTypeBuilderFactory::external_dynamic_object_deleter(const DynamicTypeBuilder* pDT)
-{
-    if (pDT)
-    {
-        pDT->release();
-    }
-}
-
-void DynamicTypeBuilderFactory::internal_dynamic_object_deleter(const DynamicTypeBuilder* pDT)
-{
-    if (pDT)
-    {
-        using traits = std::allocator_traits<builder_allocator>;
-        auto & al = DynamicTypeBuilderFactory::get_instance().get_allocator();
-        DynamicTypeBuilder* p = const_cast<DynamicTypeBuilder*>(pDT);
-
-        traits::destroy(al, p);
-        al.deallocate(p, sizeof(DynamicTypeBuilder));
-    }
-}
-
-void (*eprosima::fastrtps::types::v1_3::dynamic_object_deleter(
-        const DynamicTypeBuilder* pDT))(const DynamicTypeBuilder*)
-{
-   if ( pDT != nullptr)
-   {
-        if (pDT->use_count())
-        {
-            return DynamicTypeBuilderFactory::external_dynamic_object_deleter;
-        }
-        else
-        {
-            return DynamicTypeBuilderFactory::internal_dynamic_object_deleter;
-        }
-   }
-
-   return nullptr;
 }
 
 const int DynamicTypeBuilderFactory::indentation_index = std::ios_base::xalloc();

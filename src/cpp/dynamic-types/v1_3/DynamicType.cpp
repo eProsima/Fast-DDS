@@ -1893,3 +1893,38 @@ void DynamicType::serialize_empty_data(
         }
     }
 }
+
+void DynamicType::external_dynamic_object_deleter(const DynamicType* pDT)
+{
+    if (pDT)
+    {
+        pDT->release();
+    }
+}
+
+void DynamicType::internal_dynamic_object_deleter(const DynamicType* pDT)
+{
+    if (pDT)
+    {
+        std::default_delete<const DynamicType> del;
+        del(pDT);
+    }
+}
+
+void (*eprosima::fastrtps::types::v1_3::dynamic_object_deleter(
+        const DynamicType* pDT))(const DynamicType*)
+{
+   if ( pDT != nullptr)
+   {
+        if (pDT->use_count())
+        {
+            return DynamicType::external_dynamic_object_deleter;
+        }
+        else
+        {
+            return DynamicType::internal_dynamic_object_deleter;
+        }
+   }
+
+   return nullptr;
+}

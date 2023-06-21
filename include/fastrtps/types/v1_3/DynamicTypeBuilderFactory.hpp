@@ -15,9 +15,8 @@
 #ifndef TYPES_1_3_DYNAMIC_TYPE_BUILDER_FACTORY_H
 #define TYPES_1_3_DYNAMIC_TYPE_BUILDER_FACTORY_H
 
-#include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/AnnotationParameterValue.h>
-#include <fastrtps/types/v1_3/DynamicTypeBuilderPtr.hpp>
+#include <fastrtps/types/TypesBase.h>
 #include <fastrtps/utils/custom_allocators.hpp>
 
 #include <cassert>
@@ -114,11 +113,13 @@ class dynamic_tracker
 
 };
 
-#ifdef NDEBUG
-constexpr type_tracking selected_mode = type_tracking::none;
-#else
+#if defined(ENABLE_DYNAMIC_MEMORY_CHECK) \
+    && (!defined(_MSC_VER) || _MSC_VER >= 1921) \
+    && (!defined(__APPLE__) || _LIBCPP_STD_VER >= 20)
 constexpr type_tracking selected_mode = type_tracking::complete;
-#endif
+#else
+constexpr type_tracking selected_mode = type_tracking::none;
+#endif // if defined(ENABLE_DYNAMIC_MEMORY_CHECK) && (!defined(_MSC_VER) || _MSC_VER >= 1921) && (!defined(__APPLE__) || _LIBCPP_STD_VER >= 20)
 
 class TypeDescriptor;
 class MemberDescriptor;
@@ -138,10 +139,6 @@ class DynamicTypeBuilderFactory final
         static builder_allocator alloc{*this};
         return alloc;
     }
-
-    static void external_dynamic_object_deleter(const DynamicTypeBuilder*);
-    static void internal_dynamic_object_deleter(const DynamicTypeBuilder*);
-    friend void (*dynamic_object_deleter(const DynamicTypeBuilder* ))(const DynamicTypeBuilder*);
 
     friend builder_allocator;
 

@@ -14,7 +14,6 @@
 
 #include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
 #include <fastrtps/types/v1_3/DynamicType.hpp>
-#include <fastrtps/types/v1_3/DynamicTypeBuilder.hpp>
 #include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
 

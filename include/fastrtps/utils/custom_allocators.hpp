@@ -206,10 +206,8 @@ namespace detail {
 
 template<class T>
 class external_reference_counting
-    : public std::enable_shared_from_this<const void>
+    : public std::enable_shared_from_this<const T>
 {
-    using base = std::enable_shared_from_this<const void>;
-
     //! Keeps the object alive is external references are held
     mutable std::shared_ptr<const T> external_lock_;
     //! External references tracker
@@ -338,30 +336,6 @@ protected:
             return new_count;
         }
     }
-
-public:
-
-    std::shared_ptr<T> shared_from_this() {
-        return std::static_pointer_cast<T>(std::const_pointer_cast<void>(base::shared_from_this()));
-    }
-
-    std::shared_ptr<const T> shared_from_this() const {
-        return std::static_pointer_cast<const T>(base::shared_from_this());
-    }
-
-#ifdef __cpp_lib_enable_shared_from_this
-
-    std::weak_ptr<T> weak_from_this() {
-        auto wp = base::weak_from_this();
-        return *static_cast<std::weak_ptr<T>*>(&wp);
-    }
-
-    std::weak_ptr<const T> weak_from_this() const {
-        auto wp = base::weak_from_this();
-        return *static_cast<std::weak_ptr<const T>*>(&wp);
-    }
-
-#endif // __cpp_lib_enable_shared_from_this
 
 };
 
