@@ -869,7 +869,7 @@ public:
                 valid = fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &num_parameters);
                 if (valid)
                 {
-                    valid = (num_parameters < 100) && (num_parameters < parameter.expression_parameters.max_size());
+                    valid = (num_parameters <= 100) && (num_parameters <= parameter.expression_parameters.max_size());
                 }
                 if (valid)
                 {
