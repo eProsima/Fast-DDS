@@ -1601,6 +1601,7 @@ TEST_F(TCPv4Tests, header_read_interrumption)
     octet* buffer = {};
     uint32_t receive_buffer_capacity = 65500;
     uint32_t receive_buffer_size = 0;
+    Endianness_t msg_endian{Endianness_t::LITTLEEND};
 
     // Simulate channel connection
     channel->connect(nullptr);
@@ -1614,7 +1615,8 @@ TEST_F(TCPv4Tests, header_read_interrumption)
 
     // Start TCP segment reception
     // Should get stuck in receive_header until channel is disabled
-    transportUnderTest.Receive(rtcp_manager, channel, buffer, receive_buffer_capacity, receive_buffer_size, locator);
+    transportUnderTest.Receive(rtcp_manager, channel, buffer, receive_buffer_capacity, receive_buffer_size, msg_endian,
+            locator);
     thread.join();
 }
 

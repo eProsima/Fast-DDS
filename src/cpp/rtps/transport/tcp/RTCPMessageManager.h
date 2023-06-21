@@ -149,7 +149,8 @@ public:
     ResponseCode processRTCPMessage(
             std::shared_ptr<TCPChannelResource>& channel,
             fastrtps::rtps::octet* receive_buffer,
-            size_t receivedSize);
+            size_t receivedSize,
+            fastrtps::rtps::Endianness_t msg_endian);
 
     static uint32_t& addToCRC(
             uint32_t& crc,
