@@ -138,8 +138,15 @@ public:
      */
     virtual void announceParticipantState(
             bool new_change,
-            bool dispose = false,
-            WriteParams& wparams = WriteParams::WRITE_PARAM_DEFAULT) = 0;
+            bool dispose,
+            WriteParams& wparams) = 0;
+
+    /**
+     * \c announceParticipantState method without optional output parameter \c wparams .
+     */
+    virtual void announceParticipantState(
+            bool new_change,
+            bool dispose = false);
 
     //!Stop the RTPSParticipantAnnouncement (only used in tests).
     virtual void stopParticipantAnnouncement();
