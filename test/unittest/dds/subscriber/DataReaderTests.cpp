@@ -17,6 +17,7 @@
 #include <chrono>
 #include <forward_list>
 #include <iostream>
+#include <sstream>
 #include <thread>
 #include <type_traits>
 
@@ -67,9 +68,20 @@
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include <asio.hpp>
+
+#if defined(__cplusplus_winrt)
+#define GET_PID GetCurrentProcessId
+#elif defined(_WIN32)
+#include <process.h>
+#define GET_PID _getpid
+#else
+#define GET_PID getpid
+#endif // if defined(_WIN32)
+
 using namespace eprosima::fastdds::dds;
-using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastrtps::rtps;
 
 static constexpr LoanableCollection::size_type num_test_elements = 10;
 
@@ -86,6 +98,10 @@ public:
     void SetUp() override
     {
         type_.reset(new FooTypeSupport());
+
+        std::ostringstream topic_name_s;
+        topic_name_s << "footopic" << "_" << asio::ip::host_name() << "_" << GET_PID();
+        topic_name = topic_name_s.str();
     }
 
     void TearDown() override
@@ -133,7 +149,9 @@ protected:
             const TopicQos& tqos = TOPIC_QOS_DEFAULT,
             const DomainParticipantQos& part_qos = PARTICIPANT_QOS_DEFAULT)
     {
-        participant_ = DomainParticipantFactory::get_instance()->create_participant(0, part_qos);
+        participant_ =
+                DomainParticipantFactory::get_instance()->create_participant(
+            (uint32_t)GET_PID() % 230, part_qos);
         ASSERT_NE(participant_, nullptr);
 
         subscriber_ = participant_->create_subscriber(sqos);
@@ -144,7 +162,7 @@ protected:
 
         type_.register_type(participant_);
 
-        topic_ = participant_->create_topic("footopic", type_.get_type_name(), tqos);
+        topic_ = participant_->create_topic(topic_name, type_.get_type_name(), tqos);
         ASSERT_NE(topic_, nullptr);
 
         data_reader_ = subscriber_->create_datareader(topic_, rqos, rlistener);
@@ -549,6 +567,8 @@ protected:
     TypeSupport type_;
     bool destroy_entities_ = true;
 
+    std::string topic_name;
+
     InstanceHandle_t handle_ok_ = HANDLE_NIL;
     InstanceHandle_t handle_wrong_ = HANDLE_NIL;
 
@@ -588,16 +608,18 @@ TEST_F(DataReaderTests, get_guid)
         ParticipantFilteringFlags_t::FILTER_DIFFERENT_PROCESS);
 
     DomainParticipant* listener_participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, participant_qos,
-                    &discovery_listener,
-                    StatusMask::none());
+            DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, participant_qos,
+        &discovery_listener,
+        StatusMask::none());
 
     DomainParticipantFactoryQos factory_qos;
     DomainParticipantFactory::get_instance()->get_qos(factory_qos);
     factory_qos.entity_factory().autoenable_created_entities = false;
     DomainParticipantFactory::get_instance()->set_qos(factory_qos);
     DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, participant_qos);
+            DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, participant_qos);
     ASSERT_NE(participant, nullptr);
 
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
@@ -606,7 +628,7 @@ TEST_F(DataReaderTests, get_guid)
     TypeSupport type(new FooTypeSupport());
     type.register_type(participant);
 
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    Topic* topic = participant->create_topic(topic_name, type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
 
     DataReader* datareader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);
@@ -2570,7 +2592,8 @@ public:
 TEST_F(DataReaderUnsupportedTests, UnsupportedDataReaderMethods)
 {
     DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+            DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
@@ -2717,7 +2740,8 @@ TEST_F(DataReaderTests, read_samples_with_future_changes)
 TEST_F(DataReaderTests, delete_contained_entities)
 {
     DomainParticipant* participant =
-            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+            DomainParticipantFactory::get_instance()->create_participant(
+        (uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
     ASSERT_NE(participant, nullptr);
 
     Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
@@ -2726,7 +2750,7 @@ TEST_F(DataReaderTests, delete_contained_entities)
     TypeSupport type(new FooTypeSupport());
     type.register_type(participant);
 
-    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    Topic* topic = participant->create_topic(topic_name, type.get_type_name(), TOPIC_QOS_DEFAULT);
     ASSERT_NE(topic, nullptr);
 
     DataReader* data_reader = subscriber->create_datareader(topic, DATAREADER_QOS_DEFAULT);

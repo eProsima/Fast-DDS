@@ -22,6 +22,8 @@ if(EPROSIMA_BUILD)
     set(SYSTEM_TESTS ON)
 endif()
 
+configure_file(CTestCustom.cmake.in ${PROJECT_BINARY_DIR}/CTestCustom.cmake)
+
 file(TO_CMAKE_PATH "${PROJECT_SOURCE_DIR}/valgrind.supp" MEMORYCHECK_SUPPRESSIONS_FILE_TMP)
 set(MEMORYCHECK_SUPPRESSIONS_FILE ${MEMORYCHECK_SUPPRESSIONS_FILE_TMP} CACHE FILEPATH "Valgrind suppresions file")
 

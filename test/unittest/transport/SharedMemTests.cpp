@@ -24,6 +24,7 @@
 
 #include <string>
 #include <fstream>
+#include <sstream>
 #include <streambuf>
 #include <memory>
 #include <gtest/gtest.h>
@@ -65,6 +66,9 @@ public:
     SHMTransportTests()
     {
         eprosima::fastdds::dds::Log::SetVerbosity(eprosima::fastdds::dds::Log::Kind::Info);
+        std::ostringstream ss;
+        ss << "SHMTests_" << GET_PID();
+        domain_name = ss.str();
     }
 
     ~SHMTransportTests()
@@ -74,6 +78,8 @@ public:
     }
 
     SharedMemTransportDescriptor descriptor;
+
+    std::string domain_name;
 };
 
 class SHMCondition : public ::testing::Test
@@ -961,8 +967,6 @@ TEST_F(SHMTransportTests, port_and_segment_overflow_discard)
 
 TEST_F(SHMTransportTests, port_mutex_deadlock_recover)
 {
-    const std::string domain_name("SHMTests");
-
     auto shared_mem_manager = SharedMemManager::create(domain_name);
     SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
     MockPortSharedMemGlobal port_mocker;
@@ -999,8 +1003,6 @@ TEST_F(SHMTransportTests, port_mutex_deadlock_recover)
 
 TEST_F(SHMTransportTests, port_lock_read_exclusive)
 {
-    const std::string domain_name("SHMTests");
-
     auto shared_mem_manager = SharedMemManager::create(domain_name);
 
     shared_mem_manager->remove_port(0);
@@ -1124,7 +1126,6 @@ TEST_F(SHMTransportTests, robust_shared_lock)
 // when reading / writing in the mapped mem.
 TEST_F(SHMTransportTests, memory_bounds)
 {
-    const std::string domain_name("SHMTests");
     auto shared_mem_manager = SharedMemManager::create(domain_name);
     auto shm_path = SharedDir::get_file_path("");
 
@@ -1259,8 +1260,6 @@ TEST_F(SHMTransportTests, memory_bounds)
 
 TEST_F(SHMTransportTests, port_listener_dead_recover)
 {
-    const std::string domain_name("SHMTests");
-
     auto shared_mem_manager = SharedMemManager::create(domain_name);
     SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
 
@@ -1346,8 +1345,6 @@ TEST_F(SHMTransportTests, port_listener_dead_recover)
 
 TEST_F(SHMTransportTests, empty_cv_mutex_deadlocked_try_push)
 {
-    const std::string domain_name("SHMTests");
-
     auto shared_mem_manager = SharedMemManager::create(domain_name);
     SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
     MockPortSharedMemGlobal port_mocker;
@@ -1384,8 +1381,6 @@ TEST_F(SHMTransportTests, empty_cv_mutex_deadlocked_try_push)
 
 TEST_F(SHMTransportTests, dead_listener_sender_port_recover)
 {
-    const std::string domain_name("SHMTests");
-
     auto shared_mem_manager = SharedMemManager::create(domain_name);
     SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
 
@@ -1426,8 +1421,6 @@ TEST_F(SHMTransportTests, dead_listener_sender_port_recover)
 
 TEST_F(SHMTransportTests, port_not_ok_listener_recover)
 {
-    const std::string domain_name("SHMTests");
-
     auto shared_mem_manager = SharedMemManager::create(domain_name);
     SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
 
@@ -1473,8 +1466,6 @@ TEST_F(SHMTransportTests, port_not_ok_listener_recover)
 
 TEST_F(SHMTransportTests, buffer_recover)
 {
-    const std::string domain_name("SHMTests");
-
     auto shared_mem_manager = SharedMemManager::create(domain_name);
 
     auto segment = shared_mem_manager->create_segment(3, 3);
@@ -1621,7 +1612,6 @@ TEST_F(SHMTransportTests, buffer_recover)
 
 TEST_F(SHMTransportTests, remote_segments_free)
 {
-    const std::string domain_name("SHMTests");
     uint32_t num_participants = 100;
 
     std::vector<std::shared_ptr<SharedMemManager>> managers;
@@ -2163,8 +2153,6 @@ TEST_F(SHMTransportTests, dump_file)
 
 TEST_F(SHMTransportTests, named_mutex_concurrent_open_create)
 {
-    const std::string domain_name("SHMTests");
-
     auto shared_mem_manager = SharedMemManager::create(domain_name);
     SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
     MockPortSharedMemGlobal port_mocker;
@@ -2191,8 +2179,6 @@ TEST_F(SHMTransportTests, named_mutex_concurrent_open_create)
 
 TEST_F(SHMTransportTests, named_mutex_concurrent_open)
 {
-    const std::string domain_name("SHMTests");
-
     auto shared_mem_manager = SharedMemManager::create(domain_name);
     SharedMemGlobal* shared_mem_global = shared_mem_manager->global_segment();
     MockPortSharedMemGlobal port_mocker;

@@ -23,7 +23,10 @@
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastdds/rtps/history/WriterHistory.h>
 
+#include <utils/SystemInfo.hpp>
+
 #include <climits>
+#include <sstream>
 #include <gtest/gtest.h>
 
 using namespace eprosima::fastrtps::rtps;
@@ -63,7 +66,33 @@ protected:
 
     virtual void SetUp()
     {
-        std::remove(dbfile);
+        // Get info about current test
+        auto info = ::testing::UnitTest::GetInstance()->current_test_info();
+
+        // Create DB file name from test name and PID
+        std::ostringstream ss;
+        std::string test_case_name(info->test_case_name());
+        std::string test_name(info->name());
+        if (std::string::npos != test_case_name.find_first_of('/'))
+        {
+            ss << test_case_name.replace(test_case_name.find_first_of('/'), 1, "_");
+        }
+        else
+        {
+            ss << test_case_name;
+        }
+        ss <<  "_";
+        if (std::string::npos != test_name.find_first_of('/'))
+        {
+            ss << test_name.replace(test_name.find_first_of('/'), 1, "_");
+
+        }
+        else
+        {
+            ss << test_name;
+        }
+        ss << "_" << eprosima::SystemInfo::instance().process_id() << ".db";
+        dbfile = ss.str();
     }
 
     virtual void TearDown()
@@ -73,7 +102,7 @@ protected:
             delete service;
         }
 
-        std::remove(dbfile);
+        std::remove(dbfile.c_str());
     }
 
     void create_database(
@@ -98,7 +127,7 @@ protected:
         int flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE |
                 SQLITE_OPEN_FULLMUTEX | SQLITE_OPEN_SHAREDCACHE;
 
-        rc = sqlite3_open_v2(dbfile, db, flags, 0);
+        rc = sqlite3_open_v2(dbfile.c_str(), db, flags, 0);
         if (rc != SQLITE_OK)
         {
             FAIL() << sqlite3_errmsg(*db);
@@ -221,7 +250,7 @@ protected:
         }
     }
 
-    const char* dbfile = "text.db";
+    std::string dbfile = "text.db";
 };
 
 /*!
