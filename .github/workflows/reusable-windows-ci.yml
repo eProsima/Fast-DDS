@@ -527,6 +527,8 @@ jobs:
               $failures | % { $_.'system-out' | Set-Content -Path ($_.name + ".txt") }
               popd
 
+              colcon test-result --verbose | sls "^\- " | Tee-Object -FilePath $Env:GITHUB_STEP_SUMMARY -Append
+
               "TestLogFolder=" + $logFolder.FullName | Out-File $Env:GITHUB_OUTPUT -Append
             }
 
@@ -583,6 +585,8 @@ jobs:
               copy .\log\latest_test\fastrtps\stdout_stderr.log $logFolder
               copy .\log\latest_test\fastrtps\command.log $logFolder
               "TestLogFolder=" + $logFolder.FullName | Out-File $Env:GITHUB_OUTPUT -Append
+
+              colcon test-result --verbose | sls "^\- " | Tee-Object -FilePath $Env:GITHUB_STEP_SUMMARY -Append
             }
 
           }
