@@ -24,6 +24,16 @@ using namespace std;
 using ValueType = uint32_t;
 using TestType = eprosima::fastrtps::BitmapRange<ValueType>;
 
+template<class T>
+struct BitmapRangeExposer : T
+{
+    using T::base_;
+    using T::range_max_;
+    using T::bitmap_;
+    using T::num_bits_;
+};
+
+
 struct TestResult
 {
     bool result;
@@ -543,6 +553,134 @@ TEST_F(BitmapRangeTests, remove)
 
     test_remove0.Test(explicit_base, uut);
 }
+
+TEST_F(BitmapRangeTests, min)
+{
+    // num_bits_ == 0 return base_
+    TestType uut{10, 32};
+    ASSERT_EQ(uut.min(), 10u);
+}
+
+TEST_F(BitmapRangeTests, min_2)
+{
+    // num_bits_ != 0 return base_
+    TestType uut{10, 32};
+    uut.*& BitmapRangeExposer<TestType>::num_bits_ = 32;
+    ASSERT_EQ(uut.min(), 10u);
+}
+
+TEST_F(BitmapRangeTests, add)
+{
+    // item < base && range_max >= item
+    TestType uut{10, 32};
+    ASSERT_FALSE(uut.add(9));
+}
+
+TEST_F(BitmapRangeTests, add_2)
+{
+    // item >= base && range_max < item
+    TestType uut{10, 32};
+    ASSERT_FALSE(uut.add(100));
+}
+
+TEST_F(BitmapRangeTests, add_3)
+{
+    // item < base && range_max < item
+    TestType uut{100, 32};
+    ASSERT_FALSE(uut.add(50));
+}
+
+TEST_F(BitmapRangeTests, remove_2)
+{
+    // item < base && range_max >= item
+    TestType uut{10, 32};
+    TestType uut2{10, 32};
+    uut.remove(9);
+    ASSERT_EQ(uut.*& BitmapRangeExposer<TestType>::bitmap_, uut2.*& BitmapRangeExposer<TestType>::bitmap_);
+}
+
+TEST_F(BitmapRangeTests, remove_3)
+{
+    // item >= base && range_max < item
+    TestType uut{10, 32};
+    TestType uut2{10, 32};
+    uut.remove(100);
+    ASSERT_EQ(uut.*& BitmapRangeExposer<TestType>::bitmap_, uut2.*& BitmapRangeExposer<TestType>::bitmap_);
+}
+
+TEST_F(BitmapRangeTests, remove_4)
+{
+    // item < base && range_max < item
+    TestType uut{100, 32};
+    TestType uut2{100, 32};
+    uut.remove(50);
+    ASSERT_EQ(uut.*& BitmapRangeExposer<TestType>::bitmap_, uut2.*& BitmapRangeExposer<TestType>::bitmap_);
+}
+
+TEST_F(BitmapRangeTests, bitmap_set)
+{
+    // item >= base && range_max < item
+    TestType uut{10, 32};
+    TestType uut2{10, 32};
+    TestType::bitmap_type bitmap;
+    uut.bitmap_set(0, bitmap.data());
+    ASSERT_EQ(uut.*& BitmapRangeExposer<TestType>::bitmap_, uut2.*& BitmapRangeExposer<TestType>::bitmap_);
+}
+
+TEST_F(BitmapRangeTests, shift_map_left)
+{
+    // base > num_bits
+    TestType uut{10, 32};
+    uut.*& BitmapRangeExposer<TestType>::num_bits_ = 1;
+    uut.base_update(1000);
+    ASSERT_EQ(1000u, uut.*& BitmapRangeExposer<TestType>::base_);
+}
+
+TEST_F(BitmapRangeTests, is_set)
+{
+    // item < base && range_max >= item
+    TestType uut{10, 32};
+    ASSERT_EQ(uut.is_set(9), false);
+}
+
+TEST_F(BitmapRangeTests, is_set_2)
+{
+    // item >= base && range_max < item
+    TestType uut{10, 32};
+    ASSERT_EQ(uut.is_set(100), false);
+}
+
+TEST_F(BitmapRangeTests, is_set_3)
+{
+    // item < base && range_max < item
+    TestType uut{100, 32};
+    ASSERT_EQ(uut.is_set(10), false);
+}
+
+TEST_F(BitmapRangeTests, is_set_4)
+{
+    // item >= base && range_max >= item && diff > num_bits
+    TestType uut{10, 32};
+    ASSERT_EQ(uut.is_set(15), false);
+}
+
+TEST_F(BitmapRangeTests, is_set_5)
+{
+    // item >= base && range_max >= item && diff < num_bits
+    TestType uut{10, 32};
+    uut.*& BitmapRangeExposer<TestType>::num_bits_ = 2;
+    ASSERT_EQ(uut.is_set(11), false);
+}
+
+TEST_F(BitmapRangeTests, base)
+{
+    TestType uut{10, 32};
+    uut.base(9, 100);
+    ASSERT_EQ(uut.*& BitmapRangeExposer<TestType>::base_, 9u);
+    ASSERT_EQ(uut.*& BitmapRangeExposer<TestType>::range_max_, 109u);
+    ASSERT_EQ(uut.*& BitmapRangeExposer<TestType>::num_bits_, 0u);
+}
+
 
 int main(
         int argc,
