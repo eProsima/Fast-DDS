@@ -1684,6 +1684,7 @@ TEST_F(TCPv4Tests, header_read_interrumption)
     octet* buffer = {};
     uint32_t receive_buffer_capacity = 65500;
     uint32_t receive_buffer_size = 0;
+    Endianness_t msg_endian{Endianness_t::LITTLEEND};
 
     // Simulate channel connection
     channel->connect(nullptr);
@@ -1697,7 +1698,8 @@ TEST_F(TCPv4Tests, header_read_interrumption)
 
     // Start TCP segment reception
     // Should get stuck in receive_header until channel is disabled
-    transportUnderTest.Receive(rtcp_manager, channel, buffer, receive_buffer_capacity, receive_buffer_size, locator);
+    transportUnderTest.Receive(rtcp_manager, channel, buffer, receive_buffer_capacity, receive_buffer_size, msg_endian,
+            locator);
     thread.join();
 }
 
@@ -2257,7 +2259,7 @@ TEST_F(RTCPMessageManagerTests, process_bind_request_valid)
     auto buf = build_bind_request_buffer(reported, payload.length, payload.length);
     std::memcpy(buf.data() + 16 + 6, payload.data, payload.length);
 
-    auto result = rtcp_manager_->processRTCPMessage(channel_, buf.data(), buf.size());
+    auto result = rtcp_manager_->processRTCPMessage(channel_, buf.data(), buf.size(), DEFAULT_ENDIAN);
 
     EXPECT_NE(result, RETCODE_BAD_REQUEST);
 
@@ -2286,7 +2288,7 @@ TEST_F(RTCPMessageManagerTests, process_bind_request_oob_payload_length)
 
     auto mock_channel = std::static_pointer_cast<MockTCPChannelResource>(channel_);
 
-    auto result = rtcp_manager_->processRTCPMessage(channel_, buf.data(), buf.size());
+    auto result = rtcp_manager_->processRTCPMessage(channel_, buf.data(), buf.size(), DEFAULT_ENDIAN);
 
     EXPECT_EQ(result, RETCODE_OK);
 
@@ -2306,7 +2308,7 @@ TEST_F(RTCPMessageManagerTests, process_message_too_short)
 
     std::vector<octet> buf(8, 0x00);
 
-    auto result = rtcp_manager_->processRTCPMessage(channel_, buf.data(), buf.size());
+    auto result = rtcp_manager_->processRTCPMessage(channel_, buf.data(), buf.size(), DEFAULT_ENDIAN);
 
     EXPECT_EQ(result, RETCODE_BAD_REQUEST);
 }

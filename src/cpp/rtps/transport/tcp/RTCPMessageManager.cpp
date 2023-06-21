@@ -698,10 +698,9 @@ ResponseCode RTCPMessageManager::processKeepAliveResponse(
 ResponseCode RTCPMessageManager::processRTCPMessage(
         std::shared_ptr<TCPChannelResource>& channel,
         octet* receive_buffer,
-        size_t receivedSize)
+        size_t receivedSize,
+        fastrtps::rtps::Endianness_t msg_endian)
 {
-    fastrtps::rtps::Endianness_t msg_endian = fastrtps::rtps::DEFAULT_ENDIAN;
-
     if (receivedSize < TCPControlMsgHeader::size())
     {
         logWarning(RTCP, "Received message with size smaller than control header size: " << receivedSize);
@@ -713,6 +712,7 @@ ResponseCode RTCPMessageManager::processRTCPMessage(
     size_t dataSize = 0;
 
     TCPControlMsgHeader controlHeader = *(reinterpret_cast<TCPControlMsgHeader*>(receive_buffer));
+    controlHeader.valid_endianness(msg_endian);
     // Control header size checking.
     const size_t header_size = TCPControlMsgHeader::size();
     const size_t control_length = static_cast<size_t>(controlHeader.length());
