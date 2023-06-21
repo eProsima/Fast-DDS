@@ -59,10 +59,10 @@ bool map_compare(
 }
 
 DynamicData::DynamicData(
-        const DynamicType& type)
-    : type_(DynamicTypeBuilderFactory::get_instance().create_copy(type))
+        DynamicType_ptr pType)
+    : type_(pType)
 {
-    create_members(*type_);
+    create_members(type_);
 }
 
 DynamicData::DynamicData(
@@ -97,9 +97,9 @@ DynamicData::~DynamicData()
     clean();
 }
 
-const DynamicType* DynamicData::get_type() const
+DynamicType_ptr DynamicData::get_type() const
 {
-    return DynamicTypeBuilderFactory::get_instance().create_copy(*type_);
+    return type_;
 }
 
 void DynamicData::create_members(
@@ -137,22 +137,24 @@ void DynamicData::create_members(
 }
 
 void DynamicData::create_members(
-        const DynamicType& type)
+        DynamicType_ptr pType)
 {
-    if (type.is_complex_kind())
+    assert(pType);
+
+    if (pType->is_complex_kind())
     {
         // Bitmasks and enums register their members but only manages one value.
-        if (type.get_kind() == TypeKind::TK_BITMASK || type.get_kind() == TypeKind::TK_ENUM)
+        if (pType->get_kind() == TypeKind::TK_BITMASK || pType->get_kind() == TypeKind::TK_ENUM)
         {
-            add_value(type.get_kind(), MEMBER_ID_INVALID);
+            add_value(pType->get_kind(), MEMBER_ID_INVALID);
         }
         else
         {
-            for (auto pm : type.get_all_members())
+            for (auto pm : pType->get_all_members())
             {
                 assert(pm);
 
-                DynamicData* data = DynamicDataFactory::get_instance()->create_data(*pm->get_type());
+                DynamicData* data = DynamicDataFactory::get_instance()->create_data(pm->get_type());
                 if (pm->get_kind() != TypeKind::TK_BITSET &&
                         pm->get_kind() != TypeKind::TK_STRUCTURE &&
                         pm->get_kind() != TypeKind::TK_UNION &&
@@ -173,7 +175,7 @@ void DynamicData::create_members(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 
                 // Set the default value for unions.
-                if (type.get_kind() == TypeKind::TK_UNION &&
+                if (pType->get_kind() == TypeKind::TK_UNION &&
                         pm->is_default_union_value())
                 {
                     set_union_id(pm->get_id());
@@ -182,9 +184,9 @@ void DynamicData::create_members(
         }
 
         // If there isn't a default value... set the first element of the union
-        if (type.get_kind() == TypeKind::TK_UNION &&
+        if (pType->get_kind() == TypeKind::TK_UNION &&
                 get_union_id() == MEMBER_ID_INVALID &&
-                type.get_member_count())
+                pType->get_member_count())
         {
             set_union_id(get_member_id_at_index(0));
         }
@@ -192,13 +194,13 @@ void DynamicData::create_members(
     else
     {
         // Resolve alias type, avoid reference counting
-        DynamicType_ptr alias_type{DynamicTypeBuilderFactory::get_instance().create_copy(type)};
-        while ( alias_type->get_kind() == TypeKind::TK_ALIAS )
+        const DynamicType* type = pType.get();
+        while ( type->get_kind() == TypeKind::TK_ALIAS )
         {
-            alias_type = alias_type->get_base_type();
+            type = type->get_base_type().get();
         }
 
-        add_value(alias_type->get_kind(), MEMBER_ID_INVALID);
+        add_value(type->get_kind(), MEMBER_ID_INVALID);
     }
 }
 
@@ -219,7 +221,7 @@ bool DynamicData::equals(
         {
             return true;
         }
-        else if (type_ == other->type_ || type_->equals(*other->type_))
+        else if (type_ == other->type_ || type_->equals(*other->type_.get()))
         {
             // Optimization for unions, only check the selected element.
             if (get_kind() == TypeKind::TK_UNION)
@@ -4519,8 +4521,7 @@ ReturnCode_t DynamicData::insert_array_data(
                 DynamicDataFactory::get_instance()->delete_data((DynamicData*)it->second);
                 values_.erase(it);
             }
-            DynamicType_ptr element_type {type_->get_element_type()};
-            DynamicData* value = DynamicDataFactory::get_instance()->create_data(*element_type);
+            DynamicData* value = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
             values_.insert(std::make_pair(indexId, value));
             return ReturnCode_t::RETCODE_OK;
         }
@@ -4999,17 +5000,17 @@ ReturnCode_t DynamicData::insert_sequence_data(
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
-            DynamicType_ptr element_type {type_->get_element_type()};
 #ifdef DYNAMIC_TYPES_CHECKING
-            DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(*element_type);
+            DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
             outId = complex_values_.size();
             complex_values_.insert(std::make_pair(outId, new_element));
+            return ReturnCode_t::RETCODE_OK;
 #else
-            DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(*element_type);
+            DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
             outId = values_.size();
             values_.insert(std::make_pair(outId, new_element));
-#endif // ifdef DYNAMIC_TYPES_CHECKING
             return ReturnCode_t::RETCODE_OK;
+#endif // ifdef DYNAMIC_TYPES_CHECKING
         }
         else
         {
@@ -5110,8 +5111,7 @@ ReturnCode_t DynamicData::insert_map_data(
             keyCopy->key_element_ = true;
             values_.insert(std::make_pair(outKeyId, keyCopy));
 
-            DynamicType_ptr element_type {type_->get_element_type()};
-            DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(*element_type);
+            DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
             outValueId = outKeyId + 1u;
             values_.insert(std::make_pair(outValueId, new_element));
             return ReturnCode_t::RETCODE_OK;
@@ -5581,17 +5581,19 @@ size_t DynamicData::getCdrSerializedSize(
 }
 
 size_t DynamicData::getKeyMaxCdrSerializedSize(
-        const DynamicType& type,
+        const DynamicType_ptr type,
         size_t current_alignment /*= 0*/)
 {
-    return type.getKeyMaxCdrSerializedSize(current_alignment);
+    assert(type);
+    return type->getKeyMaxCdrSerializedSize(current_alignment);
 }
 
 size_t DynamicData::getMaxCdrSerializedSize(
-        const DynamicType& type,
+        const DynamicType_ptr type,
         size_t current_alignment /*= 0*/)
 {
-    return type.getMaxCdrSerializedSize(current_alignment);
+    assert(type);
+    return type->getMaxCdrSerializedSize(current_alignment);
 }
 
 void DynamicData::serialize(
@@ -5609,10 +5611,10 @@ void DynamicData::serializeKey(
 }
 
 size_t DynamicData::getEmptyCdrSerializedSize(
-        const DynamicType& type,
+        const DynamicType* type,
         size_t current_alignment /*= 0*/)
 {
-    return type.getEmptyCdrSerializedSize(current_alignment);
+    return type->getEmptyCdrSerializedSize(current_alignment);
 }
 
 bool DynamicData::has_children() const

@@ -55,7 +55,7 @@ protected:
     explicit DynamicData(
             const DynamicData* pData);
     DynamicData(
-            const DynamicType& type);
+            DynamicType_ptr pType);
 
     ~DynamicData();
 
@@ -64,7 +64,7 @@ protected:
             MemberId id);
 
     void create_members(
-            const DynamicType& type);
+            DynamicType_ptr pType);
 
     void create_members(
             const DynamicData* pData);
@@ -1167,18 +1167,18 @@ public:
             size_t current_alignment = 0);
 
     RTPS_DllAPI static size_t getEmptyCdrSerializedSize(
-            const DynamicType& type,
+            const DynamicType* type,
             size_t current_alignment = 0);
 
     RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(
-            const DynamicType& type,
+            const DynamicType_ptr type,
             size_t current_alignment = 0);
 
     RTPS_DllAPI static size_t getMaxCdrSerializedSize(
-            const DynamicType& type,
+            const DynamicType_ptr type,
             size_t current_alignment = 0);
 
-    RTPS_DllAPI const DynamicType* get_type() const;
+    RTPS_DllAPI DynamicType_ptr get_type() const;
 
     void serializeKey(
             eprosima::fastcdr::Cdr& cdr) const;

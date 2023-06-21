@@ -62,7 +62,7 @@ public:
             use_the_create_method,
             TypeDescriptor&& descriptor);
 
-    ~DynamicType();
+    RTPS_DllAPI ~DynamicType();
 
     using TypeDescriptor::get_descriptor;
 
