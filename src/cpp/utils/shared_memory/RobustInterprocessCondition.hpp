@@ -209,7 +209,20 @@ private:
 
     struct SemaphoreNode
     {
-        bi::interprocess_semaphore sem {0};
+        SemaphoreNode()
+        {
+        }
+
+        ~SemaphoreNode()
+        {
+            sem.bi::interprocess_semaphore::~interprocess_semaphore();
+        }
+
+        union
+        {
+            bi::interprocess_semaphore sem;
+        };
+        bool initialized = false;
         uint32_t next;
         uint32_t prev;
     };
@@ -343,6 +356,11 @@ private:
     inline uint32_t enqueue_listener()
     {
         auto sem_index = list_free_.pop(semaphores_pool_);
+        if (!semaphores_pool_[sem_index].initialized)
+        {
+            new (&semaphores_pool_[sem_index].sem) bi::interprocess_semaphore(0);
+            semaphores_pool_[sem_index].initialized = true;
+        }
         list_listening_.push(sem_index, semaphores_pool_);
         return sem_index;
     }
