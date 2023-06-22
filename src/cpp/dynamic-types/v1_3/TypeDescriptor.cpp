@@ -14,10 +14,42 @@
 
 #include <fastrtps/types/v1_3/TypeBuilderFactory.hpp>
 #include <fastrtps/types/v1_3/TypeDescriptor.hpp>
+#include <dynamic-types/v1_3/TypeState.hpp>
 
 #include <algorithm>
 
 using namespace eprosima::fastrtps::types::v1_3;
+
+TypeDescriptor::TypeDescriptor(const TypeDescriptor& type) noexcept
+    : name_(type.get_name())
+    , kind_(type.get_type())
+    , base_type_(type.get_base_type())
+    , discriminator_type_(type.get_discriminator_type())
+    , element_type_(type.get_element_type())
+    , key_element_type_(type.get_key_element_type())
+{
+    uint32_t dims;
+    const uint32_t* lenghts = type.get_bounds(dims);
+    set_bounds(lenghts, dims);
+}
+
+TypeDescriptor::TypeDescriptor(TypeDescriptor&& type) noexcept
+    : name_(type.name_)
+    , kind_(type.kind_)
+    , base_type_(type.base_type_)
+    , discriminator_type_(type.discriminator_type_)
+    , bounds_(type.bounds_)
+    , bounds_dims_(type.bounds_dims_)
+    , element_type_(type.element_type_)
+    , key_element_type_(type.key_element_type_)
+{
+    type.base_type_ = nullptr;
+    type.discriminator_ = nullptr;
+    type.element_type_ = nullptr;
+    type.key_element_type_ = nullptr;
+    type.bounds_ = nullptr;
+    type.bounds_dims_ = 0;
+}
 
 TypeDescriptor::~TypeDescriptor() noexcept
 {
@@ -26,6 +58,52 @@ TypeDescriptor::~TypeDescriptor() noexcept
     reset_element_type();
     reset_key_element_type();
     set_bounds(nullptr, 0u);
+}
+
+TypeDescriptor& TypeDescriptor::operator=(const TypeDescriptor& type) noexcept
+{
+    name_ = type.get_name();
+    kind_ = type.get_type();
+    base_type_ = type.get_base_type();
+    discriminator_type_ = type.get_discriminator_type();
+    element_type_ = type.get_element_type();
+    key_element_type_ = type.get_key_element_type();
+
+    uint32_t dims;
+    const uint32_t* lenghts = type.get_bounds(dims);
+    set_bounds(lenghts, dims);
+}
+
+TypeDescriptor& TypeDescriptor::operator=(TypeDescriptor&& type) noexcept
+{
+    name = type.name_;
+    kind_ = type.kind_;
+    base_type_ = type.base_type_;
+    discriminator_type_ = type.discriminator_type_;
+    bounds_ = type.bounds_;
+    bounds_dims_ = type.bounds_dims_;
+    element_type_ = type.element_type_;
+    key_element_type_ = type.key_element_type_;
+
+    type.base_type_ = nullptr;
+    type.discriminator_ = nullptr;
+    type.element_type_ = nullptr;
+    type.key_element_type_ = nullptr;
+    type.bounds_ = nullptr;
+    type.bounds_dims_ = 0;
+}
+
+
+bool TypeDescriptor::operator==(
+        const TypeState& descriptor) const
+{
+    return TypeState(*this) == TypeState(descriptor);
+}
+
+bool TypeDescriptor::operator!=(
+        const TypeState& descriptor) const
+{
+    return !this->operator==(descriptor);
 }
 
 const char* TypeDescriptor::get_name() const noexcept
@@ -172,4 +250,22 @@ void TypeDescriptor::set_bounds(
             bounds_dims_ = dims;
         }
     }
+}
+
+ReturnCode_t TypeDescriptor::copy_from(
+        const TypeDescriptor& descriptor) noexcept
+{
+    *this = descriptor;
+    return ReturnCode_t::RETCODE_OK;
+}
+
+bool TypeDescriptor::equals(
+        const TypeDescriptor& descriptor) const noexcept
+{
+    return *this == descriptor;
+}
+
+bool TypeDescriptor::is_consistent() const noexcept
+{
+    return TypeState(*this).is_consistent();
 }

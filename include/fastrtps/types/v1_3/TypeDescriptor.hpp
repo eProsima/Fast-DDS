@@ -57,6 +57,12 @@ public:
 
     TypeDescriptor& operator=(TypeDescriptor&& type) noexcept;
 
+    bool operator ==(
+            const TypeState& descriptor) const;
+
+    bool operator !=(
+            const TypeState& descriptor) const;
+
     /**
      * Returns the fully qualified name of this type
      * @attention The returned value may not persist in time
@@ -176,6 +182,34 @@ public:
     void set_bounds(
             const uint32_t* lengths,
             uint32_t dims) noexcept;
+
+    /**
+     * Overwrite the contents of this descriptor with those of another descriptor (see [standard] 7.5.2.3.1)
+     * @param[in] descriptor object
+     * @return standard @ref ReturnCode_t
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
+     */
+    ReturnCode_t copy_from(
+        const TypeDescriptor& descriptor) noexcept;
+
+    /**
+     * State comparison according with the [standard] sections \b 7.5.2.7.4 \b 7.5.2.8.4
+     * @remarks using `==` and `!=` operators is more convenient
+     * @param[in] descriptor object state to compare to
+     * @return \b bool `true` on equality
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
+     */
+    bool equals(
+            const TypeDescriptor& descriptor) const noexcept;
+
+    /**
+     * Indicates whether the states of all of this descriptor's properties are consistent.
+     * @param type bool `true` if we search a consistent type
+     * @remark consistency for a type is more restrictive than for a builder which may require
+     *         members and annotations.
+     * @return \b bool `true` if consistent
+     */
+    bool is_consistent() const noexcept;
 };
 
 } // namespace v1_3

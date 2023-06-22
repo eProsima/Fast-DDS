@@ -22,8 +22,9 @@
 #include <dynamic-types/v1_3/DynamicTypeImpl.hpp>
 #include <dynamic-types/v1_3/DynamicTypeBuilderFactoryImpl.hpp>
 
-#include <iomanip>
 #include <algorithm>
+#include <initializer_list>
+#include <iomanip>
 
 using namespace eprosima::fastrtps::types::v1_3;
 
@@ -53,7 +54,7 @@ static const int stateTable[4][6] =
     {VALID,       VALID,   VALID,   VALID,      SINGLECOLON, INVALID}
 };
 
-#ifdef __cpp_aggregate_nsdm
+#if defined(_MSC_VER) || defined(__cpp_aggregate_nsdmi)
 
 TypeState::TypeState(
         const std::string& name,
@@ -62,7 +63,7 @@ TypeState::TypeState(
 {
 }
 
-#else // __cpp_aggregate_nsdm
+#else // __cpp_aggregate_nsdmi
 
 TypeState::TypeState(
         const std::string& name,
@@ -72,20 +73,90 @@ TypeState::TypeState(
     kind_ = kind;
 }
 
-#endif // __cpp_aggregate_nsdm
-
+#endif // __cpp_aggregate_nsdmi
 
 TypeState::TypeState(
         const TypeState& other)
-    : TypeDescriptorData(other)
+    : TypeStateData(other)
 {
     refresh_indexes();
 }
 
-TypeState& TypeState::operator =(
-        const TypeState& descriptor) noexcept
+TypeState::TypeState(
+        const TypeDescriptor& descriptor)
 {
-    TypeDescriptorData::operator =(descriptor);
+    const DynamicType* ptr = nullptr;
+
+    name_ = descriptor.get_name();
+    kind_ = descriptor.get_kind();
+
+    ptr = descriptor.get_base_type();
+    if (ptr)
+    {
+        base_type_ = DynamicTypeImpl::get(ptr);
+    }
+
+    ptr = descriptor.get_discriminator_type();
+    if (ptr)
+    {
+        discriminator_type_ = DynamicTypeImpl::get(ptr);
+    }
+
+    ptr = descriptor.get_element_type();
+    if (ptr)
+    {
+        element_type_ = DynamicTypeImpl::get(ptr);
+    }
+
+    ptr = descriptor.get_key_element_type();
+    if (ptr)
+    {
+        key_element_type_ = DynamicTypeImpl::get(ptr);
+    }
+
+    uint32_t dims;
+    const uint32_t* lenghts = type.get_bounds(dims);
+    bound_.assign(lengths, lengths + dims);
+}
+
+TypeDescriptor get_descriptor() const noexcept
+{
+    TypeDescriptor res;
+
+    res.set_name(name_.c_str());
+    res.set_kind(kind_);
+
+    if (base_type_)
+    {
+        res.set_base_type(base_type_->get_interface());
+    }
+
+    if (discriminator_type_)
+    {
+        res.set_discriminator_type(discriminator_type_->get_interface());
+    }
+
+    if (element_type_)
+    {
+        res.set_element_type(element_type_->get_interface());
+    }
+
+    if (key_element_type_)
+    {
+        res.set_key_element_type(key_element_type_->get_interface());
+    }
+
+    res.set_bounds(
+        bound_.data(),
+        bound_.size());
+
+    return res;
+}
+
+TypeState& TypeState::operator =(
+        const TypeState& state) noexcept
+{
+    TypeStateData::operator =(state);
     refresh_indexes();
     return *this;
 }

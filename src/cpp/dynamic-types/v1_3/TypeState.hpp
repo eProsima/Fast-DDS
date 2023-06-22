@@ -33,7 +33,10 @@ class DynamicDataHelper;
 
 namespace v1_3 {
 
+class DynamicType;
 class DynamicTypeImpl;
+class DynamicTypeBuilder;
+class DynamicTypeBuilderImpl;
 class DynamicTypeBuilderFactoryImpl;
 
 using types::ReturnCode_t;
@@ -79,6 +82,10 @@ public:
     TypeState(
             TypeState&& other) = default;
 
+    //! Create from descriptor
+    TypeState(
+            const TypeDescriptor& descriptor);
+
     /**
      * Default copy assignment
      * @remark Note that the no member uses mutable references, thus the default
@@ -121,7 +128,7 @@ protected:
      * Returns the TypeDescriptor object that partially describes the state
      * @return @ref TypeDescriptor object
      */
-    const TypeDescriptor get_descriptor() const noexcept;
+    TypeDescriptor get_descriptor() const noexcept;
 
     using member_iterator = std::list<DynamicTypeMember>::iterator;
 
