@@ -160,7 +160,6 @@ set(${PROJECT_NAME}_source_files
     dynamic-types/TypeObjectHashId.cxx
     dynamic-types/TypeObjectFactory.cpp
     dynamic-types/TypeNamesGenerator.cpp
-    dynamic-types/TypesBase.cpp
     dynamic-types/BuiltinAnnotationsTypeObject.cpp
     dynamic-types/DynamicDataHelper.cpp
 

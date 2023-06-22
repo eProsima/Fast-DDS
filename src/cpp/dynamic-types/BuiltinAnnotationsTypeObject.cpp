@@ -471,6 +471,7 @@ const TypeObject* GetMinimalAutoidKindObject()
 
     uint32_t value = 0;
     MinimalEnumeratedLiteral mel_SEQUENTIAL;
+/* TODO(jlbueno): XTYPES
     mel_SEQUENTIAL.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     mel_SEQUENTIAL.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     mel_SEQUENTIAL.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -478,6 +479,7 @@ const TypeObject* GetMinimalAutoidKindObject()
     mel_SEQUENTIAL.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     mel_SEQUENTIAL.common().flags().IS_KEY(false); // Doesn't apply
     mel_SEQUENTIAL.common().flags().IS_DEFAULT(false);
+*/
     mel_SEQUENTIAL.common().value(value++);
     MD5 SEQUENTIAL_hash("SEQUENTIAL");
     for (int i = 0; i < 4; ++i)
@@ -487,6 +489,7 @@ const TypeObject* GetMinimalAutoidKindObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_SEQUENTIAL);
 
     MinimalEnumeratedLiteral mel_HASH;
+/* TODO(jlbueno): XTYPES
     mel_HASH.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     mel_HASH.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     mel_HASH.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -494,6 +497,7 @@ const TypeObject* GetMinimalAutoidKindObject()
     mel_HASH.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     mel_HASH.common().flags().IS_KEY(false); // Doesn't apply
     mel_HASH.common().flags().IS_DEFAULT(false);
+*/
     mel_HASH.common().value(value++);
     MD5 HASH_hash("HASH");
     for (int i = 0; i < 4; ++i)
@@ -556,6 +560,7 @@ const TypeObject* GetCompleteAutoidKindObject()
 
     uint32_t value = 0;
     CompleteEnumeratedLiteral cel_SEQUENTIAL;
+/* TODO(jlbueno): XTYPES
     cel_SEQUENTIAL.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     cel_SEQUENTIAL.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     cel_SEQUENTIAL.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -563,6 +568,7 @@ const TypeObject* GetCompleteAutoidKindObject()
     cel_SEQUENTIAL.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     cel_SEQUENTIAL.common().flags().IS_KEY(false); // Doesn't apply
     cel_SEQUENTIAL.common().flags().IS_DEFAULT(false);
+*/
     cel_SEQUENTIAL.common().value(value++);
     cel_SEQUENTIAL.detail().name("SEQUENTIAL");
     //cel_SEQUENTIAL.detail().ann_builtin()...
@@ -570,6 +576,7 @@ const TypeObject* GetCompleteAutoidKindObject()
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_SEQUENTIAL);
 
     CompleteEnumeratedLiteral cel_HASH;
+/* TODO(jlbueno): XTYPES
     cel_HASH.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     cel_HASH.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     cel_HASH.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -577,6 +584,7 @@ const TypeObject* GetCompleteAutoidKindObject()
     cel_HASH.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     cel_HASH.common().flags().IS_KEY(false); // Doesn't apply
     cel_HASH.common().flags().IS_DEFAULT(false);
+*/
     cel_HASH.common().value(value++);
     cel_HASH.detail().name("HASH");
     //cel_HASH.detail().ann_builtin()...
@@ -1205,6 +1213,7 @@ const TypeObject* GetMinimalExtensibilityKindObject()
 
     uint32_t value = 0;
     MinimalEnumeratedLiteral mel_FINAL;
+/* TODO(jlbueno): XTYPES
     mel_FINAL.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     mel_FINAL.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     mel_FINAL.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -1212,6 +1221,7 @@ const TypeObject* GetMinimalExtensibilityKindObject()
     mel_FINAL.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     mel_FINAL.common().flags().IS_KEY(false); // Doesn't apply
     mel_FINAL.common().flags().IS_DEFAULT(false);
+*/
     mel_FINAL.common().value(value++);
     MD5 FINAL_hash("FINAL");
     for (int i = 0; i < 4; ++i)
@@ -1221,6 +1231,7 @@ const TypeObject* GetMinimalExtensibilityKindObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_FINAL);
 
     MinimalEnumeratedLiteral mel_APPENDABLE;
+/* TODO(jlbueno): XTYPES
     mel_APPENDABLE.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     mel_APPENDABLE.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     mel_APPENDABLE.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -1228,6 +1239,7 @@ const TypeObject* GetMinimalExtensibilityKindObject()
     mel_APPENDABLE.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     mel_APPENDABLE.common().flags().IS_KEY(false); // Doesn't apply
     mel_APPENDABLE.common().flags().IS_DEFAULT(false);
+*/
     mel_APPENDABLE.common().value(value++);
     MD5 APPENDABLE_hash("APPENDABLE");
     for (int i = 0; i < 4; ++i)
@@ -1237,6 +1249,7 @@ const TypeObject* GetMinimalExtensibilityKindObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_APPENDABLE);
 
     MinimalEnumeratedLiteral mel_MUTABLE;
+/* TODO(jlbueno): XTYPES
     mel_MUTABLE.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     mel_MUTABLE.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     mel_MUTABLE.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -1244,6 +1257,7 @@ const TypeObject* GetMinimalExtensibilityKindObject()
     mel_MUTABLE.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     mel_MUTABLE.common().flags().IS_KEY(false); // Doesn't apply
     mel_MUTABLE.common().flags().IS_DEFAULT(false);
+*/
     mel_MUTABLE.common().value(value++);
     MD5 MUTABLE_hash("MUTABLE");
     for (int i = 0; i < 4; ++i)
@@ -1306,6 +1320,7 @@ const TypeObject* GetCompleteExtensibilityKindObject()
 
     uint32_t value = 0;
     CompleteEnumeratedLiteral cel_FINAL;
+/* TODO(jlbueno): XTYPES
     cel_FINAL.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     cel_FINAL.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     cel_FINAL.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -1313,6 +1328,7 @@ const TypeObject* GetCompleteExtensibilityKindObject()
     cel_FINAL.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     cel_FINAL.common().flags().IS_KEY(false); // Doesn't apply
     cel_FINAL.common().flags().IS_DEFAULT(false);
+*/
     cel_FINAL.common().value(value++);
     cel_FINAL.detail().name("FINAL");
     //cel_FINAL.detail().ann_builtin()...
@@ -1320,6 +1336,7 @@ const TypeObject* GetCompleteExtensibilityKindObject()
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_FINAL);
 
     CompleteEnumeratedLiteral cel_APPENDABLE;
+/* TODO(jlbueno): XTYPES
     cel_APPENDABLE.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     cel_APPENDABLE.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     cel_APPENDABLE.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -1327,6 +1344,7 @@ const TypeObject* GetCompleteExtensibilityKindObject()
     cel_APPENDABLE.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     cel_APPENDABLE.common().flags().IS_KEY(false); // Doesn't apply
     cel_APPENDABLE.common().flags().IS_DEFAULT(false);
+*/
     cel_APPENDABLE.common().value(value++);
     cel_APPENDABLE.detail().name("APPENDABLE");
     //cel_APPENDABLE.detail().ann_builtin()...
@@ -1334,6 +1352,7 @@ const TypeObject* GetCompleteExtensibilityKindObject()
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_APPENDABLE);
 
     CompleteEnumeratedLiteral cel_MUTABLE;
+/* TODO(jlbueno): XTYPES
     cel_MUTABLE.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     cel_MUTABLE.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     cel_MUTABLE.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -1341,6 +1360,7 @@ const TypeObject* GetCompleteExtensibilityKindObject()
     cel_MUTABLE.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     cel_MUTABLE.common().flags().IS_KEY(false); // Doesn't apply
     cel_MUTABLE.common().flags().IS_DEFAULT(false);
+*/
     cel_MUTABLE.common().value(value++);
     cel_MUTABLE.detail().name("MUTABLE");
     //cel_MUTABLE.detail().ann_builtin()...
@@ -3450,6 +3470,7 @@ const TypeObject* GetMinimalPlacementKindObject()
 
     uint32_t value = 0;
     MinimalEnumeratedLiteral mel_BEGIN_FILE;
+/* TODO(jlbueno): XTYPES
     mel_BEGIN_FILE.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     mel_BEGIN_FILE.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     mel_BEGIN_FILE.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -3457,6 +3478,7 @@ const TypeObject* GetMinimalPlacementKindObject()
     mel_BEGIN_FILE.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     mel_BEGIN_FILE.common().flags().IS_KEY(false); // Doesn't apply
     mel_BEGIN_FILE.common().flags().IS_DEFAULT(false);
+*/
     mel_BEGIN_FILE.common().value(value++);
     MD5 BEGIN_FILE_hash("BEGIN_FILE");
     for (int i = 0; i < 4; ++i)
@@ -3466,6 +3488,7 @@ const TypeObject* GetMinimalPlacementKindObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_BEGIN_FILE);
 
     MinimalEnumeratedLiteral mel_BEFORE_DECLARATION;
+/* TODO(jlbueno): XTYPES
     mel_BEFORE_DECLARATION.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     mel_BEFORE_DECLARATION.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     mel_BEFORE_DECLARATION.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -3473,6 +3496,7 @@ const TypeObject* GetMinimalPlacementKindObject()
     mel_BEFORE_DECLARATION.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     mel_BEFORE_DECLARATION.common().flags().IS_KEY(false); // Doesn't apply
     mel_BEFORE_DECLARATION.common().flags().IS_DEFAULT(false);
+*/
     mel_BEFORE_DECLARATION.common().value(value++);
     MD5 BEFORE_DECLARATION_hash("BEFORE_DECLARATION");
     for (int i = 0; i < 4; ++i)
@@ -3482,6 +3506,7 @@ const TypeObject* GetMinimalPlacementKindObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_BEFORE_DECLARATION);
 
     MinimalEnumeratedLiteral mel_BEGIN_DECLARATION;
+/* TODO(jlbueno): XTYPES
     mel_BEGIN_DECLARATION.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     mel_BEGIN_DECLARATION.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     mel_BEGIN_DECLARATION.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -3489,6 +3514,7 @@ const TypeObject* GetMinimalPlacementKindObject()
     mel_BEGIN_DECLARATION.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     mel_BEGIN_DECLARATION.common().flags().IS_KEY(false); // Doesn't apply
     mel_BEGIN_DECLARATION.common().flags().IS_DEFAULT(false);
+*/
     mel_BEGIN_DECLARATION.common().value(value++);
     MD5 BEGIN_DECLARATION_hash("BEGIN_DECLARATION");
     for (int i = 0; i < 4; ++i)
@@ -3498,6 +3524,7 @@ const TypeObject* GetMinimalPlacementKindObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_BEGIN_DECLARATION);
 
     MinimalEnumeratedLiteral mel_END_DECLARATION;
+/* TODO(jlbueno): XTYPES
     mel_END_DECLARATION.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     mel_END_DECLARATION.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     mel_END_DECLARATION.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -3505,6 +3532,7 @@ const TypeObject* GetMinimalPlacementKindObject()
     mel_END_DECLARATION.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     mel_END_DECLARATION.common().flags().IS_KEY(false); // Doesn't apply
     mel_END_DECLARATION.common().flags().IS_DEFAULT(false);
+*/
     mel_END_DECLARATION.common().value(value++);
     MD5 END_DECLARATION_hash("END_DECLARATION");
     for (int i = 0; i < 4; ++i)
@@ -3514,6 +3542,7 @@ const TypeObject* GetMinimalPlacementKindObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_END_DECLARATION);
 
     MinimalEnumeratedLiteral mel_AFTER_DECLARATION;
+/* TODO(jlbueno): XTYPES
     mel_AFTER_DECLARATION.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     mel_AFTER_DECLARATION.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     mel_AFTER_DECLARATION.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -3521,6 +3550,7 @@ const TypeObject* GetMinimalPlacementKindObject()
     mel_AFTER_DECLARATION.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     mel_AFTER_DECLARATION.common().flags().IS_KEY(false); // Doesn't apply
     mel_AFTER_DECLARATION.common().flags().IS_DEFAULT(false);
+*/
     mel_AFTER_DECLARATION.common().value(value++);
     MD5 AFTER_DECLARATION_hash("AFTER_DECLARATION");
     for (int i = 0; i < 4; ++i)
@@ -3530,6 +3560,7 @@ const TypeObject* GetMinimalPlacementKindObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_AFTER_DECLARATION);
 
     MinimalEnumeratedLiteral mel_END_FILE;
+/* TODO(jlbueno): XTYPES
     mel_END_FILE.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     mel_END_FILE.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     mel_END_FILE.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -3537,6 +3568,7 @@ const TypeObject* GetMinimalPlacementKindObject()
     mel_END_FILE.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     mel_END_FILE.common().flags().IS_KEY(false); // Doesn't apply
     mel_END_FILE.common().flags().IS_DEFAULT(false);
+*/
     mel_END_FILE.common().value(value++);
     MD5 END_FILE_hash("END_FILE");
     for (int i = 0; i < 4; ++i)
@@ -3599,6 +3631,7 @@ const TypeObject* GetCompletePlacementKindObject()
 
     uint32_t value = 0;
     CompleteEnumeratedLiteral cel_BEGIN_FILE;
+/* TODO(jlbueno): XTYPES
     cel_BEGIN_FILE.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     cel_BEGIN_FILE.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     cel_BEGIN_FILE.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -3606,6 +3639,7 @@ const TypeObject* GetCompletePlacementKindObject()
     cel_BEGIN_FILE.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     cel_BEGIN_FILE.common().flags().IS_KEY(false); // Doesn't apply
     cel_BEGIN_FILE.common().flags().IS_DEFAULT(false);
+*/
     cel_BEGIN_FILE.common().value(value++);
     cel_BEGIN_FILE.detail().name("BEGIN_FILE");
     //cel_BEGIN_FILE.detail().ann_builtin()...
@@ -3613,6 +3647,7 @@ const TypeObject* GetCompletePlacementKindObject()
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_BEGIN_FILE);
 
     CompleteEnumeratedLiteral cel_BEFORE_DECLARATION;
+/* TODO(jlbueno): XTYPES
     cel_BEFORE_DECLARATION.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     cel_BEFORE_DECLARATION.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     cel_BEFORE_DECLARATION.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -3620,6 +3655,7 @@ const TypeObject* GetCompletePlacementKindObject()
     cel_BEFORE_DECLARATION.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     cel_BEFORE_DECLARATION.common().flags().IS_KEY(false); // Doesn't apply
     cel_BEFORE_DECLARATION.common().flags().IS_DEFAULT(false);
+*/
     cel_BEFORE_DECLARATION.common().value(value++);
     cel_BEFORE_DECLARATION.detail().name("BEFORE_DECLARATION");
     //cel_BEFORE_DECLARATION.detail().ann_builtin()...
@@ -3627,6 +3663,7 @@ const TypeObject* GetCompletePlacementKindObject()
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_BEFORE_DECLARATION);
 
     CompleteEnumeratedLiteral cel_BEGIN_DECLARATION;
+/* TODO(jlbueno): XTYPES
     cel_BEGIN_DECLARATION.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     cel_BEGIN_DECLARATION.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     cel_BEGIN_DECLARATION.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -3634,6 +3671,7 @@ const TypeObject* GetCompletePlacementKindObject()
     cel_BEGIN_DECLARATION.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     cel_BEGIN_DECLARATION.common().flags().IS_KEY(false); // Doesn't apply
     cel_BEGIN_DECLARATION.common().flags().IS_DEFAULT(false);
+*/
     cel_BEGIN_DECLARATION.common().value(value++);
     cel_BEGIN_DECLARATION.detail().name("BEGIN_DECLARATION");
     //cel_BEGIN_DECLARATION.detail().ann_builtin()...
@@ -3641,6 +3679,7 @@ const TypeObject* GetCompletePlacementKindObject()
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_BEGIN_DECLARATION);
 
     CompleteEnumeratedLiteral cel_END_DECLARATION;
+/* TODO(jlbueno): XTYPES
     cel_END_DECLARATION.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     cel_END_DECLARATION.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     cel_END_DECLARATION.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -3648,6 +3687,7 @@ const TypeObject* GetCompletePlacementKindObject()
     cel_END_DECLARATION.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     cel_END_DECLARATION.common().flags().IS_KEY(false); // Doesn't apply
     cel_END_DECLARATION.common().flags().IS_DEFAULT(false);
+*/
     cel_END_DECLARATION.common().value(value++);
     cel_END_DECLARATION.detail().name("END_DECLARATION");
     //cel_END_DECLARATION.detail().ann_builtin()...
@@ -3655,6 +3695,7 @@ const TypeObject* GetCompletePlacementKindObject()
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_END_DECLARATION);
 
     CompleteEnumeratedLiteral cel_AFTER_DECLARATION;
+/* TODO(jlbueno): XTYPES
     cel_AFTER_DECLARATION.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     cel_AFTER_DECLARATION.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     cel_AFTER_DECLARATION.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -3662,6 +3703,7 @@ const TypeObject* GetCompletePlacementKindObject()
     cel_AFTER_DECLARATION.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     cel_AFTER_DECLARATION.common().flags().IS_KEY(false); // Doesn't apply
     cel_AFTER_DECLARATION.common().flags().IS_DEFAULT(false);
+*/
     cel_AFTER_DECLARATION.common().value(value++);
     cel_AFTER_DECLARATION.detail().name("AFTER_DECLARATION");
     //cel_AFTER_DECLARATION.detail().ann_builtin()...
@@ -3669,6 +3711,7 @@ const TypeObject* GetCompletePlacementKindObject()
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_AFTER_DECLARATION);
 
     CompleteEnumeratedLiteral cel_END_FILE;
+/* TODO(jlbueno): XTYPES
     cel_END_FILE.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
     cel_END_FILE.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
     cel_END_FILE.common().flags().IS_EXTERNAL(false); // Doesn't apply
@@ -3676,6 +3719,7 @@ const TypeObject* GetCompletePlacementKindObject()
     cel_END_FILE.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
     cel_END_FILE.common().flags().IS_KEY(false); // Doesn't apply
     cel_END_FILE.common().flags().IS_DEFAULT(false);
+*/
     cel_END_FILE.common().value(value++);
     cel_END_FILE.detail().name("END_FILE");
     //cel_END_FILE.detail().ann_builtin()...

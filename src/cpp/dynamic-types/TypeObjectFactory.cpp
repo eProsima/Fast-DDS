@@ -1494,6 +1494,7 @@ const TypeIdentifier* TypeObjectFactory::get_sequence_identifier(
             auxIdent._d(TI_PLAIN_SEQUENCE_SMALL);
             auxIdent.seq_sdefn().bound(static_cast<octet>(bound));
             auxIdent.seq_sdefn().element_identifier(innerIdent);
+/* TODO(jlbueno): XTYPES
             auxIdent.seq_sdefn().header().element_flags().TRY_CONSTRUCT1(false);
             auxIdent.seq_sdefn().header().element_flags().TRY_CONSTRUCT2(false);
             auxIdent.seq_sdefn().header().element_flags().IS_EXTERNAL(false);
@@ -1501,6 +1502,7 @@ const TypeIdentifier* TypeObjectFactory::get_sequence_identifier(
             auxIdent.seq_sdefn().header().element_flags().IS_MUST_UNDERSTAND(false);
             auxIdent.seq_sdefn().header().element_flags().IS_KEY(false);
             auxIdent.seq_sdefn().header().element_flags().IS_DEFAULT(false);
+*/
             auxIdent.seq_sdefn().header().equiv_kind(get_type_kind(type_name));
         }
         else
@@ -1508,6 +1510,7 @@ const TypeIdentifier* TypeObjectFactory::get_sequence_identifier(
             auxIdent._d(TI_PLAIN_SEQUENCE_LARGE);
             auxIdent.seq_ldefn().bound(bound);
             auxIdent.seq_ldefn().element_identifier(innerIdent);
+/* TODO(jlbueno): XTYPES
             auxIdent.seq_ldefn().header().element_flags().TRY_CONSTRUCT1(false);
             auxIdent.seq_ldefn().header().element_flags().TRY_CONSTRUCT2(false);
             auxIdent.seq_ldefn().header().element_flags().IS_EXTERNAL(false);
@@ -1515,6 +1518,7 @@ const TypeIdentifier* TypeObjectFactory::get_sequence_identifier(
             auxIdent.seq_ldefn().header().element_flags().IS_MUST_UNDERSTAND(false);
             auxIdent.seq_ldefn().header().element_flags().IS_KEY(false);
             auxIdent.seq_ldefn().header().element_flags().IS_DEFAULT(false);
+*/
             auxIdent.seq_ldefn().header().equiv_kind(get_type_kind(type_name));
         }
         //identifiers_.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
@@ -1560,6 +1564,7 @@ const TypeIdentifier* TypeObjectFactory::get_array_identifier(
                 auxIdent.array_sdefn().array_bound_seq().push_back(static_cast<octet>(b));
             }
             auxIdent.array_sdefn().element_identifier(innerIdent);
+/* TODO(jlbueno): XTYPES
             auxIdent.array_sdefn().header().element_flags().TRY_CONSTRUCT1(false);
             auxIdent.array_sdefn().header().element_flags().TRY_CONSTRUCT2(false);
             auxIdent.array_sdefn().header().element_flags().IS_EXTERNAL(false);
@@ -1567,6 +1572,7 @@ const TypeIdentifier* TypeObjectFactory::get_array_identifier(
             auxIdent.array_sdefn().header().element_flags().IS_MUST_UNDERSTAND(false);
             auxIdent.array_sdefn().header().element_flags().IS_KEY(false);
             auxIdent.array_sdefn().header().element_flags().IS_DEFAULT(false);
+*/
             auxIdent.array_sdefn().header().equiv_kind(get_type_kind(type_name));
         }
         else
@@ -1577,6 +1583,7 @@ const TypeIdentifier* TypeObjectFactory::get_array_identifier(
                 auxIdent.array_ldefn().array_bound_seq().push_back(b);
             }
             auxIdent.array_ldefn().element_identifier(innerIdent);
+/* TODO(jlbueno): XTYPES
             auxIdent.array_ldefn().header().element_flags().TRY_CONSTRUCT1(false);
             auxIdent.array_ldefn().header().element_flags().TRY_CONSTRUCT2(false);
             auxIdent.array_ldefn().header().element_flags().IS_EXTERNAL(false);
@@ -1584,6 +1591,7 @@ const TypeIdentifier* TypeObjectFactory::get_array_identifier(
             auxIdent.array_ldefn().header().element_flags().IS_MUST_UNDERSTAND(false);
             auxIdent.array_ldefn().header().element_flags().IS_KEY(false);
             auxIdent.array_ldefn().header().element_flags().IS_DEFAULT(false);
+*/
             auxIdent.array_ldefn().header().equiv_kind(get_type_kind(type_name));
         }
         //identifiers_.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
@@ -1630,6 +1638,7 @@ const TypeIdentifier* TypeObjectFactory::get_map_identifier(
             auxIdent.map_sdefn().bound(static_cast<octet>(bound));
             auxIdent.map_sdefn().element_identifier(valIdent);
             auxIdent.map_sdefn().key_identifier(keyIdent);
+/* TODO(jlbueno): XTYPES
             auxIdent.map_sdefn().header().element_flags().TRY_CONSTRUCT1(false);
             auxIdent.map_sdefn().header().element_flags().TRY_CONSTRUCT2(false);
             auxIdent.map_sdefn().header().element_flags().IS_EXTERNAL(false);
@@ -1644,6 +1653,7 @@ const TypeIdentifier* TypeObjectFactory::get_map_identifier(
             auxIdent.map_sdefn().key_flags().IS_MUST_UNDERSTAND(false);
             auxIdent.map_sdefn().key_flags().IS_KEY(false);
             auxIdent.map_sdefn().key_flags().IS_DEFAULT(false);
+*/
             auxIdent.map_sdefn().header().equiv_kind(get_type_kind(value_type_name));
         }
         else
@@ -1652,6 +1662,7 @@ const TypeIdentifier* TypeObjectFactory::get_map_identifier(
             auxIdent.map_ldefn().bound(bound);
             auxIdent.map_ldefn().element_identifier(valIdent);
             auxIdent.map_ldefn().key_identifier(keyIdent);
+/* TODO(jlbueno): XTYPES
             auxIdent.map_ldefn().header().element_flags().TRY_CONSTRUCT1(false);
             auxIdent.map_ldefn().header().element_flags().TRY_CONSTRUCT2(false);
             auxIdent.map_ldefn().header().element_flags().IS_EXTERNAL(false);
@@ -1666,6 +1677,7 @@ const TypeIdentifier* TypeObjectFactory::get_map_identifier(
             auxIdent.map_ldefn().key_flags().IS_MUST_UNDERSTAND(false);
             auxIdent.map_ldefn().key_flags().IS_KEY(false);
             auxIdent.map_ldefn().key_flags().IS_DEFAULT(false);
+*/
             auxIdent.map_ldefn().header().equiv_kind(get_type_kind(value_type_name));
         }
         //identifiers_.insert(std::pair<std::string, TypeIdentifier*>(auxType, auxIdent));
@@ -1952,12 +1964,14 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             {
 //TODO(jlbueno): XTypes                enum_type->add_empty_member(member->common().value(), member->detail().name());
                 apply_member_annotations(enum_type, member->common().value(), member->detail().ann_custom());
+/* TODO(jlbueno): XTYPES
                 if (member->common().flags().IS_DEFAULT())
                 {
                     AnnotationDescriptor def_flag;
                     def_flag.set_value(ANNOTATION_DEFAULT_LITERAL_ID, CONST_TRUE);
                     enum_type->apply_annotation_to_member(member->common().value(), def_flag);
                 }
+*/
             }
             return enum_type->build();
         }
@@ -2052,7 +2066,9 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 //memDesc.set_index(order++);
                 memDesc.id_ = member->common().member_id();
 //TODO(jlbueno): XTypes                memDesc.set_name(member->detail().name());
+/* TODO(jlbueno): XTYPES
                 memDesc.set_default_union_value(member->common().member_flags().IS_DEFAULT());
+*/
                 if (descriptor.discriminator_type_->get_kind() == TK_ENUM)
                 {
                     DynamicTypeMember enumMember;

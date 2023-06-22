@@ -257,13 +257,13 @@ size_t PlainCollectionHeader::getCdrSerializedSize(const PlainCollectionHeader&,
 void PlainCollectionHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
 {
     scdr << m_equiv_kind;
-    scdr << m_element_flags;
+//TODO(jlbueno): XTypes    scdr << m_element_flags;
 }
 
 void PlainCollectionHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
 {
     dcdr >> m_equiv_kind;
-    dcdr >> m_element_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_element_flags;
 }
 
 bool PlainCollectionHeader::consistent(const PlainCollectionHeader &x,
@@ -1279,7 +1279,7 @@ void PlainMapSTypeDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
         TypeIdentifier emptyId;
         scdr << emptyId;
     }
-    scdr << m_key_flags;
+//TODO(jlbueno): XTypes    scdr << m_key_flags;
     if (m_key_identifier != nullptr)
     {
         scdr << *m_key_identifier;
@@ -1300,7 +1300,7 @@ void PlainMapSTypeDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
         m_element_identifier = new TypeIdentifier();
     }
     dcdr >> *m_element_identifier;
-    dcdr >> m_key_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_key_flags;
     if (m_key_identifier == nullptr)
     {
         m_key_identifier = new TypeIdentifier();
@@ -1594,7 +1594,7 @@ void PlainMapLTypeDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
         TypeIdentifier emptyId;
         scdr << emptyId;
     }
-    scdr << m_key_flags;
+//TODO(jlbueno): XTypes    scdr << m_key_flags;
     if (m_key_identifier != nullptr)
     {
         scdr << *m_key_identifier;
@@ -1615,7 +1615,7 @@ void PlainMapLTypeDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
         m_element_identifier = new TypeIdentifier();
     }
     dcdr >> *m_element_identifier;
-    dcdr >> m_key_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_key_flags;
     if (m_key_identifier == nullptr)
     {
         m_key_identifier = new TypeIdentifier();

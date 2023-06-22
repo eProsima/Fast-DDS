@@ -1171,17 +1171,20 @@ void DynamicTypeBuilderFactory::build_sequence_type_code(
     {
         object._d(EK_COMPLETE);
         object.complete()._d(TK_SEQUENCE);
+/* TODO(jlbueno): XTYPES
         object.complete().sequence_type().collection_flag().IS_FINAL(false);
         object.complete().sequence_type().collection_flag().IS_APPENDABLE(false);
         object.complete().sequence_type().collection_flag().IS_MUTABLE(false);
         object.complete().sequence_type().collection_flag().IS_NESTED(false);
         object.complete().sequence_type().collection_flag().IS_AUTOID_HASH(false);
+*/
 
         // Apply annotations
         apply_type_annotations(object.complete().sequence_type().header().detail().ann_custom(), descriptor);
 
         object.complete().sequence_type().header().detail().type_name(descriptor->get_name());
         object.complete().sequence_type().header().common().bound(descriptor->get_bounds());
+/* TODO(jlbueno): XTYPES
         object.complete().sequence_type().element().common().element_flags().TRY_CONSTRUCT1(false);
         object.complete().sequence_type().element().common().element_flags().TRY_CONSTRUCT2(false);
         object.complete().sequence_type().element().common().element_flags().IS_EXTERNAL(false);
@@ -1189,6 +1192,7 @@ void DynamicTypeBuilderFactory::build_sequence_type_code(
         object.complete().sequence_type().element().common().element_flags().IS_MUST_UNDERSTAND(false);
         object.complete().sequence_type().element().common().element_flags().IS_KEY(false);
         object.complete().sequence_type().element().common().element_flags().IS_DEFAULT(false);
+*/
 
         //TypeIdentifier ident;
         //build_type_identifier(descriptor->get_base_type()->descriptor_, ident);
@@ -1211,14 +1215,17 @@ void DynamicTypeBuilderFactory::build_sequence_type_code(
     {
         object._d(EK_MINIMAL);
         object.minimal()._d(TK_SEQUENCE);
+/* TODO(jlbueno): XTYPES
         object.minimal().sequence_type().collection_flag().IS_FINAL(false);
         object.minimal().sequence_type().collection_flag().IS_APPENDABLE(false);
         object.minimal().sequence_type().collection_flag().IS_MUTABLE(false);
         object.minimal().sequence_type().collection_flag().IS_NESTED(false);
         object.minimal().sequence_type().collection_flag().IS_AUTOID_HASH(false);
+*/
 
         // Apply annotations
         object.minimal().sequence_type().header().common().bound(descriptor->get_bounds());
+/* TODO(jlbueno): XTYPES
         object.minimal().sequence_type().element().common().element_flags().TRY_CONSTRUCT1(false);
         object.minimal().sequence_type().element().common().element_flags().TRY_CONSTRUCT2(false);
         object.minimal().sequence_type().element().common().element_flags().IS_EXTERNAL(false);
@@ -1226,6 +1233,7 @@ void DynamicTypeBuilderFactory::build_sequence_type_code(
         object.minimal().sequence_type().element().common().element_flags().IS_MUST_UNDERSTAND(false);
         object.minimal().sequence_type().element().common().element_flags().IS_KEY(false);
         object.minimal().sequence_type().element().common().element_flags().IS_DEFAULT(false);
+*/
 
         //TypeIdentifier ident;
         //build_type_identifier(descriptor->get_base_type()->descriptor_, ident);
@@ -1255,11 +1263,13 @@ void DynamicTypeBuilderFactory::build_array_type_code(
     {
         object._d(EK_COMPLETE);
         object.complete()._d(TK_ARRAY);
+/* TODO(jlbueno): XTYPES
         object.complete().array_type().collection_flag().IS_FINAL(false);
         object.complete().array_type().collection_flag().IS_APPENDABLE(false);
         object.complete().array_type().collection_flag().IS_MUTABLE(false);
         object.complete().array_type().collection_flag().IS_NESTED(false);
         object.complete().array_type().collection_flag().IS_AUTOID_HASH(false);
+*/
 
         // Apply annotations
         apply_type_annotations(object.complete().array_type().header().detail().ann_custom(), descriptor);
@@ -1269,6 +1279,7 @@ void DynamicTypeBuilderFactory::build_array_type_code(
         {
             object.complete().array_type().header().common().bound_seq().push_back(descriptor->get_bounds(i));
         }
+/* TODO(jlbueno): XTYPES
         object.complete().array_type().element().common().element_flags().TRY_CONSTRUCT1(false);
         object.complete().array_type().element().common().element_flags().TRY_CONSTRUCT2(false);
         object.complete().array_type().element().common().element_flags().IS_EXTERNAL(false);
@@ -1276,6 +1287,7 @@ void DynamicTypeBuilderFactory::build_array_type_code(
         object.complete().array_type().element().common().element_flags().IS_MUST_UNDERSTAND(false);
         object.complete().array_type().element().common().element_flags().IS_KEY(false);
         object.complete().array_type().element().common().element_flags().IS_DEFAULT(false);
+*/
 
         //TypeIdentifier ident;
         //build_type_identifier(descriptor->get_base_type()->descriptor_, ident);
@@ -1298,17 +1310,20 @@ void DynamicTypeBuilderFactory::build_array_type_code(
     {
         object._d(EK_MINIMAL);
         object.minimal()._d(TK_ARRAY);
+/*
         object.minimal().array_type().collection_flag().IS_FINAL(false);
         object.minimal().array_type().collection_flag().IS_APPENDABLE(false);
         object.minimal().array_type().collection_flag().IS_MUTABLE(false);
         object.minimal().array_type().collection_flag().IS_NESTED(false);
         object.minimal().array_type().collection_flag().IS_AUTOID_HASH(false);
+*/
 
         // Apply annotations
         for (uint32_t i = 0; i < descriptor->get_bounds_size(); ++i)
         {
             object.minimal().array_type().header().common().bound_seq().push_back(descriptor->get_bounds(i));
         }
+/* TODO(jlbueno): XTYPES
         object.minimal().array_type().element().common().element_flags().TRY_CONSTRUCT1(false);
         object.minimal().array_type().element().common().element_flags().TRY_CONSTRUCT2(false);
         object.minimal().array_type().element().common().element_flags().IS_EXTERNAL(false);
@@ -1316,6 +1331,7 @@ void DynamicTypeBuilderFactory::build_array_type_code(
         object.minimal().array_type().element().common().element_flags().IS_MUST_UNDERSTAND(false);
         object.minimal().array_type().element().common().element_flags().IS_KEY(false);
         object.minimal().array_type().element().common().element_flags().IS_DEFAULT(false);
+*/
 
         //TypeIdentifier ident;
         //build_type_identifier(descriptor->get_base_type()->descriptor_, ident);
@@ -1345,17 +1361,20 @@ void DynamicTypeBuilderFactory::build_map_type_code(
     {
         object._d(EK_COMPLETE);
         object.complete()._d(TK_MAP);
+/* TODO(jlbueno): XTYPES
         object.complete().map_type().collection_flag().IS_FINAL(false);
         object.complete().map_type().collection_flag().IS_APPENDABLE(false);
         object.complete().map_type().collection_flag().IS_MUTABLE(false);
         object.complete().map_type().collection_flag().IS_NESTED(false);
         object.complete().map_type().collection_flag().IS_AUTOID_HASH(false);
+*/
 
         // Apply annotations
         apply_type_annotations(object.complete().map_type().header().detail().ann_custom(), descriptor);
 
         object.complete().map_type().header().detail().type_name(descriptor->get_name());
         object.complete().map_type().header().common().bound(descriptor->get_bounds());
+/* TODO(jlbueno): XTYPES
         object.complete().map_type().element().common().element_flags().TRY_CONSTRUCT1(false);
         object.complete().map_type().element().common().element_flags().TRY_CONSTRUCT2(false);
         object.complete().map_type().element().common().element_flags().IS_EXTERNAL(false);
@@ -1370,6 +1389,7 @@ void DynamicTypeBuilderFactory::build_map_type_code(
         object.complete().map_type().key().common().element_flags().IS_MUST_UNDERSTAND(false);
         object.complete().map_type().key().common().element_flags().IS_KEY(false);
         object.complete().map_type().key().common().element_flags().IS_DEFAULT(false);
+*/
 
         //TypeIdentifier ident;
         //build_type_identifier(descriptor->get_base_type()->descriptor_, ident);
@@ -1398,14 +1418,17 @@ void DynamicTypeBuilderFactory::build_map_type_code(
     {
         object._d(EK_MINIMAL);
         object.minimal()._d(TK_MAP);
+/* TODO(jlbueno): XTYPES
         object.minimal().map_type().collection_flag().IS_FINAL(false);
         object.minimal().map_type().collection_flag().IS_APPENDABLE(false);
         object.minimal().map_type().collection_flag().IS_MUTABLE(false);
         object.minimal().map_type().collection_flag().IS_NESTED(false);
         object.minimal().map_type().collection_flag().IS_AUTOID_HASH(false);
+*/
 
         // Apply annotations
         object.minimal().map_type().header().common().bound(descriptor->get_bounds());
+/* TODO(jlbueno): XTYPES
         object.minimal().map_type().element().common().element_flags().TRY_CONSTRUCT1(false);
         object.minimal().map_type().element().common().element_flags().TRY_CONSTRUCT2(false);
         object.minimal().map_type().element().common().element_flags().IS_EXTERNAL(false);
@@ -1413,6 +1436,7 @@ void DynamicTypeBuilderFactory::build_map_type_code(
         object.minimal().map_type().element().common().element_flags().IS_MUST_UNDERSTAND(false);
         object.minimal().map_type().element().common().element_flags().IS_KEY(false);
         object.minimal().map_type().element().common().element_flags().IS_DEFAULT(false);
+*/
 
         //TypeIdentifier ident;
         //build_type_identifier(descriptor->get_base_type()->descriptor_, ident);
@@ -1448,16 +1472,19 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
     {
         object._d(EK_COMPLETE);
         object.complete()._d(TK_ALIAS);
+/* TODO(jlbueno): XTYPES
         object.complete().alias_type().alias_flags().IS_FINAL(false);
         object.complete().alias_type().alias_flags().IS_APPENDABLE(false);
         object.complete().alias_type().alias_flags().IS_MUTABLE(false);
         object.complete().alias_type().alias_flags().IS_NESTED(false);
         object.complete().alias_type().alias_flags().IS_AUTOID_HASH(false);
+*/
 
         // Apply annotations
         apply_type_annotations(object.complete().alias_type().header().detail().ann_custom(), descriptor);
 
         object.complete().alias_type().header().detail().type_name(descriptor->get_name());
+/* TODO(jlbueno): XTYPES
         object.complete().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
         object.complete().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
         object.complete().alias_type().body().common().related_flags().IS_EXTERNAL(false);
@@ -1465,6 +1492,7 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
         object.complete().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
         object.complete().alias_type().body().common().related_flags().IS_KEY(false);
         object.complete().alias_type().body().common().related_flags().IS_DEFAULT(false);
+*/
 
         //TypeIdentifier ident;
         //build_type_identifier(descriptor->get_base_type()->descriptor_, ident);
@@ -1506,6 +1534,7 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
     {
         object._d(EK_MINIMAL);
         object.minimal()._d(TK_ALIAS);
+/* TODO(jlbueno): XTYPES
         object.minimal().alias_type().alias_flags().IS_FINAL(false);
         object.minimal().alias_type().alias_flags().IS_APPENDABLE(false);
         object.minimal().alias_type().alias_flags().IS_MUTABLE(false);
@@ -1519,6 +1548,7 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
         object.minimal().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
         object.minimal().alias_type().body().common().related_flags().IS_KEY(false);
         object.minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
+*/
 
         //TypeIdentifier ident;
         //build_type_identifier(descriptor->get_base_type()->descriptor_, ident);
@@ -1577,7 +1607,9 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
         for (const MemberDescriptor* member : members)
         {
             CompleteEnumeratedLiteral mel;
+/* TODO(jlbueno): XTYPES
             mel.common().flags().IS_DEFAULT(member->annotation_is_default_literal());
+*/
             mel.common().value(member->get_index());
             mel.detail().name(member->get_name());
 
@@ -1622,7 +1654,9 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
         for (const MemberDescriptor* member : members)
         {
             MinimalEnumeratedLiteral mel;
+/* TODO(jlbueno): XTYPES
             mel.common().flags().IS_DEFAULT(member->annotation_is_default_literal());
+*/
             mel.common().value(member->get_index());
             MD5 hash(member->get_name());
             for (int i = 0; i < 4; ++i)
@@ -1669,11 +1703,13 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         object._d(EK_COMPLETE);
         object.complete()._d(TK_STRUCTURE);
 
+/* TODO(jlbueno): XTYPES
         object.complete().struct_type().struct_flags().IS_FINAL(descriptor->annotation_is_final());
         object.complete().struct_type().struct_flags().IS_APPENDABLE(descriptor->annotation_is_appendable());
         object.complete().struct_type().struct_flags().IS_MUTABLE(descriptor->annotation_is_mutable());
         object.complete().struct_type().struct_flags().IS_NESTED(descriptor->annotation_get_nested());
         object.complete().struct_type().struct_flags().IS_AUTOID_HASH(false);
+*/
 
         // Apply annotations
         apply_type_annotations(object.complete().struct_type().header().detail().ann_custom(), descriptor);
@@ -1682,6 +1718,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         {
             CompleteStructMember msm;
             msm.common().member_id(member->get_index());
+/* TODO(jlbueno): XTYPES
             msm.common().member_flags().TRY_CONSTRUCT1(false);
             msm.common().member_flags().TRY_CONSTRUCT2(false);
             msm.common().member_flags().IS_EXTERNAL(false);
@@ -1689,6 +1726,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
             msm.common().member_flags().IS_MUST_UNDERSTAND(member->annotation_is_must_understand());
             msm.common().member_flags().IS_KEY(member->annotation_is_key());
             msm.common().member_flags().IS_DEFAULT(false);
+*/
 
             // Apply member annotations
             TypeDescriptor member_type_descriptor;
@@ -1767,16 +1805,19 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         object._d(EK_MINIMAL);
         object.minimal()._d(TK_STRUCTURE);
 
+/* TODO(jlbueno): XTYPES
         object.minimal().struct_type().struct_flags().IS_FINAL(descriptor->annotation_is_final());
         object.minimal().struct_type().struct_flags().IS_APPENDABLE(descriptor->annotation_is_appendable());
         object.minimal().struct_type().struct_flags().IS_MUTABLE(descriptor->annotation_is_mutable());
         object.minimal().struct_type().struct_flags().IS_NESTED(descriptor->annotation_get_nested());
         object.minimal().struct_type().struct_flags().IS_AUTOID_HASH(false);
+*/
 
         for (const MemberDescriptor* member : members)
         {
             MinimalStructMember msm;
             msm.common().member_id(member->get_index());
+/* TODO(jlbueno): XTYPES
             msm.common().member_flags().TRY_CONSTRUCT1(false);
             msm.common().member_flags().TRY_CONSTRUCT2(false);
             msm.common().member_flags().IS_EXTERNAL(false);
@@ -1784,6 +1825,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
             msm.common().member_flags().IS_MUST_UNDERSTAND(member->annotation_is_must_understand());
             msm.common().member_flags().IS_KEY(member->annotation_is_key());
             msm.common().member_flags().IS_DEFAULT(false);
+*/
             //TypeIdentifier memIdent;
             //build_type_identifier(member->type_->descriptor_, memIdent);
 
@@ -1866,6 +1908,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         object._d(EK_COMPLETE);
         object.complete()._d(TK_UNION);
 
+/* TODO(jlbueno): XTYPES
         object.complete().union_type().union_flags().IS_FINAL(descriptor->annotation_is_final());
         object.complete().union_type().union_flags().IS_APPENDABLE(descriptor->annotation_is_appendable());
         object.complete().union_type().union_flags().IS_MUTABLE(descriptor->annotation_is_mutable());
@@ -1880,6 +1923,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         object.complete().union_type().discriminator().common().member_flags().IS_KEY(
             descriptor->discriminator_type_->descriptor_->annotation_get_key());
         object.complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
+*/
 
         // Apply annotations
         apply_type_annotations(object.complete().struct_type().header().detail().ann_custom(), descriptor);
@@ -1894,6 +1938,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         {
             CompleteUnionMember mum;
             mum.common().member_id(member->get_index());
+/* TODO(jlbueno): XTYPES
             mum.common().member_flags().TRY_CONSTRUCT1(false);
             mum.common().member_flags().TRY_CONSTRUCT2(false);
             mum.common().member_flags().IS_EXTERNAL(false);
@@ -1901,6 +1946,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
             mum.common().member_flags().IS_MUST_UNDERSTAND(false);
             mum.common().member_flags().IS_KEY(false);
             mum.common().member_flags().IS_DEFAULT(member->is_default_union_value());
+*/
 
             // Apply member annotations
             TypeDescriptor member_type_descriptor;
@@ -1969,6 +2015,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         object._d(EK_MINIMAL);
         object.minimal()._d(TK_UNION);
 
+/* TODO(jlbueno): XTYPES
         object.minimal().union_type().union_flags().IS_FINAL(descriptor->annotation_is_final());
         object.minimal().union_type().union_flags().IS_APPENDABLE(descriptor->annotation_is_appendable());
         object.minimal().union_type().union_flags().IS_MUTABLE(descriptor->annotation_is_mutable());
@@ -1983,6 +2030,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         object.minimal().union_type().discriminator().common().member_flags().IS_KEY(
             descriptor->discriminator_type_->descriptor_->annotation_get_key());
         object.minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false);
+*/
 
         TypeObject discObj;
         build_type_object(descriptor->discriminator_type_->descriptor_, discObj);
@@ -1995,6 +2043,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         {
             MinimalUnionMember mum;
             mum.common().member_id(member->get_index());
+/* TODO(jlbueno): XTYPES
             mum.common().member_flags().TRY_CONSTRUCT1(false);
             mum.common().member_flags().TRY_CONSTRUCT2(false);
             mum.common().member_flags().IS_EXTERNAL(false);
@@ -2002,6 +2051,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
             mum.common().member_flags().IS_MUST_UNDERSTAND(false);
             mum.common().member_flags().IS_KEY(false);
             mum.common().member_flags().IS_DEFAULT(member->is_default_union_value());
+*/
 
             //TypeIdentifier memIdent;
             //build_type_identifier(member->type_->descriptor_, memIdent);
@@ -2078,11 +2128,13 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         object._d(EK_COMPLETE);
         object.complete()._d(TK_BITSET);
 
+/* TODO(jlbueno): XTYPES
         object.complete().bitset_type().bitset_flags().IS_FINAL(false);
         object.complete().bitset_type().bitset_flags().IS_APPENDABLE(false);
         object.complete().bitset_type().bitset_flags().IS_MUTABLE(false);
         object.complete().bitset_type().bitset_flags().IS_NESTED(false);
         object.complete().bitset_type().bitset_flags().IS_AUTOID_HASH(false);
+*/
 
         // Apply annotations
         apply_type_annotations(object.complete().bitset_type().header().detail().ann_custom(), descriptor);
@@ -2149,11 +2201,13 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         object._d(EK_COMPLETE);
         object.minimal()._d(TK_BITSET);
 
+/* TODO(jlbueno): XTYPES
         object.minimal().bitset_type().bitset_flags().IS_FINAL(false);
         object.minimal().bitset_type().bitset_flags().IS_APPENDABLE(false);
         object.minimal().bitset_type().bitset_flags().IS_MUTABLE(false);
         object.minimal().bitset_type().bitset_flags().IS_NESTED(false);
         object.minimal().bitset_type().bitset_flags().IS_AUTOID_HASH(false);
+*/
 
         for (const MemberDescriptor* member : members)
         {
@@ -2222,11 +2276,13 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
         object._d(EK_COMPLETE);
         object.complete()._d(TK_BITMASK);
 
+/* TODO(jlbueno): XTYPES
         object.complete().bitmask_type().bitmask_flags().IS_FINAL(false);
         object.complete().bitmask_type().bitmask_flags().IS_APPENDABLE(false);
         object.complete().bitmask_type().bitmask_flags().IS_MUTABLE(false);
         object.complete().bitmask_type().bitmask_flags().IS_NESTED(false);
         object.complete().bitmask_type().bitmask_flags().IS_AUTOID_HASH(false);
+*/
 
         // Apply annotations
         apply_type_annotations(object.complete().bitmask_type().header().detail().ann_custom(), descriptor);
@@ -2280,11 +2336,13 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
         object._d(EK_COMPLETE);
         object.minimal()._d(TK_BITMASK);
 
+/* TODO(jlbueno): XTYPES
         object.minimal().bitmask_type().bitmask_flags().IS_FINAL(false);
         object.minimal().bitmask_type().bitmask_flags().IS_APPENDABLE(false);
         object.minimal().bitmask_type().bitmask_flags().IS_MUTABLE(false);
         object.minimal().bitmask_type().bitmask_flags().IS_NESTED(false);
         object.minimal().bitmask_type().bitmask_flags().IS_AUTOID_HASH(false);
+*/
 
         for (const MemberDescriptor* member : members)
         {

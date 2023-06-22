@@ -124,6 +124,51 @@ namespace eprosima {
             typedef uint8_t SBound;
             typedef std::vector<eprosima::fastrtps::types::SBound> SBoundSeq;
             const eprosima::fastrtps::types::SBound INVALID_SBOUND = 0;
+            /*!
+             * @brief This class represents the bitmask MemberFlag defined by the user in the IDL file.
+             * @ingroup XTypesBase
+             */
+            enum MemberFlag : uint16_t
+            {
+                TRY_CONSTRUCT1 = 0x01ull << 0,
+                TRY_CONSTRUCT2 = 0x01ull << 1,
+                IS_EXTERNAL = 0x01ull << 2,
+                IS_OPTIONAL = 0x01ull << 3,
+                IS_MUST_UNDERSTAND = 0x01ull << 4,
+                IS_KEY = 0x01ull << 5,
+                IS_DEFAULT = 0x01ull << 6
+            };
+            typedef eprosima::fastrtps::types::MemberFlag CollectionElementFlag;
+            typedef eprosima::fastrtps::types::MemberFlag StructMemberFlag;
+            typedef eprosima::fastrtps::types::MemberFlag UnionMemberFlag;
+            typedef eprosima::fastrtps::types::MemberFlag UnionDiscriminatorFlag;
+            typedef eprosima::fastrtps::types::MemberFlag EnumeratedLiteralFlag;
+            typedef eprosima::fastrtps::types::MemberFlag AnnotationParameterFlag;
+            typedef eprosima::fastrtps::types::MemberFlag AliasMemberFlag;
+            typedef eprosima::fastrtps::types::MemberFlag BitflagFlag;
+            typedef eprosima::fastrtps::types::MemberFlag BitsetMemberFlag;
+            const uint16_t MemberFlagMinimalMask = 0x003f;
+            /*!
+             * @brief This class represents the bitmask TypeFlag defined by the user in the IDL file.
+             * @ingroup XTypesBase
+             */
+            enum TypeFlag : uint16_t
+            {
+                IS_FINAL = 0x01ull << 0,
+                IS_APPENDABLE = 0x01ull << 1,
+                IS_MUTABLE = 0x01ull << 2,
+                IS_NESTED = 0x01ull << 3,
+                IS_AUTOID_HASH = 0x01ull << 4
+            };
+            typedef eprosima::fastrtps::types::TypeFlag StructTypeFlag;
+            typedef eprosima::fastrtps::types::TypeFlag UnionTypeFlag;
+            typedef eprosima::fastrtps::types::TypeFlag CollectionTypeFlag;
+            typedef eprosima::fastrtps::types::TypeFlag AnnotationTypeFlag;
+            typedef eprosima::fastrtps::types::TypeFlag AliasTypeFlag;
+            typedef eprosima::fastrtps::types::TypeFlag EnumTypeFlag;
+            typedef eprosima::fastrtps::types::TypeFlag BitmaskTypeFlag;
+            typedef eprosima::fastrtps::types::TypeFlag BitsetTypeFlag;
+            const uint16_t TypeFlagMinimalMask = 0x0007;
         } // namespace types
     } // namespace fastrtps
 } // namespace eprosima

@@ -79,7 +79,7 @@ size_t CommonStructMember::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += StructMemberFlag::getCdrSerializedSize(data.member_flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += StructMemberFlag::getCdrSerializedSize(data.member_flags(), current_alignment);
     current_alignment += TypeIdentifier::getCdrSerializedSize(data.member_type_id(), current_alignment);
 
     return current_alignment - initial_alignment;
@@ -89,7 +89,7 @@ void CommonStructMember::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_member_id;
-    scdr << m_member_flags;
+//TODO(jlbueno): XTypes    scdr << m_member_flags;
     scdr << m_member_type_id;
 }
 
@@ -97,7 +97,7 @@ void CommonStructMember::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_member_id;
-    dcdr >> m_member_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_member_flags;
     dcdr >> m_member_type_id;
 }
 
@@ -896,7 +896,7 @@ size_t CompleteStructType::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += StructTypeFlag::getCdrSerializedSize(data.struct_flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += StructTypeFlag::getCdrSerializedSize(data.struct_flags(), current_alignment);
     current_alignment += CompleteStructHeader::getCdrSerializedSize(data.header(), current_alignment);
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
     for (size_t a = 0; a < data.member_seq().size(); ++a)
@@ -910,7 +910,7 @@ size_t CompleteStructType::getCdrSerializedSize(
 void CompleteStructType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_struct_flags;
+//TODO(jlbueno): XTypes    scdr << m_struct_flags;
     scdr << m_header;
     scdr << m_member_seq;
 }
@@ -918,7 +918,7 @@ void CompleteStructType::serialize(
 void CompleteStructType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_struct_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_struct_flags;
     dcdr >> m_header;
     dcdr >> m_member_seq;
 }
@@ -1052,7 +1052,7 @@ size_t MinimalStructType::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += StructTypeFlag::getCdrSerializedSize(data.struct_flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += StructTypeFlag::getCdrSerializedSize(data.struct_flags(), current_alignment);
     current_alignment += MinimalStructHeader::getCdrSerializedSize(data.header(), current_alignment);
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
     for (size_t a = 0; a < data.member_seq().size(); ++a)
@@ -1066,7 +1066,7 @@ size_t MinimalStructType::getCdrSerializedSize(
 void MinimalStructType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_struct_flags;
+//TODO(jlbueno): XTypes    scdr << m_struct_flags;
     scdr << m_header;
     scdr << m_member_seq;
 }
@@ -1074,7 +1074,7 @@ void MinimalStructType::serialize(
 void MinimalStructType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_struct_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_struct_flags;
     dcdr >> m_header;
     dcdr >> m_member_seq;
 }
@@ -1213,7 +1213,7 @@ size_t CommonUnionMember::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += UnionMemberFlag::getCdrSerializedSize(data.member_flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += UnionMemberFlag::getCdrSerializedSize(data.member_flags(), current_alignment);
     current_alignment += TypeIdentifier::getCdrSerializedSize(data.type_id(), current_alignment);
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
@@ -1229,7 +1229,7 @@ void CommonUnionMember::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_member_id;
-    scdr << m_member_flags;
+//TODO(jlbueno): XTypes    scdr << m_member_flags;
     scdr << m_type_id;
     scdr << m_label_seq;
 }
@@ -1238,7 +1238,7 @@ void CommonUnionMember::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_member_id;
-    dcdr >> m_member_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_member_flags;
     dcdr >> m_type_id;
     dcdr >> m_label_seq;
 }
@@ -1495,7 +1495,7 @@ size_t CommonDiscriminatorMember::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += UnionDiscriminatorFlag::getCdrSerializedSize(data.member_flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += UnionDiscriminatorFlag::getCdrSerializedSize(data.member_flags(), current_alignment);
     current_alignment += TypeIdentifier::getCdrSerializedSize(data.type_id(), current_alignment);
 
     return current_alignment - initial_alignment;
@@ -1504,14 +1504,14 @@ size_t CommonDiscriminatorMember::getCdrSerializedSize(
 void CommonDiscriminatorMember::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_member_flags;
+//TODO(jlbueno): XTypes    scdr << m_member_flags;
     scdr << m_type_id;
 }
 
 void CommonDiscriminatorMember::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_member_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_member_flags;
     dcdr >> m_type_id;
 }
 
@@ -1901,7 +1901,7 @@ size_t CompleteUnionType::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += UnionTypeFlag::getCdrSerializedSize(data.union_flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += UnionTypeFlag::getCdrSerializedSize(data.union_flags(), current_alignment);
     current_alignment += CompleteUnionHeader::getCdrSerializedSize(data.header(), current_alignment);
     current_alignment += CompleteDiscriminatorMember::getCdrSerializedSize(data.discriminator(), current_alignment);
 
@@ -1917,7 +1917,7 @@ size_t CompleteUnionType::getCdrSerializedSize(
 void CompleteUnionType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_union_flags;
+//TODO(jlbueno): XTypes    scdr << m_union_flags;
     scdr << m_header;
     scdr << m_discriminator;
     scdr << m_member_seq;
@@ -1926,7 +1926,7 @@ void CompleteUnionType::serialize(
 void CompleteUnionType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_union_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_union_flags;
     dcdr >> m_header;
     dcdr >> m_discriminator;
     dcdr >> m_member_seq;
@@ -2067,7 +2067,7 @@ size_t MinimalUnionType::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += UnionTypeFlag::getCdrSerializedSize(data.union_flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += UnionTypeFlag::getCdrSerializedSize(data.union_flags(), current_alignment);
     current_alignment += MinimalUnionHeader::getCdrSerializedSize(data.header(), current_alignment);
     current_alignment += MinimalDiscriminatorMember::getCdrSerializedSize(data.discriminator(), current_alignment);
 
@@ -2083,7 +2083,7 @@ size_t MinimalUnionType::getCdrSerializedSize(
 void MinimalUnionType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_union_flags;
+//TODO(jlbueno): XTypes    scdr << m_union_flags;
     scdr << m_header;
     scdr << m_discriminator;
     scdr << m_member_seq;
@@ -2092,7 +2092,7 @@ void MinimalUnionType::serialize(
 void MinimalUnionType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_union_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_union_flags;
     dcdr >> m_header;
     dcdr >> m_discriminator;
     dcdr >> m_member_seq;
@@ -2225,7 +2225,7 @@ size_t CommonAnnotationParameter::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += AnnotationParameterFlag::getCdrSerializedSize(data.member_flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += AnnotationParameterFlag::getCdrSerializedSize(data.member_flags(), current_alignment);
     current_alignment += TypeIdentifier::getCdrSerializedSize(data.member_type_id(), current_alignment);
 
     return current_alignment - initial_alignment;
@@ -2234,14 +2234,14 @@ size_t CommonAnnotationParameter::getCdrSerializedSize(
 void CommonAnnotationParameter::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_member_flags;
+//TODO(jlbueno): XTypes    scdr << m_member_flags;
     scdr << m_member_type_id;
 }
 
 void CommonAnnotationParameter::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_member_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_member_flags;
     dcdr >> m_member_type_id;
 }
 
@@ -2623,7 +2623,7 @@ size_t CompleteAnnotationType::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += AnnotationTypeFlag::getCdrSerializedSize(data.annotation_flag(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += AnnotationTypeFlag::getCdrSerializedSize(data.annotation_flag(), current_alignment);
     current_alignment += CompleteAnnotationHeader::getCdrSerializedSize(data.header(), current_alignment);
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
@@ -2639,7 +2639,7 @@ size_t CompleteAnnotationType::getCdrSerializedSize(
 void CompleteAnnotationType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_annotation_flag;
+//TODO(jlbueno): XTypes    scdr << m_annotation_flag;
     scdr << m_header;
     scdr << m_member_seq;
 }
@@ -2647,7 +2647,7 @@ void CompleteAnnotationType::serialize(
 void CompleteAnnotationType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_annotation_flag;
+//TODO(jlbueno): XTypes    dcdr >> m_annotation_flag;
     dcdr >> m_header;
     dcdr >> m_member_seq;
 }
@@ -2722,7 +2722,7 @@ size_t MinimalAnnotationType::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += AnnotationTypeFlag::getCdrSerializedSize(data.annotation_flag(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += AnnotationTypeFlag::getCdrSerializedSize(data.annotation_flag(), current_alignment);
     current_alignment += MinimalAnnotationHeader::getCdrSerializedSize(data.header(), current_alignment);
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
@@ -2739,7 +2739,7 @@ size_t MinimalAnnotationType::getCdrSerializedSize(
 void MinimalAnnotationType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_annotation_flag;
+//TODO(jlbueno): XTypes    scdr << m_annotation_flag;
     scdr << m_header;
     scdr << m_member_seq;
 }
@@ -2747,7 +2747,7 @@ void MinimalAnnotationType::serialize(
 void MinimalAnnotationType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_annotation_flag;
+//TODO(jlbueno): XTypes    dcdr >> m_annotation_flag;
     dcdr >> m_header;
     dcdr >> m_member_seq;
 }
@@ -2818,7 +2818,7 @@ size_t CommonAliasBody::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += AliasMemberFlag::getCdrSerializedSize(data.related_flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += AliasMemberFlag::getCdrSerializedSize(data.related_flags(), current_alignment);
     current_alignment += TypeIdentifier::getCdrSerializedSize(data.related_type(), current_alignment);
 
     return current_alignment - initial_alignment;
@@ -2827,14 +2827,14 @@ size_t CommonAliasBody::getCdrSerializedSize(
 void CommonAliasBody::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_related_flags;
+//TODO(jlbueno): XTypes    scdr << m_related_flags;
     scdr << m_related_type;
 }
 
 void CommonAliasBody::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_related_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_related_flags;
     dcdr >> m_related_type;
 }
 
@@ -3194,7 +3194,7 @@ size_t CompleteAliasType::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += AliasTypeFlag::getCdrSerializedSize(data.alias_flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += AliasTypeFlag::getCdrSerializedSize(data.alias_flags(), current_alignment);
     current_alignment += CompleteAliasHeader::getCdrSerializedSize(data.header(), current_alignment);
     current_alignment += CompleteAliasBody::getCdrSerializedSize(data.body(), current_alignment);
 
@@ -3204,7 +3204,7 @@ size_t CompleteAliasType::getCdrSerializedSize(
 void CompleteAliasType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_alias_flags;
+//TODO(jlbueno): XTypes    scdr << m_alias_flags;
     scdr << m_header;
     scdr << m_body;
 }
@@ -3212,7 +3212,7 @@ void CompleteAliasType::serialize(
 void CompleteAliasType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_alias_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_alias_flags;
     dcdr >> m_header;
     dcdr >> m_body;
 }
@@ -3282,7 +3282,7 @@ size_t MinimalAliasType::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += AliasTypeFlag::getCdrSerializedSize(data.alias_flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += AliasTypeFlag::getCdrSerializedSize(data.alias_flags(), current_alignment);
     current_alignment += MinimalAliasHeader::getCdrSerializedSize(data.header(), current_alignment);
     current_alignment += MinimalAliasBody::getCdrSerializedSize(data.body(), current_alignment);
 
@@ -3292,7 +3292,7 @@ size_t MinimalAliasType::getCdrSerializedSize(
 void MinimalAliasType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_alias_flags;
+//TODO(jlbueno): XTypes    scdr << m_alias_flags;
     scdr << m_header;
     scdr << m_body;
 }
@@ -3300,7 +3300,7 @@ void MinimalAliasType::serialize(
 void MinimalAliasType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_alias_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_alias_flags;
     dcdr >> m_header;
     dcdr >> m_body;
 }
@@ -3456,7 +3456,7 @@ size_t CommonCollectionElement::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += CollectionElementFlag::getCdrSerializedSize(data.element_flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += CollectionElementFlag::getCdrSerializedSize(data.element_flags(), current_alignment);
     current_alignment += TypeIdentifier::getCdrSerializedSize(data.type(), current_alignment);
 
     return current_alignment - initial_alignment;
@@ -3465,14 +3465,14 @@ size_t CommonCollectionElement::getCdrSerializedSize(
 void CommonCollectionElement::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_element_flags;
+//TODO(jlbueno): XTypes    scdr << m_element_flags;
     scdr << m_type;
 }
 
 void CommonCollectionElement::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_element_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_element_flags;
     dcdr >> m_type;
 }
 
@@ -3926,7 +3926,7 @@ size_t CompleteSequenceType::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
     // FIXED_SIXE current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
     current_alignment += CompleteCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
     current_alignment += CompleteCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
 
@@ -3946,7 +3946,7 @@ size_t CompleteSequenceType::getCdrSerializedSize(
 void CompleteSequenceType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_collection_flag;
+//TODO(jlbueno): XTypes    scdr << m_collection_flag;
     scdr << m_header;
     scdr << m_element;
 }
@@ -3954,7 +3954,7 @@ void CompleteSequenceType::serialize(
 void CompleteSequenceType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_collection_flag;
+//TODO(jlbueno): XTypes    dcdr >> m_collection_flag;
     dcdr >> m_header;
     dcdr >> m_element;
 }
@@ -4027,7 +4027,7 @@ size_t MinimalSequenceType::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
     // FIXED_SIXE current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
     current_alignment += MinimalCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
     current_alignment += MinimalCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
 
@@ -4047,7 +4047,7 @@ size_t MinimalSequenceType::getCdrSerializedSize(
 void MinimalSequenceType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_collection_flag;
+//TODO(jlbueno): XTypes    scdr << m_collection_flag;
     scdr << m_header;
     scdr << m_element;
 }
@@ -4055,7 +4055,7 @@ void MinimalSequenceType::serialize(
 void MinimalSequenceType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_collection_flag;
+//TODO(jlbueno): XTypes    dcdr >> m_collection_flag;
     dcdr >> m_header;
     dcdr >> m_element;
 }
@@ -4376,7 +4376,7 @@ size_t CompleteArrayType::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
     current_alignment += CompleteArrayHeader::getCdrSerializedSize(data.header(), current_alignment);
     current_alignment += CompleteCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
 
@@ -4386,7 +4386,7 @@ size_t CompleteArrayType::getCdrSerializedSize(
 void CompleteArrayType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_collection_flag;
+//TODO(jlbueno): XTypes    scdr << m_collection_flag;
     scdr << m_header;
     scdr << m_element;
 }
@@ -4394,7 +4394,7 @@ void CompleteArrayType::serialize(
 void CompleteArrayType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_collection_flag;
+//TODO(jlbueno): XTypes    dcdr >> m_collection_flag;
     dcdr >> m_header;
     dcdr >> m_element;
 }
@@ -4466,7 +4466,7 @@ size_t MinimalArrayType::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
     current_alignment += MinimalArrayHeader::getCdrSerializedSize(data.header(), current_alignment);
     current_alignment += MinimalCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
 
@@ -4476,7 +4476,7 @@ size_t MinimalArrayType::getCdrSerializedSize(
 void MinimalArrayType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_collection_flag;
+//TODO(jlbueno): XTypes    scdr << m_collection_flag;
     scdr << m_header;
     scdr << m_element;
 }
@@ -4484,7 +4484,7 @@ void MinimalArrayType::serialize(
 void MinimalArrayType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_collection_flag;
+//TODO(jlbueno): XTypes    dcdr >> m_collection_flag;
     dcdr >> m_header;
     dcdr >> m_element;
 }
@@ -4560,7 +4560,7 @@ size_t CompleteMapType::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
     current_alignment += CompleteCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
     current_alignment += CompleteCollectionElement::getCdrSerializedSize(data.key(), current_alignment);
     current_alignment += CompleteCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
@@ -4571,7 +4571,7 @@ size_t CompleteMapType::getCdrSerializedSize(
 void CompleteMapType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_collection_flag;
+//TODO(jlbueno): XTypes    scdr << m_collection_flag;
     scdr << m_header;
     scdr << m_key;
     scdr << m_element;
@@ -4580,7 +4580,7 @@ void CompleteMapType::serialize(
 void CompleteMapType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_collection_flag;
+//TODO(jlbueno): XTypes    dcdr >> m_collection_flag;
     dcdr >> m_header;
     dcdr >> m_key;
     dcdr >> m_element;
@@ -4659,7 +4659,7 @@ size_t MinimalMapType::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
     current_alignment += MinimalCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
     current_alignment += MinimalCollectionElement::getCdrSerializedSize(data.key(), current_alignment);
     current_alignment += MinimalCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
@@ -4670,7 +4670,7 @@ size_t MinimalMapType::getCdrSerializedSize(
 void MinimalMapType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_collection_flag;
+//TODO(jlbueno): XTypes    scdr << m_collection_flag;
     scdr << m_header;
     scdr << m_key;
     scdr << m_element;
@@ -4679,7 +4679,7 @@ void MinimalMapType::serialize(
 void MinimalMapType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_collection_flag;
+//TODO(jlbueno): XTypes    dcdr >> m_collection_flag;
     dcdr >> m_header;
     dcdr >> m_key;
     dcdr >> m_element;
@@ -4751,7 +4751,7 @@ size_t CommonEnumeratedLiteral::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += EnumeratedLiteralFlag::getCdrSerializedSize(data.flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += EnumeratedLiteralFlag::getCdrSerializedSize(data.flags(), current_alignment);
 
     return current_alignment - initial_alignment;
 }
@@ -4760,14 +4760,14 @@ void CommonEnumeratedLiteral::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_value;
-    scdr << m_flags;
+//TODO(jlbueno): XTypes    scdr << m_flags;
 }
 
 void CommonEnumeratedLiteral::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_value;
-    dcdr >> m_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_flags;
 }
 
 bool CommonEnumeratedLiteral::operator ==(
@@ -5229,7 +5229,7 @@ size_t CompleteEnumeratedType::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += EnumTypeFlag::getCdrSerializedSize(data.enum_flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += EnumTypeFlag::getCdrSerializedSize(data.enum_flags(), current_alignment);
     current_alignment += CompleteEnumeratedHeader::getCdrSerializedSize(data.header(), current_alignment);
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
@@ -5246,7 +5246,7 @@ size_t CompleteEnumeratedType::getCdrSerializedSize(
 void CompleteEnumeratedType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_enum_flags;
+//TODO(jlbueno): XTypes    scdr << m_enum_flags;
     scdr << m_header;
     scdr << m_literal_seq;
 }
@@ -5254,7 +5254,7 @@ void CompleteEnumeratedType::serialize(
 void CompleteEnumeratedType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_enum_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_enum_flags;
     dcdr >> m_header;
     dcdr >> m_literal_seq;
 }
@@ -5388,7 +5388,7 @@ size_t MinimalEnumeratedType::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += EnumTypeFlag::getCdrSerializedSize(data.enum_flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += EnumTypeFlag::getCdrSerializedSize(data.enum_flags(), current_alignment);
     current_alignment += MinimalEnumeratedHeader::getCdrSerializedSize(data.header(), current_alignment);
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
@@ -5404,7 +5404,7 @@ size_t MinimalEnumeratedType::getCdrSerializedSize(
 void MinimalEnumeratedType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_enum_flags;
+//TODO(jlbueno): XTypes    scdr << m_enum_flags;
     scdr << m_header;
     scdr << m_literal_seq;
 }
@@ -5412,7 +5412,7 @@ void MinimalEnumeratedType::serialize(
 void MinimalEnumeratedType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_enum_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_enum_flags;
     dcdr >> m_header;
     dcdr >> m_literal_seq;
 }
@@ -5543,7 +5543,7 @@ size_t CommonBitflag::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-    current_alignment += BitflagFlag::getCdrSerializedSize(data.flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += BitflagFlag::getCdrSerializedSize(data.flags(), current_alignment);
 
     return current_alignment - initial_alignment;
 }
@@ -5552,14 +5552,14 @@ void CommonBitflag::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_position;
-    scdr << m_flags;
+//TODO(jlbueno): XTypes    scdr << m_flags;
 }
 
 void CommonBitflag::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_position;
-    dcdr >> m_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_flags;
 }
 
 bool CommonBitflag::operator ==(
@@ -5866,7 +5866,7 @@ size_t CompleteBitmaskType::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += BitmaskTypeFlag::getCdrSerializedSize(data.bitmask_flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += BitmaskTypeFlag::getCdrSerializedSize(data.bitmask_flags(), current_alignment);
     current_alignment += CompleteBitmaskHeader::getCdrSerializedSize(data.header(), current_alignment);
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
@@ -5881,7 +5881,7 @@ size_t CompleteBitmaskType::getCdrSerializedSize(
 void CompleteBitmaskType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_bitmask_flags;
+//TODO(jlbueno): XTypes    scdr << m_bitmask_flags;
     scdr << m_header;
     scdr << m_flag_seq;
 }
@@ -5889,7 +5889,7 @@ void CompleteBitmaskType::serialize(
 void CompleteBitmaskType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_bitmask_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_bitmask_flags;
     dcdr >> m_header;
     dcdr >> m_flag_seq;
 }
@@ -6023,7 +6023,7 @@ size_t MinimalBitmaskType::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += BitmaskTypeFlag::getCdrSerializedSize(data.bitmask_flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += BitmaskTypeFlag::getCdrSerializedSize(data.bitmask_flags(), current_alignment);
     current_alignment += MinimalBitmaskHeader::getCdrSerializedSize(data.header(), current_alignment);
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
@@ -6038,7 +6038,7 @@ size_t MinimalBitmaskType::getCdrSerializedSize(
 void MinimalBitmaskType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_bitmask_flags;
+//TODO(jlbueno): XTypes    scdr << m_bitmask_flags;
     scdr << m_header;
     scdr << m_flag_seq;
 }
@@ -6046,7 +6046,7 @@ void MinimalBitmaskType::serialize(
 void MinimalBitmaskType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_bitmask_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_bitmask_flags;
     dcdr >> m_header;
     dcdr >> m_flag_seq;
 }
@@ -6185,7 +6185,7 @@ size_t CommonBitfield::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-    current_alignment += BitsetMemberFlag::getCdrSerializedSize(data.flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += BitsetMemberFlag::getCdrSerializedSize(data.flags(), current_alignment);
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
@@ -6196,7 +6196,7 @@ void CommonBitfield::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_position;
-    scdr << m_flags;
+//TODO(jlbueno): XTypes    scdr << m_flags;
     scdr << m_bitcount;
     scdr << m_holder_type;
 }
@@ -6205,7 +6205,7 @@ void CommonBitfield::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_position;
-    dcdr >> m_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_flags;
     dcdr >> m_bitcount;
     dcdr >> m_holder_type;
 }
@@ -6599,7 +6599,7 @@ size_t CompleteBitsetType::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += BitsetTypeFlag::getCdrSerializedSize(data.bitset_flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += BitsetTypeFlag::getCdrSerializedSize(data.bitset_flags(), current_alignment);
     current_alignment += CompleteBitsetHeader::getCdrSerializedSize(data.header(), current_alignment);
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
@@ -6614,7 +6614,7 @@ size_t CompleteBitsetType::getCdrSerializedSize(
 void CompleteBitsetType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_bitset_flags;
+//TODO(jlbueno): XTypes    scdr << m_bitset_flags;
     scdr << m_header;
     scdr << m_field_seq;
 }
@@ -6622,7 +6622,7 @@ void CompleteBitsetType::serialize(
 void CompleteBitsetType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_bitset_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_bitset_flags;
     dcdr >> m_header;
     dcdr >> m_field_seq;
 }
@@ -6756,7 +6756,7 @@ size_t MinimalBitsetType::getCdrSerializedSize(
 {
     size_t initial_alignment = current_alignment;
 
-    current_alignment += BitsetTypeFlag::getCdrSerializedSize(data.bitset_flags(), current_alignment);
+//TODO(jlbueno): XTypes    current_alignment += BitsetTypeFlag::getCdrSerializedSize(data.bitset_flags(), current_alignment);
     current_alignment += MinimalBitsetHeader::getCdrSerializedSize(data.header(), current_alignment);
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
@@ -6771,7 +6771,7 @@ size_t MinimalBitsetType::getCdrSerializedSize(
 void MinimalBitsetType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_bitset_flags;
+//TODO(jlbueno): XTypes    scdr << m_bitset_flags;
     scdr << m_header;
     scdr << m_field_seq;
 }
@@ -6779,7 +6779,7 @@ void MinimalBitsetType::serialize(
 void MinimalBitsetType::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_bitset_flags;
+//TODO(jlbueno): XTypes    dcdr >> m_bitset_flags;
     dcdr >> m_header;
     dcdr >> m_field_seq;
 }
