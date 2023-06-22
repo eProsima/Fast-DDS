@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "XTypesBase.idl"
+#include "TypeIdentifier.idl"
 
 module eprosima {
 module fastrtps {
