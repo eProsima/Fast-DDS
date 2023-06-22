@@ -1868,7 +1868,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             const TypeIdentifier* aux =
                     get_stored_type_identifier(&object->complete().alias_type().body().common().related_type());
             descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
-            descriptor.set_name(object->complete().alias_type().header().detail().type_name());
+//TODO(jlbueno): XTypes            descriptor.set_name(object->complete().alias_type().header().detail().type_name());
             DynamicTypeBuilder_ptr alias_type =
                     DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
 
@@ -1906,7 +1906,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 memDesc.id_ = member->common().member_id();
                 memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
                 //memDesc.set_index(order++);
-                memDesc.set_name(member->detail().name());
+//TODO(jlbueno): XTypes                memDesc.set_name(member->detail().name());
                 struct_type->add_member(&memDesc);
                 apply_member_annotations(struct_type, member->common().member_id(), member->detail().ann_custom());
             }
@@ -1950,7 +1950,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             const CompleteEnumeratedLiteralSeq& enumVector = object->complete().enumerated_type().literal_seq();
             for (auto member = enumVector.begin(); member != enumVector.end(); ++member)
             {
-                enum_type->add_empty_member(member->common().value(), member->detail().name());
+//TODO(jlbueno): XTypes                enum_type->add_empty_member(member->common().value(), member->detail().name());
                 apply_member_annotations(enum_type, member->common().value(), member->detail().ann_custom());
                 if (member->common().flags().IS_DEFAULT())
                 {
@@ -1977,10 +1977,10 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
             const CompleteBitflagSeq& seq = object->complete().bitmask_type().flag_seq();
             for (auto member = seq.begin(); member != seq.end(); ++member)
             {
-                bitmask_type->add_empty_member(member->common().position(), member->detail().name());
-                MemberId m_id = bitmask_type->get_member_id_by_name(member->detail().name());
+//TODO(jlbueno): XTypes                bitmask_type->add_empty_member(member->common().position(), member->detail().name());
+//TODO(jlbueno): XTypes                MemberId m_id = bitmask_type->get_member_id_by_name(member->detail().name());
                 // member->common().position() should be already an annotation
-                apply_member_annotations(bitmask_type, m_id, member->detail().ann_custom());
+//TODO(jlbueno): XTypes                apply_member_annotations(bitmask_type, m_id, member->detail().ann_custom());
             }
             return bitmask_type->build();
         }
@@ -2012,7 +2012,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 MemberDescriptor memDesc;
                 //memDesc.id_ = order++;
                 memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
-                memDesc.set_name(member->detail().name());
+//TODO(jlbueno): XTypes                memDesc.set_name(member->detail().name());
                 // bounds are meant for string, arrays, sequences, maps, but not for bitset!
                 // Lack in the standard?
                 bitsetType->add_member(&memDesc);
@@ -2051,7 +2051,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 memDesc.set_type(build_dynamic_type(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
                 //memDesc.set_index(order++);
                 memDesc.id_ = member->common().member_id();
-                memDesc.set_name(member->detail().name());
+//TODO(jlbueno): XTypes                memDesc.set_name(member->detail().name());
                 memDesc.set_default_union_value(member->common().member_flags().IS_DEFAULT());
                 if (descriptor.discriminator_type_->get_kind() == TK_ENUM)
                 {
@@ -2092,7 +2092,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 }
 
                 MemberDescriptor mem_desc;
-                mem_desc.set_name(member.name());
+//TODO(jlbueno): XTypes                mem_desc.set_name(member.name());
                 if (annotation_member_type != nullptr)
                 {
                     mem_desc.set_type(annotation_member_type);

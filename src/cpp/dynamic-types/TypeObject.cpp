@@ -182,7 +182,7 @@ size_t CompleteMemberDetail::getCdrSerializedSize(
 void CompleteMemberDetail::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_name;
+//TODO(jlbueno): XTypes    scdr << m_name;
     scdr << m_ann_builtin;
     scdr << m_ann_custom;
 }
@@ -190,7 +190,7 @@ void CompleteMemberDetail::serialize(
 void CompleteMemberDetail::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_name;
+//TODO(jlbueno): XTypes    dcdr >> m_name;
     dcdr >> m_ann_builtin;
     dcdr >> m_ann_custom;
 }
@@ -648,7 +648,7 @@ void CompleteTypeDetail::serialize(
 {
     scdr << m_ann_builtin;
     scdr << m_ann_custom;
-    scdr << m_type_name;
+//TODO(jlbueno): XTypes    scdr << m_type_name;
 }
 
 void CompleteTypeDetail::deserialize(
@@ -656,7 +656,7 @@ void CompleteTypeDetail::deserialize(
 {
     dcdr >> m_ann_builtin;
     dcdr >> m_ann_custom;
-    dcdr >> m_type_name;
+//TODO(jlbueno): XTypes    dcdr >> m_type_name;
 }
 
 bool CompleteTypeDetail::operator ==(
@@ -2322,7 +2322,7 @@ void CompleteAnnotationParameter::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_common;
-    scdr << m_name;
+//TODO(jlbueno): XTypes    scdr << m_name;
     scdr << m_default_value;
 }
 
@@ -2330,7 +2330,7 @@ void CompleteAnnotationParameter::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_common;
-    dcdr >> m_name;
+//TODO(jlbueno): XTypes    dcdr >> m_name;
     dcdr >> m_default_value;
 }
 
@@ -2412,7 +2412,7 @@ void MinimalAnnotationParameter::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_common;
-    scdr << m_name;
+//TODO(jlbueno): XTypes    scdr << m_name;
     scdr << m_default_value;
 }
 
@@ -2420,7 +2420,7 @@ void MinimalAnnotationParameter::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_common;
-    dcdr >> m_name;
+//TODO(jlbueno): XTypes    dcdr >> m_name;
     dcdr >> m_default_value;
 }
 
@@ -2492,13 +2492,13 @@ size_t CompleteAnnotationHeader::getCdrSerializedSize(
 void CompleteAnnotationHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
-    scdr << m_annotation_name;
+//TODO(jlbueno): XTypes    scdr << m_annotation_name;
 }
 
 void CompleteAnnotationHeader::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
-    dcdr >> m_annotation_name;
+//TODO(jlbueno): XTypes    dcdr >> m_annotation_name;
 }
 
 bool CompleteAnnotationHeader::operator ==(

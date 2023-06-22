@@ -25,6 +25,7 @@
 #include <vector>
 
 #include <fastdds/rtps/common/Types.h>
+#include <fastrtps/types/XTypesBase.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -109,74 +110,6 @@ const std::string TKNAME_BITSET = "bitset";
 const std::string TKNAME_SEQUENCE = "sequence";
 const std::string TKNAME_ARRAY = "array";
 const std::string TKNAME_MAP = "map";
-
-// ---------- Equivalence Kinds ------------------
-typedef octet EquivalenceKind;
-const octet EK_MINIMAL = 0xF1; // 0x1111 0001
-const octet EK_COMPLETE = 0xF2; // 0x1111 0010
-const octet EK_BOTH = 0xF3; // 0x1111 0011
-
-// ---------- TypeKinds (begin) ------------------
-typedef octet TypeKind;        // Primitive TKs
-
-const octet TK_NONE = 0x00;
-const octet TK_BOOLEAN = 0x01;
-const octet TK_BYTE = 0x02;
-const octet TK_INT16 = 0x03;
-const octet TK_INT32 = 0x04;
-const octet TK_INT64 = 0x05;
-const octet TK_UINT16 = 0x06;
-const octet TK_UINT32 = 0x07;
-const octet TK_UINT64 = 0x08;
-const octet TK_FLOAT32 = 0x09;
-const octet TK_FLOAT64 = 0x0A;
-const octet TK_FLOAT128 = 0x0B;
-const octet TK_CHAR8 = 0x10;
-const octet TK_CHAR16 = 0x11;
-
-// String TKs
-const octet TK_STRING8 = 0x20;
-const octet TK_STRING16 = 0x21;
-
-
-// Constructed/Named types
-const octet TK_ALIAS = 0x30;
-
-// Enumerated TKs
-const octet TK_ENUM = 0x40;
-const octet TK_BITMASK = 0x41;
-
-// Structured TKs
-const octet TK_ANNOTATION = 0x50;
-const octet TK_STRUCTURE = 0x51;
-const octet TK_UNION = 0x52;
-const octet TK_BITSET = 0x53;
-
-// Collection TKs
-const octet TK_SEQUENCE = 0x60;
-const octet TK_ARRAY = 0x61;
-const octet TK_MAP = 0x62;
-
-// ---------- TypeKinds (end) ------------------
-
-// The name of some element (e.g. type, type member, module)
-// Valid characters are alphanumeric plus the "_" cannot start with digit
-
-const int32_t MEMBER_NAME_MAX_LENGTH = 256;
-typedef std::string MemberName;
-
-// Qualified type name includes the name of containing modules
-// using "::" as separator. No leading "::". E.g. "MyModule::MyType"
-const int32_t TYPE_NAME_MAX_LENGTH = 256;
-typedef std::string QualifiedTypeName;
-
-// Every type has an ID. Those of the primitive types are pre-defined.
-typedef octet PrimitiveTypeId;
-
-// First 4 bytes of MD5 of of a member name converted to bytes
-// using UTF-8 encoding and without a 'nul' terminator.
-// Example: the member name "color" has NameHash {0x70, 0xDD, 0xA5, 0xDF}
-typedef std::array<uint8_t, 4> NameHash;
 
 // Mask used to remove the flags that do no affect assignability
 // Selects  T1, T2, O, M, K, D
@@ -277,16 +210,6 @@ typedef uint32_t MemberId;
 const int32_t MAX_BITMASK_LENGTH = 64;
 const int32_t MAX_ELEMENTS_COUNT = 100;
 const int32_t MAX_STRING_LENGTH = 255;
-
-// Long Bound of a collection type
-typedef uint32_t LBound;
-typedef std::vector<LBound> LBoundSeq;
-const LBound INVALID_LBOUND = 0;
-
-// Short Bound of a collection type
-typedef octet SBound;
-typedef std::vector<SBound> SBoundSeq;
-const SBound INVALID_SBOUND = 0;
 
 // Auxiliar function to compare sequences (std::vector)
 template<class T>

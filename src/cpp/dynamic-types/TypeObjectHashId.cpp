@@ -52,7 +52,7 @@ TypeObjectHashId::TypeObjectHashId(const TypeObjectHashId &x)
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-            memcpy(m_hash, x.m_hash, 14);
+//TODO(jlbueno): XTypes            memcpy(m_hash, x.m_hash, 14);
             break;
         default:
             break;
@@ -67,7 +67,7 @@ TypeObjectHashId::TypeObjectHashId(TypeObjectHashId &&x)
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-            memcpy(m_hash, x.m_hash, 14);
+//TODO(jlbueno): XTypes            memcpy(m_hash, x.m_hash, 14);
             break;
         default:
             break;
@@ -82,7 +82,7 @@ TypeObjectHashId& TypeObjectHashId::operator=(const TypeObjectHashId &x)
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-            memcpy(m_hash, x.m_hash, 14);
+//TODO(jlbueno): XTypes            memcpy(m_hash, x.m_hash, 14);
             break;
         default:
             break;
@@ -99,7 +99,7 @@ TypeObjectHashId& TypeObjectHashId::operator=(TypeObjectHashId &&x)
     {
         case EK_COMPLETE:
         case EK_MINIMAL:
-            memcpy(m_hash, x.m_hash, 14);
+//TODO(jlbueno): XTypes            memcpy(m_hash, x.m_hash, 14);
             break;
         default:
             break;
@@ -146,13 +146,13 @@ uint8_t& TypeObjectHashId::_d()
 
 void TypeObjectHashId::hash(const EquivalenceHash &_hash)
 {
-    memcpy(m_hash, _hash, 14);
+//TODO(jlbueno): XTypes    memcpy(m_hash, _hash, 14);
     m__d = EK_COMPLETE;
 }
 
 void TypeObjectHashId::hash(EquivalenceHash &&_hash)
 {
-    memcpy(m_hash, _hash, 14);
+//TODO(jlbueno): XTypes    memcpy(m_hash, _hash, 14);
     m__d = EK_COMPLETE;
 }
 

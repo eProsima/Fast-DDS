@@ -838,12 +838,14 @@ StronglyConnectedComponentId& TypeIdentifier::sc_component_id()
     return m_sc_component_id;
 }
 
+/*
 void TypeIdentifier::equivalence_hash(
         EquivalenceHash _equivalence_hash)
 {
     memcpy(m_equivalence_hash, _equivalence_hash, 14);
     m__d = EK_COMPLETE;
 }
+*/
 
 const octet* TypeIdentifier::equivalence_hash() const
 {

@@ -1745,9 +1745,12 @@ bool StronglyConnectedComponentId::consistent(const StronglyConnectedComponentId
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     // TODO It is neccessary apply some TypeConsistencyEnforcementQosPolicy?
+//TODO(jlbueno): XTypes
+/*
     return std::memcmp(m_sc_component_id.hash(), x.m_sc_component_id.hash(), 14) == 0
         && m_scc_index == x.m_scc_index
         && m_scc_length == x.m_scc_length;
+*/
 }
 
 ExtendedTypeDefn::ExtendedTypeDefn()

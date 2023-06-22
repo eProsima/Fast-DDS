@@ -42,10 +42,6 @@ namespace fastrtps {
 
 namespace types {
 
-// First 14 bytes of MD5 of the serialized TypeObject using XCDR
-// version 2 with Little Endian encoding
-typedef octet EquivalenceHash[14];
-
 /*!
  * @brief This class represents the union TypeObjectHashId defined by the user in the IDL file.
  * @ingroup TYPEOBJECTHASHID
