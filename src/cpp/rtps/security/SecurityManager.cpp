@@ -348,8 +348,24 @@ bool SecurityManager::init(
                     // Should be activated here, to enable encription buffer on created entities
                     throw true;
                 }
+                else
+                {
+                    if (access_plugin_ != nullptr && local_permissions_handle_ == nullptr)
+                    {
+                        EPROSIMA_LOG_ERROR(SECURITY, "Participant is not allowed with its own permissions file.");
+                    }
+
+                    if (crypto_plugin_ != nullptr && local_participant_crypto_handle_ == nullptr)
+                    {
+                        EPROSIMA_LOG_ERROR(SECURITY, "Participant cryptography could not be configured.");
+                    }
+                }
             }
 
+            // NOTE: This makes Participant creation fails, in some occasions without any info of what happened.
+            // However, it has been decided to leave it this way.
+            // For future developers struggling with security debugging issues, remember that the exception variable
+            // at this point has relevant information.
             throw false;
         }
         else
