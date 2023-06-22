@@ -80,19 +80,24 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
         {
             case TypeLookup_getTypes_Hash:
             {
-                const TypeLookup_getTypes_Out types = reply.return_value.getType().result();
-                for (auto pair : types.types)
+                auto rtps_participant = tlm_->get_RTPS_participant();
+                auto listener = rtps_participant->getListener();
+                if (nullptr != listener)
                 {
-                    if (pair.type_object()._d() == EK_COMPLETE) // Just in case
+                    const TypeLookup_getTypes_Out types = reply.return_value.getType().result();
+                    for (auto pair : types.types)
                     {
-                        // If build_dynamic_type failed, just sent the nullptr already contained on it.
-                        tlm_->participant_->getListener()->on_type_discovery(
-                            tlm_->participant_->getUserRTPSParticipant(),
-                            reply.header.requestId,
-                            "", // No topic_name available
-                            &pair.type_identifier(),
-                            &pair.type_object(),
-                            DynamicType_ptr(nullptr));
+                        if (pair.type_object()._d() == EK_COMPLETE) // Just in case
+                        {
+                            // If build_dynamic_type failed, just sent the nullptr already contained on it.
+                            listener->on_type_discovery(
+                                rtps_participant->getUserRTPSParticipant(),
+                                reply.header.requestId,
+                                "", // No topic_name available
+                                &pair.type_identifier(),
+                                &pair.type_object(),
+                                DynamicType_ptr(nullptr));
+                        }
                     }
                 }
                 // TODO Call a callback once the job is done
@@ -103,10 +108,15 @@ void TypeLookupReplyListener::onNewCacheChangeAdded(
                 //const TypeLookup_getTypeDependencies_Out dependencies =
                 //    reply.return_value.getTypeDependencies().result();
 
-                tlm_->get_RTPS_participant()->getListener()->on_type_dependencies_reply(
-                    tlm_->builtin_protocols_->mp_participantImpl->getUserRTPSParticipant(),
-                    reply.header.requestId,
-                    reply.return_value.getTypeDependencies().result().dependent_typeids);
+                auto rtps_participant = tlm_->get_RTPS_participant();
+                auto listener = rtps_participant->getListener();
+                if (nullptr != listener)
+                {
+                    listener->on_type_dependencies_reply(
+                        rtps_participant->getUserRTPSParticipant(),
+                        reply.header.requestId,
+                        reply.return_value.getTypeDependencies().result().dependent_typeids);
+                }
                 break;
             }
             default:
