@@ -1311,11 +1311,13 @@ TEST(BuiltinDataSerializationTests, null_checks)
 
         ASSERT_FALSE(CDRMessage::addData(nullptr, (octet*) &msg, msg_size));
         ASSERT_FALSE(CDRMessage::addData(&msg, nullptr, msg_size));
+        ASSERT_TRUE(CDRMessage::addData(&msg, nullptr, 0));
 
         // Test deserialization sanity checks
 
         ASSERT_FALSE(CDRMessage::readData(nullptr, (octet*) &msg, msg_size));
         ASSERT_FALSE(CDRMessage::readData(&msg, nullptr, msg_size));
+        ASSERT_TRUE(CDRMessage::readData(&msg, nullptr, 0));
     }
 }
 
