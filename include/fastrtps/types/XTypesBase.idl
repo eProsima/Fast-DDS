@@ -117,6 +117,58 @@ typedef octet SBound;
 typedef sequence<SBound> SBoundSeq;
 const SBound INVALID_SBOUND = 0;
 
+// Flags that apply to struct/union/collection/enum/bitmask/bitset
+// members/elements and DO affect type assignability
+// Depending on the flag it may not apply to members of all types
+// When not all, the applicable member types are listed
+@bit_bound(16)
+bitmask MemberFlag {
+    @position(0) TRY_CONSTRUCT1,        // T1 | 00 = INVALID, 01 = DISCARD
+    @position(1) TRY_CONSTRUCT2,        // T2 | 10 = USE_DEFAULT, 11 = TRIM
+    @position(2) IS_EXTERNAL,           // X StructMember, UnionMember,
+                                        // CollectionElement
+    @position(3) IS_OPTIONAL,           // O StructMember
+    @position(4) IS_MUST_UNDERSTAND,    // M StructMember
+    @position(5) IS_KEY,                // K StructMember, UnionDiscriminator
+    @position(6) IS_DEFAULT             // D UnionMember, EnumerationLiteral
+};
+typedef MemberFlag CollectionElementFlag;   // T1, T2, X
+typedef MemberFlag StructMemberFlag;        // T1, T2, O, M, K, X
+typedef MemberFlag UnionMemberFlag;         // T1, T2, D, X
+typedef MemberFlag UnionDiscriminatorFlag;  // T1, T2, K
+typedef MemberFlag EnumeratedLiteralFlag;   // D
+typedef MemberFlag AnnotationParameterFlag; // Unused. No flags apply
+typedef MemberFlag AliasMemberFlag;         // Unused. No flags apply
+typedef MemberFlag BitflagFlag;             // Unused. No flags apply
+typedef MemberFlag BitsetMemberFlag;        // Unused. No flags apply
+
+// Mask used to remove the flags that do no affect assignability
+// Selects  T1, T2, O, M, K, D
+const unsigned short MemberFlagMinimalMask = 0x003f;
+
+// Flags that apply to type declaration and DO affect assignability
+// Depending on the flag it may not apply to all types
+// When not all, the applicable types are listed
+@bit_bound(16)
+bitmask TypeFlag {
+    @position(0) IS_FINAL,      // F |
+    @position(1) IS_APPENDABLE, // A |- Struct, Union
+    @position(2) IS_MUTABLE,    // M |  (exactly one flag)
+    @position(3) IS_NESTED,     // N    Struct, Union
+    @position(4) IS_AUTOID_HASH // H    Struct
+};
+typedef TypeFlag StructTypeFlag;        // All flags apply
+typedef TypeFlag UnionTypeFlag;         // All flags apply
+typedef TypeFlag CollectionTypeFlag;    // Unused. No flags apply
+typedef TypeFlag AnnotationTypeFlag;    // Unused. No flags apply
+typedef TypeFlag AliasTypeFlag;         // Unused. No flags apply
+typedef TypeFlag EnumTypeFlag;          // Unused. No flags apply
+typedef TypeFlag BitmaskTypeFlag;       // Unused. No flags apply
+typedef TypeFlag BitsetTypeFlag;        // Unused. No flags apply
+
+// Mask used to remove the flags that do no affect assignability
+const unsigned short TypeFlagMinimalMask = 0x0007; // Selects M, A, F
+
 };
 };
 };
