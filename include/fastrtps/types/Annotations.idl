@@ -1,0 +1,114 @@
+// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#include "XTypesBase.idl"
+
+module eprosima {
+module fastrtps {
+module types {
+
+// --- Annotation usage: ----------------------------------------------
+
+// ID of a type member
+typedef unsigned long MemberId;
+const unsigned long ANNOTATION_STR_VALUE_MAX_LEN = 128;
+const unsigned long ANNOTATION_OCTETSEC_VALUE_MAX_LEN = 128;
+
+@extensibility(MUTABLE) @nested
+struct ExtendedAnnotationParameterValue {
+    // Empty. Available for future extension
+};
+
+/* Literal value of an annotation member: either the default value in its
+ * definition or the value applied in its usage.
+ */
+@extensibility(FINAL) @nested
+union AnnotationParameterValue switch (octet) {
+    case TK_BOOLEAN:
+        boolean             boolean_value;
+    case TK_BYTE:
+        octet               byte_value;
+    case TK_INT8:
+        int8                int8_value;
+    case TK_UINT8:
+        uint8               uint8_value;
+    case TK_INT16:
+        short               int16_value;
+    case TK_UINT16:
+        unsigned short      uint16_value;
+    case TK_INT32:
+        long                int32_value;
+    case TK_UINT32:
+        unsigned long       uint32_value;
+    case TK_INT64:
+        long long           int64_value;
+    case TK_UINT64:
+        unsigned long long  uint64_value;
+    case TK_FLOAT32:
+        float               float32_value;
+    case TK_FLOAT64:
+        double              float64_value;
+    case TK_FLOAT128:
+        long double         float128_value;
+    case TK_CHAR8:
+        char                char_value;
+    case TK_CHAR16:
+        wchar               wchar_value;
+    case TK_ENUM:
+        long                enumerated_value;
+    case TK_STRING8:
+        string<ANNOTATION_STR_VALUE_MAX_LEN>    string8_value;
+    case TK_STRING16:
+        wstring<ANNOTATION_STR_VALUE_MAX_LEN>   string16_value;
+    default:
+        ExtendedAnnotationParameterValue        extended_value;
+};
+
+// The application of an annotation to some type or type member
+@extensibility(APPENDABLE) @nested
+struct AppliedAnnotationParameter {
+    NameHash                    paramname_hash;
+    AnnotationParameterValue    value;
+};
+// Sorted by AppliedAnnotationParameter.paramname_hash
+typedef sequence<AppliedAnnotationParameter> AppliedAnnotationParameterSeq;
+
+@extensibility(APPENDABLE) @nested
+struct AppliedAnnotation {
+    TypeIdentifier                          annotation_typeid;
+    @optional AppliedAnnotationParameterSeq param_seq;
+};
+// Sorted by AppliedAnnotation.annotation_typeid
+typedef sequence<AppliedAnnotation> AppliedAnnotationSeq;
+
+// @verbatim(placement="<placement>", language="<lang>", text="<text>")
+@extensibility(FINAL) @nested
+struct AppliedVerbatimAnnotation {
+    string<32>  placement;
+    string<32>  language;
+    string      text;
+};
+
+// --- Aggregate types: ------------------------------------------------
+@extensibility(APPENDABLE) @nested
+struct AppliedBuiltinMemberAnnotations {
+    @optional string                    unit;       // @unit("<unit>")
+    @optional AnnotationParameterValue  min;        // @min , @range
+    @optional AnnotationParameterValue  max;        // @max , @range
+    @optional string                    hash_id;    // @hashid("<membername>")
+};
+
+};
+};
+};
