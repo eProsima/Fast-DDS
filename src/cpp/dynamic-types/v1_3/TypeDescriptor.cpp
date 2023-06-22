@@ -95,13 +95,13 @@ TypeDescriptor& TypeDescriptor::operator=(TypeDescriptor&& type) noexcept
 
 
 bool TypeDescriptor::operator==(
-        const TypeState& descriptor) const
+        const TypeDescriptor& descriptor) const noexcept
 {
     return TypeState(*this) == TypeState(descriptor);
 }
 
 bool TypeDescriptor::operator!=(
-        const TypeState& descriptor) const
+        const TypeDescriptor& descriptor) const noexcept
 {
     return !this->operator==(descriptor);
 }

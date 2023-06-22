@@ -30,18 +30,18 @@ class DynamicType;
 /**
  * TypeDescriptor definition according to [standard] section \b 7.5.2.4
  */
-class TypeDescriptor final
+class RTPS_DllAPI TypeDescriptor final
 {
     using str = eprosima::fastrtps::string_255;
 
-    str name_;                                    //!< Type Name.
-    TypeKind kind_ = TypeKind::TK_NONE;           //!< Type Kind.
-    DynamicType* base_type_ = nullptr;            //!< SuperType of an structure or base type of an alias type.
-    DynamicType* discriminator_type_ = nullptr;   //!< Discrimination type for a union.
-    uint32_t* bounds_ = nullptr;                  //!< Length for strings, arrays, sequences, maps and bitmasks.
-    uint32_t bounds_dims_ = 0u;                   //!< Number of dimensions associated to the bounds
-    DynamicType* element_type_ = nullptr;         //!< Value Type for arrays, sequences, maps, bitmasks.
-    DynamicType* key_element_type_ = nullptr;     //!< Key Type for maps.
+    str name_;                                          //!< Type Name.
+    TypeKind kind_ = TypeKind::TK_NONE;                 //!< Type Kind.
+    const DynamicType* base_type_ = nullptr;            //!< SuperType of an structure or base type of an alias type.
+    const DynamicType* discriminator_type_ = nullptr;   //!< Discrimination type for a union.
+    uint32_t* bounds_ = nullptr;                        //!< Length for strings, arrays, sequences, maps and bitmasks.
+    uint32_t bounds_dims_ = 0u;                         //!< Number of dimensions associated to the bounds
+    const DynamicType* element_type_ = nullptr;         //!< Value Type for arrays, sequences, maps, bitmasks.
+    const DynamicType* key_element_type_ = nullptr;     //!< Key Type for maps.
 
 public:
 
@@ -58,17 +58,17 @@ public:
     TypeDescriptor& operator=(TypeDescriptor&& type) noexcept;
 
     bool operator ==(
-            const TypeState& descriptor) const;
+            const TypeDescriptor& descriptor) const noexcept;
 
     bool operator !=(
-            const TypeState& descriptor) const;
+            const TypeDescriptor& descriptor) const noexcept;
 
     /**
      * Returns the fully qualified name of this type
      * @attention The returned value may not persist in time
      * @return const char* type name
      */
-    const char* get_name() const;
+    const char* get_name() const noexcept;
 
     /**
      * Modifies the underlying type name by copy
@@ -101,7 +101,7 @@ public:
      * @attention There is no ownership transference.
      */
     void set_base_type(
-            const DynamicType& type);
+            const DynamicType& type) noexcept;
 
     //! Clears the base type reference
     void reset_base_type() noexcept;
@@ -120,7 +120,7 @@ public:
      * @attention There is no ownership transference.
      */
     void set_discriminator_type(
-            const DynamicType& type);
+            const DynamicType& type) noexcept;
 
     //! Clears the discriminator type reference
     void reset_discriminator_type() noexcept;
@@ -139,7 +139,7 @@ public:
      * @attention There is no ownership transference.
      */
     void set_element_type(
-            const DynamicType& type);
+            const DynamicType& type) noexcept;
 
     //! Clears the element type reference
     void reset_element_type() noexcept;
@@ -158,7 +158,7 @@ public:
      * @attention There is no ownership transference.
      */
     void set_key_element_type(
-            const DynamicType& type);
+            const DynamicType& type) noexcept;
 
     //! Clears the key element type reference
     void reset_key_element_type() noexcept;
