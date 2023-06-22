@@ -12,7 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "XTypesBase.idl"
+// Fast DDS-Gen does not check if the IDL has been included previously.
+// #include "XTypesBase.idl"
+#include "TypeIdentifierTypes.idl"
 
 module eprosima {
 module fastrtps {
