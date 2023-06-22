@@ -1,0 +1,122 @@
+// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+module eprosima {
+module fastrtps {
+module types {
+
+// ---------- Equivalence Kinds -------------------
+typedef octet EquivalenceKind;
+const octet EK_MINIMAL      = 0xF1; // 0x1111 0001
+const octet EK_COMPLETE     = 0xF2; // 0x1111 0010
+const octet EK_BOTH         = 0xF3; // 0x1111 0011
+
+// ---------- TypeKinds (begin) -------------------
+typedef octet TypeKind;
+
+// Primitive TKs
+const octet TK_NONE         = 0x00;
+const octet TK_BOOLEAN      = 0x01;
+const octet TK_BYTE         = 0x02;
+const octet TK_INT16        = 0x03;
+const octet TK_INT32        = 0x04;
+const octet TK_INT64        = 0x05;
+const octet TK_UINT16       = 0x06;
+const octet TK_UINT32       = 0x07;
+const octet TK_UINT64       = 0x08;
+const octet TK_FLOAT32      = 0x09;
+const octet TK_FLOAT64      = 0x0A;
+const octet TK_FLOAT128     = 0x0B;
+const octet TK_INT8         = 0x0C;
+const octet TK_UINT8        = 0x0D;
+const octet TK_CHAR8        = 0x10;
+const octet TK_CHAR16       = 0x11;
+
+// String TKs
+const octet TK_STRING8      = 0x20;
+const octet TK_STRING16     = 0x21;
+
+// Constructed/Named types
+const octet TK_ALIAS        = 0x30;
+
+// Enumerated TKs
+const octet TK_ENUM         = 0x40;
+const octet TK_BITMASK      = 0x41;
+
+// Structured TKs
+const octet TK_ANNOTATION   = 0x50;
+const octet TK_STRUCTURE    = 0x51;
+const octet TK_UNION        = 0x52;
+const octet TK_BITSET       = 0x53;
+
+// Collection TKs
+const octet TK_SEQUENCE     = 0x60;
+const octet TK_ARRAY        = 0x61;
+const octet TK_MAP          = 0x62;
+// ---------- TypeKinds (end) -------------------
+
+// ---------- Extra TypeIdentifiers (begin) ------------
+typedef octet TypeIdentiferKind;
+const octet TI_STRING8_SMALL        = 0x70;
+const octet TI_STRING8_LARGE        = 0x71;
+const octet TI_STRING16_SMALL       = 0x72;
+const octet TI_STRING16_LARGE       = 0x73;
+
+const octet TI_PLAIN_SEQUENCE_SMALL = 0x80;
+const octet TI_PLAIN_SEQUENCE_LARGE = 0x81;
+
+const octet TI_PLAIN_ARRAY_SMALL    = 0x90;
+const octet TI_PLAIN_ARRAY_LARGE    = 0x91;
+
+const octet TI_PLAIN_MAP_SMALL      = 0xA0;
+const octet TI_PLAIN_MAP_LARGE      = 0xA1;
+
+const octet TI_STRONGLY_CONNECTED_COMPONENT = 0xB0;
+// ---------- Extra TypeIdentifiers (end) --------------
+
+// The name of some element (e.g. type, type member, module)
+// Valid characters are alphanumeric plus the "_" cannot start with digit
+const long MEMBER_NAME_MAX_LENGTH = 256;
+typedef string<MEMBER_NAME_MAX_LENGTH> MemberName;
+
+// Qualified type name includes the name of containing modules
+// using "::" as separator. No leading "::". E.g. "MyModule::MyType"
+const long TYPE_NAME_MAX_LENGTH = 256;
+typedef string<TYPE_NAME_MAX_LENGTH> QualifiedTypeName;
+
+// Every type has an ID. Those of the primitive types are pre-defined.
+typedef octet PrimitiveTypeId;
+
+// First 14 bytes of MD5 of the serialized TypeObject using XCDR
+// version 2 with Little Endian encoding
+typedef octet EquivalenceHash[14];
+
+// First 4 bytes of MD5 of of a member name converted to bytes
+// using UTF-8 encoding and without a 'nul' terminator.
+// Example: the member name "color" has NameHash {0x70, 0xDD, 0xA5, 0xDF}
+typedef octet NameHash[4];
+
+// Long Bound of a collection type
+typedef unsigned long LBound;
+typedef sequence<LBound> LBoundSeq;
+const LBound INVALID_LBOUND = 0;
+
+// Short Bound of a collection type
+typedef octet SBound;
+typedef sequence<SBound> SBoundSeq;
+const SBound INVALID_SBOUND = 0;
+
+};
+};
+};
