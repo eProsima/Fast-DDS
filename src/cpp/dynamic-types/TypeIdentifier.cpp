@@ -1397,35 +1397,35 @@ bool TypeIdentifier::consistent(
         case TI_STRING16_LARGE:
             if (_d() == TI_STRING8_SMALL && x._d() == TI_STRING8_SMALL)
             {
-                return this->string_sdefn().consistent(x.string_sdefn(), consistency);
+// TODO(jlbueno): XTypes                return this->string_sdefn().consistent(x.string_sdefn(), consistency);
             }
             else if (_d() == TI_STRING8_SMALL && x._d() == TI_STRING8_LARGE)
             {
-                return this->string_sdefn().consistent(x.string_ldefn(), consistency);
+// TODO(jlbueno): XTypes                return this->string_sdefn().consistent(x.string_ldefn(), consistency);
             }
             else if (_d() == TI_STRING16_SMALL && x._d() == TI_STRING16_SMALL)
             {
-                return this->string_sdefn().consistent(x.string_sdefn(), consistency);
+// TODO(jlbueno): XTypes                return this->string_sdefn().consistent(x.string_sdefn(), consistency);
             }
             else if (_d() == TI_STRING16_SMALL && x._d() == TI_STRING16_LARGE)
             {
-                return this->string_sdefn().consistent(x.string_ldefn(), consistency);
+// TODO(jlbueno): XTypes                return this->string_sdefn().consistent(x.string_ldefn(), consistency);
             }
             else if (_d() == TI_STRING8_LARGE && x._d() == TI_STRING8_SMALL)
             {
-                return this->string_ldefn().consistent(x.string_sdefn(), consistency);
+// TODO(jlbueno): XTypes                return this->string_ldefn().consistent(x.string_sdefn(), consistency);
             }
             else if (_d() == TI_STRING8_LARGE && x._d() == TI_STRING8_LARGE)
             {
-                return this->string_ldefn().consistent(x.string_ldefn(), consistency);
+// TODO(jlbueno): XTypes                return this->string_ldefn().consistent(x.string_ldefn(), consistency);
             }
             else if (_d() == TI_STRING16_LARGE && x._d() == TI_STRING16_SMALL)
             {
-                return this->string_ldefn().consistent(x.string_sdefn(), consistency);
+// TODO(jlbueno): XTypes                return this->string_ldefn().consistent(x.string_sdefn(), consistency);
             }
             else if (_d() == TI_STRING16_LARGE && x._d() == TI_STRING16_LARGE)
             {
-                return this->string_ldefn().consistent(x.string_ldefn(), consistency);
+// TODO(jlbueno): XTypes                return this->string_ldefn().consistent(x.string_ldefn(), consistency);
             }
             else
             {
@@ -1433,22 +1433,22 @@ bool TypeIdentifier::consistent(
             }
 
         case TI_PLAIN_SEQUENCE_SMALL:
-            return this->seq_sdefn().consistent(x.seq_sdefn(), consistency);
+// TODO(jlbueno): XTypes            return this->seq_sdefn().consistent(x.seq_sdefn(), consistency);
 
         case TI_PLAIN_SEQUENCE_LARGE:
-            return this->seq_ldefn().consistent(x.seq_ldefn(), consistency);
+// TODO(jlbueno): XTypes            return this->seq_ldefn().consistent(x.seq_ldefn(), consistency);
 
         case TI_PLAIN_ARRAY_SMALL:
-            return this->array_sdefn().consistent(x.array_sdefn(), consistency);
+// TODO(jlbueno): XTypes            return this->array_sdefn().consistent(x.array_sdefn(), consistency);
 
         case TI_PLAIN_ARRAY_LARGE:
-            return this->array_ldefn().consistent(x.array_ldefn(), consistency);
+// TODO(jlbueno): XTypes            return this->array_ldefn().consistent(x.array_ldefn(), consistency);
 
         case TI_PLAIN_MAP_SMALL:
-            return this->map_sdefn().consistent(x.map_sdefn(), consistency);
+// TODO(jlbueno): XTypes            return this->map_sdefn().consistent(x.map_sdefn(), consistency);
 
         case TI_PLAIN_MAP_LARGE:
-            return this->map_ldefn().consistent(x.map_ldefn(), consistency);
+// TODO(jlbueno): XTypes            return this->map_ldefn().consistent(x.map_ldefn(), consistency);
 
         case EK_MINIMAL:
         case EK_COMPLETE:

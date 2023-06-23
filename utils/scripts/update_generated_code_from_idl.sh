@@ -5,9 +5,6 @@ files_to_exclude=(
     './include/fastrtps/types/dds-language_binding.idl'
     './include/fastrtps/types/dds-xtypes_discovery.idl'
     './include/fastrtps/types/dds-xtypes_typeobject.idl'
-    './include/fastrtps/types/TypeIdentifier.idl'
-    './include/fastrtps/types/Annotations.idl'
-    './include/fastrtps/types/TypeIdentifierTypes.idl'
     )
 
 files_needing_typeobject=(
@@ -91,9 +88,14 @@ done
 # Move source files to src/cpp
 echo "Moving files to src/cpp. Please remember to update the include header path"
 mv ./include/fastrtps/types/TypeObjectHashId.cxx ./src/cpp/dynamic-types/TypeObjectHashId.cxx
+mv ./include/fastrtps/types/TypeIdentifierTypes.cxx ./src/cpp/dynamic-types/TypeIdentifierTypes.cxx
 
 # Remove unused files
 rm ./include/fastrtps/types/XTypesBase.cxx
+rm ./include/fastrtps/types/TypeIdentifierTypesPubSubTypes.cxx
+rm ./include/fastrtps/types/TypeIdentifierTypesPubSubTypes.h
+
+echo "Please, remember to keep changes related to non-supported @external annotation in TypeIdentifierTypes files"
 
 cd utils/scripts
 
