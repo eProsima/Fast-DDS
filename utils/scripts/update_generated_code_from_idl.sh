@@ -89,6 +89,7 @@ done
 echo "Moving files to src/cpp. Please remember to update the include header path"
 mv ./include/fastrtps/types/TypeObjectHashId.cxx ./src/cpp/dynamic-types/TypeObjectHashId.cxx
 mv ./include/fastrtps/types/TypeIdentifierTypes.cxx ./src/cpp/dynamic-types/TypeIdentifierTypes.cxx
+mv ./include/fastrtps/types/TypeIdentifier.cxx ./src/cpp/dynamic-types/TypeIdentifierTypes.cxx
 
 # Remove unused files
 rm ./include/fastrtps/types/XTypesBase.cxx

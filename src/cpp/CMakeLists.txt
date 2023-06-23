@@ -154,7 +154,7 @@ set(${PROJECT_NAME}_source_files
     dynamic-types/DynamicTypeMember.cpp
     dynamic-types/MemberDescriptor.cpp
     dynamic-types/TypeDescriptor.cpp
-    dynamic-types/TypeIdentifier.cpp
+    dynamic-types/TypeIdentifier.cxx
     dynamic-types/TypeIdentifierTypes.cxx
     dynamic-types/TypeObject.cpp
     dynamic-types/TypeObjectHashId.cxx

@@ -1684,10 +1684,10 @@ bool EDP::checkTypeIdentifier(
     coercion.m_force_type_validation = true;
     coercion.m_prevent_type_widening = true;
     coercion.m_ignore_sequence_bounds = false;
-    return wdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00) &&
+    return wdata->type_id().m_type_identifier._d() != static_cast<uint8_t>(0x00); /* TODO(jlbueno): XTypes &&
            wdata->type_id().m_type_identifier.consistent(
         //rdata->type_id().m_type_identifier, rdata->m_qos.type_consistency);
-        rdata->type_id().m_type_identifier, coercion);
+        rdata->type_id().m_type_identifier, coercion); */
 }
 
 bool EDP::hasTypeIdentifier(
@@ -1744,7 +1744,7 @@ bool EDP::checkTypeObject(
             coercion.m_prevent_type_widening = true;
             coercion.m_ignore_sequence_bounds = false;
             //return wtype->consistent(*rtype, rdata->m_qos.type_consistency);
-            return wtype->consistent(*rtype, coercion);
+// TODO(jlbueno): XTypes            return wtype->consistent(*rtype, coercion);
         }
 
         return false;

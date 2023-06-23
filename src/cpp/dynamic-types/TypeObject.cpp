@@ -113,8 +113,8 @@ bool CommonStructMember::consistent(
         const CommonStructMember& x,
         const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_member_id == x.m_member_id
-           && m_member_type_id.consistent(x.m_member_type_id, consistency);
+    return m_member_id == x.m_member_id;
+//TODO(jlbueno): XTypes           && m_member_type_id.consistent(x.m_member_type_id, consistency);
 }
 
 CompleteMemberDetail::CompleteMemberDetail()
@@ -759,8 +759,8 @@ bool CompleteStructHeader::consistent(
         const CompleteStructHeader& x,
         const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_detail.consistent(x.m_detail, consistency)
-           && m_base_type.consistent(x.m_base_type, consistency);
+    return m_detail.consistent(x.m_detail, consistency);
+//TODO(jlbueno): XTypes           && m_base_type.consistent(x.m_base_type, consistency);
 
 }
 
@@ -841,8 +841,8 @@ bool MinimalStructHeader::consistent(
         const MinimalStructHeader& x,
         const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_detail.consistent(x.m_detail, consistency)
-           && m_base_type.consistent(x.m_base_type, consistency);
+    return m_detail.consistent(x.m_detail, consistency);
+//TODO(jlbueno): XTypes           && m_base_type.consistent(x.m_base_type, consistency);
 
 }
 
@@ -1261,6 +1261,7 @@ bool CommonUnionMember::consistent(
 {
     if (m_member_id == x.m_member_id)
     {
+/* TODO(jlbueno): XTypes
         if (m_type_id.consistent(x.m_type_id, consistency))
         {
             if (m_label_seq.size() == x.m_label_seq.size())
@@ -1280,6 +1281,7 @@ bool CommonUnionMember::consistent(
             }
             return false; // different sizes
         }
+*/
     }
     return false; // MemberId or type inconsistent
 
@@ -1526,7 +1528,7 @@ bool CommonDiscriminatorMember::consistent(
         const CommonDiscriminatorMember& x,
         const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_type_id.consistent(x.m_type_id, consistency);
+// TODO(jlbueno): XTypes    return m_type_id.consistent(x.m_type_id, consistency);
 
 }
 
@@ -3487,7 +3489,7 @@ bool CommonCollectionElement::consistent(
         const CommonCollectionElement& x,
         const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
-    return m_type.consistent(x.m_type, consistency);
+// TODO(jlbueno): XTypes    return m_type.consistent(x.m_type, consistency);
 
 }
 

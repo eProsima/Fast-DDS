@@ -26,6 +26,12 @@ namespace eprosima {
 namespace fastcdr {
 class Cdr;
 }
+// TODO(jlbueno): XTypes. Previously defined in TypeIdentifier.h
+namespace fastdds {
+namespace dds {
+class TypeConsistencyEnforcementQosPolicy;
+}
+}
 }
 
 // The types in this file shall be serialized with XCDR encoding version 2
