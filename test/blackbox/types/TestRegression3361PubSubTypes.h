@@ -28,8 +28,6 @@
 
 #include "TestRegression3361.h"
 
-#include "TestIncludeRegression3361PubSubTypes.h"
-
 #if !defined(GEN_API_VER) || (GEN_API_VER != 1)
 #error \
     Generated TestRegression3361 is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
