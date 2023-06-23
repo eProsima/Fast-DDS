@@ -88,6 +88,10 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/automatic_liveliness_assertion.py
     ${CMAKE_CURRENT_BINARY_DIR}/automatic_liveliness_assertion.py COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/shm_communication_subscriber_dies_while_processing_message.py
     ${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message.py COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/best_effort_datawriter_shm.py
+    ${CMAKE_CURRENT_BINARY_DIR}/best_effort_datawriter_shm.py COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/best_effort_datawriter_udp.py
+    ${CMAKE_CURRENT_BINARY_DIR}/best_effort_datawriter_udp.py COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_besteffort_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/simple_besteffort_profile.xml COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_reliable_profile.xml
@@ -168,6 +172,10 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_secure_allow_unauthenticated_p
     ${CMAKE_CURRENT_BINARY_DIR}/simple_secure_allow_unauthenticated_pub_profile.xml COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_allow_unauthenticated_sub_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/simple_allow_unauthenticated_sub_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_besteffort_shm_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/simple_besteffort_shm_profile.xml COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_besteffort_udp_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/simple_besteffort_udp_profile.xml COPYONLY)
 
 if(SECURITY)
     configure_file(${PROJECT_SOURCE_DIR}/test/certs/maincacert.pem
@@ -198,7 +206,7 @@ endif()
 
 if(PYTHONINTERP_FOUND)
     add_test(NAME SimpleCommunicationBestEffort
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST="${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py" -P ${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake)
+        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py -P ${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake)
 
     # Set test with label NoMemoryCheck
     set_property(TEST SimpleCommunicationBestEffort PROPERTY LABELS "NoMemoryCheck")
@@ -641,6 +649,44 @@ if(PYTHONINTERP_FOUND)
     if(WIN32)
         string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
         set_property(TEST SHMCommunicationSubscriberDiesWhileProcessingMessage APPEND PROPERTY ENVIRONMENT
+            "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+    endif()
+
+    add_test(NAME SHMBestEffortDataWriter
+    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/best_effort_datawriter_shm.py)
+    #COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST="${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/best_effort_datawriter_shm.py" -P ${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake)
+
+    # Set test with label BestEffortDataWriter (related with readmine task #18950).
+    set_property(TEST SHMBestEffortDataWriter PROPERTY LABELS "BestEffortDataWriter")
+
+    set_property(TEST SHMBestEffortDataWriter PROPERTY ENVIRONMENT
+        "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
+    set_property(TEST SHMBestEffortDataWriter APPEND PROPERTY ENVIRONMENT
+        "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
+    set_property(TEST SHMBestEffortDataWriter APPEND PROPERTY ENVIRONMENT
+        "XML_FILE=simple_besteffort_shm_profile.xml")
+    if(WIN32)
+        string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+        set_property(TEST SHMBestEffortDataWriter APPEND PROPERTY ENVIRONMENT
+            "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
+    endif()
+
+    add_test(NAME UDPBestEffortDataWriter
+    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/best_effort_datawriter_udp.py)
+    #COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/best_effort_datawriter_udp.py -P ${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake)
+
+    # Set test with label BestEffortDataWriter (related with readmine task #18950).
+    set_property(TEST UDPBestEffortDataWriter PROPERTY LABELS "BestEffortDataWriter")
+
+    set_property(TEST UDPBestEffortDataWriter PROPERTY ENVIRONMENT
+        "SIMPLE_COMMUNICATION_PUBLISHER_BIN=$<TARGET_FILE:SimpleCommunicationPublisher>")
+    set_property(TEST UDPBestEffortDataWriter APPEND PROPERTY ENVIRONMENT
+        "SIMPLE_COMMUNICATION_SUBSCRIBER_BIN=$<TARGET_FILE:SimpleCommunicationSubscriber>")
+    set_property(TEST UDPBestEffortDataWriter APPEND PROPERTY ENVIRONMENT
+        "XML_FILE=simple_besteffort_udp_profile.xml")
+    if(WIN32)
+        string(REPLACE ";" "\\;" WIN_PATH "$ENV{PATH}")
+        set_property(TEST UDPBestEffortDataWriter APPEND PROPERTY ENVIRONMENT
             "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
     endif()
 
