@@ -224,3 +224,4 @@ void Topic::serializeKey(
 {
     (void) scdr;
 }
+

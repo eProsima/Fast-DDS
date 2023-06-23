@@ -31,7 +31,6 @@
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 1)
 #error \
-
     Generated ContentFilterTestType is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
@@ -40,7 +39,7 @@
 
 /*!
  * @brief This class represents the TopicDataType of the type StructType defined by the user in the IDL file.
- * @ingroup CONTENTFILTERTESTTYPE
+ * @ingroup ContentFilterTestType
  */
 class StructTypePubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -108,7 +107,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type ContentFilterTestType defined by the user in the IDL file.
- * @ingroup CONTENTFILTERTESTTYPE
+ * @ingroup ContentFilterTestType
  */
 class ContentFilterTestTypePubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -173,3 +172,4 @@ public:
 };
 
 #endif // _FAST_DDS_GENERATED_CONTENTFILTERTESTTYPE_PUBSUBTYPES_H_
+

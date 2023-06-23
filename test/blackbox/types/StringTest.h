@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(StringTest_SOURCE)
-#define StringTest_DllAPI __declspec( dllexport )
+#if defined(STRINGTEST_SOURCE)
+#define STRINGTEST_DllAPI __declspec( dllexport )
 #else
-#define StringTest_DllAPI __declspec( dllimport )
-#endif // StringTest_SOURCE
+#define STRINGTEST_DllAPI __declspec( dllimport )
+#endif // STRINGTEST_SOURCE
 #else
-#define StringTest_DllAPI
+#define STRINGTEST_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define StringTest_DllAPI
+#define STRINGTEST_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure StringTest defined by the user in the IDL file.
- * @ingroup STRINGTEST
+ * @ingroup StringTest
  */
 class StringTest
 {
@@ -213,3 +213,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_STRINGTEST_H_
+

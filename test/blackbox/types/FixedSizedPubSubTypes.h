@@ -31,11 +31,11 @@
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 1)
 #error \
-
     Generated FixedSized is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -62,9 +62,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type FixedSized defined by the user in the IDL file.
- * @ingroup FIXEDSIZED
+ * @ingroup FixedSized
  */
 class FixedSizedPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -135,3 +137,4 @@ private:
     }};
 
 #endif // _FAST_DDS_GENERATED_FIXEDSIZED_PUBSUBTYPES_H_
+

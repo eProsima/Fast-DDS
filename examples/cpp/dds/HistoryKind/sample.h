@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(sample_SOURCE)
-#define sample_DllAPI __declspec( dllexport )
+#if defined(SAMPLE_SOURCE)
+#define SAMPLE_DllAPI __declspec( dllexport )
 #else
-#define sample_DllAPI __declspec( dllimport )
-#endif // sample_SOURCE
+#define SAMPLE_DllAPI __declspec( dllimport )
+#endif // SAMPLE_SOURCE
 #else
-#define sample_DllAPI
+#define SAMPLE_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define sample_DllAPI
+#define SAMPLE_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure sample defined by the user in the IDL file.
- * @ingroup SAMPLE
+ * @ingroup sample
  */
 class sample
 {
@@ -227,3 +227,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_SAMPLE_H_
+

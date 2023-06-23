@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(types_SOURCE)
-#define types_DllAPI __declspec( dllexport )
+#if defined(TYPES_SOURCE)
+#define TYPES_DllAPI __declspec( dllexport )
 #else
-#define types_DllAPI __declspec( dllimport )
-#endif // types_SOURCE
+#define TYPES_DllAPI __declspec( dllimport )
+#endif // TYPES_SOURCE
 #else
-#define types_DllAPI
+#define TYPES_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define types_DllAPI
+#define TYPES_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -69,7 +69,7 @@ namespace eprosima {
             namespace detail {
                 /*!
                  * @brief This class represents the structure EntityId_s defined by the user in the IDL file.
-                 * @ingroup TYPES
+                 * @ingroup types
                  */
                 class EntityId_s
                 {
@@ -217,7 +217,7 @@ namespace eprosima {
                 };
                 /*!
                  * @brief This class represents the structure GuidPrefix_s defined by the user in the IDL file.
-                 * @ingroup TYPES
+                 * @ingroup types
                  */
                 class GuidPrefix_s
                 {
@@ -365,7 +365,7 @@ namespace eprosima {
                 };
                 /*!
                  * @brief This class represents the structure GUID_s defined by the user in the IDL file.
-                 * @ingroup TYPES
+                 * @ingroup types
                  */
                 class GUID_s
                 {
@@ -539,7 +539,7 @@ namespace eprosima {
                 };
                 /*!
                  * @brief This class represents the structure SequenceNumber_s defined by the user in the IDL file.
-                 * @ingroup TYPES
+                 * @ingroup types
                  */
                 class SequenceNumber_s
                 {
@@ -701,7 +701,7 @@ namespace eprosima {
                 };
                 /*!
                  * @brief This class represents the structure SampleIdentity_s defined by the user in the IDL file.
-                 * @ingroup TYPES
+                 * @ingroup types
                  */
                 class SampleIdentity_s
                 {
@@ -875,7 +875,7 @@ namespace eprosima {
                 };
                 /*!
                  * @brief This class represents the structure Locator_s defined by the user in the IDL file.
-                 * @ingroup TYPES
+                 * @ingroup types
                  */
                 class Locator_s
                 {
@@ -1064,7 +1064,7 @@ namespace eprosima {
             } // namespace detail
             /*!
              * @brief This class represents the structure DiscoveryTime defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class DiscoveryTime
             {
@@ -1336,7 +1336,7 @@ namespace eprosima {
             };
             /*!
              * @brief This class represents the structure EntityCount defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class EntityCount
             {
@@ -1504,7 +1504,7 @@ namespace eprosima {
             };
             /*!
              * @brief This class represents the structure SampleIdentityCount defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class SampleIdentityCount
             {
@@ -1672,7 +1672,7 @@ namespace eprosima {
             };
             /*!
              * @brief This class represents the structure Entity2LocatorTraffic defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class Entity2LocatorTraffic
             {
@@ -1906,7 +1906,7 @@ namespace eprosima {
             };
             /*!
              * @brief This class represents the structure WriterReaderData defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class WriterReaderData
             {
@@ -2100,7 +2100,7 @@ namespace eprosima {
             };
             /*!
              * @brief This class represents the structure Locator2LocatorData defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class Locator2LocatorData
             {
@@ -2294,7 +2294,7 @@ namespace eprosima {
             };
             /*!
              * @brief This class represents the structure EntityData defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class EntityData
             {
@@ -2462,7 +2462,7 @@ namespace eprosima {
             };
             /*!
              * @brief This class represents the structure PhysicalData defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class PhysicalData
             {
@@ -2688,7 +2688,7 @@ namespace eprosima {
             };
             /*!
              * @brief This class represents the bitmask EventKind defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             enum EventKind : uint32_t
             {
@@ -2712,7 +2712,7 @@ namespace eprosima {
             };
             /*!
              * @brief This class represents the union Data defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class Data
             {
@@ -3053,3 +3053,4 @@ namespace eprosima {
 } // namespace eprosima
 
 #endif // _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_STATISTICS_TYPES_H_
+

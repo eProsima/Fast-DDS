@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(OwnershipStrength_SOURCE)
-#define OwnershipStrength_DllAPI __declspec( dllexport )
+#if defined(OWNERSHIPSTRENGTH_SOURCE)
+#define OWNERSHIPSTRENGTH_DllAPI __declspec( dllexport )
 #else
-#define OwnershipStrength_DllAPI __declspec( dllimport )
-#endif // OwnershipStrength_SOURCE
+#define OWNERSHIPSTRENGTH_DllAPI __declspec( dllimport )
+#endif // OWNERSHIPSTRENGTH_SOURCE
 #else
-#define OwnershipStrength_DllAPI
+#define OWNERSHIPSTRENGTH_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define OwnershipStrength_DllAPI
+#define OWNERSHIPSTRENGTH_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure ExampleMessage defined by the user in the IDL file.
- * @ingroup OWNERSHIPSTRENGTH
+ * @ingroup OwnershipStrength
  */
 class ExampleMessage
 {
@@ -253,3 +253,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_OWNERSHIPSTRENGTH_H_
+

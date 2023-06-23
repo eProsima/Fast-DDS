@@ -271,6 +271,7 @@ void MyEnumStruct::serializeKey(
     (void) scdr;
 }
 
+
 MyBadEnumStruct::MyBadEnumStruct()
 {
     // MyBadEnum m_my_enum
@@ -563,6 +564,7 @@ void MyAliasEnumStruct::serializeKey(
     (void) scdr;
 }
 
+
 BasicStruct::BasicStruct()
 {
     // boolean m_my_bool
@@ -792,6 +794,7 @@ void BasicStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 BasicNamesStruct::BasicNamesStruct()
 {
@@ -1023,6 +1026,7 @@ void BasicNamesStruct::serializeKey(
     (void) scdr;
 }
 
+
 BasicBadStruct::BasicBadStruct()
 {
     // octet m_my_bool
@@ -1252,6 +1256,7 @@ void BasicBadStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 BasicWideStruct::BasicWideStruct()
 {
@@ -1571,6 +1576,7 @@ void BasicWideStruct::serializeKey(
     (void) scdr;
 }
 
+
 BadBasicWideStruct::BadBasicWideStruct()
 {
     // long m_new_int32
@@ -1889,6 +1895,7 @@ void BadBasicWideStruct::serializeKey(
     (void) scdr;
 }
 
+
 StringStruct::StringStruct()
 {
     // string m_my_string
@@ -2035,6 +2042,7 @@ void StringStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 LargeStringStruct::LargeStringStruct()
 {
@@ -2187,6 +2195,7 @@ void LargeStringStruct::serializeKey(
     (void) scdr;
 }
 
+
 WStringStruct::WStringStruct()
 {
     // wstring m_my_wstring
@@ -2335,6 +2344,7 @@ void WStringStruct::serializeKey(
     (void) scdr;
 }
 
+
 LargeWStringStruct::LargeWStringStruct()
 {
     // wstring m_my_large_wstring
@@ -2482,6 +2492,7 @@ void LargeWStringStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 ArrayStruct::ArrayStruct()
 {
@@ -2633,6 +2644,7 @@ void ArrayStruct::serializeKey(
     (void) scdr;
 }
 
+
 ArrayStructEqual::ArrayStructEqual()
 {
     // long m_my_array_equal
@@ -2782,6 +2794,7 @@ void ArrayStructEqual::serializeKey(
 {
     (void) scdr;
 }
+
 
 ArrayBadStruct::ArrayBadStruct()
 {
@@ -2933,6 +2946,7 @@ void ArrayBadStruct::serializeKey(
     (void) scdr;
 }
 
+
 ArrayDimensionsStruct::ArrayDimensionsStruct()
 {
     // long m_my_array
@@ -3083,6 +3097,7 @@ void ArrayDimensionsStruct::serializeKey(
     (void) scdr;
 }
 
+
 ArraySizeStruct::ArraySizeStruct()
 {
     // long m_my_array
@@ -3232,6 +3247,7 @@ void ArraySizeStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 SequenceStruct::SequenceStruct()
 {
@@ -3386,6 +3402,7 @@ void SequenceStruct::serializeKey(
     (void) scdr;
 }
 
+
 SequenceStructEqual::SequenceStructEqual()
 {
     // sequence<long, 2> m_my_sequence_equal
@@ -3538,6 +3555,7 @@ void SequenceStructEqual::serializeKey(
 {
     (void) scdr;
 }
+
 
 SequenceBadStruct::SequenceBadStruct()
 {
@@ -3692,6 +3710,7 @@ void SequenceBadStruct::serializeKey(
     (void) scdr;
 }
 
+
 SequenceBoundsStruct::SequenceBoundsStruct()
 {
     // sequence<long, 4> m_my_sequence
@@ -3844,6 +3863,7 @@ void SequenceBoundsStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 SequenceSequenceStruct::SequenceSequenceStruct()
 {
@@ -4004,6 +4024,7 @@ void SequenceSequenceStruct::serializeKey(
     (void) scdr;
 }
 
+
 SequenceSequenceBoundsStruct::SequenceSequenceBoundsStruct()
 {
     // sequence<sequence<long, 5>, 5> m_my_sequence_sequence
@@ -4163,6 +4184,7 @@ void SequenceSequenceBoundsStruct::serializeKey(
     (void) scdr;
 }
 
+
 MapStruct::MapStruct()
 {
     // map<long, long> m_my_map
@@ -4318,6 +4340,7 @@ void MapStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 MapStructEqual::MapStructEqual()
 {
@@ -4475,6 +4498,7 @@ void MapStructEqual::serializeKey(
     (void) scdr;
 }
 
+
 MapBadKeyStruct::MapBadKeyStruct()
 {
     // map<octet, long> m_my_map
@@ -4630,6 +4654,7 @@ void MapBadKeyStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 MapBadElemStruct::MapBadElemStruct()
 {
@@ -4787,6 +4812,7 @@ void MapBadElemStruct::serializeKey(
     (void) scdr;
 }
 
+
 MapBoundsStruct::MapBoundsStruct()
 {
     // map<long, long> m_my_map
@@ -4942,6 +4968,7 @@ void MapBoundsStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 MapMapStruct::MapMapStruct()
 {
@@ -5108,6 +5135,7 @@ void MapMapStruct::serializeKey(
     (void) scdr;
 }
 
+
 MapMapBoundsStruct::MapMapBoundsStruct()
 {
     // map<long, map<long, long>> m_my_map_map
@@ -5272,6 +5300,7 @@ void MapMapBoundsStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 SimpleUnion::SimpleUnion()
 {
@@ -7036,6 +7065,7 @@ void SimpleUnionStruct::serializeKey(
     (void) scdr;
 }
 
+
 SimpleUnionStructEqual::SimpleUnionStructEqual()
 {
     // SimpleUnion m_my_union_equal
@@ -7183,6 +7213,7 @@ void SimpleUnionStructEqual::serializeKey(
 {
     (void) scdr;
 }
+
 
 SimpleUnionNamesStruct::SimpleUnionNamesStruct()
 {
@@ -7332,6 +7363,7 @@ void SimpleUnionNamesStruct::serializeKey(
     (void) scdr;
 }
 
+
 SimpleTypeUnionStruct::SimpleTypeUnionStruct()
 {
     // SimpleTypeUnion m_my_union
@@ -7479,6 +7511,7 @@ void SimpleTypeUnionStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 SimpleBadUnionStruct::SimpleBadUnionStruct()
 {
@@ -7628,6 +7661,7 @@ void SimpleBadUnionStruct::serializeKey(
     (void) scdr;
 }
 
+
 SimplBadDiscUnionStruct::SimplBadDiscUnionStruct()
 {
     // SimpleBadDiscUnion m_my_union
@@ -7775,3 +7809,4 @@ void SimplBadDiscUnionStruct::serializeKey(
 {
     (void) scdr;
 }
+

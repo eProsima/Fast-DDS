@@ -45,16 +45,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(TestRegression3361_SOURCE)
-#define TestRegression3361_DllAPI __declspec( dllexport )
+#if defined(TESTREGRESSION3361_SOURCE)
+#define TESTREGRESSION3361_DllAPI __declspec( dllexport )
 #else
-#define TestRegression3361_DllAPI __declspec( dllimport )
-#endif // TestRegression3361_SOURCE
+#define TESTREGRESSION3361_DllAPI __declspec( dllimport )
+#endif // TESTREGRESSION3361_SOURCE
 #else
-#define TestRegression3361_DllAPI
+#define TESTREGRESSION3361_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define TestRegression3361_DllAPI
+#define TESTREGRESSION3361_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -66,7 +66,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure TestRegression3361 defined by the user in the IDL file.
- * @ingroup TESTREGRESSION3361
+ * @ingroup TestRegression3361
  */
 class TestRegression3361
 {
@@ -94,7 +94,7 @@ public:
      * @param x Reference to the object TestRegression3361 that will be copied.
      */
     eProsima_user_DllExport TestRegression3361(
-            TestRegression3361&& x);
+            TestRegression3361&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
@@ -108,7 +108,7 @@ public:
      * @param x Reference to the object TestRegression3361 that will be copied.
      */
     eProsima_user_DllExport TestRegression3361& operator =(
-            TestRegression3361&& x);
+            TestRegression3361&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
@@ -151,11 +151,11 @@ public:
     eProsima_user_DllExport TestModule::MACHINEID& uuid();
 
     /*!
-     * @brief This function returns the maximum serialized size of an object
-     * depending on the buffer alignment.
-     * @param current_alignment Buffer alignment.
-     * @return Maximum serialized size.
-     */
+    * @brief This function returns the maximum serialized size of an object
+    * depending on the buffer alignment.
+    * @param current_alignment Buffer alignment.
+    * @return Maximum serialized size.
+    */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
 
@@ -210,6 +210,8 @@ public:
 private:
 
     TestModule::MACHINEID m_uuid;
+
 };
 
 #endif // _FAST_DDS_GENERATED_TESTREGRESSION3361_H_
+

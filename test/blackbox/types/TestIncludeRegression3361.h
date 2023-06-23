@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(TestIncludeRegression3361_SOURCE)
-#define TestIncludeRegression3361_DllAPI __declspec( dllexport )
+#if defined(TESTINCLUDEREGRESSION3361_SOURCE)
+#define TESTINCLUDEREGRESSION3361_DllAPI __declspec( dllexport )
 #else
-#define TestIncludeRegression3361_DllAPI __declspec( dllimport )
-#endif // TestIncludeRegression3361_SOURCE
+#define TESTINCLUDEREGRESSION3361_DllAPI __declspec( dllimport )
+#endif // TESTINCLUDEREGRESSION3361_SOURCE
 #else
-#define TestIncludeRegression3361_DllAPI
+#define TESTINCLUDEREGRESSION3361_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define TestIncludeRegression3361_DllAPI
+#define TESTINCLUDEREGRESSION3361_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -64,7 +64,8 @@ class Cdr;
 
 
 namespace TestModule {
-typedef std::string MACHINEID;
+    typedef std::string MACHINEID;
 } // namespace TestModule
 
 #endif // _FAST_DDS_GENERATED_TESTINCLUDEREGRESSION3361_H_
+

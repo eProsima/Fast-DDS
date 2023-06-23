@@ -62,15 +62,15 @@ bool MyEnumStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -86,7 +86,7 @@ bool MyEnumStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         MyEnumStruct* p_type = static_cast<MyEnumStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -102,7 +102,7 @@ bool MyEnumStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -202,15 +202,15 @@ bool MyBadEnumStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -226,7 +226,7 @@ bool MyBadEnumStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         MyBadEnumStruct* p_type = static_cast<MyBadEnumStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -242,7 +242,7 @@ bool MyBadEnumStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -343,15 +343,15 @@ bool MyAliasEnumStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -367,7 +367,7 @@ bool MyAliasEnumStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         MyAliasEnumStruct* p_type = static_cast<MyAliasEnumStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -383,7 +383,7 @@ bool MyAliasEnumStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -483,15 +483,15 @@ bool BasicStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -507,7 +507,7 @@ bool BasicStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         BasicStruct* p_type = static_cast<BasicStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -523,7 +523,7 @@ bool BasicStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -623,15 +623,15 @@ bool BasicNamesStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -647,7 +647,7 @@ bool BasicNamesStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         BasicNamesStruct* p_type = static_cast<BasicNamesStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -663,7 +663,7 @@ bool BasicNamesStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -763,15 +763,15 @@ bool BasicBadStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -787,7 +787,7 @@ bool BasicBadStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         BasicBadStruct* p_type = static_cast<BasicBadStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -803,7 +803,7 @@ bool BasicBadStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -903,15 +903,15 @@ bool BasicWideStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -927,7 +927,7 @@ bool BasicWideStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         BasicWideStruct* p_type = static_cast<BasicWideStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -943,7 +943,7 @@ bool BasicWideStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -1043,15 +1043,15 @@ bool BadBasicWideStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -1067,7 +1067,7 @@ bool BadBasicWideStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         BadBasicWideStruct* p_type = static_cast<BadBasicWideStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -1083,7 +1083,7 @@ bool BadBasicWideStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -1183,15 +1183,15 @@ bool StringStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -1207,7 +1207,7 @@ bool StringStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         StringStruct* p_type = static_cast<StringStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -1223,7 +1223,7 @@ bool StringStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -1323,15 +1323,15 @@ bool LargeStringStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -1347,7 +1347,7 @@ bool LargeStringStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         LargeStringStruct* p_type = static_cast<LargeStringStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -1363,7 +1363,7 @@ bool LargeStringStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -1463,15 +1463,15 @@ bool WStringStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -1487,7 +1487,7 @@ bool WStringStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         WStringStruct* p_type = static_cast<WStringStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -1503,7 +1503,7 @@ bool WStringStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -1603,15 +1603,15 @@ bool LargeWStringStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -1627,7 +1627,7 @@ bool LargeWStringStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         LargeWStringStruct* p_type = static_cast<LargeWStringStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -1643,7 +1643,7 @@ bool LargeWStringStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -1743,15 +1743,15 @@ bool ArrayStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -1767,7 +1767,7 @@ bool ArrayStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         ArrayStruct* p_type = static_cast<ArrayStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -1783,7 +1783,7 @@ bool ArrayStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -1883,15 +1883,15 @@ bool ArrayStructEqualPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -1907,7 +1907,7 @@ bool ArrayStructEqualPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         ArrayStructEqual* p_type = static_cast<ArrayStructEqual*>(data);
 
         // Object that manages the raw buffer.
@@ -1923,7 +1923,7 @@ bool ArrayStructEqualPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -2023,15 +2023,15 @@ bool ArrayBadStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -2047,7 +2047,7 @@ bool ArrayBadStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         ArrayBadStruct* p_type = static_cast<ArrayBadStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -2063,7 +2063,7 @@ bool ArrayBadStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -2163,15 +2163,15 @@ bool ArrayDimensionsStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -2187,7 +2187,7 @@ bool ArrayDimensionsStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         ArrayDimensionsStruct* p_type = static_cast<ArrayDimensionsStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -2203,7 +2203,7 @@ bool ArrayDimensionsStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -2303,15 +2303,15 @@ bool ArraySizeStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -2327,7 +2327,7 @@ bool ArraySizeStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         ArraySizeStruct* p_type = static_cast<ArraySizeStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -2343,7 +2343,7 @@ bool ArraySizeStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -2443,15 +2443,15 @@ bool SequenceStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -2467,7 +2467,7 @@ bool SequenceStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         SequenceStruct* p_type = static_cast<SequenceStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -2483,7 +2483,7 @@ bool SequenceStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -2583,15 +2583,15 @@ bool SequenceStructEqualPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -2607,7 +2607,7 @@ bool SequenceStructEqualPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         SequenceStructEqual* p_type = static_cast<SequenceStructEqual*>(data);
 
         // Object that manages the raw buffer.
@@ -2623,7 +2623,7 @@ bool SequenceStructEqualPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -2723,15 +2723,15 @@ bool SequenceBadStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -2747,7 +2747,7 @@ bool SequenceBadStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         SequenceBadStruct* p_type = static_cast<SequenceBadStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -2763,7 +2763,7 @@ bool SequenceBadStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -2863,15 +2863,15 @@ bool SequenceBoundsStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -2887,7 +2887,7 @@ bool SequenceBoundsStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         SequenceBoundsStruct* p_type = static_cast<SequenceBoundsStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -2903,7 +2903,7 @@ bool SequenceBoundsStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -3003,15 +3003,15 @@ bool SequenceSequenceStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -3027,7 +3027,7 @@ bool SequenceSequenceStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         SequenceSequenceStruct* p_type = static_cast<SequenceSequenceStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -3043,7 +3043,7 @@ bool SequenceSequenceStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -3143,15 +3143,15 @@ bool SequenceSequenceBoundsStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -3167,7 +3167,7 @@ bool SequenceSequenceBoundsStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         SequenceSequenceBoundsStruct* p_type = static_cast<SequenceSequenceBoundsStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -3183,7 +3183,7 @@ bool SequenceSequenceBoundsStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -3283,15 +3283,15 @@ bool MapStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -3307,7 +3307,7 @@ bool MapStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         MapStruct* p_type = static_cast<MapStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -3323,7 +3323,7 @@ bool MapStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -3423,15 +3423,15 @@ bool MapStructEqualPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -3447,7 +3447,7 @@ bool MapStructEqualPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         MapStructEqual* p_type = static_cast<MapStructEqual*>(data);
 
         // Object that manages the raw buffer.
@@ -3463,7 +3463,7 @@ bool MapStructEqualPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -3563,15 +3563,15 @@ bool MapBadKeyStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -3587,7 +3587,7 @@ bool MapBadKeyStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         MapBadKeyStruct* p_type = static_cast<MapBadKeyStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -3603,7 +3603,7 @@ bool MapBadKeyStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -3703,15 +3703,15 @@ bool MapBadElemStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -3727,7 +3727,7 @@ bool MapBadElemStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         MapBadElemStruct* p_type = static_cast<MapBadElemStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -3743,7 +3743,7 @@ bool MapBadElemStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -3843,15 +3843,15 @@ bool MapBoundsStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -3867,7 +3867,7 @@ bool MapBoundsStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         MapBoundsStruct* p_type = static_cast<MapBoundsStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -3883,7 +3883,7 @@ bool MapBoundsStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -3983,15 +3983,15 @@ bool MapMapStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -4007,7 +4007,7 @@ bool MapMapStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         MapMapStruct* p_type = static_cast<MapMapStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -4023,7 +4023,7 @@ bool MapMapStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -4123,15 +4123,15 @@ bool MapMapBoundsStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -4147,7 +4147,7 @@ bool MapMapBoundsStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         MapMapBoundsStruct* p_type = static_cast<MapMapBoundsStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -4163,7 +4163,7 @@ bool MapMapBoundsStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -4268,15 +4268,15 @@ bool SimpleUnionStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -4292,7 +4292,7 @@ bool SimpleUnionStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         SimpleUnionStruct* p_type = static_cast<SimpleUnionStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -4308,7 +4308,7 @@ bool SimpleUnionStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -4408,15 +4408,15 @@ bool SimpleUnionStructEqualPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -4432,7 +4432,7 @@ bool SimpleUnionStructEqualPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         SimpleUnionStructEqual* p_type = static_cast<SimpleUnionStructEqual*>(data);
 
         // Object that manages the raw buffer.
@@ -4448,7 +4448,7 @@ bool SimpleUnionStructEqualPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -4548,15 +4548,15 @@ bool SimpleUnionNamesStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -4572,7 +4572,7 @@ bool SimpleUnionNamesStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         SimpleUnionNamesStruct* p_type = static_cast<SimpleUnionNamesStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -4588,7 +4588,7 @@ bool SimpleUnionNamesStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -4688,15 +4688,15 @@ bool SimpleTypeUnionStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -4712,7 +4712,7 @@ bool SimpleTypeUnionStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         SimpleTypeUnionStruct* p_type = static_cast<SimpleTypeUnionStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -4728,7 +4728,7 @@ bool SimpleTypeUnionStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -4828,15 +4828,15 @@ bool SimpleBadUnionStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -4852,7 +4852,7 @@ bool SimpleBadUnionStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         SimpleBadUnionStruct* p_type = static_cast<SimpleBadUnionStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -4868,7 +4868,7 @@ bool SimpleBadUnionStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -4968,15 +4968,15 @@ bool SimplBadDiscUnionStructPubSubType::serialize(
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-    // Serialize encapsulation
-    ser.serialize_encapsulation();
 
     try
     {
+        // Serialize encapsulation
+        ser.serialize_encapsulation();
         // Serialize the object.
         p_type->serialize(ser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }
@@ -4992,7 +4992,7 @@ bool SimplBadDiscUnionStructPubSubType::deserialize(
 {
     try
     {
-        //Convert DATA to pointer of your type
+        // Convert DATA to pointer of your type
         SimplBadDiscUnionStruct* p_type = static_cast<SimplBadDiscUnionStruct*>(data);
 
         // Object that manages the raw buffer.
@@ -5008,7 +5008,7 @@ bool SimplBadDiscUnionStructPubSubType::deserialize(
         // Deserialize the object.
         p_type->deserialize(deser);
     }
-    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
         return false;
     }

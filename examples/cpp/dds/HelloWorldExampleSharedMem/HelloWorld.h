@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(HelloWorld_SOURCE)
-#define HelloWorld_DllAPI __declspec( dllexport )
+#if defined(HELLOWORLD_SOURCE)
+#define HELLOWORLD_DllAPI __declspec( dllexport )
 #else
-#define HelloWorld_DllAPI __declspec( dllimport )
-#endif // HelloWorld_SOURCE
+#define HELLOWORLD_DllAPI __declspec( dllimport )
+#endif // HELLOWORLD_SOURCE
 #else
-#define HelloWorld_DllAPI
+#define HELLOWORLD_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define HelloWorld_DllAPI
+#define HELLOWORLD_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure HelloWorld defined by the user in the IDL file.
- * @ingroup HELLOWORLD
+ * @ingroup HelloWorld
  */
 class HelloWorld
 {
@@ -259,3 +259,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_HELLOWORLD_H_
+

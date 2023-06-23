@@ -26,6 +26,7 @@ namespace { char dummy; }
 
 #include "Basic.h"
 #include "BasicTypeObject.h"
+#include <mutex>
 #include <utility>
 #include <sstream>
 #include <fastrtps/rtps/common/SerializedPayload.h>
@@ -40,207 +41,211 @@ using namespace eprosima::fastrtps::rtps;
 
 void registerBasicTypes()
 {
-    TypeObjectFactory *factory = TypeObjectFactory::get_instance();
-    factory->add_type_object("MyEnum", GetMyEnumIdentifier(true),
-    GetMyEnumObject(true));
-    factory->add_type_object("MyEnum", GetMyEnumIdentifier(false),
-    GetMyEnumObject(false));
+    static std::once_flag once_flag;
+    std::call_once(once_flag, []()
+            {
+                TypeObjectFactory *factory = TypeObjectFactory::get_instance();
+                factory->add_type_object("MyEnum", GetMyEnumIdentifier(true),
+                GetMyEnumObject(true));
+                factory->add_type_object("MyEnum", GetMyEnumIdentifier(false),
+                GetMyEnumObject(false));
 
-    factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(true),
-    GetMyAliasEnumObject(true));
-    factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(false),
-    GetMyAliasEnumObject(false));
+                factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(true),
+                GetMyAliasEnumObject(true));
+                factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(false),
+                GetMyAliasEnumObject(false));
 
-    factory->add_type_object("MyAliasAliasEnum", GetMyAliasAliasEnumIdentifier(true),
-    GetMyAliasAliasEnumObject(true));
-    factory->add_type_object("MyAliasAliasEnum", GetMyAliasAliasEnumIdentifier(false),
-    GetMyAliasAliasEnumObject(false));
+                factory->add_type_object("MyAliasAliasEnum", GetMyAliasAliasEnumIdentifier(true),
+                GetMyAliasAliasEnumObject(true));
+                factory->add_type_object("MyAliasAliasEnum", GetMyAliasAliasEnumIdentifier(false),
+                GetMyAliasAliasEnumObject(false));
 
-    factory->add_type_object("EnumStruct", GetEnumStructIdentifier(true),
-    GetEnumStructObject(true));
-    factory->add_type_object("EnumStruct", GetEnumStructIdentifier(false),
-    GetEnumStructObject(false));
+                factory->add_type_object("EnumStruct", GetEnumStructIdentifier(true),
+                GetEnumStructObject(true));
+                factory->add_type_object("EnumStruct", GetEnumStructIdentifier(false),
+                GetEnumStructObject(false));
 
-    factory->add_type_object("AliasStruct", GetAliasStructIdentifier(true),
-    GetAliasStructObject(true));
-    factory->add_type_object("AliasStruct", GetAliasStructIdentifier(false),
-    GetAliasStructObject(false));
+                factory->add_type_object("AliasStruct", GetAliasStructIdentifier(true),
+                GetAliasStructObject(true));
+                factory->add_type_object("AliasStruct", GetAliasStructIdentifier(false),
+                GetAliasStructObject(false));
 
-    factory->add_type_object("AliasAliasStruct", GetAliasAliasStructIdentifier(true),
-    GetAliasAliasStructObject(true));
-    factory->add_type_object("AliasAliasStruct", GetAliasAliasStructIdentifier(false),
-    GetAliasAliasStructObject(false));
+                factory->add_type_object("AliasAliasStruct", GetAliasAliasStructIdentifier(true),
+                GetAliasAliasStructObject(true));
+                factory->add_type_object("AliasAliasStruct", GetAliasAliasStructIdentifier(false),
+                GetAliasAliasStructObject(false));
 
-    factory->add_type_object("BoolStruct", GetBoolStructIdentifier(true),
-    GetBoolStructObject(true));
-    factory->add_type_object("BoolStruct", GetBoolStructIdentifier(false),
-    GetBoolStructObject(false));
+                factory->add_type_object("BoolStruct", GetBoolStructIdentifier(true),
+                GetBoolStructObject(true));
+                factory->add_type_object("BoolStruct", GetBoolStructIdentifier(false),
+                GetBoolStructObject(false));
 
-    factory->add_type_object("OctetStruct", GetOctetStructIdentifier(true),
-    GetOctetStructObject(true));
-    factory->add_type_object("OctetStruct", GetOctetStructIdentifier(false),
-    GetOctetStructObject(false));
+                factory->add_type_object("OctetStruct", GetOctetStructIdentifier(true),
+                GetOctetStructObject(true));
+                factory->add_type_object("OctetStruct", GetOctetStructIdentifier(false),
+                GetOctetStructObject(false));
 
-    factory->add_type_object("ShortStruct", GetShortStructIdentifier(true),
-    GetShortStructObject(true));
-    factory->add_type_object("ShortStruct", GetShortStructIdentifier(false),
-    GetShortStructObject(false));
+                factory->add_type_object("ShortStruct", GetShortStructIdentifier(true),
+                GetShortStructObject(true));
+                factory->add_type_object("ShortStruct", GetShortStructIdentifier(false),
+                GetShortStructObject(false));
 
-    factory->add_type_object("LongStruct", GetLongStructIdentifier(true),
-    GetLongStructObject(true));
-    factory->add_type_object("LongStruct", GetLongStructIdentifier(false),
-    GetLongStructObject(false));
+                factory->add_type_object("LongStruct", GetLongStructIdentifier(true),
+                GetLongStructObject(true));
+                factory->add_type_object("LongStruct", GetLongStructIdentifier(false),
+                GetLongStructObject(false));
 
-    factory->add_type_object("LongLongStruct", GetLongLongStructIdentifier(true),
-    GetLongLongStructObject(true));
-    factory->add_type_object("LongLongStruct", GetLongLongStructIdentifier(false),
-    GetLongLongStructObject(false));
+                factory->add_type_object("LongLongStruct", GetLongLongStructIdentifier(true),
+                GetLongLongStructObject(true));
+                factory->add_type_object("LongLongStruct", GetLongLongStructIdentifier(false),
+                GetLongLongStructObject(false));
 
-    factory->add_type_object("UShortStruct", GetUShortStructIdentifier(true),
-    GetUShortStructObject(true));
-    factory->add_type_object("UShortStruct", GetUShortStructIdentifier(false),
-    GetUShortStructObject(false));
+                factory->add_type_object("UShortStruct", GetUShortStructIdentifier(true),
+                GetUShortStructObject(true));
+                factory->add_type_object("UShortStruct", GetUShortStructIdentifier(false),
+                GetUShortStructObject(false));
 
-    factory->add_type_object("ULongStruct", GetULongStructIdentifier(true),
-    GetULongStructObject(true));
-    factory->add_type_object("ULongStruct", GetULongStructIdentifier(false),
-    GetULongStructObject(false));
+                factory->add_type_object("ULongStruct", GetULongStructIdentifier(true),
+                GetULongStructObject(true));
+                factory->add_type_object("ULongStruct", GetULongStructIdentifier(false),
+                GetULongStructObject(false));
 
-    factory->add_type_object("ULongLongStruct", GetULongLongStructIdentifier(true),
-    GetULongLongStructObject(true));
-    factory->add_type_object("ULongLongStruct", GetULongLongStructIdentifier(false),
-    GetULongLongStructObject(false));
+                factory->add_type_object("ULongLongStruct", GetULongLongStructIdentifier(true),
+                GetULongLongStructObject(true));
+                factory->add_type_object("ULongLongStruct", GetULongLongStructIdentifier(false),
+                GetULongLongStructObject(false));
 
-    factory->add_type_object("FloatStruct", GetFloatStructIdentifier(true),
-    GetFloatStructObject(true));
-    factory->add_type_object("FloatStruct", GetFloatStructIdentifier(false),
-    GetFloatStructObject(false));
+                factory->add_type_object("FloatStruct", GetFloatStructIdentifier(true),
+                GetFloatStructObject(true));
+                factory->add_type_object("FloatStruct", GetFloatStructIdentifier(false),
+                GetFloatStructObject(false));
 
-    factory->add_type_object("DoubleStruct", GetDoubleStructIdentifier(true),
-    GetDoubleStructObject(true));
-    factory->add_type_object("DoubleStruct", GetDoubleStructIdentifier(false),
-    GetDoubleStructObject(false));
+                factory->add_type_object("DoubleStruct", GetDoubleStructIdentifier(true),
+                GetDoubleStructObject(true));
+                factory->add_type_object("DoubleStruct", GetDoubleStructIdentifier(false),
+                GetDoubleStructObject(false));
 
-    factory->add_type_object("LongDoubleStruct", GetLongDoubleStructIdentifier(true),
-    GetLongDoubleStructObject(true));
-    factory->add_type_object("LongDoubleStruct", GetLongDoubleStructIdentifier(false),
-    GetLongDoubleStructObject(false));
+                factory->add_type_object("LongDoubleStruct", GetLongDoubleStructIdentifier(true),
+                GetLongDoubleStructObject(true));
+                factory->add_type_object("LongDoubleStruct", GetLongDoubleStructIdentifier(false),
+                GetLongDoubleStructObject(false));
 
-    factory->add_type_object("CharStruct", GetCharStructIdentifier(true),
-    GetCharStructObject(true));
-    factory->add_type_object("CharStruct", GetCharStructIdentifier(false),
-    GetCharStructObject(false));
+                factory->add_type_object("CharStruct", GetCharStructIdentifier(true),
+                GetCharStructObject(true));
+                factory->add_type_object("CharStruct", GetCharStructIdentifier(false),
+                GetCharStructObject(false));
 
-    factory->add_type_object("WCharStruct", GetWCharStructIdentifier(true),
-    GetWCharStructObject(true));
-    factory->add_type_object("WCharStruct", GetWCharStructIdentifier(false),
-    GetWCharStructObject(false));
+                factory->add_type_object("WCharStruct", GetWCharStructIdentifier(true),
+                GetWCharStructObject(true));
+                factory->add_type_object("WCharStruct", GetWCharStructIdentifier(false),
+                GetWCharStructObject(false));
 
-    factory->add_type_object("StringStruct", GetStringStructIdentifier(true),
-    GetStringStructObject(true));
-    factory->add_type_object("StringStruct", GetStringStructIdentifier(false),
-    GetStringStructObject(false));
+                factory->add_type_object("StringStruct", GetStringStructIdentifier(true),
+                GetStringStructObject(true));
+                factory->add_type_object("StringStruct", GetStringStructIdentifier(false),
+                GetStringStructObject(false));
 
-    factory->add_type_object("WStringStruct", GetWStringStructIdentifier(true),
-    GetWStringStructObject(true));
-    factory->add_type_object("WStringStruct", GetWStringStructIdentifier(false),
-    GetWStringStructObject(false));
+                factory->add_type_object("WStringStruct", GetWStringStructIdentifier(true),
+                GetWStringStructObject(true));
+                factory->add_type_object("WStringStruct", GetWStringStructIdentifier(false),
+                GetWStringStructObject(false));
 
-    factory->add_type_object("LargeStringStruct", GetLargeStringStructIdentifier(true),
-    GetLargeStringStructObject(true));
-    factory->add_type_object("LargeStringStruct", GetLargeStringStructIdentifier(false),
-    GetLargeStringStructObject(false));
+                factory->add_type_object("LargeStringStruct", GetLargeStringStructIdentifier(true),
+                GetLargeStringStructObject(true));
+                factory->add_type_object("LargeStringStruct", GetLargeStringStructIdentifier(false),
+                GetLargeStringStructObject(false));
 
-    factory->add_type_object("LargeWStringStruct", GetLargeWStringStructIdentifier(true),
-    GetLargeWStringStructObject(true));
-    factory->add_type_object("LargeWStringStruct", GetLargeWStringStructIdentifier(false),
-    GetLargeWStringStructObject(false));
+                factory->add_type_object("LargeWStringStruct", GetLargeWStringStructIdentifier(true),
+                GetLargeWStringStructObject(true));
+                factory->add_type_object("LargeWStringStruct", GetLargeWStringStructIdentifier(false),
+                GetLargeWStringStructObject(false));
 
-    factory->add_type_object("ArraytStruct", GetArraytStructIdentifier(true),
-    GetArraytStructObject(true));
-    factory->add_type_object("ArraytStruct", GetArraytStructIdentifier(false),
-    GetArraytStructObject(false));
+                factory->add_type_object("ArraytStruct", GetArraytStructIdentifier(true),
+                GetArraytStructObject(true));
+                factory->add_type_object("ArraytStruct", GetArraytStructIdentifier(false),
+                GetArraytStructObject(false));
 
-    factory->add_type_object("MyArray", GetMyArrayIdentifier(true),
-    GetMyArrayObject(true));
-    factory->add_type_object("MyArray", GetMyArrayIdentifier(false),
-    GetMyArrayObject(false));
+                factory->add_type_object("MyArray", GetMyArrayIdentifier(true),
+                GetMyArrayObject(true));
+                factory->add_type_object("MyArray", GetMyArrayIdentifier(false),
+                GetMyArrayObject(false));
 
-    factory->add_type_object("ArrayArrayStruct", GetArrayArrayStructIdentifier(true),
-    GetArrayArrayStructObject(true));
-    factory->add_type_object("ArrayArrayStruct", GetArrayArrayStructIdentifier(false),
-    GetArrayArrayStructObject(false));
+                factory->add_type_object("ArrayArrayStruct", GetArrayArrayStructIdentifier(true),
+                GetArrayArrayStructObject(true));
+                factory->add_type_object("ArrayArrayStruct", GetArrayArrayStructIdentifier(false),
+                GetArrayArrayStructObject(false));
 
-    factory->add_type_object("SequenceStruct", GetSequenceStructIdentifier(true),
-    GetSequenceStructObject(true));
-    factory->add_type_object("SequenceStruct", GetSequenceStructIdentifier(false),
-    GetSequenceStructObject(false));
+                factory->add_type_object("SequenceStruct", GetSequenceStructIdentifier(true),
+                GetSequenceStructObject(true));
+                factory->add_type_object("SequenceStruct", GetSequenceStructIdentifier(false),
+                GetSequenceStructObject(false));
 
-    factory->add_type_object("SequenceSequenceStruct", GetSequenceSequenceStructIdentifier(true),
-    GetSequenceSequenceStructObject(true));
-    factory->add_type_object("SequenceSequenceStruct", GetSequenceSequenceStructIdentifier(false),
-    GetSequenceSequenceStructObject(false));
+                factory->add_type_object("SequenceSequenceStruct", GetSequenceSequenceStructIdentifier(true),
+                GetSequenceSequenceStructObject(true));
+                factory->add_type_object("SequenceSequenceStruct", GetSequenceSequenceStructIdentifier(false),
+                GetSequenceSequenceStructObject(false));
 
-    factory->add_type_object("MapStruct", GetMapStructIdentifier(true),
-    GetMapStructObject(true));
-    factory->add_type_object("MapStruct", GetMapStructIdentifier(false),
-    GetMapStructObject(false));
+                factory->add_type_object("MapStruct", GetMapStructIdentifier(true),
+                GetMapStructObject(true));
+                factory->add_type_object("MapStruct", GetMapStructIdentifier(false),
+                GetMapStructObject(false));
 
-    factory->add_type_object("MapMapStruct", GetMapMapStructIdentifier(true),
-    GetMapMapStructObject(true));
-    factory->add_type_object("MapMapStruct", GetMapMapStructIdentifier(false),
-    GetMapMapStructObject(false));
+                factory->add_type_object("MapMapStruct", GetMapMapStructIdentifier(true),
+                GetMapMapStructObject(true));
+                factory->add_type_object("MapMapStruct", GetMapMapStructIdentifier(false),
+                GetMapMapStructObject(false));
 
-    factory->add_type_object("MyBitset", GetMyBitsetIdentifier(true),
-    GetMyBitsetObject(true));
-    factory->add_type_object("MyBitset", GetMyBitsetIdentifier(false),
-    GetMyBitsetObject(false));
+                factory->add_type_object("MyBitset", GetMyBitsetIdentifier(true),
+                GetMyBitsetObject(true));
+                factory->add_type_object("MyBitset", GetMyBitsetIdentifier(false),
+                GetMyBitsetObject(false));
 
-    factory->add_type_object("BitsetStruct", GetBitsetStructIdentifier(true),
-    GetBitsetStructObject(true));
-    factory->add_type_object("BitsetStruct", GetBitsetStructIdentifier(false),
-    GetBitsetStructObject(false));
+                factory->add_type_object("BitsetStruct", GetBitsetStructIdentifier(true),
+                GetBitsetStructObject(true));
+                factory->add_type_object("BitsetStruct", GetBitsetStructIdentifier(false),
+                GetBitsetStructObject(false));
 
-    factory->add_type_object("StructStruct", GetStructStructIdentifier(true),
-    GetStructStructObject(true));
-    factory->add_type_object("StructStruct", GetStructStructIdentifier(false),
-    GetStructStructObject(false));
+                factory->add_type_object("StructStruct", GetStructStructIdentifier(true),
+                GetStructStructObject(true));
+                factory->add_type_object("StructStruct", GetStructStructIdentifier(false),
+                GetStructStructObject(false));
 
-    factory->add_type_object("StructStructStruct", GetStructStructStructIdentifier(true),
-    GetStructStructStructObject(true));
-    factory->add_type_object("StructStructStruct", GetStructStructStructIdentifier(false),
-    GetStructStructStructObject(false));
+                factory->add_type_object("StructStructStruct", GetStructStructStructIdentifier(true),
+                GetStructStructStructObject(true));
+                factory->add_type_object("StructStructStruct", GetStructStructStructIdentifier(false),
+                GetStructStructStructObject(false));
 
-    factory->add_type_object("SimpleUnion", GetSimpleUnionIdentifier(true),
-    GetSimpleUnionObject(true));
-    factory->add_type_object("SimpleUnion", GetSimpleUnionIdentifier(false),
-    GetSimpleUnionObject(false));
+                factory->add_type_object("SimpleUnion", GetSimpleUnionIdentifier(true),
+                GetSimpleUnionObject(true));
+                factory->add_type_object("SimpleUnion", GetSimpleUnionIdentifier(false),
+                GetSimpleUnionObject(false));
 
-    factory->add_type_object("UnionUnion", GetUnionUnionIdentifier(true),
-    GetUnionUnionObject(true));
-    factory->add_type_object("UnionUnion", GetUnionUnionIdentifier(false),
-    GetUnionUnionObject(false));
+                factory->add_type_object("UnionUnion", GetUnionUnionIdentifier(true),
+                GetUnionUnionObject(true));
+                factory->add_type_object("UnionUnion", GetUnionUnionIdentifier(false),
+                GetUnionUnionObject(false));
 
-    factory->add_type_object("WCharUnion", GetWCharUnionIdentifier(true),
-    GetWCharUnionObject(true));
-    factory->add_type_object("WCharUnion", GetWCharUnionIdentifier(false),
-    GetWCharUnionObject(false));
+                factory->add_type_object("WCharUnion", GetWCharUnionIdentifier(true),
+                GetWCharUnionObject(true));
+                factory->add_type_object("WCharUnion", GetWCharUnionIdentifier(false),
+                GetWCharUnionObject(false));
 
-    factory->add_type_object("SimpleUnionStruct", GetSimpleUnionStructIdentifier(true),
-    GetSimpleUnionStructObject(true));
-    factory->add_type_object("SimpleUnionStruct", GetSimpleUnionStructIdentifier(false),
-    GetSimpleUnionStructObject(false));
+                factory->add_type_object("SimpleUnionStruct", GetSimpleUnionStructIdentifier(true),
+                GetSimpleUnionStructObject(true));
+                factory->add_type_object("SimpleUnionStruct", GetSimpleUnionStructIdentifier(false),
+                GetSimpleUnionStructObject(false));
 
-    factory->add_type_object("UnionUnionUnionStruct", GetUnionUnionUnionStructIdentifier(true),
-    GetUnionUnionUnionStructObject(true));
-    factory->add_type_object("UnionUnionUnionStruct", GetUnionUnionUnionStructIdentifier(false),
-    GetUnionUnionUnionStructObject(false));
+                factory->add_type_object("UnionUnionUnionStruct", GetUnionUnionUnionStructIdentifier(true),
+                GetUnionUnionUnionStructObject(true));
+                factory->add_type_object("UnionUnionUnionStruct", GetUnionUnionUnionStructIdentifier(false),
+                GetUnionUnionUnionStructObject(false));
 
-    factory->add_type_object("WCharUnionStruct", GetWCharUnionStructIdentifier(true),
-    GetWCharUnionStructObject(true));
-    factory->add_type_object("WCharUnionStruct", GetWCharUnionStructIdentifier(false),
-    GetWCharUnionStructObject(false));
+                factory->add_type_object("WCharUnionStruct", GetWCharUnionStructIdentifier(true),
+                GetWCharUnionStructObject(true));
+                factory->add_type_object("WCharUnionStruct", GetWCharUnionStructIdentifier(false),
+                GetWCharUnionStructObject(false));
 
+            });
 }
 
 const TypeIdentifier* GetMyEnumIdentifier(bool complete)

@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(AllocTestType_SOURCE)
-#define AllocTestType_DllAPI __declspec( dllexport )
+#if defined(ALLOCTESTTYPE_SOURCE)
+#define ALLOCTESTTYPE_DllAPI __declspec( dllexport )
 #else
-#define AllocTestType_DllAPI __declspec( dllimport )
-#endif // AllocTestType_SOURCE
+#define ALLOCTESTTYPE_DllAPI __declspec( dllimport )
+#endif // ALLOCTESTTYPE_SOURCE
 #else
-#define AllocTestType_DllAPI
+#define ALLOCTESTTYPE_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define AllocTestType_DllAPI
+#define ALLOCTESTTYPE_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure AllocTestType defined by the user in the IDL file.
- * @ingroup ALLOCTESTTYPE
+ * @ingroup AllocTestType
  */
 class AllocTestType
 {
@@ -207,3 +207,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_ALLOCTESTTYPE_H_
+

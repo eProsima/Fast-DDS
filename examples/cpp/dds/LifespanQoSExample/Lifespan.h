@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(Lifespan_SOURCE)
-#define Lifespan_DllAPI __declspec( dllexport )
+#if defined(LIFESPAN_SOURCE)
+#define LIFESPAN_DllAPI __declspec( dllexport )
 #else
-#define Lifespan_DllAPI __declspec( dllimport )
-#endif // Lifespan_SOURCE
+#define LIFESPAN_DllAPI __declspec( dllimport )
+#endif // LIFESPAN_SOURCE
 #else
-#define Lifespan_DllAPI
+#define LIFESPAN_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define Lifespan_DllAPI
+#define LIFESPAN_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure Lifespan defined by the user in the IDL file.
- * @ingroup LIFESPAN
+ * @ingroup Lifespan
  */
 class Lifespan
 {
@@ -233,3 +233,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_LIFESPAN_H_
+

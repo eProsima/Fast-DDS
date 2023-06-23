@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(KeyedHelloWorld_SOURCE)
-#define KeyedHelloWorld_DllAPI __declspec( dllexport )
+#if defined(KEYEDHELLOWORLD_SOURCE)
+#define KEYEDHELLOWORLD_DllAPI __declspec( dllexport )
 #else
-#define KeyedHelloWorld_DllAPI __declspec( dllimport )
-#endif // KeyedHelloWorld_SOURCE
+#define KEYEDHELLOWORLD_DllAPI __declspec( dllimport )
+#endif // KEYEDHELLOWORLD_SOURCE
 #else
-#define KeyedHelloWorld_DllAPI
+#define KEYEDHELLOWORLD_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define KeyedHelloWorld_DllAPI
+#define KEYEDHELLOWORLD_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure KeyedHelloWorld defined by the user in the IDL file.
- * @ingroup KEYEDHELLOWORLD
+ * @ingroup KeyedHelloWorld
  */
 class KeyedHelloWorld
 {
@@ -253,3 +253,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_KEYEDHELLOWORLD_H_
+

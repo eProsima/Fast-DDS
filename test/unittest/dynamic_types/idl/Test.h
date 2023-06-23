@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(Test_SOURCE)
-#define Test_DllAPI __declspec( dllexport )
+#if defined(TEST_SOURCE)
+#define TEST_DllAPI __declspec( dllexport )
 #else
-#define Test_DllAPI __declspec( dllimport )
-#endif // Test_SOURCE
+#define TEST_DllAPI __declspec( dllimport )
+#endif // TEST_SOURCE
 #else
-#define Test_DllAPI
+#define TEST_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define Test_DllAPI
+#define TEST_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the enumeration MyEnum defined by the user in the IDL file.
- * @ingroup TEST
+ * @ingroup Test
  */
 enum MyEnum : uint32_t
 {
@@ -73,15 +73,12 @@ enum MyEnum : uint32_t
     B,
     C
 };
-
 typedef MyEnum MyAliasEnum;
-
 typedef MyAliasEnum MyAliasEnum2;
-
 typedef MyAliasEnum2 MyAliasEnum3;
 /*!
  * @brief This class represents the structure BasicStruct defined by the user in the IDL file.
- * @ingroup TEST
+ * @ingroup Test
  */
 class BasicStruct
 {
@@ -513,19 +510,14 @@ private:
     std::wstring m_my_wstring;
 
 };
-
 typedef std::array<uint8_t, 500> MyOctetArray500;
-
 typedef std::array<BasicStruct, 5> BSAlias5;
-
 typedef std::array<MyAliasEnum3, 42> MA3;
-
 typedef std::array<int32_t, 2> MyMiniArray;
-
 typedef std::vector<int32_t> MySequenceLong;
 /*!
  * @brief This class represents the structure ComplexStruct defined by the user in the IDL file.
- * @ingroup TEST
+ * @ingroup Test
  */
 class ComplexStruct
 {
@@ -1201,7 +1193,7 @@ private:
 };
 /*!
  * @brief This class represents the union MyUnion defined by the user in the IDL file.
- * @ingroup TEST
+ * @ingroup Test
  */
 class MyUnion
 {
@@ -1371,7 +1363,7 @@ private:
 };
 /*!
  * @brief This class represents the union MyUnion2 defined by the user in the IDL file.
- * @ingroup TEST
+ * @ingroup Test
  */
 class MyUnion2
 {
@@ -1557,7 +1549,7 @@ private:
 };
 /*!
  * @brief This class represents the structure CompleteStruct defined by the user in the IDL file.
- * @ingroup TEST
+ * @ingroup Test
  */
 class CompleteStruct
 {
@@ -1731,7 +1723,7 @@ private:
 };
 /*!
  * @brief This class represents the structure KeyedStruct defined by the user in the IDL file.
- * @ingroup TEST
+ * @ingroup Test
  */
 class KeyedStruct
 {
@@ -1899,3 +1891,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_TEST_H_
+

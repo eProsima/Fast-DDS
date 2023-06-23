@@ -119,8 +119,6 @@ using namespace eprosima::fastcdr::exception;
 
 
 
-
-
 EnumStruct::EnumStruct()
 {
     // MyEnum m_my_enum
@@ -265,6 +263,7 @@ void EnumStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 AliasStruct::AliasStruct()
 {
@@ -411,6 +410,7 @@ void AliasStruct::serializeKey(
     (void) scdr;
 }
 
+
 AliasAliasStruct::AliasAliasStruct()
 {
     // MyAliasAliasEnum m_my_alias_alias
@@ -556,6 +556,7 @@ void AliasAliasStruct::serializeKey(
     (void) scdr;
 }
 
+
 BoolStruct::BoolStruct()
 {
     // boolean m_my_bool
@@ -695,6 +696,7 @@ void BoolStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 OctetStruct::OctetStruct()
 {
@@ -836,6 +838,7 @@ void OctetStruct::serializeKey(
     (void) scdr;
 }
 
+
 ShortStruct::ShortStruct()
 {
     // short m_my_int16
@@ -975,6 +978,7 @@ void ShortStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 LongStruct::LongStruct()
 {
@@ -1116,6 +1120,7 @@ void LongStruct::serializeKey(
     (void) scdr;
 }
 
+
 LongLongStruct::LongLongStruct()
 {
     // long long m_my_int64
@@ -1255,6 +1260,7 @@ void LongLongStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 UShortStruct::UShortStruct()
 {
@@ -1396,6 +1402,7 @@ void UShortStruct::serializeKey(
     (void) scdr;
 }
 
+
 ULongStruct::ULongStruct()
 {
     // unsigned long m_my_uint32
@@ -1535,6 +1542,7 @@ void ULongStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 ULongLongStruct::ULongLongStruct()
 {
@@ -1676,6 +1684,7 @@ void ULongLongStruct::serializeKey(
     (void) scdr;
 }
 
+
 FloatStruct::FloatStruct()
 {
     // float m_my_float32
@@ -1815,6 +1824,7 @@ void FloatStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 DoubleStruct::DoubleStruct()
 {
@@ -1956,6 +1966,7 @@ void DoubleStruct::serializeKey(
     (void) scdr;
 }
 
+
 LongDoubleStruct::LongDoubleStruct()
 {
     // long double m_my_float128
@@ -2095,6 +2106,7 @@ void LongDoubleStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 CharStruct::CharStruct()
 {
@@ -2236,6 +2248,7 @@ void CharStruct::serializeKey(
     (void) scdr;
 }
 
+
 WCharStruct::WCharStruct()
 {
     // wchar m_my_wchar
@@ -2375,6 +2388,7 @@ void WCharStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 StringStruct::StringStruct()
 {
@@ -2523,6 +2537,7 @@ void StringStruct::serializeKey(
     (void) scdr;
 }
 
+
 WStringStruct::WStringStruct()
 {
     // wstring m_my_wstring
@@ -2670,6 +2685,7 @@ void WStringStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 LargeStringStruct::LargeStringStruct()
 {
@@ -2822,6 +2838,7 @@ void LargeStringStruct::serializeKey(
     (void) scdr;
 }
 
+
 LargeWStringStruct::LargeWStringStruct()
 {
     // wstring m_my_large_wstring
@@ -2969,6 +2986,7 @@ void LargeWStringStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 ArraytStruct::ArraytStruct()
 {
@@ -3279,6 +3297,7 @@ void ArrayArrayStruct::serializeKey(
     (void) scdr;
 }
 
+
 SequenceStruct::SequenceStruct()
 {
     // sequence<long, 2> m_my_sequence
@@ -3431,6 +3450,7 @@ void SequenceStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 SequenceSequenceStruct::SequenceSequenceStruct()
 {
@@ -3591,6 +3611,7 @@ void SequenceSequenceStruct::serializeKey(
     (void) scdr;
 }
 
+
 MapStruct::MapStruct()
 {
     // map<long, long> m_my_map
@@ -3746,6 +3767,7 @@ void MapStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 MapMapStruct::MapMapStruct()
 {
@@ -3911,6 +3933,7 @@ void MapMapStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 MyBitset::MyBitset()
 {
@@ -4200,6 +4223,7 @@ void BitsetStruct::serializeKey(
     (void) scdr;
 }
 
+
 StructStruct::StructStruct()
 {
     // long m_a
@@ -4381,6 +4405,7 @@ void StructStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 StructStructStruct::StructStructStruct()
 {
@@ -4570,6 +4595,7 @@ void StructStructStruct::serializeKey(
 {
     (void) scdr;
 }
+
 
 SimpleUnion::SimpleUnion()
 {
@@ -5694,6 +5720,7 @@ void SimpleUnionStruct::serializeKey(
     (void) scdr;
 }
 
+
 UnionUnionUnionStruct::UnionUnionUnionStruct()
 {
     // UnionUnion m_my_union
@@ -5842,6 +5869,7 @@ void UnionUnionUnionStruct::serializeKey(
     (void) scdr;
 }
 
+
 WCharUnionStruct::WCharUnionStruct()
 {
     // WCharUnion m_my_union
@@ -5989,3 +6017,4 @@ void WCharUnionStruct::serializeKey(
 {
     (void) scdr;
 }
+

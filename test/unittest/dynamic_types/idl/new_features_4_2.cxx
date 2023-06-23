@@ -524,6 +524,7 @@ void NewAliases::serializeKey(
     (void) scdr;
 }
 
+
 WCharUnion::WCharUnion()
 {
     m__d = 'a';
@@ -2046,6 +2047,7 @@ void bitmodule::BitsetBitmask::serializeKey(
     (void) scdr;
 }
 
+
 bitmodule::BM2::BM2()    : bitmodule::BitsetBitmask() 
 {
     // bitmodule::MyBitMask m_two
@@ -2242,6 +2244,7 @@ void bitmodule::BM2::serializeKey(
     (void) scdr;
  bitmodule::BitsetBitmask::serializeKey(scdr);  
 }
+
 
 
 StructTest::StructTest()    : NewAliases() 
@@ -2542,3 +2545,4 @@ void StructTest::serializeKey(
     (void) scdr;
  NewAliases::serializeKey(scdr);  
 }
+

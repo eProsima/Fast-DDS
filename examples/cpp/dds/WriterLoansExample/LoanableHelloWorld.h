@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(LoanableHelloWorld_SOURCE)
-#define LoanableHelloWorld_DllAPI __declspec( dllexport )
+#if defined(LOANABLEHELLOWORLD_SOURCE)
+#define LOANABLEHELLOWORLD_DllAPI __declspec( dllexport )
 #else
-#define LoanableHelloWorld_DllAPI __declspec( dllimport )
-#endif // LoanableHelloWorld_SOURCE
+#define LOANABLEHELLOWORLD_DllAPI __declspec( dllimport )
+#endif // LOANABLEHELLOWORLD_SOURCE
 #else
-#define LoanableHelloWorld_DllAPI
+#define LOANABLEHELLOWORLD_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define LoanableHelloWorld_DllAPI
+#define LOANABLEHELLOWORLD_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure LoanableHelloWorld defined by the user in the IDL file.
- * @ingroup LOANABLEHELLOWORLD
+ * @ingroup LoanableHelloWorld
  */
 class LoanableHelloWorld
 {
@@ -233,3 +233,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_LOANABLEHELLOWORLD_H_
+

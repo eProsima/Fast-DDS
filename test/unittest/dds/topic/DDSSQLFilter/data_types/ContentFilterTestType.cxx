@@ -764,6 +764,7 @@ void StructType::serializeKey(
 
 
 
+
 ContentFilterTestType::ContentFilterTestType()
 {
     // char m_char_field
@@ -4131,3 +4132,4 @@ void ContentFilterTestType::serializeKey(
 {
     (void) scdr;
 }
+

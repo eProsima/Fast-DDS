@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(FilteringExample_SOURCE)
-#define FilteringExample_DllAPI __declspec( dllexport )
+#if defined(FILTERINGEXAMPLE_SOURCE)
+#define FILTERINGEXAMPLE_DllAPI __declspec( dllexport )
 #else
-#define FilteringExample_DllAPI __declspec( dllimport )
-#endif // FilteringExample_SOURCE
+#define FILTERINGEXAMPLE_DllAPI __declspec( dllimport )
+#endif // FILTERINGEXAMPLE_SOURCE
 #else
-#define FilteringExample_DllAPI
+#define FILTERINGEXAMPLE_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define FilteringExample_DllAPI
+#define FILTERINGEXAMPLE_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure FilteringExample defined by the user in the IDL file.
- * @ingroup FILTERINGEXAMPLE
+ * @ingroup FilteringExample
  */
 class FilteringExample
 {
@@ -207,3 +207,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_FILTERINGEXAMPLE_H_
+

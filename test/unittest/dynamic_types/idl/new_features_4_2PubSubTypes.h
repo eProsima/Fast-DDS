@@ -31,14 +31,13 @@
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 1)
 #error \
-
     Generated new_features_4_2 is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
 
 /*!
  * @brief This class represents the TopicDataType of the type NewAliases defined by the user in the IDL file.
- * @ingroup NEW_FEATURES_4_2
+ * @ingroup new_features_4_2
  */
 class NewAliasesPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -110,6 +109,7 @@ namespace bitmodule
 
 
 
+    #ifndef SWIG
     namespace detail {
 
         template<typename Tag, typename Tag::type M>
@@ -136,9 +136,11 @@ namespace bitmodule
             return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
         }
     }
+    #endif
+
     /*!
      * @brief This class represents the TopicDataType of the type BitsetBitmask defined by the user in the IDL file.
-     * @ingroup NEW_FEATURES_4_2
+     * @ingroup new_features_4_2
      */
     class BitsetBitmaskPubSubType : public eprosima::fastdds::dds::TopicDataType
     {
@@ -208,6 +210,7 @@ namespace bitmodule
 
         }};
 
+    #ifndef SWIG
     namespace detail {
 
         template<typename Tag, typename Tag::type M>
@@ -234,9 +237,11 @@ namespace bitmodule
             return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
         }
     }
+    #endif
+
     /*!
      * @brief This class represents the TopicDataType of the type BM2 defined by the user in the IDL file.
-     * @ingroup NEW_FEATURES_4_2
+     * @ingroup new_features_4_2
      */
     class BM2PubSubType : public eprosima::fastdds::dds::TopicDataType
     {
@@ -309,7 +314,7 @@ namespace bitmodule
 
 /*!
  * @brief This class represents the TopicDataType of the type StructTest defined by the user in the IDL file.
- * @ingroup NEW_FEATURES_4_2
+ * @ingroup new_features_4_2
  */
 class StructTestPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -374,3 +379,4 @@ public:
 };
 
 #endif // _FAST_DDS_GENERATED_NEW_FEATURES_4_2_PUBSUBTYPES_H_
+

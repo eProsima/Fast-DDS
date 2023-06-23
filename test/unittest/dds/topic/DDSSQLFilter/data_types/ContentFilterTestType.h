@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(ContentFilterTestType_SOURCE)
-#define ContentFilterTestType_DllAPI __declspec( dllexport )
+#if defined(CONTENTFILTERTESTTYPE_SOURCE)
+#define CONTENTFILTERTESTTYPE_DllAPI __declspec( dllexport )
 #else
-#define ContentFilterTestType_DllAPI __declspec( dllimport )
-#endif // ContentFilterTestType_SOURCE
+#define CONTENTFILTERTESTTYPE_DllAPI __declspec( dllimport )
+#endif // CONTENTFILTERTESTTYPE_SOURCE
 #else
-#define ContentFilterTestType_DllAPI
+#define CONTENTFILTERTESTTYPE_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define ContentFilterTestType_DllAPI
+#define CONTENTFILTERTESTTYPE_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the enumeration Color defined by the user in the IDL file.
- * @ingroup CONTENTFILTERTESTTYPE
+ * @ingroup ContentFilterTestType
  */
 enum Color : uint32_t
 {
@@ -77,7 +77,7 @@ enum Color : uint32_t
 };
 /*!
  * @brief This class represents the enumeration Material defined by the user in the IDL file.
- * @ingroup CONTENTFILTERTESTTYPE
+ * @ingroup ContentFilterTestType
  */
 enum Material : uint32_t
 {
@@ -89,7 +89,7 @@ enum Material : uint32_t
 };
 /*!
  * @brief This class represents the structure StructType defined by the user in the IDL file.
- * @ingroup CONTENTFILTERTESTTYPE
+ * @ingroup ContentFilterTestType
  */
 class StructType
 {
@@ -519,7 +519,7 @@ const uint32_t max_array_size = 3;
 const uint32_t max_seq_size = 5;
 /*!
  * @brief This class represents the structure ContentFilterTestType defined by the user in the IDL file.
- * @ingroup CONTENTFILTERTESTTYPE
+ * @ingroup ContentFilterTestType
  */
 class ContentFilterTestType
 {
@@ -2221,3 +2221,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_CONTENTFILTERTESTTYPE_H_
+

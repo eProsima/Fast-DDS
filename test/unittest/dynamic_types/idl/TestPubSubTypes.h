@@ -31,7 +31,6 @@
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 1)
 #error \
-
     Generated Test is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
@@ -42,7 +41,7 @@ typedef MyAliasEnum2 MyAliasEnum3;
 
 /*!
  * @brief This class represents the TopicDataType of the type BasicStruct defined by the user in the IDL file.
- * @ingroup TEST
+ * @ingroup Test
  */
 class BasicStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -113,7 +112,7 @@ typedef std::vector<int32_t> MySequenceLong;
 
 /*!
  * @brief This class represents the TopicDataType of the type ComplexStruct defined by the user in the IDL file.
- * @ingroup TEST
+ * @ingroup Test
  */
 class ComplexStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -181,7 +180,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type CompleteStruct defined by the user in the IDL file.
- * @ingroup TEST
+ * @ingroup Test
  */
 class CompleteStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -247,7 +246,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type KeyedStruct defined by the user in the IDL file.
- * @ingroup TEST
+ * @ingroup Test
  */
 class KeyedStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -312,3 +311,4 @@ public:
 };
 
 #endif // _FAST_DDS_GENERATED_TEST_PUBSUBTYPES_H_
+
