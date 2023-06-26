@@ -701,17 +701,6 @@ bool eprosima::fastrtps::types::PlainSequenceSElemDefn::operator !=(
     return !(*this == x);
 }
 
-size_t eprosima::fastrtps::types::PlainSequenceSElemDefn::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-/* TODO(jlbueno): XTYPES
-    size_t initial_alignment = current_alignment;
-    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-*/
-    return eprosima_fastrtps_types_PlainSequenceSElemDefn_max_cdr_typesize; // + current_alignment - initial_alignment;
-}
-
 size_t eprosima::fastrtps::types::PlainSequenceSElemDefn::getCdrSerializedSize(
         const eprosima::fastrtps::types::PlainSequenceSElemDefn& data,
         size_t current_alignment)
@@ -981,17 +970,6 @@ bool eprosima::fastrtps::types::PlainSequenceLElemDefn::operator !=(
     return !(*this == x);
 }
 
-size_t eprosima::fastrtps::types::PlainSequenceLElemDefn::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-/* TODO(jlbueno): XTYPES
-    size_t initial_alignment = current_alignment;
-    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-*/
-    return eprosima_fastrtps_types_PlainSequenceLElemDefn_max_cdr_typesize; // + current_alignment - initial_alignment;
-}
-
 size_t eprosima::fastrtps::types::PlainSequenceLElemDefn::getCdrSerializedSize(
         const eprosima::fastrtps::types::PlainSequenceLElemDefn& data,
         size_t current_alignment)
@@ -1258,17 +1236,6 @@ bool eprosima::fastrtps::types::PlainArraySElemDefn::operator !=(
         const PlainArraySElemDefn& x) const
 {
     return !(*this == x);
-}
-
-size_t eprosima::fastrtps::types::PlainArraySElemDefn::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-/* TODO(jlbueno): XTYPES
-    size_t initial_alignment = current_alignment;
-    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-*/
-    return eprosima_fastrtps_types_PlainArraySElemDefn_max_cdr_typesize; // + current_alignment - initial_alignment;
 }
 
 size_t eprosima::fastrtps::types::PlainArraySElemDefn::getCdrSerializedSize(
@@ -1552,17 +1519,6 @@ bool eprosima::fastrtps::types::PlainArrayLElemDefn::operator !=(
         const PlainArrayLElemDefn& x) const
 {
     return !(*this == x);
-}
-
-size_t eprosima::fastrtps::types::PlainArrayLElemDefn::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-/* TODO(jlbueno): XTYPES
-    size_t initial_alignment = current_alignment;
-    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-*/
-    return eprosima_fastrtps_types_PlainArrayLElemDefn_max_cdr_typesize; // + current_alignment - initial_alignment;
 }
 
 size_t eprosima::fastrtps::types::PlainArrayLElemDefn::getCdrSerializedSize(
@@ -1901,19 +1857,6 @@ bool eprosima::fastrtps::types::PlainMapSTypeDefn::operator !=(
         const PlainMapSTypeDefn& x) const
 {
     return !(*this == x);
-}
-
-size_t eprosima::fastrtps::types::PlainMapSTypeDefn::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-/* TODO(jlbueno): XTYPES
-    size_t initial_alignment = current_alignment;
-    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-    size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-*/
-    return eprosima_fastrtps_types_PlainMapSTypeDefn_max_cdr_typesize; // + current_alignment - initial_alignment;
 }
 
 size_t eprosima::fastrtps::types::PlainMapSTypeDefn::getCdrSerializedSize(
@@ -2313,19 +2256,6 @@ bool eprosima::fastrtps::types::PlainMapLTypeDefn::operator !=(
         const PlainMapLTypeDefn& x) const
 {
     return !(*this == x);
-}
-
-size_t eprosima::fastrtps::types::PlainMapLTypeDefn::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-/* TODO(jlbueno): XTYPES
-    size_t initial_alignment = current_alignment;
-    size_t size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-    size = TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-*/
-    return eprosima_fastrtps_types_PlainMapLTypeDefn_max_cdr_typesize; // + current_alignment - initial_alignment;
 }
 
 size_t eprosima::fastrtps::types::PlainMapLTypeDefn::getCdrSerializedSize(

@@ -642,15 +642,6 @@ namespace eprosima {
 
 
                 /*!
-                * @brief This function returns the maximum serialized size of an object
-                * depending on the buffer alignment.
-                * @param current_alignment Buffer alignment.
-                * @return Maximum serialized size.
-                */
-                eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
-                        size_t current_alignment = 0);
-
-                /*!
                  * @brief This function returns the serialized size of a data depending on the buffer alignment.
                  * @param data Data which is calculated its serialized size.
                  * @param current_alignment Buffer alignment.
@@ -828,15 +819,6 @@ namespace eprosima {
                  * @return Reference to member element_identifier
                  */
                 eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier*& element_identifier();
-
-                /*!
-                * @brief This function returns the maximum serialized size of an object
-                * depending on the buffer alignment.
-                * @param current_alignment Buffer alignment.
-                * @return Maximum serialized size.
-                */
-                eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
-                        size_t current_alignment = 0);
 
                 /*!
                  * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1025,15 +1007,6 @@ namespace eprosima {
                 eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier*& element_identifier();
 
                 /*!
-                * @brief This function returns the maximum serialized size of an object
-                * depending on the buffer alignment.
-                * @param current_alignment Buffer alignment.
-                * @return Maximum serialized size.
-                */
-                eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
-                        size_t current_alignment = 0);
-
-                /*!
                  * @brief This function returns the serialized size of a data depending on the buffer alignment.
                  * @param data Data which is calculated its serialized size.
                  * @param current_alignment Buffer alignment.
@@ -1218,15 +1191,6 @@ namespace eprosima {
                  * @return Reference to member element_identifier
                  */
                 eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier*& element_identifier();
-
-                /*!
-                * @brief This function returns the maximum serialized size of an object
-                * depending on the buffer alignment.
-                * @param current_alignment Buffer alignment.
-                * @return Maximum serialized size.
-                */
-                eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
-                        size_t current_alignment = 0);
 
                 /*!
                  * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1445,15 +1409,6 @@ namespace eprosima {
                  */
                 eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier*& key_identifier();
 
-
-                /*!
-                * @brief This function returns the maximum serialized size of an object
-                * depending on the buffer alignment.
-                * @param current_alignment Buffer alignment.
-                * @return Maximum serialized size.
-                */
-                eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
-                        size_t current_alignment = 0);
 
                 /*!
                  * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1675,15 +1630,6 @@ namespace eprosima {
                  */
                 eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier*& key_identifier();
 
-
-                /*!
-                * @brief This function returns the maximum serialized size of an object
-                * depending on the buffer alignment.
-                * @param current_alignment Buffer alignment.
-                * @return Maximum serialized size.
-                */
-                eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
-                        size_t current_alignment = 0);
 
                 /*!
                  * @brief This function returns the serialized size of a data depending on the buffer alignment.
