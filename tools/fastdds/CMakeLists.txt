@@ -16,9 +16,9 @@
 project(fastdds-tool LANGUAGES CXX)
 
 # copy fastdds.py in build dir
-if(EPROSIMA_BUILD_TESTS)
+if(EPROSIMA_BUILD)
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/fastdds.py
-        ${CMAKE_CURRENT_BINARY_DIR}/fastdds.py)
+        ${CMAKE_CURRENT_BINARY_DIR}/fastdds.py COPYONLY)
 
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/discovery
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
@@ -27,7 +27,6 @@ if(EPROSIMA_BUILD_TESTS)
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/xml_ci
         DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 endif()
-
 
 ###############################################################################
 # Installation
