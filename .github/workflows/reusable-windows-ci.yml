@@ -302,8 +302,8 @@ jobs:
           $Env:OPENSSL_CONF=$config
 
           # introduce openssl binary in the path for the lower check
-          $Env:Path += ";$Env:OPENSSL64_ROOT\bin;$Env:SOFTHSM2_ROOT"
-          $Env:Path | Out-File $Env:GITHUB_PATH -Encoding OEM
+          $Env:Path += ";$Env:OPENSSL64_ROOT\bin;$Env:SOFTHSM2_ROOT\bin"
+          "$Env:SOFTHSM2_ROOT\bin" | Out-File $Env:GITHUB_PATH -Encoding OEM -Append
 
           # check if is working
           openssl engine pkcs11 -t
@@ -617,14 +617,14 @@ jobs:
             gci $dumpfolder | Sort-Object LastWriteTime
             "::endgroup::"
           }
-          
+
           if($failed)
           {
             $msg = "$failed test(s) failed"
             "TestErrors=" + $msg | Out-File $Env:GITHUB_OUTPUT -Append
             Write-Error $msg;
           }
-          
+
           # Avoid disturbing exit code 1 message
           $LASTEXITCODE=0
 
