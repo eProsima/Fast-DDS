@@ -31,7 +31,6 @@
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 1)
 #error \
-
     Generated types is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
@@ -44,6 +43,7 @@ namespace eprosima
             namespace detail
             {
 
+                #ifndef SWIG
                 namespace detail {
 
                     template<typename Tag, typename Tag::type M>
@@ -70,9 +70,11 @@ namespace eprosima
                         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
                     }
                 }
+                #endif
+
                 /*!
                  * @brief This class represents the TopicDataType of the type EntityId_s defined by the user in the IDL file.
-                 * @ingroup TYPES
+                 * @ingroup types
                  */
                 class EntityId_sPubSubType : public eprosima::fastdds::dds::TopicDataType
                 {
@@ -142,6 +144,7 @@ namespace eprosima
 
                     }};
 
+                #ifndef SWIG
                 namespace detail {
 
                     template<typename Tag, typename Tag::type M>
@@ -168,9 +171,11 @@ namespace eprosima
                         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
                     }
                 }
+                #endif
+
                 /*!
                  * @brief This class represents the TopicDataType of the type GuidPrefix_s defined by the user in the IDL file.
-                 * @ingroup TYPES
+                 * @ingroup types
                  */
                 class GuidPrefix_sPubSubType : public eprosima::fastdds::dds::TopicDataType
                 {
@@ -240,6 +245,7 @@ namespace eprosima
 
                     }};
 
+                #ifndef SWIG
                 namespace detail {
 
                     template<typename Tag, typename Tag::type M>
@@ -266,9 +272,11 @@ namespace eprosima
                         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
                     }
                 }
+                #endif
+
                 /*!
                  * @brief This class represents the TopicDataType of the type GUID_s defined by the user in the IDL file.
-                 * @ingroup TYPES
+                 * @ingroup types
                  */
                 class GUID_sPubSubType : public eprosima::fastdds::dds::TopicDataType
                 {
@@ -338,6 +346,7 @@ namespace eprosima
 
                     }};
 
+                #ifndef SWIG
                 namespace detail {
 
                     template<typename Tag, typename Tag::type M>
@@ -364,9 +373,11 @@ namespace eprosima
                         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
                     }
                 }
+                #endif
+
                 /*!
                  * @brief This class represents the TopicDataType of the type SequenceNumber_s defined by the user in the IDL file.
-                 * @ingroup TYPES
+                 * @ingroup types
                  */
                 class SequenceNumber_sPubSubType : public eprosima::fastdds::dds::TopicDataType
                 {
@@ -436,6 +447,7 @@ namespace eprosima
 
                     }};
 
+                #ifndef SWIG
                 namespace detail {
 
                     template<typename Tag, typename Tag::type M>
@@ -462,9 +474,11 @@ namespace eprosima
                         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
                     }
                 }
+                #endif
+
                 /*!
                  * @brief This class represents the TopicDataType of the type SampleIdentity_s defined by the user in the IDL file.
-                 * @ingroup TYPES
+                 * @ingroup types
                  */
                 class SampleIdentity_sPubSubType : public eprosima::fastdds::dds::TopicDataType
                 {
@@ -534,6 +548,7 @@ namespace eprosima
 
                     }};
 
+                #ifndef SWIG
                 namespace detail {
 
                     template<typename Tag, typename Tag::type M>
@@ -560,9 +575,11 @@ namespace eprosima
                         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
                     }
                 }
+                #endif
+
                 /*!
                  * @brief This class represents the TopicDataType of the type Locator_s defined by the user in the IDL file.
-                 * @ingroup TYPES
+                 * @ingroup types
                  */
                 class Locator_sPubSubType : public eprosima::fastdds::dds::TopicDataType
                 {
@@ -635,7 +652,7 @@ namespace eprosima
 
             /*!
              * @brief This class represents the TopicDataType of the type DiscoveryTime defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class DiscoveryTimePubSubType : public eprosima::fastdds::dds::TopicDataType
             {
@@ -699,6 +716,7 @@ namespace eprosima
 
             };
 
+            #ifndef SWIG
             namespace detail {
 
                 template<typename Tag, typename Tag::type M>
@@ -725,9 +743,11 @@ namespace eprosima
                     return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
                 }
             }
+            #endif
+
             /*!
              * @brief This class represents the TopicDataType of the type EntityCount defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class EntityCountPubSubType : public eprosima::fastdds::dds::TopicDataType
             {
@@ -797,6 +817,7 @@ namespace eprosima
 
                 }};
 
+            #ifndef SWIG
             namespace detail {
 
                 template<typename Tag, typename Tag::type M>
@@ -823,9 +844,11 @@ namespace eprosima
                     return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
                 }
             }
+            #endif
+
             /*!
              * @brief This class represents the TopicDataType of the type SampleIdentityCount defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class SampleIdentityCountPubSubType : public eprosima::fastdds::dds::TopicDataType
             {
@@ -895,6 +918,7 @@ namespace eprosima
 
                 }};
 
+            #ifndef SWIG
             namespace detail {
 
                 template<typename Tag, typename Tag::type M>
@@ -921,9 +945,11 @@ namespace eprosima
                     return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
                 }
             }
+            #endif
+
             /*!
              * @brief This class represents the TopicDataType of the type Entity2LocatorTraffic defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class Entity2LocatorTrafficPubSubType : public eprosima::fastdds::dds::TopicDataType
             {
@@ -993,6 +1019,7 @@ namespace eprosima
 
                 }};
 
+            #ifndef SWIG
             namespace detail {
 
                 template<typename Tag, typename Tag::type M>
@@ -1019,9 +1046,11 @@ namespace eprosima
                     return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
                 }
             }
+            #endif
+
             /*!
              * @brief This class represents the TopicDataType of the type WriterReaderData defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class WriterReaderDataPubSubType : public eprosima::fastdds::dds::TopicDataType
             {
@@ -1091,6 +1120,7 @@ namespace eprosima
 
                 }};
 
+            #ifndef SWIG
             namespace detail {
 
                 template<typename Tag, typename Tag::type M>
@@ -1117,9 +1147,11 @@ namespace eprosima
                     return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
                 }
             }
+            #endif
+
             /*!
              * @brief This class represents the TopicDataType of the type Locator2LocatorData defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class Locator2LocatorDataPubSubType : public eprosima::fastdds::dds::TopicDataType
             {
@@ -1189,6 +1221,7 @@ namespace eprosima
 
                 }};
 
+            #ifndef SWIG
             namespace detail {
 
                 template<typename Tag, typename Tag::type M>
@@ -1215,9 +1248,11 @@ namespace eprosima
                     return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
                 }
             }
+            #endif
+
             /*!
              * @brief This class represents the TopicDataType of the type EntityData defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class EntityDataPubSubType : public eprosima::fastdds::dds::TopicDataType
             {
@@ -1289,7 +1324,7 @@ namespace eprosima
 
             /*!
              * @brief This class represents the TopicDataType of the type PhysicalData defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class PhysicalDataPubSubType : public eprosima::fastdds::dds::TopicDataType
             {
@@ -1359,3 +1394,4 @@ namespace eprosima
 }
 
 #endif // _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_STATISTICS_TYPES_PUBSUBTYPES_H_
+

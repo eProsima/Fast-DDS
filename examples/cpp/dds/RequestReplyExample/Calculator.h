@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(Calculator_SOURCE)
-#define Calculator_DllAPI __declspec( dllexport )
+#if defined(CALCULATOR_SOURCE)
+#define CALCULATOR_DllAPI __declspec( dllexport )
 #else
-#define Calculator_DllAPI __declspec( dllimport )
-#endif // Calculator_SOURCE
+#define CALCULATOR_DllAPI __declspec( dllimport )
+#endif // CALCULATOR_SOURCE
 #else
-#define Calculator_DllAPI
+#define CALCULATOR_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define Calculator_DllAPI
+#define CALCULATOR_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the enumeration OperationType defined by the user in the IDL file.
- * @ingroup CALCULATOR
+ * @ingroup Calculator
  */
 enum OperationType : uint32_t
 {
@@ -76,7 +76,7 @@ enum OperationType : uint32_t
 };
 /*!
  * @brief This class represents the structure RequestType defined by the user in the IDL file.
- * @ingroup CALCULATOR
+ * @ingroup Calculator
  */
 class RequestType
 {
@@ -258,7 +258,7 @@ private:
 };
 /*!
  * @brief This class represents the structure ReplyType defined by the user in the IDL file.
- * @ingroup CALCULATOR
+ * @ingroup Calculator
  */
 class ReplyType
 {
@@ -400,3 +400,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_CALCULATOR_H_
+

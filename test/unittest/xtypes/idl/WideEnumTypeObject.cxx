@@ -26,6 +26,7 @@ namespace { char dummy; }
 
 #include "WideEnum.h"
 #include "WideEnumTypeObject.h"
+#include <mutex>
 #include <utility>
 #include <sstream>
 #include <fastrtps/rtps/common/SerializedPayload.h>
@@ -40,27 +41,31 @@ using namespace eprosima::fastrtps::rtps;
 
 void registerWideEnumTypes()
 {
-    TypeObjectFactory *factory = TypeObjectFactory::get_instance();
-    factory->add_type_object("MyEnumWide", GetMyEnumWideIdentifier(true),
-    GetMyEnumWideObject(true));
-    factory->add_type_object("MyEnumWide", GetMyEnumWideIdentifier(false),
-    GetMyEnumWideObject(false));
+    static std::once_flag once_flag;
+    std::call_once(once_flag, []()
+            {
+                TypeObjectFactory *factory = TypeObjectFactory::get_instance();
+                factory->add_type_object("MyEnumWide", GetMyEnumWideIdentifier(true),
+                GetMyEnumWideObject(true));
+                factory->add_type_object("MyEnumWide", GetMyEnumWideIdentifier(false),
+                GetMyEnumWideObject(false));
 
-    factory->add_type_object("MyEnumWideStruct", GetMyEnumWideStructIdentifier(true),
-    GetMyEnumWideStructObject(true));
-    factory->add_type_object("MyEnumWideStruct", GetMyEnumWideStructIdentifier(false),
-    GetMyEnumWideStructObject(false));
+                factory->add_type_object("MyEnumWideStruct", GetMyEnumWideStructIdentifier(true),
+                GetMyEnumWideStructObject(true));
+                factory->add_type_object("MyEnumWideStruct", GetMyEnumWideStructIdentifier(false),
+                GetMyEnumWideStructObject(false));
 
-    factory->add_type_object("SimpleWideUnion", GetSimpleWideUnionIdentifier(true),
-    GetSimpleWideUnionObject(true));
-    factory->add_type_object("SimpleWideUnion", GetSimpleWideUnionIdentifier(false),
-    GetSimpleWideUnionObject(false));
+                factory->add_type_object("SimpleWideUnion", GetSimpleWideUnionIdentifier(true),
+                GetSimpleWideUnionObject(true));
+                factory->add_type_object("SimpleWideUnion", GetSimpleWideUnionIdentifier(false),
+                GetSimpleWideUnionObject(false));
 
-    factory->add_type_object("SimpleWideUnionStruct", GetSimpleWideUnionStructIdentifier(true),
-    GetSimpleWideUnionStructObject(true));
-    factory->add_type_object("SimpleWideUnionStruct", GetSimpleWideUnionStructIdentifier(false),
-    GetSimpleWideUnionStructObject(false));
+                factory->add_type_object("SimpleWideUnionStruct", GetSimpleWideUnionStructIdentifier(true),
+                GetSimpleWideUnionStructObject(true));
+                factory->add_type_object("SimpleWideUnionStruct", GetSimpleWideUnionStructIdentifier(false),
+                GetSimpleWideUnionStructObject(false));
 
+            });
 }
 
 const TypeIdentifier* GetMyEnumWideIdentifier(bool complete)

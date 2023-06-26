@@ -31,7 +31,6 @@
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 1)
 #error \
-
     Generated Basic is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
@@ -41,7 +40,7 @@ typedef MyAliasEnum MyAliasAliasEnum;
 
 /*!
  * @brief This class represents the TopicDataType of the type EnumStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class EnumStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -107,7 +106,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type AliasStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class AliasStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -173,7 +172,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type AliasAliasStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class AliasAliasStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -237,6 +236,7 @@ public:
 
 };
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -263,9 +263,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type BoolStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class BoolStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -335,6 +337,7 @@ private:
 
     }};
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -361,9 +364,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type OctetStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class OctetStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -433,6 +438,7 @@ private:
 
     }};
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -459,9 +465,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type ShortStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class ShortStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -531,6 +539,7 @@ private:
 
     }};
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -557,9 +566,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type LongStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class LongStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -629,6 +640,7 @@ private:
 
     }};
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -655,9 +667,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type LongLongStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class LongLongStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -727,6 +741,7 @@ private:
 
     }};
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -753,9 +768,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type UShortStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class UShortStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -825,6 +842,7 @@ private:
 
     }};
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -851,9 +869,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type ULongStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class ULongStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -923,6 +943,7 @@ private:
 
     }};
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -949,9 +970,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type ULongLongStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class ULongLongStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1021,6 +1044,7 @@ private:
 
     }};
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -1047,9 +1071,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type FloatStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class FloatStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1119,6 +1145,7 @@ private:
 
     }};
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -1145,9 +1172,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type DoubleStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class DoubleStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1217,6 +1246,7 @@ private:
 
     }};
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -1243,9 +1273,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type LongDoubleStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class LongDoubleStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1315,6 +1347,7 @@ private:
 
     }};
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -1341,9 +1374,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type CharStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class CharStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1413,6 +1448,7 @@ private:
 
     }};
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -1439,9 +1475,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type WCharStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class WCharStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1513,7 +1551,7 @@ private:
 
 /*!
  * @brief This class represents the TopicDataType of the type StringStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class StringStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1579,7 +1617,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type WStringStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class WStringStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1645,7 +1683,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type LargeStringStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class LargeStringStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1711,7 +1749,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type LargeWStringStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class LargeWStringStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1775,6 +1813,7 @@ public:
 
 };
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -1801,9 +1840,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type ArraytStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class ArraytStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1874,6 +1915,7 @@ private:
     }};
 typedef std::array<std::array<int32_t, 2>, 2> MyArray;
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -1900,9 +1942,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type ArrayArrayStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class ArrayArrayStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1974,7 +2018,7 @@ private:
 
 /*!
  * @brief This class represents the TopicDataType of the type SequenceStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class SequenceStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -2040,7 +2084,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type SequenceSequenceStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class SequenceSequenceStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -2106,7 +2150,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type MapStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class MapStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -2172,7 +2216,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type MapMapStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class MapMapStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -2237,6 +2281,7 @@ public:
 };
 
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -2263,9 +2308,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type BitsetStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class BitsetStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -2335,6 +2382,7 @@ private:
 
     }};
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -2361,9 +2409,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type StructStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class StructStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -2433,6 +2483,7 @@ private:
 
     }};
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -2459,9 +2510,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type StructStructStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class StructStructStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -2536,7 +2589,7 @@ private:
 
 /*!
  * @brief This class represents the TopicDataType of the type SimpleUnionStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class SimpleUnionStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -2602,7 +2655,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type UnionUnionUnionStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class UnionUnionUnionStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -2668,7 +2721,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type WCharUnionStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class WCharUnionStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -2733,3 +2786,4 @@ public:
 };
 
 #endif // _FAST_DDS_GENERATED_BASIC_PUBSUBTYPES_H_
+

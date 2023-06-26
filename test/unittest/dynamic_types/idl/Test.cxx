@@ -70,9 +70,6 @@ using namespace eprosima::fastcdr::exception;
 
 
 
-
-
-
 BasicStruct::BasicStruct()
 {
     // boolean m_my_bool
@@ -789,10 +786,6 @@ void BasicStruct::serializeKey(
 {
     (void) scdr;
 }
-
-
-
-
 
 
 
@@ -2094,6 +2087,7 @@ void ComplexStruct::serializeKey(
     (void) scdr;
 }
 
+
 MyUnion::MyUnion()
 {
     m__d = ::A;
@@ -3054,6 +3048,7 @@ void CompleteStruct::serializeKey(
     (void) scdr;
 }
 
+
 KeyedStruct::KeyedStruct()
 {
     // octet m_key
@@ -3245,3 +3240,4 @@ void KeyedStruct::serializeKey(
    
   
 }
+

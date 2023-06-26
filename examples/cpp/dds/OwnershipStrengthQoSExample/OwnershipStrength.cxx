@@ -264,3 +264,4 @@ void ExampleMessage::serializeKey(
 {
     (void) scdr;
 }
+

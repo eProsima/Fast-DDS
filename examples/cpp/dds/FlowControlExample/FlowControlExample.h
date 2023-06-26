@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(FlowControlExample_SOURCE)
-#define FlowControlExample_DllAPI __declspec( dllexport )
+#if defined(FLOWCONTROLEXAMPLE_SOURCE)
+#define FLOWCONTROLEXAMPLE_DllAPI __declspec( dllexport )
 #else
-#define FlowControlExample_DllAPI __declspec( dllimport )
-#endif // FlowControlExample_SOURCE
+#define FLOWCONTROLEXAMPLE_DllAPI __declspec( dllimport )
+#endif // FLOWCONTROLEXAMPLE_SOURCE
 #else
-#define FlowControlExample_DllAPI
+#define FLOWCONTROLEXAMPLE_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define FlowControlExample_DllAPI
+#define FLOWCONTROLEXAMPLE_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure FlowControlExample defined by the user in the IDL file.
- * @ingroup FLOWCONTROLEXAMPLE
+ * @ingroup FlowControlExample
  */
 class FlowControlExample
 {
@@ -233,3 +233,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_FLOWCONTROLEXAMPLE_H_
+

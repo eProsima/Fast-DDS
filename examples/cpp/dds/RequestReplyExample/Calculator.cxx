@@ -267,6 +267,7 @@ void RequestType::serializeKey(
     (void) scdr;
 }
 
+
 ReplyType::ReplyType()
 {
     // long long m_z
@@ -404,3 +405,4 @@ void ReplyType::serializeKey(
 {
     (void) scdr;
 }
+

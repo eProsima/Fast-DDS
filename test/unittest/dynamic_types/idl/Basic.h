@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(Basic_SOURCE)
-#define Basic_DllAPI __declspec( dllexport )
+#if defined(BASIC_SOURCE)
+#define BASIC_DllAPI __declspec( dllexport )
 #else
-#define Basic_DllAPI __declspec( dllimport )
-#endif // Basic_SOURCE
+#define BASIC_DllAPI __declspec( dllimport )
+#endif // BASIC_SOURCE
 #else
-#define Basic_DllAPI
+#define BASIC_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define Basic_DllAPI
+#define BASIC_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the enumeration MyEnum defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 enum MyEnum : uint32_t
 {
@@ -73,13 +73,11 @@ enum MyEnum : uint32_t
     B,
     C
 };
-
 typedef MyEnum MyAliasEnum;
-
 typedef MyAliasEnum MyAliasAliasEnum;
 /*!
  * @brief This class represents the structure EnumStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class EnumStruct
 {
@@ -221,7 +219,7 @@ private:
 };
 /*!
  * @brief This class represents the structure AliasStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class AliasStruct
 {
@@ -363,7 +361,7 @@ private:
 };
 /*!
  * @brief This class represents the structure AliasAliasStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class AliasAliasStruct
 {
@@ -505,7 +503,7 @@ private:
 };
 /*!
  * @brief This class represents the structure BoolStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class BoolStruct
 {
@@ -647,7 +645,7 @@ private:
 };
 /*!
  * @brief This class represents the structure OctetStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class OctetStruct
 {
@@ -789,7 +787,7 @@ private:
 };
 /*!
  * @brief This class represents the structure ShortStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class ShortStruct
 {
@@ -931,7 +929,7 @@ private:
 };
 /*!
  * @brief This class represents the structure LongStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class LongStruct
 {
@@ -1073,7 +1071,7 @@ private:
 };
 /*!
  * @brief This class represents the structure LongLongStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class LongLongStruct
 {
@@ -1215,7 +1213,7 @@ private:
 };
 /*!
  * @brief This class represents the structure UShortStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class UShortStruct
 {
@@ -1357,7 +1355,7 @@ private:
 };
 /*!
  * @brief This class represents the structure ULongStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class ULongStruct
 {
@@ -1499,7 +1497,7 @@ private:
 };
 /*!
  * @brief This class represents the structure ULongLongStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class ULongLongStruct
 {
@@ -1641,7 +1639,7 @@ private:
 };
 /*!
  * @brief This class represents the structure FloatStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class FloatStruct
 {
@@ -1783,7 +1781,7 @@ private:
 };
 /*!
  * @brief This class represents the structure DoubleStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class DoubleStruct
 {
@@ -1925,7 +1923,7 @@ private:
 };
 /*!
  * @brief This class represents the structure LongDoubleStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class LongDoubleStruct
 {
@@ -2067,7 +2065,7 @@ private:
 };
 /*!
  * @brief This class represents the structure CharStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class CharStruct
 {
@@ -2209,7 +2207,7 @@ private:
 };
 /*!
  * @brief This class represents the structure WCharStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class WCharStruct
 {
@@ -2351,7 +2349,7 @@ private:
 };
 /*!
  * @brief This class represents the structure StringStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class StringStruct
 {
@@ -2499,7 +2497,7 @@ private:
 };
 /*!
  * @brief This class represents the structure WStringStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class WStringStruct
 {
@@ -2647,7 +2645,7 @@ private:
 };
 /*!
  * @brief This class represents the structure LargeStringStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class LargeStringStruct
 {
@@ -2795,7 +2793,7 @@ private:
 };
 /*!
  * @brief This class represents the structure LargeWStringStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class LargeWStringStruct
 {
@@ -2943,7 +2941,7 @@ private:
 };
 /*!
  * @brief This class represents the structure ArraytStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class ArraytStruct
 {
@@ -3089,11 +3087,10 @@ private:
     std::array<std::array<std::array<int32_t, 2>, 2>, 2> m_my_array;
 
 };
-
 typedef std::array<std::array<int32_t, 2>, 2> MyArray;
 /*!
  * @brief This class represents the structure ArrayArrayStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class ArrayArrayStruct
 {
@@ -3241,7 +3238,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SequenceStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class SequenceStruct
 {
@@ -3389,7 +3386,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SequenceSequenceStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class SequenceSequenceStruct
 {
@@ -3537,7 +3534,7 @@ private:
 };
 /*!
  * @brief This class represents the structure MapStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class MapStruct
 {
@@ -3685,7 +3682,7 @@ private:
 };
 /*!
  * @brief This class represents the structure MapMapStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class MapMapStruct
 {
@@ -3833,7 +3830,7 @@ private:
 };
 /*!
  * @brief This class represents the structure MyBitset defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class MyBitset
 {
@@ -3951,7 +3948,7 @@ private:
 };
 /*!
  * @brief This class represents the structure BitsetStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class BitsetStruct
 {
@@ -4099,7 +4096,7 @@ private:
 };
 /*!
  * @brief This class represents the structure StructStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class StructStruct
 {
@@ -4261,7 +4258,7 @@ private:
 };
 /*!
  * @brief This class represents the structure StructStructStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class StructStructStruct
 {
@@ -4429,7 +4426,7 @@ private:
 };
 /*!
  * @brief This class represents the union SimpleUnion defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class SimpleUnion
 {
@@ -4587,7 +4584,7 @@ private:
 };
 /*!
  * @brief This class represents the union UnionUnion defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class UnionUnion
 {
@@ -4751,7 +4748,7 @@ private:
 };
 /*!
  * @brief This class represents the union WCharUnion defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class WCharUnion
 {
@@ -4909,7 +4906,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SimpleUnionStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class SimpleUnionStruct
 {
@@ -5057,7 +5054,7 @@ private:
 };
 /*!
  * @brief This class represents the structure UnionUnionUnionStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class UnionUnionUnionStruct
 {
@@ -5205,7 +5202,7 @@ private:
 };
 /*!
  * @brief This class represents the structure WCharUnionStruct defined by the user in the IDL file.
- * @ingroup BASIC
+ * @ingroup Basic
  */
 class WCharUnionStruct
 {
@@ -5353,3 +5350,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_BASIC_H_
+

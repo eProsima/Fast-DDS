@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(Types_SOURCE)
-#define Types_DllAPI __declspec( dllexport )
+#if defined(TYPES_SOURCE)
+#define TYPES_DllAPI __declspec( dllexport )
 #else
-#define Types_DllAPI __declspec( dllimport )
-#endif // Types_SOURCE
+#define TYPES_DllAPI __declspec( dllimport )
+#endif // TYPES_SOURCE
 #else
-#define Types_DllAPI
+#define TYPES_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define Types_DllAPI
+#define TYPES_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the enumeration MyEnum defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 enum MyEnum : uint32_t
 {
@@ -75,7 +75,7 @@ enum MyEnum : uint32_t
 };
 /*!
  * @brief This class represents the enumeration MyBadEnum defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 enum MyBadEnum : uint32_t
 {
@@ -85,7 +85,7 @@ enum MyBadEnum : uint32_t
 };
 /*!
  * @brief This class represents the structure MyEnumStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MyEnumStruct
 {
@@ -227,7 +227,7 @@ private:
 };
 /*!
  * @brief This class represents the structure MyBadEnumStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MyBadEnumStruct
 {
@@ -367,11 +367,10 @@ private:
     MyBadEnum m_my_enum;
 
 };
-
 typedef MyEnum MyAliasEnum;
 /*!
  * @brief This class represents the structure MyAliasEnumStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MyAliasEnumStruct
 {
@@ -513,7 +512,7 @@ private:
 };
 /*!
  * @brief This class represents the structure BasicStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class BasicStruct
 {
@@ -701,7 +700,7 @@ private:
 };
 /*!
  * @brief This class represents the structure BasicNamesStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class BasicNamesStruct
 {
@@ -889,7 +888,7 @@ private:
 };
 /*!
  * @brief This class represents the structure BasicBadStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class BasicBadStruct
 {
@@ -1077,7 +1076,7 @@ private:
 };
 /*!
  * @brief This class represents the structure BasicWideStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class BasicWideStruct
 {
@@ -1311,7 +1310,7 @@ private:
 };
 /*!
  * @brief This class represents the structure BadBasicWideStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class BadBasicWideStruct
 {
@@ -1545,7 +1544,7 @@ private:
 };
 /*!
  * @brief This class represents the structure StringStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class StringStruct
 {
@@ -1693,7 +1692,7 @@ private:
 };
 /*!
  * @brief This class represents the structure LargeStringStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class LargeStringStruct
 {
@@ -1841,7 +1840,7 @@ private:
 };
 /*!
  * @brief This class represents the structure WStringStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class WStringStruct
 {
@@ -1989,7 +1988,7 @@ private:
 };
 /*!
  * @brief This class represents the structure LargeWStringStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class LargeWStringStruct
 {
@@ -2137,7 +2136,7 @@ private:
 };
 /*!
  * @brief This class represents the structure ArrayStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class ArrayStruct
 {
@@ -2285,7 +2284,7 @@ private:
 };
 /*!
  * @brief This class represents the structure ArrayStructEqual defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class ArrayStructEqual
 {
@@ -2433,7 +2432,7 @@ private:
 };
 /*!
  * @brief This class represents the structure ArrayBadStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class ArrayBadStruct
 {
@@ -2581,7 +2580,7 @@ private:
 };
 /*!
  * @brief This class represents the structure ArrayDimensionsStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class ArrayDimensionsStruct
 {
@@ -2729,7 +2728,7 @@ private:
 };
 /*!
  * @brief This class represents the structure ArraySizeStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class ArraySizeStruct
 {
@@ -2877,7 +2876,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SequenceStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SequenceStruct
 {
@@ -3025,7 +3024,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SequenceStructEqual defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SequenceStructEqual
 {
@@ -3173,7 +3172,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SequenceBadStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SequenceBadStruct
 {
@@ -3321,7 +3320,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SequenceBoundsStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SequenceBoundsStruct
 {
@@ -3469,7 +3468,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SequenceSequenceStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SequenceSequenceStruct
 {
@@ -3617,7 +3616,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SequenceSequenceBoundsStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SequenceSequenceBoundsStruct
 {
@@ -3765,7 +3764,7 @@ private:
 };
 /*!
  * @brief This class represents the structure MapStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapStruct
 {
@@ -3913,7 +3912,7 @@ private:
 };
 /*!
  * @brief This class represents the structure MapStructEqual defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapStructEqual
 {
@@ -4061,7 +4060,7 @@ private:
 };
 /*!
  * @brief This class represents the structure MapBadKeyStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapBadKeyStruct
 {
@@ -4209,7 +4208,7 @@ private:
 };
 /*!
  * @brief This class represents the structure MapBadElemStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapBadElemStruct
 {
@@ -4357,7 +4356,7 @@ private:
 };
 /*!
  * @brief This class represents the structure MapBoundsStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapBoundsStruct
 {
@@ -4505,7 +4504,7 @@ private:
 };
 /*!
  * @brief This class represents the structure MapMapStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapMapStruct
 {
@@ -4653,7 +4652,7 @@ private:
 };
 /*!
  * @brief This class represents the structure MapMapBoundsStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapMapBoundsStruct
 {
@@ -4801,7 +4800,7 @@ private:
 };
 /*!
  * @brief This class represents the union SimpleUnion defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleUnion
 {
@@ -4959,7 +4958,7 @@ private:
 };
 /*!
  * @brief This class represents the union SimpleUnionNames defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleUnionNames
 {
@@ -5117,7 +5116,7 @@ private:
 };
 /*!
  * @brief This class represents the union SimpleTypeUnion defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleTypeUnion
 {
@@ -5275,7 +5274,7 @@ private:
 };
 /*!
  * @brief This class represents the union SimpleBadUnion defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleBadUnion
 {
@@ -5433,7 +5432,7 @@ private:
 };
 /*!
  * @brief This class represents the union SimpleBadDiscUnion defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleBadDiscUnion
 {
@@ -5591,7 +5590,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SimpleUnionStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleUnionStruct
 {
@@ -5739,7 +5738,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SimpleUnionStructEqual defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleUnionStructEqual
 {
@@ -5887,7 +5886,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SimpleUnionNamesStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleUnionNamesStruct
 {
@@ -6035,7 +6034,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SimpleTypeUnionStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleTypeUnionStruct
 {
@@ -6183,7 +6182,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SimpleBadUnionStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleBadUnionStruct
 {
@@ -6331,7 +6330,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SimplBadDiscUnionStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimplBadDiscUnionStruct
 {
@@ -6479,3 +6478,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_TYPES_H_
+

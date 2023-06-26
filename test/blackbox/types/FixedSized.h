@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(FixedSized_SOURCE)
-#define FixedSized_DllAPI __declspec( dllexport )
+#if defined(FIXEDSIZED_SOURCE)
+#define FIXEDSIZED_DllAPI __declspec( dllexport )
 #else
-#define FixedSized_DllAPI __declspec( dllimport )
-#endif // FixedSized_SOURCE
+#define FIXEDSIZED_DllAPI __declspec( dllimport )
+#endif // FIXEDSIZED_SOURCE
 #else
-#define FixedSized_DllAPI
+#define FIXEDSIZED_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define FixedSized_DllAPI
+#define FIXEDSIZED_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure FixedSized defined by the user in the IDL file.
- * @ingroup FIXEDSIZED
+ * @ingroup FixedSized
  */
 class FixedSized
 {
@@ -207,3 +207,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_FIXEDSIZED_H_
+

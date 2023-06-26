@@ -31,14 +31,13 @@
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 1)
 #error \
-
     Generated KeyedHelloWorld is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
 
 /*!
  * @brief This class represents the TopicDataType of the type KeyedHelloWorld defined by the user in the IDL file.
- * @ingroup KEYEDHELLOWORLD
+ * @ingroup KeyedHelloWorld
  */
 class KeyedHelloWorldPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -103,3 +102,4 @@ public:
 };
 
 #endif // _FAST_DDS_GENERATED_KEYEDHELLOWORLD_PUBSUBTYPES_H_
+

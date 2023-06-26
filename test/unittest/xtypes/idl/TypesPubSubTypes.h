@@ -31,7 +31,6 @@
 
 #if !defined(GEN_API_VER) || (GEN_API_VER != 1)
 #error \
-
     Generated Types is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
@@ -40,7 +39,7 @@
 
 /*!
  * @brief This class represents the TopicDataType of the type MyEnumStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MyEnumStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -106,7 +105,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type MyBadEnumStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MyBadEnumStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -173,7 +172,7 @@ typedef MyEnum MyAliasEnum;
 
 /*!
  * @brief This class represents the TopicDataType of the type MyAliasEnumStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MyAliasEnumStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -239,7 +238,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type BasicStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class BasicStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -305,7 +304,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type BasicNamesStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class BasicNamesStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -371,7 +370,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type BasicBadStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class BasicBadStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -437,7 +436,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type BasicWideStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class BasicWideStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -503,7 +502,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type BadBasicWideStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class BadBasicWideStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -569,7 +568,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type StringStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class StringStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -635,7 +634,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type LargeStringStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class LargeStringStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -701,7 +700,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type WStringStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class WStringStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -767,7 +766,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type LargeWStringStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class LargeWStringStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -831,6 +830,7 @@ public:
 
 };
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -857,9 +857,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type ArrayStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class ArrayStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -929,6 +931,7 @@ private:
 
     }};
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -955,9 +958,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type ArrayStructEqual defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class ArrayStructEqualPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1027,6 +1032,7 @@ private:
 
     }};
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -1053,9 +1059,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type ArrayBadStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class ArrayBadStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1125,6 +1133,7 @@ private:
 
     }};
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -1151,9 +1160,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type ArrayDimensionsStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class ArrayDimensionsStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1223,6 +1234,7 @@ private:
 
     }};
 
+#ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
@@ -1249,9 +1261,11 @@ namespace detail {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
+#endif
+
 /*!
  * @brief This class represents the TopicDataType of the type ArraySizeStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class ArraySizeStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1323,7 +1337,7 @@ private:
 
 /*!
  * @brief This class represents the TopicDataType of the type SequenceStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SequenceStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1389,7 +1403,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type SequenceStructEqual defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SequenceStructEqualPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1455,7 +1469,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type SequenceBadStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SequenceBadStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1521,7 +1535,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type SequenceBoundsStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SequenceBoundsStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1587,7 +1601,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type SequenceSequenceStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SequenceSequenceStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1653,7 +1667,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type SequenceSequenceBoundsStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SequenceSequenceBoundsStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1719,7 +1733,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type MapStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1785,7 +1799,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type MapStructEqual defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapStructEqualPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1851,7 +1865,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type MapBadKeyStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapBadKeyStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1917,7 +1931,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type MapBadElemStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapBadElemStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -1983,7 +1997,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type MapBoundsStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapBoundsStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -2049,7 +2063,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type MapMapStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapMapStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -2115,7 +2129,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type MapMapBoundsStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapMapBoundsStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -2186,7 +2200,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type SimpleUnionStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleUnionStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -2252,7 +2266,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type SimpleUnionStructEqual defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleUnionStructEqualPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -2318,7 +2332,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type SimpleUnionNamesStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleUnionNamesStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -2384,7 +2398,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type SimpleTypeUnionStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleTypeUnionStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -2450,7 +2464,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type SimpleBadUnionStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleBadUnionStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -2516,7 +2530,7 @@ public:
 
 /*!
  * @brief This class represents the TopicDataType of the type SimplBadDiscUnionStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimplBadDiscUnionStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -2581,3 +2595,4 @@ public:
 };
 
 #endif // _FAST_DDS_GENERATED_TYPES_PUBSUBTYPES_H_
+

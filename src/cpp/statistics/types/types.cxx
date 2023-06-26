@@ -215,6 +215,7 @@ void eprosima::fastdds::statistics::detail::EntityId_s::serializeKey(
     (void) scdr;
 }
 
+
 eprosima::fastdds::statistics::detail::GuidPrefix_s::GuidPrefix_s()
 {
     // octet m_value
@@ -362,6 +363,7 @@ void eprosima::fastdds::statistics::detail::GuidPrefix_s::serializeKey(
 {
     (void) scdr;
 }
+
 
 eprosima::fastdds::statistics::detail::GUID_s::GUID_s()
 {
@@ -557,6 +559,7 @@ void eprosima::fastdds::statistics::detail::GUID_s::serializeKey(
     (void) scdr;
 }
 
+
 eprosima::fastdds::statistics::detail::SequenceNumber_s::SequenceNumber_s()
 {
     // long m_high
@@ -736,6 +739,7 @@ void eprosima::fastdds::statistics::detail::SequenceNumber_s::serializeKey(
 {
     (void) scdr;
 }
+
 
 eprosima::fastdds::statistics::detail::SampleIdentity_s::SampleIdentity_s()
 {
@@ -930,6 +934,7 @@ void eprosima::fastdds::statistics::detail::SampleIdentity_s::serializeKey(
 {
     (void) scdr;
 }
+
 
 eprosima::fastdds::statistics::detail::Locator_s::Locator_s()
 {
@@ -1160,6 +1165,7 @@ void eprosima::fastdds::statistics::detail::Locator_s::serializeKey(
 {
     (void) scdr;
 }
+
 
 
 eprosima::fastdds::statistics::DiscoveryTime::DiscoveryTime()
@@ -1546,6 +1552,7 @@ void eprosima::fastdds::statistics::DiscoveryTime::serializeKey(
   
 }
 
+
 eprosima::fastdds::statistics::EntityCount::EntityCount()
 {
     // eprosima::fastdds::statistics::detail::GUID_s m_guid
@@ -1735,6 +1742,7 @@ void eprosima::fastdds::statistics::EntityCount::serializeKey(
   
 }
 
+
 eprosima::fastdds::statistics::SampleIdentityCount::SampleIdentityCount()
 {
     // eprosima::fastdds::statistics::detail::SampleIdentity_s m_sample_id
@@ -1923,6 +1931,7 @@ void eprosima::fastdds::statistics::SampleIdentityCount::serializeKey(
     m_sample_id.serialize(scdr);    
   
 }
+
 
 eprosima::fastdds::statistics::Entity2LocatorTraffic::Entity2LocatorTraffic()
 {
@@ -2243,6 +2252,7 @@ void eprosima::fastdds::statistics::Entity2LocatorTraffic::serializeKey(
   
 }
 
+
 eprosima::fastdds::statistics::WriterReaderData::WriterReaderData()
 {
     // eprosima::fastdds::statistics::detail::GUID_s m_writer_guid
@@ -2479,6 +2489,7 @@ void eprosima::fastdds::statistics::WriterReaderData::serializeKey(
    m_reader_guid.serialize(scdr);    
   
 }
+
 
 eprosima::fastdds::statistics::Locator2LocatorData::Locator2LocatorData()
 {
@@ -2717,6 +2728,7 @@ void eprosima::fastdds::statistics::Locator2LocatorData::serializeKey(
   
 }
 
+
 eprosima::fastdds::statistics::EntityData::EntityData()
 {
     // eprosima::fastdds::statistics::detail::GUID_s m_guid
@@ -2905,6 +2917,7 @@ void eprosima::fastdds::statistics::EntityData::serializeKey(
     m_guid.serialize(scdr);    
   
 }
+
 
 eprosima::fastdds::statistics::PhysicalData::PhysicalData()
 {
@@ -3200,6 +3213,7 @@ void eprosima::fastdds::statistics::PhysicalData::serializeKey(
  
   
 }
+
 
 
 eprosima::fastdds::statistics::Data::Data()

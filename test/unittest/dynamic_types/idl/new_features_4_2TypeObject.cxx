@@ -26,6 +26,7 @@ namespace { char dummy; }
 
 #include "new_features_4_2.h"
 #include "new_features_4_2TypeObject.h"
+#include <mutex>
 #include <utility>
 #include <sstream>
 #include <fastrtps/rtps/common/SerializedPayload.h>
@@ -40,58 +41,62 @@ using namespace eprosima::fastrtps::rtps;
 
 void registernew_features_4_2Types()
 {
-    TypeObjectFactory *factory = TypeObjectFactory::get_instance();
-    factory->add_type_object("NewAliases", GetNewAliasesIdentifier(true),
-    GetNewAliasesObject(true));
-    factory->add_type_object("NewAliases", GetNewAliasesIdentifier(false),
-    GetNewAliasesObject(false));
+    static std::once_flag once_flag;
+    std::call_once(once_flag, []()
+            {
+                TypeObjectFactory *factory = TypeObjectFactory::get_instance();
+                factory->add_type_object("NewAliases", GetNewAliasesIdentifier(true),
+                GetNewAliasesObject(true));
+                factory->add_type_object("NewAliases", GetNewAliasesIdentifier(false),
+                GetNewAliasesObject(false));
 
-    factory->add_type_object("WCharUnion", GetWCharUnionIdentifier(true),
-    GetWCharUnionObject(true));
-    factory->add_type_object("WCharUnion", GetWCharUnionIdentifier(false),
-    GetWCharUnionObject(false));
+                factory->add_type_object("WCharUnion", GetWCharUnionIdentifier(true),
+                GetWCharUnionObject(true));
+                factory->add_type_object("WCharUnion", GetWCharUnionIdentifier(false),
+                GetWCharUnionObject(false));
 
-    factory->add_type_object("OctetUnion", GetOctetUnionIdentifier(true),
-    GetOctetUnionObject(true));
-    factory->add_type_object("OctetUnion", GetOctetUnionIdentifier(false),
-    GetOctetUnionObject(false));
+                factory->add_type_object("OctetUnion", GetOctetUnionIdentifier(true),
+                GetOctetUnionObject(true));
+                factory->add_type_object("OctetUnion", GetOctetUnionIdentifier(false),
+                GetOctetUnionObject(false));
 
-    factory->add_type_object("Int8Union", GetInt8UnionIdentifier(true),
-    GetInt8UnionObject(true));
-    factory->add_type_object("Int8Union", GetInt8UnionIdentifier(false),
-    GetInt8UnionObject(false));
+                factory->add_type_object("Int8Union", GetInt8UnionIdentifier(true),
+                GetInt8UnionObject(true));
+                factory->add_type_object("Int8Union", GetInt8UnionIdentifier(false),
+                GetInt8UnionObject(false));
 
-    factory->add_type_object("bitmodule::ParentBitset", bitmodule::GetParentBitsetIdentifier(true),
-            bitmodule::GetParentBitsetObject(true));
-    factory->add_type_object("bitmodule::ParentBitset", bitmodule::GetParentBitsetIdentifier(false),
-            bitmodule::GetParentBitsetObject(false));
+                factory->add_type_object("bitmodule::ParentBitset", bitmodule::GetParentBitsetIdentifier(true),
+                        bitmodule::GetParentBitsetObject(true));
+                factory->add_type_object("bitmodule::ParentBitset", bitmodule::GetParentBitsetIdentifier(false),
+                        bitmodule::GetParentBitsetObject(false));
 
-    factory->add_type_object("bitmodule::MyBitset", bitmodule::GetMyBitsetIdentifier(true),
-            bitmodule::GetMyBitsetObject(true));
-    factory->add_type_object("bitmodule::MyBitset", bitmodule::GetMyBitsetIdentifier(false),
-            bitmodule::GetMyBitsetObject(false));
+                factory->add_type_object("bitmodule::MyBitset", bitmodule::GetMyBitsetIdentifier(true),
+                        bitmodule::GetMyBitsetObject(true));
+                factory->add_type_object("bitmodule::MyBitset", bitmodule::GetMyBitsetIdentifier(false),
+                        bitmodule::GetMyBitsetObject(false));
 
-    factory->add_type_object("bitmodule::MyBitMask", bitmodule::GetMyBitMaskIdentifier(true),
-            bitmodule::GetMyBitMaskObject(true));
-    factory->add_type_object("bitmodule::MyBitMask", bitmodule::GetMyBitMaskIdentifier(false),
-            bitmodule::GetMyBitMaskObject(false));
+                factory->add_type_object("bitmodule::MyBitMask", bitmodule::GetMyBitMaskIdentifier(true),
+                        bitmodule::GetMyBitMaskObject(true));
+                factory->add_type_object("bitmodule::MyBitMask", bitmodule::GetMyBitMaskIdentifier(false),
+                        bitmodule::GetMyBitMaskObject(false));
 
-    factory->add_type_object("bitmodule::BitsetBitmask", bitmodule::GetBitsetBitmaskIdentifier(true),
-            bitmodule::GetBitsetBitmaskObject(true));
-    factory->add_type_object("bitmodule::BitsetBitmask", bitmodule::GetBitsetBitmaskIdentifier(false),
-            bitmodule::GetBitsetBitmaskObject(false));
+                factory->add_type_object("bitmodule::BitsetBitmask", bitmodule::GetBitsetBitmaskIdentifier(true),
+                        bitmodule::GetBitsetBitmaskObject(true));
+                factory->add_type_object("bitmodule::BitsetBitmask", bitmodule::GetBitsetBitmaskIdentifier(false),
+                        bitmodule::GetBitsetBitmaskObject(false));
 
-    factory->add_type_object("bitmodule::BM2", bitmodule::GetBM2Identifier(true),
-            bitmodule::GetBM2Object(true));
-    factory->add_type_object("bitmodule::BM2", bitmodule::GetBM2Identifier(false),
-            bitmodule::GetBM2Object(false));
+                factory->add_type_object("bitmodule::BM2", bitmodule::GetBM2Identifier(true),
+                        bitmodule::GetBM2Object(true));
+                factory->add_type_object("bitmodule::BM2", bitmodule::GetBM2Identifier(false),
+                        bitmodule::GetBM2Object(false));
 
 
-    factory->add_type_object("StructTest", GetStructTestIdentifier(true),
-    GetStructTestObject(true));
-    factory->add_type_object("StructTest", GetStructTestIdentifier(false),
-    GetStructTestObject(false));
+                factory->add_type_object("StructTest", GetStructTestIdentifier(true),
+                GetStructTestObject(true));
+                factory->add_type_object("StructTest", GetStructTestIdentifier(false),
+                GetStructTestObject(false));
 
+            });
 }
 
 const TypeIdentifier* GetNewAliasesIdentifier(bool complete)
@@ -473,12 +478,10 @@ const TypeObject* GetCompleteNewAliasesObject()
 
     cst_uint64_.detail().name("uint64_");
 
-
     {
         AppliedAnnotation ann;
         //ann.annotation_typeid(GetdefaultIdentifier(true));
         ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("default"));
-
             {
                 AppliedAnnotationParameter annParam;
                 MD5 message_hash("value");
@@ -512,12 +515,10 @@ const TypeObject* GetCompleteNewAliasesObject()
 
     cst_local_string.detail().name("local_string");
 
-
     {
         AppliedAnnotation ann;
         //ann.annotation_typeid(Getnon_serializedIdentifier(true));
         ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("non_serialized"));
-
             {
                 AppliedAnnotationParameter annParam;
                 MD5 message_hash("value");
@@ -2176,14 +2177,12 @@ namespace bitmodule {
             cbf_flag0.detail().ann_custom().push_back(ann);
         }
 
-
         {
             if (std::strcmp("position", "position") != 0)
             {
                 AppliedAnnotation ann;
                 //ann.annotation_typeid(GetpositionIdentifier(true));
                 ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
-
                         {
                             AppliedAnnotationParameter annParam;
                             MD5 message_hash("value");
@@ -2234,14 +2233,12 @@ namespace bitmodule {
             cbf_flag1.detail().ann_custom().push_back(ann);
         }
 
-
         {
             if (std::strcmp("position", "position") != 0)
             {
                 AppliedAnnotation ann;
                 //ann.annotation_typeid(GetpositionIdentifier(true));
                 ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
-
                         {
                             AppliedAnnotationParameter annParam;
                             MD5 message_hash("value");
@@ -2292,14 +2289,12 @@ namespace bitmodule {
             cbf_flag4.detail().ann_custom().push_back(ann);
         }
 
-
         {
             if (std::strcmp("position", "position") != 0)
             {
                 AppliedAnnotation ann;
                 //ann.annotation_typeid(GetpositionIdentifier(true));
                 ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
-
                         {
                             AppliedAnnotationParameter annParam;
                             MD5 message_hash("value");
@@ -2350,14 +2345,12 @@ namespace bitmodule {
             cbf_flag6.detail().ann_custom().push_back(ann);
         }
 
-
         {
             if (std::strcmp("position", "position") != 0)
             {
                 AppliedAnnotation ann;
                 //ann.annotation_typeid(GetpositionIdentifier(true));
                 ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
-
                         {
                             AppliedAnnotationParameter annParam;
                             MD5 message_hash("value");

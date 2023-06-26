@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(Data1mb_SOURCE)
-#define Data1mb_DllAPI __declspec( dllexport )
+#if defined(DATA1MB_SOURCE)
+#define DATA1MB_DllAPI __declspec( dllexport )
 #else
-#define Data1mb_DllAPI __declspec( dllimport )
-#endif // Data1mb_SOURCE
+#define DATA1MB_DllAPI __declspec( dllimport )
+#endif // DATA1MB_SOURCE
 #else
-#define Data1mb_DllAPI
+#define DATA1MB_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define Data1mb_DllAPI
+#define DATA1MB_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure Data1mb defined by the user in the IDL file.
- * @ingroup DATA1MB
+ * @ingroup Data1mb
  */
 class Data1mb
 {
@@ -213,3 +213,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_DATA1MB_H_
+

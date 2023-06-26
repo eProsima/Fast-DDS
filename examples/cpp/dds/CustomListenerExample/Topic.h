@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(Topic_SOURCE)
-#define Topic_DllAPI __declspec( dllexport )
+#if defined(TOPIC_SOURCE)
+#define TOPIC_DllAPI __declspec( dllexport )
 #else
-#define Topic_DllAPI __declspec( dllimport )
-#endif // Topic_SOURCE
+#define TOPIC_DllAPI __declspec( dllimport )
+#endif // TOPIC_SOURCE
 #else
-#define Topic_DllAPI
+#define TOPIC_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define Topic_DllAPI
+#define TOPIC_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure Topic defined by the user in the IDL file.
- * @ingroup TOPIC
+ * @ingroup Topic
  */
 class Topic
 {
@@ -233,3 +233,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_TOPIC_H_
+

@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(Benchmark_SOURCE)
-#define Benchmark_DllAPI __declspec( dllexport )
+#if defined(BENCHMARK_SOURCE)
+#define BENCHMARK_DllAPI __declspec( dllexport )
 #else
-#define Benchmark_DllAPI __declspec( dllimport )
-#endif // Benchmark_SOURCE
+#define BENCHMARK_DllAPI __declspec( dllimport )
+#endif // BENCHMARK_SOURCE
 #else
-#define Benchmark_DllAPI
+#define BENCHMARK_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define Benchmark_DllAPI
+#define BENCHMARK_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure BenchMark defined by the user in the IDL file.
- * @ingroup BENCHMARK
+ * @ingroup Benchmark
  */
 class BenchMark
 {
@@ -207,3 +207,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_BENCHMARK_H_
+

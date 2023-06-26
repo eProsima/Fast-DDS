@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(deadlinepayload_SOURCE)
-#define deadlinepayload_DllAPI __declspec( dllexport )
+#if defined(DEADLINEPAYLOAD_SOURCE)
+#define DEADLINEPAYLOAD_DllAPI __declspec( dllexport )
 #else
-#define deadlinepayload_DllAPI __declspec( dllimport )
-#endif // deadlinepayload_SOURCE
+#define DEADLINEPAYLOAD_DllAPI __declspec( dllimport )
+#endif // DEADLINEPAYLOAD_SOURCE
 #else
-#define deadlinepayload_DllAPI
+#define DEADLINEPAYLOAD_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define deadlinepayload_DllAPI
+#define DEADLINEPAYLOAD_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure HelloMsg defined by the user in the IDL file.
- * @ingroup DEADLINEPAYLOAD
+ * @ingroup deadlinepayload
  */
 class HelloMsg
 {
@@ -233,3 +233,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_DEADLINEPAYLOAD_H_
+

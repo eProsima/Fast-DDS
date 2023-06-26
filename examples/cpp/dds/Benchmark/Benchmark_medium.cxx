@@ -226,3 +226,4 @@ void BenchMarkMedium::serializeKey(
 {
     (void) scdr;
 }
+

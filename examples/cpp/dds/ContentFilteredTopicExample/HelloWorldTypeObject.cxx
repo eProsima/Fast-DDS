@@ -26,6 +26,7 @@ namespace { char dummy; }
 
 #include "HelloWorld.h"
 #include "HelloWorldTypeObject.h"
+#include <mutex>
 #include <utility>
 #include <sstream>
 #include <fastrtps/rtps/common/SerializedPayload.h>
@@ -40,12 +41,16 @@ using namespace eprosima::fastrtps::rtps;
 
 void registerHelloWorldTypes()
 {
-    TypeObjectFactory *factory = TypeObjectFactory::get_instance();
-    factory->add_type_object("HelloWorld", GetHelloWorldIdentifier(true),
-    GetHelloWorldObject(true));
-    factory->add_type_object("HelloWorld", GetHelloWorldIdentifier(false),
-    GetHelloWorldObject(false));
+    static std::once_flag once_flag;
+    std::call_once(once_flag, []()
+            {
+                TypeObjectFactory *factory = TypeObjectFactory::get_instance();
+                factory->add_type_object("HelloWorld", GetHelloWorldIdentifier(true),
+                GetHelloWorldObject(true));
+                factory->add_type_object("HelloWorld", GetHelloWorldIdentifier(false),
+                GetHelloWorldObject(false));
 
+            });
 }
 
 const TypeIdentifier* GetHelloWorldIdentifier(bool complete)

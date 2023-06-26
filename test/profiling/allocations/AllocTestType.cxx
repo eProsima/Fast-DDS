@@ -174,3 +174,4 @@ void AllocTestType::serializeKey(
 {
     (void) scdr;
 }
+

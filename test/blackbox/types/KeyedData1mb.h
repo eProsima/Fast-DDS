@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(KeyedData1mb_SOURCE)
-#define KeyedData1mb_DllAPI __declspec( dllexport )
+#if defined(KEYEDDATA1MB_SOURCE)
+#define KEYEDDATA1MB_DllAPI __declspec( dllexport )
 #else
-#define KeyedData1mb_DllAPI __declspec( dllimport )
-#endif // KeyedData1mb_SOURCE
+#define KEYEDDATA1MB_DllAPI __declspec( dllimport )
+#endif // KEYEDDATA1MB_SOURCE
 #else
-#define KeyedData1mb_DllAPI
+#define KEYEDDATA1MB_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define KeyedData1mb_DllAPI
+#define KEYEDDATA1MB_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure KeyedData1mb defined by the user in the IDL file.
- * @ingroup KEYEDDATA1MB
+ * @ingroup KeyedData1mb
  */
 class KeyedData1mb
 {
@@ -233,3 +233,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_KEYEDDATA1MB_H_
+

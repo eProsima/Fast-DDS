@@ -44,16 +44,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(WideEnum_SOURCE)
-#define WideEnum_DllAPI __declspec( dllexport )
+#if defined(WIDEENUM_SOURCE)
+#define WIDEENUM_DllAPI __declspec( dllexport )
 #else
-#define WideEnum_DllAPI __declspec( dllimport )
-#endif // WideEnum_SOURCE
+#define WIDEENUM_DllAPI __declspec( dllimport )
+#endif // WIDEENUM_SOURCE
 #else
-#define WideEnum_DllAPI
+#define WIDEENUM_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define WideEnum_DllAPI
+#define WIDEENUM_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +65,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the enumeration MyEnumWide defined by the user in the IDL file.
- * @ingroup WIDEENUM
+ * @ingroup WideEnum
  */
 enum MyEnumWide : uint32_t
 {
@@ -76,7 +76,7 @@ enum MyEnumWide : uint32_t
 };
 /*!
  * @brief This class represents the structure MyEnumWideStruct defined by the user in the IDL file.
- * @ingroup WIDEENUM
+ * @ingroup WideEnum
  */
 class MyEnumWideStruct
 {
@@ -218,7 +218,7 @@ private:
 };
 /*!
  * @brief This class represents the union SimpleWideUnion defined by the user in the IDL file.
- * @ingroup WIDEENUM
+ * @ingroup WideEnum
  */
 class SimpleWideUnion
 {
@@ -398,7 +398,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SimpleWideUnionStruct defined by the user in the IDL file.
- * @ingroup WIDEENUM
+ * @ingroup WideEnum
  */
 class SimpleWideUnionStruct
 {
@@ -546,3 +546,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_WIDEENUM_H_
+

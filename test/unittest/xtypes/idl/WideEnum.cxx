@@ -190,6 +190,7 @@ void MyEnumWideStruct::serializeKey(
     (void) scdr;
 }
 
+
 SimpleWideUnion::SimpleWideUnion()
 {
     m__d = A;
@@ -744,3 +745,4 @@ void SimpleWideUnionStruct::serializeKey(
 {
     (void) scdr;
 }
+
