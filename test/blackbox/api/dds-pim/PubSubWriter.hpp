@@ -656,7 +656,7 @@ public:
 
         if (!cv_.wait_for(lock, timeout, [&]()
                 {
-                    return matched_ == matched;
+                    return matched_ <= matched;
                 }))
         {
             ret_value = false;
