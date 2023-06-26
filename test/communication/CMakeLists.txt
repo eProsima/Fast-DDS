@@ -168,6 +168,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_secure_allow_unauthenticated_p
     ${CMAKE_CURRENT_BINARY_DIR}/simple_secure_allow_unauthenticated_pub_profile.xml COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_allow_unauthenticated_sub_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/simple_allow_unauthenticated_sub_profile.xml COPYONLY)
+configure_file(${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake @ONLY)
 
 if(SECURITY)
     configure_file(${PROJECT_SOURCE_DIR}/test/certs/maincacert.pem
@@ -198,7 +200,7 @@ endif()
 
 if(PYTHONINTERP_FOUND)
     add_test(NAME SimpleCommunicationBestEffort
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py -P ${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake)
+        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
 
     # Set test with label NoMemoryCheck
     set_property(TEST SimpleCommunicationBestEffort PROPERTY LABELS "NoMemoryCheck")
@@ -216,7 +218,7 @@ if(PYTHONINTERP_FOUND)
     endif()
 
     add_test(NAME SimpleCommunicationReliable
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py -P ${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake)
+        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
 
     # Set test with label NoMemoryCheck
     set_property(TEST SimpleCommunicationReliable PROPERTY LABELS "NoMemoryCheck")
@@ -234,7 +236,7 @@ if(PYTHONINTERP_FOUND)
     endif()
 
     add_test(NAME SimpleCommunicationReliableBestEffort
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py -P ${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake)
+        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
 
     # Set test with label NoMemoryCheck
     set_property(TEST SimpleCommunicationReliableBestEffort PROPERTY LABELS "NoMemoryCheck")
@@ -252,7 +254,7 @@ if(PYTHONINTERP_FOUND)
     endif()
 
     add_test(NAME SimpleMixCommunicationBestEffort
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_mix_communication.py -P ${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake)
+        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_mix_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
 
     # Set test with label NoMemoryCheck
     set_property(TEST SimpleMixCommunicationBestEffort PROPERTY LABELS "NoMemoryCheck")
@@ -270,7 +272,7 @@ if(PYTHONINTERP_FOUND)
     endif()
 
     add_test(NAME SimpleMixCommunicationReliable
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_mix_communication.py -P ${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake)
+        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_mix_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
 
     # Set test with label NoMemoryCheck
     set_property(TEST SimpleMixCommunicationReliable PROPERTY LABELS "NoMemoryCheck")
@@ -289,7 +291,7 @@ if(PYTHONINTERP_FOUND)
 
     if(SECURITY)
         add_test(NAME SimpleCommunicationSecureBestEffort
-            COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py -P ${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake)
+            COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
 
         # Set test with label NoMemoryCheck
         set_property(TEST SimpleCommunicationSecureBestEffort PROPERTY LABELS "NoMemoryCheck")
@@ -538,7 +540,7 @@ if(PYTHONINTERP_FOUND)
     endif()
 
     add_test(NAME LivelinessAssertion
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.py -P ${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake)
+        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/liveliness_assertion.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
 
     # Set test with label NoMemoryCheck
     set_property(TEST LivelinessAssertion PROPERTY LABELS "NoMemoryCheck")
@@ -553,7 +555,7 @@ if(PYTHONINTERP_FOUND)
             "PATH=$<TARGET_FILE_DIR:${PROJECT_NAME}>\\;$<TARGET_FILE_DIR:fastcdr>\\;${WIN_PATH}")
     endif()
     add_test(NAME AutomaticLivelinessAssertion
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/automatic_liveliness_assertion.py -P ${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake)
+        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/automatic_liveliness_assertion.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
 
     # Set test with label NoMemoryCheck
     set_property(TEST AutomaticLivelinessAssertion PROPERTY LABELS "NoMemoryCheck")
@@ -569,7 +571,7 @@ if(PYTHONINTERP_FOUND)
     endif()
 
     add_test(NAME TwoPublishersCommunicationBestEffort
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py -P ${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake)
+        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/two_publishers_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
 
     # Set test with label NoMemoryCheck
     set_property(TEST TwoPublishersCommunicationBestEffort PROPERTY LABELS "NoMemoryCheck")
@@ -605,7 +607,7 @@ if(PYTHONINTERP_FOUND)
     endif()
 
     add_test(NAME SimpleCommunicationBestEffortFixed
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py -P ${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake)
+        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/simple_communication.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
 
     # Set test with label NoMemoryCheck
     set_property(TEST SimpleCommunicationBestEffortFixed PROPERTY LABELS "NoMemoryCheck")
@@ -627,7 +629,7 @@ if(PYTHONINTERP_FOUND)
     endif()
 
     add_test(NAME SHMCommunicationSubscriberDiesWhileProcessingMessage
-        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message.py -P ${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake)
+        COMMAND ${CMAKE_COMMAND} -DACTUAL_TEST=${PYTHON_EXECUTABLE} -DACTUAL_ARGS=${CMAKE_CURRENT_BINARY_DIR}/shm_communication_subscriber_dies_while_processing_message.py -P ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake)
 
     # Set test with label NoMemoryCheck
     set_property(TEST SHMCommunicationSubscriberDiesWhileProcessingMessage PROPERTY LABELS "NoMemoryCheck")
