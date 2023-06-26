@@ -2561,7 +2561,7 @@ void DynamicTypeBuilderFactory::set_annotation_default_value(
         break;
         case TK_UINT16:
         {
-            apv.uint_16_value(static_cast<uint16_t>(std::stoul(member->get_default_value())));
+            apv.uint16_value(static_cast<uint16_t>(std::stoul(member->get_default_value())));
         }
         break;
         case TK_UINT32:
@@ -2819,7 +2819,7 @@ void DynamicTypeBuilderFactory::apply_type_annotations(
             }
             AnnotationParameterValue param_value;
             param_value._d(annotation->type_->get_kind());
-            param_value.from_string(it.second);
+//TODO(jlbueno): XTypes            param_value.from_string(it.second);
             ann_param.value(param_value);
             ann.param_seq().push_back(ann_param);
         }

@@ -141,7 +141,7 @@ set(${PROJECT_NAME}_source_files
     rtps/transport/ChainingTransport.cpp
 
     dynamic-types/AnnotationDescriptor.cpp
-    dynamic-types/AnnotationParameterValue.cpp
+    dynamic-types/AnnotationParameterValue.cxx
     dynamic-types/DynamicData.cpp
     dynamic-types/DynamicDataFactory.cpp
     dynamic-types/DynamicType.cpp

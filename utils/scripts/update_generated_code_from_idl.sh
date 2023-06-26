@@ -89,12 +89,15 @@ done
 echo "Moving files to src/cpp. Please remember to update the include header path"
 mv ./include/fastrtps/types/TypeObjectHashId.cxx ./src/cpp/dynamic-types/TypeObjectHashId.cxx
 mv ./include/fastrtps/types/TypeIdentifierTypes.cxx ./src/cpp/dynamic-types/TypeIdentifierTypes.cxx
-mv ./include/fastrtps/types/TypeIdentifier.cxx ./src/cpp/dynamic-types/TypeIdentifierTypes.cxx
+mv ./include/fastrtps/types/TypeIdentifier.cxx ./src/cpp/dynamic-types/TypeIdentifier.cxx
+mv ./include/fastrtps/types/AnnotationParameterValue.cxx ./src/cpp/dynamic-types/AnnotationParameterValue.cxx
 
 # Remove unused files
 rm ./include/fastrtps/types/XTypesBase.cxx
 rm ./include/fastrtps/types/TypeIdentifierTypesPubSubTypes.cxx
 rm ./include/fastrtps/types/TypeIdentifierTypesPubSubTypes.h
+rm ./include/fastrtps/types/AnnotationParameterValuePubSubTypes.cxx
+rm ./include/fastrtps/types/AnnotationParameterValuePubSubTypes.h
 
 echo "Please, remember to keep changes related to non-supported @external annotation in TypeIdentifierTypes files"
 

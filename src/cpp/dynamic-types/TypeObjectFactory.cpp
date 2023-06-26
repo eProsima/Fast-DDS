@@ -2117,7 +2117,7 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
                 {
                     mem_desc.set_type(build_dynamic_type(get_type_name(aux_mem), aux_mem, get_type_object(aux_mem)));
                 }
-                mem_desc.set_default_value(member.default_value().to_string());
+//TODO(jlbueno): XTypes                mem_desc.set_default_value(member.default_value().to_string());
                 annotation_type->add_member(&mem_desc);
             }
             // Annotation inner definitions?
@@ -2148,7 +2148,7 @@ void TypeObjectFactory::apply_type_annotations(
         for (const AppliedAnnotationParameter& a_param : anno_params)
         {
             std::string param_key = get_key_from_hash(anno_desc.type(), a_param.paramname_hash());
-            anno_desc.set_value(param_key, a_param.value().to_string());
+//TODO(jlbueno): XTypes            anno_desc.set_value(param_key, a_param.value().to_string());
         }
         type_builder->apply_annotation(anno_desc);
     }
@@ -2173,7 +2173,7 @@ void TypeObjectFactory::apply_member_annotations(
         for (const AppliedAnnotationParameter& a_param : anno_params)
         {
             std::string param_key = get_key_from_hash(anno_desc.type(), a_param.paramname_hash());
-            anno_desc.set_value(param_key, a_param.value().to_string());
+//TODO(jlbueno): XTypes            anno_desc.set_value(param_key, a_param.value().to_string());
         }
         parent_type_builder->apply_annotation_to_member(member_id, anno_desc);
     }

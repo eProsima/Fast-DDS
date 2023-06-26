@@ -1193,7 +1193,7 @@ void DynamicData::get_value(
             get_char16_value(value, id);
             std::wstring temp = L"";
             temp += value;
-            sOutValue = wstring_to_bytes(temp);
+// TODO(jlbueno): XTypes            sOutValue = wstring_to_bytes(temp);
         }
         break;
         case TK_BOOLEAN:
@@ -1219,7 +1219,7 @@ void DynamicData::get_value(
         {
             std::wstring value;
             get_wstring_value(value, id);
-            sOutValue = wstring_to_bytes(value);
+// TODO(jlbueno): XTypes            sOutValue = wstring_to_bytes(value);
         }
         break;
         case TK_ENUM:

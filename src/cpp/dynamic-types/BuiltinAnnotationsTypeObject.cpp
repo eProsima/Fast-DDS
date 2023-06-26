@@ -324,7 +324,7 @@ const TypeObject* GetMinimalautoidObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
-    def_value_value.from_string("1");
+//TODO(jlbueno): XTypes    def_value_value.from_string("1");
     mam_value.default_value(def_value_value);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -386,7 +386,7 @@ const TypeObject* GetCompleteautoidObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(cam_value.common().member_type_id()._d());
-    def_value_value.from_string("1");
+//TODO(jlbueno): XTypes    def_value_value.from_string("1");
     cam_value.default_value(def_value_value);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
@@ -667,7 +667,7 @@ const TypeObject* GetMinimaloptionalObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
-    def_value_value.from_string("true");
+//TODO(jlbueno): XTypes    def_value_value.from_string("true");
     mam_value.default_value(def_value_value);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -728,7 +728,7 @@ const TypeObject* GetCompleteoptionalObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(cam_value.common().member_type_id()._d());
-    def_value_value.from_string("true");
+//TODO(jlbueno): XTypes    def_value_value.from_string("true");
     cam_value.default_value(def_value_value);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
@@ -1803,7 +1803,7 @@ const TypeObject* GetMinimalkeyObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
-    def_value_value.from_string("true");
+//TODO(jlbueno): XTypes    def_value_value.from_string("true");
     mam_value.default_value(def_value_value);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -1864,7 +1864,7 @@ const TypeObject* GetCompletekeyObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(cam_value.common().member_type_id()._d());
-    def_value_value.from_string("true");
+//TODO(jlbueno): XTypes    def_value_value.from_string("true");
     cam_value.default_value(def_value_value);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
@@ -1944,7 +1944,7 @@ const TypeObject* GetMinimalmust_understandObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
-    def_value_value.from_string("true");
+//TODO(jlbueno): XTypes    def_value_value.from_string("true");
     mam_value.default_value(def_value_value);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -2005,7 +2005,7 @@ const TypeObject* GetCompletemust_understandObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(cam_value.common().member_type_id()._d());
-    def_value_value.from_string("true");
+//TODO(jlbueno): XTypes    def_value_value.from_string("true");
     cam_value.default_value(def_value_value);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
@@ -3009,7 +3009,7 @@ const TypeObject* GetMinimalexternalObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
-    def_value_value.from_string("true");
+//TODO(jlbueno): XTypes    def_value_value.from_string("true");
     mam_value.default_value(def_value_value);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -3070,7 +3070,7 @@ const TypeObject* GetCompleteexternalObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(cam_value.common().member_type_id()._d());
-    def_value_value.from_string("true");
+//TODO(jlbueno): XTypes    def_value_value.from_string("true");
     cam_value.default_value(def_value_value);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
@@ -3149,7 +3149,7 @@ const TypeObject* GetMinimalnestedObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
-    def_value_value.from_string("true");
+//TODO(jlbueno): XTypes    def_value_value.from_string("true");
     mam_value.default_value(def_value_value);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -3210,7 +3210,7 @@ const TypeObject* GetCompletenestedObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(cam_value.common().member_type_id()._d());
-    def_value_value.from_string("true");
+//TODO(jlbueno): XTypes    def_value_value.from_string("true");
     cam_value.default_value(def_value_value);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
@@ -3290,7 +3290,7 @@ const TypeObject* GetMinimalverbatimObject()
 
     AnnotationParameterValue def_value_language;
     def_value_language._d(mam_language.common().member_type_id()._d());
-    def_value_language.from_string("*");
+//TODO(jlbueno): XTypes    def_value_language.from_string("*");
     mam_language.default_value(def_value_language);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_language);
 
@@ -3300,7 +3300,7 @@ const TypeObject* GetMinimalverbatimObject()
 
     AnnotationParameterValue def_value_placement;
     def_value_placement._d(mam_placement.common().member_type_id()._d());
-    def_value_placement.from_string("1");
+//TODO(jlbueno): XTypes    def_value_placement.from_string("1");
     mam_placement.default_value(def_value_placement);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_placement);
 
@@ -3368,7 +3368,7 @@ const TypeObject* GetCompleteverbatimObject()
 
     AnnotationParameterValue def_value_language;
     def_value_language._d(cam_language.common().member_type_id()._d());
-    def_value_language.from_string("*");
+//TODO(jlbueno): XTypes    def_value_language.from_string("*");
     cam_language.default_value(def_value_language);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_language);
 
@@ -3378,7 +3378,7 @@ const TypeObject* GetCompleteverbatimObject()
 
     AnnotationParameterValue def_value_placement;
     def_value_placement._d(cam_placement.common().member_type_id()._d());
-    def_value_placement.from_string("1");
+//TODO(jlbueno): XTypes    def_value_placement.from_string("1");
     cam_placement.default_value(def_value_placement);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_placement);
 
@@ -3802,7 +3802,7 @@ const TypeObject* GetMinimalserviceObject()
 
     AnnotationParameterValue def_value_platform;
     def_value_platform._d(mam_platform.common().member_type_id()._d());
-    def_value_platform.from_string("*");
+//TODO(jlbueno): XTypes    def_value_platform.from_string("*");
     mam_platform.default_value(def_value_platform);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_platform);
 
@@ -3863,7 +3863,7 @@ const TypeObject* GetCompleteserviceObject()
 
     AnnotationParameterValue def_value_platform;
     def_value_platform._d(cam_platform.common().member_type_id()._d());
-    def_value_platform.from_string("*");
+//TODO(jlbueno): XTypes    def_value_platform.from_string("*");
     cam_platform.default_value(def_value_platform);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_platform);
 
@@ -3942,7 +3942,7 @@ const TypeObject* GetMinimalonewayObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
-    def_value_value.from_string("true");
+//TODO(jlbueno): XTypes    def_value_value.from_string("true");
     mam_value.default_value(def_value_value);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -4003,7 +4003,7 @@ const TypeObject* GetCompleteonewayObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(cam_value.common().member_type_id()._d());
-    def_value_value.from_string("true");
+//TODO(jlbueno): XTypes    def_value_value.from_string("true");
     cam_value.default_value(def_value_value);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
@@ -4082,7 +4082,7 @@ const TypeObject* GetMinimalamiObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
-    def_value_value.from_string("true");
+//TODO(jlbueno): XTypes    def_value_value.from_string("true");
     mam_value.default_value(def_value_value);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -4143,7 +4143,7 @@ const TypeObject* GetCompleteamiObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(cam_value.common().member_type_id()._d());
-    def_value_value.from_string("true");
+//TODO(jlbueno): XTypes    def_value_value.from_string("true");
     cam_value.default_value(def_value_value);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
@@ -4223,7 +4223,7 @@ const TypeObject* GetMinimalnon_serializedObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
-    def_value_value.from_string("true");
+//TODO(jlbueno): XTypes    def_value_value.from_string("true");
     mam_value.default_value(def_value_value);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -4284,7 +4284,7 @@ const TypeObject* GetCompletenon_serializedObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(cam_value.common().member_type_id()._d());
-    def_value_value.from_string("true");
+//TODO(jlbueno): XTypes    def_value_value.from_string("true");
     cam_value.default_value(def_value_value);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
