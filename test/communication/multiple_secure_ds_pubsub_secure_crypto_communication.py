@@ -215,7 +215,7 @@ def run(args):
     try:
         sys.exit(os.EX_OK)
     except AttributeError:
-        sys.exit(1)
+        sys.exit(0)
 
 
 if __name__ == '__main__':
