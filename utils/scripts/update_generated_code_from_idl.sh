@@ -5,6 +5,7 @@ files_to_exclude=(
     './include/fastrtps/types/dds-language_binding.idl'
     './include/fastrtps/types/dds-xtypes_discovery.idl'
     './include/fastrtps/types/dds-xtypes_typeobject.idl'
+    './include/fastrtps/types/BuiltinAnnotations.idl'
     )
 
 files_needing_typeobject=(
