@@ -302,10 +302,12 @@ jobs:
           $Env:OPENSSL_CONF=$config
 
           # introduce openssl binary in the path for the lower check
-          $Env:Path += ";$Env:OPENSSL64_ROOT\bin"
+          $Env:Path += ";$Env:OPENSSL64_ROOT\bin;$Env:SOFTHSM2_ROOT"
+          $Env:Path | Out-File $Env:GITHUB_PATH -Encoding OEM
 
           # check if is working
           openssl engine pkcs11 -t
+          softhsm2-util --show-slots
 
       - name: Prepare colcon workspace
         run: |
