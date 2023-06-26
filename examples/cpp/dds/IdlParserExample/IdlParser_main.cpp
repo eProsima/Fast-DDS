@@ -40,6 +40,8 @@ int main(
         struct StructDcl;
         union UnionDcl;
         const boolean C_BOOL = true;
+        const string<100> C_STR = "hello";
+        const int32 C_LITERAL = (0x5 | (4 + 3)) + 4 * 2;
     )";
     idl::Context context00 = idl::parse(test00);
 

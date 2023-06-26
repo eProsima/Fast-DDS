@@ -22,8 +22,10 @@
 
 #include <fastrtps/types/v1_3/DynamicTypeBuilder.hpp>
 #include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
+#include <fastrtps/types/v1_3/DynamicDataFactory.hpp>
 
 #include "pegtl.hpp"
+#include <pegtl/analyze.hpp>
 
 #ifdef _MSC_VER
 #   include <cstdio>
@@ -44,6 +46,7 @@
 #include <vector>
 #include <mutex>
 #include <unordered_set>
+#include <iomanip>
 
 // mimic posix pipe APIs
 #ifdef _MSC_VER
@@ -348,12 +351,25 @@ private:
     friend class Parser;
     std::shared_ptr<Parser> parser_;
     std::shared_ptr<Module> module_;
+
 }; // class Context
 
 
+// Actions
 template<typename Rule>
 struct action
 {
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
+    {
+        std::cout << "Rule1: " << typeid(Rule).name() << " " << in.string() << std::endl;
+    }
+
 };
 
 template<>
@@ -363,7 +379,9 @@ struct action<identifier>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         // Keep the identifier for super-expression use
         state["identifier"] = in.string();
@@ -378,7 +396,9 @@ struct action<boolean_type>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         state["type"] = "boolean";
     }
@@ -392,7 +412,9 @@ struct action<signed_tiny_int>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         state["type"] = "int8";
     }
@@ -406,7 +428,9 @@ struct action<unsigned_tiny_int>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         state["type"] = "uint8";
     }
@@ -420,7 +444,9 @@ struct action<octet_type>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         state["type"] = "uint8";
     }
@@ -434,7 +460,9 @@ struct action<signed_short_int>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         state["type"] = "int16";
     }
@@ -448,7 +476,9 @@ struct action<unsigned_short_int>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         state["type"] = "uint16";
     }
@@ -462,7 +492,9 @@ struct action<signed_long_int>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         state["type"] = "int32";
     }
@@ -476,7 +508,9 @@ struct action<unsigned_long_int>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         state["type"] = "uint32";
     }
@@ -490,7 +524,9 @@ struct action<signed_longlong_int>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         state["type"] = "int64";
     }
@@ -504,7 +540,9 @@ struct action<unsigned_longlong_int>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         state["type"] = "uint64";
     }
@@ -518,7 +556,9 @@ struct action<float_type>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         state["type"] = "float";
     }
@@ -532,7 +572,9 @@ struct action<double_type>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         state["type"] = "double";
     }
@@ -546,7 +588,9 @@ struct action<long_double_type>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         state["type"] = "long double";
     }
@@ -560,7 +604,9 @@ struct action<char_type>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         switch (ctx->char_translation)
         {
@@ -585,7 +631,9 @@ struct action<wide_char_type>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         switch (ctx->wchar_type)
         {
@@ -608,7 +656,9 @@ struct action<positive_int_const>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         state["positive_int_const"] = in.string();
     }
@@ -622,7 +672,9 @@ struct action<string_size>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         if (state.count("positive_int_const"))
         {
@@ -640,7 +692,9 @@ struct action<string_type>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         state["type"] = "string";
     }
@@ -654,7 +708,9 @@ struct action<wstring_size>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         if (state.count("positive_int_const"))
         {
@@ -672,9 +728,422 @@ struct action<wide_string_type>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         state["type"] = "wstring";
+    }
+
+};
+
+// TODO sequence type, map type
+
+template<typename T> T promote(
+        v1_3::DynamicData_ptr x)
+{
+    if (TypeKind::TK_UINT64 == x->get_kind())
+    {
+        long long value = x->get_uint64_value();
+        return static_cast<T>(value);
+    }
+    else if (TypeKind::TK_FLOAT128 == x->get_kind())
+    {
+        long double value = x->get_float128_value();
+        return static_cast<T>(value);
+    }
+    else if (TypeKind::TK_BOOLEAN == x->get_kind())
+    {
+        bool value = x->get_bool_value();
+        return static_cast<T>(value);
+    }
+    else
+    {
+        throw std::runtime_error("bad promote");
+    }
+}
+
+const TypeKind promotion_type(
+        v1_3::DynamicData_ptr a,
+        v1_3::DynamicData_ptr b)
+{
+    static std::map<TypeKind, int> priorities = {
+        {TypeKind::TK_FLOAT128, 2},
+        {TypeKind::TK_UINT64, 1},
+        {TypeKind::TK_BOOLEAN, 0},
+    };
+
+    static std::array<TypeKind, 3> infos = {
+        TypeKind::TK_BOOLEAN,
+        TypeKind::TK_UINT64,
+        TypeKind::TK_FLOAT128
+    };
+
+    if (a->get_kind() == b->get_kind())
+    {
+        return a->get_kind();
+    }
+    else
+    {
+        return infos[std::max(priorities.at(a->get_kind()), priorities.at(b->get_kind()))];
+    }
+}
+
+template<>
+struct action<boolean_literal>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
+    {
+        std::cout << "Rule2: " << typeid(boolean_literal).name()
+                  << " " << in.string() << std::endl;
+
+        evaluated += (evaluated.empty() ? "" : ";") + std::string{"bool"};
+
+        struct custom_tf : std::numpunct<char>
+        {
+            std::string do_truename()  const
+            {
+                return "TRUE";
+            }
+
+            std::string do_falsename() const
+            {
+                return "FALSE";
+            }
+
+        };
+
+        std::istringstream ss(in.string());
+        ss.imbue(std::locale(ss.getloc(), new custom_tf));
+
+        bool res;
+        ss >> std::boolalpha >> res;
+        v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance();
+        v1_3::DynamicTypeBuilder_cptr builder = factory.create_bool_type();
+        auto type = builder->build();
+        v1_3::DynamicData_ptr data(v1_3::DynamicDataFactory::get_instance()->create_data(type));
+        data->set_bool_value(res);
+
+        operands.push_back(data);
+    }
+
+};
+
+#define load_action(Rule, id, type, create_type, set_value) \
+    template<> \
+    struct action<Rule> \
+    { \
+        template<typename Input> \
+        static void apply( \
+            const Input& in, \
+            Context * ctx, \
+            std::map<std::string, std::string>& state, \
+            std::string& evaluated, \
+            std::vector<v1_3::DynamicData_ptr>& operands) \
+        { \
+            evaluated += (evaluated.empty() ? "" : ";") + std::string{#id}; \
+            std::cout << "Rule3: " << typeid(Rule).name() \
+                      << " " << in.string() << std::endl; \
+            std::istringstream ss(in.string()); \
+            type res; \
+            if (#id == "octal") { \
+                ss >> std::setbase(std::ios_base::oct) >> res; \
+            } \
+            else if (#id == "hexa") { \
+                ss >> std::setbase(std::ios_base::hex) >> res; \
+            } \
+            else { \
+                ss >> res; \
+            } \
+            v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance(); \
+            v1_3::DynamicTypeBuilder_cptr builder = factory.create_type; \
+            auto xtype = builder->build(); \
+            v1_3::DynamicData_ptr data(v1_3::DynamicDataFactory::get_instance()->create_data(xtype)); \
+            data->set_value(res); \
+            operands.push_back(data); \
+        } \
+    };
+
+load_action(dec_literal, decimal, long long, create_uint64_type(), set_uint64_value)
+load_action(oct_literal, octal, long long, create_uint64_type(), set_uint64_value)
+load_action(hex_literal, hexa, long long, create_uint64_type(), set_uint64_value)
+load_action(float_literal, float, long double, create_float128_type(), set_float128_value)
+load_action(fixed_pt_literal, fixed, long double, create_float128_type(), set_float128_value)
+
+#define float_op_action(Rule, id, operation) \
+    template<> \
+    struct action<Rule> \
+    { \
+        template<typename Input> \
+        static void apply( \
+            const Input& in, \
+            Context * ctx, \
+            std::map<std::string, std::string>& state, \
+            std::string& evaluated, \
+            std::vector<v1_3::DynamicData_ptr>& operands) \
+        { \
+            std::cout << "Rule4: " << typeid(Rule).name() \
+                      << " " << in.string() << std::endl; \
+ \
+            evaluated += (evaluated.empty() ? "" : ";") + std::string{#id}; \
+ \
+            /* calculate the result */ \
+            auto it = operands.rbegin(); \
+            v1_3::DynamicData_ptr s1 = *it++, s2 = *it, res; \
+            v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance(); \
+            v1_3::DynamicTypeBuilder_cptr builder = nullptr; \
+            v1_3::DynamicType_ptr xtype = nullptr; \
+ \
+            TypeKind pt = promotion_type(s1, s2); \
+ \
+            if (TypeKind::TK_UINT64 == pt) \
+            { \
+                long long value = promote<long long>(s2) operation promote<long long>(s1); \
+                builder = factory.create_uint64_type(); \
+                xtype = builder->build(); \
+                v1_3::DynamicData_ptr data(v1_3::DynamicDataFactory::get_instance()->create_data(xtype)); \
+                data->set_uint64_value(value); \
+                std::cout << "=========" << std::endl; \
+                std::cout << #operation << ": " << value << std::endl; \
+                std::cout << "=========" << std::endl; \
+                res = data; \
+            } \
+            else if (TypeKind::TK_FLOAT128 == pt) \
+            { \
+                long double value = promote<long double>(s2) operation promote<long double>(s1); \
+                builder = factory.create_float128_type(); \
+                xtype = builder->build(); \
+                v1_3::DynamicData_ptr data(v1_3::DynamicDataFactory::get_instance()->create_data(xtype)); \
+                data->set_float128_value(value); \
+                std::cout << "=========" << std::endl; \
+                std::cout << #operation << ": " << value << std::endl; \
+                std::cout << "=========" << std::endl; \
+                res = data; \
+            } \
+            else \
+            { \
+                throw std::runtime_error("invalid arguments for the operation " #operation ); \
+            } \
+ \
+            /* update the stack */ \
+            operands.pop_back(); \
+            operands.pop_back(); \
+            operands.push_back(res); \
+ \
+        } \
+    };
+
+#define int_op_action(Rule, id, operation) \
+    template<> \
+    struct action<Rule> \
+    { \
+        template<typename Input> \
+        static void apply( \
+            const Input& in, \
+            Context * ctx, \
+            std::map<std::string, std::string>& state, \
+            std::string& evaluated, \
+            std::vector<v1_3::DynamicData_ptr>& operands) \
+        { \
+            std::cout << "Rule5: " << typeid(Rule).name() \
+                      << " " << in.string() << std::endl; \
+ \
+            evaluated += (evaluated.empty() ? "" : ";") + std::string{#id}; \
+ \
+            /* calculate the result */ \
+            auto it = operands.rbegin(); \
+            v1_3::DynamicData_ptr s1 = *it++, s2 = *it, res; \
+            v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance(); \
+            v1_3::DynamicTypeBuilder_cptr builder = nullptr; \
+            v1_3::DynamicType_ptr xtype = nullptr; \
+ \
+            TypeKind pt = promotion_type(s1, s2); \
+ \
+            if (TypeKind::TK_UINT64 == pt) \
+            { \
+                long long value = promote<long long>(s2) operation promote<long long>(s1); \
+                builder = factory.create_uint64_type(); \
+                xtype = builder->build(); \
+                v1_3::DynamicData_ptr data(v1_3::DynamicDataFactory::get_instance()->create_data(xtype)); \
+                data->set_uint64_value(value); \
+                std::cout << "=========" << std::endl; \
+                std::cout << #operation << ": " << value << std::endl; \
+                std::cout << "=========" << std::endl; \
+                res = data; \
+            } \
+            else \
+            { \
+                throw std::runtime_error("invalid arguments for the operation " #operation ); \
+            } \
+ \
+            /* update the stack */ \
+            operands.pop_back(); \
+            operands.pop_back(); \
+            operands.push_back(res); \
+ \
+        } \
+    };
+
+#define bool_op_action(Rule, id, operation) \
+    template<> \
+    struct action<Rule> \
+    { \
+        template<typename Input> \
+        static void apply( \
+            const Input& in, \
+            Context * ctx, \
+            std::map<std::string, std::string>& state, \
+            std::string& evaluated, \
+            std::vector<v1_3::DynamicData_ptr>& operands) \
+        { \
+            std::cout << "Rule6: " << typeid(Rule).name() \
+                      << " " << in.string() << std::endl; \
+ \
+            evaluated += (evaluated.empty() ? "" : ";") + std::string{#id}; \
+ \
+            /* calculate the result */ \
+            auto it = operands.rbegin(); \
+            v1_3::DynamicData_ptr s1 = *it++, s2 = *it, res; \
+            v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance(); \
+            v1_3::DynamicTypeBuilder_cptr builder = nullptr; \
+            v1_3::DynamicType_ptr xtype = nullptr; \
+ \
+            TypeKind pt = promotion_type(s1, s2); \
+ \
+            if (TypeKind::TK_UINT64 == pt) \
+            { \
+                long long value = promote<long long>(s2) operation promote<long long>(s1); \
+                builder = factory.create_uint64_type(); \
+                xtype = builder->build(); \
+                v1_3::DynamicData_ptr data(v1_3::DynamicDataFactory::get_instance()->create_data(xtype)); \
+                data->set_uint64_value(value); \
+                std::cout << "=========" << std::endl; \
+                std::cout << #operation << ": " << value << std::endl; \
+                std::cout << "=========" << std::endl; \
+                res = data; \
+            } \
+            else if (TypeKind::TK_BOOLEAN == pt) \
+            { \
+                bool value = promote<bool>(s2) operation promote<bool>(s1); \
+                builder = factory.create_bool_type(); \
+                xtype = builder->build(); \
+                v1_3::DynamicData_ptr data(v1_3::DynamicDataFactory::get_instance()->create_data(xtype)); \
+                data->set_bool_value(value); \
+                std::cout << "=========" << std::endl; \
+                std::cout << #operation << ": " << value << std::endl; \
+                std::cout << "=========" << std::endl; \
+                res = data; \
+            } \
+            else \
+            { \
+                throw std::runtime_error("invalid arguments for the operation " #operation ); \
+            } \
+ \
+            /* update the stack */ \
+            operands.pop_back(); \
+            operands.pop_back(); \
+            operands.push_back(res); \
+ \
+        } \
+    };
+
+bool_op_action(or_exec, or, |)
+bool_op_action(xor_exec, xor, ^)
+bool_op_action(and_exec, and, &)
+int_op_action(rshift_exec, >>, >>)
+int_op_action(lshift_exec, <<, <<)
+int_op_action(mod_exec, mod, %)
+float_op_action(add_exec, add, +)
+float_op_action(sub_exec, sub, -)
+float_op_action(mult_exec, mult, *)
+float_op_action(div_exec, div, / )
+
+template<>
+struct action<minus_exec>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
+    {
+        std::cout << "Rule7: " << typeid(minus_exec).name() << " " << in.string() << std::endl;
+
+        evaluated += (evaluated.empty() ? "" : ";") + std::string{"minus"};
+
+        if (TypeKind::TK_UINT64 == operands.back()->get_kind())
+        {
+            long long value = operands.back()->get_uint64_value();
+            operands.back()->set_uint64_value(-value);
+        }
+        else if (TypeKind::TK_FLOAT128 == operands.back()->get_kind())
+        {
+            long double value = operands.back()->get_float128_value();
+            operands.back()->set_float128_value(-value);
+        }
+        else
+        {
+            throw std::runtime_error("invalid argument for the minus unary operator");
+        }
+    }
+
+};
+
+template<>
+struct action<plus_exec>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
+    {
+        // noop
+        std::cout << "Rule8: " << typeid(plus_exec).name() << " " << in.string() << std::endl;
+        evaluated += (evaluated.empty() ? "" : ";") + std::string{"plus"};
+    }
+
+};
+
+template<>
+struct action<inv_exec>
+{
+    template<typename Input>
+    static void apply(
+            const Input& in,
+            Context* ctx,
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
+    {
+        std::cout << "Rule9: " << typeid(inv_exec).name() << " " << in.string() << std::endl;
+
+        evaluated += (evaluated.empty() ? "" : ";") + std::string{"inv"};
+
+        if (TypeKind::TK_UINT64 == operands.back()->get_kind())
+        {
+            long long value = operands.back()->get_uint64_value();
+            operands.back()->set_uint64_value(~value);
+        }
+        else if (TypeKind::TK_BOOLEAN == operands.back()->get_kind())
+        {
+            bool value = operands.back()->get_bool_value();
+            operands.back()->set_bool_value(!value);
+        }
+        else
+        {
+            throw std::runtime_error("invalid argument for the inverse unary operator");
+        }
     }
 
 };
@@ -686,7 +1155,9 @@ struct action<struct_forward_dcl>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         const std::string& name = state["identifier"];
         Module& module = ctx->module();
@@ -713,7 +1184,9 @@ struct action<union_forward_dcl>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         const std::string& name = state["identifier"];
         Module& module = ctx->module();
@@ -742,15 +1215,16 @@ struct action<const_dcl>
     static void apply(
             const Input& in,
             Context* ctx,
-            std::map<std::string, std::string>& state)
+            std::map<std::string, std::string>& state,
+            std::string& evaluated,
+            std::vector<v1_3::DynamicData_ptr>& operands)
     {
         v1_3::DynamicType_ptr type = ctx->get_type(state);
         const std::string& identifier = state["identifier"];
-        std::cout << identifier << std::endl;
+        //v1_3::DynamicData expr(type);
     }
 
 };
-
 
 class Parser
     : public std::enable_shared_from_this<Parser>
@@ -777,14 +1251,32 @@ public:
     {
         memory_input<> input_mem(idl_string, "idlparser");
         std::map<std::string, std::string> parsing_state;
+        std::vector<v1_3::DynamicData_ptr> operands;
+
+        std::size_t issues = tao::TAO_PEGTL_NAMESPACE::analyze<document>(-1);
+        if (issues > 0)
+        {
+            context_->success = false;
+            EPROSIMA_LOG_ERROR(IDLPARSER, "IDL grammar error: " << tao::TAO_PEGTL_NAMESPACE::analyze<document>(1));
+            return false;
+        }
 
         context.parser_ = shared_from_this();
         context_ = &context;
-        tao::TAO_PEGTL_NAMESPACE::parse<document, action>(input_mem, context_, parsing_state);
-        context_->success = true;
-        EPROSIMA_LOG_INFO(IDLPARSER, "The parsing is finished.");
-
-        return true;
+        std::string evaluated;
+        if (tao::TAO_PEGTL_NAMESPACE::parse<document, action>(input_mem, context_, parsing_state, evaluated,
+                operands) && input_mem.empty())
+        {
+            context_->success = true;
+            EPROSIMA_LOG_INFO(IDLPARSER, "IDL parsing succeeded.");
+            return true;
+        }
+        else
+        {
+            context_->success = false;
+            EPROSIMA_LOG_INFO(IDLPARSER, "IDL parsing failed.");
+            return false;
+        }
     }
 
     Context parse_file(

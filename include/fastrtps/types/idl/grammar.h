@@ -26,34 +26,19 @@ using namespace tao::TAO_PEGTL_NAMESPACE;
 
 // *INDENT-OFF*  Allow curly braces on the same line to improve grammar readability
 
-// COMMENTS
-struct line_comment : seq<star<space>, TAO_PEGTL_KEYWORD("//"), until<eolf>> {};
-struct block_comment : seq<star<space>, TAO_PEGTL_KEYWORD("/*"), until<TAO_PEGTL_KEYWORD("*/")>, star<space>> {};
+// comments
+struct line_comment : seq<star<space>, seq<one<'/'>, one<'/'>>, until<eolf>> {};
+struct block_comment : seq<star<space>, seq<one<'/'>, one<'*'>>, until<seq<one<'*'>, one<'/'>>>, star<space>> {};
 struct comment : sor<line_comment, block_comment> {};
 struct ws : sor<comment, plus<space>> {};
 
-// DIGITS
-struct octal_digit : range<'0', '7'> {};
+// octal digits
+struct odigit : range<'0', '7'> {};
 
-// OPERATORS
-struct equal_op : pad<one<'='>, ws> {};
-struct or_op : pad<one<'|'>, ws> {};
-struct xor_op : pad<one<'^'>, ws> {};
-struct and_op : pad<one<'&'>, ws> {};
-struct lshift_op : pad<TAO_PEGTL_KEYWORD("<<"), ws> {};
-struct rshift_op : pad<TAO_PEGTL_KEYWORD(">>"), ws> {};
-struct add_op : pad<one<'+'>, ws> {};
-struct sub_op : pad<one<'-'>, ws> {};
-struct mult_op : pad<one<'*'>, ws> {};
-struct div_op : pad<one<'/'>, ws> {};
-struct mod_op : pad<one<'%'>, ws> {};
-struct neg_op : pad<one<'~'>, ws> {};
-struct unary_op : sor<sub_op, add_op, neg_op> {};
-
-// SYMBOLS
+// symbols
 struct semicolon : pad<one<';'>, ws> {};
 struct colon : pad<one<':'>, ws> {};
-struct double_colon : pad<TAO_PEGTL_KEYWORD("::"), ws> {};
+struct double_colon : pad<seq<one<':'>, one<':'>>, ws> {};
 struct comma : pad<one<','>, ws> {};
 struct open_parentheses : pad<one<'('>, ws> {};
 struct close_parentheses : pad<one<')'>, ws> {};
@@ -64,7 +49,7 @@ struct close_ang_bracket : pad<one<'>'>, ws> {};
 struct open_brace : pad<one<'{'>, ws> {};
 struct close_brace : pad<one<'}'>, ws> {};
 
-// KEYWORDS
+// keywords
 struct end_kw : not_at<identifier> {};
 struct kw_const : seq<opt<ws>, TAO_PEGTL_KEYWORD("const"), end_kw, opt<ws>> {};
 struct kw_module : seq<opt<ws>, TAO_PEGTL_KEYWORD("module"), end_kw, opt<ws>> {};
@@ -108,58 +93,155 @@ struct kw_float : seq<opt<ws>, TAO_PEGTL_KEYWORD("float"), end_kw, opt<ws>> {};
 struct kw_double : seq<opt<ws>, TAO_PEGTL_KEYWORD("double"), end_kw, opt<ws>> {};
 struct kw_long_double : seq<opt<ws>, TAO_PEGTL_KEYWORD("long"), ws, TAO_PEGTL_KEYWORD("double"), end_kw, opt<ws>> {};
 
-// ESCAPE SEQUENCES
-struct es_unicode_char : seq<xdigit, opt<xdigit>, opt<xdigit>, opt<xdigit>> {};
-struct es_hex_number : seq<xdigit, opt<xdigit>> {};
-struct es_octal_number : seq<octal_digit, opt<octal_digit>, opt<octal_digit>> {};
-struct es_unicode : seq<TAO_PEGTL_STRING("\\u"), es_unicode_char> {};
-struct es_hex : seq<TAO_PEGTL_STRING("\\x"), es_hex_number> {};
-struct es_octal : seq<TAO_PEGTL_STRING("\\"), es_octal_number> {};
-struct es_double_quote : TAO_PEGTL_STRING("\\\"") {};
-struct es_single_quote : TAO_PEGTL_STRING("\\'") {};
-struct es_question_mark : TAO_PEGTL_STRING("\\?") {};
-struct es_backslash : TAO_PEGTL_STRING("\\\\") {};
-struct es_alert : TAO_PEGTL_STRING("\\a") {};
-struct es_form_feed : TAO_PEGTL_STRING("\\f") {};
-struct es_carriage_return : TAO_PEGTL_STRING("\\r") {};
-struct es_backspace : TAO_PEGTL_STRING("\\b") {};
-struct es_v_tab : TAO_PEGTL_STRING("\\v") {};
-struct es_h_tab : TAO_PEGTL_STRING("\\t") {};
-struct es_new_line : TAO_PEGTL_STRING("\\n") {};
-struct escape_sequence : sor<
-                              es_new_line, es_h_tab, es_v_tab, es_backspace, es_carriage_return, es_form_feed, es_alert,
-                              es_backslash, es_question_mark, es_single_quote, es_double_quote, es_octal, es_hex, es_unicode
+/* literal grammar */
+
+// boolean literal
+struct boolean_literal : sor<TAO_PEGTL_KEYWORD("TRUE"), TAO_PEGTL_KEYWORD("FALSE")> {};
+
+// integer literals
+using zero = one<'0'>;
+struct dec_literal : seq<opt<one<'-'>>, plus<digit>> {};
+struct oct_literal : seq<zero, plus<odigit>> {};
+struct hex_literal : seq<zero, one<'x', 'X'>, plus<xdigit>> {};
+struct float_literal;
+struct fixed_pt_literal;
+// prevent premature matching of integer literals
+struct integer_literal : seq<
+                                not_at<float_literal>,
+                                not_at<fixed_pt_literal>,
+                                sor<oct_literal, hex_literal, dec_literal>
                             > {};
 
-// LITERALS
-struct boolean_literal : sor<TAO_PEGTL_KEYWORD("true"), TAO_PEGTL_KEYWORD("false")> {};
-struct dec_literal : sor<seq<one<'-'>, plus<digit>>, plus<digit>> {};
-struct oct_literal : seq<TAO_PEGTL_STRING("0"), plus<octal_digit>> {};
-struct hex_literal : seq<sor<TAO_PEGTL_STRING("0x"), TAO_PEGTL_STRING("0X")>, plus<xdigit>> {};
-struct integer_literal : sor<oct_literal, hex_literal, dec_literal> {};
-struct char_literal : seq<one<'\''>, sor<escape_sequence, until<TAO_PEGTL_STRING("\'")>>, one<'\''>> {};
-struct wide_char_literal : seq<one<'L'>, char_literal> {};
-struct string_ws : sor<seq<one<'\"'>, opt<ws>, one<'\"'>>, opt<ws>> {};
-// String literals must avoid '\0' inside them. Check after parsing!
-struct substring_literal : if_must<TAO_PEGTL_STRING("\""), star<not_at<TAO_PEGTL_STRING("\"")>, any>, TAO_PEGTL_STRING("\"")> {};
-struct string_literal : plus<substring_literal> {};
-struct wide_substring_literal : substring_literal {};
-struct wide_string_literal : seq<one<'L'>, plus<wide_substring_literal>> {};
-struct exp_or_suffix : seq<one<'e', 'E'>, opt<one<'+', '-'>>, plus<digit>, opt<one<'d', 'D'>>> {};
-struct float_literal : sor<
-                            seq<plus<digit>, one<'.'>, star<digit>, opt<exp_or_suffix>>,
-                            seq<one<'.'>, plus<digit>, opt<exp_or_suffix>>,
-                            seq<plus<digit>, exp_or_suffix>
+// float literals
+using dot = one<'.'>;
+using kw_exp = one<'e', 'E'>;
+struct decimal_exponent : seq<kw_exp, opt<one<'-'>>, plus<digit>> {};
+struct float_literal : seq<
+                            not_at<fixed_pt_literal>,
+                            opt<one<'-'>>,
+                            not_at<seq<dot, kw_exp>>,
+                            star<digit>,
+                            opt<seq<dot, star<digit>>>,
+                            decimal_exponent
                           > {};
-struct fixed_pt_literal : float_literal {};
+
+// fixed-point literals
+using fixed_suffix = one<'d', 'D'>;
+struct fixed_pt_literal : seq<
+                                opt<one<'-'>>,
+                                not_at<seq<dot, fixed_suffix>>,
+                                star<digit>,
+                                opt<seq<dot, star<digit>>>,
+                                fixed_suffix
+                             > {};
+
+// char literals
+using singlequote = one<'\''>;
+using doublequote = one<'"'>;
+using backslash = one<'\\'>;
+using escapable_char = sor<
+                            singlequote,
+                            doublequote,
+                            one<'?'>,
+                            backslash,
+                            one<'a'>,
+                            one<'b'>,
+                            one<'f'>,
+                            one<'n'>,
+                            one<'r'>,
+                            one<'t'>,
+                            one<'v'>
+                          >;
+struct escaped_octal : seq<backslash, rep_max<3, odigit>> {};
+struct escaped_hexa : seq<backslash, one<'x'>, rep_max<2, xdigit>> {};
+struct escaped_unicode : seq<backslash, one<'u'>, rep_max<4, xdigit>> {};
+struct escape_sequence : sor<
+                                seq<backslash, escapable_char>,
+                                escaped_unicode,
+                                escaped_hexa,
+                                escaped_octal
+                            > {};
+struct character : sor<escape_sequence, seq<not_at<singlequote>, any>> {};
+struct character_literal : seq<singlequote, character, singlequote> {};
+
+// wide-char literals
+struct wide_character : sor<escape_sequence, seq<not_at<singlequote>, utf8::any>> {};
+struct wide_character_literal : seq<one<'L'>, singlequote, wide_character, singlequote> {};
+
+// string literals
+struct string_character : sor<escape_sequence, seq<not_at<doublequote>, any>> {};
+struct substring_literal : seq<doublequote, star<string_character>, doublequote> {};
+struct string_literal : seq<substring_literal, star<seq<space, substring_literal>>> {};
+
+// wstring literals
+struct wstring_character : sor<escape_sequence, seq<not_at<doublequote>, utf8::any>> {};
+struct wide_substring_literal : seq<one<'L'>, doublequote, star<wstring_character>, doublequote> {};
+struct wide_string_literal : seq<wide_substring_literal, star<seq<space, wide_substring_literal>>> {};
+
+// literals
 struct literal : sor<
-                      float_literal, fixed_pt_literal, integer_literal, boolean_literal,
-                      char_literal, wide_char_literal, string_literal, wide_string_literal
+                        pad<boolean_literal, ws>,
+                        pad<integer_literal, ws>,
+                        pad<float_literal, ws>,
+                        pad<fixed_pt_literal, ws>,
+                        pad<character_literal, ws>,
+                        pad<wide_character_literal, ws>,
+                        pad<string_literal, ws>,
+                        pad<wide_string_literal, ws>
                     > {};
 
-struct scoped_name : sor<seq<identifier, double_colon, scoped_name>, seq<double_colon, scoped_name>, identifier> {};
+// operators
+struct equal_op : pad<one<'='>, ws> {};
+struct or_op : pad<one<'|'>, ws> {};
+struct xor_op : pad<one<'^'>, ws> {};
+struct and_op : pad<one<'&'>, ws> {};
+struct lshift_op : pad<seq<one<'<'>, one<'<'>>, ws> {};
+struct rshift_op : pad<seq<one<'>'>, one<'>'>>, ws> {};
+struct add_op : pad<one<'+'>, ws> {};
+struct sub_op : pad<one<'-'>, ws> {};
+struct mult_op : pad<one<'*'>, ws> {};
+struct div_op : pad<one<'/'>, ws> {};
+struct mod_op : pad<one<'%'>, ws> {};
+struct neg_op : pad<one<'~'>, ws> {};
 
-// TYPES
+// const expressions
+struct scoped_or_literal : sor<literal, plus<alnum>> {}; // TODO
+struct const_expr;
+struct primary_expr : sor<seq<open_parentheses, const_expr, close_parentheses>, scoped_or_literal> {};
+
+struct inv_exec : seq<neg_op, primary_expr> {};
+struct plus_exec : seq<add_op, primary_expr> {};
+struct minus_exec : seq<sub_op, primary_expr> {};
+struct unary_expr : sor<inv_exec, plus_exec, minus_exec, primary_expr> {};
+
+struct mult_expr;
+struct mod_exec : seq<mod_op, mult_expr> {};
+struct div_exec : seq<div_op, mult_expr> {};
+struct mult_exec : seq<mult_op, mult_expr> {};
+struct mult_expr : seq<unary_expr, opt<sor<mod_exec, div_exec, mult_exec>>> {};
+
+struct add_expr;
+struct sub_exec : seq<sub_op, add_expr> {};
+struct add_exec : seq<add_op, add_expr> {};
+struct add_expr : seq<mult_expr, opt<sor<sub_exec, add_exec>>> {};
+
+struct shift_expr;
+struct lshift_exec : seq<lshift_op, shift_expr> {};
+struct rshift_exec : seq<rshift_op, shift_expr> {};
+struct shift_expr : seq<add_expr, opt<sor<lshift_exec, rshift_exec>>> {};
+
+struct and_expr;
+struct and_exec : seq<and_op, and_expr> {};
+struct and_expr : seq<shift_expr, opt<and_exec>> {};
+
+struct xor_expr;
+struct xor_exec : seq<xor_op, xor_expr> {};
+struct xor_expr : seq<and_expr, opt<xor_exec>> {};
+
+struct or_exec : seq<or_op, const_expr> {};
+struct const_expr : seq<xor_expr, opt<or_exec>> {};
+
+// types
 struct float_type : kw_float {};
 struct double_type : kw_double {};
 struct long_double_type : kw_long_double {};
@@ -180,43 +262,30 @@ struct boolean_type : kw_boolean {};
 struct octet_type : kw_octet {};
 struct any_type : kw_any {};
 struct base_type_spec : sor<
-                             float_type, double_type, long_double_type, integer_type,
-                             char_type, wide_char_type, boolean_type, octet_type, any_type
+                            float_type, double_type, long_double_type, integer_type,
+                            char_type, wide_char_type, boolean_type, octet_type, any_type
                            > {};
 struct fixed_pt_const_type : kw_fixed {};
+
+struct scoped_name : sor<seq<identifier, double_colon, scoped_name>, seq<double_colon, scoped_name>, identifier> {};
 struct positive_int_const : sor<integer_literal, scoped_name> {};
 struct fixed_pt_type : seq<kw_fixed, open_ang_bracket, positive_int_const, comma, positive_int_const, close_ang_bracket> {};
-struct string_size : seq<TAO_PEGTL_STRING("<"), positive_int_const, TAO_PEGTL_STRING(">")> {};
-struct wstring_size : seq<TAO_PEGTL_STRING("<"), positive_int_const, TAO_PEGTL_STRING(">")> {};
+struct string_size : seq<one<'<'>, positive_int_const, one<'>'>> {};
+struct wstring_size : seq<one<'<'>, positive_int_const, one<'>'>> {};
 struct collection_size : seq<comma, positive_int_const> {};
 struct string_type : seq<kw_string, opt<string_size>> {};
 struct wide_string_type : seq<kw_wstring, opt<wstring_size>> {};
-struct map_type; // forward declaration
-struct type_spec; // forward declaration
+struct map_type;
+struct type_spec;
 struct sequence_size : opt<collection_size> {};
 struct sequence_type : seq<kw_sequence, open_ang_bracket, type_spec, sequence_size, close_ang_bracket> {};
 struct template_type_spec : sor<map_type, sequence_type, string_type, wide_string_type, fixed_pt_type> {};
 struct simple_type_spec : sor<base_type_spec, scoped_name> {};
 struct type_spec : seq<opt<ws>, sor<template_type_spec, simple_type_spec>, opt<ws>> {};
 
-struct any_shift_op : sor<lshift_op, rshift_op> {};
-struct any_add_op : sor<add_op, sub_op> {};
-struct any_mult_op : sor<mult_op, div_op, mod_op> {};
-
-struct scoped_or_literal : sor<literal, scoped_name> {};
-struct const_expr; // forward declaration
-struct primary_expr : sor<seq<open_parentheses, const_expr, close_parentheses>, scoped_or_literal> {};
-struct unary_expr : sor<seq<unary_op, primary_expr>, primary_expr> {};
-struct mult_expr : sor<seq<unary_expr, any_mult_op, mult_expr>, unary_expr> {};
-struct add_expr : sor<seq<mult_expr, any_add_op, add_expr>, mult_expr> {};
-struct shift_expr : sor<seq<add_expr, any_shift_op, shift_expr>, add_expr> {};
-struct and_expr : sor<seq<shift_expr, and_op, and_expr>, shift_expr> {};
-struct xor_expr : sor<seq<and_expr, xor_op, xor_expr>, and_expr> {};
-struct const_expr : sor<seq<xor_expr, or_op, const_expr>, xor_expr> {};
-
 struct const_type : sor<
-                         float_type, double_type, long_double_type, fixed_pt_const_type, integer_type,
-                         char_type, wide_char_type, boolean_type, string_type, wide_string_type, scoped_name
+                        float_type, double_type, long_double_type, fixed_pt_const_type, integer_type,
+                        char_type, wide_char_type, boolean_type, string_type, wide_string_type, scoped_name
                        > {};
 struct simple_declarator : identifier {};
 struct fixed_array_size : seq<open_bracket, positive_int_const, close_bracket> {};
@@ -225,10 +294,10 @@ struct declarator : sor<array_declarator, simple_declarator> {}; // same as any_
 struct declarators : seq<declarator, star<seq<comma, declarator>>> {};
 struct any_declarator : sor<array_declarator, simple_declarator> {};
 struct any_declarators : seq<any_declarator, star<seq<comma, any_declarator>>> {};
-struct type_declarator; // forward declaration
+struct type_declarator;
 struct typedef_dlc : seq<kw_typedef, type_declarator> {};
 struct native_dcl : seq<kw_native, simple_declarator> {};
-struct annotation_appl; // forward declaration
+struct annotation_appl;
 struct enumerator : seq<star<annotation_appl>, identifier> {};
 struct enum_dcl : seq<kw_enum, identifier, open_brace, enumerator, star<comma, enumerator>, close_brace> {};
 struct union_forward_dcl : seq<kw_union, identifier> {};
@@ -244,8 +313,8 @@ struct member : seq<star<annotation_appl>, type_spec, declarators, semicolon> {}
 struct inhertance : seq<colon, scoped_name> {};
 struct struct_def : seq<kw_struct, identifier, opt<inhertance>, open_brace, star<member>, close_brace> {};
 struct struct_dcl : sor<struct_def, struct_forward_dcl> {};
-struct bitset_dcl; // forward declaration
-struct bitmask_dcl; // forward declaration
+struct bitset_dcl;
+struct bitmask_dcl;
 struct constr_type_dlc : seq<star<annotation_appl>, sor<struct_dcl, union_dcl, enum_dcl, bitset_dcl, bitmask_dcl>> {};
 struct type_declarator : seq<sor<constr_type_dlc, template_type_spec, simple_type_spec>, opt<ws>, any_declarators> {};
 struct type_dcl : sor<constr_type_dlc, native_dcl, typedef_dlc> {};
