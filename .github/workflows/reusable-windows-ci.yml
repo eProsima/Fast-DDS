@@ -307,7 +307,7 @@ jobs:
 
           # check if is working
           openssl engine pkcs11 -t
-          softhsm2-util --show-slots
+          softhsm2-util --help
 
       - name: Prepare colcon workspace
         run: |
