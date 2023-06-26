@@ -17,9 +17,10 @@
 
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/v1_3/MemberId.hpp>
-#include <fastrtps/utils/fixed_size_string.hpp>
 
 #include <cstdint>
+#include <string>
+#include <vector>
 
 namespace eprosima {
 namespace fastrtps {
@@ -30,20 +31,17 @@ class DynamicType;
 
 class RTPS_DllAPI MemberDescriptor : final
 {
-    using str = eprosima::fastrtps::string_255;
-
-    str name_;                          //!< Name of the member
-    MemberId id_;                       //!< MemberId, it should be filled automatically when the member is added.
-    const DynamicType* type_ = nullptr; //!< Member's Type.
-    str default_value_;                 //!< Default value of the member in string.
-    uint32_t index_ = INDEX_INVALID;    //!< Definition order of the member inside it's parent.
-    uint32_t* labels_ = nullptr;        //!< Case Labels for unions.
-    uint32_t labels_size_ = 0u;         //!< Number of labels
-    bool default_label_ = false;        //!< TRUE if it's the default option of a union.
+    std::string* name_ = nullptr;             //!< Name of the member
+    MemberId id_;                             //!< MemberId, it should be filled automatically when the member is added.
+    const DynamicType* type_ = nullptr;       //!< Member's Type.
+    std::string* default_value_;              //!< Default value of the member in string.
+    uint32_t index_ = INDEX_INVALID;          //!< Definition order of the member inside it's parent.
+    std::vector<uint32_t>* labels_ = nullptr; //!< Case Labels for unions.
+    bool default_label_ = false;              //!< TRUE if it's the default option of a union.
 
 public:
 
-    MemberDescriptor() noexcept = default;
+    MemberDescriptor() noexcept;
 
     MemberDescriptor(const MemberDescriptor& type) noexcept;
 
@@ -62,9 +60,9 @@ public:
             const MemberDescriptor& descriptor) const noexcept;
 
     /**
-     * Returns the fully qualified name of this type
+     * Returns the name of this member
      * @attention The returned value may not persist in time
-     * @return const char* type name
+     * @return const char* member name
      */
     const char* get_name() const noexcept;
 
@@ -80,7 +78,10 @@ public:
      * @return @ref MemberId
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    MemberId get_id() const noexcept;
+    MemberId get_id() const noexcept
+    {
+        return id_;
+    }
 
     /**
      * Setter for @b id property (see [standard] table 53)
@@ -88,7 +89,10 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
     void set_id(
-            const MemberId id) noexcept;
+            const MemberId id) noexcept
+    {
+        id_ = id;
+    }
 
     /**
      * Getter for @b type property (see [standard] table 53)
@@ -131,15 +135,21 @@ public:
      * @return @ref uint32_t
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    uint32_t get_index() const noexcept;
+    uint32_t get_index() const noexcept
+    {
+        return index_;
+    }
 
     /**
      * Setter for @b index property (see [standard] table 53)
-     * @param const @ref uint32_t
+     * @param index @ref uint32_t
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
     void set_index(
-            const uint32_t id) noexcept;
+            const uint32_t index) noexcept
+    {
+        index_ = index;
+    }
 
     /**
      * Getter for @b label property (see [standard] table 53)
@@ -167,7 +177,10 @@ public:
      *         see [standard] section \b 7.5.2.7.2
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    bool get_default_label() const noexcept;
+    bool get_default_label() const noexcept
+    {
+        return default_label_;
+    }
 
     /**
      * Setter for @b default label property (see [standard] table 53)
@@ -176,7 +189,10 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
     void set_default_label(
-            bool value) noexcept;
+            bool value) noexcept
+    {
+        default_label_ = value;
+    }
 
     /**
      * Overwrite the contents of this descriptor with those of another descriptor (see [standard] 7.5.2.7.1)
@@ -199,9 +215,6 @@ public:
 
     /**
      * Indicates whether the states of all of this descriptor's properties are consistent.
-     * @param type bool `true` if we search a consistent type
-     * @remark consistency for a type is more restrictive than for a builder which may require
-     *         members and annotations.
      * @return \b bool `true` if consistent
      */
     bool is_consistent() const noexcept;

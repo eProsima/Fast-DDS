@@ -20,17 +20,30 @@
 
 using namespace eprosima::fastrtps::types::v1_3;
 
+TypeDescriptor::TypeDescriptor() noexcept
+    : name_(new(std::nothrow) std::string)
+    , bounds_(new(std::nothrow) std::vector<uint32_t>)
+{
+}
+
 TypeDescriptor::TypeDescriptor(const TypeDescriptor& type) noexcept
-    : name_(type.get_name())
-    , kind_(type.get_type())
+    : name_(new(std::nothrow) std::string)
+    , kind_(type.get_kind())
     , base_type_(type.get_base_type())
     , discriminator_type_(type.get_discriminator_type())
+    , bounds_(new(std::nothrow) std::vector<uint32_t>)
     , element_type_(type.get_element_type())
     , key_element_type_(type.get_key_element_type())
 {
-    uint32_t dims;
-    const uint32_t* lenghts = type.get_bounds(dims);
-    set_bounds(lenghts, dims);
+    if (name_ != nullptr && type.name_ != nullptr)
+    {
+        *name_ = *type.name_;
+    }
+
+    if (bounds_ != nullptr && type.bounds_ != nullptr)
+    {
+        *bounds_ = *type.bounds_;
+    }
 }
 
 TypeDescriptor::TypeDescriptor(TypeDescriptor&& type) noexcept
@@ -39,16 +52,9 @@ TypeDescriptor::TypeDescriptor(TypeDescriptor&& type) noexcept
     , base_type_(type.base_type_)
     , discriminator_type_(type.discriminator_type_)
     , bounds_(type.bounds_)
-    , bounds_dims_(type.bounds_dims_)
     , element_type_(type.element_type_)
     , key_element_type_(type.key_element_type_)
 {
-    type.base_type_ = nullptr;
-    type.discriminator_ = nullptr;
-    type.element_type_ = nullptr;
-    type.key_element_type_ = nullptr;
-    type.bounds_ = nullptr;
-    type.bounds_dims_ = 0;
 }
 
 TypeDescriptor::~TypeDescriptor() noexcept
@@ -57,21 +63,30 @@ TypeDescriptor::~TypeDescriptor() noexcept
     reset_discriminator_type();
     reset_element_type();
     reset_key_element_type();
-    set_bounds(nullptr, 0u);
+
+    delete name_;
+    delete bounds_;
 }
 
 TypeDescriptor& TypeDescriptor::operator=(const TypeDescriptor& type) noexcept
 {
-    name_ = type.get_name();
-    kind_ = type.get_type();
+    if (name_ != nullptr && type.name_ != nullptr)
+    {
+        *name_ = *type.name_;
+    }
+
+    if (bounds_ != nullptr && type.bounds_ != nullptr)
+    {
+        *bounds_ = *type.bounds_;
+    }
+
+    kind_ = type.kind_;
     base_type_ = type.get_base_type();
     discriminator_type_ = type.get_discriminator_type();
     element_type_ = type.get_element_type();
     key_element_type_ = type.get_key_element_type();
 
-    uint32_t dims;
-    const uint32_t* lenghts = type.get_bounds(dims);
-    set_bounds(lenghts, dims);
+    return *this;
 }
 
 TypeDescriptor& TypeDescriptor::operator=(TypeDescriptor&& type) noexcept
@@ -81,16 +96,10 @@ TypeDescriptor& TypeDescriptor::operator=(TypeDescriptor&& type) noexcept
     base_type_ = type.base_type_;
     discriminator_type_ = type.discriminator_type_;
     bounds_ = type.bounds_;
-    bounds_dims_ = type.bounds_dims_;
     element_type_ = type.element_type_;
     key_element_type_ = type.key_element_type_;
 
-    type.base_type_ = nullptr;
-    type.discriminator_ = nullptr;
-    type.element_type_ = nullptr;
-    type.key_element_type_ = nullptr;
-    type.bounds_ = nullptr;
-    type.bounds_dims_ = 0;
+    return *this;
 }
 
 
@@ -114,7 +123,14 @@ const char* TypeDescriptor::get_name() const noexcept
 void TypeDescriptor::set_name(
         const char* name) noexcept
 {
-    name_ = name;
+    if (nullptr == name_)
+    {
+        name_ = new(std::nothrow) std::string(name);
+    }
+    else
+    {
+        *name_ = name;
+    }
 }
 
 void TypeDescriptor::set_kind(
@@ -227,28 +243,27 @@ void TypeDescriptor::reset_key_element_type() noexcept
 const uint32_t* TypeDescriptor::get_bounds(
         uint32_t& dims) const noexcept
 {
-    dims = bounds_dims_;
-    return bounds_;
+    if ( nullptr == bounds_)
+    {
+        dims = 0u;
+        return nullptr;
+    }
+
+    dims = static_cast<uint32_t>(bounds_->size());
+    return bounds_->data();
 }
 
 void TypeDescriptor::set_bounds(
         const uint32_t* lengths,
         uint32_t dims) noexcept
 {
-   if (bounds_ != nullptr)
-   {
-        delete [] bounds_;
-        bounds_ = nullptr;
-        bounds_dims_ = 0u;
-   }
-
-    if (dims)
+    if ( nullptr == bounds_)
     {
-        if (bounds_ = new (std::nothrow) uint32_t[](dims))
-        {
-            std::copy(lengths, lengths + dims, bounds_);
-            bounds_dims_ = dims;
-        }
+        bounds_ = new(std::nothrow) std::vector<uint32_t>(lengths, lengths + dims);
+    }
+    else
+    {
+        bounds_->assign(lengths, lengths + dims);
     }
 }
 

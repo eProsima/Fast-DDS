@@ -13,145 +13,231 @@
 // limitations under the License.
 
 #include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
-#include <fastrtps/types/v1_3/DynamicType.hpp>
-#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
-#include <fastdds/dds/log/Log.hpp>
-
-#include <iomanip>
 
 using namespace eprosima::fastrtps::types::v1_3;
 
-ReturnCode_t AnnotationDescriptor::copy_from(
-        const AnnotationDescriptor* descriptor)
+Parameters::Parameters()
+    : map_(new mapping)
+    , ownership_(true)
 {
-    if (descriptor != nullptr)
+}
+
+Parameters::~Parameters()
+{
+    if (ownership_)
     {
-        *this = *descriptor;
+        delete mapping;
+    }
+}
+
+Parameters::Parameters(const Parameters& type) noexcept
+    : map_(type.ownership_ ? new mapping(*type.map_) : type.map_)
+    , ownership_(type.ownership_)
+{}
+
+Parameters::Parameters(Parameters&& type) noexcept
+    : map_(type.map_)
+    , ownership_(type.ownership_)
+{}
+
+Parameters& Parameters::operator=(const Parameters& type) noexcept
+{
+    ownership_ = type.ownership;
+    map_ = type.ownership_ ? new mapping(*type.map_) : type.map_;
+}
+
+Parameters& Parameters::operator=(Parameters&& type) noexcept
+{
+    map_ = type.map_;
+    ownership_ = type.ownership_;
+}
+
+bool Parameters::operator==(
+        const Parameters& other) const noexcept
+{
+    return map_ == other.map_
+           || (map_ != nullptr && other.map_ != nullptr && *map_ == *other.map_);
+}
+
+bool Parameters::operator!=(
+        const Parameters& other) const noexcept
+{
+    return !this->operator==(other);
+}
+
+const char* Parameters::operator[](const char* key) const noexcept
+{
+    if (nullptr != map_)
+    {
+        auto it = map_->find(key);
+        if ( it != mapping::cend())
+        {
+            return it->second.c_str();
+        }
+    }
+
+    return nullptr;
+}
+
+const char* Parameters::at(const char* key) const noexcept
+{
+    return this->operator[](key);
+}
+
+ReturnCode_t Parameters::set_value(const char* key, const char* value) noexcept
+{
+    if (nullptr == key || nullptr == value )
+    {
+        return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    }
+
+    if (nullptr == map_)
+    {
+        map_ = new(std::nothrow) mapping;
+
+        if (nullptr == map_)
+        {
+            return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+        }
+    }
+
+    *map_[key] = value;
+
+    return ReturnCode_t::RETCODE_OK;
+}
+
+uint64_t Parameters::size() const noexcept
+{
+    return map_ != nullptr ? map_->size() : 0u;
+}
+
+bool Parameters::empty() const noexcept
+{
+    return map_ != nullptr ? map_->empty() : true;
+}
+
+const char* Parameters::next_key(const char* key = nullptr) const noexcept
+{
+    if (nullptr == map_)
+    {
+        return nullptr;
+    }
+
+    mapping::const_iterator it;
+
+    if (key = nullptr)
+    {
+        it = map_->cbegin();
     }
     else
     {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying AnnotationDescriptor, invalid input descriptor");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        it = map_->find(key);
     }
+
+    if (it != map_->cend())
+    {
+        return it->second.c_str();
+    }
+
+    return nullptr;
+}
+
+AnnotationDescriptor::AnnotationDescriptor(const AnnotationDescriptor& type)
+    : type_(type.get_type())
+    , map_(type.map_)
+{
+}
+
+AnnotationDescriptor::AnnotationDescriptor(AnnotationDescriptor&& type) noexcept
+    : type_(type.type_)
+    , map_(std::move(map_))
+{
+}
+
+AnnotationDescriptor::~AnnotationDescriptor() noexcept
+{
+    reset_type();
+}
+
+AnnotationDescriptor& AnnotationDescriptor::operator=(const AnnotationDescriptor& type) noexcept
+{
+    type_ = type.get_type();
+    map_ = type.map_;
+}
+
+AnnotationDescriptor& AnnotationDescriptor::operator=(AnnotationDescriptor&& type) noexcept
+{
+    type_ = type.type_;
+    map_ = std::move(type.map_);
+}
+
+bool AnnotationDescriptor::operator==(
+        const AnnotationDescriptor& other) const noexcept
+{
+    return ( type_ == other.type_
+           || (type_ != nullptr && other.type_ != nullptr && *type_ == *other.type_))
+           && map_ == other.map_;
+}
+
+const DynamicType* AnnotationDescriptor::get_type() const noexcept
+{
+    return nullptr == type_ ?
+        nullptr :
+        TypeBuilderFactory::get_instance().create_copy(*type_);
+}
+
+void AnnotationDescriptor::set_type(
+            const DynamicType& type) noexcept
+{
+    reset_type();
+    type_ = TypeBuilderFactory::get_instance().create_copy(type);
+}
+
+void AnnotationDescriptor::reset_type() noexcept
+{
+    if (type_ != nullptr)
+    {
+        TypeBuilderFactory::get_instance().delete_type(base_type_);
+    }
+
+    type_ = nullptr;
+}
+
+const char* AnnotationDescriptor::get_value(const char* key, ReturnCode_t error = nullptr) const noexcept
+{
+    const char* res = map_[key];
+
+    if (error != nullptr)
+    {
+        *error != nullptr ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    return res;
+}
+
+ReturnCode_t AnnotationDescriptor::set_value(const char* key, const char* value) noexcept
+{
+    return map_.set_value(key, value);
+}
+
+const Parameters* AnnotationDescriptor::get_all_value(ReturnCode_t error = nullptr) const noexcept
+{
+    *error = ReturnCode_t::RETCODE_OK;
+    return &map_;
+}
+
+ReturnCode_t AnnotationDescriptor::copy_from(const AnnotationDescriptor& other) noexcept
+{
+    this->operator=(other);
     return ReturnCode_t::RETCODE_OK;
 }
 
-bool AnnotationDescriptor::operator ==(
-        const AnnotationDescriptor& other) const
+bool AnnotationDescriptor::equals(const AnnotationDescriptor& other) const noexcept
 {
-    if ( type_ == other.type_ || (type_ && other.type_ && type_->equals(*other.type_)))
-    {
-        return value_ == other.value_;
-    }
-    return true;
+    return this->operator==(other);
 }
 
-bool AnnotationDescriptor::operator !=(
-        const AnnotationDescriptor& other) const
+bool AnnotationDescriptor::is_consistent() const noexcept
 {
-    return !(*this == other);
-}
-
-bool AnnotationDescriptor::operator <(
-        const AnnotationDescriptor& other) const
-{
-    auto name = type_->get_name();
-    auto other_name = other.type_->get_name();
-    return name == other_name ? value_ < other.value_ : name < other_name;
-}
-
-bool AnnotationDescriptor::equals(
-        const AnnotationDescriptor* other) const
-{
-    assert(other);
-    return *this == *other;
-}
-
-bool AnnotationDescriptor::key_annotation() const
-{
-    auto it = value_.find(ANNOTATION_KEY_ID);
-    if (it == value_.end())
-    {
-        it = value_.find(ANNOTATION_EPKEY_ID); // Legacy "@Key"
-    }
-    return (it != value_.end() && it->second == CONST_TRUE);
-}
-
-ReturnCode_t AnnotationDescriptor::get_value(
-        std::string& value) const
-{
-    return get_value(value, "value");
-}
-
-ReturnCode_t AnnotationDescriptor::get_value(
-        std::string& value,
-        const std::string& key) const
-{
-    auto it = value_.find(key);
-    if (it != value_.end())
-    {
-        value = it->second;
-        return ReturnCode_t::RETCODE_OK;
-    }
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
-}
-
-ReturnCode_t AnnotationDescriptor::get_all_value(
-        std::map<std::string, std::string>& value) const
-{
-    value = value_;
-    return ReturnCode_t::RETCODE_OK;
-}
-
-bool AnnotationDescriptor::is_consistent() const
-{
-    if (!type_ || type_->get_kind() != TypeKind::TK_ANNOTATION)
-    {
-        return false;
-    }
-
-    //TODO: Check consistency of value_
-    return true;
-}
-
-ReturnCode_t AnnotationDescriptor::set_value(
-        const std::string& key,
-        const std::string& value)
-{
-    value_[key] = value;
-    return ReturnCode_t::RETCODE_OK;
-}
-
-std::ostream& eprosima::fastrtps::types::v1_3::operator <<(
-        std::ostream& os,
-        const AnnotationDescriptor& ad)
-{
-    using namespace std;
-
-    // indentation increment
-    ++os.iword(DynamicTypeBuilderFactory::indentation_index);
-
-    auto manips = [](ostream& os) -> ostream&
-            {
-                long indent = os.iword(DynamicTypeBuilderFactory::indentation_index);
-                return os << string(indent, '\t') << setw(10) << left;
-            };
-
-    // without type the annotation is not consistent and cannot be created
-    assert(ad.type());
-
-    // show type
-    os << manips << "annotation:" << ad.type()->get_name() << endl;
-
-    // show the map contents
-    for (auto pair : ad.get_all_values())
-    {
-        os << manips << "\tkey:" << "'" << pair.first << "'" << endl
-           << manips << "\tvalue:" << pair.second << endl;
-    }
-
-    // indentation decrement
-    --os.iword(DynamicTypeBuilderFactory::indentation_index);
-
-    return os;
+    // TODO: fill in
 }

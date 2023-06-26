@@ -13,333 +13,257 @@
 // limitations under the License.
 
 #include <fastrtps/types/v1_3/MemberDescriptor.hpp>
-#include <fastrtps/types/v1_3/DynamicType.hpp>
-#include <fastrtps/types/v1_3/TypeDescriptor.hpp>
-#include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
-#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
-#include <fastdds/dds/log/Log.hpp>
-
-#include <iomanip>
 
 using namespace eprosima::fastrtps::types::v1_3;
 
-void MemberDescriptor::add_union_case_index(
-        uint64_t value)
+MemberDescriptor::MemberDescriptor()
+    : name_(new(std::nothrow) std::string)
+    , default_value_(new(std::nothrow) std::string)
+    , labels_(new(std::nothrow) std::vector<uint32_t>) noexcept
+{}
+
+MemberDescriptor::~MemberDescriptor() noexcept
 {
-    labels_.insert(value);
+    if (type_ != nullptr)
+    {
+        DynamicTypeBuilderFactory::get_instance().delete_type(type_);
+    }
+
+    delete name_;
+    delete default_value_;
+    delete labels_;
 }
 
-ReturnCode_t MemberDescriptor::copy_from(
-        const MemberDescriptor& other)
+MemberDescriptor::MemberDescriptor(const MemberDescriptor& type) noexcept
+    : name_(new(std::nothrow) std::string)
+    , id_(type.id_)
+    , default_value_(new(std::nothrow) std::string)
+    , index_(type.index_)
+    , labels_(new(std::nothrow) std::vector<uint32_t>)
+    , default_label_(type.default_label_)
 {
-    *this = other;
-    return ReturnCode_t::RETCODE_OK;
+    if (type.type_ != nullptr)
+    {
+        type_ = DynamicTypeBuilderFactory::get_instance().create_copy(*type.type_);
+    }
+
+    if (name_ != nullptr && type.name_ != nullptr)
+    {
+        *name_ = *type.name_;
+    }
+
+    if (default_value_ != nullptr && type.default_value_ != nullptr)
+    {
+        *default_value_ = *type.default_value_;
+    }
+
+    if (labels_ != nullptr && type.labels != nullptr)
+    {
+        *labels_ = *type.labels;
+    }
 }
 
-bool MemberDescriptor::operator ==(
-        const MemberDescriptor& other) const
+MemberDescriptor::MemberDescriptor(MemberDescriptor&& type) noexcept
+    : name_(type.name_)
+    , id_(type.id_)
+    , type_(type.type_)
+    , default_value_(type.default_value_)
+    , index_(type.index_)
+    , labels_(type.labels_)
+    , default_label_(type.default_label_)
 {
-    return name_ == other.name_ &&
-           id_ == other.id_ &&
-           default_value_ == other.default_value_ &&
-           index_ == other.index_ &&
-           labels_ == other.labels_ &&
-           default_label_ == other.default_label_ &&
-           (type_ == other.type_ || (type_ && other.type_ && *type_ == *other.type_ ));
+}
+
+MemberDescriptor::MemberDescriptor& operator=(const MemberDescriptor& type) noexcept
+{
+    name_ = new(std::nothrow) std::string;
+    id_ = type.id_;
+    default_value_ = new(std::nothrow) std::string;
+    index_ = type.index_;
+    labels_ = new(std::nothrow) std::vector<uint32_t>;
+    default_label_ = type.default_label_;
+
+    if (type.type_ != nullptr)
+    {
+        type_ = DynamicTypeBuilderFactory::get_instance().create_copy(*type.type_);
+    }
+
+    if (name_ != nullptr && type.name_ != nullptr)
+    {
+        *name_ = *type.name_;
+    }
+
+    if (default_value_ != nullptr && type.default_value_ != nullptr)
+    {
+        *default_value_ = *type.default_value_;
+    }
+
+    if (labels_ != nullptr && type.labels != nullptr)
+    {
+        *labels_ = *type.labels;
+    }
+}
+
+MemberDescriptor& MemberDescriptor::operator=(MemberDescriptor&& type) noexcept
+{
+    name_ = type.name_;
+    id_ = type.id_;
+    type_ = type.type_;
+    default_value_ = type.default_value_;
+    index_ = type.index_;
+    labels_ = type.labels_;
+    default_label_ = type.default_label_;
+
+    return *this;
+}
+
+bool MemberDescriptor::operator==(
+        const MemberDescriptor& d) const noexcept
+{
+    return (name_ == type.name_ || (name_ != nullptr && d.name_ != nullptr && *name_ == *d.name_))
+        && id_ == type.id_
+        && (type_ == type.type_ || (type_ != nullptr && d.type_ != nullptr && *type_ == *d.type_ ))
+        && (default_value_ == type.default_value_ || (default_value_ != nullptr && d.default_value_ != nullptr && *default_value_ == *d.default_value_))
+        && index_ == type.index_
+        && (labels_ == type.labels_ || (labels_ != nullptr && d.labels_ != nullptr && *labels_ == *d.labels_))
+        && default_label_ == type.default_label_;
 }
 
 bool MemberDescriptor::operator !=(
-        const MemberDescriptor& other) const
+        const MemberDescriptor& descriptor) const noexcept
 {
-    return !operator ==(other);
+    return !this->operator==(d);
 }
 
-bool MemberDescriptor::equals(
-        const MemberDescriptor& other) const
+const char* MemberDescriptor::get_name() const noexcept
 {
-    return *this == other;
-}
-
-MemberId MemberDescriptor::get_id() const
-{
-    return id_;
-}
-
-uint32_t MemberDescriptor::get_index() const
-{
-    return index_;
-}
-
-TypeKind MemberDescriptor::get_kind() const
-{
-    return type_ ? type_->get_kind() : TypeKind::TK_NONE;
-}
-
-std::string MemberDescriptor::get_name() const
-{
-    return name_;
-}
-
-const std::set<uint64_t>& MemberDescriptor::get_union_labels() const
-{
-    return labels_;
-}
-
-bool MemberDescriptor::is_consistent(
-        TypeKind parentKind) const
-{
-    // The type field is mandatory in every type except bitmasks and enums.
-    // Structures and unions allow it for @external. This condition can only
-    // be check in the DynamicTypeMember override
-    if ((parentKind != TypeKind::TK_BITMASK && parentKind != TypeKind::TK_ENUM &&
-            parentKind != TypeKind::TK_STRUCTURE && parentKind != TypeKind::TK_UNION) && !type_)
+    if (name_ != nullptr)
     {
-        return false;
+        return name_->c_str();
     }
 
-    // Only enums, bitmaks and aggregated types must use the ID value.
-    if (id_ != MEMBER_ID_INVALID && parentKind != TypeKind::TK_UNION &&
-            parentKind != TypeKind::TK_STRUCTURE && parentKind != TypeKind::TK_BITSET &&
-            parentKind != TypeKind::TK_ANNOTATION && parentKind != TypeKind::TK_ENUM &&
-            parentKind != TypeKind::TK_BITMASK)
-    {
-        return false;
-    }
-
-    if (!is_default_value_consistent(default_value_))
-    {
-        return false;
-    }
-
-    if (type_ && !is_type_name_consistent(type_->get_name())) // Enums and bitmask don't have type
-    {
-        return false;
-    }
-
-    // Only Unions need the field "label"
-    if (!labels_.empty() && parentKind != TypeKind::TK_UNION)
-    {
-        return false;
-    }
-    // If the field isn't the default value for the union, it must have a label value.
-    else if (parentKind == TypeKind::TK_UNION && default_label_ == false && labels_.empty())
-    {
-        return false;
-    }
-
-    return true;
+    return nullptr;
 }
 
-std::string MemberDescriptor::get_default_value() const
+void MemberDescriptor::set_name(
+        const char* name) noexcept
 {
-    return default_value_;
-}
-
-bool MemberDescriptor::is_default_union_value() const
-{
-    return default_label_;
-}
-
-bool MemberDescriptor::is_default_value_consistent(
-        const std::string& sDefaultValue) const
-{
-    if (sDefaultValue.length() > 0)
+    if (nullptr == name)
     {
-        try
+        return;
+    }
+
+    if (nullptr == name_)
+    {
+        name_ = new(std::nothrow) std::string;
+        if (nullptr == name_)
         {
-            switch (get_kind())
-            {
-                default:
-                    return true;
-                case TypeKind::TK_INT32:
-                {
-                    int32_t value(0);
-                    value = stoi(sDefaultValue);
-                    (void)value;
-                }
-                break;
-                case TypeKind::TK_UINT32:
-                {
-                    uint32_t value(0);
-                    value = stoul(sDefaultValue);
-                    (void)value;
-                }
-                break;
-                case TypeKind::TK_INT16:
-                {
-                    int16_t value(0);
-                    value = static_cast<int16_t>(stoi(sDefaultValue));
-                    (void)value;
-                }
-                break;
-                case TypeKind::TK_UINT16:
-                {
-                    uint16_t value(0);
-                    value = static_cast<uint16_t>(stoul(sDefaultValue));
-                    (void)value;
-                }
-                break;
-                case TypeKind::TK_INT64:
-                {
-                    int64_t value(0);
-                    value = stoll(sDefaultValue);
-                    (void)value;
-                }
-                break;
-                case TypeKind::TK_UINT64:
-                {
-                    uint64_t value(0);
-                    value = stoul(sDefaultValue);
-                    (void)value;
-                }
-                break;
-                case TypeKind::TK_FLOAT32:
-                {
-                    float value(0.0f);
-                    value = stof(sDefaultValue);
-                    (void)value;
-                }
-                break;
-                case TypeKind::TK_FLOAT64:
-                {
-                    double value(0.0f);
-                    value = stod(sDefaultValue);
-                    (void)value;
-                }
-                break;
-                case TypeKind::TK_FLOAT128:
-                {
-                    long double value(0.0f);
-                    value = stold(sDefaultValue);
-                    (void)value;
-                }
-                break;
-                case TypeKind::TK_CHAR8:
-                case TypeKind::TK_BYTE:
-                    return sDefaultValue.length() >= 1;
-                case TypeKind::TK_CHAR16:
-                {
-                    std::wstring temp = std::wstring(sDefaultValue.begin(), sDefaultValue.end());
-                    (void)temp;
-                }
-                break;
-                case TypeKind::TK_BOOLEAN:
-                {
-                    if (sDefaultValue == CONST_TRUE || sDefaultValue == CONST_FALSE)
-                    {
-                        return true;
-                    }
-                    int value(0);
-                    value = stoi(sDefaultValue);
-                    (void)value;
-                }
-                break;
-                case TypeKind::TK_STRING16:
-                case TypeKind::TK_STRING8:
-                    return true;
-                case TypeKind::TK_ENUM:
-                {
-                    uint32_t value(0);
-                    value = stoul(sDefaultValue);
-                    (void)value;
-                }
-                break;
-                case TypeKind::TK_BITMASK:
-                {
-                    int value(0);
-                    value = stoi(sDefaultValue);
-                    (void)value;
-                }
-                break;
-                case TypeKind::TK_ARRAY:
-                case TypeKind::TK_SEQUENCE:
-                case TypeKind::TK_MAP:
-                    return true;
-            }
-        }
-        catch (...)
-        {
-            return false;
+            return;
         }
     }
-    return true;
+
+    *name_ = name;
 }
 
-bool MemberDescriptor::is_type_name_consistent(
-        const std::string& sName) const
+const DynamicType* MemberDescriptor::get_type() const noexcept
 {
-    return TypeDescriptor::is_type_name_consistent(sName);
-}
+    if (type_ != nullptr)
+    {
+        type_ = DynamicTypeBuilderFactory::get_instance().create_copy(*type.type_);
+    }
 
-void MemberDescriptor::set_id(
-        MemberId id)
-{
-    id_ = id;
-}
-
-void MemberDescriptor::set_index(
-        uint32_t index)
-{
-    index_ = index;
+    return nullptr;
 }
 
 void MemberDescriptor::set_type(
-        DynamicType_ptr&& type)
+            const DynamicType& type) noexcept
 {
-    type_ = std::move(type);
+    reset_type();
+    type_ = DynamicTypeBuilderFactory::get_instance().create_copy(type);
 }
 
-DynamicType_ptr MemberDescriptor::get_type() const
+void MemberDescriptor::reset_type() noexcept
 {
-    return type_;
-}
-
-void MemberDescriptor::set_default_union_value(
-        bool bDefault)
-{
-    default_label_ = bDefault;
-}
-
-std::ostream& eprosima::fastrtps::types::v1_3::operator <<(
-        std::ostream& os,
-        const MemberDescriptor& md)
-{
-    using namespace std;
-
-    // indentation increment
-    ++os.iword(DynamicTypeBuilderFactory::indentation_index);
-    // parent object
-    auto desc = static_cast<const TypeDescriptor*>(os.pword(DynamicTypeBuilderFactory::object_index));
-
-    auto manips = [](ostream& os) -> ostream&
-            {
-                long indent = os.iword(DynamicTypeBuilderFactory::indentation_index);
-                return os << string(indent, '\t') << setw(10) << left;
-            };
-
-    // TODO: Barro, add support Type details and labels
-
-    os << endl
-       << manips << "index:" << md.get_index() << endl
-       << manips << "name:" << md.get_name() << endl
-       << manips << "id:" << md.get_id() << endl;
-
-    if ( nullptr != desc && desc->get_kind() == TypeKind::TK_UNION)
+    if (type_ != nullptr)
     {
-        os << manips << "default value:" << md.get_default_value() << endl
-           << manips << "is default:" << std::boolalpha << md.is_default_union_value() << endl;
+        DynamicTypeBuilderFactory::get_instance().delete_type(type_);
     }
 
-    // Show type
-    auto bt = md.get_type();
-    if (bt)
+    type_ = nullptr;
+}
+
+const char* MemberDescriptor::get_default_value() const noexcept
+{
+    if (default_value_ != nullptr)
     {
-        os << manips << "type: ";
-        os << *bt;
+        return default_value_->c_str();
     }
 
-    // indentation decrement
-    --os.iword(DynamicTypeBuilderFactory::indentation_index);
+    return nullptr;
+}
 
-    return os;
+void MemberDescriptor::set_default_value(
+        const char* value) noexcept
+{
+    if (nullptr == value)
+    {
+        return;
+    }
+
+    if (nullptr == default_value_)
+    {
+        default_value_ = new(std::nothrow) std::string;
+        if (nullptr == default_value_)
+        {
+            return;
+        }
+    }
+
+    *default_value_ = value;
+}
+
+const uint32_t* MemberDescriptor::get_labels(
+        uint32_t& count) const noexcept
+{
+    if (labels_ != nullptr)
+    {
+        count = static_cast<uint32_t>(labels_->size());
+        return labels_->data();
+    }
+
+    count = 0;
+    return nullptr;
+}
+
+void MemberDescriptor::set_labels(
+            const uint32_t* labels,
+            uint32_t count) noexcept
+{
+    if (nullptr == labels_ )
+    {
+        labels_ = new(std::nowthrow) std::vector<uint32_t>(labels, labels + count);
+    }
+    else
+    {
+        *labels.assign(labels, labels + count);
+    }
+}
+
+ReturnCode_t MemberDescriptor::copy_from(
+    const MemberDescriptor& descriptor) noexcept
+{
+    this->operator=(descriptor);
+    return ReturnCode_t::RETCODE_OK;
+}
+
+bool MemberDescriptor::equals(
+        const MemberDescriptor& descriptor) const noexcept
+{
+    return this->operator==(descriptor);
+}
+
+
+bool MemberDescriptor::is_consistent() const noexcept
+{
+    // TODO: rely on implementation definition
 }

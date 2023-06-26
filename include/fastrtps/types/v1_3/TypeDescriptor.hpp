@@ -16,9 +16,10 @@
 #define TYPES_1_3_TYPE_DESCRIPTOR_HPP
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/utils/fixed_size_string.hpp>
 
 #include <cstdint>
+#include <string>
+#include <vector>
 
 namespace eprosima {
 namespace fastrtps {
@@ -32,20 +33,17 @@ class DynamicType;
  */
 class RTPS_DllAPI TypeDescriptor final
 {
-    using str = eprosima::fastrtps::string_255;
-
-    str name_;                                          //!< Type Name.
+    std::string* name_ = nullptr;                       //!< Type Name.
     TypeKind kind_ = TypeKind::TK_NONE;                 //!< Type Kind.
     const DynamicType* base_type_ = nullptr;            //!< SuperType of an structure or base type of an alias type.
     const DynamicType* discriminator_type_ = nullptr;   //!< Discrimination type for a union.
-    uint32_t* bounds_ = nullptr;                        //!< Length for strings, arrays, sequences, maps and bitmasks.
-    uint32_t bounds_dims_ = 0u;                         //!< Number of dimensions associated to the bounds
+    std::vector<uint32_t> bounds_ = nullptr;            //!< Length for strings, arrays, sequences, maps and bitmasks.
     const DynamicType* element_type_ = nullptr;         //!< Value Type for arrays, sequences, maps, bitmasks.
     const DynamicType* key_element_type_ = nullptr;     //!< Key Type for maps.
 
 public:
 
-    TypeDescriptor() noexcept = default;
+    TypeDescriptor() noexcept;
 
     TypeDescriptor(const TypeDescriptor& type) noexcept;
 
@@ -204,9 +202,6 @@ public:
 
     /**
      * Indicates whether the states of all of this descriptor's properties are consistent.
-     * @param type bool `true` if we search a consistent type
-     * @remark consistency for a type is more restrictive than for a builder which may require
-     *         members and annotations.
      * @return \b bool `true` if consistent
      */
     bool is_consistent() const noexcept;
