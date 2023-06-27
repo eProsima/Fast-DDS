@@ -168,6 +168,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_secure_allow_unauthenticated_p
     ${CMAKE_CURRENT_BINARY_DIR}/simple_secure_allow_unauthenticated_pub_profile.xml COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/simple_allow_unauthenticated_sub_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/simple_allow_unauthenticated_sub_profile.xml COPYONLY)
+configure_file(${PROJECT_SOURCE_DIR}/cmake/common/test_wrapper.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/test_wrapper.cmake @ONLY)
 
 if(SECURITY)
     configure_file(${PROJECT_SOURCE_DIR}/test/certs/maincacert.pem
