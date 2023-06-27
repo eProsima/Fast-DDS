@@ -187,7 +187,7 @@ const TypeObject* GetMinimalidObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint32_t", false));
-    mam_value.name("value");
+// TODO(jlbueno): XTypes    mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -320,7 +320,7 @@ const TypeObject* GetMinimalautoidObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*GetAutoidKindIdentifier(false));
-    mam_value.name("value");
+// TODO(jlbueno): XTypes    mam_value.name("value");
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
@@ -663,7 +663,7 @@ const TypeObject* GetMinimaloptionalObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
-    mam_value.name("value");
+// TODO(jlbueno): XTypes    mam_value.name("value");
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
@@ -803,7 +803,7 @@ const TypeObject* GetMinimalpositionObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
-    mam_value.name("value");
+// TODO(jlbueno): XTypes    mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -935,7 +935,7 @@ const TypeObject* GetMinimalvalueObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
-    mam_value.name("value");
+// TODO(jlbueno): XTypes    mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -1069,7 +1069,7 @@ const TypeObject* GetMinimalextensibilityObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*GetExtensibilityKindIdentifier(false));
-    mam_value.name("value");
+// TODO(jlbueno): XTypes    mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -1799,7 +1799,7 @@ const TypeObject* GetMinimalkeyObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
-    mam_value.name("value");
+// TODO(jlbueno): XTypes    mam_value.name("value");
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
@@ -1940,7 +1940,7 @@ const TypeObject* GetMinimalmust_understandObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
-    mam_value.name("value");
+// TODO(jlbueno): XTypes    mam_value.name("value");
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
@@ -2001,7 +2001,7 @@ const TypeObject* GetCompletemust_understandObject()
 
     CompleteAnnotationParameter cam_value;
     cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
-    cam_value.name("value");
+// TODO(jlbueno): XTypes    cam_value.name("value");
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(cam_value.common().member_type_id()._d());
@@ -2201,7 +2201,7 @@ const TypeObject* GetMinimaldefaultObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
-    mam_value.name("value");
+// TODO(jlbueno): XTypes    mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -2333,13 +2333,13 @@ const TypeObject* GetMinimalrangeObject()
 
     MinimalAnnotationParameter mam_min;
     mam_min.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
-    mam_min.name("min");
+// TODO(jlbueno): XTypes    mam_min.name("min");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_min);
 
     MinimalAnnotationParameter mam_max;
     mam_max.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
-    mam_max.name("max");
+// TODO(jlbueno): XTypes    mam_max.name("max");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_max);
 
@@ -2477,7 +2477,7 @@ const TypeObject* GetMinimalminObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
-    mam_value.name("value");
+// TODO(jlbueno): XTypes    mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -2609,7 +2609,7 @@ const TypeObject* GetMinimalmaxObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
-    mam_value.name("value");
+// TODO(jlbueno): XTypes    mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -2741,7 +2741,7 @@ const TypeObject* GetMinimalunitObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
-    mam_value.name("value");
+// TODO(jlbueno): XTypes    mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -2873,7 +2873,7 @@ const TypeObject* GetMinimalbit_boundObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
-    mam_value.name("value");
+// TODO(jlbueno): XTypes    mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -3005,7 +3005,7 @@ const TypeObject* GetMinimalexternalObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
-    mam_value.name("value");
+// TODO(jlbueno): XTypes    mam_value.name("value");
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
@@ -3145,7 +3145,7 @@ const TypeObject* GetMinimalnestedObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
-    mam_value.name("value");
+// TODO(jlbueno): XTypes    mam_value.name("value");
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
@@ -3286,7 +3286,7 @@ const TypeObject* GetMinimalverbatimObject()
 
     MinimalAnnotationParameter mam_language;
     mam_language.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
-    mam_language.name("language");
+// TODO(jlbueno): XTypes    mam_language.name("language");
 
     AnnotationParameterValue def_value_language;
     def_value_language._d(mam_language.common().member_type_id()._d());
@@ -3296,7 +3296,7 @@ const TypeObject* GetMinimalverbatimObject()
 
     MinimalAnnotationParameter mam_placement;
     mam_placement.common().member_type_id(*GetPlacementKindIdentifier(false));
-    mam_placement.name("placement");
+// TODO(jlbueno): XTypes    mam_placement.name("placement");
 
     AnnotationParameterValue def_value_placement;
     def_value_placement._d(mam_placement.common().member_type_id()._d());
@@ -3306,7 +3306,7 @@ const TypeObject* GetMinimalverbatimObject()
 
     MinimalAnnotationParameter mam_text;
     mam_text.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
-    mam_text.name("text");
+// TODO(jlbueno): XTypes    mam_text.name("text");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_text);
 
@@ -3798,7 +3798,7 @@ const TypeObject* GetMinimalserviceObject()
 
     MinimalAnnotationParameter mam_platform;
     mam_platform.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
-    mam_platform.name("platform");
+// TODO(jlbueno): XTypes    mam_platform.name("platform");
 
     AnnotationParameterValue def_value_platform;
     def_value_platform._d(mam_platform.common().member_type_id()._d());
@@ -3938,7 +3938,7 @@ const TypeObject* GetMinimalonewayObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
-    mam_value.name("value");
+// TODO(jlbueno): XTypes    mam_value.name("value");
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
@@ -4078,7 +4078,7 @@ const TypeObject* GetMinimalamiObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
-    mam_value.name("value");
+// TODO(jlbueno): XTypes    mam_value.name("value");
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
@@ -4219,7 +4219,7 @@ const TypeObject* GetMinimalnon_serializedObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
-    mam_value.name("value");
+// TODO(jlbueno): XTypes    mam_value.name("value");
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());

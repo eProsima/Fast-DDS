@@ -1674,7 +1674,7 @@ bool EDP::pairing_remote_writer_with_local_reader_after_security(
 
 bool EDP::checkTypeIdentifier(
         const WriterProxyData* wdata,
-        const ReaderProxyData* rdata) const
+        const ReaderProxyData* /*rdata*/) const
 {
     // TODO - Remove once XCDR or XCDR2 is implemented.
     TypeConsistencyEnforcementQosPolicy coercion;
@@ -1705,7 +1705,7 @@ bool EDP::checkTypeObject(
     if (wdata->has_type_information() && wdata->type_information().assigned() &&
             rdata->has_type_information() && rdata->type_information().assigned())
     {
-        const types::TypeIdentifier* rtype = nullptr;
+        const types::TypeIdentifier* rtype; // TODO(jlbueno): XTypes = nullptr;
         const types::TypeIdentifier* wtype = nullptr;
 
         if (wdata->type_information().type_information.complete().typeid_with_size().type_id()._d() !=
@@ -1747,6 +1747,11 @@ bool EDP::checkTypeObject(
 // TODO(jlbueno): XTypes            return wtype->consistent(*rtype, coercion);
         }
 
+        // TODO(jlbueno): XTypes, remove warning
+        if (rtype != nullptr)
+        {
+        }
+
         return false;
     }
 
@@ -1770,7 +1775,7 @@ bool EDP::checkTypeObject(
         coercion.m_prevent_type_widening = true;
         coercion.m_ignore_sequence_bounds = false;
         //return wdata->type().m_type_object.consistent(rdata->type().m_type_object, rdata->m_qos.type_consistency);
-        return wdata->type().m_type_object.consistent(rdata->type().m_type_object, coercion);
+// TODO(jlbueno): XTypes        return wdata->type().m_type_object.consistent(rdata->type().m_type_object, coercion);
     }
 
     return false;

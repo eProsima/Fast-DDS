@@ -87,11 +87,13 @@ for idl_file in "${idl_files[@]}"; do
 done
 
 # Move source files to src/cpp
+echo "*************************************************************"
 echo "Moving files to src/cpp. Please remember to update the include header path"
 mv ./include/fastrtps/types/TypeObjectHashId.cxx ./src/cpp/dynamic-types/TypeObjectHashId.cxx
 mv ./include/fastrtps/types/TypeIdentifierTypes.cxx ./src/cpp/dynamic-types/TypeIdentifierTypes.cxx
 mv ./include/fastrtps/types/TypeIdentifier.cxx ./src/cpp/dynamic-types/TypeIdentifier.cxx
 mv ./include/fastrtps/types/AnnotationParameterValue.cxx ./src/cpp/dynamic-types/AnnotationParameterValue.cxx
+mv ./include/fastrtps/types/TypeObject.cxx ./src/cpp/dynamic-types/TypeObject.cxx
 
 # Remove unused files
 rm ./include/fastrtps/types/XTypesBase.cxx
@@ -99,8 +101,10 @@ rm ./include/fastrtps/types/TypeIdentifierTypesPubSubTypes.cxx
 rm ./include/fastrtps/types/TypeIdentifierTypesPubSubTypes.h
 rm ./include/fastrtps/types/AnnotationParameterValuePubSubTypes.cxx
 rm ./include/fastrtps/types/AnnotationParameterValuePubSubTypes.h
+rm ./include/fastrtps/types/TypeObjectPubSubTypes.cxx
+rm ./include/fastrtps/types/TypeObjectPubSubTypes.h
 
-echo "Please, remember to keep changes related to non-supported @external annotation in TypeIdentifierTypes files"
+echo "Please, remember also to keep changes related to non-supported @external annotation in TypeIdentifierTypes files and dependent source files"
 
 cd utils/scripts
 

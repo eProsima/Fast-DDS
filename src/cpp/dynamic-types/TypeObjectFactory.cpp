@@ -2000,11 +2000,13 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(
         }
         case TK_BITSET:
         {
+/* TODO(jlbueno): XTypes
             const TypeIdentifier* aux = &object->complete().bitset_type().header().base_type();
             if (aux->_d() == EK_COMPLETE)
             {
                 descriptor.base_type_ = build_dynamic_type(get_type_name(aux), aux, get_type_object(aux));
             }
+*/
 
             DynamicTypeBuilder_ptr bitsetType =
                     DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
@@ -2204,12 +2206,12 @@ std::string TypeObjectFactory::get_key_from_hash(
 
 TypeIdentifierWithSizeSeq TypeObjectFactory::typelookup_get_type_dependencies(
         const TypeIdentifierSeq& identifiers,
-        const OctetSeq& in_continuation_point,
+        const OctetSeq& /*in_continuation_point*/,
         OctetSeq& out_continuation_point,
         size_t max_size) const
 {
     TypeIdentifierWithSizeSeq result;
-    size_t continuation_point = to_size_t(in_continuation_point);
+    size_t continuation_point = 0; // TODO(jlbueno): XTypes to_size_t(in_continuation_point);
     size_t start_index = max_size * continuation_point;
     size_t skip = 0;
 
@@ -2276,7 +2278,7 @@ TypeIdentifierWithSizeSeq TypeObjectFactory::typelookup_get_type_dependencies(
                     if (added == max_size)
                     {
                         // If max_size reached, increment out_continuation_point
-                        ++out_continuation_point;
+// TODO(jlbueno): XTypes                        ++out_continuation_point;
                         break;
                     }
                 }

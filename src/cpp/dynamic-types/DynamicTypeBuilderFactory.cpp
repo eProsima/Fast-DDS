@@ -2164,7 +2164,7 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         {
             TypeIdentifier parent;
             build_type_identifier(descriptor->get_base_type(), parent);
-            object.complete().bitset_type().header().base_type(parent);
+// TODO(jlbueno): XTypes            object.complete().bitset_type().header().base_type(parent);
         }
         //object.complete().bitset_type().header().base_type().equivalence_hash()[0..13];
 
@@ -2231,7 +2231,7 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         {
             TypeIdentifier parent;
             build_type_identifier(descriptor->get_base_type(), parent);
-            object.minimal().bitset_type().header().base_type(parent);
+// TODO(jlbueno): XTypes            object.minimal().bitset_type().header().base_type(parent);
         }
         //object.minimal().bitset_type().header().base_type().equivalence_hash()[0..13];
 
@@ -2465,7 +2465,7 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
         for (const MemberDescriptor* member : members)
         {
             MinimalAnnotationParameter msm;
-            msm.name(member->get_name());
+// TODO(jlbueno): XTypes            msm.name(member->get_name());
 
             if (!member->get_default_value().empty())
             {
