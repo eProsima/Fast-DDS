@@ -161,6 +161,18 @@ public:
         return strncmp(string_data, rhs.c_str(), MAX_CHARS) != 0;
     }
 
+    bool operator < (
+            const std::string& rhs) const noexcept
+    {
+        return 0 > compare(rhs);
+    }
+
+    bool operator > (
+            const std::string& rhs) const noexcept
+    {
+        return 0 < compare(rhs);
+    }
+
     operator const char* () const noexcept {
         return c_str();
     }
