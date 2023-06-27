@@ -20,6 +20,9 @@ module eprosima {
 module fastrtps {
 module types {
 
+// Forward declaration
+union TypeIdentifier;
+
 // 1 Byte
 @extensibility(FINAL) @nested
 struct StringSTypeDefn {
@@ -42,54 +45,46 @@ struct PlainCollectionHeader {
 struct PlainSequenceSElemDefn {
     PlainCollectionHeader       header;
     SBound                      bound;
-// Fast DDS-Gen does not support @external yet
-//    @external TypeIdentifier    element_identifier;
+    @external TypeIdentifier    element_identifier;
 };
 
 @extensibility(FINAL) @nested
 struct PlainSequenceLElemDefn {
     PlainCollectionHeader       header;
     LBound                      bound;
-// Fast DDS-Gen does not support @external yet
-//    @external TypeIdentifier    element_identifier;
+    @external TypeIdentifier    element_identifier;
 };
 
 @extensibility(FINAL) @nested
 struct PlainArraySElemDefn {
     PlainCollectionHeader       header;
     SBoundSeq                   array_bound_seq;
-// Fast DDS-Gen does not support @external yet
-//    @external TypeIdentifier    element_identifier;
+    @external TypeIdentifier    element_identifier;
 };
 
 @extensibility(FINAL) @nested
 struct PlainArrayLElemDefn {
     PlainCollectionHeader       header;
     LBoundSeq                   array_bound_seq;
-// Fast DDS-Gen does not support @external yet
-//    @external TypeIdentifier    element_identifier;
+    @external TypeIdentifier    element_identifier;
 };
 
 @extensibility(FINAL) @nested
 struct PlainMapSTypeDefn {
     PlainCollectionHeader       header;
     SBound                      bound;
-// Fast DDS-Gen does not support @external yet
-//    @external TypeIdentifier    element_identifier;
+    @external TypeIdentifier    element_identifier;
     CollectionElementFlag       key_flags;
-// Fast DDS-Gen does not support @external yet
-//    @external TypeIdentifier    key_identifier;
+    @external TypeIdentifier    key_identifier;
 };
 
 @extensibility(FINAL) @nested
 struct PlainMapLTypeDefn {
     PlainCollectionHeader       header;
     LBound                      bound;
-// Fast DDS-Gen does not support @external yet
-//    @external TypeIdentifier    element_identifier;
+    @external TypeIdentifier    element_identifier;
     CollectionElementFlag       key_flags;
-// Fast DDS-Gen does not support @external yet
-//    @external TypeIdentifier    key_identifier;
+    @external TypeIdentifier    key_identifier;
 };
 
 // Used for Types that have cyclic depencencies with other types
