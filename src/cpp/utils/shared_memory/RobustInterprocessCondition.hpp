@@ -207,6 +207,9 @@ public:
 
 private:
 
+    /*!
+     * @warning Changing this class means no communication with previous versions of SHM transport.
+     */
     struct SemaphoreNode
     {
         SemaphoreNode()
