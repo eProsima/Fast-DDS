@@ -1029,15 +1029,6 @@ namespace eprosima {
                 eProsima_user_DllExport eprosima::fastrtps::types::AppliedAnnotationParameterSeq& param_seq();
 
                 /*!
-                * @brief This function returns the maximum serialized size of an object
-                * depending on the buffer alignment.
-                * @param current_alignment Buffer alignment.
-                * @return Maximum serialized size.
-                */
-                eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
-                        size_t current_alignment = 0);
-
-                /*!
                  * @brief This function returns the serialized size of a data depending on the buffer alignment.
                  * @param data Data which is calculated its serialized size.
                  * @param current_alignment Buffer alignment.

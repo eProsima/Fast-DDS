@@ -149,17 +149,17 @@ eprosima::fastrtps::types::ExtendedAnnotationParameterValue::~ExtendedAnnotation
 }
 
 eprosima::fastrtps::types::ExtendedAnnotationParameterValue::ExtendedAnnotationParameterValue(
-        const ExtendedAnnotationParameterValue& x)
+        const ExtendedAnnotationParameterValue& /*x*/)
 {
 }
 
 eprosima::fastrtps::types::ExtendedAnnotationParameterValue::ExtendedAnnotationParameterValue(
-        ExtendedAnnotationParameterValue&& x) noexcept 
+        ExtendedAnnotationParameterValue&& /*x*/) noexcept 
 {
 }
 
 eprosima::fastrtps::types::ExtendedAnnotationParameterValue& eprosima::fastrtps::types::ExtendedAnnotationParameterValue::operator =(
-        const ExtendedAnnotationParameterValue& x)
+        const ExtendedAnnotationParameterValue& /*x*/)
 {
 
 
@@ -167,7 +167,7 @@ eprosima::fastrtps::types::ExtendedAnnotationParameterValue& eprosima::fastrtps:
 }
 
 eprosima::fastrtps::types::ExtendedAnnotationParameterValue& eprosima::fastrtps::types::ExtendedAnnotationParameterValue::operator =(
-        ExtendedAnnotationParameterValue&& x) noexcept
+        ExtendedAnnotationParameterValue&& /*x*/) noexcept
 {
 
 
@@ -175,7 +175,7 @@ eprosima::fastrtps::types::ExtendedAnnotationParameterValue& eprosima::fastrtps:
 }
 
 bool eprosima::fastrtps::types::ExtendedAnnotationParameterValue::operator ==(
-        const ExtendedAnnotationParameterValue& x) const
+        const ExtendedAnnotationParameterValue& /*x*/) const
 {
 
     return true;
@@ -207,13 +207,13 @@ size_t eprosima::fastrtps::types::ExtendedAnnotationParameterValue::getCdrSerial
 }
 
 void eprosima::fastrtps::types::ExtendedAnnotationParameterValue::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
+        eprosima::fastcdr::Cdr& /*scdr*/) const
 {
 
 }
 
 void eprosima::fastrtps::types::ExtendedAnnotationParameterValue::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
+        eprosima::fastcdr::Cdr& /*dcdr*/)
 {
 
 }
@@ -2293,13 +2293,6 @@ bool eprosima::fastrtps::types::AppliedAnnotation::operator !=(
         const AppliedAnnotation& x) const
 {
     return !(*this == x);
-}
-
-size_t eprosima::fastrtps::types::AppliedAnnotation::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastrtps_types_AppliedAnnotation_max_cdr_typesize;
 }
 
 size_t eprosima::fastrtps::types::AppliedAnnotation::getCdrSerializedSize(
