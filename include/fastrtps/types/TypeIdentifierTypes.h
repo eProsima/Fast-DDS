@@ -67,8 +67,6 @@ class Cdr;
 namespace eprosima {
     namespace fastrtps {
         namespace types {
-
-            // Forward declaration: non-supported @external annotation
             class TypeIdentifier;
 
             /*!
@@ -622,24 +620,32 @@ namespace eprosima {
                 eProsima_user_DllExport eprosima::fastrtps::types::SBound& bound();
 
                 /*!
-                 * @brief This function sets a value in member element_identifier
-                 * @param _element_identifier New value for member element_identifier 
+                 * @brief This function copies the pointed value in member element_identifier
+                 * @param _element_identifier New value to be copied in member element_identifier
+                 * XTypes v1.3 Clause 7.5.1.2.3.2 The chosen type must support the concept of being "unset".
+                 * For example, a plain pointer is considered unset if its value is NULL.
                  */
                 eProsima_user_DllExport void element_identifier(
                         const eprosima::fastrtps::types::TypeIdentifier* _element_identifier);
 
                 /*!
-                 * @brief This function returns the value of member element_identifier
-                 * @return Value of member element_identifier
+                 * @brief This function moves the value in member element_identifier
+                 * @param _element_identifier New value to be moved in member element_identifier
                  */
-                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier* element_identifier() const;
+                eProsima_user_DllExport void element_identifier(
+                        eprosima::fastrtps::types::TypeIdentifier&& _element_identifier);
 
                 /*!
-                 * @brief This function returns a reference to member element_identifier
-                 * @return Reference to member element_identifier
+                 * @brief This function returns a constant pointer to member element_identifier
+                 * @return Constant pointer to member element_identifier
                  */
-                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier*& element_identifier();
+                eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* element_identifier() const;
 
+                /*!
+                 * @brief This function returns a pointer to member element_identifier
+                 * @return Pointer to member element_identifier
+                 */
+                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier* element_identifier();
 
                 /*!
                  * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -693,7 +699,6 @@ namespace eprosima {
 
                 eprosima::fastrtps::types::PlainCollectionHeader m_header;
                 eprosima::fastrtps::types::SBound m_bound;
-                // @external annotation
                 eprosima::fastrtps::types::TypeIdentifier* m_element_identifier;
 
             };
@@ -802,23 +807,30 @@ namespace eprosima {
                 eProsima_user_DllExport eprosima::fastrtps::types::LBound& bound();
 
                 /*!
-                 * @brief This function sets a value in member element_identifier
-                 * @param _element_identifier New value for member element_identifier 
+                 * @brief This function copies the pointed value in member element_identifier
+                 * @param _element_identifier New value to be copied in member element_identifier
                  */
                 eProsima_user_DllExport void element_identifier(
                         const eprosima::fastrtps::types::TypeIdentifier* _element_identifier);
 
                 /*!
-                 * @brief This function returns the value of member element_identifier
-                 * @return Value of member element_identifier
+                 * @brief This function moves the value in member element_identifier
+                 * @param _element_identifier New value to be moved in member element_identifier
                  */
-                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier* element_identifier() const;
+                eProsima_user_DllExport void element_identifier(
+                        eprosima::fastrtps::types::TypeIdentifier&& _element_identifier);
 
                 /*!
-                 * @brief This function returns a reference to member element_identifier
-                 * @return Reference to member element_identifier
+                 * @brief This function returns a constant pointer to member element_identifier
+                 * @return Constant pointer to member element_identifier
                  */
-                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier*& element_identifier();
+                eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* element_identifier() const;
+
+                /*!
+                 * @brief This function returns a pointer to member element_identifier
+                 * @return Pointer to member element_identifier
+                 */
+                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier* element_identifier();
 
                 /*!
                  * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -872,7 +884,6 @@ namespace eprosima {
 
                 eprosima::fastrtps::types::PlainCollectionHeader m_header;
                 eprosima::fastrtps::types::LBound m_bound;
-                // @external annotation
                 eprosima::fastrtps::types::TypeIdentifier* m_element_identifier;
 
             };
@@ -986,25 +997,31 @@ namespace eprosima {
                  * @return Reference to member array_bound_seq
                  */
                 eProsima_user_DllExport eprosima::fastrtps::types::SBoundSeq& array_bound_seq();
-
                 /*!
-                 * @brief This function sets a value in member element_identifier
-                 * @param _element_identifier New value for member element_identifier 
+                 * @brief This function copies the pointed value in member element_identifier
+                 * @param _element_identifier New value to be copied in member element_identifier
                  */
                 eProsima_user_DllExport void element_identifier(
                         const eprosima::fastrtps::types::TypeIdentifier* _element_identifier);
 
                 /*!
-                 * @brief This function returns the value of member element_identifier
-                 * @return Value of member element_identifier
+                 * @brief This function moves the value in member element_identifier
+                 * @param _element_identifier New value to be moved in member element_identifier
                  */
-                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier* element_identifier() const;
+                eProsima_user_DllExport void element_identifier(
+                        eprosima::fastrtps::types::TypeIdentifier&& _element_identifier);
 
                 /*!
-                 * @brief This function returns a reference to member element_identifier
-                 * @return Reference to member element_identifier
+                 * @brief This function returns a constant pointer to member element_identifier
+                 * @return Constant pointer to member element_identifier
                  */
-                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier*& element_identifier();
+                eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* element_identifier() const;
+
+                /*!
+                 * @brief This function returns a pointer to member element_identifier
+                 * @return Pointer to member element_identifier
+                 */
+                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier* element_identifier();
 
                 /*!
                  * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1058,7 +1075,6 @@ namespace eprosima {
 
                 eprosima::fastrtps::types::PlainCollectionHeader m_header;
                 eprosima::fastrtps::types::SBoundSeq m_array_bound_seq;
-                // @external annotation
                 eprosima::fastrtps::types::TypeIdentifier* m_element_identifier;
 
             };
@@ -1172,25 +1188,31 @@ namespace eprosima {
                  * @return Reference to member array_bound_seq
                  */
                 eProsima_user_DllExport eprosima::fastrtps::types::LBoundSeq& array_bound_seq();
-
                 /*!
-                 * @brief This function sets a value in member element_identifier
-                 * @param _element_identifier New value for member element_identifier 
+                 * @brief This function copies the pointed value in member element_identifier
+                 * @param _element_identifier New value to be copied in member element_identifier
                  */
                 eProsima_user_DllExport void element_identifier(
                         const eprosima::fastrtps::types::TypeIdentifier* _element_identifier);
 
                 /*!
-                 * @brief This function returns the value of member element_identifier
-                 * @return Value of member element_identifier
+                 * @brief This function moves the value in member element_identifier
+                 * @param _element_identifier New value to be moved in member element_identifier
                  */
-                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier* element_identifier() const;
+                eProsima_user_DllExport void element_identifier(
+                        eprosima::fastrtps::types::TypeIdentifier&& _element_identifier);
 
                 /*!
-                 * @brief This function returns a reference to member element_identifier
-                 * @return Reference to member element_identifier
+                 * @brief This function returns a constant pointer to member element_identifier
+                 * @return Constant pointer to member element_identifier
                  */
-                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier*& element_identifier();
+                eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* element_identifier() const;
+
+                /*!
+                 * @brief This function returns a pointer to member element_identifier
+                 * @return Pointer to member element_identifier
+                 */
+                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier* element_identifier();
 
                 /*!
                  * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1244,7 +1266,6 @@ namespace eprosima {
 
                 eprosima::fastrtps::types::PlainCollectionHeader m_header;
                 eprosima::fastrtps::types::LBoundSeq m_array_bound_seq;
-                // @external annotation
                 eprosima::fastrtps::types::TypeIdentifier* m_element_identifier;
 
             };
@@ -1353,24 +1374,30 @@ namespace eprosima {
                 eProsima_user_DllExport eprosima::fastrtps::types::SBound& bound();
 
                 /*!
-                 * @brief This function sets a value in member element_identifier
-                 * @param _element_identifier New value for member element_identifier 
+                 * @brief This function copies the pointed value in member element_identifier
+                 * @param _element_identifier New value to be copied in member element_identifier
                  */
                 eProsima_user_DllExport void element_identifier(
                         const eprosima::fastrtps::types::TypeIdentifier* _element_identifier);
 
                 /*!
-                 * @brief This function returns the value of member element_identifier
-                 * @return Value of member element_identifier
+                 * @brief This function moves the value in member element_identifier
+                 * @param _element_identifier New value to be moved in member element_identifier
                  */
-                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier* element_identifier() const;
+                eProsima_user_DllExport void element_identifier(
+                        eprosima::fastrtps::types::TypeIdentifier&& _element_identifier);
 
                 /*!
-                 * @brief This function returns a reference to member element_identifier
-                 * @return Reference to member element_identifier
+                 * @brief This function returns a constant pointer to member element_identifier
+                 * @return Constant pointer to member element_identifier
                  */
-                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier*& element_identifier();
+                eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* element_identifier() const;
 
+                /*!
+                 * @brief This function returns a pointer to member element_identifier
+                 * @return Pointer to member element_identifier
+                 */
+                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier* element_identifier();
                 /*!
                  * @brief This function sets a value in member key_flags
                  * @param _key_flags New value for member key_flags
@@ -1391,24 +1418,30 @@ namespace eprosima {
                 eProsima_user_DllExport eprosima::fastrtps::types::CollectionElementFlag& key_flags();
 
                 /*!
-                 * @brief This function sets a value in member key_identifier
-                 * @param _key_identifier New value for member key_identifier 
+                 * @brief This function copies the pointed value in member key_identifier
+                 * @param _key_identifier New value to be copied in member key_identifier
                  */
                 eProsima_user_DllExport void key_identifier(
                         const eprosima::fastrtps::types::TypeIdentifier* _key_identifier);
 
                 /*!
-                 * @brief This function returns the value of member key_identifier
-                 * @return Value of member key_identifier
+                 * @brief This function moves the value in member key_identifier
+                 * @param _key_identifier New value to be moved in member key_identifier
                  */
-                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier* key_identifier() const;
+                eProsima_user_DllExport void key_identifier(
+                        eprosima::fastrtps::types::TypeIdentifier&& _key_identifier);
 
                 /*!
-                 * @brief This function returns a reference to member key_identifier
-                 * @return Reference to member key_identifier
+                 * @brief This function returns a constant reference to member key_identifier
+                 * @return Constant reference to member key_identifier
                  */
-                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier*& key_identifier();
+                eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* key_identifier() const;
 
+                /*!
+                 * @brief This function returns a pointer to member key_identifier
+                 * @return Pointer to member key_identifier
+                 */
+                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier* key_identifier();
 
                 /*!
                  * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1462,10 +1495,8 @@ namespace eprosima {
 
                 eprosima::fastrtps::types::PlainCollectionHeader m_header;
                 eprosima::fastrtps::types::SBound m_bound;
-                // @external annotation
                 eprosima::fastrtps::types::TypeIdentifier* m_element_identifier;
                 eprosima::fastrtps::types::CollectionElementFlag m_key_flags;
-                // @external annotation
                 eprosima::fastrtps::types::TypeIdentifier* m_key_identifier;
 
             };
@@ -1574,24 +1605,30 @@ namespace eprosima {
                 eProsima_user_DllExport eprosima::fastrtps::types::LBound& bound();
 
                 /*!
-                 * @brief This function sets a value in member element_identifier
-                 * @param _element_identifier New value for member element_identifier 
+                 * @brief This function copies the pointed value in member element_identifier
+                 * @param _element_identifier New value to be copied in member element_identifier
                  */
                 eProsima_user_DllExport void element_identifier(
                         const eprosima::fastrtps::types::TypeIdentifier* _element_identifier);
 
                 /*!
-                 * @brief This function returns the value of member element_identifier
-                 * @return Value of member element_identifier
+                 * @brief This function moves the value in member element_identifier
+                 * @param _element_identifier New value to be moved in member element_identifier
                  */
-                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier* element_identifier() const;
+                eProsima_user_DllExport void element_identifier(
+                        eprosima::fastrtps::types::TypeIdentifier&& _element_identifier);
 
                 /*!
-                 * @brief This function returns a reference to member element_identifier
-                 * @return Reference to member element_identifier
+                 * @brief This function returns a constant pointer to member element_identifier
+                 * @return Constant pointer to member element_identifier
                  */
-                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier*& element_identifier();
+                eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* element_identifier() const;
 
+                /*!
+                 * @brief This function returns a pointer to member element_identifier
+                 * @return Pointer to member element_identifier
+                 */
+                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier* element_identifier();
                 /*!
                  * @brief This function sets a value in member key_flags
                  * @param _key_flags New value for member key_flags
@@ -1612,24 +1649,30 @@ namespace eprosima {
                 eProsima_user_DllExport eprosima::fastrtps::types::CollectionElementFlag& key_flags();
 
                 /*!
-                 * @brief This function sets a value in member key_identifier
-                 * @param _key_identifier New value for member key_identifier 
+                 * @brief This function copies the pointed value in member key_identifier
+                 * @param _key_identifier New value to be copied in member key_identifier
                  */
                 eProsima_user_DllExport void key_identifier(
                         const eprosima::fastrtps::types::TypeIdentifier* _key_identifier);
 
                 /*!
-                 * @brief This function returns the value of member key_identifier
-                 * @return Value of member key_identifier
+                 * @brief This function moves the value in member key_identifier
+                 * @param _key_identifier New value to be moved in member key_identifier
                  */
-                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier* key_identifier() const;
+                eProsima_user_DllExport void key_identifier(
+                        eprosima::fastrtps::types::TypeIdentifier&& _key_identifier);
 
                 /*!
-                 * @brief This function returns a reference to member key_identifier
-                 * @return Reference to member key_identifier
+                 * @brief This function returns a constant reference to member key_identifier
+                 * @return Constant reference to member key_identifier
                  */
-                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier*& key_identifier();
+                eProsima_user_DllExport const eprosima::fastrtps::types::TypeIdentifier* key_identifier() const;
 
+                /*!
+                 * @brief This function returns a pointer to member key_identifier
+                 * @return Pointer to member key_identifier
+                 */
+                eProsima_user_DllExport eprosima::fastrtps::types::TypeIdentifier* key_identifier();
 
                 /*!
                  * @brief This function returns the serialized size of a data depending on the buffer alignment.
@@ -1683,10 +1726,8 @@ namespace eprosima {
 
                 eprosima::fastrtps::types::PlainCollectionHeader m_header;
                 eprosima::fastrtps::types::LBound m_bound;
-                // @external annotation
                 eprosima::fastrtps::types::TypeIdentifier* m_element_identifier;
                 eprosima::fastrtps::types::CollectionElementFlag m_key_flags;
-                // @external annotation
                 eprosima::fastrtps::types::TypeIdentifier* m_key_identifier;
 
             };

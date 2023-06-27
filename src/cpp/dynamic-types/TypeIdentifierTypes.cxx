@@ -28,7 +28,6 @@ char dummy;
 
 #include <fastrtps/types/TypeIdentifierTypes.h>
 #include <fastcdr/Cdr.h>
-#include <fastrtps/types/TypeIdentifier.h>
 
 #include <fastcdr/exceptions/BadParamException.h>
 using namespace eprosima::fastcdr::exception;
@@ -36,7 +35,6 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
-#define eprosima_fastrtps_types_PlainMapLTypeDefn_max_cdr_typesize 10ULL;
 
 
 
@@ -44,15 +42,8 @@ using namespace eprosima::fastcdr::exception;
 
 
 #define eprosima_fastrtps_types_PlainCollectionHeader_max_cdr_typesize 4ULL;
-#define eprosima_fastrtps_types_PlainSequenceSElemDefn_max_cdr_typesize 5ULL;
 #define eprosima_fastrtps_types_StringSTypeDefn_max_cdr_typesize 1ULL;
 
-#define eprosima_fastrtps_types_PlainSequenceLElemDefn_max_cdr_typesize 8ULL;
-
-
-
-
-#define eprosima_fastrtps_types_PlainArrayLElemDefn_max_cdr_typesize 408ULL;
 
 
 
@@ -60,12 +51,14 @@ using namespace eprosima::fastcdr::exception;
 
 
 
-#define eprosima_fastrtps_types_PlainArraySElemDefn_max_cdr_typesize 108ULL;
 
 
 
 
-#define eprosima_fastrtps_types_PlainMapSTypeDefn_max_cdr_typesize 8ULL;
+
+
+
+
 
 
 #define eprosima_fastrtps_types_ExtendedTypeDefn_max_cdr_typesize 0ULL;
@@ -75,6 +68,7 @@ using namespace eprosima::fastcdr::exception;
 
 #define eprosima_fastrtps_types_StringLTypeDefn_max_cdr_typesize 4ULL;
 #define eprosima_fastrtps_types_StronglyConnectedComponentId_max_cdr_typesize 24ULL;
+
 
 
 
@@ -121,6 +115,9 @@ using namespace eprosima::fastcdr::exception;
 
 
 
+
+
+class TypeIdentifier;
 
 eprosima::fastrtps::types::StringSTypeDefn::StringSTypeDefn()
 {
@@ -202,7 +199,6 @@ void eprosima::fastrtps::types::StringSTypeDefn::serialize(
 {
 
     scdr << m_bound;
-
 }
 
 void eprosima::fastrtps::types::StringSTypeDefn::deserialize(
@@ -341,7 +337,6 @@ void eprosima::fastrtps::types::StringLTypeDefn::serialize(
 {
 
     scdr << m_bound;
-
 }
 
 void eprosima::fastrtps::types::StringLTypeDefn::deserialize(
@@ -491,9 +486,7 @@ void eprosima::fastrtps::types::PlainCollectionHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
-    scdr << m_equiv_kind;
-    scdr << (uint16_t)m_element_flags;
-
+    scdr << m_equiv_kind;scdr << (uint16_t)m_element_flags;
 }
 
 void eprosima::fastrtps::types::PlainCollectionHeader::deserialize(
@@ -501,9 +494,13 @@ void eprosima::fastrtps::types::PlainCollectionHeader::deserialize(
 {
 
     dcdr >> m_equiv_kind;
-    uint16_t bitmask_value = 0;
-    dcdr >> bitmask_value;
-    m_element_flags = (eprosima::fastrtps::types::CollectionElementFlag)bitmask_value;
+    {
+        uint16_t bitmask_value = 0;
+        dcdr >> bitmask_value;
+        m_element_flags = (eprosima::fastrtps::types::CollectionElementFlag)bitmask_value;
+    }
+
+
 }
 
 /*!
@@ -589,7 +586,6 @@ eprosima::fastrtps::types::PlainSequenceSElemDefn::PlainSequenceSElemDefn()
 
     // eprosima::fastrtps::types::SBound m_bound
     m_bound = 0;
-
     // XTypes v1.3 Clauses 7.5.1.2.3.1 & 7.5.1.2.3.2: The constructor/initializer of the enclosing object shall set
     // the external member pointers to NULL. The behavior of the constructor shall be the same as specified for C.
     // eprosima::fastrtps::types::TypeIdentifier* m_element_identifier
@@ -603,7 +599,6 @@ eprosima::fastrtps::types::PlainSequenceSElemDefn::~PlainSequenceSElemDefn()
     // referenced by non-NULL external member pointers. The behavior of the destructor shall be the same as specified
     // for C.
     delete m_element_identifier;
-
 }
 
 eprosima::fastrtps::types::PlainSequenceSElemDefn::PlainSequenceSElemDefn(
@@ -613,13 +608,14 @@ eprosima::fastrtps::types::PlainSequenceSElemDefn::PlainSequenceSElemDefn(
     m_bound = x.m_bound;
     if (x.m_element_identifier != nullptr)
     {
-        m_element_identifier = new TypeIdentifier();
+        m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         *m_element_identifier = *x.m_element_identifier;
     }
     else
     {
         m_element_identifier = nullptr;
     }
+
 }
 
 eprosima::fastrtps::types::PlainSequenceSElemDefn::PlainSequenceSElemDefn(
@@ -629,8 +625,9 @@ eprosima::fastrtps::types::PlainSequenceSElemDefn::PlainSequenceSElemDefn(
     m_bound = x.m_bound;
     if (x.m_element_identifier != nullptr)
     {
-        m_element_identifier = new TypeIdentifier();
+        m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         *m_element_identifier = std::move(*x.m_element_identifier);
+        x.m_element_identifier = nullptr;
     }
     else
     {
@@ -638,10 +635,10 @@ eprosima::fastrtps::types::PlainSequenceSElemDefn::PlainSequenceSElemDefn(
     }
 }
 
-// XTypes v1.3 Clauses 7.5.1.2.3.1 & 7.5.1.2.3.2: The copy function of the enclosing object shall do a deep copy of the
-// external members. If the destination external member is NULL it shall be allocated. If the destination external
-// member is not NULL it shall be filled with a copy of the source member. If the copy operation of the external member
-// fails, the the copy function of the containing object shall fail as well.
+-// XTypes v1.3 Clauses 7.5.1.2.3.1 & 7.5.1.2.3.2: The copy function of the enclosing object shall do a deep copy of the
+-// external members. If the destination external member is NULL it shall be allocated. If the destination external
+-// member is not NULL it shall be filled with a copy of the source member. If the copy operation of the external member
+-// fails, the the copy function of the containing object shall fail as well.
 eprosima::fastrtps::types::PlainSequenceSElemDefn& eprosima::fastrtps::types::PlainSequenceSElemDefn::operator =(
         const PlainSequenceSElemDefn& x)
 {
@@ -652,7 +649,7 @@ eprosima::fastrtps::types::PlainSequenceSElemDefn& eprosima::fastrtps::types::Pl
     {
         if (m_element_identifier == nullptr)
         {
-            m_element_identifier = new TypeIdentifier();
+            m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_element_identifier = *x.m_element_identifier;
     }
@@ -675,9 +672,10 @@ eprosima::fastrtps::types::PlainSequenceSElemDefn& eprosima::fastrtps::types::Pl
     {
         if (m_element_identifier == nullptr)
         {
-            m_element_identifier = new TypeIdentifier();
+            m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_element_identifier = std::move(*x.m_element_identifier);
+        x.m_element_identifier = nullptr;
     }
     else
     {
@@ -715,8 +713,7 @@ size_t eprosima::fastrtps::types::PlainSequenceSElemDefn::getCdrSerializedSize(
     // therefore the pointer to non-optional external member cannot be NULL.
     if (data.element_identifier() != nullptr)
     {
-        size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+        current_alignment += eprosima::fastrtps::types::TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
     }
     else
     {
@@ -731,11 +728,8 @@ void eprosima::fastrtps::types::PlainSequenceSElemDefn::serialize(
 {
     if (m_element_identifier != nullptr)
     {
-        scdr << m_header;
-        scdr << m_bound;
-        scdr << *m_element_identifier;
+        scdr << m_header;scdr << m_bound;scdr << *m_element_identifier;
     }
-
 }
 
 void eprosima::fastrtps::types::PlainSequenceSElemDefn::deserialize(
@@ -816,6 +810,10 @@ eprosima::fastrtps::types::SBound& eprosima::fastrtps::types::PlainSequenceSElem
     return m_bound;
 }
 
+/*!
+ * @brief This function copies the pointed value in member element_identifier
+ * @param _element_identifier New value to be copied in member element_identifier
+ */
 void eprosima::fastrtps::types::PlainSequenceSElemDefn::element_identifier(
         const eprosima::fastrtps::types::TypeIdentifier* _element_identifier)
 {
@@ -823,7 +821,7 @@ void eprosima::fastrtps::types::PlainSequenceSElemDefn::element_identifier(
     {
         if (m_element_identifier == nullptr)
         {
-            m_element_identifier = new TypeIdentifier();
+            m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_element_identifier = *_element_identifier;
     }
@@ -834,15 +832,34 @@ void eprosima::fastrtps::types::PlainSequenceSElemDefn::element_identifier(
     }
 }
 
-eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainSequenceSElemDefn::element_identifier() const
+/*!
+ * @brief This function moves the value in member element_identifier
+ * @param _element_identifier New value to be moved in member element_identifier
+ */
+void eprosima::fastrtps::types::PlainSequenceSElemDefn::element_identifier(
+        eprosima::fastrtps::types::TypeIdentifier&& _element_identifier)
+{
+    *m_element_identifier = std::move(_element_identifier);
+}
+
+/*!
+ * @brief This function returns a constant pointer to member element_identifier
+ * @return Constant pointer to member element_identifier
+ */
+const eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainSequenceSElemDefn::element_identifier() const
 {
     return m_element_identifier;
 }
 
-eprosima::fastrtps::types::TypeIdentifier*& eprosima::fastrtps::types::PlainSequenceSElemDefn::element_identifier()
+/*!
+ * @brief This function returns a pointer to member element_identifier
+ * @return Pointer to member element_identifier
+ */
+eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainSequenceSElemDefn::element_identifier()
 {
     return m_element_identifier;
 }
+
 
 size_t eprosima::fastrtps::types::PlainSequenceSElemDefn::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
@@ -869,14 +886,16 @@ eprosima::fastrtps::types::PlainSequenceLElemDefn::PlainSequenceLElemDefn()
 
     // eprosima::fastrtps::types::LBound m_bound
     m_bound = 0;
+    // eprosima::fastrtps::types::TypeIdentifier* m_element_identifier
     m_element_identifier = nullptr;
 
 }
 
 eprosima::fastrtps::types::PlainSequenceLElemDefn::~PlainSequenceLElemDefn()
 {
-    delete m_element_identifier;
 
+
+    delete m_element_identifier;
 }
 
 eprosima::fastrtps::types::PlainSequenceLElemDefn::PlainSequenceLElemDefn(
@@ -886,13 +905,14 @@ eprosima::fastrtps::types::PlainSequenceLElemDefn::PlainSequenceLElemDefn(
     m_bound = x.m_bound;
     if (x.m_element_identifier != nullptr)
     {
-        m_element_identifier = new TypeIdentifier();
+        m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         *m_element_identifier = *x.m_element_identifier;
     }
     else
     {
         m_element_identifier = nullptr;
     }
+
 }
 
 eprosima::fastrtps::types::PlainSequenceLElemDefn::PlainSequenceLElemDefn(
@@ -902,8 +922,9 @@ eprosima::fastrtps::types::PlainSequenceLElemDefn::PlainSequenceLElemDefn(
     m_bound = x.m_bound;
     if (x.m_element_identifier != nullptr)
     {
-        m_element_identifier = new TypeIdentifier();
+        m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         *m_element_identifier = std::move(*x.m_element_identifier);
+        x.m_element_identifier = nullptr;
     }
     else
     {
@@ -921,7 +942,7 @@ eprosima::fastrtps::types::PlainSequenceLElemDefn& eprosima::fastrtps::types::Pl
     {
         if (m_element_identifier == nullptr)
         {
-            m_element_identifier = new TypeIdentifier();
+            m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_element_identifier = *x.m_element_identifier;
     }
@@ -944,9 +965,10 @@ eprosima::fastrtps::types::PlainSequenceLElemDefn& eprosima::fastrtps::types::Pl
     {
         if (m_element_identifier == nullptr)
         {
-            m_element_identifier = new TypeIdentifier();
+            m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_element_identifier = std::move(*x.m_element_identifier);
+        x.m_element_identifier = nullptr;
     }
     else
     {
@@ -980,10 +1002,10 @@ size_t eprosima::fastrtps::types::PlainSequenceLElemDefn::getCdrSerializedSize(
 
     current_alignment += eprosima::fastrtps::types::PlainCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
     if (data.element_identifier() != nullptr)
     {
-        size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+        current_alignment += eprosima::fastrtps::types::TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
     }
     else
     {
@@ -998,11 +1020,8 @@ void eprosima::fastrtps::types::PlainSequenceLElemDefn::serialize(
 {
     if (m_element_identifier != nullptr)
     {
-        scdr << m_header;
-        scdr << m_bound;
-        scdr << *m_element_identifier;
+        scdr << m_header;scdr << m_bound;scdr << *m_element_identifier;
     }
-
 }
 
 void eprosima::fastrtps::types::PlainSequenceLElemDefn::deserialize(
@@ -1083,6 +1102,10 @@ eprosima::fastrtps::types::LBound& eprosima::fastrtps::types::PlainSequenceLElem
     return m_bound;
 }
 
+/*!
+ * @brief This function copies the pointed value in member element_identifier
+ * @param _element_identifier New value to be copied in member element_identifier
+ */
 void eprosima::fastrtps::types::PlainSequenceLElemDefn::element_identifier(
         const eprosima::fastrtps::types::TypeIdentifier* _element_identifier)
 {
@@ -1090,7 +1113,7 @@ void eprosima::fastrtps::types::PlainSequenceLElemDefn::element_identifier(
     {
         if (m_element_identifier == nullptr)
         {
-            m_element_identifier = new TypeIdentifier();
+            m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_element_identifier = *_element_identifier;
     }
@@ -1101,12 +1124,30 @@ void eprosima::fastrtps::types::PlainSequenceLElemDefn::element_identifier(
     }
 }
 
-eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainSequenceLElemDefn::element_identifier() const
+/*!
+ * @brief This function moves the value in member element_identifier
+ * @param _element_identifier New value to be moved in member element_identifier
+ */
+void eprosima::fastrtps::types::PlainSequenceLElemDefn::element_identifier(
+        eprosima::fastrtps::types::TypeIdentifier&& _element_identifier)
+{
+    *m_element_identifier = std::move(_element_identifier);
+}
+
+/*!
+ * @brief This function returns a constant pointer to member element_identifier
+ * @return Constant pointer to member element_identifier
+ */
+const eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainSequenceLElemDefn::element_identifier() const
 {
     return m_element_identifier;
 }
 
-eprosima::fastrtps::types::TypeIdentifier*& eprosima::fastrtps::types::PlainSequenceLElemDefn::element_identifier()
+/*!
+ * @brief This function returns a pointer to member element_identifier
+ * @return Pointer to member element_identifier
+ */
+eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainSequenceLElemDefn::element_identifier()
 {
     return m_element_identifier;
 }
@@ -1136,14 +1177,17 @@ eprosima::fastrtps::types::PlainArraySElemDefn::PlainArraySElemDefn()
     // eprosima::fastrtps::types::PlainCollectionHeader m_header
 
     // eprosima::fastrtps::types::SBoundSeq m_array_bound_seq
+
+    // eprosima::fastrtps::types::TypeIdentifier* m_element_identifier
     m_element_identifier = nullptr;
 
 }
 
 eprosima::fastrtps::types::PlainArraySElemDefn::~PlainArraySElemDefn()
 {
-    delete m_element_identifier;
 
+
+    delete m_element_identifier;
 }
 
 eprosima::fastrtps::types::PlainArraySElemDefn::PlainArraySElemDefn(
@@ -1153,13 +1197,14 @@ eprosima::fastrtps::types::PlainArraySElemDefn::PlainArraySElemDefn(
     m_array_bound_seq = x.m_array_bound_seq;
     if (x.m_element_identifier != nullptr)
     {
-        m_element_identifier = new TypeIdentifier();
+        m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         *m_element_identifier = *x.m_element_identifier;
     }
     else
     {
         m_element_identifier = nullptr;
     }
+
 }
 
 eprosima::fastrtps::types::PlainArraySElemDefn::PlainArraySElemDefn(
@@ -1169,8 +1214,9 @@ eprosima::fastrtps::types::PlainArraySElemDefn::PlainArraySElemDefn(
     m_array_bound_seq = std::move(x.m_array_bound_seq);
     if (x.m_element_identifier != nullptr)
     {
-        m_element_identifier = new TypeIdentifier();
+        m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         *m_element_identifier = std::move(*x.m_element_identifier);
+        x.m_element_identifier = nullptr;
     }
     else
     {
@@ -1188,7 +1234,7 @@ eprosima::fastrtps::types::PlainArraySElemDefn& eprosima::fastrtps::types::Plain
     {
         if (m_element_identifier == nullptr)
         {
-            m_element_identifier = new TypeIdentifier();
+            m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_element_identifier = *x.m_element_identifier;
     }
@@ -1211,9 +1257,10 @@ eprosima::fastrtps::types::PlainArraySElemDefn& eprosima::fastrtps::types::Plain
     {
         if (m_element_identifier == nullptr)
         {
-            m_element_identifier = new TypeIdentifier();
+            m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_element_identifier = std::move(*x.m_element_identifier);
+        x.m_element_identifier = nullptr;
     }
     else
     {
@@ -1228,8 +1275,7 @@ bool eprosima::fastrtps::types::PlainArraySElemDefn::operator ==(
         const PlainArraySElemDefn& x) const
 {
 
-    return (m_header == x.m_header && m_array_bound_seq == x.m_array_bound_seq
-            && *m_element_identifier == *x.m_element_identifier);
+    return (m_header == x.m_header && m_array_bound_seq == x.m_array_bound_seq && *m_element_identifier == *x.m_element_identifier);
 }
 
 bool eprosima::fastrtps::types::PlainArraySElemDefn::operator !=(
@@ -1254,16 +1300,15 @@ size_t eprosima::fastrtps::types::PlainArraySElemDefn::getCdrSerializedSize(
         current_alignment += (data.array_bound_seq().size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
     }
 
+
     if (data.element_identifier() != nullptr)
     {
-        size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+        current_alignment += eprosima::fastrtps::types::TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
     }
     else
     {
         return initial_alignment;
     }
-
 
     return current_alignment - initial_alignment;
 }
@@ -1273,8 +1318,7 @@ void eprosima::fastrtps::types::PlainArraySElemDefn::serialize(
 {
     if (m_element_identifier != nullptr)
     {
-        scdr << m_header;
-        scdr << m_array_bound_seq;
+        scdr << m_header;scdr << m_array_bound_seq;
         scdr << *m_element_identifier;
     }
 }
@@ -1366,7 +1410,10 @@ eprosima::fastrtps::types::SBoundSeq& eprosima::fastrtps::types::PlainArraySElem
 {
     return m_array_bound_seq;
 }
-
+/*!
+ * @brief This function copies the pointed value in member element_identifier
+ * @param _element_identifier New value to be copied in member element_identifier
+ */
 void eprosima::fastrtps::types::PlainArraySElemDefn::element_identifier(
         const eprosima::fastrtps::types::TypeIdentifier* _element_identifier)
 {
@@ -1374,7 +1421,7 @@ void eprosima::fastrtps::types::PlainArraySElemDefn::element_identifier(
     {
         if (m_element_identifier == nullptr)
         {
-            m_element_identifier = new TypeIdentifier();
+            m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_element_identifier = *_element_identifier;
     }
@@ -1385,15 +1432,34 @@ void eprosima::fastrtps::types::PlainArraySElemDefn::element_identifier(
     }
 }
 
-eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainArraySElemDefn::element_identifier() const
+/*!
+ * @brief This function moves the value in member element_identifier
+ * @param _element_identifier New value to be moved in member element_identifier
+ */
+void eprosima::fastrtps::types::PlainArraySElemDefn::element_identifier(
+        eprosima::fastrtps::types::TypeIdentifier&& _element_identifier)
+{
+    *m_element_identifier = std::move(_element_identifier);
+}
+
+/*!
+ * @brief This function returns a constant pointer to member element_identifier
+ * @return Constant pointer to member element_identifier
+ */
+const eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainArraySElemDefn::element_identifier() const
 {
     return m_element_identifier;
 }
 
-eprosima::fastrtps::types::TypeIdentifier*& eprosima::fastrtps::types::PlainArraySElemDefn::element_identifier()
+/*!
+ * @brief This function returns a pointer to member element_identifier
+ * @return Pointer to member element_identifier
+ */
+eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainArraySElemDefn::element_identifier()
 {
     return m_element_identifier;
 }
+
 
 size_t eprosima::fastrtps::types::PlainArraySElemDefn::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
@@ -1419,14 +1485,17 @@ eprosima::fastrtps::types::PlainArrayLElemDefn::PlainArrayLElemDefn()
     // eprosima::fastrtps::types::PlainCollectionHeader m_header
 
     // eprosima::fastrtps::types::LBoundSeq m_array_bound_seq
+
+    // eprosima::fastrtps::types::TypeIdentifier* m_element_identifier
     m_element_identifier = nullptr;
 
 }
 
 eprosima::fastrtps::types::PlainArrayLElemDefn::~PlainArrayLElemDefn()
 {
-    delete m_element_identifier;
 
+
+    delete m_element_identifier;
 }
 
 eprosima::fastrtps::types::PlainArrayLElemDefn::PlainArrayLElemDefn(
@@ -1436,13 +1505,14 @@ eprosima::fastrtps::types::PlainArrayLElemDefn::PlainArrayLElemDefn(
     m_array_bound_seq = x.m_array_bound_seq;
     if (x.m_element_identifier != nullptr)
     {
-        m_element_identifier = new TypeIdentifier();
+        m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         *m_element_identifier = *x.m_element_identifier;
     }
     else
     {
         m_element_identifier = nullptr;
     }
+
 }
 
 eprosima::fastrtps::types::PlainArrayLElemDefn::PlainArrayLElemDefn(
@@ -1452,8 +1522,9 @@ eprosima::fastrtps::types::PlainArrayLElemDefn::PlainArrayLElemDefn(
     m_array_bound_seq = std::move(x.m_array_bound_seq);
     if (x.m_element_identifier != nullptr)
     {
-        m_element_identifier = new TypeIdentifier();
+        m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         *m_element_identifier = std::move(*x.m_element_identifier);
+        x.m_element_identifier = nullptr;
     }
     else
     {
@@ -1471,7 +1542,7 @@ eprosima::fastrtps::types::PlainArrayLElemDefn& eprosima::fastrtps::types::Plain
     {
         if (m_element_identifier == nullptr)
         {
-            m_element_identifier = new TypeIdentifier();
+            m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_element_identifier = *x.m_element_identifier;
     }
@@ -1494,9 +1565,10 @@ eprosima::fastrtps::types::PlainArrayLElemDefn& eprosima::fastrtps::types::Plain
     {
         if (m_element_identifier == nullptr)
         {
-            m_element_identifier = new TypeIdentifier();
+            m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_element_identifier = std::move(*x.m_element_identifier);
+        x.m_element_identifier = nullptr;
     }
     else
     {
@@ -1511,8 +1583,7 @@ bool eprosima::fastrtps::types::PlainArrayLElemDefn::operator ==(
         const PlainArrayLElemDefn& x) const
 {
 
-    return (m_header == x.m_header && m_array_bound_seq == x.m_array_bound_seq
-            && *m_element_identifier == *x.m_element_identifier);
+    return (m_header == x.m_header && m_array_bound_seq == x.m_array_bound_seq && *m_element_identifier == *x.m_element_identifier);
 }
 
 bool eprosima::fastrtps::types::PlainArrayLElemDefn::operator !=(
@@ -1537,16 +1608,15 @@ size_t eprosima::fastrtps::types::PlainArrayLElemDefn::getCdrSerializedSize(
         current_alignment += (data.array_bound_seq().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
     }
 
+
     if (data.element_identifier() != nullptr)
     {
-        size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+        current_alignment += eprosima::fastrtps::types::TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
     }
     else
     {
         return initial_alignment;
     }
-
 
     return current_alignment - initial_alignment;
 }
@@ -1556,11 +1626,9 @@ void eprosima::fastrtps::types::PlainArrayLElemDefn::serialize(
 {
     if (m_element_identifier != nullptr)
     {
-        scdr << m_header;
-        scdr << m_array_bound_seq;
+        scdr << m_header;scdr << m_array_bound_seq;
         scdr << *m_element_identifier;
     }
-
 }
 
 void eprosima::fastrtps::types::PlainArrayLElemDefn::deserialize(
@@ -1650,7 +1718,10 @@ eprosima::fastrtps::types::LBoundSeq& eprosima::fastrtps::types::PlainArrayLElem
 {
     return m_array_bound_seq;
 }
-
+/*!
+ * @brief This function copies the pointed value in member element_identifier
+ * @param _element_identifier New value to be copied in member element_identifier
+ */
 void eprosima::fastrtps::types::PlainArrayLElemDefn::element_identifier(
         const eprosima::fastrtps::types::TypeIdentifier* _element_identifier)
 {
@@ -1658,7 +1729,7 @@ void eprosima::fastrtps::types::PlainArrayLElemDefn::element_identifier(
     {
         if (m_element_identifier == nullptr)
         {
-            m_element_identifier = new TypeIdentifier();
+            m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_element_identifier = *_element_identifier;
     }
@@ -1669,12 +1740,30 @@ void eprosima::fastrtps::types::PlainArrayLElemDefn::element_identifier(
     }
 }
 
-eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainArrayLElemDefn::element_identifier() const
+/*!
+ * @brief This function moves the value in member element_identifier
+ * @param _element_identifier New value to be moved in member element_identifier
+ */
+void eprosima::fastrtps::types::PlainArrayLElemDefn::element_identifier(
+        eprosima::fastrtps::types::TypeIdentifier&& _element_identifier)
+{
+    *m_element_identifier = std::move(_element_identifier);
+}
+
+/*!
+ * @brief This function returns a constant pointer to member element_identifier
+ * @return Constant pointer to member element_identifier
+ */
+const eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainArrayLElemDefn::element_identifier() const
 {
     return m_element_identifier;
 }
 
-eprosima::fastrtps::types::TypeIdentifier*& eprosima::fastrtps::types::PlainArrayLElemDefn::element_identifier()
+/*!
+ * @brief This function returns a pointer to member element_identifier
+ * @return Pointer to member element_identifier
+ */
+eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainArrayLElemDefn::element_identifier()
 {
     return m_element_identifier;
 }
@@ -1705,18 +1794,22 @@ eprosima::fastrtps::types::PlainMapSTypeDefn::PlainMapSTypeDefn()
 
     // eprosima::fastrtps::types::SBound m_bound
     m_bound = 0;
+    // eprosima::fastrtps::types::TypeIdentifier* m_element_identifier
     m_element_identifier = nullptr;
     // eprosima::fastrtps::types::CollectionElementFlag m_key_flags
     m_key_flags = static_cast<eprosima::fastrtps::types::CollectionElementFlag>(0);
+    // eprosima::fastrtps::types::TypeIdentifier* m_key_identifier
     m_key_identifier = nullptr;
 
 }
 
 eprosima::fastrtps::types::PlainMapSTypeDefn::~PlainMapSTypeDefn()
 {
-    delete m_element_identifier;
-    delete m_key_identifier;
 
+
+    delete m_element_identifier;
+
+    delete m_key_identifier;
 }
 
 eprosima::fastrtps::types::PlainMapSTypeDefn::PlainMapSTypeDefn(
@@ -1726,23 +1819,25 @@ eprosima::fastrtps::types::PlainMapSTypeDefn::PlainMapSTypeDefn(
     m_bound = x.m_bound;
     if (x.m_element_identifier != nullptr)
     {
-        m_element_identifier = new TypeIdentifier();
+        m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         *m_element_identifier = *x.m_element_identifier;
     }
     else
     {
         m_element_identifier = nullptr;
     }
+
     m_key_flags = x.m_key_flags;
     if (x.m_key_identifier != nullptr)
     {
-        m_key_identifier = new TypeIdentifier();
+        m_key_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         *m_key_identifier = *x.m_key_identifier;
     }
     else
     {
         m_key_identifier = nullptr;
     }
+
 }
 
 eprosima::fastrtps::types::PlainMapSTypeDefn::PlainMapSTypeDefn(
@@ -1752,8 +1847,9 @@ eprosima::fastrtps::types::PlainMapSTypeDefn::PlainMapSTypeDefn(
     m_bound = x.m_bound;
     if (x.m_element_identifier != nullptr)
     {
-        m_element_identifier = new TypeIdentifier();
+        m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         *m_element_identifier = std::move(*x.m_element_identifier);
+        x.m_element_identifier = nullptr;
     }
     else
     {
@@ -1762,8 +1858,9 @@ eprosima::fastrtps::types::PlainMapSTypeDefn::PlainMapSTypeDefn(
     m_key_flags = x.m_key_flags;
     if (x.m_key_identifier != nullptr)
     {
-        m_key_identifier = new TypeIdentifier();
+        m_key_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         *m_key_identifier = std::move(*x.m_key_identifier);
+        x.m_key_identifier = nullptr;
     }
     else
     {
@@ -1781,7 +1878,7 @@ eprosima::fastrtps::types::PlainMapSTypeDefn& eprosima::fastrtps::types::PlainMa
     {
         if (m_element_identifier == nullptr)
         {
-            m_element_identifier = new TypeIdentifier();
+            m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_element_identifier = *x.m_element_identifier;
     }
@@ -1790,12 +1887,13 @@ eprosima::fastrtps::types::PlainMapSTypeDefn& eprosima::fastrtps::types::PlainMa
         delete m_element_identifier;
         m_element_identifier = nullptr;
     }
+
     m_key_flags = x.m_key_flags;
     if (x.m_key_identifier != nullptr)
     {
         if (m_key_identifier == nullptr)
         {
-            m_key_identifier = new TypeIdentifier();
+            m_key_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_key_identifier = *x.m_key_identifier;
     }
@@ -1804,6 +1902,7 @@ eprosima::fastrtps::types::PlainMapSTypeDefn& eprosima::fastrtps::types::PlainMa
         delete m_key_identifier;
         m_key_identifier = nullptr;
     }
+
 
     return *this;
 }
@@ -1818,29 +1917,33 @@ eprosima::fastrtps::types::PlainMapSTypeDefn& eprosima::fastrtps::types::PlainMa
     {
         if (m_element_identifier == nullptr)
         {
-            m_element_identifier = new TypeIdentifier();
+            m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_element_identifier = std::move(*x.m_element_identifier);
+        x.m_element_identifier = nullptr;
     }
     else
     {
         delete m_element_identifier;
         m_element_identifier = nullptr;
     }
+
     m_key_flags = x.m_key_flags;
     if (x.m_key_identifier != nullptr)
     {
         if (m_key_identifier == nullptr)
         {
-            m_key_identifier = new TypeIdentifier();
+            m_key_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_key_identifier = std::move(*x.m_key_identifier);
+        x.m_key_identifier = nullptr;
     }
     else
     {
         delete m_key_identifier;
         m_key_identifier = nullptr;
     }
+
 
     return *this;
 }
@@ -1849,8 +1952,7 @@ bool eprosima::fastrtps::types::PlainMapSTypeDefn::operator ==(
         const PlainMapSTypeDefn& x) const
 {
 
-    return (m_header == x.m_header && m_bound == x.m_bound && *m_element_identifier == *x.m_element_identifier
-            && m_key_flags == x.m_key_flags && *m_key_identifier == *x.m_key_identifier);
+    return (m_header == x.m_header && m_bound == x.m_bound && *m_element_identifier == *x.m_element_identifier && m_key_flags == x.m_key_flags && *m_key_identifier == *x.m_key_identifier);
 }
 
 bool eprosima::fastrtps::types::PlainMapSTypeDefn::operator !=(
@@ -1869,27 +1971,25 @@ size_t eprosima::fastrtps::types::PlainMapSTypeDefn::getCdrSerializedSize(
 
     current_alignment += eprosima::fastrtps::types::PlainCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+
     if (data.element_identifier() != nullptr)
     {
-        size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+        current_alignment += eprosima::fastrtps::types::TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
     }
     else
     {
         return initial_alignment;
     }
-
     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
     if (data.key_identifier() != nullptr)
     {
-        size_t size = TypeIdentifier::getCdrSerializedSize(*data.key_identifier(), current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+        current_alignment += eprosima::fastrtps::types::TypeIdentifier::getCdrSerializedSize(*data.key_identifier(), current_alignment);
     }
     else
     {
         return initial_alignment;
     }
-
 
     return current_alignment - initial_alignment;
 }
@@ -1899,13 +1999,8 @@ void eprosima::fastrtps::types::PlainMapSTypeDefn::serialize(
 {
     if (m_element_identifier != nullptr && m_key_identifier != nullptr)
     {
-        scdr << m_header;
-        scdr << m_bound;
-        scdr << *m_element_identifier;
-        scdr << (uint16_t)m_key_flags;
-        scdr << *m_key_identifier;
+        scdr << m_header;scdr << m_bound;scdr << *m_element_identifier;scdr << (uint16_t)m_key_flags;scdr << *m_key_identifier;
     }
-
 }
 
 void eprosima::fastrtps::types::PlainMapSTypeDefn::deserialize(
@@ -1919,9 +2014,12 @@ void eprosima::fastrtps::types::PlainMapSTypeDefn::deserialize(
         m_element_identifier = new TypeIdentifier();
     }
     dcdr >> *m_element_identifier;
-    uint16_t bitmask_value = 0;
-    dcdr >> bitmask_value;
-    m_key_flags = (eprosima::fastrtps::types::CollectionElementFlag)bitmask_value;
+    {
+        uint16_t bitmask_value = 0;
+        dcdr >> bitmask_value;
+        m_key_flags = (eprosima::fastrtps::types::CollectionElementFlag)bitmask_value;
+    }
+
     if (m_key_identifier == nullptr)
     {
         m_key_identifier = new TypeIdentifier();
@@ -1994,6 +2092,10 @@ eprosima::fastrtps::types::SBound& eprosima::fastrtps::types::PlainMapSTypeDefn:
     return m_bound;
 }
 
+/*!
+ * @brief This function copies the pointed value in member element_identifier
+ * @param _element_identifier New value to be copied in member element_identifier
+ */
 void eprosima::fastrtps::types::PlainMapSTypeDefn::element_identifier(
         const eprosima::fastrtps::types::TypeIdentifier* _element_identifier)
 {
@@ -2001,7 +2103,7 @@ void eprosima::fastrtps::types::PlainMapSTypeDefn::element_identifier(
     {
         if (m_element_identifier == nullptr)
         {
-            m_element_identifier = new TypeIdentifier();
+            m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_element_identifier = *_element_identifier;
     }
@@ -2012,16 +2114,33 @@ void eprosima::fastrtps::types::PlainMapSTypeDefn::element_identifier(
     }
 }
 
-eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainMapSTypeDefn::element_identifier() const
+/*!
+ * @brief This function moves the value in member element_identifier
+ * @param _element_identifier New value to be moved in member element_identifier
+ */
+void eprosima::fastrtps::types::PlainMapSTypeDefn::element_identifier(
+        eprosima::fastrtps::types::TypeIdentifier&& _element_identifier)
+{
+    *m_element_identifier = std::move(_element_identifier);
+}
+
+/*!
+ * @brief This function returns a constant pointer to member element_identifier
+ * @return Constant pointer to member element_identifier
+ */
+const eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainMapSTypeDefn::element_identifier() const
 {
     return m_element_identifier;
 }
 
-eprosima::fastrtps::types::TypeIdentifier*& eprosima::fastrtps::types::PlainMapSTypeDefn::element_identifier()
+/*!
+ * @brief This function returns a pointer to member element_identifier
+ * @return Pointer to member element_identifier
+ */
+eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainMapSTypeDefn::element_identifier()
 {
     return m_element_identifier;
 }
-
 /*!
  * @brief This function sets a value in member key_flags
  * @param _key_flags New value for member key_flags
@@ -2050,6 +2169,10 @@ eprosima::fastrtps::types::CollectionElementFlag& eprosima::fastrtps::types::Pla
     return m_key_flags;
 }
 
+/*!
+ * @brief This function copies the value in member key_identifier
+ * @param _key_identifier New value to be copied in member key_identifier
+ */
 void eprosima::fastrtps::types::PlainMapSTypeDefn::key_identifier(
         const eprosima::fastrtps::types::TypeIdentifier* _key_identifier)
 {
@@ -2057,7 +2180,7 @@ void eprosima::fastrtps::types::PlainMapSTypeDefn::key_identifier(
     {
         if (m_key_identifier == nullptr)
         {
-            m_key_identifier = new TypeIdentifier();
+            m_key_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_key_identifier = *_key_identifier;
     }
@@ -2068,12 +2191,30 @@ void eprosima::fastrtps::types::PlainMapSTypeDefn::key_identifier(
     }
 }
 
-eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainMapSTypeDefn::key_identifier() const
+/*!
+ * @brief This function moves the value in member key_identifier
+ * @param _key_identifier New value to be moved in member key_identifier
+ */
+void eprosima::fastrtps::types::PlainMapSTypeDefn::key_identifier(
+        eprosima::fastrtps::types::TypeIdentifier&& _key_identifier)
+{
+    *m_key_identifier = std::move(_key_identifier);
+}
+
+/*!
+ * @brief This function returns a constant pointer to member key_identifier
+ * @return Constant pointer to member key_identifier
+ */
+const eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainMapSTypeDefn::key_identifier() const
 {
     return m_key_identifier;
 }
 
-eprosima::fastrtps::types::TypeIdentifier*& eprosima::fastrtps::types::PlainMapSTypeDefn::key_identifier()
+/*!
+ * @brief This function returns a pointer to member key_identifier
+ * @return Pointer to member key_identifier
+ */
+eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainMapSTypeDefn::key_identifier()
 {
     return m_key_identifier;
 }
@@ -2104,18 +2245,22 @@ eprosima::fastrtps::types::PlainMapLTypeDefn::PlainMapLTypeDefn()
 
     // eprosima::fastrtps::types::LBound m_bound
     m_bound = 0;
+    // eprosima::fastrtps::types::TypeIdentifier* m_element_identifier
     m_element_identifier = nullptr;
     // eprosima::fastrtps::types::CollectionElementFlag m_key_flags
     m_key_flags = static_cast<eprosima::fastrtps::types::CollectionElementFlag>(0);
+    // eprosima::fastrtps::types::TypeIdentifier* m_key_identifier
     m_key_identifier = nullptr;
 
 }
 
 eprosima::fastrtps::types::PlainMapLTypeDefn::~PlainMapLTypeDefn()
 {
-    delete m_element_identifier;
-    delete m_key_identifier;
 
+
+    delete m_element_identifier;
+
+    delete m_key_identifier;
 }
 
 eprosima::fastrtps::types::PlainMapLTypeDefn::PlainMapLTypeDefn(
@@ -2125,23 +2270,25 @@ eprosima::fastrtps::types::PlainMapLTypeDefn::PlainMapLTypeDefn(
     m_bound = x.m_bound;
     if (x.m_element_identifier != nullptr)
     {
-        m_element_identifier = new TypeIdentifier();
+        m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         *m_element_identifier = *x.m_element_identifier;
     }
     else
     {
         m_element_identifier = nullptr;
     }
+
     m_key_flags = x.m_key_flags;
     if (x.m_key_identifier != nullptr)
     {
-        m_key_identifier = new TypeIdentifier();
+        m_key_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         *m_key_identifier = *x.m_key_identifier;
     }
     else
     {
         m_key_identifier = nullptr;
     }
+
 }
 
 eprosima::fastrtps::types::PlainMapLTypeDefn::PlainMapLTypeDefn(
@@ -2151,8 +2298,9 @@ eprosima::fastrtps::types::PlainMapLTypeDefn::PlainMapLTypeDefn(
     m_bound = x.m_bound;
     if (x.m_element_identifier != nullptr)
     {
-        m_element_identifier = new TypeIdentifier();
+        m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         *m_element_identifier = std::move(*x.m_element_identifier);
+        x.m_element_identifier = nullptr;
     }
     else
     {
@@ -2161,8 +2309,9 @@ eprosima::fastrtps::types::PlainMapLTypeDefn::PlainMapLTypeDefn(
     m_key_flags = x.m_key_flags;
     if (x.m_key_identifier != nullptr)
     {
-        m_key_identifier = new TypeIdentifier();
+        m_key_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         *m_key_identifier = std::move(*x.m_key_identifier);
+        x.m_key_identifier = nullptr;
     }
     else
     {
@@ -2180,7 +2329,7 @@ eprosima::fastrtps::types::PlainMapLTypeDefn& eprosima::fastrtps::types::PlainMa
     {
         if (m_element_identifier == nullptr)
         {
-            m_element_identifier = new TypeIdentifier();
+            m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_element_identifier = *x.m_element_identifier;
     }
@@ -2189,12 +2338,13 @@ eprosima::fastrtps::types::PlainMapLTypeDefn& eprosima::fastrtps::types::PlainMa
         delete m_element_identifier;
         m_element_identifier = nullptr;
     }
+
     m_key_flags = x.m_key_flags;
     if (x.m_key_identifier != nullptr)
     {
         if (m_key_identifier == nullptr)
         {
-            m_key_identifier = new TypeIdentifier();
+            m_key_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_key_identifier = *x.m_key_identifier;
     }
@@ -2203,6 +2353,7 @@ eprosima::fastrtps::types::PlainMapLTypeDefn& eprosima::fastrtps::types::PlainMa
         delete m_key_identifier;
         m_key_identifier = nullptr;
     }
+
 
     return *this;
 }
@@ -2217,9 +2368,10 @@ eprosima::fastrtps::types::PlainMapLTypeDefn& eprosima::fastrtps::types::PlainMa
     {
         if (m_element_identifier == nullptr)
         {
-            m_element_identifier = new TypeIdentifier();
+            m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_element_identifier = std::move(*x.m_element_identifier);
+        x.m_element_identifier = nullptr;
     }
     else
     {
@@ -2231,9 +2383,10 @@ eprosima::fastrtps::types::PlainMapLTypeDefn& eprosima::fastrtps::types::PlainMa
     {
         if (m_key_identifier == nullptr)
         {
-            m_key_identifier = new TypeIdentifier();
+            m_key_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_key_identifier = std::move(*x.m_key_identifier);
+        x.m_key_identifier = nullptr;
     }
     else
     {
@@ -2248,8 +2401,7 @@ bool eprosima::fastrtps::types::PlainMapLTypeDefn::operator ==(
         const PlainMapLTypeDefn& x) const
 {
 
-    return (m_header == x.m_header && m_bound == x.m_bound && *m_element_identifier == *x.m_element_identifier
-            && m_key_flags == x.m_key_flags && *m_key_identifier == *x.m_key_identifier);
+    return (m_header == x.m_header && m_bound == x.m_bound && *m_element_identifier == *x.m_element_identifier && m_key_flags == x.m_key_flags && *m_key_identifier == *x.m_key_identifier);
 }
 
 bool eprosima::fastrtps::types::PlainMapLTypeDefn::operator !=(
@@ -2268,27 +2420,25 @@ size_t eprosima::fastrtps::types::PlainMapLTypeDefn::getCdrSerializedSize(
 
     current_alignment += eprosima::fastrtps::types::PlainCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
+
     if (data.element_identifier() != nullptr)
     {
-        size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+        current_alignment += eprosima::fastrtps::types::TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
     }
     else
     {
         return initial_alignment;
     }
-
     current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+
     if (data.key_identifier() != nullptr)
     {
-        size_t size = TypeIdentifier::getCdrSerializedSize(*data.key_identifier(), current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
+        current_alignment += eprosima::fastrtps::types::TypeIdentifier::getCdrSerializedSize(*data.key_identifier(), current_alignment);
     }
     else
     {
         return initial_alignment;
     }
-
 
     return current_alignment - initial_alignment;
 }
@@ -2298,13 +2448,8 @@ void eprosima::fastrtps::types::PlainMapLTypeDefn::serialize(
 {
     if (m_element_identifier != nullptr && m_key_identifier != nullptr)
     {
-        scdr << m_header;
-        scdr << m_bound;
-        scdr << *m_element_identifier;
-        scdr << (uint16_t)m_key_flags;
-        scdr << *m_key_identifier;
+        scdr << m_header;scdr << m_bound;scdr << *m_element_identifier;scdr << (uint16_t)m_key_flags;scdr << *m_key_identifier;
     }
-
 }
 
 void eprosima::fastrtps::types::PlainMapLTypeDefn::deserialize(
@@ -2318,9 +2463,12 @@ void eprosima::fastrtps::types::PlainMapLTypeDefn::deserialize(
         m_element_identifier = new TypeIdentifier();
     }
     dcdr >> *m_element_identifier;
-    uint16_t bitmask_value = 0;
-    dcdr >> bitmask_value;
-    m_key_flags = (eprosima::fastrtps::types::CollectionElementFlag)bitmask_value;
+    {
+        uint16_t bitmask_value = 0;
+        dcdr >> bitmask_value;
+        m_key_flags = (eprosima::fastrtps::types::CollectionElementFlag)bitmask_value;
+    }
+
     if (m_key_identifier == nullptr)
     {
         m_key_identifier = new TypeIdentifier();
@@ -2393,6 +2541,10 @@ eprosima::fastrtps::types::LBound& eprosima::fastrtps::types::PlainMapLTypeDefn:
     return m_bound;
 }
 
+/*!
+ * @brief This function copies the pointed value in member element_identifier
+ * @param _element_identifier New value to be copied in member element_identifier
+ */
 void eprosima::fastrtps::types::PlainMapLTypeDefn::element_identifier(
         const eprosima::fastrtps::types::TypeIdentifier* _element_identifier)
 {
@@ -2400,7 +2552,7 @@ void eprosima::fastrtps::types::PlainMapLTypeDefn::element_identifier(
     {
         if (m_element_identifier == nullptr)
         {
-            m_element_identifier = new TypeIdentifier();
+            m_element_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_element_identifier = *_element_identifier;
     }
@@ -2411,16 +2563,33 @@ void eprosima::fastrtps::types::PlainMapLTypeDefn::element_identifier(
     }
 }
 
-eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainMapLTypeDefn::element_identifier() const
+/*!
+ * @brief This function moves the value in member element_identifier
+ * @param _element_identifier New value to be moved in member element_identifier
+ */
+void eprosima::fastrtps::types::PlainMapLTypeDefn::element_identifier(
+        eprosima::fastrtps::types::TypeIdentifier&& _element_identifier)
+{
+    *m_element_identifier = std::move(_element_identifier);
+}
+
+/*!
+ * @brief This function returns a constant pointer to member element_identifier
+ * @return Constant pointer to member element_identifier
+ */
+const eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainMapLTypeDefn::element_identifier() const
 {
     return m_element_identifier;
 }
 
-eprosima::fastrtps::types::TypeIdentifier*& eprosima::fastrtps::types::PlainMapLTypeDefn::element_identifier()
+/*!
+ * @brief This function returns a pointer to member element_identifier
+ * @return Pointer to member element_identifier
+ */
+eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainMapLTypeDefn::element_identifier()
 {
     return m_element_identifier;
 }
-
 /*!
  * @brief This function sets a value in member key_flags
  * @param _key_flags New value for member key_flags
@@ -2449,6 +2618,10 @@ eprosima::fastrtps::types::CollectionElementFlag& eprosima::fastrtps::types::Pla
     return m_key_flags;
 }
 
+/*!
+ * @brief This function copies the value in member key_identifier
+ * @param _key_identifier New value to be copied in member key_identifier
+ */
 void eprosima::fastrtps::types::PlainMapLTypeDefn::key_identifier(
         const eprosima::fastrtps::types::TypeIdentifier* _key_identifier)
 {
@@ -2456,7 +2629,7 @@ void eprosima::fastrtps::types::PlainMapLTypeDefn::key_identifier(
     {
         if (m_key_identifier == nullptr)
         {
-            m_key_identifier = new TypeIdentifier();
+            m_key_identifier = new eprosima::fastrtps::types::TypeIdentifier();
         }
         *m_key_identifier = *_key_identifier;
     }
@@ -2467,12 +2640,30 @@ void eprosima::fastrtps::types::PlainMapLTypeDefn::key_identifier(
     }
 }
 
-eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainMapLTypeDefn::key_identifier() const
+/*!
+ * @brief This function moves the value in member key_identifier
+ * @param _key_identifier New value to be moved in member key_identifier
+ */
+void eprosima::fastrtps::types::PlainMapLTypeDefn::key_identifier(
+        eprosima::fastrtps::types::TypeIdentifier&& _key_identifier)
+{
+    *m_key_identifier = std::move(_key_identifier);
+}
+
+/*!
+ * @brief This function returns a constant pointer to member key_identifier
+ * @return Constant pointer to member key_identifier
+ */
+const eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainMapLTypeDefn::key_identifier() const
 {
     return m_key_identifier;
 }
 
-eprosima::fastrtps::types::TypeIdentifier*& eprosima::fastrtps::types::PlainMapLTypeDefn::key_identifier()
+/*!
+ * @brief This function returns a pointer to member key_identifier
+ * @return Pointer to member key_identifier
+ */
+eprosima::fastrtps::types::TypeIdentifier* eprosima::fastrtps::types::PlainMapLTypeDefn::key_identifier()
 {
     return m_key_identifier;
 }
@@ -2596,10 +2787,7 @@ void eprosima::fastrtps::types::StronglyConnectedComponentId::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
-    scdr << m_sc_component_id;
-    scdr << m_scc_length;
-    scdr << m_scc_index;
-
+    scdr << m_sc_component_id;scdr << m_scc_length;scdr << m_scc_index;
 }
 
 void eprosima::fastrtps::types::StronglyConnectedComponentId::deserialize(
