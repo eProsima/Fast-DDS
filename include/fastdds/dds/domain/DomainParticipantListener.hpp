@@ -114,11 +114,11 @@ public:
 #endif // if HAVE_SECURITY
 
     /*!
-     * This method is called when a new Subscriber is discovered, or a previously discovered subscriber changes
+     * This method is called when a new DataReader is discovered, or a previously discovered DataReader changes
      * its QOS or is removed.
      *
-     * @param[out] participant Pointer to the Participant which discovered the remote subscriber.
-     * @param[out] info Remote subscriber information. User can take ownership of the object.
+     * @param[out] participant Pointer to the Participant which discovered the remote DataReader.
+     * @param[out] info Remote DataReader information. User can take ownership of the object.
      */
     virtual void on_subscriber_discovery(
             DomainParticipant* participant,
@@ -129,12 +129,14 @@ public:
     }
 
     /*!
-     * This method is called when a new Subscriber is discovered, or a previously discovered subscriber changes
+     * This method is called when a new DataReader is discovered, or a previously discovered DataReader changes
      * its QOS or is removed.
      *
-     * @param[out] participant Pointer to the Participant which discovered the remote subscriber.
-     * @param[out] info Remote subscriber information. User can take ownership of the object.
-     * @param[out] should_be_ignored Flag to indicate the library to automatically ignore the discovered Participant.
+     * @warning Not Supported. This callback will never be called in the current version.
+     *
+     * @param[out] participant Pointer to the Participant which discovered the remote DataReader.
+     * @param[out] info Remote DataReader information. User can take ownership of the object.
+     * @param[out] should_be_ignored Flag to indicate the library to automatically ignore the discovered DataReader.
      */
     virtual void on_subscriber_discovery(
             DomainParticipant* participant,
@@ -147,11 +149,11 @@ public:
     }
 
     /*!
-     * This method is called when a new Publisher is discovered, or a previously discovered publisher changes
+     * This method is called when a new DataWriter is discovered, or a previously discovered DataWriter changes
      * its QOS or is removed.
      *
-     * @param[out] participant Pointer to the Participant which discovered the remote publisher.
-     * @param[out] info Remote publisher information. User can take ownership of the object.
+     * @param[out] participant Pointer to the Participant which discovered the remote DataWriter.
+     * @param[out] info Remote DataWriter information. User can take ownership of the object.
      */
     virtual void on_publisher_discovery(
             DomainParticipant* participant,
@@ -162,12 +164,14 @@ public:
     }
 
     /*!
-     * This method is called when a new Publisher is discovered, or a previously discovered publisher changes
+     * This method is called when a new DataWriter is discovered, or a previously discovered DataWriter changes
      * its QOS or is removed.
      *
-     * @param[out] participant Pointer to the Participant which discovered the remote publisher.
-     * @param[out] info Remote publisher information. User can take ownership of the object.
-     * @param[out] should_be_ignored Flag to indicate the library to automatically ignore the discovered Participant.
+     * @warning Not Supported. This callback will never be called in the current version.
+     *
+     * @param[out] participant Pointer to the Participant which discovered the remote DataWriter.
+     * @param[out] info Remote DataWriter information. User can take ownership of the object.
+     * @param[out] should_be_ignored Flag to indicate the library to automatically ignore the discovered DataWriter.
      */
     virtual void on_publisher_discovery(
             DomainParticipant* participant,
