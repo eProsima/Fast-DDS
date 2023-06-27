@@ -61,6 +61,44 @@ using namespace eprosima::fastcdr::exception;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 eprosima::fastrtps::types::TypeObjectHashId::TypeObjectHashId()
 {
     m__d = EK_COMPLETE;
@@ -234,7 +272,7 @@ const eprosima::fastrtps::types::EquivalenceHash& eprosima::fastrtps::types::Typ
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_hash;
@@ -255,7 +293,7 @@ eprosima::fastrtps::types::EquivalenceHash& eprosima::fastrtps::types::TypeObjec
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_hash;
@@ -294,7 +332,6 @@ void eprosima::fastrtps::types::TypeObjectHashId::serialize(
         case EK_COMPLETE:
         case EK_MINIMAL:
         scdr << m_hash;
-
 
         break;
         default:

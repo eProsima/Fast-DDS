@@ -27,7 +27,6 @@ char dummy;
 #endif  // _WIN32
 
 #include <fastrtps/types/AnnotationParameterValue.h>
-
 #include <fastcdr/Cdr.h>
 
 #include <fastcdr/exceptions/BadParamException.h>
@@ -40,7 +39,6 @@ using namespace eprosima::fastcdr::exception;
 
 
 #define eprosima_fastrtps_types_PlainCollectionHeader_max_cdr_typesize 4ULL;
-#define eprosima_fastrtps_types_PlainSequenceSElemDefn_max_cdr_typesize 5ULL;
 
 
 #define eprosima_fastrtps_types_ExtendedAnnotationParameterValue_max_cdr_typesize 0ULL;
@@ -54,10 +52,8 @@ using namespace eprosima::fastcdr::exception;
 
 
 
-#define eprosima_fastrtps_types_PlainArraySElemDefn_max_cdr_typesize 108ULL;
 
 
-#define eprosima_fastrtps_types_PlainMapSTypeDefn_max_cdr_typesize 8ULL;
 
 
 
@@ -69,18 +65,14 @@ using namespace eprosima::fastcdr::exception;
 #define eprosima_fastrtps_types_AppliedVerbatimAnnotation_max_cdr_typesize 340ULL;
 #define eprosima_fastrtps_types_AppliedBuiltinMemberAnnotations_max_cdr_typesize 1560ULL;
 
-#define eprosima_fastrtps_types_PlainMapLTypeDefn_max_cdr_typesize 10ULL;
 
 
 
-#define eprosima_fastrtps_types_AppliedAnnotation_max_cdr_typesize 52812ULL;
 
 
 #define eprosima_fastrtps_types_StringSTypeDefn_max_cdr_typesize 1ULL;
-#define eprosima_fastrtps_types_PlainSequenceLElemDefn_max_cdr_typesize 8ULL;
 #define eprosima_fastrtps_types_AppliedAnnotationParameter_max_cdr_typesize 524ULL;
 
-#define eprosima_fastrtps_types_PlainArrayLElemDefn_max_cdr_typesize 408ULL;
 
 
 #define eprosima_fastrtps_types_ExtendedTypeDefn_max_cdr_typesize 0ULL;
@@ -904,7 +896,7 @@ bool eprosima::fastrtps::types::AnnotationParameterValue::boolean_value() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_boolean_value;
@@ -924,7 +916,7 @@ bool& eprosima::fastrtps::types::AnnotationParameterValue::boolean_value()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_boolean_value;
@@ -950,7 +942,7 @@ uint8_t eprosima::fastrtps::types::AnnotationParameterValue::byte_value() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_byte_value;
@@ -970,7 +962,7 @@ uint8_t& eprosima::fastrtps::types::AnnotationParameterValue::byte_value()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_byte_value;
@@ -996,7 +988,7 @@ int8_t eprosima::fastrtps::types::AnnotationParameterValue::int8_value() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_int8_value;
@@ -1016,7 +1008,7 @@ int8_t& eprosima::fastrtps::types::AnnotationParameterValue::int8_value()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_int8_value;
@@ -1042,7 +1034,7 @@ uint8_t eprosima::fastrtps::types::AnnotationParameterValue::uint8_value() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_uint8_value;
@@ -1062,7 +1054,7 @@ uint8_t& eprosima::fastrtps::types::AnnotationParameterValue::uint8_value()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_uint8_value;
@@ -1088,7 +1080,7 @@ int16_t eprosima::fastrtps::types::AnnotationParameterValue::int16_value() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_int16_value;
@@ -1108,7 +1100,7 @@ int16_t& eprosima::fastrtps::types::AnnotationParameterValue::int16_value()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_int16_value;
@@ -1134,7 +1126,7 @@ uint16_t eprosima::fastrtps::types::AnnotationParameterValue::uint16_value() con
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_uint16_value;
@@ -1154,7 +1146,7 @@ uint16_t& eprosima::fastrtps::types::AnnotationParameterValue::uint16_value()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_uint16_value;
@@ -1180,7 +1172,7 @@ int32_t eprosima::fastrtps::types::AnnotationParameterValue::int32_value() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_int32_value;
@@ -1200,7 +1192,7 @@ int32_t& eprosima::fastrtps::types::AnnotationParameterValue::int32_value()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_int32_value;
@@ -1226,7 +1218,7 @@ uint32_t eprosima::fastrtps::types::AnnotationParameterValue::uint32_value() con
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_uint32_value;
@@ -1246,7 +1238,7 @@ uint32_t& eprosima::fastrtps::types::AnnotationParameterValue::uint32_value()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_uint32_value;
@@ -1272,7 +1264,7 @@ int64_t eprosima::fastrtps::types::AnnotationParameterValue::int64_value() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_int64_value;
@@ -1292,7 +1284,7 @@ int64_t& eprosima::fastrtps::types::AnnotationParameterValue::int64_value()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_int64_value;
@@ -1318,7 +1310,7 @@ uint64_t eprosima::fastrtps::types::AnnotationParameterValue::uint64_value() con
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_uint64_value;
@@ -1338,7 +1330,7 @@ uint64_t& eprosima::fastrtps::types::AnnotationParameterValue::uint64_value()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_uint64_value;
@@ -1364,7 +1356,7 @@ float eprosima::fastrtps::types::AnnotationParameterValue::float32_value() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_float32_value;
@@ -1384,7 +1376,7 @@ float& eprosima::fastrtps::types::AnnotationParameterValue::float32_value()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_float32_value;
@@ -1410,7 +1402,7 @@ double eprosima::fastrtps::types::AnnotationParameterValue::float64_value() cons
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_float64_value;
@@ -1430,7 +1422,7 @@ double& eprosima::fastrtps::types::AnnotationParameterValue::float64_value()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_float64_value;
@@ -1456,7 +1448,7 @@ long double eprosima::fastrtps::types::AnnotationParameterValue::float128_value(
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_float128_value;
@@ -1476,7 +1468,7 @@ long double& eprosima::fastrtps::types::AnnotationParameterValue::float128_value
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_float128_value;
@@ -1502,7 +1494,7 @@ char eprosima::fastrtps::types::AnnotationParameterValue::char_value() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_char_value;
@@ -1522,7 +1514,7 @@ char& eprosima::fastrtps::types::AnnotationParameterValue::char_value()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_char_value;
@@ -1548,7 +1540,7 @@ wchar_t eprosima::fastrtps::types::AnnotationParameterValue::wchar_value() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_wchar_value;
@@ -1568,7 +1560,7 @@ wchar_t& eprosima::fastrtps::types::AnnotationParameterValue::wchar_value()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_wchar_value;
@@ -1594,7 +1586,7 @@ int32_t eprosima::fastrtps::types::AnnotationParameterValue::enumerated_value() 
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_enumerated_value;
@@ -1614,7 +1606,7 @@ int32_t& eprosima::fastrtps::types::AnnotationParameterValue::enumerated_value()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_enumerated_value;
@@ -1647,7 +1639,7 @@ const eprosima::fastrtps::fixed_string<128>& eprosima::fastrtps::types::Annotati
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_string8_value;
@@ -1667,7 +1659,7 @@ eprosima::fastrtps::fixed_string<128>& eprosima::fastrtps::types::AnnotationPara
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_string8_value;
@@ -1700,7 +1692,7 @@ const std::wstring& eprosima::fastrtps::types::AnnotationParameterValue::string1
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_string16_value;
@@ -1720,7 +1712,7 @@ std::wstring& eprosima::fastrtps::types::AnnotationParameterValue::string16_valu
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_string16_value;
@@ -1770,7 +1762,7 @@ const eprosima::fastrtps::types::ExtendedAnnotationParameterValue& eprosima::fas
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_extended_value;
@@ -1807,7 +1799,7 @@ eprosima::fastrtps::types::ExtendedAnnotationParameterValue& eprosima::fastrtps:
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_extended_value;
@@ -1913,80 +1905,61 @@ void eprosima::fastrtps::types::AnnotationParameterValue::serialize(
     {
         case TK_BOOLEAN:
         scdr << m_boolean_value;
-
         break;
         case TK_BYTE:
         scdr << m_byte_value;
-
         break;
         case TK_INT8:
         scdr << m_int8_value;
-
         break;
         case TK_UINT8:
         scdr << m_uint8_value;
-
         break;
         case TK_INT16:
         scdr << m_int16_value;
-
         break;
         case TK_UINT16:
         scdr << m_uint16_value;
-
         break;
         case TK_INT32:
         scdr << m_int32_value;
-
         break;
         case TK_UINT32:
         scdr << m_uint32_value;
-
         break;
         case TK_INT64:
         scdr << m_int64_value;
-
         break;
         case TK_UINT64:
         scdr << m_uint64_value;
-
         break;
         case TK_FLOAT32:
         scdr << m_float32_value;
-
         break;
         case TK_FLOAT64:
         scdr << m_float64_value;
-
         break;
         case TK_FLOAT128:
         scdr << m_float128_value;
-
         break;
         case TK_CHAR8:
         scdr << m_char_value;
-
         break;
         case TK_CHAR16:
         scdr << m_wchar_value;
-
         break;
         case TK_ENUM:
         scdr << m_enumerated_value;
-
         break;
         case TK_STRING8:
         scdr << m_string8_value.c_str();
-
         break;
         case TK_STRING16:
         scdr << m_string16_value;
-
         break;
 
         default:
         scdr << m_extended_value;
-
         break;
     }
 }
@@ -2152,9 +2125,7 @@ void eprosima::fastrtps::types::AppliedAnnotationParameter::serialize(
 {
 
     scdr << m_paramname_hash;
-
     scdr << m_value;
-
 }
 
 void eprosima::fastrtps::types::AppliedAnnotationParameter::deserialize(
@@ -2562,10 +2533,7 @@ void eprosima::fastrtps::types::AppliedVerbatimAnnotation::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
-    scdr << m_placement.c_str();
-    scdr << m_language.c_str();
-    scdr << m_text.c_str();
-
+    scdr << m_placement.c_str();scdr << m_language.c_str();scdr << m_text.c_str();
 }
 
 void eprosima::fastrtps::types::AppliedVerbatimAnnotation::deserialize(
@@ -2822,11 +2790,7 @@ void eprosima::fastrtps::types::AppliedBuiltinMemberAnnotations::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
-    scdr << m_unit.c_str();
-    scdr << m_min;
-    scdr << m_max;
-    scdr << m_hash_id.c_str();
-
+    scdr << m_unit.c_str();scdr << m_min;scdr << m_max;scdr << m_hash_id.c_str();
 }
 
 void eprosima::fastrtps::types::AppliedBuiltinMemberAnnotations::deserialize(

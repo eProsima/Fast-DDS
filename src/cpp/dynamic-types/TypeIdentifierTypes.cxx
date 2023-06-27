@@ -28,6 +28,7 @@ char dummy;
 
 #include <fastrtps/types/TypeIdentifierTypes.h>
 #include <fastcdr/Cdr.h>
+#include <fastrtps/types/TypeIdentifier.h>
 
 #include <fastcdr/exceptions/BadParamException.h>
 using namespace eprosima::fastcdr::exception;
@@ -117,7 +118,6 @@ using namespace eprosima::fastcdr::exception;
 
 
 
-class TypeIdentifier;
 
 eprosima::fastrtps::types::StringSTypeDefn::StringSTypeDefn()
 {
@@ -635,10 +635,10 @@ eprosima::fastrtps::types::PlainSequenceSElemDefn::PlainSequenceSElemDefn(
     }
 }
 
--// XTypes v1.3 Clauses 7.5.1.2.3.1 & 7.5.1.2.3.2: The copy function of the enclosing object shall do a deep copy of the
--// external members. If the destination external member is NULL it shall be allocated. If the destination external
--// member is not NULL it shall be filled with a copy of the source member. If the copy operation of the external member
--// fails, the the copy function of the containing object shall fail as well.
+// XTypes v1.3 Clauses 7.5.1.2.3.1 & 7.5.1.2.3.2: The copy function of the enclosing object shall do a deep copy of the
+// external members. If the destination external member is NULL it shall be allocated. If the destination external
+// member is not NULL it shall be filled with a copy of the source member. If the copy operation of the external member
+// fails, the the copy function of the containing object shall fail as well.
 eprosima::fastrtps::types::PlainSequenceSElemDefn& eprosima::fastrtps::types::PlainSequenceSElemDefn::operator =(
         const PlainSequenceSElemDefn& x)
 {

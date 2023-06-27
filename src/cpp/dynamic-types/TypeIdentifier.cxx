@@ -35,7 +35,6 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 
-#define eprosima_fastrtps_types_PlainMapLTypeDefn_max_cdr_typesize 10ULL;
 
 
 
@@ -43,16 +42,9 @@ using namespace eprosima::fastcdr::exception;
 
 
 #define eprosima_fastrtps_types_PlainCollectionHeader_max_cdr_typesize 4ULL;
-#define eprosima_fastrtps_types_PlainSequenceSElemDefn_max_cdr_typesize 5ULL;
 #define eprosima_fastrtps_types_StringSTypeDefn_max_cdr_typesize 1ULL;
 
 
-#define eprosima_fastrtps_types_PlainSequenceLElemDefn_max_cdr_typesize 8ULL;
-
-
-
-
-#define eprosima_fastrtps_types_PlainArrayLElemDefn_max_cdr_typesize 408ULL;
 
 
 
@@ -60,12 +52,14 @@ using namespace eprosima::fastcdr::exception;
 
 
 
-#define eprosima_fastrtps_types_PlainArraySElemDefn_max_cdr_typesize 108ULL;
 
 
 
 
-#define eprosima_fastrtps_types_PlainMapSTypeDefn_max_cdr_typesize 8ULL;
+
+
+
+
 
 
 #define eprosima_fastrtps_types_ExtendedTypeDefn_max_cdr_typesize 0ULL;
@@ -590,7 +584,7 @@ const eprosima::fastrtps::types::StringSTypeDefn& eprosima::fastrtps::types::Typ
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_string_sdefn;
@@ -611,7 +605,7 @@ eprosima::fastrtps::types::StringSTypeDefn& eprosima::fastrtps::types::TypeIdent
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_string_sdefn;
@@ -645,7 +639,7 @@ const eprosima::fastrtps::types::StringLTypeDefn& eprosima::fastrtps::types::Typ
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_string_ldefn;
@@ -666,7 +660,7 @@ eprosima::fastrtps::types::StringLTypeDefn& eprosima::fastrtps::types::TypeIdent
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_string_ldefn;
@@ -699,7 +693,7 @@ const eprosima::fastrtps::types::PlainSequenceSElemDefn& eprosima::fastrtps::typ
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_seq_sdefn;
@@ -719,7 +713,7 @@ eprosima::fastrtps::types::PlainSequenceSElemDefn& eprosima::fastrtps::types::Ty
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_seq_sdefn;
@@ -752,7 +746,7 @@ const eprosima::fastrtps::types::PlainSequenceLElemDefn& eprosima::fastrtps::typ
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_seq_ldefn;
@@ -772,7 +766,7 @@ eprosima::fastrtps::types::PlainSequenceLElemDefn& eprosima::fastrtps::types::Ty
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_seq_ldefn;
@@ -805,7 +799,7 @@ const eprosima::fastrtps::types::PlainArraySElemDefn& eprosima::fastrtps::types:
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_array_sdefn;
@@ -825,7 +819,7 @@ eprosima::fastrtps::types::PlainArraySElemDefn& eprosima::fastrtps::types::TypeI
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_array_sdefn;
@@ -858,7 +852,7 @@ const eprosima::fastrtps::types::PlainArrayLElemDefn& eprosima::fastrtps::types:
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_array_ldefn;
@@ -878,7 +872,7 @@ eprosima::fastrtps::types::PlainArrayLElemDefn& eprosima::fastrtps::types::TypeI
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_array_ldefn;
@@ -911,7 +905,7 @@ const eprosima::fastrtps::types::PlainMapSTypeDefn& eprosima::fastrtps::types::T
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_map_sdefn;
@@ -931,7 +925,7 @@ eprosima::fastrtps::types::PlainMapSTypeDefn& eprosima::fastrtps::types::TypeIde
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_map_sdefn;
@@ -964,7 +958,7 @@ const eprosima::fastrtps::types::PlainMapLTypeDefn& eprosima::fastrtps::types::T
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_map_ldefn;
@@ -984,7 +978,7 @@ eprosima::fastrtps::types::PlainMapLTypeDefn& eprosima::fastrtps::types::TypeIde
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_map_ldefn;
@@ -1017,7 +1011,7 @@ const eprosima::fastrtps::types::StronglyConnectedComponentId& eprosima::fastrtp
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_sc_component_id;
@@ -1037,7 +1031,7 @@ eprosima::fastrtps::types::StronglyConnectedComponentId& eprosima::fastrtps::typ
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_sc_component_id;
@@ -1071,7 +1065,7 @@ const eprosima::fastrtps::types::EquivalenceHash& eprosima::fastrtps::types::Typ
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_equivalence_hash;
@@ -1092,7 +1086,7 @@ eprosima::fastrtps::types::EquivalenceHash& eprosima::fastrtps::types::TypeIdent
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_equivalence_hash;
@@ -1137,7 +1131,7 @@ const eprosima::fastrtps::types::ExtendedTypeDefn& eprosima::fastrtps::types::Ty
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_extended_defn;
@@ -1169,7 +1163,7 @@ eprosima::fastrtps::types::ExtendedTypeDefn& eprosima::fastrtps::types::TypeIden
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_extended_defn;
@@ -1239,51 +1233,40 @@ void eprosima::fastrtps::types::TypeIdentifier::serialize(
         case TI_STRING8_SMALL:
         case TI_STRING16_SMALL:
         scdr << m_string_sdefn;
-
         break;
         case TI_STRING8_LARGE:
         case TI_STRING16_LARGE:
         scdr << m_string_ldefn;
-
         break;
         case TI_PLAIN_SEQUENCE_SMALL:
         scdr << m_seq_sdefn;
-
         break;
         case TI_PLAIN_SEQUENCE_LARGE:
         scdr << m_seq_ldefn;
-
         break;
         case TI_PLAIN_ARRAY_SMALL:
         scdr << m_array_sdefn;
-
         break;
         case TI_PLAIN_ARRAY_LARGE:
         scdr << m_array_ldefn;
-
         break;
         case TI_PLAIN_MAP_SMALL:
         scdr << m_map_sdefn;
-
         break;
         case TI_PLAIN_MAP_LARGE:
         scdr << m_map_ldefn;
-
         break;
         case TI_STRONGLY_CONNECTED_COMPONENT:
         scdr << m_sc_component_id;
-
         break;
         case EK_COMPLETE:
         case EK_MINIMAL:
         scdr << m_equivalence_hash;
 
-
         break;
 
         default:
         scdr << m_extended_defn;
-
         break;
     }
 }
