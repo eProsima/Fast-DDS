@@ -493,16 +493,20 @@ bool SharedMemTransport::push_discard(
     try
     {
         bool is_port_ok = false;
-        if (!find_port(remote_locator.port)->try_push(buffer, is_port_ok))
+        const size_t num_retries = 2;
+        for (size_t i = 0; i < num_retries && !is_port_ok; ++i)
         {
-            if (is_port_ok)
+            if (!find_port(remote_locator.port)->try_push(buffer, is_port_ok))
             {
-                logInfo(RTPS_MSG_OUT, "Port " << remote_locator.port << " full. Buffer dropped");
-            }
-            else
-            {
-                logWarning(RTPS_MSG_OUT, "Port " << remote_locator.port << " inconsistent. Port dropped");
-                opened_ports_.erase(remote_locator.port);
+                if (is_port_ok)
+                {
+                    logInfo(RTPS_MSG_OUT, "Port " << remote_locator.port << " full. Buffer dropped");
+                }
+                else
+                {
+                    logWarning(RTPS_MSG_OUT, "Port " << remote_locator.port << " inconsistent. Port dropped");
+                    opened_ports_.erase(remote_locator.port);
+                }
             }
         }
     }
