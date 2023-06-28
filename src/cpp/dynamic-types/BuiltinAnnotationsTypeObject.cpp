@@ -211,11 +211,32 @@ const TypeObject* GetMinimalidObject()
 
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
+    // MinimalTypeObject
     type_object->minimal()._d(TK_ANNOTATION);
 
+    // MinimalAnnotationType
+
+    // AnnotationTypeFlag: unused. No flags apply
+    // MinimalAnnotationHeader: Empty. Available for future extension
+    // MinimalAnnotationParameterSeq
+
+    // MinimalAnnotationParameter
     MinimalAnnotationParameter mam_value;
+    // CommonAnnotationParameter
+
+    // AnnotationParameterFlag: Unused. No flags apply
+    // TypeIdentifier
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint32_t", false));
-// TODO(jlbueno): XTypes    mam_value.name("value");
+
+    // NameHash
+    MD5 value_hash("value");
+    for (int i=0; i < 4; ++i)
+    {
+        mam_value.name_hash()[i] = value_hash.digest[i];
+    }
+    // AnnotationParameterValue
+    mam_value.default_value()._d(TK_UINT32);
+    // Default constructor already sets the value 0.
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -223,6 +244,7 @@ const TypeObject* GetMinimalidObject()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    // EquivalenceHash
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
@@ -257,22 +279,33 @@ const TypeObject* GetCompleteidObject()
 
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
+    // CompleteTypeObject
     type_object->complete()._d(TK_ANNOTATION);
 
-    // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
+    // CompleteAnnotationType
 
-    //type_object->complete().annotation_type().header().detail().ann_builtin()...
-    //type_object->complete().annotation_type().header().detail().ann_custom()...
+    // AnnotationTypeFlag: unused. No flags apply
+    // CompleteAnnotationHeader
+
+    // QualifiedTypeName
     type_object->complete().annotation_type().header().annotation_name("id");
 
+    // CompleteAnnotationParameterSeq
+
+    // CompleteAnnotationParameter
     CompleteAnnotationParameter cam_value;
+
+    // CommonAnnotationParameter
+
+    // AnnotationParameterFlag: Unused. No flags apply
+    // TypeIdentifier
     cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint32_t", false));
+
+    // MemberName
     cam_value.name("value");
+    // AnnotationParameterValue
+    cam_value.default_value()._d(TK_UINT32);
+    // Default constructor already sets the value 0.
 
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
@@ -280,6 +313,7 @@ const TypeObject* GetCompleteidObject()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    // EquivalenceHash
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
