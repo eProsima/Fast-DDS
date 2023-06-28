@@ -246,7 +246,7 @@ bool NetworkFactory::getDefaultMetatrafficMulticastLocators(
 
     for (auto& transport : mRegisteredTransports)
     {
-        // For better fault-tolerance reasons, SHM multicast metatraffic is avoided if it is already provided
+        // For better fault-tolerance reasons, SHM metatraffic is avoided if it is already provided
         // by another transport
         if (transport->kind() != LOCATOR_KIND_SHM)
         {
@@ -286,10 +286,28 @@ bool NetworkFactory::getDefaultMetatrafficUnicastLocators(
         uint32_t metatraffic_unicast_port) const
 {
     bool result = false;
+
+    TransportInterface* shm_transport = nullptr;
+
     for (auto& transport : mRegisteredTransports)
     {
-        result |= transport->getDefaultMetatrafficUnicastLocators(locators, metatraffic_unicast_port);
+        // For better fault-tolerance reasons, SHM metatraffic is avoided if it is already provided
+        // by another transport
+        if (transport->kind() != LOCATOR_KIND_SHM)
+        {
+            result |= transport->getDefaultMetatrafficUnicastLocators(locators, metatraffic_unicast_port);
+        }
+        else
+        {
+            shm_transport = transport.get();
+        }
     }
+
+    if (locators.size() == 0 && shm_transport)
+    {
+        result |= shm_transport->getDefaultMetatrafficUnicastLocators(locators, metatraffic_unicast_port);
+    }
+
     return result;
 }
 
