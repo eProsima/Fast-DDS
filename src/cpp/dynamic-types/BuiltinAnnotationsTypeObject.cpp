@@ -27,14 +27,17 @@ char dummy;
 #endif // ifdef _WIN32
 
 #include <fastrtps/types/BuiltinAnnotationsTypeObject.h>
-#include <utility>
+
+#include <cassert>
 #include <sstream>
-#include <fastdds/rtps/common/SerializedPayload.h>
-#include <fastrtps/utils/md5.h>
-#include <fastrtps/types/TypeNamesGenerator.h>
-#include <fastrtps/types/AnnotationParameterValue.h>
+#include <utility>
+
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>
+
+#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastrtps/types/AnnotationParameterValue.h>
+#include <fastrtps/utils/md5.h>
 
 using namespace eprosima::fastrtps::rtps;
 
@@ -381,12 +384,21 @@ const TypeObject* GetMinimalautoidObject()
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*GetAutoidKindIdentifier(false));
-// TODO(jlbueno): XTypes    mam_value.name("value");
+    const TypeIdentifier* member_type_id = GetAutoidKindIdentifier(false);
+    assert(nullptr != member_type_id);
+    mam_value.common().member_type_id(*member_type_id);
+    MD5 value_hash("value");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_value.name_hash()[i] = value_hash.digest[i];
+    }
 
     AnnotationParameterValue def_value_value;
-    def_value_value._d(mam_value.common().member_type_id()._d());
-//TODO(jlbueno): XTypes    def_value_value.from_string("1");
+    const TypeObject* member_type_object = GetAutoidKindObject(false);
+    assert(nullptr != member_type_object);
+    def_value_value._d(member_type_object->minimal()._d());
+    // Default value: HASH (enumerated value: 1)
+    def_value_value.enumerated_value(1);
     mam_value.default_value(def_value_value);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -430,25 +442,20 @@ const TypeObject* GetCompleteautoidObject()
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
-
-    // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().annotation_type().header().detail().ann_builtin()...
-    //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("autoid");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*GetAutoidKindIdentifier(true));
+    const TypeIdentifier* member_type_id = GetAutoidKindIdentifier(true);
+    assert(nullptr != member_type_id);
+    cam_value.common().member_type_id(*member_type_id);
     cam_value.name("value");
 
     AnnotationParameterValue def_value_value;
-    def_value_value._d(cam_value.common().member_type_id()._d());
-//TODO(jlbueno): XTypes    def_value_value.from_string("1");
+    const TypeObject* member_type_object = GetAutoidKindObject(true);
+    assert(nullptr != member_type_object);
+    def_value_value._d(member_type_object->complete()._d());
+    // Default value: HASH (enumerated value: 1)
+    def_value_value.enumerated_value(1);
     cam_value.default_value(def_value_value);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
@@ -520,29 +527,31 @@ const TypeObject* GetMinimalAutoidKindObject()
 
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
+
+    // MinimalTypeObject
     type_object->minimal()._d(TK_ENUM);
 
-    // No flags apply
-    //type_object->minimal().enumerated_type().enum_flags().IS_FINAL(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_APPENDABLE(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_MUTABLE(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_NESTED(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_AUTOID_HASH(false);
+    // MinimalEnumeratedType
+    // EnumTypeFlag: Unused. No flags apply
+    // MinimalEnumeratedHeader
 
-    type_object->minimal().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
+    // CommonEnumeratedHeader
+    // BitBound: not defined. Default: 32.
+    type_object->minimal().enumerated_type().header().common().bit_bound(32);
+
+    // MinimalEnumeratedLiteralSeq
 
     uint32_t value = 0;
+    // MinimalEnumeratedLiteral
     MinimalEnumeratedLiteral mel_SEQUENTIAL;
-/* TODO(jlbueno): XTYPES
-    mel_SEQUENTIAL.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    mel_SEQUENTIAL.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    mel_SEQUENTIAL.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    mel_SEQUENTIAL.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    mel_SEQUENTIAL.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    mel_SEQUENTIAL.common().flags().IS_KEY(false); // Doesn't apply
-    mel_SEQUENTIAL.common().flags().IS_DEFAULT(false);
-*/
+    // CommonEnumeratedLiteral
+    // long value
     mel_SEQUENTIAL.common().value(value++);
+    // EnumeratedLiteralFlag: D (IS_DEFAULT). The corresponding annotation is not used.
+    mel_SEQUENTIAL.common().flags(static_cast<EnumeratedLiteralFlag>(0));
+
+    // MinimalMemberDetail
+    // NameHash
     MD5 SEQUENTIAL_hash("SEQUENTIAL");
     for (int i = 0; i < 4; ++i)
     {
@@ -551,16 +560,8 @@ const TypeObject* GetMinimalAutoidKindObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_SEQUENTIAL);
 
     MinimalEnumeratedLiteral mel_HASH;
-/* TODO(jlbueno): XTYPES
-    mel_HASH.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    mel_HASH.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    mel_HASH.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    mel_HASH.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    mel_HASH.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    mel_HASH.common().flags().IS_KEY(false); // Doesn't apply
-    mel_HASH.common().flags().IS_DEFAULT(false);
-*/
     mel_HASH.common().value(value++);
+    mel_HASH.common().flags(static_cast<EnumeratedLiteralFlag>(0));
     MD5 HASH_hash("HASH");
     for (int i = 0; i < 4; ++i)
     {
@@ -572,6 +573,7 @@ const TypeObject* GetMinimalAutoidKindObject()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    // EquivalenceHash
     SerializedPayload_t payload(static_cast<uint32_t>(
                 MinimalEnumeratedType::getCdrSerializedSize(type_object->minimal().enumerated_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
@@ -606,57 +608,53 @@ const TypeObject* GetCompleteAutoidKindObject()
 
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
+
+    // CompleteTypeObject
     type_object->complete()._d(TK_ENUM);
 
-    // No flags apply
-    //type_object->complete().enumerated_type().enum_flags().IS_FINAL(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_APPENDABLE(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_MUTABLE(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_NESTED(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_AUTOID_HASH(false);
+    // CompleteEnumeratedType
+    // EnumTypeFlag: Unused. No flags apply
+    // CompleteEnumeratedHeader
 
-    type_object->complete().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
-    //type_object->complete().enumerated_type().header().detail().ann_builtin()...
-    //type_object->complete().enumerated_type().header().detail().ann_custom()...
-    type_object->complete().enumerated_type().header().detail().type_name("AutoidKind");
+    // CommonEnumeratedHeader
+    // BitBound: not defined. Default: 32
+    type_object->complete().enumerated_type().header().common().bit_bound(32);
+
+    // CompleteTypeDetail
+    // @optional AppliedBuiltinTypeAnnotations: N/A
+    // @optional AppliedAnnotationSeq: N/A
+    // QualifiedTypeName: includes the name of containing modules using "::" as separator
+    type_object->complete().enumerated_type().header().detail().type_name("autoid::AutoidKind");
+
+    // CompleteEnumeratedLiteralSeq
 
     uint32_t value = 0;
+    // CompleteEnumeratedLiteral
     CompleteEnumeratedLiteral cel_SEQUENTIAL;
-/* TODO(jlbueno): XTYPES
-    cel_SEQUENTIAL.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    cel_SEQUENTIAL.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    cel_SEQUENTIAL.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    cel_SEQUENTIAL.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    cel_SEQUENTIAL.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    cel_SEQUENTIAL.common().flags().IS_KEY(false); // Doesn't apply
-    cel_SEQUENTIAL.common().flags().IS_DEFAULT(false);
-*/
+    // CommonEnumeratedLiteral
+    // long value
     cel_SEQUENTIAL.common().value(value++);
+    // EnumeratedLiteralFlag: D (IS_DEFAULT). The corresponding annotation is not used.
+    cel_SEQUENTIAL.common().flags(static_cast<EnumeratedLiteralFlag>(0));
+
+    // CompleteMemberDetail
+    // MemberName
     cel_SEQUENTIAL.detail().name("SEQUENTIAL");
-    //cel_SEQUENTIAL.detail().ann_builtin()...
-    //cel_SEQUENTIAL.detail().ann_custom()...
+    // @optional AppliedBuiltinMemberAnnotations: N/A
+    // @optional AppliedAnnotationSeq: N/A
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_SEQUENTIAL);
 
     CompleteEnumeratedLiteral cel_HASH;
-/* TODO(jlbueno): XTYPES
-    cel_HASH.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    cel_HASH.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    cel_HASH.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    cel_HASH.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    cel_HASH.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    cel_HASH.common().flags().IS_KEY(false); // Doesn't apply
-    cel_HASH.common().flags().IS_DEFAULT(false);
-*/
     cel_HASH.common().value(value++);
+    cel_HASH.common().flags(static_cast<EnumeratedLiteralFlag>(0));
     cel_HASH.detail().name("HASH");
-    //cel_HASH.detail().ann_builtin()...
-    //cel_HASH.detail().ann_custom()...
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_HASH);
 
 
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    // EquivalenceHash
     SerializedPayload_t payload(static_cast<uint32_t>(
                 CompleteEnumeratedType::getCdrSerializedSize(type_object->complete().enumerated_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
