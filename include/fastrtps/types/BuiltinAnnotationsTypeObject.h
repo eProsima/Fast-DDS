@@ -58,10 +58,12 @@ const TypeObject* GetpositionObject(bool complete = false);
 const TypeObject* GetMinimalpositionObject();
 const TypeObject* GetCompletepositionObject();
 
+/* TODO: pending any definition
 const TypeIdentifier* GetvalueIdentifier(bool complete = false);
 const TypeObject* GetvalueObject(bool complete = false);
 const TypeObject* GetMinimalvalueObject();
 const TypeObject* GetCompletevalueObject();
+*/
 
 const TypeIdentifier* GetextensibilityIdentifier(bool complete = false);
 const TypeObject* GetextensibilityObject(bool complete = false);
@@ -106,10 +108,12 @@ const TypeObject* Getdefault_literalObject(bool complete = false);
 const TypeObject* GetMinimaldefault_literalObject();
 const TypeObject* GetCompletedefault_literalObject();
 
+/* TODO: pending any definition
 const TypeIdentifier* GetdefaultIdentifier(bool complete = false);
 const TypeObject* GetdefaultObject(bool complete = false);
 const TypeObject* GetMinimaldefaultObject();
 const TypeObject* GetCompletedefaultObject();
+*/
 
 const TypeIdentifier* GetrangeIdentifier(bool complete = false);
 const TypeObject* GetrangeObject(bool complete = false);

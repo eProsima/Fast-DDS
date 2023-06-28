@@ -63,8 +63,10 @@ void register_builtin_annotations_types(
     factory->add_type_object("position", GetpositionIdentifier(true), GetpositionObject(true));
     factory->add_type_object("position", GetpositionIdentifier(false), GetpositionObject(false));
 
+/* TODO: pending any definition
     factory->add_type_object("value", GetvalueIdentifier(true), GetvalueObject(true));
     factory->add_type_object("value", GetvalueIdentifier(false), GetvalueObject(false));
+*/
 
     factory->add_type_object("extensibility", GetextensibilityIdentifier(true), GetextensibilityObject(true));
     factory->add_type_object("extensibility", GetextensibilityIdentifier(false), GetextensibilityObject(false));
@@ -100,8 +102,10 @@ void register_builtin_annotations_types(
     factory->add_type_object("default_literal", Getdefault_literalIdentifier(true), Getdefault_literalObject(true));
     factory->add_type_object("default_literal", Getdefault_literalIdentifier(false), Getdefault_literalObject(false));
 
+/* TODO: pending any definition
     factory->add_type_object("default", GetdefaultIdentifier(true), GetdefaultObject(true));
     factory->add_type_object("default", GetdefaultIdentifier(false), GetdefaultObject(false));
+*/
 
     factory->add_type_object("range", GetrangeIdentifier(true), GetrangeObject(true));
     factory->add_type_object("range", GetrangeIdentifier(false), GetrangeObject(false));
@@ -947,6 +951,7 @@ const TypeObject* GetCompletepositionObject()
     return TypeObjectFactory::get_instance()->get_type_object("position", true);
 }
 
+/* TODO: pending any definition
 const TypeIdentifier* GetvalueIdentifier(
         bool complete)
 {
@@ -1078,6 +1083,7 @@ const TypeObject* GetCompletevalueObject()
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("value", true);
 }
+*/
 
 const TypeIdentifier* GetextensibilityIdentifier(
         bool complete)
@@ -2213,6 +2219,7 @@ const TypeObject* GetCompletedefault_literalObject()
     return TypeObjectFactory::get_instance()->get_type_object("default_literal", true);
 }
 
+/* TODO: pending any definition
 const TypeIdentifier* GetdefaultIdentifier(
         bool complete)
 {
@@ -2344,6 +2351,7 @@ const TypeObject* GetCompletedefaultObject()
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("default", true);
 }
+*/
 
 const TypeIdentifier* GetrangeIdentifier(
         bool complete)
