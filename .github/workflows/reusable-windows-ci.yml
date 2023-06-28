@@ -248,14 +248,13 @@ jobs:
           # Install the HSM emulator (required for testing PKCS #11 support)
           $urlHSM = "https://github.com/disig/SoftHSM2-for-Windows/releases/download/v2.5.0/SoftHSM2-2.5.0.msi"
           $msiHSM = "$Env:tmp\SoftHSM2-2.5.0.msi"
-
           iwr $urlHSM -OutFile $msiHSM
-          msiexec /i $msiHSM /quiet TARGETDIR="""${Env:ProgramFiles(x86)}"""
-          $Env:SOFTHSM2_ROOT = Join-Path "${Env:ProgramFiles(x86)}" SoftHSM2
-          'SOFTHSM2_ROOT=' + $Env:SOFTHSM2_ROOT | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
+          msiexec /i $msiHSM /log "$Env:tmp\SoftHSM2.log" /quiet TARGETDIR="""${Env:ProgramFiles(x86)}"""
+
+          # move to pkcs11 installation while msiexec installs softhsm2
 
           # Build pkcs11 library
-          $deploy_dir = "$Env:ProgramFiles\libp11"
+          $deploy_dir = "$Env:ProgramFiles/libp11"
           git clone https://github.com/OpenSC/libp11.git $deploy_dir
           $deploy_dir = gi $deploy_dir
 
@@ -269,11 +268,23 @@ jobs:
           nmake .\Makefile.mak OPENSSL_DIR="$Env:OPENSSL64_ROOT" BUILD_FOR=WIN64
           $config = ls -Path "$Env:OPENSSL64_ROOT" -Recurse -Include openssl.cnf;
           $libp11_path = Join-Path $deploy_dir src
-          'LibP11_ROOT_64=' + $libp11_path | Out-File $Env:GITHUB_ENV -Append -Encoding OEM
 
-          # Wait until installation is completed
-          Wait-Process -Name msiexec -ErrorAction SilentlyContinue
-          del $msiHSM
+          # Check softhsm2 installation
+          if (!(sls -Path "$Env:tmp\SoftHSM2.log" -Pattern  "Installation success or error status: 0" -SimpleMatch -Quiet))
+          {
+            Write-Error -Message "SoftHSM2 installation failed."
+          }
+
+          # lead openssl to the right config file
+          $Env:OPENSSL_CONF=$config
+
+          # Set up environment: introduce openssl and softhsm2 binaries in the path for the lower check
+          $Env:SOFTHSM2_ROOT = Join-Path "${Env:ProgramFiles(x86)}" SoftHSM2
+          $Env:SOFTHSM2_CONF = (gci -Path $Env:SOFTHSM2_ROOT -R -Filter *.conf | select -First 1).fullname
+          $Env:Path += ($env:Path[-1] -ne ';' ? ';' : $null) + (Join-Path $Env:SOFTHSM2_ROOT bin)
+          $Env:Path += ";" + (Join-Path $Env:SOFTHSM2_ROOT lib)
+          $Env:Path += ";" + (Join-Path $Env:OPENSSL64_ROOT bin)
+          $Env:Path += ";" + $libp11_path
 
           # Set up OpenSSL
           $module_path = gci -Path $Env:SOFTHSM2_ROOT -Recurse -Include '*.dll' | ? FullName -match 64
@@ -298,14 +309,24 @@ jobs:
           ($contents[0..$header_line] + $header +  $contents[$header_line..$contents.count] + $footer) |
           % { $_.TrimStart() } | Out-File $config -Encoding OEM;
 
-          # lead openssl to the right config file
-          $Env:OPENSSL_CONF=$config
+          # Check config file
+          Get-Content $config
 
-          # introduce openssl binary in the path for the lower check
-          $Env:Path += ";$Env:OPENSSL64_ROOT\bin"
+          # Propagate to the other steps using github actions ad hoc files
+          ('LibP11_ROOT_64=' + $libp11_path ),
+          ('OPENSSL_CONF=' + $Env:OPENSSL_CONF),
+          ('SOFTHSM2_ROOT=' + $Env:SOFTHSM2_ROOT),
+          ('SOFTHSM2_CONF=' + $Env:SOFTHSM2_CONF ) |
+                Out-File -Path $Env:GITHUB_ENV -Append -Encoding OEM
+
+          # keep softhsm2-util working in the testing
+          (Join-path $Env:SOFTHSM2_ROOT bin),
+          (Join-path $Env:SOFTHSM2_ROOT lib),
+          $libp11_path | Out-File -Path $Env:GITHUB_PATH -Encoding OEM -Append
 
           # check if is working
           openssl engine pkcs11 -t
+          softhsm2-util --show-slots
 
       - name: Prepare colcon workspace
         run: |
@@ -615,14 +636,14 @@ jobs:
             gci $dumpfolder | Sort-Object LastWriteTime
             "::endgroup::"
           }
-          
+
           if($failed)
           {
             $msg = "$failed test(s) failed"
             "TestErrors=" + $msg | Out-File $Env:GITHUB_OUTPUT -Append
             Write-Error $msg;
           }
-          
+
           # Avoid disturbing exit code 1 message
           $LASTEXITCODE=0
 
