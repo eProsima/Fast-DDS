@@ -26,6 +26,7 @@ namespace { char dummy; }
 
 #include "TestRegression3361.h"
 #include "TestRegression3361TypeObject.h"
+#include <mutex>
 #include <utility>
 #include <sstream>
 #include <fastrtps/rtps/common/SerializedPayload.h>
@@ -40,18 +41,22 @@ using namespace eprosima::fastrtps::rtps;
 
 void registerTestRegression3361Types()
 {
-    TypeObjectFactory *factory = TypeObjectFactory::get_instance();
-    factory->add_type_object("TestModule::MACHINEID", TestModule::GetMACHINEIDIdentifier(true),
-            TestModule::GetMACHINEIDObject(true));
-    factory->add_type_object("TestModule::MACHINEID", TestModule::GetMACHINEIDIdentifier(false),
-            TestModule::GetMACHINEIDObject(false));
+    static std::once_flag once_flag;
+    std::call_once(once_flag, []()
+            {
+                TypeObjectFactory *factory = TypeObjectFactory::get_instance();
+                factory->add_type_object("TestModule::MACHINEID", TestModule::GetMACHINEIDIdentifier(true),
+                        TestModule::GetMACHINEIDObject(true));
+                factory->add_type_object("TestModule::MACHINEID", TestModule::GetMACHINEIDIdentifier(false),
+                        TestModule::GetMACHINEIDObject(false));
 
 
-    factory->add_type_object("TestRegression3361", GetTestRegression3361Identifier(true),
-    GetTestRegression3361Object(true));
-    factory->add_type_object("TestRegression3361", GetTestRegression3361Identifier(false),
-    GetTestRegression3361Object(false));
+                factory->add_type_object("TestRegression3361", GetTestRegression3361Identifier(true),
+                GetTestRegression3361Object(true));
+                factory->add_type_object("TestRegression3361", GetTestRegression3361Identifier(false),
+                GetTestRegression3361Object(false));
 
+            });
 }
 
 const TypeIdentifier* GetTestRegression3361Identifier(bool complete)

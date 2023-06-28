@@ -27,6 +27,7 @@ char dummy;
 #endif  // _WIN32
 
 #include "TestRegression3361.h"
+#include "TestRegression3361TypeObject.h"
 #include <fastcdr/Cdr.h>
 
 #include <fastcdr/exceptions/BadParamException.h>
@@ -44,6 +45,8 @@ TestRegression3361::TestRegression3361()
     // TestModule::MACHINEID m_uuid
     m_uuid ="";
 
+    // Just to register all known types
+    registerTestRegression3361Types();
 }
 
 TestRegression3361::~TestRegression3361()

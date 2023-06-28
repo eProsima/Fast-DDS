@@ -26,6 +26,7 @@ namespace { char dummy; }
 
 #include "TestIncludeRegression3361.h"
 #include "TestIncludeRegression3361TypeObject.h"
+#include <mutex>
 #include <utility>
 #include <sstream>
 #include <fastrtps/rtps/common/SerializedPayload.h>
@@ -40,13 +41,17 @@ using namespace eprosima::fastrtps::rtps;
 
 void registerTestIncludeRegression3361Types()
 {
-    TypeObjectFactory *factory = TypeObjectFactory::get_instance();
-    factory->add_type_object("TestModule::MACHINEID", TestModule::GetMACHINEIDIdentifier(true),
-            TestModule::GetMACHINEIDObject(true));
-    factory->add_type_object("TestModule::MACHINEID", TestModule::GetMACHINEIDIdentifier(false),
-            TestModule::GetMACHINEIDObject(false));
+    static std::once_flag once_flag;
+    std::call_once(once_flag, []()
+            {
+                TypeObjectFactory *factory = TypeObjectFactory::get_instance();
+                factory->add_type_object("TestModule::MACHINEID", TestModule::GetMACHINEIDIdentifier(true),
+                        TestModule::GetMACHINEIDObject(true));
+                factory->add_type_object("TestModule::MACHINEID", TestModule::GetMACHINEIDIdentifier(false),
+                        TestModule::GetMACHINEIDObject(false));
 
 
+            });
 }
 
 namespace TestModule {
