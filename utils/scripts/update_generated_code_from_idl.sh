@@ -20,8 +20,19 @@ files_needing_case_sensitive=(
 
 files_needing_output_dir=(
     './include/fastdds/statistics/types.idl|../../../src/cpp/statistics/types'
+    './include/fastrtps/monitor-service/ms_types.idl|../../../src/cpp/monitor-service/types'
     )
 
+generated_files_needed_to_remove=(
+    './src/cpp/monitor-service/types/types*'
+)
+
+# Temporal workaround for the include paths of generated files
+# header include path - substitute
+generated_files_needed_include_path_change=(
+    './src/cpp/monitor-service/types/ms_types.h|__/__/fastdds/statistics/types.h|statistics/types/types.h'
+    './src/cpp/monitor-service/types/ms_typesPubSubTypes.h|__/__/fastdds/statistics/typesPubSubTypes.h|statistics/types/typesPubSubTypes.h'
+)
 
 yellow='\E[1;33m'
 textreset='\E[1;0m'
@@ -81,6 +92,20 @@ for idl_file in "${idl_files[@]}"; do
 
     cd -
 done
+
+# Change include paths if needed
+generated_file=""
+path_splits=""
+for generated_file in ${generated_files_needed_include_path_change[@]}; do
+    path_splits=(${generated_file//\|/ })
+    sed -i "s#${path_splits[1]}#${path_splits[2]}#" ${path_splits[0]}
+done
+
+# Remove extra files
+rm_file=""
+for rm_file in ${generated_files_needed_to_remove[@]}; do
+        rm $rm_file
+    done
 
 cd utils/scripts
 
