@@ -233,7 +233,7 @@ const TypeObject* GetMinimalidObject()
 
     // NameHash
     MD5 value_hash("value");
-    for (int i=0; i < 4; ++i)
+    for (int i = 0; i < 4; ++i)
     {
         mam_value.name_hash()[i] = value_hash.digest[i];
     }
@@ -302,7 +302,7 @@ const TypeObject* GetCompleteidObject()
 
     // AnnotationParameterFlag: Unused. No flags apply
     // TypeIdentifier
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint32_t", false));
+    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint32_t", true));
 
     // MemberName
     cam_value.name("value");
@@ -723,11 +723,17 @@ const TypeObject* GetMinimaloptionalObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
-// TODO(jlbueno): XTypes    mam_value.name("value");
+    MD5 value_hash("value");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_value.name_hash()[i] = value_hash.digest[i];
+    }
 
     AnnotationParameterValue def_value_value;
+    // As the member type id is primitive, the discriminator is correctly set with this instruction
     def_value_value._d(mam_value.common().member_type_id()._d());
-//TODO(jlbueno): XTypes    def_value_value.from_string("true");
+    // Default value: true
+    def_value_value.boolean_value(true);
     mam_value.default_value(def_value_value);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -770,25 +776,17 @@ const TypeObject* GetCompleteoptionalObject()
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
-
-    // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().annotation_type().header().detail().ann_builtin()...
-    //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("optional");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", true));
     cam_value.name("value");
 
     AnnotationParameterValue def_value_value;
+    // As the member type id is primitive, the discriminator is correctly set with this instruction
     def_value_value._d(cam_value.common().member_type_id()._d());
-//TODO(jlbueno): XTypes    def_value_value.from_string("true");
+    // Default value: true
+    def_value_value.boolean_value(true);
     cam_value.default_value(def_value_value);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
