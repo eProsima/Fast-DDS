@@ -1129,9 +1129,18 @@ const TypeObject* GetMinimalextensibilityObject()
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*GetExtensibilityKindIdentifier(false));
-// TODO(jlbueno): XTypes    mam_value.name("value");
-
+    const TypeIdentifier* member_type_id = GetExtensibilityKindIdentifier(false);
+    assert(nullptr != member_type_id);
+    mam_value.common().member_type_id(*member_type_id);
+    MD5 value_hash("value");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_value.name_hash()[i] = value_hash.digest[i];
+    }
+    const TypeObject* member_type_object = GetExtensibilityKindObject(false);
+    assert(nullptr != member_type_object);
+    mam_value.default_value()._d(member_type_object->minimal()._d());
+    // Default constructor already sets the enumerated value to 0.
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
 
@@ -1174,21 +1183,16 @@ const TypeObject* GetCompleteextensibilityObject()
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
-
-    // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().annotation_type().header().detail().ann_builtin()...
-    //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("extensibility");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*GetExtensibilityKindIdentifier(true));
+    const TypeIdentifier* member_type_id = GetExtensibilityKindIdentifier(true);
+    assert(nullptr != member_type_id);
+    cam_value.common().member_type_id(*member_type_id);
     cam_value.name("value");
+    const TypeObject* member_type_object = GetExtensibilityKindObject(true);
+    assert(nullptr != member_type_object);
+    cam_value.default_value()._d(member_type_object->complete()._d());
 
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
@@ -1262,28 +1266,12 @@ const TypeObject* GetMinimalExtensibilityKindObject()
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ENUM);
-
-    // No flags apply
-    //type_object->minimal().enumerated_type().enum_flags().IS_FINAL(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_APPENDABLE(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_MUTABLE(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_NESTED(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_AUTOID_HASH(false);
-
-    type_object->minimal().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
+    type_object->minimal().enumerated_type().header().common().bit_bound(32);
 
     uint32_t value = 0;
     MinimalEnumeratedLiteral mel_FINAL;
-/* TODO(jlbueno): XTYPES
-    mel_FINAL.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    mel_FINAL.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    mel_FINAL.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    mel_FINAL.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    mel_FINAL.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    mel_FINAL.common().flags().IS_KEY(false); // Doesn't apply
-    mel_FINAL.common().flags().IS_DEFAULT(false);
-*/
     mel_FINAL.common().value(value++);
+    mel_FINAL.common().flags(static_cast<EnumeratedLiteralFlag>(0));
     MD5 FINAL_hash("FINAL");
     for (int i = 0; i < 4; ++i)
     {
@@ -1292,16 +1280,8 @@ const TypeObject* GetMinimalExtensibilityKindObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_FINAL);
 
     MinimalEnumeratedLiteral mel_APPENDABLE;
-/* TODO(jlbueno): XTYPES
-    mel_APPENDABLE.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    mel_APPENDABLE.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    mel_APPENDABLE.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    mel_APPENDABLE.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    mel_APPENDABLE.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    mel_APPENDABLE.common().flags().IS_KEY(false); // Doesn't apply
-    mel_APPENDABLE.common().flags().IS_DEFAULT(false);
-*/
     mel_APPENDABLE.common().value(value++);
+    mel_APPENDABLE.common().flags(static_cast<EnumeratedLiteralFlag>(0));
     MD5 APPENDABLE_hash("APPENDABLE");
     for (int i = 0; i < 4; ++i)
     {
@@ -1310,16 +1290,8 @@ const TypeObject* GetMinimalExtensibilityKindObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_APPENDABLE);
 
     MinimalEnumeratedLiteral mel_MUTABLE;
-/* TODO(jlbueno): XTYPES
-    mel_MUTABLE.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    mel_MUTABLE.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    mel_MUTABLE.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    mel_MUTABLE.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    mel_MUTABLE.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    mel_MUTABLE.common().flags().IS_KEY(false); // Doesn't apply
-    mel_MUTABLE.common().flags().IS_DEFAULT(false);
-*/
     mel_MUTABLE.common().value(value++);
+    mel_MUTABLE.common().flags(static_cast<EnumeratedLiteralFlag>(0));
     MD5 MUTABLE_hash("MUTABLE");
     for (int i = 0; i < 4; ++i)
     {
@@ -1366,66 +1338,26 @@ const TypeObject* GetCompleteExtensibilityKindObject()
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ENUM);
-
-    // No flags apply
-    //type_object->complete().enumerated_type().enum_flags().IS_FINAL(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_APPENDABLE(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_MUTABLE(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_NESTED(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_AUTOID_HASH(false);
-
-    type_object->complete().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
-    //type_object->complete().enumerated_type().header().detail().ann_builtin()...
-    //type_object->complete().enumerated_type().header().detail().ann_custom()...
-    type_object->complete().enumerated_type().header().detail().type_name("ExtensibilityKind");
+    type_object->complete().enumerated_type().header().common().bit_bound(32);
+    type_object->complete().enumerated_type().header().detail().type_name("extensibility::ExtensibilityKind");
 
     uint32_t value = 0;
     CompleteEnumeratedLiteral cel_FINAL;
-/* TODO(jlbueno): XTYPES
-    cel_FINAL.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    cel_FINAL.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    cel_FINAL.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    cel_FINAL.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    cel_FINAL.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    cel_FINAL.common().flags().IS_KEY(false); // Doesn't apply
-    cel_FINAL.common().flags().IS_DEFAULT(false);
-*/
     cel_FINAL.common().value(value++);
+    cel_FINAL.common().flags(static_cast<EnumeratedLiteralFlag>(0));
     cel_FINAL.detail().name("FINAL");
-    //cel_FINAL.detail().ann_builtin()...
-    //cel_FINAL.detail().ann_custom()...
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_FINAL);
 
     CompleteEnumeratedLiteral cel_APPENDABLE;
-/* TODO(jlbueno): XTYPES
-    cel_APPENDABLE.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    cel_APPENDABLE.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    cel_APPENDABLE.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    cel_APPENDABLE.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    cel_APPENDABLE.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    cel_APPENDABLE.common().flags().IS_KEY(false); // Doesn't apply
-    cel_APPENDABLE.common().flags().IS_DEFAULT(false);
-*/
     cel_APPENDABLE.common().value(value++);
+    cel_APPENDABLE.common().flags(static_cast<EnumeratedLiteralFlag>(0));
     cel_APPENDABLE.detail().name("APPENDABLE");
-    //cel_APPENDABLE.detail().ann_builtin()...
-    //cel_APPENDABLE.detail().ann_custom()...
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_APPENDABLE);
 
     CompleteEnumeratedLiteral cel_MUTABLE;
-/* TODO(jlbueno): XTYPES
-    cel_MUTABLE.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    cel_MUTABLE.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    cel_MUTABLE.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    cel_MUTABLE.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    cel_MUTABLE.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    cel_MUTABLE.common().flags().IS_KEY(false); // Doesn't apply
-    cel_MUTABLE.common().flags().IS_DEFAULT(false);
-*/
     cel_MUTABLE.common().value(value++);
+    cel_MUTABLE.common().flags(static_cast<EnumeratedLiteralFlag>(0));
     cel_MUTABLE.detail().name("MUTABLE");
-    //cel_MUTABLE.detail().ann_builtin()...
-    //cel_MUTABLE.detail().ann_custom()...
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_MUTABLE);
 
 
