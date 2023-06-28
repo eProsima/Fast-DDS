@@ -436,6 +436,7 @@ std::basic_ostream<CharT, Traits>& operator <<(
 }
 
 // specialization to use
+template class RTPS_DllAPI member_id<uint32_t>;
 using MemberId = member_id<uint32_t>;
 
 const MemberId MEMBER_ID_INVALID;

@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_1_3_DYNAMIC_TYPE_BUILDER_FACTORY_H
-#define TYPES_1_3_DYNAMIC_TYPE_BUILDER_FACTORY_H
+#ifndef TYPES_1_3_DYNAMIC_TYPE_BUILDER_FACTORY_IMPL_H
+#define TYPES_1_3_DYNAMIC_TYPE_BUILDER_FACTORY_IMPL_H
 
 #include <fastrtps/types/AnnotationParameterValue.h>
 #include <fastrtps/types/TypesBase.h>
@@ -34,9 +34,9 @@ class AnnotationParameterValue;
 
 namespace v1_3 {
 
-class DynamicTypeBuilderFactory;
-class DynamicTypeBuilder;
-class DynamicType;
+class DynamicTypeBuilderFactoryImpl;
+class DynamicTypeBuilderImpl;
+class DynamicTypeImpl;
 
 enum class type_tracking
 {
@@ -56,8 +56,8 @@ struct dynamic_tracker_data<type_tracking::none> {};
 template<>
 struct dynamic_tracker_data<type_tracking::partial>
 {
-    std::set<const DynamicTypeBuilder*> builders_list_; /*!< Collection of active DynamicTypeBuilder instances */
-    std::set<const DynamicType*> types_list_; /*!< Collection of active DynamicType instances */
+    std::set<const DynamicTypeBuilderImpl*> builders_list_; /*!< Collection of active DynamicTypeBuilderImpl instances */
+    std::set<const DynamicTypeImpl*> types_list_; /*!< Collection of active DynamicTypeImpl instances */
     std::mutex mutex_; /*!< atomic access to the collections */
 };
 
@@ -65,8 +65,8 @@ template<>
 struct dynamic_tracker_data<type_tracking::complete>
     : public dynamic_tracker_data<type_tracking::partial>
 {
-    std::set<const DynamicTypeBuilder*> primitive_builders_list_; /*!< Collection of static builder instances */
-    std::set<const DynamicType*> primitive_types_list_; /*!< Collection of static type instances */
+    std::set<const DynamicTypeBuilderImpl*> primitive_builders_list_; /*!< Collection of static builder instances */
+    std::set<const DynamicTypeImpl*> primitive_types_list_; /*!< Collection of static type instances */
 };
 
 } // namespace detail
@@ -78,8 +78,8 @@ template<type_tracking mode>
 class dynamic_tracker
     : protected detail::dynamic_tracker_data<mode>
 {
-    friend class DynamicTypeBuilder;
-    friend class DynamicTypeBuilderFactory;
+    friend class DynamicTypeBuilderImpl;
+    friend class DynamicTypeBuilderFactoryImpl;
 
     //! clear collection contents
     void reset() noexcept;
@@ -87,22 +87,22 @@ class dynamic_tracker
     bool is_empty() noexcept;
     //! add primitive builder
     void add_primitive(
-            const DynamicTypeBuilder*) noexcept;
+            const DynamicTypeBuilderImpl*) noexcept;
     //! add primitive types
     void add_primitive(
-            const DynamicType*) noexcept;
+            const DynamicTypeImpl*) noexcept;
     //! add new builder
     bool add(
-            const DynamicTypeBuilder*) noexcept;
+            const DynamicTypeBuilderImpl*) noexcept;
     //! remove builder
     bool remove(
-            const DynamicTypeBuilder*) noexcept;
+            const DynamicTypeBuilderImpl*) noexcept;
     //! add new type
     bool add(
-            const DynamicType*) noexcept;
+            const DynamicTypeImpl*) noexcept;
     //! remove type
     bool remove(
-            const DynamicType*) noexcept;
+            const DynamicTypeImpl*) noexcept;
 
     // singleton creation
     static dynamic_tracker<mode>& get_dynamic_tracker()
@@ -119,18 +119,18 @@ class dynamic_tracker
 constexpr type_tracking selected_mode = type_tracking::complete;
 #else
 constexpr type_tracking selected_mode = type_tracking::none;
-#endif // if defined(ENABLE_DYNAMIC_MEMORY_CHECK) && (!defined(_MSC_VER) || _MSC_VER >= 1921) && (!defined(__APPLE__) || _LIBCPP_STD_VER >= 20)
+#endif // if defined(ENABLE_DYNAMIC_MEMORY_CHECK) ...
 
 class TypeDescriptor;
 class MemberDescriptor;
 
 /**
- * This class is conceived as a singleton charged of creation of @ref DynamicTypeBuilder objects.
+ * This class is conceived as a singleton charged of creation of @ref DynamicTypeBuilderImpl objects.
  * For simplicity direct primitive types instantiation is also possible.
  */
-class DynamicTypeBuilderFactory final
+class DynamicTypeBuilderFactoryImpl final
 {
-    using builder_allocator = eprosima::detail::BuilderAllocator<DynamicTypeBuilder, DynamicTypeBuilderFactory, true>;
+    using builder_allocator = eprosima::detail::BuilderAllocator<DynamicTypeBuilderImpl, DynamicTypeBuilderFactoryImpl, true>;
 
     // BuilderAllocator ancillary
     builder_allocator& get_allocator()
@@ -144,19 +144,19 @@ class DynamicTypeBuilderFactory final
 
     //! allocator callback
     void after_construction(
-            DynamicTypeBuilder* b);
+            DynamicTypeBuilderImpl* b);
 
     //! allocator callback
     void before_destruction(
-            DynamicTypeBuilder* b);
+            DynamicTypeBuilderImpl* b);
 
     // free any allocated resources
     void reset();
 
-    DynamicTypeBuilderFactory() = default;
+    DynamicTypeBuilderFactoryImpl() = default;
 
     //! auxiliary method for primitive creation that atomically modifies the dynamic_tracker
-    RTPS_DllAPI DynamicTypeBuilder_ptr new_primitive_builder(
+    DynamicTypeBuilder_ptr new_primitive_builder(
             TypeKind kind) noexcept;
 
     //! auxiliary method for string creation that atomically modifies the dynamic_tracker
@@ -229,15 +229,15 @@ class DynamicTypeBuilderFactory final
 
 public:
 
-    ~DynamicTypeBuilderFactory();
+    ~DynamicTypeBuilderFactoryImpl();
 
     /**
      * Returns the singleton factory object
      * @remark This method is thread-safe.
      * @remark The singleton is allocated using C++11 builtin double-checked locking lazy initialization.
-     * @return @ref DynamicTypeBuilderFactory &
+     * @return @ref DynamicTypeBuilderFactoryImpl &
      */
-    RTPS_DllAPI static DynamicTypeBuilderFactory& get_instance() noexcept;
+    static DynamicTypeBuilderFactoryImpl& get_instance() noexcept;
 
     /**
      * Resets the state of the factory
@@ -246,52 +246,52 @@ public:
      *         the factory will track object allocation/deallocation. This method will reset this tracking.
      * @return standard @ref ReturnCode_t
      */
-    RTPS_DllAPI static ReturnCode_t delete_instance() noexcept;
+    static ReturnCode_t delete_instance() noexcept;
 
     /**
-     * Create a new @ref DynamicTypeBuilder object based on the given @ref TypeDescriptor state.
+     * Create a new @ref DynamicTypeBuilderImpl object based on the given @ref TypeDescriptor state.
      * @remark This method is thread-safe.
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.6 this method is
      *         called `create_type` which is misguiding. Note it returns a builder associated with the type.
      * @remark This method will always create a new builder object. In order to access primitive static allocated
      *         ones and avoid heap overhead use the `get_xxxx_type()` methods.
      * @param[in] td object state to copy
-     * @return new @ref DynamicTypeBuilder object
+     * @return new @ref DynamicTypeBuilderImpl object
      */
-    RTPS_DllAPI DynamicTypeBuilder* create_type(
+    DynamicTypeBuilderImpl* create_type(
             const TypeDescriptor& td) noexcept;
 
     /**
-     * Create a new @ref DynamicTypeBuilder object based on the given @ref DynamicType object.
+     * Create a new @ref DynamicTypeBuilderImpl object based on the given @ref DynamicTypeImpl object.
      * @remark This method is thread-safe.
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.7 this method is
      *         called `create_type_copy` which is misguiding. Note it returns a builder associated with the type.
      * @remark This method will always create a new builder object. In order to access primitive static allocated
      *         ones and avoid heap overhead use the `get_xxxx_type()` methods.
-     * @param[in] type @ref DynamicType object
-     * @return new @ref DynamicTypeBuilder object
+     * @param[in] type @ref DynamicTypeImpl object
+     * @return new @ref DynamicTypeBuilderImpl object
      */
-    RTPS_DllAPI DynamicTypeBuilder* create_type_copy(
-            const DynamicType& type) noexcept;
+    DynamicTypeBuilderImpl* create_type_copy(
+            const DynamicTypeImpl& type) noexcept;
 
     /**
-     * Create a new @ref DynamicType object based on the given @ref DynamicType object.
+     * Create a new @ref DynamicTypeImpl object based on the given @ref DynamicTypeImpl object.
      * @remark This method is thread-safe.
      * @remark This method will always create a new object. In order to access primitive static allocated
      *         ones and avoid heap overhead use the `get_xxxx_type()` methods.
-     * @param[in] type @ref DynamicType object
-     * @return new @ref DynamicType object copy
+     * @param[in] type @ref DynamicTypeImpl object
+     * @return new @ref DynamicTypeImpl object copy
      */
-    RTPS_DllAPI const DynamicType* create_copy(
-            const DynamicType& type) noexcept;
+    const DynamicTypeImpl* create_copy(
+            const DynamicTypeImpl& type) noexcept;
 
     /**
-     * Retrieve the cached @ref DynamicType object associated to a given primitive
+     * Retrieve the cached @ref DynamicTypeImpl object associated to a given primitive
      * @remark This method is thread-safe.
      * @param[in] kind type identifying the primitive type to retrieve
-     * @return @ref DynamicType object
+     * @return @ref DynamicTypeImpl object
      */
-    RTPS_DllAPI const DynamicType* get_primitive_type(
+    const DynamicTypeImpl* get_primitive_type(
             TypeKind kind) noexcept;
 
     /**
@@ -299,35 +299,35 @@ public:
      * @remark This method is thread-safe.
      * @remark RAII will prevent memory leaks even if this method is not called.
      * @remark Non-primitive types will not be tracked by the framework after this call.
-     * @param[in] type @ref DynamicType object whose resources to free
+     * @param[in] type @ref DynamicTypeImpl object whose resources to free
      * @return standard ReturnCode_t
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
      */
-    RTPS_DllAPI ReturnCode_t delete_type(
-            const DynamicType* type) noexcept;
+    ReturnCode_t delete_type(
+            const DynamicTypeImpl* type) noexcept;
 
     /**
      * Frees any framework resources associated with the given type according with [standard] section 7.5.2.2.10.
      * @remark This method is thread-safe.
      * @remark RAII will prevent memory leaks even if this method is not called.
      * @remark Non-primitive types will not be tracked by the framework after this call.
-     * @param[in] type @ref DynamicTypeBuilder object whose resources to free
+     * @param[in] type @ref DynamicTypeBuilderImpl object whose resources to free
      * @return standard ReturnCode_t
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
      */
-    RTPS_DllAPI ReturnCode_t delete_type(
-            const DynamicTypeBuilder* type) noexcept;
+    ReturnCode_t delete_type(
+            const DynamicTypeBuilderImpl* type) noexcept;
 
     /**
-     * Returns a singleton @ref DynamicTypeBuilder object
+     * Returns a singleton @ref DynamicTypeBuilderImpl object
      * @tparam kind @ref eprosima::fastrtps::types::TypeKind that identifies the singleton to return
      * @remark This method is thread-safe.
      * @remark The singleton is allocated using C++11 builtin double-checked locking lazy initialization.
      * @remark The singleton cannot be modified. In order to get a modifiable builder use @ref create_type().
-     * @return singleton @ref DynamicTypeBuilder object
+     * @return singleton @ref DynamicTypeBuilderImpl object
      */
     template<TypeKind kind>
-    typename std::enable_if<is_primitive_t<kind>::value, const DynamicTypeBuilder*>::type
+    typename std::enable_if<is_primitive_t<kind>::value, const DynamicTypeBuilderImpl*>::type
     create_primitive_type() noexcept
     {
         // C++11 compiler uses double-checked locking pattern to avoid concurrency issues
@@ -340,251 +340,251 @@ public:
     }
 
     /**
-     * Returns a singleton @ref DynamicTypeBuilder object
+     * Returns a singleton @ref DynamicTypeBuilderImpl object
      * @remark This method is thread-safe.
      * @remark The singleton is allocated using C++11 builtin double-checked locking lazy initialization.
      * @remark The singleton cannot be modified. In order to get a modifiable builder use @ref create_type().
      * @param kind @ref eprosima::fastrtps::types::TypeKind that identifies the singleton to return
-     * @return singleton @ref DynamicTypeBuilder object
+     * @return singleton @ref DynamicTypeBuilderImpl object
      */
-    RTPS_DllAPI const DynamicTypeBuilder* create_primitive_type(
+    const DynamicTypeBuilderImpl* create_primitive_type(
             TypeKind kind) noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_INT32>()`
-    RTPS_DllAPI const DynamicTypeBuilder* create_int32_type() noexcept;
+    const DynamicTypeBuilderImpl* create_int32_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_UINT32>()`
-    RTPS_DllAPI const DynamicTypeBuilder* create_uint32_type() noexcept;
+    const DynamicTypeBuilderImpl* create_uint32_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_INT16>()`
-    RTPS_DllAPI const DynamicTypeBuilder* create_int16_type() noexcept;
+    const DynamicTypeBuilderImpl* create_int16_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_UINT16>()`
-    RTPS_DllAPI const DynamicTypeBuilder* create_uint16_type() noexcept;
+    const DynamicTypeBuilderImpl* create_uint16_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_INT64>()`
-    RTPS_DllAPI const DynamicTypeBuilder* create_int64_type() noexcept;
+    const DynamicTypeBuilderImpl* create_int64_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_UINT64>()`
-    RTPS_DllAPI const DynamicTypeBuilder* create_uint64_type() noexcept;
+    const DynamicTypeBuilderImpl* create_uint64_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_FLOAT32>()`
-    RTPS_DllAPI const DynamicTypeBuilder* create_float32_type() noexcept;
+    const DynamicTypeBuilderImpl* create_float32_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_FLOAT64>()`
-    RTPS_DllAPI const DynamicTypeBuilder* create_float64_type() noexcept;
+    const DynamicTypeBuilderImpl* create_float64_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_FLOAT128>()`
-    RTPS_DllAPI const DynamicTypeBuilder* create_float128_type() noexcept;
+    const DynamicTypeBuilderImpl* create_float128_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_CHAR8>()`
-    RTPS_DllAPI const DynamicTypeBuilder* create_char8_type() noexcept;
+    const DynamicTypeBuilderImpl* create_char8_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_CHAR16>()`
-    RTPS_DllAPI const DynamicTypeBuilder* create_char16_type() noexcept;
+    const DynamicTypeBuilderImpl* create_char16_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_BOOLEAN>()`
-    RTPS_DllAPI const DynamicTypeBuilder* create_bool_type() noexcept;
+    const DynamicTypeBuilderImpl* create_bool_type() noexcept;
 
     //! alias of `create_primitive_builder<TypeKind::TK_BYTE>()`
-    RTPS_DllAPI const DynamicTypeBuilder* create_byte_type() noexcept;
+    const DynamicTypeBuilderImpl* create_byte_type() noexcept;
 
     /**
-     * Creates a new @ref DynamicTypeBuilder object representing a bounded string type.
+     * Creates a new @ref DynamicTypeBuilderImpl object representing a bounded string type.
      * @remark The element type of the typed returned is a char8
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.5 this method is
      *         called `create_string_type` which is misguiding. Note it returns a builder.
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
-     * @return new @ref DynamicTypeBuilder object
+     * @return new @ref DynamicTypeBuilderImpl object
      */
-    RTPS_DllAPI const DynamicTypeBuilder* create_string_type(
+    const DynamicTypeBuilderImpl* create_string_type(
             uint32_t bound = LENGTH_UNLIMITED) noexcept;
 
     /**
-     * Creates a new @ref DynamicTypeBuilder object representing a bounded wstring type.
+     * Creates a new @ref DynamicTypeBuilderImpl object representing a bounded wstring type.
      * @remark The element type of the typed returned is a char16
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.5 this method is
      *         called `create_wstring_type` which is misguiding. Note it returns a builder.
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
-     * @return new @ref DynamicTypeBuilder object
+     * @return new @ref DynamicTypeBuilderImpl object
      */
-    RTPS_DllAPI const DynamicTypeBuilder* create_wstring_type(
+    const DynamicTypeBuilderImpl* create_wstring_type(
             uint32_t bound = LENGTH_UNLIMITED) noexcept;
 
     /**
-     * Creates a new @ref DynamicTypeBuilder object representing a sequence
+     * Creates a new @ref DynamicTypeBuilderImpl object representing a sequence
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.4 this method is
      *         called `create_sequence_type` which is misguiding. Note it returns a builder.
-     * @param[in] type @ref DynamicType which becomes the element type
+     * @param[in] type @ref DynamicTypeImpl which becomes the element type
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
-     * @return new @ref DynamicTypeBuilder object
+     * @return new @ref DynamicTypeBuilderImpl object
      */
-    RTPS_DllAPI DynamicTypeBuilder* create_sequence_type(
-            const DynamicType& type,
+    DynamicTypeBuilderImpl* create_sequence_type(
+            const DynamicTypeImpl& type,
             uint32_t bound = LENGTH_UNLIMITED) noexcept;
 
     /**
-     * Creates a new @ref DynamicTypeBuilder object representing an array
+     * Creates a new @ref DynamicTypeBuilderImpl object representing an array
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.1 this method is
      *         called `create_array_type` which is misguiding. Note the return value is a builder.
-     * @param[in] type @ref DynamicType which becomes the element type
+     * @param[in] type @ref DynamicTypeImpl which becomes the element type
      * @param[in] bounds `uint32_t` representing the desired dimensions
-     * @return new @ref DynamicTypeBuilder object
+     * @return new @ref DynamicTypeBuilderImpl object
      */
-    RTPS_DllAPI DynamicTypeBuilder* create_array_type(
-            const DynamicType& type,
+    DynamicTypeBuilderImpl* create_array_type(
+            const DynamicTypeImpl& type,
             const std::vector<uint32_t>& bounds) noexcept;
 
     /**
-     * Creates a new @ref DynamicTypeBuilder object representing a map
+     * Creates a new @ref DynamicTypeBuilderImpl object representing a map
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.3 this method is
      *         called `create_map_type` which is misguiding. Note the return value is a builder.
-     * @param[in] key_type @ref DynamicType which becomes the map's key type
-     * @param[in] value_type @ref DynamicType which becomes the map's value type
+     * @param[in] key_type @ref DynamicTypeImpl which becomes the map's key type
+     * @param[in] value_type @ref DynamicTypeImpl which becomes the map's value type
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
-     * @return new @ref DynamicTypeBuilder object
+     * @return new @ref DynamicTypeBuilderImpl object
      */
-    RTPS_DllAPI DynamicTypeBuilder* create_map_type(
-            const DynamicType& key_type,
-            const DynamicType& value_type,
+    DynamicTypeBuilderImpl* create_map_type(
+            const DynamicTypeImpl& key_type,
+            const DynamicTypeImpl& value_type,
             uint32_t bound = LENGTH_UNLIMITED) noexcept;
 
     /**
-     * Creates a new @ref DynamicTypeBuilder object representing a bitmask
+     * Creates a new @ref DynamicTypeBuilderImpl object representing a bitmask
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.2 this method is
      *         called `create_bitmask_type` which is misguiding. Note the return value is a builder.
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
-     * @return new @ref DynamicTypeBuilder object
+     * @return new @ref DynamicTypeBuilderImpl object
      */
-    RTPS_DllAPI DynamicTypeBuilder* create_bitmask_type(
+    DynamicTypeBuilderImpl* create_bitmask_type(
             uint32_t bound = 32) noexcept;
 
     /**
-     * Creates a new @ref DynamicTypeBuilder object representing a bitset
+     * Creates a new @ref DynamicTypeBuilderImpl object representing a bitset
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
-     * @return new @ref DynamicTypeBuilder object
+     * @return new @ref DynamicTypeBuilderImpl object
      */
-    RTPS_DllAPI DynamicTypeBuilder* create_bitset_type(
+    DynamicTypeBuilderImpl* create_bitset_type(
             uint32_t bound = 32) noexcept;
 
     /**
-     * Creates a new @ref DynamicTypeBuilder object representing an alias
-     * @param[in] base_type @ref DynamicType to be referenced
+     * Creates a new @ref DynamicTypeBuilderImpl object representing an alias
+     * @param[in] base_type @ref DynamicTypeImpl to be referenced
      * @param[in] sName new alias name
-     * @return new @ref DynamicTypeBuilder object
+     * @return new @ref DynamicTypeBuilderImpl object
      */
-    RTPS_DllAPI DynamicTypeBuilder* create_alias_type(
-            const DynamicType& base_type,
+    DynamicTypeBuilderImpl* create_alias_type(
+            const DynamicTypeImpl& base_type,
             const std::string& sName);
 
     /**
-     * Creates a new @ref DynamicTypeBuilder object representing an enum
-     * @return new @ref DynamicTypeBuilder object
+     * Creates a new @ref DynamicTypeBuilderImpl object representing an enum
+     * @return new @ref DynamicTypeBuilderImpl object
      */
-    RTPS_DllAPI DynamicTypeBuilder* create_enum_type();
+    DynamicTypeBuilderImpl* create_enum_type();
 
     /**
-     * Returns a @ref DynamicTypeBuilder associated with a `TypeKind::TK_STRUCTURE`
-     * @return @ref DynamicTypeBuilder object
+     * Returns a @ref DynamicTypeBuilderImpl associated with a `TypeKind::TK_STRUCTURE`
+     * @return @ref DynamicTypeBuilderImpl object
      */
-    RTPS_DllAPI DynamicTypeBuilder* create_struct_type() noexcept;
+    DynamicTypeBuilderImpl* create_struct_type() noexcept;
 
     /**
-     * Creates a new @ref DynamicTypeBuilder object representing a subclass
-     * @param[in] parent_type @ref DynamicType identifying the desired superclass
-     * @return new @ref DynamicTypeBuilder object
+     * Creates a new @ref DynamicTypeBuilderImpl object representing a subclass
+     * @param[in] parent_type @ref DynamicTypeImpl identifying the desired superclass
+     * @return new @ref DynamicTypeBuilderImpl object
      */
-    RTPS_DllAPI DynamicTypeBuilder* create_child_struct_type(
-            const DynamicType& parent_type);
+    DynamicTypeBuilderImpl* create_child_struct_type(
+            const DynamicTypeImpl& parent_type);
 
     /**
-     * Creates a new @ref DynamicTypeBuilder object representing a union
-     * @param[in] discriminator_type @ref DynamicType associated to the union's discriminator
-     * @return new @ref DynamicTypeBuilder object
+     * Creates a new @ref DynamicTypeBuilderImpl object representing a union
+     * @param[in] discriminator_type @ref DynamicTypeImpl associated to the union's discriminator
+     * @return new @ref DynamicTypeBuilderImpl object
      */
-    RTPS_DllAPI DynamicTypeBuilder* create_union_type(
-            const DynamicType& discriminator_type);
+    DynamicTypeBuilderImpl* create_union_type(
+            const DynamicTypeImpl& discriminator_type);
 
     /**
-     * Creates a new @ref DynamicTypeBuilder object representing an annotation
+     * Creates a new @ref DynamicTypeBuilderImpl object representing an annotation
      * @param[in] name string annotation identifier
-     * @return new @ref DynamicTypeBuilder object
+     * @return new @ref DynamicTypeBuilderImpl object
      */
-    RTPS_DllAPI const DynamicType* create_annotation_primitive(
+    const DynamicTypeImpl* create_annotation_primitive(
             const std::string& name);
 
-    //! returns type instantiation of the @ref DynamicTypeBuilderFactory::create_alias_type builder
-    RTPS_DllAPI const DynamicType* get_alias_type(
-            const DynamicType& base_type,
+    //! returns type instantiation of the @ref DynamicTypeBuilderFactoryImpl::create_alias_type builder
+    const DynamicTypeImpl* get_alias_type(
+            const DynamicTypeImpl& base_type,
             const std::string& sName);
 
     //! returns the cache type associated to create_int16_type()
-    RTPS_DllAPI const DynamicType* get_int16_type();
+    const DynamicTypeImpl* get_int16_type();
 
     //! returns the cache type associated to create_uint16_type()
-    RTPS_DllAPI const DynamicType* get_uint16_type();
+    const DynamicTypeImpl* get_uint16_type();
 
     //! returns the cache type associated to create_int32_type()
-    RTPS_DllAPI const DynamicType* get_int32_type();
+    const DynamicTypeImpl* get_int32_type();
 
     //! returns the cache type associated to create_uint32_type()
-    RTPS_DllAPI const DynamicType* get_uint32_type();
+    const DynamicTypeImpl* get_uint32_type();
 
     //! returns the cache type associated to create_int64_type()
-    RTPS_DllAPI const DynamicType* get_int64_type();
+    const DynamicTypeImpl* get_int64_type();
 
     //! returns the cache type associated to create_uint64_type()
-    RTPS_DllAPI const DynamicType* get_uint64_type();
+    const DynamicTypeImpl* get_uint64_type();
 
     //! returns the cache type associated to create_float32_type()
-    RTPS_DllAPI const DynamicType* get_float32_type();
+    const DynamicTypeImpl* get_float32_type();
 
     //! returns the cache type associated to create_float64_type()
-    RTPS_DllAPI const DynamicType* get_float64_type();
+    const DynamicTypeImpl* get_float64_type();
 
     //! returns the cache type associated to create_float128_type()
-    RTPS_DllAPI const DynamicType* get_float128_type();
+    const DynamicTypeImpl* get_float128_type();
 
     //! returns the cache type associated to create_char8_type()
-    RTPS_DllAPI const DynamicType* get_char8_type();
+    const DynamicTypeImpl* get_char8_type();
 
     //! returns the cache type associated to create_char16_type()
-    RTPS_DllAPI const DynamicType* get_char16_type();
+    const DynamicTypeImpl* get_char16_type();
 
     //! returns the cache type associated to create_bool_type()
-    RTPS_DllAPI const DynamicType* get_bool_type();
+    const DynamicTypeImpl* get_bool_type();
 
     //! returns the cache type associated to get_byte_type()
-    RTPS_DllAPI const DynamicType* get_byte_type();
+    const DynamicTypeImpl* get_byte_type();
 
     //! returns the cache type associated to create_string_type()
-    RTPS_DllAPI const DynamicType* get_string_type(
+    const DynamicTypeImpl* get_string_type(
             uint32_t bound = LENGTH_UNLIMITED) noexcept;
 
     //! returns the cache type associated to create_wstring_type()
-    RTPS_DllAPI const DynamicType* get_wstring_type(
+    const DynamicTypeImpl* get_wstring_type(
             uint32_t bound = LENGTH_UNLIMITED) noexcept;
 
     /**
-     * Creates a new @ref DynamicTypeBuilder object representing a bitset
+     * Creates a new @ref DynamicTypeBuilderImpl object representing a bitset
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
-     * @return new @ref DynamicTypeBuilder object
+     * @return new @ref DynamicTypeBuilderImpl object
      */
-    RTPS_DllAPI const DynamicType* get_bitset_type(
+    const DynamicTypeImpl* get_bitset_type(
             uint32_t bound);
 
-    RTPS_DllAPI void build_type_identifier(
+    void build_type_identifier(
             const TypeDescriptor& descriptor,
             TypeIdentifier& identifier,
             bool complete = true) const;
 
-    RTPS_DllAPI void build_type_object(
+    void build_type_object(
             const TypeDescriptor& descriptor,
             TypeObject& object,
             bool complete = true,
             bool force = false) const;
 
-    RTPS_DllAPI bool is_empty() const;
+    bool is_empty() const;
 
     //! ostream ancillary
     static const int indentation_index; //!< indentation
@@ -596,4 +596,4 @@ public:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_1_3_DYNAMIC_TYPE_BUILDER_FACTORY_H
+#endif // TYPES_1_3_DYNAMIC_TYPE_BUILDER_FACTORY_IMPL_H

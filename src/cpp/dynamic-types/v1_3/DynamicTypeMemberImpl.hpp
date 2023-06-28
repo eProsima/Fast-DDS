@@ -12,33 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_1_3_DYNAMIC_TYPE_MEMBER_H
-#define TYPES_1_3_DYNAMIC_TYPE_MEMBER_H
+#ifndef TYPES_1_3_DYNAMIC_TYPE_MEMBER_IMPL_H
+#define TYPES_1_3_DYNAMIC_TYPE_MEMBER_IMPL_H
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/v1_3/MemberDescriptor.hpp>
-#include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
-#include <fastrtps/types/v1_3/AnnotationManager.hpp>
+#include <dynamic-types/v1_3/MemberDescriptorImpl.hpp>
+#include <dynamic-types/v1_3/AnnotationManager.hpp>
 
 namespace eprosima {
 namespace fastrtps {
 namespace types {
 namespace v1_3 {
 
-class DynamicType;
+class DynamicTypeImpl;
 
-class DynamicTypeMember final
-    : public MemberDescriptor
+class DynamicTypeMemberImpl final
+    : public MemberDescriptorImpl
     , protected AnnotationManager
 {
 protected:
 
-    friend class DynamicTypeBuilder;
-    friend class DynamicType;
+    friend class DynamicTypeBuilderImpl;
+    friend class DynamicTypeImpl;
     friend class DynamicData;
 
-    using MemberDescriptor::MemberDescriptor;
-    using MemberDescriptor::operator =;
+    using MemberDescriptorImpl::MemberDescriptorImpl;
+    using MemberDescriptorImpl::operator =;
 
 public:
 
@@ -60,10 +59,10 @@ public:
 
 public:
 
-    using MemberDescriptor::operator ==;
-    using MemberDescriptor::operator !=;
+    using MemberDescriptorImpl::operator ==;
+    using MemberDescriptorImpl::operator !=;
 
-    using MemberDescriptor::get_descriptor;
+//  using MemberDescriptorImpl::get_descriptor;
 
     /**
      * Getter for \b default_value property (see [standard] section 7.5.2.7.3)
@@ -71,26 +70,16 @@ public:
      * @remarks fallbacks to any value kept as an annotation
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    RTPS_DllAPI std::string get_default_value() const;
+    std::string get_default_value() const;
 
     /**
      * equality operator following [standard] section 7.5.2.7.4 guidelines
-     * @param[in] other @ref DynamicTypeMember reference to compare to
+     * @param[in] other @ref DynamicTypeMemberImpl reference to compare to
      * @return `true` on equality
-     * @remarks @ref DynamicTypeMember::equals relies on this
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
     bool operator ==(
-            const DynamicTypeMember& other) const;
-
-    /**
-     * checks equality according to [standard] section 7.5.2.7.4 guidelines
-     * @param[in] other @ref DynamicTypeMember reference to compare to
-     * @return `true` on equality
-     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
-     */
-    RTPS_DllAPI bool equals(
-            const DynamicTypeMember& other) const;
+            const DynamicTypeMemberImpl& other) const;
 
     /**
      * This operation provides a summary of the state of this type (see [standard] section 7.5.2.8.7 guidelines)
@@ -98,7 +87,7 @@ public:
      * @return standard @ref ReturnCode_t
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    RTPS_DllAPI ReturnCode_t get_descriptor(
+    ReturnCode_t get_descriptor(
             MemberDescriptor& descriptor) const;
 
     //! more accurate that base class because it has access to annotations
@@ -106,14 +95,14 @@ public:
             TypeKind parentKind) const;
 };
 
-//! @ref DynamicTypeMember expected `std::ostream` non-member override of `operator<<`
-RTPS_DllAPI std::ostream& operator <<(
+//! @ref DynamicTypeMemberImpl expected `std::ostream` non-member override of `operator<<`
+std::ostream& operator <<(
         std::ostream& os,
-        const DynamicTypeMember& dm);
+        const DynamicTypeMemberImpl& dm);
 
 } // namespace v1_3
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_1_3_DYNAMIC_TYPE_MEMBER_H
+#endif // TYPES_1_3_DYNAMIC_TYPE_MEMBER_IMPL_H

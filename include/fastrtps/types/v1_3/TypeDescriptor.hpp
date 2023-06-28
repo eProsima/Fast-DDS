@@ -37,7 +37,7 @@ class RTPS_DllAPI TypeDescriptor final
     TypeKind kind_ = TypeKind::TK_NONE;                 //!< Type Kind.
     const DynamicType* base_type_ = nullptr;            //!< SuperType of an structure or base type of an alias type.
     const DynamicType* discriminator_type_ = nullptr;   //!< Discrimination type for a union.
-    std::vector<uint32_t> bounds_ = nullptr;            //!< Length for strings, arrays, sequences, maps and bitmasks.
+    std::vector<uint32_t>* bounds_ = nullptr;            //!< Length for strings, arrays, sequences, maps and bitmasks.
     const DynamicType* element_type_ = nullptr;         //!< Value Type for arrays, sequences, maps, bitmasks.
     const DynamicType* key_element_type_ = nullptr;     //!< Key Type for maps.
 

@@ -12,11 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_1_3_MEMBER_DESCRIPTOR_H
-#define TYPES_1_3_MEMBER_DESCRIPTOR_H
+#ifndef TYPES_1_3_MEMBER_DESCRIPTOR_IMPL_H
+#define TYPES_1_3_MEMBER_DESCRIPTOR_IMPL_H
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/v1_3/DynamicTypePtr.hpp>
 #include <fastrtps/types/v1_3/MemberId.hpp>
 
 #include <set>
@@ -30,30 +29,31 @@ class TypeObjectFactory;
 
 namespace v1_3 {
 
-class AnnotationDescriptor;
+class AnnotationDescriptorImpl;
+class DynamicTypeImpl;
 
 using types::TypeKind;
 
 /**
- * This class packages together the state of a @ref DynamicTypeMember.
+ * This class packages together the state of a DynamicTypeMemberImpl.
  * @remark This class has value semantics, allowing it to be deeply copied and compared.
  */
-class MemberDescriptor
+class MemberDescriptorImpl
 {
 protected:
 
-    std::string name_;                  // Name of the member
-    MemberId id_;                       // MemberId, it should be filled automatically when the member is added.
-    DynamicType_ptr type_;              // Member's Type.
-    std::string default_value_;         // Default value of the member in string.
-    uint32_t index_ = INDEX_INVALID;    // Definition order of the member inside it's parent.
-    std::set<uint64_t> labels_;         // Case Labels for unions.
-    bool default_label_ = false;        // TRUE if it's the default option of a union.
+    std::string name_;                              // Name of the member
+    MemberId id_;                                   // MemberId, it should be filled automatically when the member is added.
+    std::shared_ptr<const DynamicTypeImpl> type_;   // Member's Type.
+    std::string default_value_;                     // Default value of the member in string.
+    uint32_t index_ = INDEX_INVALID;                // Definition order of the member inside it's parent.
+    std::set<uint64_t> labels_;                     // Case Labels for unions.
+    bool default_label_ = false;                    // TRUE if it's the default option of a union.
 
-    friend class DynamicTypeBuilder;
-    friend class DynamicTypeBuilderFactory;
+    friend class DynamicTypeBuilderImpl;
+    friend class DynamicTypeBuilderFactoryImpl;
     friend class DynamicData;
-    friend class DynamicTypeMember;
+    friend class DynamicTypeMemberImpl;
     friend class types::TypeObjectFactory;
 
     bool is_default_value_consistent(
@@ -62,24 +62,26 @@ protected:
     bool is_type_name_consistent(
             const std::string& sName) const;
 
+/* TODO: implement
     //! builtin cast inherited on subclasses
     const MemberDescriptor& get_descriptor() const
     {
         return *this;
     }
+*/
 
 public:
 
     //! Default constructor
-    RTPS_DllAPI MemberDescriptor() = default;
+    MemberDescriptorImpl() = default;
 
     //! Default copy constructor
-    RTPS_DllAPI MemberDescriptor(
-            const MemberDescriptor& descriptor) = default;
+    MemberDescriptorImpl(
+            const MemberDescriptorImpl& descriptor) = default;
 
     //! Default move constructor
-    RTPS_DllAPI MemberDescriptor(
-            MemberDescriptor&& descriptor) = default;
+    MemberDescriptorImpl(
+            MemberDescriptorImpl&& descriptor) = default;
 
     /**
      * convenience constructor
@@ -90,7 +92,7 @@ public:
              typename std::enable_if<
                  std::is_constructible<std::string, S>::value,
                  bool>::type = true>
-    MemberDescriptor(
+    MemberDescriptorImpl(
             const MemberId& id,
             const S& name)
         : name_(name)
@@ -106,7 +108,7 @@ public:
              typename std::enable_if<
                  std::is_constructible<std::string, S>::value,
                  bool>::type = true>
-    MemberDescriptor(
+    MemberDescriptorImpl(
             uint32_t index,
             const S& name)
         : name_(name)
@@ -126,9 +128,9 @@ public:
                  std::is_constructible<std::string, S>::value,
                  bool>::type = true,
              typename std::enable_if<
-                 std::is_constructible<DynamicType_ptr, D>::value,
+                 std::is_constructible<std::shared_ptr<const DynamicTypeImpl>, D>::value,
                  bool>::type = true>
-    MemberDescriptor(
+    MemberDescriptorImpl(
             uint32_t index,
             const S& name,
             const D& type)
@@ -150,9 +152,9 @@ public:
                  std::is_constructible<std::string, S>::value,
                  bool>::type = true,
              typename std::enable_if<
-                 std::is_constructible<DynamicType_ptr, D>::value,
+                 std::is_constructible<std::shared_ptr<const DynamicTypeImpl>, D>::value,
                  bool>::type = true>
-    MemberDescriptor(
+    MemberDescriptorImpl(
             const MemberId& id,
             const S& name,
             const D& type)
@@ -176,12 +178,12 @@ public:
                  std::is_constructible<std::string, S1>::value,
                  bool>::type = true,
              typename std::enable_if<
-                 std::is_constructible<DynamicType_ptr, D>::value,
+                 std::is_constructible<std::shared_ptr<const DynamicTypeImpl>, D>::value,
                  bool>::type = true,
              typename std::enable_if<
                  std::is_constructible<std::string, S2>::value,
                  bool>::type = true>
-    MemberDescriptor(
+    MemberDescriptorImpl(
             const MemberId& id,
             const S1& name,
             const D& type,
@@ -210,7 +212,7 @@ public:
                  std::is_constructible<std::string, S1>::value,
                  bool>::type = true,
              typename std::enable_if<
-                 std::is_constructible<DynamicType_ptr, D>::value,
+                 std::is_constructible<std::shared_ptr<const DynamicTypeImpl>, D>::value,
                  bool>::type = true,
              typename std::enable_if<
                  std::is_constructible<std::string, S2>::value,
@@ -218,7 +220,7 @@ public:
              typename std::enable_if<
                  std::is_same<uint64_t, typename Cont::value_type>::value,
                  bool>::type = true>
-    MemberDescriptor(
+    MemberDescriptorImpl(
             const MemberId& id,
             const S1& name,
             const D& type,
@@ -237,17 +239,17 @@ public:
      * Default copy assignment
      * @remark Note that the no member uses mutable references, thus the default
      *         copy operator provides an actual deep copy.
-     * @param[in] descriptor l-value @ref MemberDescriptor reference to copy from
-     * @result own @ref MemberDescriptor reference
+     * @param[in] descriptor l-value @ref MemberDescriptorImpl reference to copy from
+     * @result own @ref MemberDescriptorImpl reference
      */
-    RTPS_DllAPI MemberDescriptor& operator =(
-            const MemberDescriptor& descriptor) = default;
+    MemberDescriptorImpl& operator =(
+            const MemberDescriptorImpl& descriptor) = default;
 
     //! Default move assignment
-    RTPS_DllAPI MemberDescriptor& operator =(
-            MemberDescriptor&& descriptor) = default;
+    MemberDescriptorImpl& operator =(
+            MemberDescriptorImpl&& descriptor) = default;
 
-    RTPS_DllAPI ~MemberDescriptor() = default;
+    ~MemberDescriptorImpl() = default;
 
     //! check if any given labels are already set
     template<
@@ -263,93 +265,72 @@ public:
     }
 
     /**
-     * Overwrite the contents of this descriptor with those of another descriptor
-     * @remark subsequent calls to equals, passing the same argument as to this method, return true
-     * @remark The other descriptor shall not be changed by this operation
-     * @return standard @ref ReturnCode_t
-     */
-    RTPS_DllAPI ReturnCode_t copy_from(
-            const MemberDescriptor& other);
-
-    /**
      * checks for equality according with [standard] section 7.5.2.7.4
-     * @param[in] other @ref MemberDescriptor reference to compare to
-     * @remark the @ref MemberDescriptor::equals relies on this method
+     * @param[in] other @ref MemberDescriptorImpl reference to compare to
      * @return bool on equality
      * [standard]: https://www.omg.org/spec/dds-xtypes/1.3/ "OMG standard"
      */
-    RTPS_DllAPI bool operator ==(
-            const MemberDescriptor& other) const;
+    bool operator ==(
+            const MemberDescriptorImpl& other) const;
 
     /**
      * checks for inequality according with [standard] section 7.5.2.7.4
-     * @param[in] other @ref MemberDescriptor reference to compare to
-     * @remark the @ref MemberDescriptor::equals relies on this method
+     * @param[in] other @ref MemberDescriptorImpl reference to compare to
      * @return bool on inequality
      * [standard]: https://www.omg.org/spec/dds-xtypes/1.3/ "omg standard"
      */
-    RTPS_DllAPI bool operator !=(
-            const MemberDescriptor& other) const;
-
-    /**
-     * State comparison
-     * @remarks using `==` and `!=` operators is more convenient
-     * @param[in] other @ref MemberDescriptor object whose state to compare to
-     * @return \b bool `true` on equality
-     * [standard]: https://www.omg.org/spec/dds-xtypes/1.3/ "omg standard"
-     */
-    RTPS_DllAPI bool equals(
-            const MemberDescriptor& other) const;
+    bool operator !=(
+            const MemberDescriptorImpl& other) const;
 
     //! convenient getter for the associated \b type property
-    RTPS_DllAPI TypeKind get_kind() const;
+    TypeKind get_kind() const;
 
     /**
      * Queries the desired or actual member id
      * @return MemberId id
      */
-    RTPS_DllAPI MemberId get_id() const;
+    MemberId get_id() const;
 
     /**
      * Queries the desired or actual member position in the collection.
      * @return uint32_t position
      */
-    RTPS_DllAPI uint32_t get_index() const;
+    uint32_t get_index() const;
 
     /**
      * Queries the desired or actual member name
      * @return std::string name
      */
-    RTPS_DllAPI std::string get_name() const;
+    std::string get_name() const;
 
     //! getter for the labels member
-    RTPS_DllAPI const std::set<uint64_t>& get_union_labels() const;
+    const std::set<uint64_t>& get_union_labels() const;
 
     //! getter for the \b default_value property
-    RTPS_DllAPI std::string get_default_value() const;
+    std::string get_default_value() const;
 
     //! checks if the member is the 'default' idl case
-    RTPS_DllAPI bool is_default_union_value() const;
+    bool is_default_union_value() const;
 
     /**
      * Tests state consistency
-     * @remark A MemberDescriptor shall be considered consistent if and only if all of the values
+     * @remark A MemberDescriptorImpl shall be considered consistent if and only if all of the values
      *         of its properties are considered consistent with its collection owner
      * @param[in] parentKind @ref eprosima::fastrtps::types::TypeKind collection's owner kind
      * @return bool `true` if consistent
      */
-    RTPS_DllAPI bool is_consistent(
+    bool is_consistent(
             TypeKind parentKind) const;
 
     //! insert a new label for this union member
-    RTPS_DllAPI void add_union_case_index(
+    void add_union_case_index(
             uint64_t value);
 
     /**
      * Set member @ref MemberId
      * @param[in] id desired MemberId
      */
-    RTPS_DllAPI void set_id(
+    void set_id(
             MemberId id);
 
     /**
@@ -360,7 +341,7 @@ public:
      *         [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.7.6
      * @param[in] index uint32_t desired position
      */
-    RTPS_DllAPI void set_index(
+    void set_index(
             uint32_t index);
 
     /**
@@ -371,7 +352,7 @@ public:
              typename std::enable_if<
                  std::is_constructible<std::string, S>::value,
                  bool>::type = true>
-    RTPS_DllAPI void set_name(
+    void set_name(
             const S& name)
     {
         name_ = name;
@@ -381,8 +362,8 @@ public:
      * Set member type by move
      * @param[in] type @ref DynamicType r-value
      */
-    RTPS_DllAPI void set_type(
-            DynamicType_ptr&& type);
+    void set_type(
+            std::shared_ptr<const DynamicTypeImpl>&& type);
 
     /**
      * Set member type by copy
@@ -390,12 +371,12 @@ public:
      */
     template<class D,
              typename std::enable_if<
-                 std::is_constructible<DynamicType_ptr, D>::value,
+                 std::is_constructible<std::shared_ptr<const DynamicTypeImpl>, D>::value,
                  bool>::type = true>
-    RTPS_DllAPI void set_type(
+    void set_type(
             const D& type)
     {
-        DynamicType_ptr tmp{type};
+        std::shared_ptr<const DynamicTypeImpl> tmp{type};
         type_.swap(tmp);
     }
 
@@ -403,13 +384,13 @@ public:
      * Queries the desired or actual member type
      * @return @ref DynamicType
      */
-    RTPS_DllAPI DynamicType_ptr get_type() const;
+    std::shared_ptr<const DynamicTypeImpl> get_type() const;
 
-    RTPS_DllAPI void set_default_union_value(
+    void set_default_union_value(
             bool bDefault);
 
     // setter for the \b default_value property
-    RTPS_DllAPI void set_default_value(
+    void set_default_value(
             const std::string& value)
     {
         default_value_ = value;
@@ -418,13 +399,13 @@ public:
 };
 
 //! @ref DynamicTypeMember expected `std::ostream` non-member override of `operator<<`
-RTPS_DllAPI std::ostream& operator <<(
+std::ostream& operator <<(
         std::ostream& os,
-        const MemberDescriptor& md);
+        const MemberDescriptorImpl& md);
 
 } // namespace v1_3
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_1_3_MEMBER_DESCRIPTOR_H
+#endif // TYPES_1_3_MEMBER_DESCRIPTOR_IMPL_H

@@ -13,31 +13,25 @@
 // limitations under the License.
 
 #include <fastrtps/types/v1_3/MemberDescriptor.hpp>
-#include <fastrtps/types/v1_3/DynamicType.hpp>
-#include <fastrtps/types/v1_3/TypeDescriptor.hpp>
-#include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
-#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
+#include <dynamic-types/v1_3/MemberDescriptorImpl.hpp>
+#include <dynamic-types/v1_3/DynamicTypeImpl.hpp>
+#include <dynamic-types/v1_3/DynamicTypeBuilderFactoryImpl.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
 #include <iomanip>
 
 using namespace eprosima::fastrtps::types::v1_3;
 
-void MemberDescriptor::add_union_case_index(
+using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+
+void MemberDescriptorImpl::add_union_case_index(
         uint64_t value)
 {
     labels_.insert(value);
 }
 
-ReturnCode_t MemberDescriptor::copy_from(
-        const MemberDescriptor& other)
-{
-    *this = other;
-    return ReturnCode_t::RETCODE_OK;
-}
-
-bool MemberDescriptor::operator ==(
-        const MemberDescriptor& other) const
+bool MemberDescriptorImpl::operator ==(
+        const MemberDescriptorImpl& other) const
 {
     return name_ == other.name_ &&
            id_ == other.id_ &&
@@ -48,44 +42,38 @@ bool MemberDescriptor::operator ==(
            (type_ == other.type_ || (type_ && other.type_ && *type_ == *other.type_ ));
 }
 
-bool MemberDescriptor::operator !=(
-        const MemberDescriptor& other) const
+bool MemberDescriptorImpl::operator !=(
+        const MemberDescriptorImpl& other) const
 {
     return !operator ==(other);
 }
 
-bool MemberDescriptor::equals(
-        const MemberDescriptor& other) const
-{
-    return *this == other;
-}
-
-MemberId MemberDescriptor::get_id() const
+MemberId MemberDescriptorImpl::get_id() const
 {
     return id_;
 }
 
-uint32_t MemberDescriptor::get_index() const
+uint32_t MemberDescriptorImpl::get_index() const
 {
     return index_;
 }
 
-TypeKind MemberDescriptor::get_kind() const
+TypeKind MemberDescriptorImpl::get_kind() const
 {
     return type_ ? type_->get_kind() : TypeKind::TK_NONE;
 }
 
-std::string MemberDescriptor::get_name() const
+std::string MemberDescriptorImpl::get_name() const
 {
     return name_;
 }
 
-const std::set<uint64_t>& MemberDescriptor::get_union_labels() const
+const std::set<uint64_t>& MemberDescriptorImpl::get_union_labels() const
 {
     return labels_;
 }
 
-bool MemberDescriptor::is_consistent(
+bool MemberDescriptorImpl::is_consistent(
         TypeKind parentKind) const
 {
     // The type field is mandatory in every type except bitmasks and enums.
@@ -130,17 +118,17 @@ bool MemberDescriptor::is_consistent(
     return true;
 }
 
-std::string MemberDescriptor::get_default_value() const
+std::string MemberDescriptorImpl::get_default_value() const
 {
     return default_value_;
 }
 
-bool MemberDescriptor::is_default_union_value() const
+bool MemberDescriptorImpl::is_default_union_value() const
 {
     return default_label_;
 }
 
-bool MemberDescriptor::is_default_value_consistent(
+bool MemberDescriptorImpl::is_default_value_consistent(
         const std::string& sDefaultValue) const
 {
     if (sDefaultValue.length() > 0)
@@ -265,36 +253,36 @@ bool MemberDescriptor::is_default_value_consistent(
     return true;
 }
 
-bool MemberDescriptor::is_type_name_consistent(
+bool MemberDescriptorImpl::is_type_name_consistent(
         const std::string& sName) const
 {
-    return TypeDescriptor::is_type_name_consistent(sName);
+    return TypeState::is_type_name_consistent(sName);
 }
 
-void MemberDescriptor::set_id(
+void MemberDescriptorImpl::set_id(
         MemberId id)
 {
     id_ = id;
 }
 
-void MemberDescriptor::set_index(
+void MemberDescriptorImpl::set_index(
         uint32_t index)
 {
     index_ = index;
 }
 
-void MemberDescriptor::set_type(
-        DynamicType_ptr&& type)
+void MemberDescriptorImpl::set_type(
+        std::shared_ptr<const DynamicTypeImpl> && type)
 {
     type_ = std::move(type);
 }
 
-DynamicType_ptr MemberDescriptor::get_type() const
+std::shared_ptr<const DynamicTypeImpl> MemberDescriptorImpl::get_type() const
 {
     return type_;
 }
 
-void MemberDescriptor::set_default_union_value(
+void MemberDescriptorImpl::set_default_union_value(
         bool bDefault)
 {
     default_label_ = bDefault;
@@ -302,18 +290,18 @@ void MemberDescriptor::set_default_union_value(
 
 std::ostream& eprosima::fastrtps::types::v1_3::operator <<(
         std::ostream& os,
-        const MemberDescriptor& md)
+        const MemberDescriptorImpl& md)
 {
     using namespace std;
 
     // indentation increment
-    ++os.iword(DynamicTypeBuilderFactory::indentation_index);
+    ++os.iword(DynamicTypeBuilderFactoryImpl::indentation_index);
     // parent object
-    auto desc = static_cast<const TypeDescriptor*>(os.pword(DynamicTypeBuilderFactory::object_index));
+    auto desc = static_cast<const TypeState*>(os.pword(DynamicTypeBuilderFactoryImpl::object_index));
 
     auto manips = [](ostream& os) -> ostream&
             {
-                long indent = os.iword(DynamicTypeBuilderFactory::indentation_index);
+                long indent = os.iword(DynamicTypeBuilderFactoryImpl::indentation_index);
                 return os << string(indent, '\t') << setw(10) << left;
             };
 
@@ -339,7 +327,7 @@ std::ostream& eprosima::fastrtps::types::v1_3::operator <<(
     }
 
     // indentation decrement
-    --os.iword(DynamicTypeBuilderFactory::indentation_index);
+    --os.iword(DynamicTypeBuilderFactoryImpl::indentation_index);
 
     return os;
 }

@@ -24,6 +24,9 @@ namespace types {
 namespace v1_3 {
 
 class DynamicType;
+class AnnotationDescriptor;
+class AnnotationDescriptorImpl;
+class AnnotationManager;
 
 class RTPS_DllAPI Parameters final
 {
@@ -33,7 +36,7 @@ class RTPS_DllAPI Parameters final
 
     Parameters(mapping& map) : map_(&map) {}
 
-    friend class eprosima::types::v1_3::AnnotationDescriptor;
+    friend class AnnotationDescriptor;
 
 public:
 
@@ -88,7 +91,7 @@ class RTPS_DllAPI AnnotationDescriptor final
 
     AnnotationDescriptor(Parameters::mapping& map) : map_(map) {}
 
-    friend class eprosima::types::v1_3::AnnotationDescriptorImpl;
+    friend class AnnotationDescriptorImpl;
 
 public:
 
@@ -137,7 +140,7 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference. Livecycle linked to the annotation.
      */
-    const char* get_value(const char* key, ReturnCode_t error = nullptr) const noexcept;
+    const char* get_value(const char* key, ReturnCode_t* error = nullptr) const noexcept;
 
     /**
      * Setter given a key for the @b value property (see [standard] table 49)
@@ -155,7 +158,7 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference. Livecycle linked to the annotation.
      */
-    const Parameters* get_all_value(ReturnCode_t error = nullptr) const noexcept;
+    const Parameters* get_all_value(ReturnCode_t* error = nullptr) const noexcept;
 
     /**
      * Overwrite the contents of this descriptor with those of another descriptor (see [standard] 7.5.2.3.1)
@@ -186,7 +189,9 @@ public:
 
 class Annotations final
 {
-    friend class eprosima::types::v1_3::AnnotationManager;
+    // TODO: wait until the AnnotationManger is refactored
+
+    friend class AnnotationManager;
 
     public:
 

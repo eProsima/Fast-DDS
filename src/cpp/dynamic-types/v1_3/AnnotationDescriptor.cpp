@@ -239,5 +239,11 @@ bool AnnotationDescriptor::equals(const AnnotationDescriptor& other) const noexc
 
 bool AnnotationDescriptor::is_consistent() const noexcept
 {
-    // TODO: fill in
+    if (type_ != nullptr || type_->get_kind() != TypeKind::TK_ANNOTATION)
+    {
+        return false;
+    }
+
+    //TODO: Check consistency of value_
+    return true;
 }

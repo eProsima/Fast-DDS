@@ -29,7 +29,7 @@ namespace v1_3 {
 
 class DynamicType;
 
-class RTPS_DllAPI MemberDescriptor : final
+class RTPS_DllAPI MemberDescriptor final
 {
     std::string* name_ = nullptr;             //!< Name of the member
     MemberId id_;                             //!< MemberId, it should be filled automatically when the member is added.

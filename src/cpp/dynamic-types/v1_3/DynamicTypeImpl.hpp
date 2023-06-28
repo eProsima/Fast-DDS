@@ -12,11 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_1_3_DYNAMIC_TYPE_HPP
-#define TYPES_1_3_DYNAMIC_TYPE_HPP
+#ifndef TYPES_1_3_DYNAMIC_TYPE_IMPL_HPP
+#define TYPES_1_3_DYNAMIC_TYPE_IMPL_HPP
 
-#include <fastrtps/types/v1_3/DynamicTypePtr.hpp>
-#include <fastrtps/types/v1_3/TypeDescriptor.hpp>
+#include <dynamic-types/v1_3/TypeState.hpp>
 #include <fastrtps/utils/custom_allocators.hpp>
 
 namespace eprosima {
@@ -31,15 +30,15 @@ namespace fastrtps {
 namespace types {
 namespace v1_3 {
 
-class AnnotationDescriptor;
+class AnnotationDescriptorImpl;
 class DynamicData;
-class DynamicTypeMember;
-class DynamicTypeBuilder;
+class DynamicTypeMemberImpl;
+class DynamicTypeBuilderImpl;
 class DynamicTypeBuilderFactory;
 
-class DynamicType final
-    : public TypeDescriptor
-    , public eprosima::detail::external_reference_counting<DynamicType>
+class DynamicTypeImpl final
+    : public TypeState
+    , public eprosima::detail::external_reference_counting<DynamicTypeImpl>
 {
     // Only create objects from the associated factory
     struct use_the_create_method
@@ -47,33 +46,27 @@ class DynamicType final
         explicit use_the_create_method() = default;
     };
 
-    static void external_dynamic_object_deleter(const DynamicType*);
-    static void internal_dynamic_object_deleter(const DynamicType*);
-    friend void (*dynamic_object_deleter(const DynamicType* ))(const DynamicType*);
-
 public:
 
-    DynamicType(
+    DynamicTypeImpl(
             use_the_create_method);
 
-    DynamicType(
+    DynamicTypeImpl(
             use_the_create_method,
             const TypeDescriptor& descriptor);
 
-    DynamicType(
+    DynamicTypeImpl(
             use_the_create_method,
             TypeDescriptor&& descriptor);
 
-    RTPS_DllAPI ~DynamicType();
-
-    using TypeDescriptor::get_descriptor;
+    ~DynamicTypeImpl();
 
 protected:
 
-    friend class DynamicTypeBuilder;
+    friend class DynamicTypeBuilderImpl;
     friend class types::DynamicDataHelper;
 
-    RTPS_DllAPI void clear();
+    void clear();
 
     // Serialization ancillary
     void serialize_empty_data(
@@ -118,23 +111,14 @@ public:
 
 public:
 
-    /**
-     * State comparison
-     * @remarks using `==` and `!=` operators is more convenient
-     * @param[in] other @ref DynamicType object whose state to compare to
-     * @return \b bool `true` on equality
-     */
-    RTPS_DllAPI bool equals(
-            const DynamicType& other) const;
-
     //! check if the type is complex
-    RTPS_DllAPI bool is_complex_kind() const;
+    bool is_complex_kind() const;
 
     //! check if the type can be used as a discriminator
-    RTPS_DllAPI bool is_discriminator_type() const;
+    bool is_discriminator_type() const;
 
     //! returns footprint size if the underlying type is primitive
-    RTPS_DllAPI size_t get_size() const;
+    size_t get_size() const;
 };
 
 } // namespace v1_3
@@ -142,4 +126,4 @@ public:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_1_3_DYNAMIC_TYPE_HPP
+#endif // TYPES_1_3_DYNAMIC_TYPE_IMPL_HPP

@@ -18,7 +18,7 @@
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/v1_3/MemberId.hpp>
 #include <fastrtps/types/v1_3/TypeDescriptor.hpp>
-#include <dynamic-types/v1_3/DynamicTypeMember.hpp>
+#include <dynamic-types/v1_3/DynamicTypeMemberImpl.hpp>
 
 #include <limits>
 #include <list>
@@ -50,7 +50,7 @@ struct TypeStateData
     std::vector<uint32_t> bound_;                         //!< Length for strings, arrays, sequences, maps and bitmasks.
     std::shared_ptr<DynamicTypeImpl> element_type_;       //!< Value Type for arrays, sequences, maps, bitmasks.
     std::shared_ptr<DynamicTypeImpl> key_element_type_;   //!< Key Type for maps.
-    std::list<DynamicTypeMember> members_;                //!< Member descriptors sequence
+    std::list<DynamicTypeMemberImpl> members_;                //!< Member descriptors sequence
 };
 
 /**
@@ -116,8 +116,8 @@ public:
 protected:
 
     bool is_key_defined_ = false;
-    std::map<MemberId, DynamicTypeMember*> member_by_id_;       //!< members references indexed by id
-    std::map<std::string, DynamicTypeMember*> member_by_name_;  //!< members references indexed by name
+    std::map<MemberId, DynamicTypeMemberImpl*> member_by_id_;       //!< members references indexed by id
+    std::map<std::string, DynamicTypeMemberImpl*> member_by_name_;  //!< members references indexed by name
 
     void refresh_indexes();
 
@@ -130,7 +130,7 @@ protected:
      */
     TypeDescriptor get_descriptor() const noexcept;
 
-    using member_iterator = std::list<DynamicTypeMember>::iterator;
+    using member_iterator = std::list<DynamicTypeMemberImpl>::iterator;
 
     void clean();
 
@@ -231,9 +231,9 @@ public:
     /**
      * Queries members by identifier
      * @param[in] id MemberId
-     * @return std::pair where second if `second == true` then first is a reference to an associated @ref DynamicTypeMember
+     * @return std::pair where second if `second == true` then first is a reference to an associated @ref DynamicTypeMemberImpl
      */
-    std::pair<const DynamicTypeMember*, bool> get_member(
+    std::pair<const DynamicTypeMemberImpl*, bool> get_member(
             MemberId id) const;
 
     /**
@@ -357,24 +357,24 @@ public:
      * @attention This method is not thread safe.
      *            The returned collection may be modified afterwards.
      *            The collection use should not outlive this Dynamic object.
-     * @return list<@ref DynamicTypeMember>
+     * @return list<@ref DynamicTypeMemberImpl>
      */
-    const std::list<const DynamicTypeMember*> get_all_members() const;
+    const std::list<const DynamicTypeMemberImpl*> get_all_members() const;
 
     /**
      * Populates an associative collection of member references indexed by @ref MemberId
      * @attention This method is not thread safe. The returned collection use should not outlive this Dynamic object.
-     * @return members map<@ref MemberId, @ref DynamicTypeMember> collection to populate
+     * @return members map<@ref MemberId, @ref DynamicTypeMemberImpl> collection to populate
 
      */
-    std::map<MemberId, const DynamicTypeMember*> get_all_members_by_id() const;
+    std::map<MemberId, const DynamicTypeMemberImpl*> get_all_members_by_id() const;
 
     /**
      * Populates an associative collection of member references indexed by name
      * @attention This method is not thread safe. The returned collection use should not outlive this Dynamic object.
-     * @return members map<std::string, @ref DynamicTypeMember> collection to populate
+     * @return members map<std::string, @ref DynamicTypeMemberImpl> collection to populate
      */
-    std::map<std::string, const DynamicTypeMember*> get_all_members_by_name() const;
+    std::map<std::string, const DynamicTypeMemberImpl*> get_all_members_by_name() const;
 
     /**
      * Queries current number of members
