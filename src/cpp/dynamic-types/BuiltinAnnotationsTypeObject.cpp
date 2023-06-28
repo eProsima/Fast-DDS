@@ -87,6 +87,7 @@ void register_builtin_annotations_types(
     factory->add_type_object("key", GetkeyIdentifier(true), GetkeyObject(true));
     factory->add_type_object("key", GetkeyIdentifier(false), GetkeyObject(false));
 
+    // Important: support for non-standard eProsima @Key annotation
     factory->add_type_object("Key", GetkeyIdentifier(true), GetkeyObject(true));
     factory->add_type_object("Key", GetkeyIdentifier(false), GetkeyObject(false));
 
@@ -139,8 +140,35 @@ void register_builtin_annotations_types(
     factory->add_type_object("ami", GetamiIdentifier(true), GetamiObject(true));
     factory->add_type_object("ami", GetamiIdentifier(false), GetamiObject(false));
 
+    factory->add_type_object("hashid", GethashidIdentifier(true), GethashidObject(true));
+    factory->add_type_object("hashid", GethashidIdentifier(false), GethashidObject(false));
+
+    factory->add_type_object("default_nested", Getdefault_nestedIdentifier(true), Getdefault_nestedObject(true));
+    factory->add_type_object("default_nested", Getdefault_nestedIdentifier(false), Getdefault_nestedObject(false));
+
+    factory->add_type_object("ignore_literal_names", Getignore_literal_namesIdentifier(true), Getignore_literal_namesObject(true));
+    factory->add_type_object("ignore_literal_names", Getignore_literal_namesIdentifier(false), Getignore_literal_namesObject(false));
+
+    factory->add_type_object("try_construct", Gettry_constructIdentifier(true), Gettry_constructObject(true));
+    factory->add_type_object("try_construct", Gettry_constructIdentifier(false), Gettry_constructObject(false));
+    {
+        using namespace try_construct;
+
+        factory->add_type_object("TryConstructFailAction", GetTryConstructFailActionIdentifier(true), GetTryConstructFailActionObject(true));
+        factory->add_type_object("TryConstructFailAction", GetTryConstructFailActionIdentifier(false), GetTryConstructFailActionObject(false));
+    }
+
     factory->add_type_object("non_serialized", Getnon_serializedIdentifier(true), Getnon_serializedObject(true));
     factory->add_type_object("non_serialized", Getnon_serializedIdentifier(false), Getnon_serializedObject(false));
+
+    factory->add_type_object("DataRepresentationMask", GetDataRepresentationMaskIdentifier(true), GetDataRepresentationMaskObject(true));
+    factory->add_type_object("DataRepresentationMask", GetDataRepresentationMaskIdentifier(false), GetDataRepresentationMaskObject(false));
+
+    factory->add_type_object("data_representation", Getdata_representationIdentifier(true), Getdata_representationObject(true));
+    factory->add_type_object("data_representation", Getdata_representationIdentifier(false), Getdata_representationObject(false));
+
+    factory->add_type_object("topic", GettopicIdentifier(true), GettopicObject(true));
+    factory->add_type_object("topic", GettopicIdentifier(false), GettopicObject(false));
 
 }
 
@@ -4175,6 +4203,129 @@ const TypeObject* GetCompleteamiObject()
     return TypeObjectFactory::get_instance()->get_type_object("ami", true);
 }
 
+const TypeIdentifier* GethashidIdentifier(
+        bool complete)
+{
+    static_cast<void>(complete);
+    return nullptr;
+}
+
+const TypeObject* GethashidObject(
+        bool complete)
+{
+    static_cast<void>(complete);
+    return nullptr;
+}
+
+const TypeObject* GetMinimalhashidObject()
+{
+    return nullptr;
+}
+
+const TypeObject* GetCompletehashidObject()
+{
+    return nullptr;
+}
+
+const TypeIdentifier* Getdefault_nestedIdentifier(
+        bool complete)
+{
+    static_cast<void>(complete);
+    return nullptr;
+}
+
+const TypeObject* Getdefault_nestedObject(
+        bool complete)
+{
+    static_cast<void>(complete);
+    return nullptr;
+}
+
+const TypeObject* GetMinimaldefault_nestedObject()
+{
+    return nullptr;
+}
+
+const TypeObject* GetCompletedefault_nestedObject()
+{
+    return nullptr;
+}
+
+const TypeIdentifier* Getignore_literal_namesIdentifier(
+        bool complete)
+{
+    static_cast<void>(complete);
+    return nullptr;
+}
+
+const TypeObject* Getignore_literal_namesObject(
+        bool complete)
+{
+    static_cast<void>(complete);
+    return nullptr;
+}
+
+const TypeObject* GetMinimalignore_literal_namesObject()
+{
+    return nullptr;
+}
+
+const TypeObject* GetCompleteignore_literal_namesObject()
+{
+    return nullptr;
+}
+
+const TypeIdentifier* Gettry_constructIdentifier(
+        bool complete)
+{
+    static_cast<void>(complete);
+    return nullptr;
+}
+
+const TypeObject* Gettry_constructObject(
+        bool complete)
+{
+    static_cast<void>(complete);
+    return nullptr;
+}
+
+const TypeObject* GetMinimaltry_constructObject()
+{
+    return nullptr;
+}
+
+const TypeObject* GetCompletetry_constructObject()
+{
+    return nullptr;
+}
+
+namespace try_construct {
+const TypeIdentifier* GetTryConstructFailActionIdentifier(
+        bool complete)
+{
+    static_cast<void>(complete);
+    return nullptr;
+}
+
+const TypeObject* GetTryConstructFailActionObject(
+        bool complete)
+{
+    static_cast<void>(complete);
+    return nullptr;
+}
+
+const TypeObject* GetMinimalTryConstructFailActionObject()
+{
+    return nullptr;
+}
+
+const TypeObject* GetCompleteTryConstructFailActionObject()
+{
+    return nullptr;
+}
+
+} // try_construct namespace
+
 const TypeIdentifier* Getnon_serializedIdentifier(
         bool complete)
 {
@@ -4314,4 +4465,76 @@ const TypeObject* GetCompletenon_serializedObject()
     TypeObjectFactory::get_instance()->add_type_object("non_serialized", &identifier, type_object);
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("non_serialized", true);
+}
+
+const TypeIdentifier* GetDataRepresentationMaskIdentifier(
+        bool complete)
+{
+    static_cast<void>(complete);
+    return nullptr;
+}
+
+const TypeObject* GetDataRepresentationMaskObject(
+        bool complete)
+{
+    static_cast<void>(complete);
+    return nullptr;
+}
+
+const TypeObject* GetMinimalDataRepresentationMaskObject()
+{
+    return nullptr;
+}
+
+const TypeObject* GetCompleteDataRepresentationMaskObject()
+{
+    return nullptr;
+}
+
+const TypeIdentifier* Getdata_representationIdentifier(
+        bool complete)
+{
+    static_cast<void>(complete);
+    return nullptr;
+}
+
+const TypeObject* Getdata_representationObject(
+        bool complete)
+{
+    static_cast<void>(complete);
+    return nullptr;
+}
+
+const TypeObject* GetMinimaldata_representationObject()
+{
+    return nullptr;
+}
+
+const TypeObject* GetCompletedata_representationObject()
+{
+    return nullptr;
+}
+
+const TypeIdentifier* GettopicIdentifier(
+        bool complete)
+{
+    static_cast<void>(complete);
+    return nullptr;
+}
+
+const TypeObject* GettopicObject(
+        bool complete)
+{
+    static_cast<void>(complete);
+    return nullptr;
+}
+
+const TypeObject* GetMinimaltopicObject()
+{
+    return nullptr;
+}
+
+const TypeObject* GetCompletetopicObject()
+{
+    return nullptr;
 }
