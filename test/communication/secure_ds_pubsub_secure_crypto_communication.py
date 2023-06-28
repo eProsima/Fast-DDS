@@ -202,12 +202,18 @@ def run(args):
         sub_proc.kill()
         pub_proc.kill()
         ds_proc.kill()
-        sys.exit(os.EX_SOFTWARE)
+        try:
+            sys.exit(os.EX_SOFTWARE)
+        except AttributeError:
+            sys.exit(1)
 
     pub_proc.kill()
     ds_proc.kill()
 
-    sys.exit(os.EX_OK)
+    try:
+        sys.exit(os.EX_OK)
+    except AttributeError:
+        sys.exit(0)
 
 
 if __name__ == '__main__':
