@@ -239,7 +239,7 @@ const TypeObject* GetMinimalidObject()
     }
     // AnnotationParameterValue
     mam_value.default_value()._d(TK_UINT32);
-    // Default constructor already sets the value 0.
+    // Default constructor already sets the value to 0.
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -861,7 +861,13 @@ const TypeObject* GetMinimalpositionObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
-// TODO(jlbueno): XTypes    mam_value.name("value");
+    MD5 value_hash("value");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_value.name_hash()[i] = value_hash.digest[i];
+    }
+    mam_value.default_value()._d(TK_UINT16);
+    // Default constructor already sets the value to 0.
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -904,21 +910,12 @@ const TypeObject* GetCompletepositionObject()
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
-
-    // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().annotation_type().header().detail().ann_builtin()...
-    //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("position");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
+    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", true));
     cam_value.name("value");
+    cam_value.default_value()._d(TK_UINT16);
 
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
