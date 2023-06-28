@@ -845,8 +845,11 @@ public:
          * @returns false If the port's queue is full so buffer couldn't be enqueued.
          */
         bool try_push(
-                const std::shared_ptr<Buffer>& buffer)
+                const std::shared_ptr<Buffer>& buffer,
+                bool& is_port_ok)
         {
+            is_port_ok = true;
+
             assert(std::dynamic_pointer_cast<SharedMemBuffer>(buffer));
 
             SharedMemBuffer* shared_mem_buffer = std::static_pointer_cast<SharedMemBuffer>(buffer).get();
@@ -880,6 +883,7 @@ public:
                                                                << e.what());
 
                     regenerate_port();
+                    is_port_ok = false;
                     ret = false;
                 }
                 else
