@@ -841,6 +841,11 @@ public:
             return *this;
         }
 
+        bool is_ok() const
+        {
+            return global_port_->is_port_ok();
+        }
+
         /**
          * Try to enqueue a buffer in the port.
          * @returns false If the port's queue is full so buffer couldn't be enqueued.
