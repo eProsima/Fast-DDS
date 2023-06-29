@@ -507,4 +507,3 @@ bool DomainParticipant::has_active_entities()
 {
     return impl_->has_active_entities();
 }
-
