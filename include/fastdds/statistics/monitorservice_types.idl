@@ -13,16 +13,16 @@
 // limitations under the License.
 
 /**
- * @file include/fastrtps/monitor-service/ms_types.idl
+ * @file include/fastdds/statistics/ms_types.idl
  */
 
-#include "../../fastdds/statistics/types.idl"
+#include "types.idl"
 
 module eprosima {
-module fastrtps {
-module monitor_service {
+module fastdds {
+module statistics {
 
-	/* Reuse existing statistics detail moudle*/
+	/* Reuse existing statistics detail module*/
 	module detail
 	{
 		typedef eprosima::fastdds::statistics::detail::EntityId_s EntityId_m;
@@ -41,7 +41,7 @@ module monitor_service {
 	struct Connection
 	{
 		ConnectionMode mode;
-		eprosima::fastdds::statistics::detail::GUID_s guid;
+		detail::GUID_m guid;
 		sequence<detail::Locator_m> announced_locators;
 		sequence<detail::Locator_m> used_locators;
 	};
@@ -96,7 +96,7 @@ module monitor_service {
 		STATUSES_SIZE
 	};
 
-	union Data switch(StatusKind)
+	union MonitorServiceData switch(StatusKind)
 	{
 		case PROXY:
 			sequence<octet> entity_proxy;
@@ -114,16 +114,18 @@ module monitor_service {
 			DeadlineMissedStatus_m deadline_missed_status;
 		case SAMPLE_LOST:
 			SampleLostStatus_m sample_lost_status;
+		case STATUSES_SIZE:
+			octet statuses_size;
 	};
 
 	struct MonitorServiceStatusData
 	{
 		@Key detail::GUID_m local_entity;
 		@Key StatusKind status_kind;
-		Data value;
+		MonitorServiceData value;
 	};
 
-}; // namespace monitor_service
-}; // namespace fastrtps
+}; // namespace statisitcs
+}; // namespace fastdds
 }; // namespace eprosima
 
