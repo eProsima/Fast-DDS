@@ -18,7 +18,7 @@
 #include <fastrtps/types/v1_3/TypeDescriptor.hpp>
 #include <fastrtps/types/v1_3/MemberDescriptor.hpp>
 
-#include <dynamic-types/v1_3/AnnotationDescriptor.hpp>
+#include <dynamic-types/v1_3/AnnotationDescriptorImpl.hpp>
 #include <dynamic-types/v1_3/DynamicTypeImpl.hpp>
 #include <dynamic-types/v1_3/DynamicTypeBuilderFactoryImpl.hpp>
 
@@ -81,7 +81,7 @@ TypeState::TypeState(
 {
     refresh_indexes();
 }
-
+/*
 TypeState::TypeState(
         const TypeDescriptor& descriptor)
 {
@@ -119,7 +119,7 @@ TypeState::TypeState(
     bound_.assign(lengths, lengths + dims);
 }
 
-TypeDescriptor get_descriptor() const noexcept
+TypeDescriptor TypeState::get_descriptor() const noexcept
 {
     TypeDescriptor res;
 
@@ -152,7 +152,7 @@ TypeDescriptor get_descriptor() const noexcept
 
     return res;
 }
-
+*/
 TypeState& TypeState::operator =(
         const TypeState& state) noexcept
 {
@@ -172,7 +172,7 @@ void TypeState::refresh_indexes()
     member_by_name_.clear();
 
     // update indexes with member info
-    for (DynamicTypeMember& m : members_)
+    for (DynamicTypeMemberImpl& m : members_)
     {
         member_by_id_[m.get_id()] = &m;
         member_by_name_[m.get_name()] = &m;
@@ -411,7 +411,7 @@ bool TypeState::is_consistent(
 
     // Check members if any
     if (type && std::any_of(members_.begin(), members_.end(),
-            [this](const DynamicTypeMember& m)
+            [this](const DynamicTypeMemberImpl& m)
             {
                 return !m.is_consistent(kind_);
             }))
@@ -500,9 +500,9 @@ void TypeState::set_name(
     name_ = std::move(name);
 }
 
-const std::list<const DynamicTypeMember*> TypeState::get_all_members() const
+const std::list<const DynamicTypeMemberImpl*> TypeState::get_all_members() const
 {
-    std::list<const DynamicTypeMember*> res;
+    std::list<const DynamicTypeMemberImpl*> res;
 
     // retrieve members from the base classes
     if (base_type_)
@@ -515,7 +515,7 @@ const std::list<const DynamicTypeMember*> TypeState::get_all_members() const
         members_.begin(),
         members_.end(),
         std::back_inserter(res),
-        [](const DynamicTypeMember& m)
+        [](const DynamicTypeMemberImpl& m)
         {
             return &m;
         });
@@ -523,9 +523,9 @@ const std::list<const DynamicTypeMember*> TypeState::get_all_members() const
     return res;
 }
 
-std::map<std::string, const DynamicTypeMember*> TypeState::get_all_members_by_name() const
+std::map<std::string, const DynamicTypeMemberImpl*> TypeState::get_all_members_by_name() const
 {
-    std::map<std::string, const DynamicTypeMember*> res;
+    std::map<std::string, const DynamicTypeMemberImpl*> res;
 
     // retrieve members from the base classes
     if (base_type_)
@@ -539,9 +539,9 @@ std::map<std::string, const DynamicTypeMember*> TypeState::get_all_members_by_na
     return res;
 }
 
-std::map<MemberId, const DynamicTypeMember*> TypeState::get_all_members_by_id() const
+std::map<MemberId, const DynamicTypeMemberImpl*> TypeState::get_all_members_by_id() const
 {
-    std::map<MemberId, const DynamicTypeMember*> res;
+    std::map<MemberId, const DynamicTypeMemberImpl*> res;
 
     // retrieve members from the base classes
     if (base_type_)
@@ -555,105 +555,80 @@ std::map<MemberId, const DynamicTypeMember*> TypeState::get_all_members_by_id() 
     return res;
 }
 
-ReturnCode_t TypeState::get_member_by_index(
-        MemberDescriptor& member,
-        uint32_t index) const noexcept
+const MemberDescriptorImpl& TypeState::get_member_by_index(uint32_t index) const
 {
     uint32_t offset = 0;
 
     // try the base type
     if (base_type_)
     {
-        ReturnCode_t res = resolve_alias_type(*base_type_).get_member_by_index(member, index);
-        if (!res)
+        try
         {
-            // correct the offset
-            offset = base_type_->get_member_count();
+            return resolve_alias_type(*base_type_).get_member_by_index(index);
         }
-        else
+        catch(const std::system_error&)
         {
-            // we are done
-            return res;
+            offset = base_type_->get_member_count();
         }
     }
 
     if (index >= (offset + members_.size()))
     {
-        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting member by index, member not found.");
-        return ReturnCode_t::RETCODE_ERROR;
+        throw std::system_error(
+                make_error_code(ReturnCode_t::RETCODE_ERROR),
+                "Error getting member by index, member not found.");
     }
 
     auto it = members_.begin();
     std::advance(it, index - offset);
-    member = *it;
-
-    return ReturnCode_t::RETCODE_OK;
+    return *it;
 }
 
-ReturnCode_t TypeState::get_member_by_name(
-        MemberDescriptor& member,
-        const std::string& name) const noexcept
+const MemberDescriptorImpl& TypeState::get_member_by_name(const std::string& name) const
 {
-    // try the base type
-    if (base_type_)
-    {
-        ReturnCode_t res = resolve_alias_type(*base_type_).get_member_by_name(member, name);
-        if (!!res)
-        {
-            return res;
-        }
-    }
-
     auto it = member_by_name_.find(name);
     if (it != member_by_name_.end())
     {
-        member = it->second->get_descriptor();
-        return ReturnCode_t::RETCODE_OK;
+        return it->second->get_descriptor();
     }
-    else
+    else if (base_type_)
     {
-        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting member by name, member not found.");
-        return ReturnCode_t::RETCODE_ERROR;
+        // try the base type
+        try
+        {
+            return resolve_alias_type(*base_type_).get_member_by_name(name);
+        }
+        catch(const std::system_error&)
+        {
+        }
     }
+
+    throw std::system_error(
+            make_error_code(ReturnCode_t::RETCODE_ERROR),
+            "Error getting member by name, member not found.");
 }
 
-std::pair<const DynamicTypeMember*, bool>
-TypeState::get_member(
-        MemberId id) const
+const MemberDescriptorImpl& TypeState::get_member(MemberId id) const
 {
     auto it = member_by_id_.find(id);
     if (it != member_by_id_.end())
     {
-        return {it->second, true};
+        return *it->second;
     }
     else if (base_type_)
     {
-        return resolve_alias_type(*base_type_).get_member(id);
+        try
+        {
+            return resolve_alias_type(*base_type_).get_member(id);
+        }
+        catch(const std::system_error&)
+        {
+        }
     }
-    else
-    {
-        return {nullptr, false};
-    }
-}
 
-ReturnCode_t TypeState::get_member(
-        MemberDescriptor& member,
-        MemberId id) const noexcept
-{
-    const DynamicTypeMember* pM;
-    bool found;
-
-    std::tie(pM, found) = get_member(id);
-    if (found)
-    {
-        member = pM->get_descriptor();
-        return ReturnCode_t::RETCODE_OK;
-    }
-    else
-    {
-        EPROSIMA_LOG_WARNING(DYN_TYPES, "Error getting member, member not found.");
-        return ReturnCode_t::RETCODE_ERROR;
-    }
+    throw std::system_error(
+            make_error_code(ReturnCode_t::RETCODE_ERROR),
+            "Error getting member, member not found.");
 }
 
 uint32_t TypeState::get_member_count() const
@@ -788,11 +763,11 @@ std::ostream& eprosima::fastrtps::types::v1_3::operator <<(
     using namespace std;
 
     // indentation increment
-    ++os.iword(DynamicTypeBuilderFactory::indentation_index);
+    ++os.iword(DynamicTypeBuilderFactoryImpl::indentation_index);
 
     auto manips = [](ostream& os) -> ostream&
             {
-                long indent = os.iword(DynamicTypeBuilderFactory::indentation_index);
+                long indent = os.iword(DynamicTypeBuilderFactoryImpl::indentation_index);
                 return os << string(indent, '\t') << setw(10) << left;
             };
 
@@ -839,7 +814,7 @@ std::ostream& eprosima::fastrtps::types::v1_3::operator <<(
     if (td.get_annotation_count())
     {
         os << manips << "annotations:" << endl;
-        for (const AnnotationDescriptor& d : td.get_all_annotations())
+        for (const AnnotationDescriptorImpl& d : td.get_all_annotations())
         {
             os << d;
         }
@@ -849,19 +824,19 @@ std::ostream& eprosima::fastrtps::types::v1_3::operator <<(
     if (td.get_member_count())
     {
         // notify the members which object they belong to
-        os.pword(DynamicTypeBuilderFactory::object_index) = (void*)&td;
+        os.pword(DynamicTypeBuilderFactoryImpl::object_index) = (void*)&td;
 
         os << manips << "members:";
-        for (const DynamicTypeMember* m : td.get_all_members())
+        for (const DynamicTypeMemberImpl* m : td.get_all_members())
         {
             os << *m;
         }
 
-        os.pword(DynamicTypeBuilderFactory::object_index) = nullptr;
+        os.pword(DynamicTypeBuilderFactoryImpl::object_index) = nullptr;
     }
 
     // indentation decrement
-    --os.iword(DynamicTypeBuilderFactory::indentation_index);
+    --os.iword(DynamicTypeBuilderFactoryImpl::indentation_index);
 
     return os;
 }

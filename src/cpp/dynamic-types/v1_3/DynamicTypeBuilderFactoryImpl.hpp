@@ -350,45 +350,6 @@ public:
     const DynamicTypeBuilderImpl* create_primitive_type(
             TypeKind kind) noexcept;
 
-    //! alias of `create_primitive_builder<TypeKind::TK_INT32>()`
-    const DynamicTypeBuilderImpl* create_int32_type() noexcept;
-
-    //! alias of `create_primitive_builder<TypeKind::TK_UINT32>()`
-    const DynamicTypeBuilderImpl* create_uint32_type() noexcept;
-
-    //! alias of `create_primitive_builder<TypeKind::TK_INT16>()`
-    const DynamicTypeBuilderImpl* create_int16_type() noexcept;
-
-    //! alias of `create_primitive_builder<TypeKind::TK_UINT16>()`
-    const DynamicTypeBuilderImpl* create_uint16_type() noexcept;
-
-    //! alias of `create_primitive_builder<TypeKind::TK_INT64>()`
-    const DynamicTypeBuilderImpl* create_int64_type() noexcept;
-
-    //! alias of `create_primitive_builder<TypeKind::TK_UINT64>()`
-    const DynamicTypeBuilderImpl* create_uint64_type() noexcept;
-
-    //! alias of `create_primitive_builder<TypeKind::TK_FLOAT32>()`
-    const DynamicTypeBuilderImpl* create_float32_type() noexcept;
-
-    //! alias of `create_primitive_builder<TypeKind::TK_FLOAT64>()`
-    const DynamicTypeBuilderImpl* create_float64_type() noexcept;
-
-    //! alias of `create_primitive_builder<TypeKind::TK_FLOAT128>()`
-    const DynamicTypeBuilderImpl* create_float128_type() noexcept;
-
-    //! alias of `create_primitive_builder<TypeKind::TK_CHAR8>()`
-    const DynamicTypeBuilderImpl* create_char8_type() noexcept;
-
-    //! alias of `create_primitive_builder<TypeKind::TK_CHAR16>()`
-    const DynamicTypeBuilderImpl* create_char16_type() noexcept;
-
-    //! alias of `create_primitive_builder<TypeKind::TK_BOOLEAN>()`
-    const DynamicTypeBuilderImpl* create_bool_type() noexcept;
-
-    //! alias of `create_primitive_builder<TypeKind::TK_BYTE>()`
-    const DynamicTypeBuilderImpl* create_byte_type() noexcept;
-
     /**
      * Creates a new @ref DynamicTypeBuilderImpl object representing a bounded string type.
      * @remark The element type of the typed returned is a char8
@@ -517,45 +478,6 @@ public:
     const DynamicTypeImpl* get_alias_type(
             const DynamicTypeImpl& base_type,
             const std::string& sName);
-
-    //! returns the cache type associated to create_int16_type()
-    const DynamicTypeImpl* get_int16_type();
-
-    //! returns the cache type associated to create_uint16_type()
-    const DynamicTypeImpl* get_uint16_type();
-
-    //! returns the cache type associated to create_int32_type()
-    const DynamicTypeImpl* get_int32_type();
-
-    //! returns the cache type associated to create_uint32_type()
-    const DynamicTypeImpl* get_uint32_type();
-
-    //! returns the cache type associated to create_int64_type()
-    const DynamicTypeImpl* get_int64_type();
-
-    //! returns the cache type associated to create_uint64_type()
-    const DynamicTypeImpl* get_uint64_type();
-
-    //! returns the cache type associated to create_float32_type()
-    const DynamicTypeImpl* get_float32_type();
-
-    //! returns the cache type associated to create_float64_type()
-    const DynamicTypeImpl* get_float64_type();
-
-    //! returns the cache type associated to create_float128_type()
-    const DynamicTypeImpl* get_float128_type();
-
-    //! returns the cache type associated to create_char8_type()
-    const DynamicTypeImpl* get_char8_type();
-
-    //! returns the cache type associated to create_char16_type()
-    const DynamicTypeImpl* get_char16_type();
-
-    //! returns the cache type associated to create_bool_type()
-    const DynamicTypeImpl* get_bool_type();
-
-    //! returns the cache type associated to get_byte_type()
-    const DynamicTypeImpl* get_byte_type();
 
     //! returns the cache type associated to create_string_type()
     const DynamicTypeImpl* get_string_type(

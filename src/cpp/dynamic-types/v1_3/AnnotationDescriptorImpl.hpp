@@ -12,43 +12,45 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_1_3_ANNOTATION_DESCRIPTOR_H
-#define TYPES_1_3_ANNOTATION_DESCRIPTOR_H
+#ifndef TYPES_1_3_ANNOTATION_DESCRIPTOR_IMPL_H
+#define TYPES_1_3_ANNOTATION_DESCRIPTOR_IMPL_H
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/v1_3/DynamicTypePtr.hpp>
 
 #include <functional>
+#include <map>
+#include <string>
 
 namespace eprosima {
 namespace fastrtps {
 namespace types {
 namespace v1_3 {
 
-class DynamicTypeBuilderFactory;
+class DynamicTypeImpl;
+class DynamicTypeBuilderFactoryImpl;
 
-class AnnotationDescriptor final
+class AnnotationDescriptorImpl final
 {
 protected:
 
-    friend class DynamicTypeBuilderFactory;
+    friend class DynamicTypeBuilderFactoryImpl;
 
     // Reference to the annotation type
-    DynamicType_ptr type_;
+    std::shared_ptr<const DynamicTypeImpl> type_;
     std::map<std::string, std::string> value_;
 
 public:
 
     ReturnCode_t copy_from(
-            const AnnotationDescriptor* other);
+            const AnnotationDescriptorImpl* other);
     bool operator ==(
-            const AnnotationDescriptor&) const;
+            const AnnotationDescriptorImpl&) const;
     bool operator !=(
-            const AnnotationDescriptor&) const;
+            const AnnotationDescriptorImpl&) const;
     bool operator <(
-            const AnnotationDescriptor&) const;
+            const AnnotationDescriptorImpl&) const;
     bool equals(
-            const AnnotationDescriptor*) const;
+            const AnnotationDescriptorImpl*) const;
     bool is_consistent() const;
     bool key_annotation() const;
 
@@ -73,22 +75,22 @@ public:
 
     template<class D,
              typename std::enable_if<
-                 std::is_constructible<DynamicType_ptr, D>::value,
+                 std::is_constructible<std::shared_ptr<const DynamicTypeImpl>, D>::value,
                  bool>::type = true>
     void set_type(
             const D& type)
     {
-        DynamicType_ptr tmp{type};
+        std::shared_ptr<const DynamicTypeImpl> tmp{type};
         type_.swap(tmp);
     }
 
     void set_type(
-            DynamicType_ptr&& type)
+            std::shared_ptr<const DynamicTypeImpl>&& type)
     {
         type_ = std::move(type);
     }
 
-    const DynamicType_ptr type() const
+    const std::shared_ptr<const DynamicTypeImpl> type() const
     {
         return type_;
     }
@@ -97,11 +99,11 @@ public:
 
 std::ostream& operator <<(
         std::ostream& os,
-        const AnnotationDescriptor& md);
+        const AnnotationDescriptorImpl& md);
 
 } // namespace v1_3
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_1_3_ANNOTATION_DESCRIPTOR_H
+#endif // TYPES_1_3_ANNOTATION_DESCRIPTOR_IMPL_H

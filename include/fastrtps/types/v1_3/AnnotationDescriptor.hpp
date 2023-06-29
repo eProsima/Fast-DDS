@@ -15,6 +15,8 @@
 #ifndef TYPES_1_3_ANNOTATION_DESCRIPTOR_H
 #define TYPES_1_3_ANNOTATION_DESCRIPTOR_H
 
+#include <fastrtps/types/TypesBase.h>
+
 #include <cstdint>
 #include <string>
 

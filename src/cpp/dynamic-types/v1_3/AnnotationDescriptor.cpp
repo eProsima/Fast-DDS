@@ -13,8 +13,12 @@
 // limitations under the License.
 
 #include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
+#include <fastrtps/types/v1_3/DynamicType.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
 
 using namespace eprosima::fastrtps::types::v1_3;
+
+using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
 Parameters::Parameters()
     : map_(new mapping)
@@ -26,7 +30,7 @@ Parameters::~Parameters()
 {
     if (ownership_)
     {
-        delete mapping;
+        delete map_;
     }
 }
 
@@ -42,14 +46,16 @@ Parameters::Parameters(Parameters&& type) noexcept
 
 Parameters& Parameters::operator=(const Parameters& type) noexcept
 {
-    ownership_ = type.ownership;
+    ownership_ = type.ownership_;
     map_ = type.ownership_ ? new mapping(*type.map_) : type.map_;
+    return *this;
 }
 
 Parameters& Parameters::operator=(Parameters&& type) noexcept
 {
     map_ = type.map_;
     ownership_ = type.ownership_;
+    return *this;
 }
 
 bool Parameters::operator==(
@@ -70,7 +76,7 @@ const char* Parameters::operator[](const char* key) const noexcept
     if (nullptr != map_)
     {
         auto it = map_->find(key);
-        if ( it != mapping::cend())
+        if ( it != map_->cend())
         {
             return it->second.c_str();
         }
@@ -101,7 +107,7 @@ ReturnCode_t Parameters::set_value(const char* key, const char* value) noexcept
         }
     }
 
-    *map_[key] = value;
+    (*map_)[key] = value;
 
     return ReturnCode_t::RETCODE_OK;
 }
@@ -116,7 +122,7 @@ bool Parameters::empty() const noexcept
     return map_ != nullptr ? map_->empty() : true;
 }
 
-const char* Parameters::next_key(const char* key = nullptr) const noexcept
+const char* Parameters::next_key(const char* key /*= nullptr*/) const noexcept
 {
     if (nullptr == map_)
     {
@@ -125,7 +131,7 @@ const char* Parameters::next_key(const char* key = nullptr) const noexcept
 
     mapping::const_iterator it;
 
-    if (key = nullptr)
+    if (nullptr == key)
     {
         it = map_->cbegin();
     }
@@ -142,7 +148,7 @@ const char* Parameters::next_key(const char* key = nullptr) const noexcept
     return nullptr;
 }
 
-AnnotationDescriptor::AnnotationDescriptor(const AnnotationDescriptor& type)
+AnnotationDescriptor::AnnotationDescriptor(const AnnotationDescriptor& type) noexcept
     : type_(type.get_type())
     , map_(type.map_)
 {
@@ -163,12 +169,14 @@ AnnotationDescriptor& AnnotationDescriptor::operator=(const AnnotationDescriptor
 {
     type_ = type.get_type();
     map_ = type.map_;
+    return *this;
 }
 
 AnnotationDescriptor& AnnotationDescriptor::operator=(AnnotationDescriptor&& type) noexcept
 {
     type_ = type.type_;
     map_ = std::move(type.map_);
+    return *this;
 }
 
 bool AnnotationDescriptor::operator==(
@@ -183,33 +191,33 @@ const DynamicType* AnnotationDescriptor::get_type() const noexcept
 {
     return nullptr == type_ ?
         nullptr :
-        TypeBuilderFactory::get_instance().create_copy(*type_);
+        DynamicTypeBuilderFactory::get_instance().create_copy(*type_);
 }
 
 void AnnotationDescriptor::set_type(
             const DynamicType& type) noexcept
 {
     reset_type();
-    type_ = TypeBuilderFactory::get_instance().create_copy(type);
+    type_ = DynamicTypeBuilderFactory::get_instance().create_copy(type);
 }
 
 void AnnotationDescriptor::reset_type() noexcept
 {
     if (type_ != nullptr)
     {
-        TypeBuilderFactory::get_instance().delete_type(base_type_);
+        DynamicTypeBuilderFactory::get_instance().delete_type(type_);
     }
 
     type_ = nullptr;
 }
 
-const char* AnnotationDescriptor::get_value(const char* key, ReturnCode_t error = nullptr) const noexcept
+const char* AnnotationDescriptor::get_value(const char* key, ReturnCode_t* error /*= nullptr*/) const noexcept
 {
     const char* res = map_[key];
 
     if (error != nullptr)
     {
-        *error != nullptr ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_BAD_PARAMETER;
+        *error = res != nullptr ? ReturnCode_t::RETCODE_OK : ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 
     return res;
@@ -220,7 +228,7 @@ ReturnCode_t AnnotationDescriptor::set_value(const char* key, const char* value)
     return map_.set_value(key, value);
 }
 
-const Parameters* AnnotationDescriptor::get_all_value(ReturnCode_t error = nullptr) const noexcept
+const Parameters* AnnotationDescriptor::get_all_value(ReturnCode_t* error /*= nullptr*/) const noexcept
 {
     *error = ReturnCode_t::RETCODE_OK;
     return &map_;

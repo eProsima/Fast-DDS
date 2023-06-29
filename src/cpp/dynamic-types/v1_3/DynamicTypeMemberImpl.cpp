@@ -13,11 +13,10 @@
 // limitations under the License.
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
-#include <fastrtps/types/v1_3/DynamicType.hpp>
-#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
-#include <fastrtps/types/v1_3/DynamicTypeMember.hpp>
-#include <fastrtps/types/v1_3/MemberDescriptor.hpp>
+#include <dynamic-types/v1_3/AnnotationDescriptorImpl.hpp>
+#include <dynamic-types/v1_3/DynamicTypeBuilderFactoryImpl.hpp>
+#include <dynamic-types/v1_3/DynamicTypeMemberImpl.hpp>
+#include <dynamic-types/v1_3/MemberDescriptorImpl.hpp>
 
 #include <cassert>
 #include <iomanip>
@@ -25,36 +24,25 @@
 
 using namespace eprosima::fastrtps::types::v1_3;
 
-bool DynamicTypeMember::operator ==(
-        const DynamicTypeMember& other) const
+using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+
+bool DynamicTypeMemberImpl::operator ==(
+        const DynamicTypeMemberImpl& other) const
 {
     return get_descriptor() == other.get_descriptor() && AnnotationManager::operator ==(other);
 }
 
-bool DynamicTypeMember::equals(
-        const DynamicTypeMember& other) const
-{
-    return *this == other;
-}
-
-ReturnCode_t DynamicTypeMember::get_descriptor(
-        MemberDescriptor& descriptor) const
-{
-    descriptor = get_descriptor();
-    return ReturnCode_t::RETCODE_OK;
-}
-
-std::string DynamicTypeMember::get_default_value() const
+std::string DynamicTypeMemberImpl::get_default_value() const
 {
     // Fallback to annotation
-    std::string res = MemberDescriptor::get_default_value();
+    std::string res = MemberDescriptorImpl::get_default_value();
     return res.empty() ? annotation_get_default() : res;
 }
 
-bool DynamicTypeMember::is_consistent(
+bool DynamicTypeMemberImpl::is_consistent(
         TypeKind parentKind) const
 {
-    if (!MemberDescriptor::is_consistent(parentKind))
+    if (!MemberDescriptorImpl::is_consistent(parentKind))
     {
         return false;
     }
@@ -62,7 +50,7 @@ bool DynamicTypeMember::is_consistent(
     // checks based on annotations
 
     // Structures and unions allow it for @external. This condition can only
-    // be check in the DynamicTypeMember override
+    // be check in the DynamicTypeMemberImpl override
     if ((parentKind == TypeKind::TK_STRUCTURE || parentKind == TypeKind::TK_UNION) &&
             !type_ && !annotation_is_external())
     {
@@ -81,33 +69,33 @@ bool DynamicTypeMember::is_consistent(
 
 std::ostream& eprosima::fastrtps::types::v1_3::operator <<(
         std::ostream& os,
-        const DynamicTypeMember& dm)
+        const DynamicTypeMemberImpl& dm)
 {
     using namespace std;
 
     // delegate into the base class
-    os << static_cast<const MemberDescriptor&>(dm);
+    os << static_cast<const MemberDescriptorImpl&>(dm);
 
     // Show the annotations if any
     if (dm.get_annotation_count())
     {
         // indentation increment
-        ++os.iword(DynamicTypeBuilderFactory::indentation_index);
+        ++os.iword(DynamicTypeBuilderFactoryImpl::indentation_index);
 
         auto manips = [](ostream& os) -> ostream&
                 {
-                    long indent = os.iword(DynamicTypeBuilderFactory::indentation_index);
+                    long indent = os.iword(DynamicTypeBuilderFactoryImpl::indentation_index);
                     return os << string(indent, '\t') << setw(10) << left;
                 };
 
         os << manips << "member annotations:" << endl;
-        for (const AnnotationDescriptor& d : dm.get_all_annotations())
+        for (const AnnotationDescriptorImpl& d : dm.get_all_annotations())
         {
             os << d;
         }
 
         // indentation decrement
-        --os.iword(DynamicTypeBuilderFactory::indentation_index);
+        --os.iword(DynamicTypeBuilderFactoryImpl::indentation_index);
     }
 
     return os;

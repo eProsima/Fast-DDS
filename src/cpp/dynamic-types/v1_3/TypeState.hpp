@@ -229,14 +229,6 @@ public:
             uint32_t index) const;
 
     /**
-     * Queries members by identifier
-     * @param[in] id MemberId
-     * @return std::pair where second if `second == true` then first is a reference to an associated @ref DynamicTypeMemberImpl
-     */
-    std::pair<const DynamicTypeMemberImpl*, bool> get_member(
-            MemberId id) const;
-
-    /**
      * Returns the state of the @ref DynamicTypeImpl or @ref DynamicTypeBuilderImpl object
      * @param[in] descriptor object state
      * @return standard @ref ReturnCode_t
@@ -384,33 +376,24 @@ public:
 
     /**
      * This operation returns the member that corresponds to the specified member ID
-     * @param[in, out] member MemberDescriptor to fill in
      * @param[in] id MemberId identifier to query
-     * @return standard @ref ReturnCode_t
+     * @return standard MemberDescriptorImpl
      */
-    ReturnCode_t get_member(
-            MemberDescriptor& member,
-            MemberId id) const noexcept;
+    const MemberDescriptorImpl& get_member(MemberId id) const;
 
     /**
      * This operation returns the member that corresponds to the specified index
-     * @param[in, out] member MemberDescriptor to fill in
      * @param[in] index uint32_t collection position to query
-     * @return standard @ref ReturnCode_t
+     * @return standard MemberDescriptorImpl
      */
-    ReturnCode_t get_member_by_index(
-            MemberDescriptor& member,
-            uint32_t index) const noexcept;
+    const MemberDescriptorImpl& get_member_by_index(uint32_t index) const;
 
     /**
      * This operation returns the member that corresponds to the specified name
-     * @param[in, out] member MemberDescriptor to fill in
      * @param[in] name std::string collection member name to query
-     * @return standard @ref ReturnCode_t
+     * @return standard MemberDescriptorImpl
      */
-    ReturnCode_t get_member_by_name(
-            MemberDescriptor& member,
-            const std::string& name) const noexcept;
+    const MemberDescriptorImpl& get_member_by_name(const std::string& name) const;
 };
 
 //! @ref TypeState expected `std::ostream` non-member override of `operator<<`

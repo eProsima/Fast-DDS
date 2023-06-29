@@ -25,6 +25,7 @@ namespace types {
 namespace v1_3 {
 
 class DynamicTypeImpl;
+class MemberDescriptor;
 
 class DynamicTypeMemberImpl final
     : public MemberDescriptorImpl
@@ -62,7 +63,7 @@ public:
     using MemberDescriptorImpl::operator ==;
     using MemberDescriptorImpl::operator !=;
 
-//  using MemberDescriptorImpl::get_descriptor;
+    using MemberDescriptorImpl::get_descriptor;
 
     /**
      * Getter for \b default_value property (see [standard] section 7.5.2.7.3)

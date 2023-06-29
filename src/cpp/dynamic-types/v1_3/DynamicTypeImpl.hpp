@@ -34,7 +34,7 @@ class AnnotationDescriptorImpl;
 class DynamicData;
 class DynamicTypeMemberImpl;
 class DynamicTypeBuilderImpl;
-class DynamicTypeBuilderFactory;
+class DynamicTypeBuilderFactoryImpl;
 
 class DynamicTypeImpl final
     : public TypeState

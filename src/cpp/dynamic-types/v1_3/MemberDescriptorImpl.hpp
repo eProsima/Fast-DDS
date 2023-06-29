@@ -62,13 +62,11 @@ protected:
     bool is_type_name_consistent(
             const std::string& sName) const;
 
-/* TODO: implement
     //! builtin cast inherited on subclasses
-    const MemberDescriptor& get_descriptor() const
+    const MemberDescriptorImpl& get_descriptor() const
     {
         return *this;
     }
-*/
 
 public:
 

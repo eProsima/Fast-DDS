@@ -27,7 +27,7 @@ namespace fastrtps {
 namespace types {
 namespace v1_3 {
 
-class DynamicTypeMember : final
+class DynamicTypeMember final
 {
     DynamicTypeMember() noexcept = default;
 
@@ -85,7 +85,7 @@ public:
 class DynamicTypeMembersByName final
 {
     // const because we don't want to modify the ref map from this class
-    using const std::map<std::string, const DynamicTypeMember*> mapping;
+    using mapping = const std::map<std::string, const DynamicTypeMember*>;
     mapping& map_;
 
     // only retrievable from DynamicType and DynamicTypeBuilder
@@ -96,7 +96,7 @@ class DynamicTypeMembersByName final
     // liveliness associated to DynamicType and DynamicTypeBuilder
     ~DynamicTypeMembersByName() = default;
 
-    friend class eprosima::types::v1_3::TypeState;
+    friend class TypeState;
 
 public:
 
@@ -137,7 +137,7 @@ class DynamicTypeMembersById final
     // liveliness associated to DynamicType and DynamicTypeBuilder
     ~DynamicTypeMembersById() = default;
 
-    friend class eprosima::types::v1_3::TypeState;
+    friend class TypeState;
 
 public:
 

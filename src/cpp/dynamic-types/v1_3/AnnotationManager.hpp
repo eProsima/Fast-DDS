@@ -15,8 +15,8 @@
 #ifndef TYPES_1_3_ANNOTATION_MANAGER_H
 #define TYPES_1_3_ANNOTATION_MANAGER_H
 
-#include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
 #include <fastrtps/types/v1_3/MemberId.hpp>
+#include <dynamic-types/v1_3/AnnotationDescriptorImpl.hpp>
 
 #include <set>
 #include <string>
@@ -28,8 +28,8 @@ namespace v1_3 {
 
 class AnnotationManager
 {
-    std::set<AnnotationDescriptor> annotation_; // Annotations to apply
-    using annotation_iterator = std::set<AnnotationDescriptor>::iterator;
+    std::set<AnnotationDescriptorImpl> annotation_; // Annotations to apply
+    using annotation_iterator = std::set<AnnotationDescriptorImpl>::iterator;
 
     //! auxiliary methods for setters
 
@@ -68,7 +68,7 @@ protected:
 public:
 
     //! retrieve a collection of all annotations
-    RTPS_DllAPI const std::set<AnnotationDescriptor>& get_all_annotations() const
+    const std::set<AnnotationDescriptorImpl>& get_all_annotations() const
     {
         return annotation_;
     }
@@ -76,138 +76,138 @@ public:
     // Annotations flags for members
 
     //! checks if member is bit bound
-    RTPS_DllAPI bool annotation_is_bit_bound() const;
+    bool annotation_is_bit_bound() const;
 
     //! checks if member is key
-    RTPS_DllAPI bool annotation_is_key() const;
+    bool annotation_is_key() const;
 
     //! checks if member should be serialized
-    RTPS_DllAPI bool annotation_is_non_serialized() const;
+    bool annotation_is_non_serialized() const;
 
     //! checks if member is optional
-    RTPS_DllAPI bool annotation_is_optional() const;
+    bool annotation_is_optional() const;
 
     //! checks if client should mandatorily cope with this member
-    RTPS_DllAPI bool annotation_is_must_understand() const;
+    bool annotation_is_must_understand() const;
 
     //! checks if member is value
-    RTPS_DllAPI bool annotation_is_value() const;
+    bool annotation_is_value() const;
 
     //! checks if member is default literal value
-    RTPS_DllAPI bool annotation_is_default_literal() const;
+    bool annotation_is_default_literal() const;
 
     //! checks if member provides a context meaningful position
-    RTPS_DllAPI bool annotation_is_position() const;
+    bool annotation_is_position() const;
 
     //! checks if member is an external reference (pointer)
-    RTPS_DllAPI bool annotation_is_external() const;
+    bool annotation_is_external() const;
 
     // Annotations flags for types
 
     //! checks if the type is extensible
-    RTPS_DllAPI bool annotation_is_extensibility() const;
+    bool annotation_is_extensibility() const;
 
     //! checks if the type is mutable
-    RTPS_DllAPI bool annotation_is_mutable() const;
+    bool annotation_is_mutable() const;
 
     //! checks if subclasses can be created
-    RTPS_DllAPI bool annotation_is_final() const;
+    bool annotation_is_final() const;
 
     //! checks if appendability is supported
-    RTPS_DllAPI bool annotation_is_appendable() const;
+    bool annotation_is_appendable() const;
 
     //! checks if type can be nested
-    RTPS_DllAPI bool annotation_is_nested() const;
+    bool annotation_is_nested() const;
 
     //! checks if type is a valid key
-    RTPS_DllAPI bool key_annotation() const;
+    bool key_annotation() const;
 
     // Annotations getters
 
     //! gets annotation value key
-    RTPS_DllAPI std::string annotation_get_value() const;
+    std::string annotation_get_value() const;
 
     //! gets default value from annotation
-    RTPS_DllAPI std::string annotation_get_default() const;
+    std::string annotation_get_default() const;
 
     //! gets position from annotation
-    RTPS_DllAPI uint16_t annotation_get_position() const;
+    uint16_t annotation_get_position() const;
 
     //! gets bit bound from annotation
-    RTPS_DllAPI uint16_t annotation_get_bit_bound() const;
+    uint16_t annotation_get_bit_bound() const;
 
     //! gets extensibility from annotation
-    RTPS_DllAPI std::string annotation_get_extensibility() const;
+    std::string annotation_get_extensibility() const;
 
     //! gets type name externally referenced
-    RTPS_DllAPI std::string annotation_get_external_typename() const;
+    std::string annotation_get_external_typename() const;
 
     // Annotations setters
 
     //! sets optional annotation
-    RTPS_DllAPI void annotation_set_optional(
+    void annotation_set_optional(
             bool optional);
 
     //! sets key annotation
-    RTPS_DllAPI void annotation_set_key(
+    void annotation_set_key(
             bool key);
 
     //! sets 'client must understand' annotation
-    RTPS_DllAPI void annotation_set_must_understand(
+    void annotation_set_must_understand(
             bool must_understand);
 
     //! sets non-serialized annotation
-    RTPS_DllAPI void annotation_set_non_serialized(
+    void annotation_set_non_serialized(
             bool non_serialized);
 
     //! sets value annotation
-    RTPS_DllAPI void annotation_set_value(
+    void annotation_set_value(
             const std::string& value);
 
     //! sets default annotation
-    RTPS_DllAPI void annotation_set_default(
+    void annotation_set_default(
             const std::string& default_value);
 
     //! sets default-literal annotation
-    RTPS_DllAPI void annotation_set_default_literal();
+    void annotation_set_default_literal();
 
     //! sets position annotation
-    RTPS_DllAPI void annotation_set_position(
+    void annotation_set_position(
             uint16_t position);
 
     //! sets bit-bound annotation
-    RTPS_DllAPI void annotation_set_bit_bound(
+    void annotation_set_bit_bound(
             uint16_t bit_bound);
 
     //! sets extensibility annotation
-    RTPS_DllAPI void annotation_set_extensibility(
+    void annotation_set_extensibility(
             const std::string& extensibility);
 
     //! sets mutable annotation
-    RTPS_DllAPI void annotation_set_mutable();
+    void annotation_set_mutable();
 
     //! sets final annotation
-    RTPS_DllAPI void annotation_set_final();
+    void annotation_set_final();
 
     //! sets appendable annotation
-    RTPS_DllAPI void annotation_set_appendable();
+    void annotation_set_appendable();
 
     //! sets nested annotation
-    RTPS_DllAPI void annotation_set_nested(
+    void annotation_set_nested(
             bool nested);
 
     //! sets external annotation referencing a specific type name
-    RTPS_DllAPI void annotation_set_external(
+    void annotation_set_external(
             const std::string& type_name);
 
     /**
      * Apply the given annotation to this type (see [standard] section 7.5.2.9.5)
-     * @param[in] descriptor @ref AnnotationDescriptor to copy
+     * @param[in] descriptor @ref AnnotationDescriptorImpl to copy
      * @return standard @ref ReturnCode_t
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    RTPS_DllAPI ReturnCode_t apply_annotation(
-            const AnnotationDescriptor& descriptor);
+    ReturnCode_t apply_annotation(
+            const AnnotationDescriptorImpl& descriptor);
 
     /**
      * Apply the given annotation to this type (see [standard] section 7.5.2.9.5).
@@ -216,10 +216,10 @@ public:
      * @param[in] key string for new map entry key
      * @param[in] value string for new map entry value
      * @return standard @ref ReturnCode_t
-     * @remarks Convenient constructor that emplaces an @ref AnnotationDescriptor constructed from the arguments
+     * @remarks Convenient constructor that emplaces an @ref AnnotationDescriptorImpl constructed from the arguments
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    RTPS_DllAPI ReturnCode_t apply_annotation(
+    ReturnCode_t apply_annotation(
             const std::string& annotation_name,
             const std::string& key,
             const std::string& value);
@@ -227,13 +227,13 @@ public:
     /**
      * This operation returns the annotation that corresponds to the specified index,
      * if any (see [standard] section 7.5.2.8.5)
-     * @param[out] descriptor @ref AnnotationDescriptor to populate
+     * @param[out] descriptor @ref AnnotationDescriptorImpl to populate
      * @param[in] idx index associated to the annotation to retrieve
      * @return standard @ref ReturnCode_t
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    RTPS_DllAPI ReturnCode_t get_annotation(
-            AnnotationDescriptor& descriptor,
+    ReturnCode_t get_annotation(
+            AnnotationDescriptorImpl& descriptor,
             std::size_t idx) const;
 
     /**
@@ -242,7 +242,7 @@ public:
      * @return number of annotations
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    RTPS_DllAPI std::size_t get_annotation_count() const;
+    std::size_t get_annotation_count() const;
 };
 
 } // namespace v1_3

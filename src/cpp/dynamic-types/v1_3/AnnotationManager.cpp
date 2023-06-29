@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/v1_3/AnnotationManager.hpp>
-#include <fastrtps/types/v1_3/DynamicType.hpp>
-#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
 #include <fastdds/dds/log/Log.hpp>
+
+#include <dynamic-types/v1_3/AnnotationManager.hpp>
+#include <dynamic-types/v1_3/DynamicTypeImpl.hpp>
+#include <dynamic-types/v1_3/DynamicTypeBuilderFactoryImpl.hpp>
 
 using namespace eprosima::fastrtps::types::v1_3;
 
@@ -27,7 +28,7 @@ AnnotationManager::get_annotation(
 
     for (; it != annotation_.end(); ++it)
     {
-        const AnnotationDescriptor& d = *it;
+        const AnnotationDescriptorImpl& d = *it;
         if ( d.type() && d.type()->get_kind() != TypeKind::TK_NONE
                 && !d.type()->get_name().empty()
                 && d.type()->get_name().compare(name) == 0)
@@ -211,8 +212,8 @@ uint16_t AnnotationManager::annotation_get_bit_bound() const
 
 /* Ancillary method for setters
  * @param id annotation name
- * @param C functor that checks if the annotation should be modified: bool(const AnnotationDescriptor&)
- * @param M functor that modifies the annotation if present: void(AnnotationDescriptor&)
+ * @param C functor that checks if the annotation should be modified: bool(const AnnotationDescriptorImpl&)
+ * @param M functor that modifies the annotation if present: void(AnnotationDescriptorImpl&)
  */
 template<typename C, typename M>
 void AnnotationManager::annotation_set(
@@ -226,16 +227,16 @@ void AnnotationManager::annotation_set(
     std::tie(it, found) = get_annotation(id);
     if (!found)
     {
-        AnnotationDescriptor descriptor;
+        AnnotationDescriptorImpl descriptor;
         descriptor.set_type(
-            DynamicTypeBuilderFactory::get_instance().create_annotation_primitive(id));
+            DynamicTypeBuilderFactoryImpl::get_instance().create_annotation_primitive(id));
         m(descriptor);
         apply_annotation(descriptor);
     }
     else if (c(*it))
     {
         // Reinsert because order may be modified
-        AnnotationDescriptor descriptor(std::move(*it));
+        AnnotationDescriptorImpl descriptor(std::move(*it));
         it = annotation_.erase(it);
         m(descriptor);
         annotation_.insert(it, std::move(descriptor));
@@ -252,13 +253,13 @@ void AnnotationManager::annotation_set(
 {
     annotation_set(
         id,
-        [new_val](const AnnotationDescriptor& d) -> bool
+        [new_val](const AnnotationDescriptorImpl& d) -> bool
         {
             std::string val;
             d.get_value(val, "value");
             return 0 != val.compare(new_val);
         },
-        [new_val](AnnotationDescriptor& d)
+        [new_val](AnnotationDescriptorImpl& d)
         {
             d.set_value("value", new_val);
         });
@@ -360,7 +361,7 @@ void AnnotationManager::annotation_set_external(
 }
 
 ReturnCode_t AnnotationManager::apply_annotation(
-        const AnnotationDescriptor& descriptor)
+        const AnnotationDescriptorImpl& descriptor)
 {
     if (descriptor.is_consistent())
     {
@@ -381,13 +382,13 @@ ReturnCode_t AnnotationManager::apply_annotation(
 {
     annotation_set(
         annotation_name,
-        [&key, &value](const AnnotationDescriptor& d) -> bool
+        [&key, &value](const AnnotationDescriptorImpl& d) -> bool
         {
             std::string val;
             d.get_value(val, key);
             return val != value;
         },
-        [&key, &value](AnnotationDescriptor& d)
+        [&key, &value](AnnotationDescriptorImpl& d)
         {
             d.set_value(key, value);
         });
@@ -478,7 +479,7 @@ std::size_t AnnotationManager::get_annotation_count() const
 }
 
 ReturnCode_t AnnotationManager::get_annotation(
-        AnnotationDescriptor& descriptor,
+        AnnotationDescriptorImpl& descriptor,
         std::size_t idx) const
 {
     assert(idx < get_annotation_count());
@@ -498,11 +499,4 @@ bool AnnotationManager::key_annotation() const
         }
     }
     return false;
-}
-
-ReturnCode_t TypeDescriptor::get_descriptor(
-        TypeDescriptor& descriptor) const noexcept
-{
-    descriptor = *this;
-    return ReturnCode_t::RETCODE_OK;
 }
