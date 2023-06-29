@@ -485,7 +485,7 @@ void SharedMemTransport::cleanup_output_ports()
     auto it = opened_ports_.begin();
     while (it != opened_ports_.end())
     {
-        if (it->second->is_ok())
+        if (it->second->has_listeners())
         {
             ++it;
         }

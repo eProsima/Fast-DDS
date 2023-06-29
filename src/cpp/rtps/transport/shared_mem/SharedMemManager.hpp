@@ -841,9 +841,9 @@ public:
             return *this;
         }
 
-        bool is_ok() const
+        bool has_listeners() const
         {
-            return global_port_->is_port_ok();
+            return global_port_->port_has_listeners();
         }
 
         /**
