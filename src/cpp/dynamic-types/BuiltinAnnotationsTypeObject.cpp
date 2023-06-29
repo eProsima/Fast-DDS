@@ -305,8 +305,9 @@ const TypeObject* GetCompleteidObject()
     // CommonAnnotationParameter
 
     // AnnotationParameterFlag: Unused. No flags apply
-    // TypeIdentifier
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint32_t", true));
+    // TypeIdentifier: Primitive types TypeIdentifiers are saved into the identifiers_ collection and not into the
+    // complete_identifiers_ collection.
+    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint32_t", false));
 
     // MemberName
     cam_value.name("value");
@@ -783,7 +784,7 @@ const TypeObject* GetCompleteoptionalObject()
     type_object->complete().annotation_type().header().annotation_name("optional");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", true));
+    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
     cam_value.name("value");
 
     AnnotationParameterValue def_value_value;
@@ -917,7 +918,7 @@ const TypeObject* GetCompletepositionObject()
     type_object->complete().annotation_type().header().annotation_name("position");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", true));
+    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
     cam_value.name("value");
     cam_value.default_value()._d(TK_UINT16);
 
@@ -1816,7 +1817,7 @@ const TypeObject* GetCompletekeyObject()
     type_object->complete().annotation_type().header().annotation_name("key");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", true));
+    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
     cam_value.name("value");
 
     AnnotationParameterValue def_value_value;
@@ -1939,7 +1940,7 @@ const TypeObject* GetMinimalmust_understandObject()
 
 const TypeObject* GetCompletemust_understandObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("must_understand", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("must_understand", false);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
