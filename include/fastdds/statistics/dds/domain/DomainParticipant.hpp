@@ -104,6 +104,27 @@ public:
     RTPS_DllAPI static const DomainParticipant* narrow(
             const eprosima::fastdds::dds::DomainParticipant* domain_participant);
 
+    /**
+     * Enables the monitor service in the DomainParticipant.
+     *
+     * @return RETCODE_OK if the monitor service could be correctly enabled.
+     * @return RETCODE_ERROR if the monitor service could not be enabled properly.
+     *
+     * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
+     */
+    RTPS_DllAPI ReturnCode_t enable_monitor_service() const;
+
+    /**
+     * Disables the monitor service in this DomainParticipant. Does nothing if the service was not enabled before.
+     *
+     * @return RETCODE_OK if the monitor service could be correctly disabled.
+     * @return RETCODE_NOT_ENABLED if the monitor service was not previously enabled.
+     * @return RETCODE_ERROR if the service could not be properly disabled.
+     *
+     * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
+     */
+    RTPS_DllAPI ReturnCode_t disable_monitor_service() const;
+
 };
 
 } // namespace dds

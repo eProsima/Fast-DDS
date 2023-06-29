@@ -196,16 +196,6 @@ bool RTPSParticipant::ignore_reader(
     return false;
 }
 
-bool RTPSParticipant::enable_monitor_service() const
-{
-    return mp_impl->enable_monitor_service();
-}
-
-bool RTPSParticipant::disable_monitor_service() const
-{
-    return mp_impl->disable_monitor_service();
-}
-
 #if HAVE_SECURITY
 
 bool RTPSParticipant::is_security_enabled_for_writer(
@@ -242,6 +232,32 @@ void RTPSParticipant::set_enabled_statistics_writers_mask(
         uint32_t enabled_writers)
 {
     mp_impl->set_enabled_statistics_writers_mask(enabled_writers);
+}
+
+const fastdds::statistics::rtps::IStatusListener* RTPSParticipant::create_monitor_service(
+            fastdds::statistics::rtps::IStatusQueryable& sq)
+{
+    return mp_impl->create_monitor_service(sq);
+}
+
+bool RTPSParticipant::create_monitor_service()
+{
+    return mp_impl->create_monitor_service();
+}
+
+bool RTPSParticipant::is_monitor_service_created() const
+{
+    return mp_impl->is_monitor_service_created();
+}
+
+bool RTPSParticipant::enable_monitor_service() const
+{
+    return mp_impl->enable_monitor_service();
+}
+
+bool RTPSParticipant::disable_monitor_service() const
+{
+    return mp_impl->disable_monitor_service();
 }
 
 #endif // FASTDDS_STATISTICS
