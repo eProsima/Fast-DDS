@@ -105,7 +105,6 @@ void register_builtin_annotations_types(
 /* TODO: pending any definition
     factory->add_type_object("default", GetdefaultIdentifier(true), GetdefaultObject(true));
     factory->add_type_object("default", GetdefaultIdentifier(false), GetdefaultObject(false));
-*/
 
     factory->add_type_object("range", GetrangeIdentifier(true), GetrangeObject(true));
     factory->add_type_object("range", GetrangeIdentifier(false), GetrangeObject(false));
@@ -115,6 +114,7 @@ void register_builtin_annotations_types(
 
     factory->add_type_object("max", GetmaxIdentifier(true), GetmaxObject(true));
     factory->add_type_object("max", GetmaxIdentifier(false), GetmaxObject(false));
+*/
 
     factory->add_type_object("unit", GetunitIdentifier(true), GetunitObject(true));
     factory->add_type_object("unit", GetunitIdentifier(false), GetunitObject(false));
@@ -2231,7 +2231,6 @@ const TypeObject* GetCompletedefaultObject()
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("default", true);
 }
-*/
 
 const TypeIdentifier* GetrangeIdentifier(
         bool complete)
@@ -2640,6 +2639,7 @@ const TypeObject* GetCompletemaxObject()
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("max", true);
 }
+*/
 
 const TypeIdentifier* GetunitIdentifier(
         bool complete)

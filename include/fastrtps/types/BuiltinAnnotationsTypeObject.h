@@ -113,7 +113,6 @@ const TypeIdentifier* GetdefaultIdentifier(bool complete = false);
 const TypeObject* GetdefaultObject(bool complete = false);
 const TypeObject* GetMinimaldefaultObject();
 const TypeObject* GetCompletedefaultObject();
-*/
 
 const TypeIdentifier* GetrangeIdentifier(bool complete = false);
 const TypeObject* GetrangeObject(bool complete = false);
@@ -129,6 +128,7 @@ const TypeIdentifier* GetmaxIdentifier(bool complete = false);
 const TypeObject* GetmaxObject(bool complete = false);
 const TypeObject* GetMinimalmaxObject();
 const TypeObject* GetCompletemaxObject();
+*/
 
 const TypeIdentifier* GetunitIdentifier(bool complete = false);
 const TypeObject* GetunitObject(bool complete = false);
