@@ -53,11 +53,11 @@ public:
 
     DynamicTypeImpl(
             use_the_create_method,
-            const TypeDescriptor& descriptor);
+            const TypeState& descriptor);
 
     DynamicTypeImpl(
             use_the_create_method,
-            TypeDescriptor&& descriptor);
+            TypeState&& descriptor);
 
     ~DynamicTypeImpl();
 

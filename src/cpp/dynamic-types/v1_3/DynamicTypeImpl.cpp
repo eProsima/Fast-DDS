@@ -13,55 +13,49 @@
 // limitations under the License.
 
 #include <fastdds/dds/log/Log.hpp>
-#include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
-#include <fastrtps/types/v1_3/DynamicData.hpp>
-#include <fastrtps/types/v1_3/DynamicDataFactory.hpp>
-#include <fastrtps/types/v1_3/DynamicType.hpp>
-#include <fastrtps/types/v1_3/DynamicTypeBuilder.hpp>
-#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
-#include <fastrtps/types/v1_3/DynamicTypeMember.hpp>
-#include <fastrtps/types/v1_3/TypeDescriptor.hpp>
+#include <dynamic-types/v1_3/AnnotationDescriptorImpl.hpp>
+#include <dynamic-types/v1_3/DynamicData.hpp>
+#include <dynamic-types/v1_3/DynamicDataFactory.hpp>
+#include <dynamic-types/v1_3/DynamicTypeImpl.hpp>
+// #include <dynamic-types/v1_3/DynamicTypeBuilderImpl.hpp>
+#include <dynamic-types/v1_3/DynamicTypeBuilderFactoryImpl.hpp>
+#include <dynamic-types/v1_3/DynamicTypeMemberImpl.hpp>
+#include <dynamic-types/v1_3/TypeState.hpp>
 
 #include <fastcdr/Cdr.h>
 
 using namespace eprosima::fastrtps::types::v1_3;
 
-DynamicType::DynamicType(
+DynamicTypeImpl::DynamicTypeImpl(
         use_the_create_method)
 {
 }
 
-DynamicType::DynamicType(
+DynamicTypeImpl::DynamicTypeImpl(
         use_the_create_method,
-        const TypeDescriptor& descriptor)
-    : TypeDescriptor(descriptor)
+        const TypeState& state)
+    : TypeState(state)
 {
 }
 
-DynamicType::DynamicType(
+DynamicTypeImpl::DynamicTypeImpl(
         use_the_create_method,
-        TypeDescriptor&& descriptor)
-    : TypeDescriptor(std::move(descriptor))
+        TypeState&& state)
+    : TypeState(std::move(state))
 {
 }
 
-DynamicType::~DynamicType()
+DynamicTypeImpl::~DynamicTypeImpl()
 {
     clear();
 }
 
-void DynamicType::clear()
+void DynamicTypeImpl::clear()
 {
-    TypeDescriptor::clean();
+    TypeState::clean();
 }
 
-bool DynamicType::equals(
-        const DynamicType& other) const
-{
-    return operator ==(other);
-}
-
-bool DynamicType::is_complex_kind() const
+bool DynamicTypeImpl::is_complex_kind() const
 {
     switch (kind_)
     {
@@ -79,7 +73,7 @@ bool DynamicType::is_complex_kind() const
     }
 }
 
-bool DynamicType::is_discriminator_type() const
+bool DynamicTypeImpl::is_discriminator_type() const
 {
     if (kind_ == TypeKind::TK_ALIAS && get_base_type())
     {
@@ -111,7 +105,7 @@ bool DynamicType::is_discriminator_type() const
     }
 }
 
-size_t DynamicType::get_size() const
+size_t DynamicTypeImpl::get_size() const
 {
     switch (kind_)
     {
@@ -154,7 +148,7 @@ size_t DynamicType::get_size() const
     return 0;
 }
 
-bool DynamicType::deserialize_discriminator(
+bool DynamicTypeImpl::deserialize_discriminator(
         DynamicData& data,
         eprosima::fastcdr::Cdr& cdr) const
 {
@@ -328,7 +322,7 @@ bool DynamicType::deserialize_discriminator(
     return true;
 }
 
-bool DynamicType::deserialize(
+bool DynamicTypeImpl::deserialize(
         DynamicData& data,
         eprosima::fastcdr::Cdr& cdr) const
 {
@@ -606,7 +600,7 @@ bool DynamicType::deserialize(
                 res &= base_type_->deserialize(data, cdr);
             }
 
-            for (const DynamicTypeMember& m : members_)
+            for (const DynamicTypeMemberImpl& m : members_)
             {
                 if (!m.annotation_is_non_serialized())
                 {
@@ -760,7 +754,7 @@ bool DynamicType::deserialize(
     return res;
 }
 
-size_t DynamicType::getCdrSerializedSize(
+size_t DynamicTypeImpl::getCdrSerializedSize(
         const DynamicData& data,
         size_t current_alignment /*= 0*/) const
 {
@@ -862,13 +856,7 @@ size_t DynamicType::getCdrSerializedSize(
                 auto it = (DynamicData*)data.values_.at(data.union_id_);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 
-                const DynamicTypeMember* member_desc;
-                bool found;
-
-                std::tie(member_desc, found) = get_member(data.union_id_);
-                assert(found);
-
-                current_alignment += member_desc->type_->getCdrSerializedSize(*it, current_alignment);
+                current_alignment += get_member(data.union_id_).get_type()->getCdrSerializedSize(*it, current_alignment);
             }
             break;
         }
@@ -888,7 +876,7 @@ size_t DynamicType::getCdrSerializedSize(
                 current_alignment += base_type_->getCdrSerializedSize(data, current_alignment);
             }
 
-            for (const DynamicTypeMember& m : members_)
+            for (const DynamicTypeMemberImpl& m : members_)
             {
                 if (!m.annotation_is_non_serialized())
                 {
@@ -987,7 +975,7 @@ size_t DynamicType::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-size_t DynamicType::getEmptyCdrSerializedSize(
+size_t DynamicTypeImpl::getEmptyCdrSerializedSize(
         size_t current_alignment /*= 0*/) const
 {
     if (annotation_is_non_serialized())
@@ -1068,7 +1056,7 @@ size_t DynamicType::getEmptyCdrSerializedSize(
                 current_alignment += base_type_->getEmptyCdrSerializedSize(current_alignment);
             }
 
-            for (const DynamicTypeMember& m : members_)
+            for (const DynamicTypeMemberImpl& m : members_)
             {
                 if (!m.annotation_is_non_serialized())
                 {
@@ -1104,7 +1092,7 @@ size_t DynamicType::getEmptyCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-size_t DynamicType::getKeyMaxCdrSerializedSize(
+size_t DynamicTypeImpl::getKeyMaxCdrSerializedSize(
         size_t current_alignment /*= 0*/) const
 {
     size_t initial_alignment = current_alignment;
@@ -1118,7 +1106,7 @@ size_t DynamicType::getKeyMaxCdrSerializedSize(
             current_alignment += base_type_->getKeyMaxCdrSerializedSize(current_alignment);
         }
 
-        for (const DynamicTypeMember& m : members_)
+        for (const DynamicTypeMemberImpl& m : members_)
         {
             if (m.key_annotation())
             {
@@ -1133,7 +1121,7 @@ size_t DynamicType::getKeyMaxCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-size_t DynamicType::getMaxCdrSerializedSize(
+size_t DynamicTypeImpl::getMaxCdrSerializedSize(
         size_t current_alignment /*= 0*/) const
 {
     if (annotation_is_non_serialized())
@@ -1208,7 +1196,7 @@ size_t DynamicType::getMaxCdrSerializedSize(
             // Check the size of all members and take the size of the biggest one.
             size_t temp_size(0);
             size_t max_element_size(0);
-            for (const DynamicTypeMember& m : members_)
+            for (const DynamicTypeMemberImpl& m : members_)
             {
                 temp_size = m.get_type()->getMaxCdrSerializedSize(current_alignment);
                 if (temp_size > max_element_size)
@@ -1228,7 +1216,7 @@ size_t DynamicType::getMaxCdrSerializedSize(
                 current_alignment += base_type_->getMaxCdrSerializedSize(current_alignment);
             }
 
-            for (const DynamicTypeMember& m : members_)
+            for (const DynamicTypeMemberImpl& m : members_)
             {
                 if (!m.annotation_is_non_serialized())
                 {
@@ -1279,24 +1267,25 @@ size_t DynamicType::getMaxCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void DynamicType::serialize_discriminator(
+void DynamicTypeImpl::serialize_discriminator(
         const DynamicData& data,
         eprosima::fastcdr::Cdr& cdr) const
 {
     assert(discriminator_type_);
-    const DynamicTypeMember* pM;
-    bool found;
 
     // retrieve the associated label
     uint64_t label = *data.union_id_;
-    std::tie(pM, found) = get_member(data.union_id_);
-    if (found)
+
+    try
     {
-        auto& lbls = pM->get_union_labels();
+        auto& lbls = get_member(data.union_id_).get_union_labels();
         if (!lbls.empty())
         {
             label = *lbls.begin();
         }
+    }
+    catch(const std::system_error&)
+    {
     }
 
     switch (discriminator_type_->get_kind())
@@ -1396,7 +1385,7 @@ void DynamicType::serialize_discriminator(
     }
 }
 
-void DynamicType::serialize(
+void DynamicTypeImpl::serialize(
         const DynamicData& data,
         eprosima::fastcdr::Cdr& cdr) const
 {
@@ -1651,7 +1640,7 @@ void DynamicType::serialize(
                 base_type_->serialize(data, cdr);
             }
 
-            for (const DynamicTypeMember& m : members_)
+            for (const DynamicTypeMemberImpl& m : members_)
             {
                 if (!m.annotation_is_non_serialized())
                 {
@@ -1711,7 +1700,7 @@ void DynamicType::serialize(
     }
 }
 
-void DynamicType::serializeKey(
+void DynamicTypeImpl::serializeKey(
         const DynamicData& data,
         eprosima::fastcdr::Cdr& cdr) const
 {
@@ -1738,7 +1727,7 @@ void DynamicType::serializeKey(
     }
 }
 
-void DynamicType::serialize_empty_data(
+void DynamicTypeImpl::serialize_empty_data(
         eprosima::fastcdr::Cdr& cdr) const
 {
     if (annotation_is_non_serialized())
@@ -1867,7 +1856,7 @@ void DynamicType::serialize_empty_data(
                 base_type_->serialize_empty_data(cdr);
             }
 
-            for (const DynamicTypeMember& m : members_)
+            for (const DynamicTypeMemberImpl& m : members_)
             {
                 if (!m.annotation_is_non_serialized())
                 {
@@ -1892,39 +1881,4 @@ void DynamicType::serialize_empty_data(
             break;
         }
     }
-}
-
-void DynamicType::external_dynamic_object_deleter(const DynamicType* pDT)
-{
-    if (pDT)
-    {
-        pDT->release();
-    }
-}
-
-void DynamicType::internal_dynamic_object_deleter(const DynamicType* pDT)
-{
-    if (pDT)
-    {
-        std::default_delete<const DynamicType> del;
-        del(pDT);
-    }
-}
-
-void (*eprosima::fastrtps::types::v1_3::dynamic_object_deleter(
-        const DynamicType* pDT))(const DynamicType*)
-{
-   if ( pDT != nullptr)
-   {
-        if (pDT->use_count())
-        {
-            return DynamicType::external_dynamic_object_deleter;
-        }
-        else
-        {
-            return DynamicType::internal_dynamic_object_deleter;
-        }
-   }
-
-   return nullptr;
 }

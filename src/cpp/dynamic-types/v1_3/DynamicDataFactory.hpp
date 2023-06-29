@@ -36,7 +36,7 @@ protected:
 
     ReturnCode_t create_members(
             DynamicData* pData,
-            DynamicType_ptr pType);
+            std::shared_ptr<const DynamicTypeImpl> pType);
 
 #ifndef DISABLE_DYNAMIC_MEMORY_CHECK
     std::vector<DynamicData*> dynamic_datas_;
@@ -55,7 +55,7 @@ public:
             DynamicTypeBuilder* pBuilder);
 
     RTPS_DllAPI DynamicData* create_data(
-            DynamicType_ptr pType);
+            std::shared_ptr<const DynamicTypeImpl> pType);
 
     RTPS_DllAPI DynamicData* create_copy(
             const DynamicData* pData);

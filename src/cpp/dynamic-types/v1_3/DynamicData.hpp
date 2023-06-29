@@ -16,8 +16,8 @@
 #define TYPES_1_3_DYNAMIC_DATA_H
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/v1_3/DynamicType.hpp>
-#include <fastrtps/types/v1_3/DynamicDataPtr.hpp>
+#include <dynamic-types/v1_3/DynamicTypeImpl.hpp>
+#include <dynamic-types/v1_3/DynamicDataPtr.hpp>
 #include <fastrtps/types/v1_3/MemberId.hpp>
 
 //#define DYNAMIC_TYPES_CHECKING
@@ -42,20 +42,20 @@ class DynamicDataHelper;
 
 namespace v1_3 {
 
-class DynamicType;
-class MemberDescriptor;
+class DynamicTypeImpl;
+class MemberDescriptorImpl;
 class DynamicPubSubType;
 
 class DynamicData
 {
-    friend class DynamicType;
+    friend class DynamicTypeImpl;
 
 protected:
 
     explicit DynamicData(
             const DynamicData* pData);
     DynamicData(
-            DynamicType_ptr pType);
+            std::shared_ptr<const DynamicTypeImpl> pType);
 
     ~DynamicData();
 
@@ -64,7 +64,7 @@ protected:
             MemberId id);
 
     void create_members(
-            DynamicType_ptr pType);
+            std::shared_ptr<const DynamicTypeImpl> pType);
 
     void create_members(
             const DynamicData* pData);
@@ -103,7 +103,7 @@ protected:
 
     bool has_children() const;
 
-    DynamicType_ptr type_;
+    std::shared_ptr<const DynamicTypeImpl> type_;
 
 #ifdef DYNAMIC_TYPES_CHECKING
     int32_t int32_value_ = 0;
@@ -1171,14 +1171,14 @@ public:
             size_t current_alignment = 0);
 
     RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(
-            const DynamicType_ptr type,
+            const std::shared_ptr<const DynamicTypeImpl> type,
             size_t current_alignment = 0);
 
     RTPS_DllAPI static size_t getMaxCdrSerializedSize(
-            const DynamicType_ptr type,
+            const std::shared_ptr<const DynamicTypeImpl> type,
             size_t current_alignment = 0);
 
-    RTPS_DllAPI DynamicType_ptr get_type() const;
+    RTPS_DllAPI std::shared_ptr<const DynamicTypeImpl> get_type() const;
 
     void serializeKey(
             eprosima::fastcdr::Cdr& cdr) const;
