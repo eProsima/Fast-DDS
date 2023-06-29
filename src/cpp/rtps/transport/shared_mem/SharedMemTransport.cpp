@@ -425,6 +425,8 @@ bool SharedMemTransport::send(
 {
     using namespace eprosima::fastdds::statistics::rtps;
 
+    cleanup_output_ports();
+
     fastrtps::rtps::LocatorsIterator& it = *destination_locators_begin;
 
     bool ret = true;
@@ -473,6 +475,22 @@ bool SharedMemTransport::send(
 
     return ret;
 
+}
+
+void SharedMemTransport::cleanup_output_ports()
+{
+    auto it = opened_ports_.begin();
+    while (it != opened_ports_.end())
+    {
+        if (it->second->is_ok())
+        {
+            ++it;
+        }
+        else
+        {
+            it = opened_ports_.erase(it);
+        }
+    }
 }
 
 std::shared_ptr<SharedMemManager::Port> SharedMemTransport::find_port(
