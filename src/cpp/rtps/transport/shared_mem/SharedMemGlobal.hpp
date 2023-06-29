@@ -626,6 +626,11 @@ public:
             return node_->is_port_ok;
         }
 
+        inline bool port_has_listeners() const
+        {
+            return node_->is_port_ok && node_->is_opened_for_reading && node_->num_listeners > 0;
+        }
+
         inline uint32_t port_id() const
         {
             return node_->port_id;
