@@ -2683,8 +2683,15 @@ const TypeObject* GetMinimalunitObject()
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_value;
-    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
-// TODO(jlbueno): XTypes    mam_value.name("value");
+    // Unbounded strings are represented with INVALID_SBOUND = 0
+    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(0, false));
+    MD5 value_hash("value");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_value.name_hash()[i] = value_hash.digest[i];
+    }
+    mam_value.default_value()._d(TK_STRING8);
+    // Default constructor already sets the value to "" (empty string).
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -2727,21 +2734,12 @@ const TypeObject* GetCompleteunitObject()
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
-
-    // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().annotation_type().header().detail().ann_builtin()...
-    //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("unit");
 
     CompleteAnnotationParameter cam_value;
-    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(0, false));
     cam_value.name("value");
+    cam_value.default_value()._d(TK_STRING8);
 
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
