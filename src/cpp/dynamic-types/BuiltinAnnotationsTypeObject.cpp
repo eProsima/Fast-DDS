@@ -1469,16 +1469,6 @@ const TypeObject* GetCompletefinalObject()
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
-
-    // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().annotation_type().header().detail().ann_builtin()...
-    //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("final");
 
 
@@ -1589,16 +1579,6 @@ const TypeObject* GetCompleteappendableObject()
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
-
-    // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().annotation_type().header().detail().ann_builtin()...
-    //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("appendable");
 
 
@@ -1709,16 +1689,6 @@ const TypeObject* GetCompletemutableObject()
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
-
-    // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().annotation_type().header().detail().ann_builtin()...
-    //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("mutable");
 
 
