@@ -206,6 +206,7 @@ public:
                 std::shared_ptr<SharedMemSegment> port_segment;
                 PortNode* node;
                 MultiProducerConsumerRingBuffer<BufferDescriptor>* buffer;
+                BufferDescriptor last_checked_buffer[PortNode::LISTENERS_STATUS_SIZE];
             };
 
             static const std::shared_ptr<WatchTask>& get()
@@ -267,30 +268,48 @@ public:
             }
 
             bool update_status_all_listeners(
-                    PortNode* port_node)
+                    PortContext& port_context)
             {
                 uint32_t listeners_found = 0;
+
+                auto port_node = port_context.node;
 
                 for (uint32_t i = 0; i < PortNode::LISTENERS_STATUS_SIZE; i++)
                 {
                     auto& status = port_node->listeners_status[i];
+                    auto& last_checked_buffer = port_context.last_checked_buffer[i];
 
                     if (status.is_in_use)
                     {
                         listeners_found++;
-                        // Check only currently waiting listeners
-                        if (status.is_waiting)
+                        // Check if a listener is processing first
+                        if (status.is_processing)
                         {
-                            if (status.counter != status.last_verified_counter)
-                            {
-                                status.last_verified_counter = status.counter;
-                            }
-                            else             // Counter is freeze => this listener is blocked!!!
+                            if ((last_checked_buffer.validity_id == status.descriptor.validity_id) &&
+                               (last_checked_buffer.source_segment_id == status.descriptor.source_segment_id) &&
+                               (last_checked_buffer.buffer_node_offset == status.descriptor.buffer_node_offset)) 
+                                
                             {
                                 return false;
                             }
+                            last_checked_buffer = status.descriptor;
                         }
-
+                        else
+                        {
+                            last_checked_buffer = BufferDescriptor{};
+                            // Check if it is waiting next
+                            if (status.is_waiting)
+                            {
+                                if (status.counter != status.last_verified_counter)
+                                {
+                                    status.last_verified_counter = status.counter;
+                                }
+                                else             // Counter is freeze => this listener is blocked!!!
+                                {
+                                    return false;
+                                }
+                            } 
+                        }
                         if (listeners_found == port_node->num_listeners)
                         {
                             break;
@@ -333,7 +352,7 @@ public:
                             // Check again, there can be races before locking the mutex.
                             if (timeout_elapsed(now, *(*port_it)))
                             {
-                                if (!update_status_all_listeners((*port_it)->node))
+                                if (!update_status_all_listeners(*(*port_it)))
                                 {
                                     (*port_it)->node->is_port_ok = false;
                                 }
@@ -442,7 +461,7 @@ public:
             node_->ref_counter.fetch_add(1);
 
             auto port_context = std::make_shared<Port::WatchTask::PortContext>();
-            *port_context = {port_segment_, node_, buffer_.get()};
+            *port_context = {port_segment_, node_, buffer_.get(), BufferDescriptor{}};
             Port::WatchTask::get()->add_port(std::move(port_context));
         }
 
