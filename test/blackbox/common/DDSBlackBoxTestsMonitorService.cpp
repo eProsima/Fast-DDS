@@ -19,6 +19,11 @@
 #include "PubSubWriter.hpp"
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
+#include <statistics/types/monitorservice_typesPubSubTypes.h>
+
+using namespace eprosima::fastdds;
+using namespace eprosima::fastdds::dds;
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -72,6 +77,13 @@ public:
 
 };
 
+using MonitorServiceType = MonitorServiceStatusDataPubSubType;
+
+class MonitorServiceConsumer : public PubSubReader<MonitorServiceType>
+{
+
+};
+
 /*
  * Abbreviations
  * +--------+----------------------------+
@@ -94,17 +106,44 @@ public:
  */
 TEST(DDSMonitorServiceTest, monitor_service_enable_disable_api)
 {
+    //! Setup
+    auto participant = DomainParticipantFactory::get_instance()->
+            create_participant((uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+
+    ASSERT_EQ(ReturnCode_t::RETCODE_NOT_ENABLED, participant->disable_monitor_service());
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->enable_monitor_service());
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->disable_monitor_service());
+    ASSERT_EQ(ReturnCode_t::RETCODE_NOT_ENABLED, participant->disable_monitor_service());
 
 }
 
 /**
  * Refers to DDS-MS-API-02 from the test plan.
  *
- * Checks fastdds.enable_monitor_service property
+ * Checks fastdds.enable_monitor_service property and fastdds.statistics with the MONITOR_SERVICE_TOPIC
  */
 TEST(DDSMonitorServiceTest, monitor_service_property)
 {
+    //! Setup
+    std::string xml_file = "MonitorServiceDomainParticipant_profile.xml";
+    std::pair<std::string, std::string> participant_profile_names = {
+        "monitor_service_property_participant", "monitor_service_statistics_property_participant" };
 
+    //! Load XML profiles
+    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->load_XML_profiles_file(xml_file);
+
+    eprosima::fastdds::dds::DomainParticipant* participant =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
+                    create_participant_with_profile((uint32_t)GET_PID() % 230, participant_profile_names.first);
+
+    ASSERT_NE(participant, nullptr);
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->disable_monitor_service());
+
+    participant = eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
+            create_participant_with_profile((uint32_t)GET_PID() % 230, participant_profile_names.second);
+
+    ASSERT_NE(participant, nullptr);
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->disable_monitor_service());
 }
 
 /**
@@ -116,7 +155,43 @@ TEST(DDSMonitorServiceTest, monitor_service_property)
  */
 TEST(DDSMonitorServiceTest, monitor_service_environment_variable)
 {
+    //! Set environment variable and create participant using Qos set by code
+    const char* value = "NETWORK_LATENCY_TOPIC;MONITOR_SERVICE_TOPIC";
 
+    #ifdef _WIN32
+        ASSERT_EQ(0, _putenv_s(eprosima::fastdds::statistics::dds::FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, value));
+    #else
+        ASSERT_EQ(0, setenv(eprosima::fastdds::statistics::dds::FASTDDS_STATISTICS_ENVIRONMENT_VARIABLE, value, 1));
+    #endif // ifdef _WIN32
+
+    eprosima::fastdds::dds::DomainParticipant* participant =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
+                    create_participant((uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+
+    ASSERT_NE(participant, nullptr);
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->disable_monitor_service());
+
+}
+
+/**
+ * Refers to DDS-MS-API-04 from the test plan.
+ *
+ * Appending the fastdds.enable_monitor_service to the DomainParticipant
+ * properties in the C++ API correctly creates a MSP.
+ */
+TEST(DDSMonitorServiceTest, monitor_service_properties_cpp_api)
+{
+    //! Setup
+    DomainParticipantQos pqos;
+
+    pqos.properties().properties().push_back({"fastdds.enable_monitor_service",""});
+
+    eprosima::fastdds::dds::DomainParticipant* participant =
+            eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->
+                    create_participant((uint32_t)GET_PID() % 230, pqos);
+
+    ASSERT_NE(participant, nullptr);
+    ASSERT_EQ(ReturnCode_t::RETCODE_OK, participant->disable_monitor_service());
 }
 
 /**
@@ -154,7 +229,7 @@ TEST_P(DDSMonitorServiceTest, monitor_service_simple_qos_incompatibility_status)
 /**
  * Refers to DDS-MS-SIMPLE-04 from the test plan.
  *
- * To implement when InconsistentTopciStatus is fully suported
+ * To implement when InconsistentTopciStatus is fully supported
 
 TEST_P(DDSMonitorServiceTest, monitor_service_simple_inconsistent_topic)
 {

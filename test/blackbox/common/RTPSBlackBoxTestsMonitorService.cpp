@@ -16,6 +16,10 @@
 
 #include "BlackboxTests.hpp"
 
+#include <fastdds/rtps/RTPSDomain.h>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
+
+using namespace eprosima::fastdds::rtps;
 
 /*
  * Abbreviations
@@ -41,7 +45,15 @@
  */
 TEST(RTPSMonitorServiceTest, monitor_service_create_is_created)
 {
+    //! Setup
+    auto participant = eprosima::fastrtps::rtps::RTPSDomain::createParticipant(
+                static_cast<uint32_t>(GET_PID()) % 230, eprosima::fastrtps::rtps::RTPSParticipantAttributes());
 
+    ASSERT_NE(participant, nullptr);
+
+    ASSERT_TRUE(participant->is_monitor_service_created());
+    ASSERT_TRUE(participant->create_monitor_service());
+    ASSERT_TRUE(participant->is_monitor_service_created());
 }
 
 /**
@@ -52,6 +64,14 @@ TEST(RTPSMonitorServiceTest, monitor_service_create_is_created)
  */
 TEST(RTPSMonitorServiceTest, monitor_service_create_enable_disable)
 {
+    //! Setup
+    auto participant = RTPSDomain::createParticipant(
+                static_cast<uint32_t>(GET_PID()) % 230, RTPSParticipantAttributes());
 
+    ASSERT_NE(participant, nullptr);
+
+    ASSERT_TRUE(participant->create_monitor_service());
+    ASSERT_TRUE(participant->enable_monitor_service());
+    ASSERT_TRUE(participant->disable_monitor_service());
 }
 
