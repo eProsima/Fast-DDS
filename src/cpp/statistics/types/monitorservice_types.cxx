@@ -34,90 +34,77 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define eprosima_fastdds_statistics_BaseStatus_m_max_cdr_typesize 4ULL;
 #define eprosima_fastdds_statistics_DiscoveryTime_max_cdr_typesize 820ULL;
+
+#define eprosima_fastdds_statistics_BaseStatus_s_max_cdr_typesize 4ULL;
 
 
 #define eprosima_fastdds_statistics_detail_SampleIdentity_s_max_cdr_typesize 24ULL;
 
 
+
+#define eprosima_fastdds_statistics_DeadlineMissedStatus_s_max_cdr_typesize 20ULL;
 #define eprosima_fastdds_statistics_detail_EntityId_s_max_cdr_typesize 4ULL;
-
-
+#define eprosima_fastdds_statistics_QosPolicyCount_s_max_cdr_typesize 8ULL;
 #define eprosima_fastdds_statistics_detail_SequenceNumber_s_max_cdr_typesize 8ULL;
-
-#define eprosima_fastdds_statistics_LivelinessChangedStatus_m_max_cdr_typesize 24ULL;
 
 #define eprosima_fastdds_statistics_MonitorServiceStatusData_max_cdr_typesize 482828ULL;
 #define eprosima_fastdds_statistics_PhysicalData_max_cdr_typesize 796ULL;
 #define eprosima_fastdds_statistics_detail_Locator_s_max_cdr_typesize 24ULL;
-#define eprosima_fastdds_statistics_DeadlineMissedStatus_m_max_cdr_typesize 20ULL;
 #define eprosima_fastdds_statistics_detail_GuidPrefix_s_max_cdr_typesize 12ULL;
-
 #define eprosima_fastdds_statistics_EntityData_max_cdr_typesize 20ULL;
 #define eprosima_fastdds_statistics_Connection_max_cdr_typesize 4828ULL;
-#define eprosima_fastdds_statistics_QosPolicyCount_m_max_cdr_typesize 8ULL;
 #define eprosima_fastdds_statistics_Entity2LocatorTraffic_max_cdr_typesize 58ULL;
-
-
 #define eprosima_fastdds_statistics_EntityCount_max_cdr_typesize 24ULL;
+#define eprosima_fastdds_statistics_IncompatibleQoSStatus_s_max_cdr_typesize 812ULL;
+
 
 #define eprosima_fastdds_statistics_WriterReaderData_max_cdr_typesize 36ULL;
-
 #define eprosima_fastdds_statistics_SampleIdentityCount_max_cdr_typesize 32ULL;
 #define eprosima_fastdds_statistics_Locator2LocatorData_max_cdr_typesize 52ULL;
-#define eprosima_fastdds_statistics_IncompatibleQoSStatus_m_max_cdr_typesize 812ULL;
 #define eprosima_fastdds_statistics_detail_GUID_s_max_cdr_typesize 16ULL;
-#define eprosima_fastdds_statistics_BaseStatus_m_max_key_cdr_typesize 0ULL;
+#define eprosima_fastdds_statistics_LivelinessChangedStatus_s_max_cdr_typesize 24ULL;
 #define eprosima_fastdds_statistics_DiscoveryTime_max_key_cdr_typesize 32ULL;
+
+#define eprosima_fastdds_statistics_BaseStatus_s_max_key_cdr_typesize 0ULL;
 
 
 #define eprosima_fastdds_statistics_detail_SampleIdentity_s_max_key_cdr_typesize 0ULL;
 
 
+
+#define eprosima_fastdds_statistics_DeadlineMissedStatus_s_max_key_cdr_typesize 0ULL;
 #define eprosima_fastdds_statistics_detail_EntityId_s_max_key_cdr_typesize 0ULL;
-
-
+#define eprosima_fastdds_statistics_QosPolicyCount_s_max_key_cdr_typesize 0ULL;
 #define eprosima_fastdds_statistics_detail_SequenceNumber_s_max_key_cdr_typesize 0ULL;
-
-#define eprosima_fastdds_statistics_LivelinessChangedStatus_m_max_key_cdr_typesize 0ULL;
 
 #define eprosima_fastdds_statistics_MonitorServiceStatusData_max_key_cdr_typesize 20ULL;
 #define eprosima_fastdds_statistics_PhysicalData_max_key_cdr_typesize 16ULL;
 #define eprosima_fastdds_statistics_detail_Locator_s_max_key_cdr_typesize 0ULL;
-#define eprosima_fastdds_statistics_DeadlineMissedStatus_m_max_key_cdr_typesize 0ULL;
 #define eprosima_fastdds_statistics_detail_GuidPrefix_s_max_key_cdr_typesize 0ULL;
-
 #define eprosima_fastdds_statistics_EntityData_max_key_cdr_typesize 16ULL;
 #define eprosima_fastdds_statistics_Connection_max_key_cdr_typesize 0ULL;
-#define eprosima_fastdds_statistics_QosPolicyCount_m_max_key_cdr_typesize 0ULL;
 #define eprosima_fastdds_statistics_Entity2LocatorTraffic_max_key_cdr_typesize 40ULL;
-
-
 #define eprosima_fastdds_statistics_EntityCount_max_key_cdr_typesize 16ULL;
+#define eprosima_fastdds_statistics_IncompatibleQoSStatus_s_max_key_cdr_typesize 0ULL;
+
 
 #define eprosima_fastdds_statistics_WriterReaderData_max_key_cdr_typesize 32ULL;
-
 #define eprosima_fastdds_statistics_SampleIdentityCount_max_key_cdr_typesize 24ULL;
 #define eprosima_fastdds_statistics_Locator2LocatorData_max_key_cdr_typesize 48ULL;
-#define eprosima_fastdds_statistics_IncompatibleQoSStatus_m_max_key_cdr_typesize 0ULL;
 #define eprosima_fastdds_statistics_detail_GUID_s_max_key_cdr_typesize 0ULL;
-
-
-
-
-
+#define eprosima_fastdds_statistics_LivelinessChangedStatus_s_max_key_cdr_typesize 0ULL;
 
 
 eprosima::fastdds::statistics::Connection::Connection()
 {
     // eprosima::fastdds::statistics::ConnectionMode m_mode
     m_mode = eprosima::fastdds::statistics::DATA_SHARING;
-    // eprosima::fastdds::statistics::detail::GUID_m m_guid
+    // eprosima::fastdds::statistics::detail::GUID_s m_guid
 
-    // sequence<eprosima::fastdds::statistics::detail::Locator_m> m_announced_locators
+    // sequence<eprosima::fastdds::statistics::detail::Locator_s> m_announced_locators
 
-    // sequence<eprosima::fastdds::statistics::detail::Locator_m> m_used_locators
+    // sequence<eprosima::fastdds::statistics::detail::Locator_s> m_used_locators
 
 
 }
@@ -140,7 +127,7 @@ eprosima::fastdds::statistics::Connection::Connection(
 }
 
 eprosima::fastdds::statistics::Connection::Connection(
-        Connection&& x) noexcept
+        Connection&& x) noexcept 
 {
     m_mode = x.m_mode;
     m_guid = std::move(x.m_guid);
@@ -203,20 +190,20 @@ size_t eprosima::fastdds::statistics::Connection::getCdrSerializedSize(
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
-    current_alignment += eprosima::fastdds::statistics::detail::GUID_m::getCdrSerializedSize(data.guid(), current_alignment);
+    current_alignment += eprosima::fastdds::statistics::detail::GUID_s::getCdrSerializedSize(data.guid(), current_alignment);
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
     for(size_t a = 0; a < data.announced_locators().size(); ++a)
     {
-        current_alignment += eprosima::fastdds::statistics::detail::Locator_m::getCdrSerializedSize(data.announced_locators().at(a), current_alignment);}
+        current_alignment += eprosima::fastdds::statistics::detail::Locator_s::getCdrSerializedSize(data.announced_locators().at(a), current_alignment);}
 
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
     for(size_t a = 0; a < data.used_locators().size(); ++a)
     {
-        current_alignment += eprosima::fastdds::statistics::detail::Locator_m::getCdrSerializedSize(data.used_locators().at(a), current_alignment);}
+        current_alignment += eprosima::fastdds::statistics::detail::Locator_s::getCdrSerializedSize(data.used_locators().at(a), current_alignment);}
 
 
     return current_alignment - initial_alignment;
@@ -281,7 +268,7 @@ eprosima::fastdds::statistics::ConnectionMode& eprosima::fastdds::statistics::Co
  * @param _guid New value to be copied in member guid
  */
 void eprosima::fastdds::statistics::Connection::guid(
-        const eprosima::fastdds::statistics::detail::GUID_m& _guid)
+        const eprosima::fastdds::statistics::detail::GUID_s& _guid)
 {
     m_guid = _guid;
 }
@@ -291,7 +278,7 @@ void eprosima::fastdds::statistics::Connection::guid(
  * @param _guid New value to be moved in member guid
  */
 void eprosima::fastdds::statistics::Connection::guid(
-        eprosima::fastdds::statistics::detail::GUID_m&& _guid)
+        eprosima::fastdds::statistics::detail::GUID_s&& _guid)
 {
     m_guid = std::move(_guid);
 }
@@ -300,7 +287,7 @@ void eprosima::fastdds::statistics::Connection::guid(
  * @brief This function returns a constant reference to member guid
  * @return Constant reference to member guid
  */
-const eprosima::fastdds::statistics::detail::GUID_m& eprosima::fastdds::statistics::Connection::guid() const
+const eprosima::fastdds::statistics::detail::GUID_s& eprosima::fastdds::statistics::Connection::guid() const
 {
     return m_guid;
 }
@@ -309,7 +296,7 @@ const eprosima::fastdds::statistics::detail::GUID_m& eprosima::fastdds::statisti
  * @brief This function returns a reference to member guid
  * @return Reference to member guid
  */
-eprosima::fastdds::statistics::detail::GUID_m& eprosima::fastdds::statistics::Connection::guid()
+eprosima::fastdds::statistics::detail::GUID_s& eprosima::fastdds::statistics::Connection::guid()
 {
     return m_guid;
 }
@@ -318,7 +305,7 @@ eprosima::fastdds::statistics::detail::GUID_m& eprosima::fastdds::statistics::Co
  * @param _announced_locators New value to be copied in member announced_locators
  */
 void eprosima::fastdds::statistics::Connection::announced_locators(
-        const std::vector<eprosima::fastdds::statistics::detail::Locator_m>& _announced_locators)
+        const std::vector<eprosima::fastdds::statistics::detail::Locator_s>& _announced_locators)
 {
     m_announced_locators = _announced_locators;
 }
@@ -328,7 +315,7 @@ void eprosima::fastdds::statistics::Connection::announced_locators(
  * @param _announced_locators New value to be moved in member announced_locators
  */
 void eprosima::fastdds::statistics::Connection::announced_locators(
-        std::vector<eprosima::fastdds::statistics::detail::Locator_m>&& _announced_locators)
+        std::vector<eprosima::fastdds::statistics::detail::Locator_s>&& _announced_locators)
 {
     m_announced_locators = std::move(_announced_locators);
 }
@@ -337,7 +324,7 @@ void eprosima::fastdds::statistics::Connection::announced_locators(
  * @brief This function returns a constant reference to member announced_locators
  * @return Constant reference to member announced_locators
  */
-const std::vector<eprosima::fastdds::statistics::detail::Locator_m>& eprosima::fastdds::statistics::Connection::announced_locators() const
+const std::vector<eprosima::fastdds::statistics::detail::Locator_s>& eprosima::fastdds::statistics::Connection::announced_locators() const
 {
     return m_announced_locators;
 }
@@ -346,7 +333,7 @@ const std::vector<eprosima::fastdds::statistics::detail::Locator_m>& eprosima::f
  * @brief This function returns a reference to member announced_locators
  * @return Reference to member announced_locators
  */
-std::vector<eprosima::fastdds::statistics::detail::Locator_m>& eprosima::fastdds::statistics::Connection::announced_locators()
+std::vector<eprosima::fastdds::statistics::detail::Locator_s>& eprosima::fastdds::statistics::Connection::announced_locators()
 {
     return m_announced_locators;
 }
@@ -355,7 +342,7 @@ std::vector<eprosima::fastdds::statistics::detail::Locator_m>& eprosima::fastdds
  * @param _used_locators New value to be copied in member used_locators
  */
 void eprosima::fastdds::statistics::Connection::used_locators(
-        const std::vector<eprosima::fastdds::statistics::detail::Locator_m>& _used_locators)
+        const std::vector<eprosima::fastdds::statistics::detail::Locator_s>& _used_locators)
 {
     m_used_locators = _used_locators;
 }
@@ -365,7 +352,7 @@ void eprosima::fastdds::statistics::Connection::used_locators(
  * @param _used_locators New value to be moved in member used_locators
  */
 void eprosima::fastdds::statistics::Connection::used_locators(
-        std::vector<eprosima::fastdds::statistics::detail::Locator_m>&& _used_locators)
+        std::vector<eprosima::fastdds::statistics::detail::Locator_s>&& _used_locators)
 {
     m_used_locators = std::move(_used_locators);
 }
@@ -374,7 +361,7 @@ void eprosima::fastdds::statistics::Connection::used_locators(
  * @brief This function returns a constant reference to member used_locators
  * @return Constant reference to member used_locators
  */
-const std::vector<eprosima::fastdds::statistics::detail::Locator_m>& eprosima::fastdds::statistics::Connection::used_locators() const
+const std::vector<eprosima::fastdds::statistics::detail::Locator_s>& eprosima::fastdds::statistics::Connection::used_locators() const
 {
     return m_used_locators;
 }
@@ -383,7 +370,7 @@ const std::vector<eprosima::fastdds::statistics::detail::Locator_m>& eprosima::f
  * @brief This function returns a reference to member used_locators
  * @return Reference to member used_locators
  */
-std::vector<eprosima::fastdds::statistics::detail::Locator_m>& eprosima::fastdds::statistics::Connection::used_locators()
+std::vector<eprosima::fastdds::statistics::detail::Locator_s>& eprosima::fastdds::statistics::Connection::used_locators()
 {
     return m_used_locators;
 }
@@ -408,7 +395,7 @@ void eprosima::fastdds::statistics::Connection::serializeKey(
 }
 
 
-eprosima::fastdds::statistics::QosPolicyCount_m::QosPolicyCount_m()
+eprosima::fastdds::statistics::QosPolicyCount_s::QosPolicyCount_s()
 {
     // unsigned long m_policy_id
     m_policy_id = 0;
@@ -417,38 +404,28 @@ eprosima::fastdds::statistics::QosPolicyCount_m::QosPolicyCount_m()
 
 }
 
-eprosima::fastdds::statistics::QosPolicyCount_m::~QosPolicyCount_m()
+eprosima::fastdds::statistics::QosPolicyCount_s::~QosPolicyCount_s()
 {
 
 
 }
 
-eprosima::fastdds::statistics::QosPolicyCount_m::QosPolicyCount_m(
-        const QosPolicyCount_m& x)
-{
-    m_policy_id = x.m_policy_id;
-    m_count = x.m_count;
-}
-
-eprosima::fastdds::statistics::QosPolicyCount_m::QosPolicyCount_m(
-        QosPolicyCount_m&& x) noexcept
+eprosima::fastdds::statistics::QosPolicyCount_s::QosPolicyCount_s(
+        const QosPolicyCount_s& x)
 {
     m_policy_id = x.m_policy_id;
     m_count = x.m_count;
 }
 
-eprosima::fastdds::statistics::QosPolicyCount_m& eprosima::fastdds::statistics::QosPolicyCount_m::operator =(
-        const QosPolicyCount_m& x)
+eprosima::fastdds::statistics::QosPolicyCount_s::QosPolicyCount_s(
+        QosPolicyCount_s&& x) noexcept 
 {
-
     m_policy_id = x.m_policy_id;
     m_count = x.m_count;
-
-    return *this;
 }
 
-eprosima::fastdds::statistics::QosPolicyCount_m& eprosima::fastdds::statistics::QosPolicyCount_m::operator =(
-        QosPolicyCount_m&& x) noexcept
+eprosima::fastdds::statistics::QosPolicyCount_s& eprosima::fastdds::statistics::QosPolicyCount_s::operator =(
+        const QosPolicyCount_s& x)
 {
 
     m_policy_id = x.m_policy_id;
@@ -457,28 +434,38 @@ eprosima::fastdds::statistics::QosPolicyCount_m& eprosima::fastdds::statistics::
     return *this;
 }
 
-bool eprosima::fastdds::statistics::QosPolicyCount_m::operator ==(
-        const QosPolicyCount_m& x) const
+eprosima::fastdds::statistics::QosPolicyCount_s& eprosima::fastdds::statistics::QosPolicyCount_s::operator =(
+        QosPolicyCount_s&& x) noexcept
+{
+
+    m_policy_id = x.m_policy_id;
+    m_count = x.m_count;
+
+    return *this;
+}
+
+bool eprosima::fastdds::statistics::QosPolicyCount_s::operator ==(
+        const QosPolicyCount_s& x) const
 {
 
     return (m_policy_id == x.m_policy_id && m_count == x.m_count);
 }
 
-bool eprosima::fastdds::statistics::QosPolicyCount_m::operator !=(
-        const QosPolicyCount_m& x) const
+bool eprosima::fastdds::statistics::QosPolicyCount_s::operator !=(
+        const QosPolicyCount_s& x) const
 {
     return !(*this == x);
 }
 
-size_t eprosima::fastdds::statistics::QosPolicyCount_m::getMaxCdrSerializedSize(
+size_t eprosima::fastdds::statistics::QosPolicyCount_s::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_QosPolicyCount_m_max_cdr_typesize;
+    return eprosima_fastdds_statistics_QosPolicyCount_s_max_cdr_typesize;
 }
 
-size_t eprosima::fastdds::statistics::QosPolicyCount_m::getCdrSerializedSize(
-        const eprosima::fastdds::statistics::QosPolicyCount_m& data,
+size_t eprosima::fastdds::statistics::QosPolicyCount_s::getCdrSerializedSize(
+        const eprosima::fastdds::statistics::QosPolicyCount_s& data,
         size_t current_alignment)
 {
     (void)data;
@@ -495,7 +482,7 @@ size_t eprosima::fastdds::statistics::QosPolicyCount_m::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void eprosima::fastdds::statistics::QosPolicyCount_m::serialize(
+void eprosima::fastdds::statistics::QosPolicyCount_s::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
@@ -504,7 +491,7 @@ void eprosima::fastdds::statistics::QosPolicyCount_m::serialize(
 
 }
 
-void eprosima::fastdds::statistics::QosPolicyCount_m::deserialize(
+void eprosima::fastdds::statistics::QosPolicyCount_s::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -516,7 +503,7 @@ void eprosima::fastdds::statistics::QosPolicyCount_m::deserialize(
  * @brief This function sets a value in member policy_id
  * @param _policy_id New value for member policy_id
  */
-void eprosima::fastdds::statistics::QosPolicyCount_m::policy_id(
+void eprosima::fastdds::statistics::QosPolicyCount_s::policy_id(
         uint32_t _policy_id)
 {
     m_policy_id = _policy_id;
@@ -526,7 +513,7 @@ void eprosima::fastdds::statistics::QosPolicyCount_m::policy_id(
  * @brief This function returns the value of member policy_id
  * @return Value of member policy_id
  */
-uint32_t eprosima::fastdds::statistics::QosPolicyCount_m::policy_id() const
+uint32_t eprosima::fastdds::statistics::QosPolicyCount_s::policy_id() const
 {
     return m_policy_id;
 }
@@ -535,7 +522,7 @@ uint32_t eprosima::fastdds::statistics::QosPolicyCount_m::policy_id() const
  * @brief This function returns a reference to member policy_id
  * @return Reference to member policy_id
  */
-uint32_t& eprosima::fastdds::statistics::QosPolicyCount_m::policy_id()
+uint32_t& eprosima::fastdds::statistics::QosPolicyCount_s::policy_id()
 {
     return m_policy_id;
 }
@@ -544,7 +531,7 @@ uint32_t& eprosima::fastdds::statistics::QosPolicyCount_m::policy_id()
  * @brief This function sets a value in member count
  * @param _count New value for member count
  */
-void eprosima::fastdds::statistics::QosPolicyCount_m::count(
+void eprosima::fastdds::statistics::QosPolicyCount_s::count(
         uint32_t _count)
 {
     m_count = _count;
@@ -554,7 +541,7 @@ void eprosima::fastdds::statistics::QosPolicyCount_m::count(
  * @brief This function returns the value of member count
  * @return Value of member count
  */
-uint32_t eprosima::fastdds::statistics::QosPolicyCount_m::count() const
+uint32_t eprosima::fastdds::statistics::QosPolicyCount_s::count() const
 {
     return m_count;
 }
@@ -563,66 +550,57 @@ uint32_t eprosima::fastdds::statistics::QosPolicyCount_m::count() const
  * @brief This function returns a reference to member count
  * @return Reference to member count
  */
-uint32_t& eprosima::fastdds::statistics::QosPolicyCount_m::count()
+uint32_t& eprosima::fastdds::statistics::QosPolicyCount_s::count()
 {
     return m_count;
 }
 
 
 
-size_t eprosima::fastdds::statistics::QosPolicyCount_m::getKeyMaxCdrSerializedSize(
+size_t eprosima::fastdds::statistics::QosPolicyCount_s::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_QosPolicyCount_m_max_key_cdr_typesize;
+    return eprosima_fastdds_statistics_QosPolicyCount_s_max_key_cdr_typesize;
 }
 
-bool eprosima::fastdds::statistics::QosPolicyCount_m::isKeyDefined()
+bool eprosima::fastdds::statistics::QosPolicyCount_s::isKeyDefined()
 {
     return false;
 }
 
-void eprosima::fastdds::statistics::QosPolicyCount_m::serializeKey(
+void eprosima::fastdds::statistics::QosPolicyCount_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-eprosima::fastdds::statistics::BaseStatus_m::BaseStatus_m()
+eprosima::fastdds::statistics::BaseStatus_s::BaseStatus_s()
 {
     // unsigned long m_total_count
     m_total_count = 0;
 
 }
 
-eprosima::fastdds::statistics::BaseStatus_m::~BaseStatus_m()
+eprosima::fastdds::statistics::BaseStatus_s::~BaseStatus_s()
 {
 }
 
-eprosima::fastdds::statistics::BaseStatus_m::BaseStatus_m(
-        const BaseStatus_m& x)
-{
-    m_total_count = x.m_total_count;
-}
-
-eprosima::fastdds::statistics::BaseStatus_m::BaseStatus_m(
-        BaseStatus_m&& x) noexcept
+eprosima::fastdds::statistics::BaseStatus_s::BaseStatus_s(
+        const BaseStatus_s& x)
 {
     m_total_count = x.m_total_count;
 }
 
-eprosima::fastdds::statistics::BaseStatus_m& eprosima::fastdds::statistics::BaseStatus_m::operator =(
-        const BaseStatus_m& x)
+eprosima::fastdds::statistics::BaseStatus_s::BaseStatus_s(
+        BaseStatus_s&& x) noexcept 
 {
-
     m_total_count = x.m_total_count;
-
-    return *this;
 }
 
-eprosima::fastdds::statistics::BaseStatus_m& eprosima::fastdds::statistics::BaseStatus_m::operator =(
-        BaseStatus_m&& x) noexcept
+eprosima::fastdds::statistics::BaseStatus_s& eprosima::fastdds::statistics::BaseStatus_s::operator =(
+        const BaseStatus_s& x)
 {
 
     m_total_count = x.m_total_count;
@@ -630,28 +608,37 @@ eprosima::fastdds::statistics::BaseStatus_m& eprosima::fastdds::statistics::Base
     return *this;
 }
 
-bool eprosima::fastdds::statistics::BaseStatus_m::operator ==(
-        const BaseStatus_m& x) const
+eprosima::fastdds::statistics::BaseStatus_s& eprosima::fastdds::statistics::BaseStatus_s::operator =(
+        BaseStatus_s&& x) noexcept
+{
+
+    m_total_count = x.m_total_count;
+
+    return *this;
+}
+
+bool eprosima::fastdds::statistics::BaseStatus_s::operator ==(
+        const BaseStatus_s& x) const
 {
 
     return (m_total_count == x.m_total_count);
 }
 
-bool eprosima::fastdds::statistics::BaseStatus_m::operator !=(
-        const BaseStatus_m& x) const
+bool eprosima::fastdds::statistics::BaseStatus_s::operator !=(
+        const BaseStatus_s& x) const
 {
     return !(*this == x);
 }
 
-size_t eprosima::fastdds::statistics::BaseStatus_m::getMaxCdrSerializedSize(
+size_t eprosima::fastdds::statistics::BaseStatus_s::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_BaseStatus_m_max_cdr_typesize;
+    return eprosima_fastdds_statistics_BaseStatus_s_max_cdr_typesize;
 }
 
-size_t eprosima::fastdds::statistics::BaseStatus_m::getCdrSerializedSize(
-        const eprosima::fastdds::statistics::BaseStatus_m& data,
+size_t eprosima::fastdds::statistics::BaseStatus_s::getCdrSerializedSize(
+        const eprosima::fastdds::statistics::BaseStatus_s& data,
         size_t current_alignment)
 {
     (void)data;
@@ -664,7 +651,7 @@ size_t eprosima::fastdds::statistics::BaseStatus_m::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void eprosima::fastdds::statistics::BaseStatus_m::serialize(
+void eprosima::fastdds::statistics::BaseStatus_s::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
@@ -672,7 +659,7 @@ void eprosima::fastdds::statistics::BaseStatus_m::serialize(
 
 }
 
-void eprosima::fastdds::statistics::BaseStatus_m::deserialize(
+void eprosima::fastdds::statistics::BaseStatus_s::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -683,7 +670,7 @@ void eprosima::fastdds::statistics::BaseStatus_m::deserialize(
  * @brief This function sets a value in member total_count
  * @param _total_count New value for member total_count
  */
-void eprosima::fastdds::statistics::BaseStatus_m::total_count(
+void eprosima::fastdds::statistics::BaseStatus_s::total_count(
         uint32_t _total_count)
 {
     m_total_count = _total_count;
@@ -693,7 +680,7 @@ void eprosima::fastdds::statistics::BaseStatus_m::total_count(
  * @brief This function returns the value of member total_count
  * @return Value of member total_count
  */
-uint32_t eprosima::fastdds::statistics::BaseStatus_m::total_count() const
+uint32_t eprosima::fastdds::statistics::BaseStatus_s::total_count() const
 {
     return m_total_count;
 }
@@ -702,26 +689,26 @@ uint32_t eprosima::fastdds::statistics::BaseStatus_m::total_count() const
  * @brief This function returns a reference to member total_count
  * @return Reference to member total_count
  */
-uint32_t& eprosima::fastdds::statistics::BaseStatus_m::total_count()
+uint32_t& eprosima::fastdds::statistics::BaseStatus_s::total_count()
 {
     return m_total_count;
 }
 
 
 
-size_t eprosima::fastdds::statistics::BaseStatus_m::getKeyMaxCdrSerializedSize(
+size_t eprosima::fastdds::statistics::BaseStatus_s::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_BaseStatus_m_max_key_cdr_typesize;
+    return eprosima_fastdds_statistics_BaseStatus_s_max_key_cdr_typesize;
 }
 
-bool eprosima::fastdds::statistics::BaseStatus_m::isKeyDefined()
+bool eprosima::fastdds::statistics::BaseStatus_s::isKeyDefined()
 {
     return false;
 }
 
-void eprosima::fastdds::statistics::BaseStatus_m::serializeKey(
+void eprosima::fastdds::statistics::BaseStatus_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
@@ -729,42 +716,42 @@ void eprosima::fastdds::statistics::BaseStatus_m::serializeKey(
 
 
 
-eprosima::fastdds::statistics::IncompatibleQoSStatus_m::IncompatibleQoSStatus_m()
+eprosima::fastdds::statistics::IncompatibleQoSStatus_s::IncompatibleQoSStatus_s()
 {
     // unsigned long m_total_count
     m_total_count = 0;
     // unsigned long m_last_policy_id
     m_last_policy_id = 0;
-    // eprosima::fastdds::statistics::QosPolicyCountSeq_m m_policies
+    // eprosima::fastdds::statistics::QosPolicyCountSeq_s m_policies
 
 
 }
 
-eprosima::fastdds::statistics::IncompatibleQoSStatus_m::~IncompatibleQoSStatus_m()
+eprosima::fastdds::statistics::IncompatibleQoSStatus_s::~IncompatibleQoSStatus_s()
 {
 
 
 
 }
 
-eprosima::fastdds::statistics::IncompatibleQoSStatus_m::IncompatibleQoSStatus_m(
-        const IncompatibleQoSStatus_m& x)
+eprosima::fastdds::statistics::IncompatibleQoSStatus_s::IncompatibleQoSStatus_s(
+        const IncompatibleQoSStatus_s& x)
 {
     m_total_count = x.m_total_count;
     m_last_policy_id = x.m_last_policy_id;
     m_policies = x.m_policies;
 }
 
-eprosima::fastdds::statistics::IncompatibleQoSStatus_m::IncompatibleQoSStatus_m(
-        IncompatibleQoSStatus_m&& x) noexcept
+eprosima::fastdds::statistics::IncompatibleQoSStatus_s::IncompatibleQoSStatus_s(
+        IncompatibleQoSStatus_s&& x) noexcept 
 {
     m_total_count = x.m_total_count;
     m_last_policy_id = x.m_last_policy_id;
     m_policies = std::move(x.m_policies);
 }
 
-eprosima::fastdds::statistics::IncompatibleQoSStatus_m& eprosima::fastdds::statistics::IncompatibleQoSStatus_m::operator =(
-        const IncompatibleQoSStatus_m& x)
+eprosima::fastdds::statistics::IncompatibleQoSStatus_s& eprosima::fastdds::statistics::IncompatibleQoSStatus_s::operator =(
+        const IncompatibleQoSStatus_s& x)
 {
 
     m_total_count = x.m_total_count;
@@ -774,8 +761,8 @@ eprosima::fastdds::statistics::IncompatibleQoSStatus_m& eprosima::fastdds::stati
     return *this;
 }
 
-eprosima::fastdds::statistics::IncompatibleQoSStatus_m& eprosima::fastdds::statistics::IncompatibleQoSStatus_m::operator =(
-        IncompatibleQoSStatus_m&& x) noexcept
+eprosima::fastdds::statistics::IncompatibleQoSStatus_s& eprosima::fastdds::statistics::IncompatibleQoSStatus_s::operator =(
+        IncompatibleQoSStatus_s&& x) noexcept
 {
 
     m_total_count = x.m_total_count;
@@ -785,28 +772,28 @@ eprosima::fastdds::statistics::IncompatibleQoSStatus_m& eprosima::fastdds::stati
     return *this;
 }
 
-bool eprosima::fastdds::statistics::IncompatibleQoSStatus_m::operator ==(
-        const IncompatibleQoSStatus_m& x) const
+bool eprosima::fastdds::statistics::IncompatibleQoSStatus_s::operator ==(
+        const IncompatibleQoSStatus_s& x) const
 {
 
     return (m_total_count == x.m_total_count && m_last_policy_id == x.m_last_policy_id && m_policies == x.m_policies);
 }
 
-bool eprosima::fastdds::statistics::IncompatibleQoSStatus_m::operator !=(
-        const IncompatibleQoSStatus_m& x) const
+bool eprosima::fastdds::statistics::IncompatibleQoSStatus_s::operator !=(
+        const IncompatibleQoSStatus_s& x) const
 {
     return !(*this == x);
 }
 
-size_t eprosima::fastdds::statistics::IncompatibleQoSStatus_m::getMaxCdrSerializedSize(
+size_t eprosima::fastdds::statistics::IncompatibleQoSStatus_s::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_IncompatibleQoSStatus_m_max_cdr_typesize;
+    return eprosima_fastdds_statistics_IncompatibleQoSStatus_s_max_cdr_typesize;
 }
 
-size_t eprosima::fastdds::statistics::IncompatibleQoSStatus_m::getCdrSerializedSize(
-        const eprosima::fastdds::statistics::IncompatibleQoSStatus_m& data,
+size_t eprosima::fastdds::statistics::IncompatibleQoSStatus_s::getCdrSerializedSize(
+        const eprosima::fastdds::statistics::IncompatibleQoSStatus_s& data,
         size_t current_alignment)
 {
     (void)data;
@@ -824,13 +811,13 @@ size_t eprosima::fastdds::statistics::IncompatibleQoSStatus_m::getCdrSerializedS
 
     for(size_t a = 0; a < data.policies().size(); ++a)
     {
-        current_alignment += eprosima::fastdds::statistics::QosPolicyCount_m::getCdrSerializedSize(data.policies().at(a), current_alignment);}
+        current_alignment += eprosima::fastdds::statistics::QosPolicyCount_s::getCdrSerializedSize(data.policies().at(a), current_alignment);}
 
 
     return current_alignment - initial_alignment;
 }
 
-void eprosima::fastdds::statistics::IncompatibleQoSStatus_m::serialize(
+void eprosima::fastdds::statistics::IncompatibleQoSStatus_s::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
@@ -840,7 +827,7 @@ void eprosima::fastdds::statistics::IncompatibleQoSStatus_m::serialize(
 
 }
 
-void eprosima::fastdds::statistics::IncompatibleQoSStatus_m::deserialize(
+void eprosima::fastdds::statistics::IncompatibleQoSStatus_s::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -853,7 +840,7 @@ void eprosima::fastdds::statistics::IncompatibleQoSStatus_m::deserialize(
  * @brief This function sets a value in member total_count
  * @param _total_count New value for member total_count
  */
-void eprosima::fastdds::statistics::IncompatibleQoSStatus_m::total_count(
+void eprosima::fastdds::statistics::IncompatibleQoSStatus_s::total_count(
         uint32_t _total_count)
 {
     m_total_count = _total_count;
@@ -863,7 +850,7 @@ void eprosima::fastdds::statistics::IncompatibleQoSStatus_m::total_count(
  * @brief This function returns the value of member total_count
  * @return Value of member total_count
  */
-uint32_t eprosima::fastdds::statistics::IncompatibleQoSStatus_m::total_count() const
+uint32_t eprosima::fastdds::statistics::IncompatibleQoSStatus_s::total_count() const
 {
     return m_total_count;
 }
@@ -872,7 +859,7 @@ uint32_t eprosima::fastdds::statistics::IncompatibleQoSStatus_m::total_count() c
  * @brief This function returns a reference to member total_count
  * @return Reference to member total_count
  */
-uint32_t& eprosima::fastdds::statistics::IncompatibleQoSStatus_m::total_count()
+uint32_t& eprosima::fastdds::statistics::IncompatibleQoSStatus_s::total_count()
 {
     return m_total_count;
 }
@@ -881,7 +868,7 @@ uint32_t& eprosima::fastdds::statistics::IncompatibleQoSStatus_m::total_count()
  * @brief This function sets a value in member last_policy_id
  * @param _last_policy_id New value for member last_policy_id
  */
-void eprosima::fastdds::statistics::IncompatibleQoSStatus_m::last_policy_id(
+void eprosima::fastdds::statistics::IncompatibleQoSStatus_s::last_policy_id(
         uint32_t _last_policy_id)
 {
     m_last_policy_id = _last_policy_id;
@@ -891,7 +878,7 @@ void eprosima::fastdds::statistics::IncompatibleQoSStatus_m::last_policy_id(
  * @brief This function returns the value of member last_policy_id
  * @return Value of member last_policy_id
  */
-uint32_t eprosima::fastdds::statistics::IncompatibleQoSStatus_m::last_policy_id() const
+uint32_t eprosima::fastdds::statistics::IncompatibleQoSStatus_s::last_policy_id() const
 {
     return m_last_policy_id;
 }
@@ -900,7 +887,7 @@ uint32_t eprosima::fastdds::statistics::IncompatibleQoSStatus_m::last_policy_id(
  * @brief This function returns a reference to member last_policy_id
  * @return Reference to member last_policy_id
  */
-uint32_t& eprosima::fastdds::statistics::IncompatibleQoSStatus_m::last_policy_id()
+uint32_t& eprosima::fastdds::statistics::IncompatibleQoSStatus_s::last_policy_id()
 {
     return m_last_policy_id;
 }
@@ -909,8 +896,8 @@ uint32_t& eprosima::fastdds::statistics::IncompatibleQoSStatus_m::last_policy_id
  * @brief This function copies the value in member policies
  * @param _policies New value to be copied in member policies
  */
-void eprosima::fastdds::statistics::IncompatibleQoSStatus_m::policies(
-        const eprosima::fastdds::statistics::QosPolicyCountSeq_m& _policies)
+void eprosima::fastdds::statistics::IncompatibleQoSStatus_s::policies(
+        const eprosima::fastdds::statistics::QosPolicyCountSeq_s& _policies)
 {
     m_policies = _policies;
 }
@@ -919,8 +906,8 @@ void eprosima::fastdds::statistics::IncompatibleQoSStatus_m::policies(
  * @brief This function moves the value in member policies
  * @param _policies New value to be moved in member policies
  */
-void eprosima::fastdds::statistics::IncompatibleQoSStatus_m::policies(
-        eprosima::fastdds::statistics::QosPolicyCountSeq_m&& _policies)
+void eprosima::fastdds::statistics::IncompatibleQoSStatus_s::policies(
+        eprosima::fastdds::statistics::QosPolicyCountSeq_s&& _policies)
 {
     m_policies = std::move(_policies);
 }
@@ -929,7 +916,7 @@ void eprosima::fastdds::statistics::IncompatibleQoSStatus_m::policies(
  * @brief This function returns a constant reference to member policies
  * @return Constant reference to member policies
  */
-const eprosima::fastdds::statistics::QosPolicyCountSeq_m& eprosima::fastdds::statistics::IncompatibleQoSStatus_m::policies() const
+const eprosima::fastdds::statistics::QosPolicyCountSeq_s& eprosima::fastdds::statistics::IncompatibleQoSStatus_s::policies() const
 {
     return m_policies;
 }
@@ -938,32 +925,32 @@ const eprosima::fastdds::statistics::QosPolicyCountSeq_m& eprosima::fastdds::sta
  * @brief This function returns a reference to member policies
  * @return Reference to member policies
  */
-eprosima::fastdds::statistics::QosPolicyCountSeq_m& eprosima::fastdds::statistics::IncompatibleQoSStatus_m::policies()
+eprosima::fastdds::statistics::QosPolicyCountSeq_s& eprosima::fastdds::statistics::IncompatibleQoSStatus_s::policies()
 {
     return m_policies;
 }
 
 
-size_t eprosima::fastdds::statistics::IncompatibleQoSStatus_m::getKeyMaxCdrSerializedSize(
+size_t eprosima::fastdds::statistics::IncompatibleQoSStatus_s::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_IncompatibleQoSStatus_m_max_key_cdr_typesize;
+    return eprosima_fastdds_statistics_IncompatibleQoSStatus_s_max_key_cdr_typesize;
 }
 
-bool eprosima::fastdds::statistics::IncompatibleQoSStatus_m::isKeyDefined()
+bool eprosima::fastdds::statistics::IncompatibleQoSStatus_s::isKeyDefined()
 {
     return false;
 }
 
-void eprosima::fastdds::statistics::IncompatibleQoSStatus_m::serializeKey(
+void eprosima::fastdds::statistics::IncompatibleQoSStatus_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-eprosima::fastdds::statistics::LivelinessChangedStatus_m::LivelinessChangedStatus_m()
+eprosima::fastdds::statistics::LivelinessChangedStatus_s::LivelinessChangedStatus_s()
 {
     // unsigned long m_alive_count
     m_alive_count = 0;
@@ -974,31 +961,31 @@ eprosima::fastdds::statistics::LivelinessChangedStatus_m::LivelinessChangedStatu
 
 }
 
-eprosima::fastdds::statistics::LivelinessChangedStatus_m::~LivelinessChangedStatus_m()
+eprosima::fastdds::statistics::LivelinessChangedStatus_s::~LivelinessChangedStatus_s()
 {
 
 
 
 }
 
-eprosima::fastdds::statistics::LivelinessChangedStatus_m::LivelinessChangedStatus_m(
-        const LivelinessChangedStatus_m& x)
+eprosima::fastdds::statistics::LivelinessChangedStatus_s::LivelinessChangedStatus_s(
+        const LivelinessChangedStatus_s& x)
 {
     m_alive_count = x.m_alive_count;
     m_not_alive_count = x.m_not_alive_count;
     m_last_publication_handle = x.m_last_publication_handle;
 }
 
-eprosima::fastdds::statistics::LivelinessChangedStatus_m::LivelinessChangedStatus_m(
-        LivelinessChangedStatus_m&& x) noexcept
+eprosima::fastdds::statistics::LivelinessChangedStatus_s::LivelinessChangedStatus_s(
+        LivelinessChangedStatus_s&& x) noexcept 
 {
     m_alive_count = x.m_alive_count;
     m_not_alive_count = x.m_not_alive_count;
     m_last_publication_handle = std::move(x.m_last_publication_handle);
 }
 
-eprosima::fastdds::statistics::LivelinessChangedStatus_m& eprosima::fastdds::statistics::LivelinessChangedStatus_m::operator =(
-        const LivelinessChangedStatus_m& x)
+eprosima::fastdds::statistics::LivelinessChangedStatus_s& eprosima::fastdds::statistics::LivelinessChangedStatus_s::operator =(
+        const LivelinessChangedStatus_s& x)
 {
 
     m_alive_count = x.m_alive_count;
@@ -1008,8 +995,8 @@ eprosima::fastdds::statistics::LivelinessChangedStatus_m& eprosima::fastdds::sta
     return *this;
 }
 
-eprosima::fastdds::statistics::LivelinessChangedStatus_m& eprosima::fastdds::statistics::LivelinessChangedStatus_m::operator =(
-        LivelinessChangedStatus_m&& x) noexcept
+eprosima::fastdds::statistics::LivelinessChangedStatus_s& eprosima::fastdds::statistics::LivelinessChangedStatus_s::operator =(
+        LivelinessChangedStatus_s&& x) noexcept
 {
 
     m_alive_count = x.m_alive_count;
@@ -1019,28 +1006,28 @@ eprosima::fastdds::statistics::LivelinessChangedStatus_m& eprosima::fastdds::sta
     return *this;
 }
 
-bool eprosima::fastdds::statistics::LivelinessChangedStatus_m::operator ==(
-        const LivelinessChangedStatus_m& x) const
+bool eprosima::fastdds::statistics::LivelinessChangedStatus_s::operator ==(
+        const LivelinessChangedStatus_s& x) const
 {
 
     return (m_alive_count == x.m_alive_count && m_not_alive_count == x.m_not_alive_count && m_last_publication_handle == x.m_last_publication_handle);
 }
 
-bool eprosima::fastdds::statistics::LivelinessChangedStatus_m::operator !=(
-        const LivelinessChangedStatus_m& x) const
+bool eprosima::fastdds::statistics::LivelinessChangedStatus_s::operator !=(
+        const LivelinessChangedStatus_s& x) const
 {
     return !(*this == x);
 }
 
-size_t eprosima::fastdds::statistics::LivelinessChangedStatus_m::getMaxCdrSerializedSize(
+size_t eprosima::fastdds::statistics::LivelinessChangedStatus_s::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_LivelinessChangedStatus_m_max_cdr_typesize;
+    return eprosima_fastdds_statistics_LivelinessChangedStatus_s_max_cdr_typesize;
 }
 
-size_t eprosima::fastdds::statistics::LivelinessChangedStatus_m::getCdrSerializedSize(
-        const eprosima::fastdds::statistics::LivelinessChangedStatus_m& data,
+size_t eprosima::fastdds::statistics::LivelinessChangedStatus_s::getCdrSerializedSize(
+        const eprosima::fastdds::statistics::LivelinessChangedStatus_s& data,
         size_t current_alignment)
 {
     (void)data;
@@ -1059,7 +1046,7 @@ size_t eprosima::fastdds::statistics::LivelinessChangedStatus_m::getCdrSerialize
     return current_alignment - initial_alignment;
 }
 
-void eprosima::fastdds::statistics::LivelinessChangedStatus_m::serialize(
+void eprosima::fastdds::statistics::LivelinessChangedStatus_s::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
@@ -1070,7 +1057,7 @@ void eprosima::fastdds::statistics::LivelinessChangedStatus_m::serialize(
 
 }
 
-void eprosima::fastdds::statistics::LivelinessChangedStatus_m::deserialize(
+void eprosima::fastdds::statistics::LivelinessChangedStatus_s::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -1084,7 +1071,7 @@ void eprosima::fastdds::statistics::LivelinessChangedStatus_m::deserialize(
  * @brief This function sets a value in member alive_count
  * @param _alive_count New value for member alive_count
  */
-void eprosima::fastdds::statistics::LivelinessChangedStatus_m::alive_count(
+void eprosima::fastdds::statistics::LivelinessChangedStatus_s::alive_count(
         uint32_t _alive_count)
 {
     m_alive_count = _alive_count;
@@ -1094,7 +1081,7 @@ void eprosima::fastdds::statistics::LivelinessChangedStatus_m::alive_count(
  * @brief This function returns the value of member alive_count
  * @return Value of member alive_count
  */
-uint32_t eprosima::fastdds::statistics::LivelinessChangedStatus_m::alive_count() const
+uint32_t eprosima::fastdds::statistics::LivelinessChangedStatus_s::alive_count() const
 {
     return m_alive_count;
 }
@@ -1103,7 +1090,7 @@ uint32_t eprosima::fastdds::statistics::LivelinessChangedStatus_m::alive_count()
  * @brief This function returns a reference to member alive_count
  * @return Reference to member alive_count
  */
-uint32_t& eprosima::fastdds::statistics::LivelinessChangedStatus_m::alive_count()
+uint32_t& eprosima::fastdds::statistics::LivelinessChangedStatus_s::alive_count()
 {
     return m_alive_count;
 }
@@ -1112,7 +1099,7 @@ uint32_t& eprosima::fastdds::statistics::LivelinessChangedStatus_m::alive_count(
  * @brief This function sets a value in member not_alive_count
  * @param _not_alive_count New value for member not_alive_count
  */
-void eprosima::fastdds::statistics::LivelinessChangedStatus_m::not_alive_count(
+void eprosima::fastdds::statistics::LivelinessChangedStatus_s::not_alive_count(
         uint32_t _not_alive_count)
 {
     m_not_alive_count = _not_alive_count;
@@ -1122,7 +1109,7 @@ void eprosima::fastdds::statistics::LivelinessChangedStatus_m::not_alive_count(
  * @brief This function returns the value of member not_alive_count
  * @return Value of member not_alive_count
  */
-uint32_t eprosima::fastdds::statistics::LivelinessChangedStatus_m::not_alive_count() const
+uint32_t eprosima::fastdds::statistics::LivelinessChangedStatus_s::not_alive_count() const
 {
     return m_not_alive_count;
 }
@@ -1131,7 +1118,7 @@ uint32_t eprosima::fastdds::statistics::LivelinessChangedStatus_m::not_alive_cou
  * @brief This function returns a reference to member not_alive_count
  * @return Reference to member not_alive_count
  */
-uint32_t& eprosima::fastdds::statistics::LivelinessChangedStatus_m::not_alive_count()
+uint32_t& eprosima::fastdds::statistics::LivelinessChangedStatus_s::not_alive_count()
 {
     return m_not_alive_count;
 }
@@ -1140,7 +1127,7 @@ uint32_t& eprosima::fastdds::statistics::LivelinessChangedStatus_m::not_alive_co
  * @brief This function copies the value in member last_publication_handle
  * @param _last_publication_handle New value to be copied in member last_publication_handle
  */
-void eprosima::fastdds::statistics::LivelinessChangedStatus_m::last_publication_handle(
+void eprosima::fastdds::statistics::LivelinessChangedStatus_s::last_publication_handle(
         const std::array<uint8_t, 16>& _last_publication_handle)
 {
     m_last_publication_handle = _last_publication_handle;
@@ -1150,7 +1137,7 @@ void eprosima::fastdds::statistics::LivelinessChangedStatus_m::last_publication_
  * @brief This function moves the value in member last_publication_handle
  * @param _last_publication_handle New value to be moved in member last_publication_handle
  */
-void eprosima::fastdds::statistics::LivelinessChangedStatus_m::last_publication_handle(
+void eprosima::fastdds::statistics::LivelinessChangedStatus_s::last_publication_handle(
         std::array<uint8_t, 16>&& _last_publication_handle)
 {
     m_last_publication_handle = std::move(_last_publication_handle);
@@ -1160,7 +1147,7 @@ void eprosima::fastdds::statistics::LivelinessChangedStatus_m::last_publication_
  * @brief This function returns a constant reference to member last_publication_handle
  * @return Constant reference to member last_publication_handle
  */
-const std::array<uint8_t, 16>& eprosima::fastdds::statistics::LivelinessChangedStatus_m::last_publication_handle() const
+const std::array<uint8_t, 16>& eprosima::fastdds::statistics::LivelinessChangedStatus_s::last_publication_handle() const
 {
     return m_last_publication_handle;
 }
@@ -1169,32 +1156,32 @@ const std::array<uint8_t, 16>& eprosima::fastdds::statistics::LivelinessChangedS
  * @brief This function returns a reference to member last_publication_handle
  * @return Reference to member last_publication_handle
  */
-std::array<uint8_t, 16>& eprosima::fastdds::statistics::LivelinessChangedStatus_m::last_publication_handle()
+std::array<uint8_t, 16>& eprosima::fastdds::statistics::LivelinessChangedStatus_s::last_publication_handle()
 {
     return m_last_publication_handle;
 }
 
 
-size_t eprosima::fastdds::statistics::LivelinessChangedStatus_m::getKeyMaxCdrSerializedSize(
+size_t eprosima::fastdds::statistics::LivelinessChangedStatus_s::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_LivelinessChangedStatus_m_max_key_cdr_typesize;
+    return eprosima_fastdds_statistics_LivelinessChangedStatus_s_max_key_cdr_typesize;
 }
 
-bool eprosima::fastdds::statistics::LivelinessChangedStatus_m::isKeyDefined()
+bool eprosima::fastdds::statistics::LivelinessChangedStatus_s::isKeyDefined()
 {
     return false;
 }
 
-void eprosima::fastdds::statistics::LivelinessChangedStatus_m::serializeKey(
+void eprosima::fastdds::statistics::LivelinessChangedStatus_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-eprosima::fastdds::statistics::DeadlineMissedStatus_m::DeadlineMissedStatus_m()
+eprosima::fastdds::statistics::DeadlineMissedStatus_s::DeadlineMissedStatus_s()
 {
     // unsigned long m_total_count
     m_total_count = 0;
@@ -1203,28 +1190,28 @@ eprosima::fastdds::statistics::DeadlineMissedStatus_m::DeadlineMissedStatus_m()
 
 }
 
-eprosima::fastdds::statistics::DeadlineMissedStatus_m::~DeadlineMissedStatus_m()
+eprosima::fastdds::statistics::DeadlineMissedStatus_s::~DeadlineMissedStatus_s()
 {
 
 
 }
 
-eprosima::fastdds::statistics::DeadlineMissedStatus_m::DeadlineMissedStatus_m(
-        const DeadlineMissedStatus_m& x)
+eprosima::fastdds::statistics::DeadlineMissedStatus_s::DeadlineMissedStatus_s(
+        const DeadlineMissedStatus_s& x)
 {
     m_total_count = x.m_total_count;
     m_last_instance_handle = x.m_last_instance_handle;
 }
 
-eprosima::fastdds::statistics::DeadlineMissedStatus_m::DeadlineMissedStatus_m(
-        DeadlineMissedStatus_m&& x) noexcept
+eprosima::fastdds::statistics::DeadlineMissedStatus_s::DeadlineMissedStatus_s(
+        DeadlineMissedStatus_s&& x) noexcept 
 {
     m_total_count = x.m_total_count;
     m_last_instance_handle = std::move(x.m_last_instance_handle);
 }
 
-eprosima::fastdds::statistics::DeadlineMissedStatus_m& eprosima::fastdds::statistics::DeadlineMissedStatus_m::operator =(
-        const DeadlineMissedStatus_m& x)
+eprosima::fastdds::statistics::DeadlineMissedStatus_s& eprosima::fastdds::statistics::DeadlineMissedStatus_s::operator =(
+        const DeadlineMissedStatus_s& x)
 {
 
     m_total_count = x.m_total_count;
@@ -1233,8 +1220,8 @@ eprosima::fastdds::statistics::DeadlineMissedStatus_m& eprosima::fastdds::statis
     return *this;
 }
 
-eprosima::fastdds::statistics::DeadlineMissedStatus_m& eprosima::fastdds::statistics::DeadlineMissedStatus_m::operator =(
-        DeadlineMissedStatus_m&& x) noexcept
+eprosima::fastdds::statistics::DeadlineMissedStatus_s& eprosima::fastdds::statistics::DeadlineMissedStatus_s::operator =(
+        DeadlineMissedStatus_s&& x) noexcept
 {
 
     m_total_count = x.m_total_count;
@@ -1243,28 +1230,28 @@ eprosima::fastdds::statistics::DeadlineMissedStatus_m& eprosima::fastdds::statis
     return *this;
 }
 
-bool eprosima::fastdds::statistics::DeadlineMissedStatus_m::operator ==(
-        const DeadlineMissedStatus_m& x) const
+bool eprosima::fastdds::statistics::DeadlineMissedStatus_s::operator ==(
+        const DeadlineMissedStatus_s& x) const
 {
 
     return (m_total_count == x.m_total_count && m_last_instance_handle == x.m_last_instance_handle);
 }
 
-bool eprosima::fastdds::statistics::DeadlineMissedStatus_m::operator !=(
-        const DeadlineMissedStatus_m& x) const
+bool eprosima::fastdds::statistics::DeadlineMissedStatus_s::operator !=(
+        const DeadlineMissedStatus_s& x) const
 {
     return !(*this == x);
 }
 
-size_t eprosima::fastdds::statistics::DeadlineMissedStatus_m::getMaxCdrSerializedSize(
+size_t eprosima::fastdds::statistics::DeadlineMissedStatus_s::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_DeadlineMissedStatus_m_max_cdr_typesize;
+    return eprosima_fastdds_statistics_DeadlineMissedStatus_s_max_cdr_typesize;
 }
 
-size_t eprosima::fastdds::statistics::DeadlineMissedStatus_m::getCdrSerializedSize(
-        const eprosima::fastdds::statistics::DeadlineMissedStatus_m& data,
+size_t eprosima::fastdds::statistics::DeadlineMissedStatus_s::getCdrSerializedSize(
+        const eprosima::fastdds::statistics::DeadlineMissedStatus_s& data,
         size_t current_alignment)
 {
     (void)data;
@@ -1280,7 +1267,7 @@ size_t eprosima::fastdds::statistics::DeadlineMissedStatus_m::getCdrSerializedSi
     return current_alignment - initial_alignment;
 }
 
-void eprosima::fastdds::statistics::DeadlineMissedStatus_m::serialize(
+void eprosima::fastdds::statistics::DeadlineMissedStatus_s::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
@@ -1290,7 +1277,7 @@ void eprosima::fastdds::statistics::DeadlineMissedStatus_m::serialize(
 
 }
 
-void eprosima::fastdds::statistics::DeadlineMissedStatus_m::deserialize(
+void eprosima::fastdds::statistics::DeadlineMissedStatus_s::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -1303,7 +1290,7 @@ void eprosima::fastdds::statistics::DeadlineMissedStatus_m::deserialize(
  * @brief This function sets a value in member total_count
  * @param _total_count New value for member total_count
  */
-void eprosima::fastdds::statistics::DeadlineMissedStatus_m::total_count(
+void eprosima::fastdds::statistics::DeadlineMissedStatus_s::total_count(
         uint32_t _total_count)
 {
     m_total_count = _total_count;
@@ -1313,7 +1300,7 @@ void eprosima::fastdds::statistics::DeadlineMissedStatus_m::total_count(
  * @brief This function returns the value of member total_count
  * @return Value of member total_count
  */
-uint32_t eprosima::fastdds::statistics::DeadlineMissedStatus_m::total_count() const
+uint32_t eprosima::fastdds::statistics::DeadlineMissedStatus_s::total_count() const
 {
     return m_total_count;
 }
@@ -1322,7 +1309,7 @@ uint32_t eprosima::fastdds::statistics::DeadlineMissedStatus_m::total_count() co
  * @brief This function returns a reference to member total_count
  * @return Reference to member total_count
  */
-uint32_t& eprosima::fastdds::statistics::DeadlineMissedStatus_m::total_count()
+uint32_t& eprosima::fastdds::statistics::DeadlineMissedStatus_s::total_count()
 {
     return m_total_count;
 }
@@ -1331,7 +1318,7 @@ uint32_t& eprosima::fastdds::statistics::DeadlineMissedStatus_m::total_count()
  * @brief This function copies the value in member last_instance_handle
  * @param _last_instance_handle New value to be copied in member last_instance_handle
  */
-void eprosima::fastdds::statistics::DeadlineMissedStatus_m::last_instance_handle(
+void eprosima::fastdds::statistics::DeadlineMissedStatus_s::last_instance_handle(
         const std::array<uint8_t, 16>& _last_instance_handle)
 {
     m_last_instance_handle = _last_instance_handle;
@@ -1341,7 +1328,7 @@ void eprosima::fastdds::statistics::DeadlineMissedStatus_m::last_instance_handle
  * @brief This function moves the value in member last_instance_handle
  * @param _last_instance_handle New value to be moved in member last_instance_handle
  */
-void eprosima::fastdds::statistics::DeadlineMissedStatus_m::last_instance_handle(
+void eprosima::fastdds::statistics::DeadlineMissedStatus_s::last_instance_handle(
         std::array<uint8_t, 16>&& _last_instance_handle)
 {
     m_last_instance_handle = std::move(_last_instance_handle);
@@ -1351,7 +1338,7 @@ void eprosima::fastdds::statistics::DeadlineMissedStatus_m::last_instance_handle
  * @brief This function returns a constant reference to member last_instance_handle
  * @return Constant reference to member last_instance_handle
  */
-const std::array<uint8_t, 16>& eprosima::fastdds::statistics::DeadlineMissedStatus_m::last_instance_handle() const
+const std::array<uint8_t, 16>& eprosima::fastdds::statistics::DeadlineMissedStatus_s::last_instance_handle() const
 {
     return m_last_instance_handle;
 }
@@ -1360,25 +1347,25 @@ const std::array<uint8_t, 16>& eprosima::fastdds::statistics::DeadlineMissedStat
  * @brief This function returns a reference to member last_instance_handle
  * @return Reference to member last_instance_handle
  */
-std::array<uint8_t, 16>& eprosima::fastdds::statistics::DeadlineMissedStatus_m::last_instance_handle()
+std::array<uint8_t, 16>& eprosima::fastdds::statistics::DeadlineMissedStatus_s::last_instance_handle()
 {
     return m_last_instance_handle;
 }
 
 
-size_t eprosima::fastdds::statistics::DeadlineMissedStatus_m::getKeyMaxCdrSerializedSize(
+size_t eprosima::fastdds::statistics::DeadlineMissedStatus_s::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_DeadlineMissedStatus_m_max_key_cdr_typesize;
+    return eprosima_fastdds_statistics_DeadlineMissedStatus_s_max_key_cdr_typesize;
 }
 
-bool eprosima::fastdds::statistics::DeadlineMissedStatus_m::isKeyDefined()
+bool eprosima::fastdds::statistics::DeadlineMissedStatus_s::isKeyDefined()
 {
     return false;
 }
 
-void eprosima::fastdds::statistics::DeadlineMissedStatus_m::serializeKey(
+void eprosima::fastdds::statistics::DeadlineMissedStatus_s::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
@@ -1396,17 +1383,17 @@ eprosima::fastdds::statistics::MonitorServiceData::MonitorServiceData()
 
     // sequence<eprosima::fastdds::statistics::Connection> m_connection_list
 
-    // eprosima::fastdds::statistics::IncompatibleQoSStatus_m m_incompatible_qos_status
+    // eprosima::fastdds::statistics::IncompatibleQoSStatus_s m_incompatible_qos_status
 
-    // eprosima::fastdds::statistics::InconsistentTopicStatus_m m_inconsistent_topic_status
+    // eprosima::fastdds::statistics::InconsistentTopicStatus_s m_inconsistent_topic_status
 
-    // eprosima::fastdds::statistics::LivelinessLostStatus_m m_liveliness_lost_status
+    // eprosima::fastdds::statistics::LivelinessLostStatus_s m_liveliness_lost_status
 
-    // eprosima::fastdds::statistics::LivelinessChangedStatus_m m_liveliness_changed_status
+    // eprosima::fastdds::statistics::LivelinessChangedStatus_s m_liveliness_changed_status
 
-    // eprosima::fastdds::statistics::DeadlineMissedStatus_m m_deadline_missed_status
+    // eprosima::fastdds::statistics::DeadlineMissedStatus_s m_deadline_missed_status
 
-    // eprosima::fastdds::statistics::SampleLostStatus_m m_sample_lost_status
+    // eprosima::fastdds::statistics::SampleLostStatus_s m_sample_lost_status
 
     // octet m_statuses_size
     m_statuses_size = 0;
@@ -1849,20 +1836,20 @@ std::vector<eprosima::fastdds::statistics::Connection>& eprosima::fastdds::stati
     return m_connection_list;
 }
 void eprosima::fastdds::statistics::MonitorServiceData::incompatible_qos_status(
-        const eprosima::fastdds::statistics::IncompatibleQoSStatus_m& _incompatible_qos_status)
+        const eprosima::fastdds::statistics::IncompatibleQoSStatus_s& _incompatible_qos_status)
 {
     m_incompatible_qos_status = _incompatible_qos_status;
     m__d = eprosima::fastdds::statistics::INCOMPATIBLE_QOS;
 }
 
 void eprosima::fastdds::statistics::MonitorServiceData::incompatible_qos_status(
-        eprosima::fastdds::statistics::IncompatibleQoSStatus_m&& _incompatible_qos_status)
+        eprosima::fastdds::statistics::IncompatibleQoSStatus_s&& _incompatible_qos_status)
 {
     m_incompatible_qos_status = std::move(_incompatible_qos_status);
     m__d = eprosima::fastdds::statistics::INCOMPATIBLE_QOS;
 }
 
-const eprosima::fastdds::statistics::IncompatibleQoSStatus_m& eprosima::fastdds::statistics::MonitorServiceData::incompatible_qos_status() const
+const eprosima::fastdds::statistics::IncompatibleQoSStatus_s& eprosima::fastdds::statistics::MonitorServiceData::incompatible_qos_status() const
 {
     bool b = false;
 
@@ -1882,7 +1869,7 @@ const eprosima::fastdds::statistics::IncompatibleQoSStatus_m& eprosima::fastdds:
     return m_incompatible_qos_status;
 }
 
-eprosima::fastdds::statistics::IncompatibleQoSStatus_m& eprosima::fastdds::statistics::MonitorServiceData::incompatible_qos_status()
+eprosima::fastdds::statistics::IncompatibleQoSStatus_s& eprosima::fastdds::statistics::MonitorServiceData::incompatible_qos_status()
 {
     bool b = false;
 
@@ -1902,20 +1889,20 @@ eprosima::fastdds::statistics::IncompatibleQoSStatus_m& eprosima::fastdds::stati
     return m_incompatible_qos_status;
 }
 void eprosima::fastdds::statistics::MonitorServiceData::inconsistent_topic_status(
-        const eprosima::fastdds::statistics::InconsistentTopicStatus_m& _inconsistent_topic_status)
+        const eprosima::fastdds::statistics::InconsistentTopicStatus_s& _inconsistent_topic_status)
 {
     m_inconsistent_topic_status = _inconsistent_topic_status;
     m__d = eprosima::fastdds::statistics::INCONSISTENT_TOPIC;
 }
 
 void eprosima::fastdds::statistics::MonitorServiceData::inconsistent_topic_status(
-        eprosima::fastdds::statistics::InconsistentTopicStatus_m&& _inconsistent_topic_status)
+        eprosima::fastdds::statistics::InconsistentTopicStatus_s&& _inconsistent_topic_status)
 {
     m_inconsistent_topic_status = std::move(_inconsistent_topic_status);
     m__d = eprosima::fastdds::statistics::INCONSISTENT_TOPIC;
 }
 
-const eprosima::fastdds::statistics::InconsistentTopicStatus_m& eprosima::fastdds::statistics::MonitorServiceData::inconsistent_topic_status() const
+const eprosima::fastdds::statistics::InconsistentTopicStatus_s& eprosima::fastdds::statistics::MonitorServiceData::inconsistent_topic_status() const
 {
     bool b = false;
 
@@ -1935,7 +1922,7 @@ const eprosima::fastdds::statistics::InconsistentTopicStatus_m& eprosima::fastdd
     return m_inconsistent_topic_status;
 }
 
-eprosima::fastdds::statistics::InconsistentTopicStatus_m& eprosima::fastdds::statistics::MonitorServiceData::inconsistent_topic_status()
+eprosima::fastdds::statistics::InconsistentTopicStatus_s& eprosima::fastdds::statistics::MonitorServiceData::inconsistent_topic_status()
 {
     bool b = false;
 
@@ -1955,20 +1942,20 @@ eprosima::fastdds::statistics::InconsistentTopicStatus_m& eprosima::fastdds::sta
     return m_inconsistent_topic_status;
 }
 void eprosima::fastdds::statistics::MonitorServiceData::liveliness_lost_status(
-        const eprosima::fastdds::statistics::LivelinessLostStatus_m& _liveliness_lost_status)
+        const eprosima::fastdds::statistics::LivelinessLostStatus_s& _liveliness_lost_status)
 {
     m_liveliness_lost_status = _liveliness_lost_status;
     m__d = eprosima::fastdds::statistics::LIVELINESS_LOST;
 }
 
 void eprosima::fastdds::statistics::MonitorServiceData::liveliness_lost_status(
-        eprosima::fastdds::statistics::LivelinessLostStatus_m&& _liveliness_lost_status)
+        eprosima::fastdds::statistics::LivelinessLostStatus_s&& _liveliness_lost_status)
 {
     m_liveliness_lost_status = std::move(_liveliness_lost_status);
     m__d = eprosima::fastdds::statistics::LIVELINESS_LOST;
 }
 
-const eprosima::fastdds::statistics::LivelinessLostStatus_m& eprosima::fastdds::statistics::MonitorServiceData::liveliness_lost_status() const
+const eprosima::fastdds::statistics::LivelinessLostStatus_s& eprosima::fastdds::statistics::MonitorServiceData::liveliness_lost_status() const
 {
     bool b = false;
 
@@ -1988,7 +1975,7 @@ const eprosima::fastdds::statistics::LivelinessLostStatus_m& eprosima::fastdds::
     return m_liveliness_lost_status;
 }
 
-eprosima::fastdds::statistics::LivelinessLostStatus_m& eprosima::fastdds::statistics::MonitorServiceData::liveliness_lost_status()
+eprosima::fastdds::statistics::LivelinessLostStatus_s& eprosima::fastdds::statistics::MonitorServiceData::liveliness_lost_status()
 {
     bool b = false;
 
@@ -2008,20 +1995,20 @@ eprosima::fastdds::statistics::LivelinessLostStatus_m& eprosima::fastdds::statis
     return m_liveliness_lost_status;
 }
 void eprosima::fastdds::statistics::MonitorServiceData::liveliness_changed_status(
-        const eprosima::fastdds::statistics::LivelinessChangedStatus_m& _liveliness_changed_status)
+        const eprosima::fastdds::statistics::LivelinessChangedStatus_s& _liveliness_changed_status)
 {
     m_liveliness_changed_status = _liveliness_changed_status;
     m__d = eprosima::fastdds::statistics::LIVELINESS_CHANGED;
 }
 
 void eprosima::fastdds::statistics::MonitorServiceData::liveliness_changed_status(
-        eprosima::fastdds::statistics::LivelinessChangedStatus_m&& _liveliness_changed_status)
+        eprosima::fastdds::statistics::LivelinessChangedStatus_s&& _liveliness_changed_status)
 {
     m_liveliness_changed_status = std::move(_liveliness_changed_status);
     m__d = eprosima::fastdds::statistics::LIVELINESS_CHANGED;
 }
 
-const eprosima::fastdds::statistics::LivelinessChangedStatus_m& eprosima::fastdds::statistics::MonitorServiceData::liveliness_changed_status() const
+const eprosima::fastdds::statistics::LivelinessChangedStatus_s& eprosima::fastdds::statistics::MonitorServiceData::liveliness_changed_status() const
 {
     bool b = false;
 
@@ -2041,7 +2028,7 @@ const eprosima::fastdds::statistics::LivelinessChangedStatus_m& eprosima::fastdd
     return m_liveliness_changed_status;
 }
 
-eprosima::fastdds::statistics::LivelinessChangedStatus_m& eprosima::fastdds::statistics::MonitorServiceData::liveliness_changed_status()
+eprosima::fastdds::statistics::LivelinessChangedStatus_s& eprosima::fastdds::statistics::MonitorServiceData::liveliness_changed_status()
 {
     bool b = false;
 
@@ -2061,20 +2048,20 @@ eprosima::fastdds::statistics::LivelinessChangedStatus_m& eprosima::fastdds::sta
     return m_liveliness_changed_status;
 }
 void eprosima::fastdds::statistics::MonitorServiceData::deadline_missed_status(
-        const eprosima::fastdds::statistics::DeadlineMissedStatus_m& _deadline_missed_status)
+        const eprosima::fastdds::statistics::DeadlineMissedStatus_s& _deadline_missed_status)
 {
     m_deadline_missed_status = _deadline_missed_status;
     m__d = eprosima::fastdds::statistics::DEADLINE_MISSED;
 }
 
 void eprosima::fastdds::statistics::MonitorServiceData::deadline_missed_status(
-        eprosima::fastdds::statistics::DeadlineMissedStatus_m&& _deadline_missed_status)
+        eprosima::fastdds::statistics::DeadlineMissedStatus_s&& _deadline_missed_status)
 {
     m_deadline_missed_status = std::move(_deadline_missed_status);
     m__d = eprosima::fastdds::statistics::DEADLINE_MISSED;
 }
 
-const eprosima::fastdds::statistics::DeadlineMissedStatus_m& eprosima::fastdds::statistics::MonitorServiceData::deadline_missed_status() const
+const eprosima::fastdds::statistics::DeadlineMissedStatus_s& eprosima::fastdds::statistics::MonitorServiceData::deadline_missed_status() const
 {
     bool b = false;
 
@@ -2094,7 +2081,7 @@ const eprosima::fastdds::statistics::DeadlineMissedStatus_m& eprosima::fastdds::
     return m_deadline_missed_status;
 }
 
-eprosima::fastdds::statistics::DeadlineMissedStatus_m& eprosima::fastdds::statistics::MonitorServiceData::deadline_missed_status()
+eprosima::fastdds::statistics::DeadlineMissedStatus_s& eprosima::fastdds::statistics::MonitorServiceData::deadline_missed_status()
 {
     bool b = false;
 
@@ -2114,20 +2101,20 @@ eprosima::fastdds::statistics::DeadlineMissedStatus_m& eprosima::fastdds::statis
     return m_deadline_missed_status;
 }
 void eprosima::fastdds::statistics::MonitorServiceData::sample_lost_status(
-        const eprosima::fastdds::statistics::SampleLostStatus_m& _sample_lost_status)
+        const eprosima::fastdds::statistics::SampleLostStatus_s& _sample_lost_status)
 {
     m_sample_lost_status = _sample_lost_status;
     m__d = eprosima::fastdds::statistics::SAMPLE_LOST;
 }
 
 void eprosima::fastdds::statistics::MonitorServiceData::sample_lost_status(
-        eprosima::fastdds::statistics::SampleLostStatus_m&& _sample_lost_status)
+        eprosima::fastdds::statistics::SampleLostStatus_s&& _sample_lost_status)
 {
     m_sample_lost_status = std::move(_sample_lost_status);
     m__d = eprosima::fastdds::statistics::SAMPLE_LOST;
 }
 
-const eprosima::fastdds::statistics::SampleLostStatus_m& eprosima::fastdds::statistics::MonitorServiceData::sample_lost_status() const
+const eprosima::fastdds::statistics::SampleLostStatus_s& eprosima::fastdds::statistics::MonitorServiceData::sample_lost_status() const
 {
     bool b = false;
 
@@ -2147,7 +2134,7 @@ const eprosima::fastdds::statistics::SampleLostStatus_m& eprosima::fastdds::stat
     return m_sample_lost_status;
 }
 
-eprosima::fastdds::statistics::SampleLostStatus_m& eprosima::fastdds::statistics::MonitorServiceData::sample_lost_status()
+eprosima::fastdds::statistics::SampleLostStatus_s& eprosima::fastdds::statistics::MonitorServiceData::sample_lost_status()
 {
     bool b = false;
 
@@ -2244,22 +2231,22 @@ size_t eprosima::fastdds::statistics::MonitorServiceData::getCdrSerializedSize(
             current_alignment += eprosima::fastdds::statistics::Connection::getCdrSerializedSize(data.connection_list().at(a), current_alignment);}
         break;
         case eprosima::fastdds::statistics::INCOMPATIBLE_QOS:
-        current_alignment += eprosima::fastdds::statistics::IncompatibleQoSStatus_m::getCdrSerializedSize(data.incompatible_qos_status(), current_alignment);
+        current_alignment += eprosima::fastdds::statistics::IncompatibleQoSStatus_s::getCdrSerializedSize(data.incompatible_qos_status(), current_alignment);
         break;
         case eprosima::fastdds::statistics::INCONSISTENT_TOPIC:
-        current_alignment += eprosima::fastdds::statistics::InconsistentTopicStatus_m::getCdrSerializedSize(data.inconsistent_topic_status(), current_alignment);
+        current_alignment += eprosima::fastdds::statistics::InconsistentTopicStatus_s::getCdrSerializedSize(data.inconsistent_topic_status(), current_alignment);
         break;
         case eprosima::fastdds::statistics::LIVELINESS_LOST:
-        current_alignment += eprosima::fastdds::statistics::LivelinessLostStatus_m::getCdrSerializedSize(data.liveliness_lost_status(), current_alignment);
+        current_alignment += eprosima::fastdds::statistics::LivelinessLostStatus_s::getCdrSerializedSize(data.liveliness_lost_status(), current_alignment);
         break;
         case eprosima::fastdds::statistics::LIVELINESS_CHANGED:
-        current_alignment += eprosima::fastdds::statistics::LivelinessChangedStatus_m::getCdrSerializedSize(data.liveliness_changed_status(), current_alignment);
+        current_alignment += eprosima::fastdds::statistics::LivelinessChangedStatus_s::getCdrSerializedSize(data.liveliness_changed_status(), current_alignment);
         break;
         case eprosima::fastdds::statistics::DEADLINE_MISSED:
-        current_alignment += eprosima::fastdds::statistics::DeadlineMissedStatus_m::getCdrSerializedSize(data.deadline_missed_status(), current_alignment);
+        current_alignment += eprosima::fastdds::statistics::DeadlineMissedStatus_s::getCdrSerializedSize(data.deadline_missed_status(), current_alignment);
         break;
         case eprosima::fastdds::statistics::SAMPLE_LOST:
-        current_alignment += eprosima::fastdds::statistics::SampleLostStatus_m::getCdrSerializedSize(data.sample_lost_status(), current_alignment);
+        current_alignment += eprosima::fastdds::statistics::SampleLostStatus_s::getCdrSerializedSize(data.sample_lost_status(), current_alignment);
         break;
         case eprosima::fastdds::statistics::STATUSES_SIZE:
         current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
@@ -2363,7 +2350,7 @@ void eprosima::fastdds::statistics::MonitorServiceData::deserialize(
 
 eprosima::fastdds::statistics::MonitorServiceStatusData::MonitorServiceStatusData()
 {
-    // eprosima::fastdds::statistics::detail::GUID_m m_local_entity
+    // eprosima::fastdds::statistics::detail::GUID_s m_local_entity
 
     // eprosima::fastdds::statistics::StatusKind m_status_kind
     m_status_kind = eprosima::fastdds::statistics::PROXY;
@@ -2388,7 +2375,7 @@ eprosima::fastdds::statistics::MonitorServiceStatusData::MonitorServiceStatusDat
 }
 
 eprosima::fastdds::statistics::MonitorServiceStatusData::MonitorServiceStatusData(
-        MonitorServiceStatusData&& x) noexcept
+        MonitorServiceStatusData&& x) noexcept 
 {
     m_local_entity = std::move(x.m_local_entity);
     m_status_kind = x.m_status_kind;
@@ -2445,7 +2432,7 @@ size_t eprosima::fastdds::statistics::MonitorServiceStatusData::getCdrSerialized
     size_t initial_alignment = current_alignment;
 
 
-    current_alignment += eprosima::fastdds::statistics::detail::GUID_m::getCdrSerializedSize(data.local_entity(), current_alignment);
+    current_alignment += eprosima::fastdds::statistics::detail::GUID_s::getCdrSerializedSize(data.local_entity(), current_alignment);
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
 
@@ -2483,7 +2470,7 @@ void eprosima::fastdds::statistics::MonitorServiceStatusData::deserialize(
  * @param _local_entity New value to be copied in member local_entity
  */
 void eprosima::fastdds::statistics::MonitorServiceStatusData::local_entity(
-        const eprosima::fastdds::statistics::detail::GUID_m& _local_entity)
+        const eprosima::fastdds::statistics::detail::GUID_s& _local_entity)
 {
     m_local_entity = _local_entity;
 }
@@ -2493,7 +2480,7 @@ void eprosima::fastdds::statistics::MonitorServiceStatusData::local_entity(
  * @param _local_entity New value to be moved in member local_entity
  */
 void eprosima::fastdds::statistics::MonitorServiceStatusData::local_entity(
-        eprosima::fastdds::statistics::detail::GUID_m&& _local_entity)
+        eprosima::fastdds::statistics::detail::GUID_s&& _local_entity)
 {
     m_local_entity = std::move(_local_entity);
 }
@@ -2502,7 +2489,7 @@ void eprosima::fastdds::statistics::MonitorServiceStatusData::local_entity(
  * @brief This function returns a constant reference to member local_entity
  * @return Constant reference to member local_entity
  */
-const eprosima::fastdds::statistics::detail::GUID_m& eprosima::fastdds::statistics::MonitorServiceStatusData::local_entity() const
+const eprosima::fastdds::statistics::detail::GUID_s& eprosima::fastdds::statistics::MonitorServiceStatusData::local_entity() const
 {
     return m_local_entity;
 }
@@ -2511,7 +2498,7 @@ const eprosima::fastdds::statistics::detail::GUID_m& eprosima::fastdds::statisti
  * @brief This function returns a reference to member local_entity
  * @return Reference to member local_entity
  */
-eprosima::fastdds::statistics::detail::GUID_m& eprosima::fastdds::statistics::MonitorServiceStatusData::local_entity()
+eprosima::fastdds::statistics::detail::GUID_s& eprosima::fastdds::statistics::MonitorServiceStatusData::local_entity()
 {
     return m_local_entity;
 }
@@ -2598,11 +2585,10 @@ void eprosima::fastdds::statistics::MonitorServiceStatusData::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-   scdr << m_local_entity;
-
+    m_local_entity.serialize(scdr);    
   scdr << (uint32_t)m_status_kind;
-
-
+   
+  
 }
 
 

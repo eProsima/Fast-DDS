@@ -41,13 +41,6 @@ namespace eprosima
     {
         namespace statistics
         {
-            namespace detail
-            {
-                typedef eprosima::fastdds::statistics::detail::EntityId_s EntityId_m;
-                typedef eprosima::fastdds::statistics::detail::GUID_s GUID_m;
-                typedef eprosima::fastdds::statistics::detail::GuidPrefix_s GuidPrefix_m;
-                typedef eprosima::fastdds::statistics::detail::Locator_s Locator_m;
-            }
 
 
             /*!
@@ -120,7 +113,7 @@ namespace eprosima
             namespace detail {
 
                 template<typename Tag, typename Tag::type M>
-                struct QosPolicyCount_m_rob
+                struct QosPolicyCount_s_rob
                 {
                     friend constexpr typename Tag::type get(
                             Tag)
@@ -129,35 +122,35 @@ namespace eprosima
                     }
                 };
 
-                struct QosPolicyCount_m_f
+                struct QosPolicyCount_s_f
                 {
-                    typedef uint32_t QosPolicyCount_m::* type;
+                    typedef uint32_t QosPolicyCount_s::* type;
                     friend constexpr type get(
-                            QosPolicyCount_m_f);
+                            QosPolicyCount_s_f);
                 };
 
-                template struct QosPolicyCount_m_rob<QosPolicyCount_m_f, &QosPolicyCount_m::m_count>;
+                template struct QosPolicyCount_s_rob<QosPolicyCount_s_f, &QosPolicyCount_s::m_count>;
 
                 template <typename T, typename Tag>
-                inline size_t constexpr QosPolicyCount_m_offset_of() {
+                inline size_t constexpr QosPolicyCount_s_offset_of() {
                     return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
                 }
             }
             #endif
 
             /*!
-             * @brief This class represents the TopicDataType of the type QosPolicyCount_m defined by the user in the IDL file.
+             * @brief This class represents the TopicDataType of the type QosPolicyCount_s defined by the user in the IDL file.
              * @ingroup monitorservice_types
              */
-            class QosPolicyCount_mPubSubType : public eprosima::fastdds::dds::TopicDataType
+            class QosPolicyCount_sPubSubType : public eprosima::fastdds::dds::TopicDataType
             {
             public:
 
-                typedef QosPolicyCount_m type;
+                typedef QosPolicyCount_s type;
 
-                eProsima_user_DllExport QosPolicyCount_mPubSubType();
+                eProsima_user_DllExport QosPolicyCount_sPubSubType();
 
-                eProsima_user_DllExport virtual ~QosPolicyCount_mPubSubType() override;
+                eProsima_user_DllExport virtual ~QosPolicyCount_sPubSubType() override;
 
                 eProsima_user_DllExport virtual bool serialize(
                         void* data,
@@ -200,7 +193,7 @@ namespace eprosima
                 eProsima_user_DllExport inline bool construct_sample(
                         void* memory) const override
                 {
-                    new (memory) QosPolicyCount_m();
+                    new (memory) QosPolicyCount_s();
                     return true;
                 }
 
@@ -213,7 +206,7 @@ namespace eprosima
 
                 static constexpr bool is_plain_impl()
                 {
-                    return 8ULL == (detail::QosPolicyCount_m_offset_of<QosPolicyCount_m, detail::QosPolicyCount_m_f>() + sizeof(uint32_t));
+                    return 8ULL == (detail::QosPolicyCount_s_offset_of<QosPolicyCount_s, detail::QosPolicyCount_s_f>() + sizeof(uint32_t));
 
                 }};
 
@@ -221,7 +214,7 @@ namespace eprosima
             namespace detail {
 
                 template<typename Tag, typename Tag::type M>
-                struct BaseStatus_m_rob
+                struct BaseStatus_s_rob
                 {
                     friend constexpr typename Tag::type get(
                             Tag)
@@ -230,35 +223,35 @@ namespace eprosima
                     }
                 };
 
-                struct BaseStatus_m_f
+                struct BaseStatus_s_f
                 {
-                    typedef uint32_t BaseStatus_m::* type;
+                    typedef uint32_t BaseStatus_s::* type;
                     friend constexpr type get(
-                            BaseStatus_m_f);
+                            BaseStatus_s_f);
                 };
 
-                template struct BaseStatus_m_rob<BaseStatus_m_f, &BaseStatus_m::m_total_count>;
+                template struct BaseStatus_s_rob<BaseStatus_s_f, &BaseStatus_s::m_total_count>;
 
                 template <typename T, typename Tag>
-                inline size_t constexpr BaseStatus_m_offset_of() {
+                inline size_t constexpr BaseStatus_s_offset_of() {
                     return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
                 }
             }
             #endif
 
             /*!
-             * @brief This class represents the TopicDataType of the type BaseStatus_m defined by the user in the IDL file.
+             * @brief This class represents the TopicDataType of the type BaseStatus_s defined by the user in the IDL file.
              * @ingroup monitorservice_types
              */
-            class BaseStatus_mPubSubType : public eprosima::fastdds::dds::TopicDataType
+            class BaseStatus_sPubSubType : public eprosima::fastdds::dds::TopicDataType
             {
             public:
 
-                typedef BaseStatus_m type;
+                typedef BaseStatus_s type;
 
-                eProsima_user_DllExport BaseStatus_mPubSubType();
+                eProsima_user_DllExport BaseStatus_sPubSubType();
 
-                eProsima_user_DllExport virtual ~BaseStatus_mPubSubType() override;
+                eProsima_user_DllExport virtual ~BaseStatus_sPubSubType() override;
 
                 eProsima_user_DllExport virtual bool serialize(
                         void* data,
@@ -301,7 +294,7 @@ namespace eprosima
                 eProsima_user_DllExport inline bool construct_sample(
                         void* memory) const override
                 {
-                    new (memory) BaseStatus_m();
+                    new (memory) BaseStatus_s();
                     return true;
                 }
 
@@ -314,24 +307,24 @@ namespace eprosima
 
                 static constexpr bool is_plain_impl()
                 {
-                    return 4ULL == (detail::BaseStatus_m_offset_of<BaseStatus_m, detail::BaseStatus_m_f>() + sizeof(uint32_t));
+                    return 4ULL == (detail::BaseStatus_s_offset_of<BaseStatus_s, detail::BaseStatus_s_f>() + sizeof(uint32_t));
 
                 }};
-            typedef std::vector<eprosima::fastdds::statistics::QosPolicyCount_m> QosPolicyCountSeq_m;
+            typedef std::vector<eprosima::fastdds::statistics::QosPolicyCount_s> QosPolicyCountSeq_s;
 
             /*!
-             * @brief This class represents the TopicDataType of the type IncompatibleQoSStatus_m defined by the user in the IDL file.
+             * @brief This class represents the TopicDataType of the type IncompatibleQoSStatus_s defined by the user in the IDL file.
              * @ingroup monitorservice_types
              */
-            class IncompatibleQoSStatus_mPubSubType : public eprosima::fastdds::dds::TopicDataType
+            class IncompatibleQoSStatus_sPubSubType : public eprosima::fastdds::dds::TopicDataType
             {
             public:
 
-                typedef IncompatibleQoSStatus_m type;
+                typedef IncompatibleQoSStatus_s type;
 
-                eProsima_user_DllExport IncompatibleQoSStatus_mPubSubType();
+                eProsima_user_DllExport IncompatibleQoSStatus_sPubSubType();
 
-                eProsima_user_DllExport virtual ~IncompatibleQoSStatus_mPubSubType() override;
+                eProsima_user_DllExport virtual ~IncompatibleQoSStatus_sPubSubType() override;
 
                 eProsima_user_DllExport virtual bool serialize(
                         void* data,
@@ -389,7 +382,7 @@ namespace eprosima
             namespace detail {
 
                 template<typename Tag, typename Tag::type M>
-                struct LivelinessChangedStatus_m_rob
+                struct LivelinessChangedStatus_s_rob
                 {
                     friend constexpr typename Tag::type get(
                             Tag)
@@ -398,35 +391,35 @@ namespace eprosima
                     }
                 };
 
-                struct LivelinessChangedStatus_m_f
+                struct LivelinessChangedStatus_s_f
                 {
-                    typedef std::array<uint8_t, 16> LivelinessChangedStatus_m::* type;
+                    typedef std::array<uint8_t, 16> LivelinessChangedStatus_s::* type;
                     friend constexpr type get(
-                            LivelinessChangedStatus_m_f);
+                            LivelinessChangedStatus_s_f);
                 };
 
-                template struct LivelinessChangedStatus_m_rob<LivelinessChangedStatus_m_f, &LivelinessChangedStatus_m::m_last_publication_handle>;
+                template struct LivelinessChangedStatus_s_rob<LivelinessChangedStatus_s_f, &LivelinessChangedStatus_s::m_last_publication_handle>;
 
                 template <typename T, typename Tag>
-                inline size_t constexpr LivelinessChangedStatus_m_offset_of() {
+                inline size_t constexpr LivelinessChangedStatus_s_offset_of() {
                     return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
                 }
             }
             #endif
 
             /*!
-             * @brief This class represents the TopicDataType of the type LivelinessChangedStatus_m defined by the user in the IDL file.
+             * @brief This class represents the TopicDataType of the type LivelinessChangedStatus_s defined by the user in the IDL file.
              * @ingroup monitorservice_types
              */
-            class LivelinessChangedStatus_mPubSubType : public eprosima::fastdds::dds::TopicDataType
+            class LivelinessChangedStatus_sPubSubType : public eprosima::fastdds::dds::TopicDataType
             {
             public:
 
-                typedef LivelinessChangedStatus_m type;
+                typedef LivelinessChangedStatus_s type;
 
-                eProsima_user_DllExport LivelinessChangedStatus_mPubSubType();
+                eProsima_user_DllExport LivelinessChangedStatus_sPubSubType();
 
-                eProsima_user_DllExport virtual ~LivelinessChangedStatus_mPubSubType() override;
+                eProsima_user_DllExport virtual ~LivelinessChangedStatus_sPubSubType() override;
 
                 eProsima_user_DllExport virtual bool serialize(
                         void* data,
@@ -469,7 +462,7 @@ namespace eprosima
                 eProsima_user_DllExport inline bool construct_sample(
                         void* memory) const override
                 {
-                    new (memory) LivelinessChangedStatus_m();
+                    new (memory) LivelinessChangedStatus_s();
                     return true;
                 }
 
@@ -482,7 +475,7 @@ namespace eprosima
 
                 static constexpr bool is_plain_impl()
                 {
-                    return 24ULL == (detail::LivelinessChangedStatus_m_offset_of<LivelinessChangedStatus_m, detail::LivelinessChangedStatus_m_f>() + sizeof(std::array<uint8_t, 16>));
+                    return 24ULL == (detail::LivelinessChangedStatus_s_offset_of<LivelinessChangedStatus_s, detail::LivelinessChangedStatus_s_f>() + sizeof(std::array<uint8_t, 16>));
 
                 }};
 
@@ -490,7 +483,7 @@ namespace eprosima
             namespace detail {
 
                 template<typename Tag, typename Tag::type M>
-                struct DeadlineMissedStatus_m_rob
+                struct DeadlineMissedStatus_s_rob
                 {
                     friend constexpr typename Tag::type get(
                             Tag)
@@ -499,35 +492,35 @@ namespace eprosima
                     }
                 };
 
-                struct DeadlineMissedStatus_m_f
+                struct DeadlineMissedStatus_s_f
                 {
-                    typedef std::array<uint8_t, 16> DeadlineMissedStatus_m::* type;
+                    typedef std::array<uint8_t, 16> DeadlineMissedStatus_s::* type;
                     friend constexpr type get(
-                            DeadlineMissedStatus_m_f);
+                            DeadlineMissedStatus_s_f);
                 };
 
-                template struct DeadlineMissedStatus_m_rob<DeadlineMissedStatus_m_f, &DeadlineMissedStatus_m::m_last_instance_handle>;
+                template struct DeadlineMissedStatus_s_rob<DeadlineMissedStatus_s_f, &DeadlineMissedStatus_s::m_last_instance_handle>;
 
                 template <typename T, typename Tag>
-                inline size_t constexpr DeadlineMissedStatus_m_offset_of() {
+                inline size_t constexpr DeadlineMissedStatus_s_offset_of() {
                     return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
                 }
             }
             #endif
 
             /*!
-             * @brief This class represents the TopicDataType of the type DeadlineMissedStatus_m defined by the user in the IDL file.
+             * @brief This class represents the TopicDataType of the type DeadlineMissedStatus_s defined by the user in the IDL file.
              * @ingroup monitorservice_types
              */
-            class DeadlineMissedStatus_mPubSubType : public eprosima::fastdds::dds::TopicDataType
+            class DeadlineMissedStatus_sPubSubType : public eprosima::fastdds::dds::TopicDataType
             {
             public:
 
-                typedef DeadlineMissedStatus_m type;
+                typedef DeadlineMissedStatus_s type;
 
-                eProsima_user_DllExport DeadlineMissedStatus_mPubSubType();
+                eProsima_user_DllExport DeadlineMissedStatus_sPubSubType();
 
-                eProsima_user_DllExport virtual ~DeadlineMissedStatus_mPubSubType() override;
+                eProsima_user_DllExport virtual ~DeadlineMissedStatus_sPubSubType() override;
 
                 eProsima_user_DllExport virtual bool serialize(
                         void* data,
@@ -570,7 +563,7 @@ namespace eprosima
                 eProsima_user_DllExport inline bool construct_sample(
                         void* memory) const override
                 {
-                    new (memory) DeadlineMissedStatus_m();
+                    new (memory) DeadlineMissedStatus_s();
                     return true;
                 }
 
@@ -583,12 +576,12 @@ namespace eprosima
 
                 static constexpr bool is_plain_impl()
                 {
-                    return 20ULL == (detail::DeadlineMissedStatus_m_offset_of<DeadlineMissedStatus_m, detail::DeadlineMissedStatus_m_f>() + sizeof(std::array<uint8_t, 16>));
+                    return 20ULL == (detail::DeadlineMissedStatus_s_offset_of<DeadlineMissedStatus_s, detail::DeadlineMissedStatus_s_f>() + sizeof(std::array<uint8_t, 16>));
 
                 }};
-            typedef eprosima::fastdds::statistics::BaseStatus_m LivelinessLostStatus_m;
-            typedef eprosima::fastdds::statistics::BaseStatus_m InconsistentTopicStatus_m;
-            typedef eprosima::fastdds::statistics::BaseStatus_m SampleLostStatus_m;
+            typedef eprosima::fastdds::statistics::BaseStatus_s LivelinessLostStatus_s;
+            typedef eprosima::fastdds::statistics::BaseStatus_s InconsistentTopicStatus_s;
+            typedef eprosima::fastdds::statistics::BaseStatus_s SampleLostStatus_s;
 
 
 

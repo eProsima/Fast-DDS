@@ -67,12 +67,6 @@ class Cdr;
 namespace eprosima {
     namespace fastdds {
         namespace statistics {
-            namespace detail {
-                typedef eprosima::fastdds::statistics::detail::EntityId_s EntityId_m;
-                typedef eprosima::fastdds::statistics::detail::GUID_s GUID_m;
-                typedef eprosima::fastdds::statistics::detail::GuidPrefix_s GuidPrefix_m;
-                typedef eprosima::fastdds::statistics::detail::Locator_s Locator_m;
-            } // namespace detail
             /*!
              * @brief This class represents the enumeration ConnectionMode defined by the user in the IDL file.
              * @ingroup monitorservice_types
@@ -167,76 +161,76 @@ namespace eprosima {
                  * @param _guid New value to be copied in member guid
                  */
                 eProsima_user_DllExport void guid(
-                        const eprosima::fastdds::statistics::detail::GUID_m& _guid);
+                        const eprosima::fastdds::statistics::detail::GUID_s& _guid);
 
                 /*!
                  * @brief This function moves the value in member guid
                  * @param _guid New value to be moved in member guid
                  */
                 eProsima_user_DllExport void guid(
-                        eprosima::fastdds::statistics::detail::GUID_m&& _guid);
+                        eprosima::fastdds::statistics::detail::GUID_s&& _guid);
 
                 /*!
                  * @brief This function returns a constant reference to member guid
                  * @return Constant reference to member guid
                  */
-                eProsima_user_DllExport const eprosima::fastdds::statistics::detail::GUID_m& guid() const;
+                eProsima_user_DllExport const eprosima::fastdds::statistics::detail::GUID_s& guid() const;
 
                 /*!
                  * @brief This function returns a reference to member guid
                  * @return Reference to member guid
                  */
-                eProsima_user_DllExport eprosima::fastdds::statistics::detail::GUID_m& guid();
+                eProsima_user_DllExport eprosima::fastdds::statistics::detail::GUID_s& guid();
                 /*!
                  * @brief This function copies the value in member announced_locators
                  * @param _announced_locators New value to be copied in member announced_locators
                  */
                 eProsima_user_DllExport void announced_locators(
-                        const std::vector<eprosima::fastdds::statistics::detail::Locator_m>& _announced_locators);
+                        const std::vector<eprosima::fastdds::statistics::detail::Locator_s>& _announced_locators);
 
                 /*!
                  * @brief This function moves the value in member announced_locators
                  * @param _announced_locators New value to be moved in member announced_locators
                  */
                 eProsima_user_DllExport void announced_locators(
-                        std::vector<eprosima::fastdds::statistics::detail::Locator_m>&& _announced_locators);
+                        std::vector<eprosima::fastdds::statistics::detail::Locator_s>&& _announced_locators);
 
                 /*!
                  * @brief This function returns a constant reference to member announced_locators
                  * @return Constant reference to member announced_locators
                  */
-                eProsima_user_DllExport const std::vector<eprosima::fastdds::statistics::detail::Locator_m>& announced_locators() const;
+                eProsima_user_DllExport const std::vector<eprosima::fastdds::statistics::detail::Locator_s>& announced_locators() const;
 
                 /*!
                  * @brief This function returns a reference to member announced_locators
                  * @return Reference to member announced_locators
                  */
-                eProsima_user_DllExport std::vector<eprosima::fastdds::statistics::detail::Locator_m>& announced_locators();
+                eProsima_user_DllExport std::vector<eprosima::fastdds::statistics::detail::Locator_s>& announced_locators();
                 /*!
                  * @brief This function copies the value in member used_locators
                  * @param _used_locators New value to be copied in member used_locators
                  */
                 eProsima_user_DllExport void used_locators(
-                        const std::vector<eprosima::fastdds::statistics::detail::Locator_m>& _used_locators);
+                        const std::vector<eprosima::fastdds::statistics::detail::Locator_s>& _used_locators);
 
                 /*!
                  * @brief This function moves the value in member used_locators
                  * @param _used_locators New value to be moved in member used_locators
                  */
                 eProsima_user_DllExport void used_locators(
-                        std::vector<eprosima::fastdds::statistics::detail::Locator_m>&& _used_locators);
+                        std::vector<eprosima::fastdds::statistics::detail::Locator_s>&& _used_locators);
 
                 /*!
                  * @brief This function returns a constant reference to member used_locators
                  * @return Constant reference to member used_locators
                  */
-                eProsima_user_DllExport const std::vector<eprosima::fastdds::statistics::detail::Locator_m>& used_locators() const;
+                eProsima_user_DllExport const std::vector<eprosima::fastdds::statistics::detail::Locator_s>& used_locators() const;
 
                 /*!
                  * @brief This function returns a reference to member used_locators
                  * @return Reference to member used_locators
                  */
-                eProsima_user_DllExport std::vector<eprosima::fastdds::statistics::detail::Locator_m>& used_locators();
+                eProsima_user_DllExport std::vector<eprosima::fastdds::statistics::detail::Locator_s>& used_locators();
 
                 /*!
                 * @brief This function returns the maximum serialized size of an object
@@ -298,70 +292,70 @@ namespace eprosima {
             private:
 
                 eprosima::fastdds::statistics::ConnectionMode m_mode;
-                eprosima::fastdds::statistics::detail::GUID_m m_guid;
-                std::vector<eprosima::fastdds::statistics::detail::Locator_m> m_announced_locators;
-                std::vector<eprosima::fastdds::statistics::detail::Locator_m> m_used_locators;
+                eprosima::fastdds::statistics::detail::GUID_s m_guid;
+                std::vector<eprosima::fastdds::statistics::detail::Locator_s> m_announced_locators;
+                std::vector<eprosima::fastdds::statistics::detail::Locator_s> m_used_locators;
 
             };
             /*!
-             * @brief This class represents the structure QosPolicyCount_m defined by the user in the IDL file.
+             * @brief This class represents the structure QosPolicyCount_s defined by the user in the IDL file.
              * @ingroup monitorservice_types
              */
-            class QosPolicyCount_m
+            class QosPolicyCount_s
             {
             public:
 
                 /*!
                  * @brief Default constructor.
                  */
-                eProsima_user_DllExport QosPolicyCount_m();
+                eProsima_user_DllExport QosPolicyCount_s();
 
                 /*!
                  * @brief Default destructor.
                  */
-                eProsima_user_DllExport ~QosPolicyCount_m();
+                eProsima_user_DllExport ~QosPolicyCount_s();
 
                 /*!
                  * @brief Copy constructor.
-                 * @param x Reference to the object eprosima::fastdds::statistics::QosPolicyCount_m that will be copied.
+                 * @param x Reference to the object eprosima::fastdds::statistics::QosPolicyCount_s that will be copied.
                  */
-                eProsima_user_DllExport QosPolicyCount_m(
-                        const QosPolicyCount_m& x);
+                eProsima_user_DllExport QosPolicyCount_s(
+                        const QosPolicyCount_s& x);
 
                 /*!
                  * @brief Move constructor.
-                 * @param x Reference to the object eprosima::fastdds::statistics::QosPolicyCount_m that will be copied.
+                 * @param x Reference to the object eprosima::fastdds::statistics::QosPolicyCount_s that will be copied.
                  */
-                eProsima_user_DllExport QosPolicyCount_m(
-                        QosPolicyCount_m&& x) noexcept;
+                eProsima_user_DllExport QosPolicyCount_s(
+                        QosPolicyCount_s&& x) noexcept;
 
                 /*!
                  * @brief Copy assignment.
-                 * @param x Reference to the object eprosima::fastdds::statistics::QosPolicyCount_m that will be copied.
+                 * @param x Reference to the object eprosima::fastdds::statistics::QosPolicyCount_s that will be copied.
                  */
-                eProsima_user_DllExport QosPolicyCount_m& operator =(
-                        const QosPolicyCount_m& x);
+                eProsima_user_DllExport QosPolicyCount_s& operator =(
+                        const QosPolicyCount_s& x);
 
                 /*!
                  * @brief Move assignment.
-                 * @param x Reference to the object eprosima::fastdds::statistics::QosPolicyCount_m that will be copied.
+                 * @param x Reference to the object eprosima::fastdds::statistics::QosPolicyCount_s that will be copied.
                  */
-                eProsima_user_DllExport QosPolicyCount_m& operator =(
-                        QosPolicyCount_m&& x) noexcept;
+                eProsima_user_DllExport QosPolicyCount_s& operator =(
+                        QosPolicyCount_s&& x) noexcept;
 
                 /*!
                  * @brief Comparison operator.
-                 * @param x eprosima::fastdds::statistics::QosPolicyCount_m object to compare.
+                 * @param x eprosima::fastdds::statistics::QosPolicyCount_s object to compare.
                  */
                 eProsima_user_DllExport bool operator ==(
-                        const QosPolicyCount_m& x) const;
+                        const QosPolicyCount_s& x) const;
 
                 /*!
                  * @brief Comparison operator.
-                 * @param x eprosima::fastdds::statistics::QosPolicyCount_m object to compare.
+                 * @param x eprosima::fastdds::statistics::QosPolicyCount_s object to compare.
                  */
                 eProsima_user_DllExport bool operator !=(
-                        const QosPolicyCount_m& x) const;
+                        const QosPolicyCount_s& x) const;
 
                 /*!
                  * @brief This function sets a value in member policy_id
@@ -418,7 +412,7 @@ namespace eprosima {
                  * @return Serialized size.
                  */
                 eProsima_user_DllExport static size_t getCdrSerializedSize(
-                        const eprosima::fastdds::statistics::QosPolicyCount_m& data,
+                        const eprosima::fastdds::statistics::QosPolicyCount_s& data,
                         size_t current_alignment = 0);
 
 
@@ -466,64 +460,64 @@ namespace eprosima {
 
             };
             /*!
-             * @brief This class represents the structure BaseStatus_m defined by the user in the IDL file.
+             * @brief This class represents the structure BaseStatus_s defined by the user in the IDL file.
              * @ingroup monitorservice_types
              */
-            class BaseStatus_m
+            class BaseStatus_s
             {
             public:
 
                 /*!
                  * @brief Default constructor.
                  */
-                eProsima_user_DllExport BaseStatus_m();
+                eProsima_user_DllExport BaseStatus_s();
 
                 /*!
                  * @brief Default destructor.
                  */
-                eProsima_user_DllExport ~BaseStatus_m();
+                eProsima_user_DllExport ~BaseStatus_s();
 
                 /*!
                  * @brief Copy constructor.
-                 * @param x Reference to the object eprosima::fastdds::statistics::BaseStatus_m that will be copied.
+                 * @param x Reference to the object eprosima::fastdds::statistics::BaseStatus_s that will be copied.
                  */
-                eProsima_user_DllExport BaseStatus_m(
-                        const BaseStatus_m& x);
+                eProsima_user_DllExport BaseStatus_s(
+                        const BaseStatus_s& x);
 
                 /*!
                  * @brief Move constructor.
-                 * @param x Reference to the object eprosima::fastdds::statistics::BaseStatus_m that will be copied.
+                 * @param x Reference to the object eprosima::fastdds::statistics::BaseStatus_s that will be copied.
                  */
-                eProsima_user_DllExport BaseStatus_m(
-                        BaseStatus_m&& x) noexcept;
+                eProsima_user_DllExport BaseStatus_s(
+                        BaseStatus_s&& x) noexcept;
 
                 /*!
                  * @brief Copy assignment.
-                 * @param x Reference to the object eprosima::fastdds::statistics::BaseStatus_m that will be copied.
+                 * @param x Reference to the object eprosima::fastdds::statistics::BaseStatus_s that will be copied.
                  */
-                eProsima_user_DllExport BaseStatus_m& operator =(
-                        const BaseStatus_m& x);
+                eProsima_user_DllExport BaseStatus_s& operator =(
+                        const BaseStatus_s& x);
 
                 /*!
                  * @brief Move assignment.
-                 * @param x Reference to the object eprosima::fastdds::statistics::BaseStatus_m that will be copied.
+                 * @param x Reference to the object eprosima::fastdds::statistics::BaseStatus_s that will be copied.
                  */
-                eProsima_user_DllExport BaseStatus_m& operator =(
-                        BaseStatus_m&& x) noexcept;
+                eProsima_user_DllExport BaseStatus_s& operator =(
+                        BaseStatus_s&& x) noexcept;
 
                 /*!
                  * @brief Comparison operator.
-                 * @param x eprosima::fastdds::statistics::BaseStatus_m object to compare.
+                 * @param x eprosima::fastdds::statistics::BaseStatus_s object to compare.
                  */
                 eProsima_user_DllExport bool operator ==(
-                        const BaseStatus_m& x) const;
+                        const BaseStatus_s& x) const;
 
                 /*!
                  * @brief Comparison operator.
-                 * @param x eprosima::fastdds::statistics::BaseStatus_m object to compare.
+                 * @param x eprosima::fastdds::statistics::BaseStatus_s object to compare.
                  */
                 eProsima_user_DllExport bool operator !=(
-                        const BaseStatus_m& x) const;
+                        const BaseStatus_s& x) const;
 
                 /*!
                  * @brief This function sets a value in member total_count
@@ -561,7 +555,7 @@ namespace eprosima {
                  * @return Serialized size.
                  */
                 eProsima_user_DllExport static size_t getCdrSerializedSize(
-                        const eprosima::fastdds::statistics::BaseStatus_m& data,
+                        const eprosima::fastdds::statistics::BaseStatus_s& data,
                         size_t current_alignment = 0);
 
 
@@ -607,66 +601,66 @@ namespace eprosima {
                 uint32_t m_total_count;
 
             };
-            typedef std::vector<eprosima::fastdds::statistics::QosPolicyCount_m> QosPolicyCountSeq_m;
+            typedef std::vector<eprosima::fastdds::statistics::QosPolicyCount_s> QosPolicyCountSeq_s;
             /*!
-             * @brief This class represents the structure IncompatibleQoSStatus_m defined by the user in the IDL file.
+             * @brief This class represents the structure IncompatibleQoSStatus_s defined by the user in the IDL file.
              * @ingroup monitorservice_types
              */
-            class IncompatibleQoSStatus_m
+            class IncompatibleQoSStatus_s
             {
             public:
 
                 /*!
                  * @brief Default constructor.
                  */
-                eProsima_user_DllExport IncompatibleQoSStatus_m();
+                eProsima_user_DllExport IncompatibleQoSStatus_s();
 
                 /*!
                  * @brief Default destructor.
                  */
-                eProsima_user_DllExport ~IncompatibleQoSStatus_m();
+                eProsima_user_DllExport ~IncompatibleQoSStatus_s();
 
                 /*!
                  * @brief Copy constructor.
-                 * @param x Reference to the object eprosima::fastdds::statistics::IncompatibleQoSStatus_m that will be copied.
+                 * @param x Reference to the object eprosima::fastdds::statistics::IncompatibleQoSStatus_s that will be copied.
                  */
-                eProsima_user_DllExport IncompatibleQoSStatus_m(
-                        const IncompatibleQoSStatus_m& x);
+                eProsima_user_DllExport IncompatibleQoSStatus_s(
+                        const IncompatibleQoSStatus_s& x);
 
                 /*!
                  * @brief Move constructor.
-                 * @param x Reference to the object eprosima::fastdds::statistics::IncompatibleQoSStatus_m that will be copied.
+                 * @param x Reference to the object eprosima::fastdds::statistics::IncompatibleQoSStatus_s that will be copied.
                  */
-                eProsima_user_DllExport IncompatibleQoSStatus_m(
-                        IncompatibleQoSStatus_m&& x) noexcept;
+                eProsima_user_DllExport IncompatibleQoSStatus_s(
+                        IncompatibleQoSStatus_s&& x) noexcept;
 
                 /*!
                  * @brief Copy assignment.
-                 * @param x Reference to the object eprosima::fastdds::statistics::IncompatibleQoSStatus_m that will be copied.
+                 * @param x Reference to the object eprosima::fastdds::statistics::IncompatibleQoSStatus_s that will be copied.
                  */
-                eProsima_user_DllExport IncompatibleQoSStatus_m& operator =(
-                        const IncompatibleQoSStatus_m& x);
+                eProsima_user_DllExport IncompatibleQoSStatus_s& operator =(
+                        const IncompatibleQoSStatus_s& x);
 
                 /*!
                  * @brief Move assignment.
-                 * @param x Reference to the object eprosima::fastdds::statistics::IncompatibleQoSStatus_m that will be copied.
+                 * @param x Reference to the object eprosima::fastdds::statistics::IncompatibleQoSStatus_s that will be copied.
                  */
-                eProsima_user_DllExport IncompatibleQoSStatus_m& operator =(
-                        IncompatibleQoSStatus_m&& x) noexcept;
+                eProsima_user_DllExport IncompatibleQoSStatus_s& operator =(
+                        IncompatibleQoSStatus_s&& x) noexcept;
 
                 /*!
                  * @brief Comparison operator.
-                 * @param x eprosima::fastdds::statistics::IncompatibleQoSStatus_m object to compare.
+                 * @param x eprosima::fastdds::statistics::IncompatibleQoSStatus_s object to compare.
                  */
                 eProsima_user_DllExport bool operator ==(
-                        const IncompatibleQoSStatus_m& x) const;
+                        const IncompatibleQoSStatus_s& x) const;
 
                 /*!
                  * @brief Comparison operator.
-                 * @param x eprosima::fastdds::statistics::IncompatibleQoSStatus_m object to compare.
+                 * @param x eprosima::fastdds::statistics::IncompatibleQoSStatus_s object to compare.
                  */
                 eProsima_user_DllExport bool operator !=(
-                        const IncompatibleQoSStatus_m& x) const;
+                        const IncompatibleQoSStatus_s& x) const;
 
                 /*!
                  * @brief This function sets a value in member total_count
@@ -711,26 +705,26 @@ namespace eprosima {
                  * @param _policies New value to be copied in member policies
                  */
                 eProsima_user_DllExport void policies(
-                        const eprosima::fastdds::statistics::QosPolicyCountSeq_m& _policies);
+                        const eprosima::fastdds::statistics::QosPolicyCountSeq_s& _policies);
 
                 /*!
                  * @brief This function moves the value in member policies
                  * @param _policies New value to be moved in member policies
                  */
                 eProsima_user_DllExport void policies(
-                        eprosima::fastdds::statistics::QosPolicyCountSeq_m&& _policies);
+                        eprosima::fastdds::statistics::QosPolicyCountSeq_s&& _policies);
 
                 /*!
                  * @brief This function returns a constant reference to member policies
                  * @return Constant reference to member policies
                  */
-                eProsima_user_DllExport const eprosima::fastdds::statistics::QosPolicyCountSeq_m& policies() const;
+                eProsima_user_DllExport const eprosima::fastdds::statistics::QosPolicyCountSeq_s& policies() const;
 
                 /*!
                  * @brief This function returns a reference to member policies
                  * @return Reference to member policies
                  */
-                eProsima_user_DllExport eprosima::fastdds::statistics::QosPolicyCountSeq_m& policies();
+                eProsima_user_DllExport eprosima::fastdds::statistics::QosPolicyCountSeq_s& policies();
 
                 /*!
                 * @brief This function returns the maximum serialized size of an object
@@ -748,7 +742,7 @@ namespace eprosima {
                  * @return Serialized size.
                  */
                 eProsima_user_DllExport static size_t getCdrSerializedSize(
-                        const eprosima::fastdds::statistics::IncompatibleQoSStatus_m& data,
+                        const eprosima::fastdds::statistics::IncompatibleQoSStatus_s& data,
                         size_t current_alignment = 0);
 
 
@@ -793,68 +787,68 @@ namespace eprosima {
 
                 uint32_t m_total_count;
                 uint32_t m_last_policy_id;
-                eprosima::fastdds::statistics::QosPolicyCountSeq_m m_policies;
+                eprosima::fastdds::statistics::QosPolicyCountSeq_s m_policies;
 
             };
             /*!
-             * @brief This class represents the structure LivelinessChangedStatus_m defined by the user in the IDL file.
+             * @brief This class represents the structure LivelinessChangedStatus_s defined by the user in the IDL file.
              * @ingroup monitorservice_types
              */
-            class LivelinessChangedStatus_m
+            class LivelinessChangedStatus_s
             {
             public:
 
                 /*!
                  * @brief Default constructor.
                  */
-                eProsima_user_DllExport LivelinessChangedStatus_m();
+                eProsima_user_DllExport LivelinessChangedStatus_s();
 
                 /*!
                  * @brief Default destructor.
                  */
-                eProsima_user_DllExport ~LivelinessChangedStatus_m();
+                eProsima_user_DllExport ~LivelinessChangedStatus_s();
 
                 /*!
                  * @brief Copy constructor.
-                 * @param x Reference to the object eprosima::fastdds::statistics::LivelinessChangedStatus_m that will be copied.
+                 * @param x Reference to the object eprosima::fastdds::statistics::LivelinessChangedStatus_s that will be copied.
                  */
-                eProsima_user_DllExport LivelinessChangedStatus_m(
-                        const LivelinessChangedStatus_m& x);
+                eProsima_user_DllExport LivelinessChangedStatus_s(
+                        const LivelinessChangedStatus_s& x);
 
                 /*!
                  * @brief Move constructor.
-                 * @param x Reference to the object eprosima::fastdds::statistics::LivelinessChangedStatus_m that will be copied.
+                 * @param x Reference to the object eprosima::fastdds::statistics::LivelinessChangedStatus_s that will be copied.
                  */
-                eProsima_user_DllExport LivelinessChangedStatus_m(
-                        LivelinessChangedStatus_m&& x) noexcept;
+                eProsima_user_DllExport LivelinessChangedStatus_s(
+                        LivelinessChangedStatus_s&& x) noexcept;
 
                 /*!
                  * @brief Copy assignment.
-                 * @param x Reference to the object eprosima::fastdds::statistics::LivelinessChangedStatus_m that will be copied.
+                 * @param x Reference to the object eprosima::fastdds::statistics::LivelinessChangedStatus_s that will be copied.
                  */
-                eProsima_user_DllExport LivelinessChangedStatus_m& operator =(
-                        const LivelinessChangedStatus_m& x);
+                eProsima_user_DllExport LivelinessChangedStatus_s& operator =(
+                        const LivelinessChangedStatus_s& x);
 
                 /*!
                  * @brief Move assignment.
-                 * @param x Reference to the object eprosima::fastdds::statistics::LivelinessChangedStatus_m that will be copied.
+                 * @param x Reference to the object eprosima::fastdds::statistics::LivelinessChangedStatus_s that will be copied.
                  */
-                eProsima_user_DllExport LivelinessChangedStatus_m& operator =(
-                        LivelinessChangedStatus_m&& x) noexcept;
+                eProsima_user_DllExport LivelinessChangedStatus_s& operator =(
+                        LivelinessChangedStatus_s&& x) noexcept;
 
                 /*!
                  * @brief Comparison operator.
-                 * @param x eprosima::fastdds::statistics::LivelinessChangedStatus_m object to compare.
+                 * @param x eprosima::fastdds::statistics::LivelinessChangedStatus_s object to compare.
                  */
                 eProsima_user_DllExport bool operator ==(
-                        const LivelinessChangedStatus_m& x) const;
+                        const LivelinessChangedStatus_s& x) const;
 
                 /*!
                  * @brief Comparison operator.
-                 * @param x eprosima::fastdds::statistics::LivelinessChangedStatus_m object to compare.
+                 * @param x eprosima::fastdds::statistics::LivelinessChangedStatus_s object to compare.
                  */
                 eProsima_user_DllExport bool operator !=(
-                        const LivelinessChangedStatus_m& x) const;
+                        const LivelinessChangedStatus_s& x) const;
 
                 /*!
                  * @brief This function sets a value in member alive_count
@@ -936,7 +930,7 @@ namespace eprosima {
                  * @return Serialized size.
                  */
                 eProsima_user_DllExport static size_t getCdrSerializedSize(
-                        const eprosima::fastdds::statistics::LivelinessChangedStatus_m& data,
+                        const eprosima::fastdds::statistics::LivelinessChangedStatus_s& data,
                         size_t current_alignment = 0);
 
 
@@ -985,64 +979,64 @@ namespace eprosima {
 
             };
             /*!
-             * @brief This class represents the structure DeadlineMissedStatus_m defined by the user in the IDL file.
+             * @brief This class represents the structure DeadlineMissedStatus_s defined by the user in the IDL file.
              * @ingroup monitorservice_types
              */
-            class DeadlineMissedStatus_m
+            class DeadlineMissedStatus_s
             {
             public:
 
                 /*!
                  * @brief Default constructor.
                  */
-                eProsima_user_DllExport DeadlineMissedStatus_m();
+                eProsima_user_DllExport DeadlineMissedStatus_s();
 
                 /*!
                  * @brief Default destructor.
                  */
-                eProsima_user_DllExport ~DeadlineMissedStatus_m();
+                eProsima_user_DllExport ~DeadlineMissedStatus_s();
 
                 /*!
                  * @brief Copy constructor.
-                 * @param x Reference to the object eprosima::fastdds::statistics::DeadlineMissedStatus_m that will be copied.
+                 * @param x Reference to the object eprosima::fastdds::statistics::DeadlineMissedStatus_s that will be copied.
                  */
-                eProsima_user_DllExport DeadlineMissedStatus_m(
-                        const DeadlineMissedStatus_m& x);
+                eProsima_user_DllExport DeadlineMissedStatus_s(
+                        const DeadlineMissedStatus_s& x);
 
                 /*!
                  * @brief Move constructor.
-                 * @param x Reference to the object eprosima::fastdds::statistics::DeadlineMissedStatus_m that will be copied.
+                 * @param x Reference to the object eprosima::fastdds::statistics::DeadlineMissedStatus_s that will be copied.
                  */
-                eProsima_user_DllExport DeadlineMissedStatus_m(
-                        DeadlineMissedStatus_m&& x) noexcept;
+                eProsima_user_DllExport DeadlineMissedStatus_s(
+                        DeadlineMissedStatus_s&& x) noexcept;
 
                 /*!
                  * @brief Copy assignment.
-                 * @param x Reference to the object eprosima::fastdds::statistics::DeadlineMissedStatus_m that will be copied.
+                 * @param x Reference to the object eprosima::fastdds::statistics::DeadlineMissedStatus_s that will be copied.
                  */
-                eProsima_user_DllExport DeadlineMissedStatus_m& operator =(
-                        const DeadlineMissedStatus_m& x);
+                eProsima_user_DllExport DeadlineMissedStatus_s& operator =(
+                        const DeadlineMissedStatus_s& x);
 
                 /*!
                  * @brief Move assignment.
-                 * @param x Reference to the object eprosima::fastdds::statistics::DeadlineMissedStatus_m that will be copied.
+                 * @param x Reference to the object eprosima::fastdds::statistics::DeadlineMissedStatus_s that will be copied.
                  */
-                eProsima_user_DllExport DeadlineMissedStatus_m& operator =(
-                        DeadlineMissedStatus_m&& x) noexcept;
+                eProsima_user_DllExport DeadlineMissedStatus_s& operator =(
+                        DeadlineMissedStatus_s&& x) noexcept;
 
                 /*!
                  * @brief Comparison operator.
-                 * @param x eprosima::fastdds::statistics::DeadlineMissedStatus_m object to compare.
+                 * @param x eprosima::fastdds::statistics::DeadlineMissedStatus_s object to compare.
                  */
                 eProsima_user_DllExport bool operator ==(
-                        const DeadlineMissedStatus_m& x) const;
+                        const DeadlineMissedStatus_s& x) const;
 
                 /*!
                  * @brief Comparison operator.
-                 * @param x eprosima::fastdds::statistics::DeadlineMissedStatus_m object to compare.
+                 * @param x eprosima::fastdds::statistics::DeadlineMissedStatus_s object to compare.
                  */
                 eProsima_user_DllExport bool operator !=(
-                        const DeadlineMissedStatus_m& x) const;
+                        const DeadlineMissedStatus_s& x) const;
 
                 /*!
                  * @brief This function sets a value in member total_count
@@ -1105,7 +1099,7 @@ namespace eprosima {
                  * @return Serialized size.
                  */
                 eProsima_user_DllExport static size_t getCdrSerializedSize(
-                        const eprosima::fastdds::statistics::DeadlineMissedStatus_m& data,
+                        const eprosima::fastdds::statistics::DeadlineMissedStatus_s& data,
                         size_t current_alignment = 0);
 
 
@@ -1152,9 +1146,9 @@ namespace eprosima {
                 std::array<uint8_t, 16> m_last_instance_handle;
 
             };
-            typedef eprosima::fastdds::statistics::BaseStatus_m LivelinessLostStatus_m;
-            typedef eprosima::fastdds::statistics::BaseStatus_m InconsistentTopicStatus_m;
-            typedef eprosima::fastdds::statistics::BaseStatus_m SampleLostStatus_m;
+            typedef eprosima::fastdds::statistics::BaseStatus_s LivelinessLostStatus_s;
+            typedef eprosima::fastdds::statistics::BaseStatus_s InconsistentTopicStatus_s;
+            typedef eprosima::fastdds::statistics::BaseStatus_s SampleLostStatus_s;
             /*!
              * @brief This class represents the enumeration StatusKind defined by the user in the IDL file.
              * @ingroup monitorservice_types
@@ -1310,163 +1304,163 @@ namespace eprosima {
                  * @param _incompatible_qos_status New value to be copied in member incompatible_qos_status
                  */
                 eProsima_user_DllExport void incompatible_qos_status(
-                        const eprosima::fastdds::statistics::IncompatibleQoSStatus_m& _incompatible_qos_status);
+                        const eprosima::fastdds::statistics::IncompatibleQoSStatus_s& _incompatible_qos_status);
 
                 /*!
                  * @brief This function moves the value in member incompatible_qos_status
                  * @param _incompatible_qos_status New value to be moved in member incompatible_qos_status
                  */
                 eProsima_user_DllExport void incompatible_qos_status(
-                        eprosima::fastdds::statistics::IncompatibleQoSStatus_m&& _incompatible_qos_status);
+                        eprosima::fastdds::statistics::IncompatibleQoSStatus_s&& _incompatible_qos_status);
 
                 /*!
                  * @brief This function returns a constant reference to member incompatible_qos_status
                  * @return Constant reference to member incompatible_qos_status
                  * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
                  */
-                eProsima_user_DllExport const eprosima::fastdds::statistics::IncompatibleQoSStatus_m& incompatible_qos_status() const;
+                eProsima_user_DllExport const eprosima::fastdds::statistics::IncompatibleQoSStatus_s& incompatible_qos_status() const;
 
                 /*!
                  * @brief This function returns a reference to member incompatible_qos_status
                  * @return Reference to member incompatible_qos_status
                  * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
                  */
-                eProsima_user_DllExport eprosima::fastdds::statistics::IncompatibleQoSStatus_m& incompatible_qos_status();
+                eProsima_user_DllExport eprosima::fastdds::statistics::IncompatibleQoSStatus_s& incompatible_qos_status();
                 /*!
                  * @brief This function copies the value in member inconsistent_topic_status
                  * @param _inconsistent_topic_status New value to be copied in member inconsistent_topic_status
                  */
                 eProsima_user_DllExport void inconsistent_topic_status(
-                        const eprosima::fastdds::statistics::InconsistentTopicStatus_m& _inconsistent_topic_status);
+                        const eprosima::fastdds::statistics::InconsistentTopicStatus_s& _inconsistent_topic_status);
 
                 /*!
                  * @brief This function moves the value in member inconsistent_topic_status
                  * @param _inconsistent_topic_status New value to be moved in member inconsistent_topic_status
                  */
                 eProsima_user_DllExport void inconsistent_topic_status(
-                        eprosima::fastdds::statistics::InconsistentTopicStatus_m&& _inconsistent_topic_status);
+                        eprosima::fastdds::statistics::InconsistentTopicStatus_s&& _inconsistent_topic_status);
 
                 /*!
                  * @brief This function returns a constant reference to member inconsistent_topic_status
                  * @return Constant reference to member inconsistent_topic_status
                  * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
                  */
-                eProsima_user_DllExport const eprosima::fastdds::statistics::InconsistentTopicStatus_m& inconsistent_topic_status() const;
+                eProsima_user_DllExport const eprosima::fastdds::statistics::InconsistentTopicStatus_s& inconsistent_topic_status() const;
 
                 /*!
                  * @brief This function returns a reference to member inconsistent_topic_status
                  * @return Reference to member inconsistent_topic_status
                  * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
                  */
-                eProsima_user_DllExport eprosima::fastdds::statistics::InconsistentTopicStatus_m& inconsistent_topic_status();
+                eProsima_user_DllExport eprosima::fastdds::statistics::InconsistentTopicStatus_s& inconsistent_topic_status();
                 /*!
                  * @brief This function copies the value in member liveliness_lost_status
                  * @param _liveliness_lost_status New value to be copied in member liveliness_lost_status
                  */
                 eProsima_user_DllExport void liveliness_lost_status(
-                        const eprosima::fastdds::statistics::LivelinessLostStatus_m& _liveliness_lost_status);
+                        const eprosima::fastdds::statistics::LivelinessLostStatus_s& _liveliness_lost_status);
 
                 /*!
                  * @brief This function moves the value in member liveliness_lost_status
                  * @param _liveliness_lost_status New value to be moved in member liveliness_lost_status
                  */
                 eProsima_user_DllExport void liveliness_lost_status(
-                        eprosima::fastdds::statistics::LivelinessLostStatus_m&& _liveliness_lost_status);
+                        eprosima::fastdds::statistics::LivelinessLostStatus_s&& _liveliness_lost_status);
 
                 /*!
                  * @brief This function returns a constant reference to member liveliness_lost_status
                  * @return Constant reference to member liveliness_lost_status
                  * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
                  */
-                eProsima_user_DllExport const eprosima::fastdds::statistics::LivelinessLostStatus_m& liveliness_lost_status() const;
+                eProsima_user_DllExport const eprosima::fastdds::statistics::LivelinessLostStatus_s& liveliness_lost_status() const;
 
                 /*!
                  * @brief This function returns a reference to member liveliness_lost_status
                  * @return Reference to member liveliness_lost_status
                  * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
                  */
-                eProsima_user_DllExport eprosima::fastdds::statistics::LivelinessLostStatus_m& liveliness_lost_status();
+                eProsima_user_DllExport eprosima::fastdds::statistics::LivelinessLostStatus_s& liveliness_lost_status();
                 /*!
                  * @brief This function copies the value in member liveliness_changed_status
                  * @param _liveliness_changed_status New value to be copied in member liveliness_changed_status
                  */
                 eProsima_user_DllExport void liveliness_changed_status(
-                        const eprosima::fastdds::statistics::LivelinessChangedStatus_m& _liveliness_changed_status);
+                        const eprosima::fastdds::statistics::LivelinessChangedStatus_s& _liveliness_changed_status);
 
                 /*!
                  * @brief This function moves the value in member liveliness_changed_status
                  * @param _liveliness_changed_status New value to be moved in member liveliness_changed_status
                  */
                 eProsima_user_DllExport void liveliness_changed_status(
-                        eprosima::fastdds::statistics::LivelinessChangedStatus_m&& _liveliness_changed_status);
+                        eprosima::fastdds::statistics::LivelinessChangedStatus_s&& _liveliness_changed_status);
 
                 /*!
                  * @brief This function returns a constant reference to member liveliness_changed_status
                  * @return Constant reference to member liveliness_changed_status
                  * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
                  */
-                eProsima_user_DllExport const eprosima::fastdds::statistics::LivelinessChangedStatus_m& liveliness_changed_status() const;
+                eProsima_user_DllExport const eprosima::fastdds::statistics::LivelinessChangedStatus_s& liveliness_changed_status() const;
 
                 /*!
                  * @brief This function returns a reference to member liveliness_changed_status
                  * @return Reference to member liveliness_changed_status
                  * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
                  */
-                eProsima_user_DllExport eprosima::fastdds::statistics::LivelinessChangedStatus_m& liveliness_changed_status();
+                eProsima_user_DllExport eprosima::fastdds::statistics::LivelinessChangedStatus_s& liveliness_changed_status();
                 /*!
                  * @brief This function copies the value in member deadline_missed_status
                  * @param _deadline_missed_status New value to be copied in member deadline_missed_status
                  */
                 eProsima_user_DllExport void deadline_missed_status(
-                        const eprosima::fastdds::statistics::DeadlineMissedStatus_m& _deadline_missed_status);
+                        const eprosima::fastdds::statistics::DeadlineMissedStatus_s& _deadline_missed_status);
 
                 /*!
                  * @brief This function moves the value in member deadline_missed_status
                  * @param _deadline_missed_status New value to be moved in member deadline_missed_status
                  */
                 eProsima_user_DllExport void deadline_missed_status(
-                        eprosima::fastdds::statistics::DeadlineMissedStatus_m&& _deadline_missed_status);
+                        eprosima::fastdds::statistics::DeadlineMissedStatus_s&& _deadline_missed_status);
 
                 /*!
                  * @brief This function returns a constant reference to member deadline_missed_status
                  * @return Constant reference to member deadline_missed_status
                  * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
                  */
-                eProsima_user_DllExport const eprosima::fastdds::statistics::DeadlineMissedStatus_m& deadline_missed_status() const;
+                eProsima_user_DllExport const eprosima::fastdds::statistics::DeadlineMissedStatus_s& deadline_missed_status() const;
 
                 /*!
                  * @brief This function returns a reference to member deadline_missed_status
                  * @return Reference to member deadline_missed_status
                  * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
                  */
-                eProsima_user_DllExport eprosima::fastdds::statistics::DeadlineMissedStatus_m& deadline_missed_status();
+                eProsima_user_DllExport eprosima::fastdds::statistics::DeadlineMissedStatus_s& deadline_missed_status();
                 /*!
                  * @brief This function copies the value in member sample_lost_status
                  * @param _sample_lost_status New value to be copied in member sample_lost_status
                  */
                 eProsima_user_DllExport void sample_lost_status(
-                        const eprosima::fastdds::statistics::SampleLostStatus_m& _sample_lost_status);
+                        const eprosima::fastdds::statistics::SampleLostStatus_s& _sample_lost_status);
 
                 /*!
                  * @brief This function moves the value in member sample_lost_status
                  * @param _sample_lost_status New value to be moved in member sample_lost_status
                  */
                 eProsima_user_DllExport void sample_lost_status(
-                        eprosima::fastdds::statistics::SampleLostStatus_m&& _sample_lost_status);
+                        eprosima::fastdds::statistics::SampleLostStatus_s&& _sample_lost_status);
 
                 /*!
                  * @brief This function returns a constant reference to member sample_lost_status
                  * @return Constant reference to member sample_lost_status
                  * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
                  */
-                eProsima_user_DllExport const eprosima::fastdds::statistics::SampleLostStatus_m& sample_lost_status() const;
+                eProsima_user_DllExport const eprosima::fastdds::statistics::SampleLostStatus_s& sample_lost_status() const;
 
                 /*!
                  * @brief This function returns a reference to member sample_lost_status
                  * @return Reference to member sample_lost_status
                  * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
                  */
-                eProsima_user_DllExport eprosima::fastdds::statistics::SampleLostStatus_m& sample_lost_status();
+                eProsima_user_DllExport eprosima::fastdds::statistics::SampleLostStatus_s& sample_lost_status();
                 /*!
                  * @brief This function sets a value in member statuses_size
                  * @param _statuses_size New value for member statuses_size
@@ -1523,12 +1517,12 @@ namespace eprosima {
 
                 std::vector<uint8_t> m_entity_proxy;
                 std::vector<eprosima::fastdds::statistics::Connection> m_connection_list;
-                eprosima::fastdds::statistics::IncompatibleQoSStatus_m m_incompatible_qos_status;
-                eprosima::fastdds::statistics::InconsistentTopicStatus_m m_inconsistent_topic_status;
-                eprosima::fastdds::statistics::LivelinessLostStatus_m m_liveliness_lost_status;
-                eprosima::fastdds::statistics::LivelinessChangedStatus_m m_liveliness_changed_status;
-                eprosima::fastdds::statistics::DeadlineMissedStatus_m m_deadline_missed_status;
-                eprosima::fastdds::statistics::SampleLostStatus_m m_sample_lost_status;
+                eprosima::fastdds::statistics::IncompatibleQoSStatus_s m_incompatible_qos_status;
+                eprosima::fastdds::statistics::InconsistentTopicStatus_s m_inconsistent_topic_status;
+                eprosima::fastdds::statistics::LivelinessLostStatus_s m_liveliness_lost_status;
+                eprosima::fastdds::statistics::LivelinessChangedStatus_s m_liveliness_changed_status;
+                eprosima::fastdds::statistics::DeadlineMissedStatus_s m_deadline_missed_status;
+                eprosima::fastdds::statistics::SampleLostStatus_s m_sample_lost_status;
                 uint8_t m_statuses_size;
             };
             /*!
@@ -1596,26 +1590,26 @@ namespace eprosima {
                  * @param _local_entity New value to be copied in member local_entity
                  */
                 eProsima_user_DllExport void local_entity(
-                        const eprosima::fastdds::statistics::detail::GUID_m& _local_entity);
+                        const eprosima::fastdds::statistics::detail::GUID_s& _local_entity);
 
                 /*!
                  * @brief This function moves the value in member local_entity
                  * @param _local_entity New value to be moved in member local_entity
                  */
                 eProsima_user_DllExport void local_entity(
-                        eprosima::fastdds::statistics::detail::GUID_m&& _local_entity);
+                        eprosima::fastdds::statistics::detail::GUID_s&& _local_entity);
 
                 /*!
                  * @brief This function returns a constant reference to member local_entity
                  * @return Constant reference to member local_entity
                  */
-                eProsima_user_DllExport const eprosima::fastdds::statistics::detail::GUID_m& local_entity() const;
+                eProsima_user_DllExport const eprosima::fastdds::statistics::detail::GUID_s& local_entity() const;
 
                 /*!
                  * @brief This function returns a reference to member local_entity
                  * @return Reference to member local_entity
                  */
-                eProsima_user_DllExport eprosima::fastdds::statistics::detail::GUID_m& local_entity();
+                eProsima_user_DllExport eprosima::fastdds::statistics::detail::GUID_s& local_entity();
                 /*!
                  * @brief This function sets a value in member status_kind
                  * @param _status_kind New value for member status_kind
@@ -1720,7 +1714,7 @@ namespace eprosima {
 
             private:
 
-                eprosima::fastdds::statistics::detail::GUID_m m_local_entity;
+                eprosima::fastdds::statistics::detail::GUID_s m_local_entity;
                 eprosima::fastdds::statistics::StatusKind m_status_kind;
                 eprosima::fastdds::statistics::MonitorServiceData m_value;
 

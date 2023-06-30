@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @file include/fastdds/statistics/ms_types.idl
+ * @file include/fastdds/statistics/monitorservice_types.idl
  */
 
 #include "types.idl"
@@ -21,15 +21,6 @@
 module eprosima {
 module fastdds {
 module statistics {
-
-	/* Reuse existing statistics detail module*/
-	module detail
-	{
-		typedef eprosima::fastdds::statistics::detail::EntityId_s EntityId_m;
-		typedef eprosima::fastdds::statistics::detail::GUID_s GUID_m;
-		typedef eprosima::fastdds::statistics::detail::GuidPrefix_s GuidPrefix_m;
-		typedef eprosima::fastdds::statistics::detail::Locator_s Locator_m;
-	};
 
 	enum ConnectionMode
 	{
@@ -41,47 +32,47 @@ module statistics {
 	struct Connection
 	{
 		ConnectionMode mode;
-		detail::GUID_m guid;
-		sequence<detail::Locator_m> announced_locators;
-		sequence<detail::Locator_m> used_locators;
+		detail::GUID_s guid;
+		sequence<detail::Locator_s> announced_locators;
+		sequence<detail::Locator_s> used_locators;
 	};
 
-	struct QosPolicyCount_m
+	struct QosPolicyCount_s
 	{
 		unsigned long policy_id;
 		unsigned long count;
 	};
 
-	struct BaseStatus_m
+	struct BaseStatus_s
 	{
 		unsigned long total_count;
 	};
 
-	typedef sequence<QosPolicyCount_m> QosPolicyCountSeq_m;
+	typedef sequence<QosPolicyCount_s> QosPolicyCountSeq_s;
 
-	struct IncompatibleQoSStatus_m
+	struct IncompatibleQoSStatus_s
 	{
 		unsigned long total_count;
 		unsigned long last_policy_id;
-		QosPolicyCountSeq_m policies;
+		QosPolicyCountSeq_s policies;
 	};
 
-	struct LivelinessChangedStatus_m
+	struct LivelinessChangedStatus_s
 	{
 		unsigned long alive_count;
 		unsigned long not_alive_count;
 		octet last_publication_handle[16];
 	};
 
-	struct DeadlineMissedStatus_m
+	struct DeadlineMissedStatus_s
 	{
 		unsigned long total_count;
 		octet last_instance_handle[16];
 	};
 
-	typedef BaseStatus_m LivelinessLostStatus_m;
-	typedef BaseStatus_m InconsistentTopicStatus_m;
-	typedef BaseStatus_m SampleLostStatus_m;
+	typedef BaseStatus_s LivelinessLostStatus_s;
+	typedef BaseStatus_s InconsistentTopicStatus_s;
+	typedef BaseStatus_s SampleLostStatus_s;
 
 	enum StatusKind
 	{
@@ -103,24 +94,24 @@ module statistics {
 		case CONNECTION_LIST:
 			sequence<Connection> connection_list;
 		case INCOMPATIBLE_QOS:
-			IncompatibleQoSStatus_m incompatible_qos_status;
+			IncompatibleQoSStatus_s incompatible_qos_status;
 		case INCONSISTENT_TOPIC:
-			InconsistentTopicStatus_m inconsistent_topic_status;
+			InconsistentTopicStatus_s inconsistent_topic_status;
 		case LIVELINESS_LOST:
-			LivelinessLostStatus_m liveliness_lost_status;
+			LivelinessLostStatus_s liveliness_lost_status;
 		case LIVELINESS_CHANGED:
-			LivelinessChangedStatus_m liveliness_changed_status;
+			LivelinessChangedStatus_s liveliness_changed_status;
 		case DEADLINE_MISSED:
-			DeadlineMissedStatus_m deadline_missed_status;
+			DeadlineMissedStatus_s deadline_missed_status;
 		case SAMPLE_LOST:
-			SampleLostStatus_m sample_lost_status;
+			SampleLostStatus_s sample_lost_status;
 		case STATUSES_SIZE:
 			octet statuses_size;
 	};
 
 	struct MonitorServiceStatusData
 	{
-		@Key detail::GUID_m local_entity;
+		@Key detail::GUID_s local_entity;
 		@Key StatusKind status_kind;
 		MonitorServiceData value;
 	};
