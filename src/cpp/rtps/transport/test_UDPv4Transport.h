@@ -62,6 +62,9 @@ public:
 
     RTPS_DllAPI static test_UDPv4TransportDescriptor::DestinationLocatorFilter locator_filter;
 
+    // Record the number of packages sent to the different ports (key)
+    RTPS_DllAPI static std::map<uint32_t,uint32_t> messages_sent;
+
 protected:
 
     virtual void get_ips(
@@ -100,6 +103,9 @@ private:
     test_UDPv4TransportDescriptor::filter messages_filter_;
     std::vector<fastrtps::rtps::SequenceNumber_t> sequence_number_data_messages_to_drop_;
     test_UDPv4TransportDescriptor::DestinationLocatorFilter locator_filter_;
+
+    void increase_message_sent(
+            uint32_t port);
 
     bool should_drop_locator(
             const Locator& remote_locator);

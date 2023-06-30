@@ -245,6 +245,7 @@ bool test_UDPv4Transport::send(
         }
         else
         {
+            increase_message_sent(remote_locator.port);
             return UDPv4Transport::send(send_buffer, send_buffer_size, socket, remote_locator, only_multicast_purpose,
                            whitelisted, timeout);
         }
@@ -495,6 +496,22 @@ bool test_UDPv4Transport::should_be_dropped(
 
     return false;
 }
+
+void test_UDPv4Transport::increase_message_sent(
+        uint32_t port)
+{
+    for (std::map<uint32_t,uint32_t>::iterator it = messages_sent.begin(); it != messages_sent.end(); ++it)
+    {
+        if (it->first == port)
+        {
+            it->second++;
+            return;
+        }
+    }
+    // if code reaches here, it means it was not part of the map
+    messages_sent.insert({port,1});
+}
+
 
 } // namespace rtps
 } // namespace fastrtps

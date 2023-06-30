@@ -749,6 +749,34 @@ public:
         return *this;
     }
 
+    PubSubWriterReader& pub_data_sharing(
+            bool enable)
+    {
+        if (enable)
+        {
+            publisher_attr_.qos.data_sharing().automatic();
+        }
+        else
+        {
+            publisher_attr_.qos.data_sharing().off();
+        }
+        return *this;
+    }
+
+    PubSubWriterReader& sub_data_sharing(
+            bool enable)
+    {
+        if (enable)
+        {
+            subscriber_attr_.qos.data_sharing().automatic();
+        }
+        else
+        {
+            subscriber_attr_.qos.data_sharing().off();
+        }
+        return *this;
+    }
+
 private:
 
     void receive_one(

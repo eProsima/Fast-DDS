@@ -1118,6 +1118,20 @@ public:
         return *this;
     }
 
+    PubSubWriter& data_sharing(
+            bool enable)
+    {
+        if (enable)
+        {
+            publisher_attr_.qos.data_sharing().automatic();
+        }
+        else
+        {
+            publisher_attr_.qos.data_sharing().off();
+        }
+        return *this;
+    }
+
     PubSubWriter& max_initial_peers_range(
             uint32_t maxInitialPeerRange)
     {
