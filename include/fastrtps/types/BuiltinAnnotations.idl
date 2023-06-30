@@ -167,7 +167,7 @@
 
 // Clause 7.3.1.2.1.7 Nested Types
 @annotation default_nested {
-    boolean value default true;
+    boolean value default TRUE;
 };
 
 // Clause 7.3.1.2.1.11 Ignore Literal Names for Enumeration
@@ -176,12 +176,13 @@
 };
 
 // Clause 7.3.1.2.1.12 TryConstruct Elements and Members
+enum TryConstructFailAction {
+    DISCARD,
+    USE_DEFAULT,
+    TRIM
+};
+
 @annotation try_construct {
-    enum TryConstructFailAction {
-        DISCARD,
-        USE_DEFAULT,
-        TRIM
-    };
     TryConstructFailAction value default USE_DEFAULT;
 };
 

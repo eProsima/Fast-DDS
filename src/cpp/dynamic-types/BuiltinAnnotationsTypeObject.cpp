@@ -158,12 +158,9 @@ void register_builtin_annotations_types(
 
     factory->add_type_object("try_construct", Gettry_constructIdentifier(true), Gettry_constructObject(true));
     factory->add_type_object("try_construct", Gettry_constructIdentifier(false), Gettry_constructObject(false));
-    {
-        using namespace try_construct;
 
-        factory->add_type_object("TryConstructFailAction", GetTryConstructFailActionIdentifier(true), GetTryConstructFailActionObject(true));
-        factory->add_type_object("TryConstructFailAction", GetTryConstructFailActionIdentifier(false), GetTryConstructFailActionObject(false));
-    }
+    factory->add_type_object("TryConstructFailAction", GetTryConstructFailActionIdentifier(true), GetTryConstructFailActionObject(true));
+    factory->add_type_object("TryConstructFailAction", GetTryConstructFailActionIdentifier(false), GetTryConstructFailActionObject(false));
 
     factory->add_type_object("non_serialized", Getnon_serializedIdentifier(true), Getnon_serializedObject(true));
     factory->add_type_object("non_serialized", Getnon_serializedIdentifier(false), Getnon_serializedObject(false));
@@ -2815,7 +2812,12 @@ const TypeObject* GetMinimalbit_boundObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
-// TODO(jlbueno): XTypes    mam_value.name("value");
+    MD5 value_hash("value");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_value.name_hash()[i] = value_hash.digest[i];
+    }
+    mam_value.default_value()._d(TK_UINT16);
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -2858,21 +2860,12 @@ const TypeObject* GetCompletebit_boundObject()
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
-
-    // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().annotation_type().header().detail().ann_builtin()...
-    //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("bit_bound");
 
     CompleteAnnotationParameter cam_value;
     cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
     cam_value.name("value");
+    cam_value.default_value()._d(TK_UINT16);
 
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
@@ -2947,11 +2940,15 @@ const TypeObject* GetMinimalexternalObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
-// TODO(jlbueno): XTypes    mam_value.name("value");
+    MD5 value_hash("value");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_value.name_hash()[i] = value_hash.digest[i];
+    }
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
-//TODO(jlbueno): XTypes    def_value_value.from_string("true");
+    def_value_value.boolean_value(true);
     mam_value.default_value(def_value_value);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -2994,16 +2991,6 @@ const TypeObject* GetCompleteexternalObject()
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
-
-    // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().annotation_type().header().detail().ann_builtin()...
-    //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("external");
 
     CompleteAnnotationParameter cam_value;
@@ -3012,7 +2999,7 @@ const TypeObject* GetCompleteexternalObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(cam_value.common().member_type_id()._d());
-//TODO(jlbueno): XTypes    def_value_value.from_string("true");
+    def_value_value.boolean_value(true);
     cam_value.default_value(def_value_value);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
@@ -3087,11 +3074,15 @@ const TypeObject* GetMinimalnestedObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
-// TODO(jlbueno): XTypes    mam_value.name("value");
+    MD5 value_hash("value");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_value.name_hash()[i] = value_hash.digest[i];
+    }
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
-//TODO(jlbueno): XTypes    def_value_value.from_string("true");
+    def_value_value.boolean_value(true);
     mam_value.default_value(def_value_value);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -3134,16 +3125,6 @@ const TypeObject* GetCompletenestedObject()
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
-
-    // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().annotation_type().header().detail().ann_builtin()...
-    //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("nested");
 
     CompleteAnnotationParameter cam_value;
@@ -3152,7 +3133,7 @@ const TypeObject* GetCompletenestedObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(cam_value.common().member_type_id()._d());
-//TODO(jlbueno): XTypes    def_value_value.from_string("true");
+    def_value_value.boolean_value(true);
     cam_value.default_value(def_value_value);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
@@ -3227,28 +3208,46 @@ const TypeObject* GetMinimalverbatimObject()
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_language;
-    mam_language.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
-// TODO(jlbueno): XTypes    mam_language.name("language");
+    mam_language.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(0, false));
+    MD5 value_hash("language");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_language.name_hash()[i] = value_hash.digest[i];
+    }
 
     AnnotationParameterValue def_value_language;
-    def_value_language._d(mam_language.common().member_type_id()._d());
-//TODO(jlbueno): XTypes    def_value_language.from_string("*");
+    def_value_language._d(TK_STRING8);
+    def_value_language.string8_value("*");
     mam_language.default_value(def_value_language);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_language);
 
     MinimalAnnotationParameter mam_placement;
-    mam_placement.common().member_type_id(*GetPlacementKindIdentifier(false));
-// TODO(jlbueno): XTypes    mam_placement.name("placement");
+    const TypeIdentifier* member_type_id = GetPlacementKindIdentifier(false);
+    assert(nullptr != member_type_id);
+    mam_placement.common().member_type_id(*member_type_id);
+    MD5 placement_hash("placement");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_placement.name_hash()[i] = placement_hash.digest[i];
+    }
 
     AnnotationParameterValue def_value_placement;
-    def_value_placement._d(mam_placement.common().member_type_id()._d());
-//TODO(jlbueno): XTypes    def_value_placement.from_string("1");
+    const TypeObject* member_type_object = GetPlacementKindObject(false);
+    assert(nullptr != member_type_object);
+    def_value_placement._d(member_type_object->minimal()._d());
+    // Default value: BEFORE_DECLARATION (enumerated value: 1)
+    def_value_placement.enumerated_value(1);
     mam_placement.default_value(def_value_placement);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_placement);
 
     MinimalAnnotationParameter mam_text;
-    mam_text.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
-// TODO(jlbueno): XTypes    mam_text.name("text");
+    mam_text.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(0, false));
+    MD5 text_hash("text");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_text.name_hash()[i] = text_hash.digest[i];
+    }
+    mam_text.default_value()._d(TK_STRING8);
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_text);
 
@@ -3292,41 +3291,36 @@ const TypeObject* GetCompleteverbatimObject()
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
-
-    // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().annotation_type().header().detail().ann_builtin()...
-    //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("verbatim");
 
     CompleteAnnotationParameter cam_language;
-    cam_language.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    cam_language.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(0, false));
     cam_language.name("language");
 
     AnnotationParameterValue def_value_language;
-    def_value_language._d(cam_language.common().member_type_id()._d());
-//TODO(jlbueno): XTypes    def_value_language.from_string("*");
+    def_value_language._d(TK_STRING8);
+    def_value_language.string8_value("*");
     cam_language.default_value(def_value_language);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_language);
 
     CompleteAnnotationParameter cam_placement;
-    cam_placement.common().member_type_id(*GetPlacementKindIdentifier(true));
+    const TypeIdentifier* member_type_id = GetPlacementKindIdentifier(true);
+    assert(nullptr != member_type_id);
+    cam_placement.common().member_type_id(*member_type_id);
     cam_placement.name("placement");
 
     AnnotationParameterValue def_value_placement;
-    def_value_placement._d(cam_placement.common().member_type_id()._d());
-//TODO(jlbueno): XTypes    def_value_placement.from_string("1");
+    const TypeObject* member_type_object = GetPlacementKindObject(true);
+    assert(nullptr != member_type_object);
+    def_value_placement._d(member_type_object->complete()._d());
+    def_value_placement.enumerated_value(1);
     cam_placement.default_value(def_value_placement);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_placement);
 
     CompleteAnnotationParameter cam_text;
-    cam_text.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    cam_text.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(0, false));
     cam_text.name("text");
+    cam_text.default_value()._d(TK_STRING8);
 
     type_object->complete().annotation_type().member_seq().emplace_back(cam_text);
 
@@ -3400,28 +3394,12 @@ const TypeObject* GetMinimalPlacementKindObject()
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     type_object->minimal()._d(TK_ENUM);
-
-    // No flags apply
-    //type_object->minimal().enumerated_type().enum_flags().IS_FINAL(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_APPENDABLE(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_MUTABLE(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_NESTED(false);
-    //type_object->minimal().enumerated_type().enum_flags().IS_AUTOID_HASH(false);
-
-    type_object->minimal().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
+    type_object->minimal().enumerated_type().header().common().bit_bound(32);
 
     uint32_t value = 0;
     MinimalEnumeratedLiteral mel_BEGIN_FILE;
-/* TODO(jlbueno): XTYPES
-    mel_BEGIN_FILE.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    mel_BEGIN_FILE.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    mel_BEGIN_FILE.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    mel_BEGIN_FILE.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    mel_BEGIN_FILE.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    mel_BEGIN_FILE.common().flags().IS_KEY(false); // Doesn't apply
-    mel_BEGIN_FILE.common().flags().IS_DEFAULT(false);
-*/
     mel_BEGIN_FILE.common().value(value++);
+    mel_BEGIN_FILE.common().flags(static_cast<EnumeratedLiteralFlag>(0));
     MD5 BEGIN_FILE_hash("BEGIN_FILE");
     for (int i = 0; i < 4; ++i)
     {
@@ -3430,16 +3408,8 @@ const TypeObject* GetMinimalPlacementKindObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_BEGIN_FILE);
 
     MinimalEnumeratedLiteral mel_BEFORE_DECLARATION;
-/* TODO(jlbueno): XTYPES
-    mel_BEFORE_DECLARATION.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    mel_BEFORE_DECLARATION.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    mel_BEFORE_DECLARATION.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    mel_BEFORE_DECLARATION.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    mel_BEFORE_DECLARATION.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    mel_BEFORE_DECLARATION.common().flags().IS_KEY(false); // Doesn't apply
-    mel_BEFORE_DECLARATION.common().flags().IS_DEFAULT(false);
-*/
     mel_BEFORE_DECLARATION.common().value(value++);
+    mel_BEFORE_DECLARATION.common().flags(static_cast<EnumeratedLiteralFlag>(0));
     MD5 BEFORE_DECLARATION_hash("BEFORE_DECLARATION");
     for (int i = 0; i < 4; ++i)
     {
@@ -3448,16 +3418,8 @@ const TypeObject* GetMinimalPlacementKindObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_BEFORE_DECLARATION);
 
     MinimalEnumeratedLiteral mel_BEGIN_DECLARATION;
-/* TODO(jlbueno): XTYPES
-    mel_BEGIN_DECLARATION.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    mel_BEGIN_DECLARATION.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    mel_BEGIN_DECLARATION.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    mel_BEGIN_DECLARATION.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    mel_BEGIN_DECLARATION.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    mel_BEGIN_DECLARATION.common().flags().IS_KEY(false); // Doesn't apply
-    mel_BEGIN_DECLARATION.common().flags().IS_DEFAULT(false);
-*/
     mel_BEGIN_DECLARATION.common().value(value++);
+    mel_BEGIN_DECLARATION.common().flags(static_cast<EnumeratedLiteralFlag>(0));
     MD5 BEGIN_DECLARATION_hash("BEGIN_DECLARATION");
     for (int i = 0; i < 4; ++i)
     {
@@ -3466,16 +3428,8 @@ const TypeObject* GetMinimalPlacementKindObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_BEGIN_DECLARATION);
 
     MinimalEnumeratedLiteral mel_END_DECLARATION;
-/* TODO(jlbueno): XTYPES
-    mel_END_DECLARATION.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    mel_END_DECLARATION.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    mel_END_DECLARATION.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    mel_END_DECLARATION.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    mel_END_DECLARATION.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    mel_END_DECLARATION.common().flags().IS_KEY(false); // Doesn't apply
-    mel_END_DECLARATION.common().flags().IS_DEFAULT(false);
-*/
     mel_END_DECLARATION.common().value(value++);
+    mel_END_DECLARATION.common().flags(static_cast<EnumeratedLiteralFlag>(0));
     MD5 END_DECLARATION_hash("END_DECLARATION");
     for (int i = 0; i < 4; ++i)
     {
@@ -3484,16 +3438,8 @@ const TypeObject* GetMinimalPlacementKindObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_END_DECLARATION);
 
     MinimalEnumeratedLiteral mel_AFTER_DECLARATION;
-/* TODO(jlbueno): XTYPES
-    mel_AFTER_DECLARATION.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    mel_AFTER_DECLARATION.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    mel_AFTER_DECLARATION.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    mel_AFTER_DECLARATION.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    mel_AFTER_DECLARATION.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    mel_AFTER_DECLARATION.common().flags().IS_KEY(false); // Doesn't apply
-    mel_AFTER_DECLARATION.common().flags().IS_DEFAULT(false);
-*/
     mel_AFTER_DECLARATION.common().value(value++);
+    mel_AFTER_DECLARATION.common().flags(static_cast<EnumeratedLiteralFlag>(0));
     MD5 AFTER_DECLARATION_hash("AFTER_DECLARATION");
     for (int i = 0; i < 4; ++i)
     {
@@ -3502,16 +3448,8 @@ const TypeObject* GetMinimalPlacementKindObject()
     type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_AFTER_DECLARATION);
 
     MinimalEnumeratedLiteral mel_END_FILE;
-/* TODO(jlbueno): XTYPES
-    mel_END_FILE.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    mel_END_FILE.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    mel_END_FILE.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    mel_END_FILE.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    mel_END_FILE.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    mel_END_FILE.common().flags().IS_KEY(false); // Doesn't apply
-    mel_END_FILE.common().flags().IS_DEFAULT(false);
-*/
     mel_END_FILE.common().value(value++);
+    mel_END_FILE.common().flags(static_cast<EnumeratedLiteralFlag>(0));
     MD5 END_FILE_hash("END_FILE");
     for (int i = 0; i < 4; ++i)
     {
@@ -3558,114 +3496,44 @@ const TypeObject* GetCompletePlacementKindObject()
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ENUM);
-
-    // No flags apply
-    //type_object->complete().enumerated_type().enum_flags().IS_FINAL(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_APPENDABLE(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_MUTABLE(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_NESTED(false);
-    //type_object->complete().enumerated_type().enum_flags().IS_AUTOID_HASH(false);
-
-    type_object->complete().enumerated_type().header().common().bit_bound(32); // TODO fixed by IDL, isn't?
-    //type_object->complete().enumerated_type().header().detail().ann_builtin()...
-    //type_object->complete().enumerated_type().header().detail().ann_custom()...
-    type_object->complete().enumerated_type().header().detail().type_name("PlacementKind");
+    type_object->complete().enumerated_type().header().common().bit_bound(32);
+    type_object->complete().enumerated_type().header().detail().type_name("verbatim::PlacementKind");
 
     uint32_t value = 0;
     CompleteEnumeratedLiteral cel_BEGIN_FILE;
-/* TODO(jlbueno): XTYPES
-    cel_BEGIN_FILE.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    cel_BEGIN_FILE.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    cel_BEGIN_FILE.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    cel_BEGIN_FILE.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    cel_BEGIN_FILE.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    cel_BEGIN_FILE.common().flags().IS_KEY(false); // Doesn't apply
-    cel_BEGIN_FILE.common().flags().IS_DEFAULT(false);
-*/
     cel_BEGIN_FILE.common().value(value++);
+    cel_BEGIN_FILE.common().flags(static_cast<EnumeratedLiteralFlag>(0));
     cel_BEGIN_FILE.detail().name("BEGIN_FILE");
-    //cel_BEGIN_FILE.detail().ann_builtin()...
-    //cel_BEGIN_FILE.detail().ann_custom()...
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_BEGIN_FILE);
 
     CompleteEnumeratedLiteral cel_BEFORE_DECLARATION;
-/* TODO(jlbueno): XTYPES
-    cel_BEFORE_DECLARATION.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    cel_BEFORE_DECLARATION.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    cel_BEFORE_DECLARATION.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    cel_BEFORE_DECLARATION.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    cel_BEFORE_DECLARATION.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    cel_BEFORE_DECLARATION.common().flags().IS_KEY(false); // Doesn't apply
-    cel_BEFORE_DECLARATION.common().flags().IS_DEFAULT(false);
-*/
     cel_BEFORE_DECLARATION.common().value(value++);
+    cel_BEFORE_DECLARATION.common().flags(static_cast<EnumeratedLiteralFlag>(0));
     cel_BEFORE_DECLARATION.detail().name("BEFORE_DECLARATION");
-    //cel_BEFORE_DECLARATION.detail().ann_builtin()...
-    //cel_BEFORE_DECLARATION.detail().ann_custom()...
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_BEFORE_DECLARATION);
 
     CompleteEnumeratedLiteral cel_BEGIN_DECLARATION;
-/* TODO(jlbueno): XTYPES
-    cel_BEGIN_DECLARATION.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    cel_BEGIN_DECLARATION.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    cel_BEGIN_DECLARATION.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    cel_BEGIN_DECLARATION.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    cel_BEGIN_DECLARATION.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    cel_BEGIN_DECLARATION.common().flags().IS_KEY(false); // Doesn't apply
-    cel_BEGIN_DECLARATION.common().flags().IS_DEFAULT(false);
-*/
     cel_BEGIN_DECLARATION.common().value(value++);
+    cel_BEGIN_DECLARATION.common().flags(static_cast<EnumeratedLiteralFlag>(0));
     cel_BEGIN_DECLARATION.detail().name("BEGIN_DECLARATION");
-    //cel_BEGIN_DECLARATION.detail().ann_builtin()...
-    //cel_BEGIN_DECLARATION.detail().ann_custom()...
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_BEGIN_DECLARATION);
 
     CompleteEnumeratedLiteral cel_END_DECLARATION;
-/* TODO(jlbueno): XTYPES
-    cel_END_DECLARATION.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    cel_END_DECLARATION.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    cel_END_DECLARATION.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    cel_END_DECLARATION.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    cel_END_DECLARATION.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    cel_END_DECLARATION.common().flags().IS_KEY(false); // Doesn't apply
-    cel_END_DECLARATION.common().flags().IS_DEFAULT(false);
-*/
     cel_END_DECLARATION.common().value(value++);
+    cel_END_DECLARATION.common().flags(static_cast<EnumeratedLiteralFlag>(0));
     cel_END_DECLARATION.detail().name("END_DECLARATION");
-    //cel_END_DECLARATION.detail().ann_builtin()...
-    //cel_END_DECLARATION.detail().ann_custom()...
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_END_DECLARATION);
 
     CompleteEnumeratedLiteral cel_AFTER_DECLARATION;
-/* TODO(jlbueno): XTYPES
-    cel_AFTER_DECLARATION.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    cel_AFTER_DECLARATION.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    cel_AFTER_DECLARATION.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    cel_AFTER_DECLARATION.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    cel_AFTER_DECLARATION.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    cel_AFTER_DECLARATION.common().flags().IS_KEY(false); // Doesn't apply
-    cel_AFTER_DECLARATION.common().flags().IS_DEFAULT(false);
-*/
     cel_AFTER_DECLARATION.common().value(value++);
+    cel_AFTER_DECLARATION.common().flags(static_cast<EnumeratedLiteralFlag>(0));
     cel_AFTER_DECLARATION.detail().name("AFTER_DECLARATION");
-    //cel_AFTER_DECLARATION.detail().ann_builtin()...
-    //cel_AFTER_DECLARATION.detail().ann_custom()...
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_AFTER_DECLARATION);
 
     CompleteEnumeratedLiteral cel_END_FILE;
-/* TODO(jlbueno): XTYPES
-    cel_END_FILE.common().flags().TRY_CONSTRUCT1(false); // Doesn't apply
-    cel_END_FILE.common().flags().TRY_CONSTRUCT2(false); // Doesn't apply
-    cel_END_FILE.common().flags().IS_EXTERNAL(false); // Doesn't apply
-    cel_END_FILE.common().flags().IS_OPTIONAL(false); // Doesn't apply
-    cel_END_FILE.common().flags().IS_MUST_UNDERSTAND(false); // Doesn't apply
-    cel_END_FILE.common().flags().IS_KEY(false); // Doesn't apply
-    cel_END_FILE.common().flags().IS_DEFAULT(false);
-*/
     cel_END_FILE.common().value(value++);
+    cel_END_FILE.common().flags(static_cast<EnumeratedLiteralFlag>(0));
     cel_END_FILE.detail().name("END_FILE");
-    //cel_END_FILE.detail().ann_builtin()...
-    //cel_END_FILE.detail().ann_custom()...
     type_object->complete().enumerated_type().literal_seq().emplace_back(cel_END_FILE);
 
 
@@ -3739,12 +3607,16 @@ const TypeObject* GetMinimalserviceObject()
     type_object->minimal()._d(TK_ANNOTATION);
 
     MinimalAnnotationParameter mam_platform;
-    mam_platform.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
-// TODO(jlbueno): XTypes    mam_platform.name("platform");
+    mam_platform.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(0, false));
+    MD5 platform_hash("platform");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_platform.name_hash()[i] = platform_hash.digest[i];
+    }
 
     AnnotationParameterValue def_value_platform;
-    def_value_platform._d(mam_platform.common().member_type_id()._d());
-//TODO(jlbueno): XTypes    def_value_platform.from_string("*");
+    def_value_platform._d(TK_STRING8);
+    def_value_platform.string8_value("*");
     mam_platform.default_value(def_value_platform);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_platform);
 
@@ -3787,25 +3659,15 @@ const TypeObject* GetCompleteserviceObject()
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
-
-    // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().annotation_type().header().detail().ann_builtin()...
-    //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("service");
 
     CompleteAnnotationParameter cam_platform;
-    cam_platform.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    cam_platform.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(0, false));
     cam_platform.name("platform");
 
     AnnotationParameterValue def_value_platform;
-    def_value_platform._d(cam_platform.common().member_type_id()._d());
-//TODO(jlbueno): XTypes    def_value_platform.from_string("*");
+    def_value_platform._d(TK_STRING8);
+    def_value_platform.string8_value("*");
     cam_platform.default_value(def_value_platform);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_platform);
 
@@ -3880,11 +3742,15 @@ const TypeObject* GetMinimalonewayObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
-// TODO(jlbueno): XTypes    mam_value.name("value");
+    MD5 value_hash("value");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_value.name_hash()[i] = value_hash.digest[i];
+    }
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
-//TODO(jlbueno): XTypes    def_value_value.from_string("true");
+    def_value_value.boolean_value(true);
     mam_value.default_value(def_value_value);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -3927,16 +3793,6 @@ const TypeObject* GetCompleteonewayObject()
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
-
-    // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().annotation_type().header().detail().ann_builtin()...
-    //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("oneway");
 
     CompleteAnnotationParameter cam_value;
@@ -3945,7 +3801,7 @@ const TypeObject* GetCompleteonewayObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(cam_value.common().member_type_id()._d());
-//TODO(jlbueno): XTypes    def_value_value.from_string("true");
+    def_value_value.boolean_value(true);
     cam_value.default_value(def_value_value);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
@@ -4020,11 +3876,15 @@ const TypeObject* GetMinimalamiObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
-// TODO(jlbueno): XTypes    mam_value.name("value");
+    MD5 value_hash("value");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_value.name_hash()[i] = value_hash.digest[i];
+    }
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
-//TODO(jlbueno): XTypes    def_value_value.from_string("true");
+    def_value_value.boolean_value(true);
     mam_value.default_value(def_value_value);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -4067,16 +3927,6 @@ const TypeObject* GetCompleteamiObject()
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
-
-    // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().annotation_type().header().detail().ann_builtin()...
-    //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("ami");
 
     CompleteAnnotationParameter cam_value;
@@ -4085,7 +3935,7 @@ const TypeObject* GetCompleteamiObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(cam_value.common().member_type_id()._d());
-//TODO(jlbueno): XTypes    def_value_value.from_string("true");
+    def_value_value.boolean_value(true);
     cam_value.default_value(def_value_value);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
@@ -4120,125 +3970,708 @@ const TypeObject* GetCompleteamiObject()
 const TypeIdentifier* GethashidIdentifier(
         bool complete)
 {
-    static_cast<void>(complete);
-    return nullptr;
+    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("hashid", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    {
+        return c_identifier;
+    }
+
+    GethashidObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("hashid", complete);
 }
 
 const TypeObject* GethashidObject(
         bool complete)
 {
-    static_cast<void>(complete);
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("hashid", complete);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+    else if (complete)
+    {
+        return GetCompletehashidObject();
+    }
+    // else
+    return GetMinimalhashidObject();
 }
 
 const TypeObject* GetMinimalhashidObject()
 {
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("hashid", false);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+
+    TypeObject* type_object = new TypeObject();
+    type_object->_d(EK_MINIMAL);
+    type_object->minimal()._d(TK_ANNOTATION);
+
+    MinimalAnnotationParameter mam_value;
+    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(0, false));
+    MD5 value_hash("value");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_value.name_hash()[i] = value_hash.digest[i];
+    }
+    mam_value.default_value()._d(TK_STRING8);
+    // Default constructor already sets the value to "" (empty string).
+
+    type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
+
+
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+                MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for (int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("hashid", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("hashid", false);
 }
 
 const TypeObject* GetCompletehashidObject()
 {
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("hashid", true);
+    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    {
+        return c_type_object;
+    }
+
+    TypeObject* type_object = new TypeObject();
+    type_object->_d(EK_COMPLETE);
+    type_object->complete()._d(TK_ANNOTATION);
+    type_object->complete().annotation_type().header().annotation_name("hashid");
+
+    CompleteAnnotationParameter cam_value;
+    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(0, false));
+    cam_value.name("value");
+    cam_value.default_value()._d(TK_STRING8);
+
+    type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
+
+
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+                CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for (int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("hashid", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("hashid", true);
 }
 
 const TypeIdentifier* Getdefault_nestedIdentifier(
         bool complete)
 {
-    static_cast<void>(complete);
-    return nullptr;
+    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("default_nested", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    {
+        return c_identifier;
+    }
+
+    Getdefault_nestedObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("default_nested", complete);
 }
 
 const TypeObject* Getdefault_nestedObject(
         bool complete)
 {
-    static_cast<void>(complete);
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("default_nested", complete);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+    else if (complete)
+    {
+        return GetCompletedefault_nestedObject();
+    }
+    // else
+    return GetMinimaldefault_nestedObject();
 }
 
 const TypeObject* GetMinimaldefault_nestedObject()
 {
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("default_nested", false);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+
+    TypeObject* type_object = new TypeObject();
+    type_object->_d(EK_MINIMAL);
+    type_object->minimal()._d(TK_ANNOTATION);
+
+    MinimalAnnotationParameter mam_value;
+    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    MD5 value_hash("value");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_value.name_hash()[i] = value_hash.digest[i];
+    }
+
+    AnnotationParameterValue def_value_value;
+    def_value_value._d(mam_value.common().member_type_id()._d());
+    def_value_value.boolean_value(true);
+    mam_value.default_value(def_value_value);
+    type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
+
+
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+                MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for (int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("default_nested", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("default_nested", false);
 }
 
 const TypeObject* GetCompletedefault_nestedObject()
 {
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("default_nested", true);
+    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    {
+        return c_type_object;
+    }
+
+    TypeObject* type_object = new TypeObject();
+    type_object->_d(EK_COMPLETE);
+    type_object->complete()._d(TK_ANNOTATION);
+    type_object->complete().annotation_type().header().annotation_name("default_nested");
+
+    CompleteAnnotationParameter cam_value;
+    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    cam_value.name("value");
+
+    AnnotationParameterValue def_value_value;
+    def_value_value._d(cam_value.common().member_type_id()._d());
+    def_value_value.boolean_value(true);
+    cam_value.default_value(def_value_value);
+    type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
+
+
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+                CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for (int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("default_nested", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("default_nested", true);
 }
 
 const TypeIdentifier* Getignore_literal_namesIdentifier(
         bool complete)
 {
-    static_cast<void>(complete);
-    return nullptr;
+    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ignore_literal_names", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    {
+        return c_identifier;
+    }
+
+    Getignore_literal_namesObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("ignore_literal_names", complete);
 }
 
 const TypeObject* Getignore_literal_namesObject(
         bool complete)
 {
-    static_cast<void>(complete);
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ignore_literal_names", complete);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+    else if (complete)
+    {
+        return GetCompleteignore_literal_namesObject();
+    }
+    // else
+    return GetMinimalignore_literal_namesObject();
 }
 
 const TypeObject* GetMinimalignore_literal_namesObject()
 {
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ignore_literal_names", false);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+
+    TypeObject* type_object = new TypeObject();
+    type_object->_d(EK_MINIMAL);
+    type_object->minimal()._d(TK_ANNOTATION);
+
+    MinimalAnnotationParameter mam_value;
+    mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    MD5 value_hash("value");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_value.name_hash()[i] = value_hash.digest[i];
+    }
+
+    AnnotationParameterValue def_value_value;
+    def_value_value._d(mam_value.common().member_type_id()._d());
+    def_value_value.boolean_value(true);
+    mam_value.default_value(def_value_value);
+    type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
+
+
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+                MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for (int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("ignore_literal_names", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("ignore_literal_names", false);
 }
 
 const TypeObject* GetCompleteignore_literal_namesObject()
 {
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ignore_literal_names", true);
+    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    {
+        return c_type_object;
+    }
+
+    TypeObject* type_object = new TypeObject();
+    type_object->_d(EK_COMPLETE);
+    type_object->complete()._d(TK_ANNOTATION);
+    type_object->complete().annotation_type().header().annotation_name("ignore_literal_names");
+
+    CompleteAnnotationParameter cam_value;
+    cam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
+    cam_value.name("value");
+
+    AnnotationParameterValue def_value_value;
+    def_value_value._d(cam_value.common().member_type_id()._d());
+    def_value_value.boolean_value(true);
+    cam_value.default_value(def_value_value);
+    type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
+
+
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+                CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for (int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("ignore_literal_names", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("ignore_literal_names", true);
 }
 
-const TypeIdentifier* Gettry_constructIdentifier(
-        bool complete)
-{
-    static_cast<void>(complete);
-    return nullptr;
-}
-
-const TypeObject* Gettry_constructObject(
-        bool complete)
-{
-    static_cast<void>(complete);
-    return nullptr;
-}
-
-const TypeObject* GetMinimaltry_constructObject()
-{
-    return nullptr;
-}
-
-const TypeObject* GetCompletetry_constructObject()
-{
-    return nullptr;
-}
-
-namespace try_construct {
 const TypeIdentifier* GetTryConstructFailActionIdentifier(
         bool complete)
 {
-    static_cast<void>(complete);
-    return nullptr;
+    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("TryConstructFailAction",
+                    complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    {
+        return c_identifier;
+    }
+
+    GetTryConstructFailActionObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("TryConstructFailAction", complete);
 }
 
 const TypeObject* GetTryConstructFailActionObject(
         bool complete)
 {
-    static_cast<void>(complete);
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("TryConstructFailAction", complete);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+    else if (complete)
+    {
+        return GetCompleteTryConstructFailActionObject();
+    }
+    // else
+    return GetMinimalTryConstructFailActionObject();
 }
 
 const TypeObject* GetMinimalTryConstructFailActionObject()
 {
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("TryConstructFailAction", false);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+
+    TypeObject* type_object = new TypeObject();
+    type_object->_d(EK_MINIMAL);
+    type_object->minimal()._d(TK_ENUM);
+    type_object->minimal().enumerated_type().header().common().bit_bound(32);
+
+    uint32_t value = 0;
+    MinimalEnumeratedLiteral mel_DISCARD;
+    mel_DISCARD.common().value(value++);
+    mel_DISCARD.common().flags(static_cast<EnumeratedLiteralFlag>(0));
+    MD5 DISCARD_hash("DISCARD");
+    for (int i = 0; i < 4; ++i)
+    {
+        mel_DISCARD.detail().name_hash()[i] = DISCARD_hash.digest[i];
+    }
+    type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_DISCARD);
+
+    MinimalEnumeratedLiteral mel_USE_DEFAULT;
+    mel_USE_DEFAULT.common().value(value++);
+    mel_USE_DEFAULT.common().flags(static_cast<EnumeratedLiteralFlag>(0));
+    MD5 USE_DEFAULT_hash("USE_DEFAULT");
+    for (int i = 0; i < 4; ++i)
+    {
+        mel_USE_DEFAULT.detail().name_hash()[i] = USE_DEFAULT_hash.digest[i];
+    }
+    type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_USE_DEFAULT);
+
+    MinimalEnumeratedLiteral mel_TRIM;
+    mel_TRIM.common().value(value++);
+    mel_TRIM.common().flags(static_cast<EnumeratedLiteralFlag>(0));
+    MD5 TRIM_hash("TRIM");
+    for (int i = 0; i < 4; ++i)
+    {
+        mel_TRIM.detail().name_hash()[i] = TRIM_hash.digest[i];
+    }
+    type_object->minimal().enumerated_type().literal_seq().emplace_back(mel_TRIM);
+
+
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+                MinimalEnumeratedType::getCdrSerializedSize(type_object->minimal().enumerated_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for (int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("TryConstructFailAction", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("TryConstructFailAction", false);
 }
 
 const TypeObject* GetCompleteTryConstructFailActionObject()
 {
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("TryConstructFailAction", true);
+    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    {
+        return c_type_object;
+    }
+
+    TypeObject* type_object = new TypeObject();
+    type_object->_d(EK_COMPLETE);
+    type_object->complete()._d(TK_ENUM);
+    type_object->complete().enumerated_type().header().common().bit_bound(32);
+    type_object->complete().enumerated_type().header().detail().type_name("TryConstructFailAction");
+
+    uint32_t value = 0;
+    CompleteEnumeratedLiteral cel_DISCARD;
+    cel_DISCARD.common().value(value++);
+    cel_DISCARD.common().flags(static_cast<EnumeratedLiteralFlag>(0));
+    cel_DISCARD.detail().name("DISCARD");
+    type_object->complete().enumerated_type().literal_seq().emplace_back(cel_DISCARD);
+
+    CompleteEnumeratedLiteral cel_USE_DEFAULT;
+    cel_USE_DEFAULT.common().value(value++);
+    cel_USE_DEFAULT.common().flags(static_cast<EnumeratedLiteralFlag>(0));
+    cel_USE_DEFAULT.detail().name("USE_DEFAULT");
+    type_object->complete().enumerated_type().literal_seq().emplace_back(cel_USE_DEFAULT);
+
+    CompleteEnumeratedLiteral cel_TRIM;
+    cel_TRIM.common().value(value++);
+    cel_TRIM.common().flags(static_cast<EnumeratedLiteralFlag>(0));
+    cel_TRIM.detail().name("TRIM");
+    type_object->complete().enumerated_type().literal_seq().emplace_back(cel_TRIM);
+
+
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+                CompleteEnumeratedType::getCdrSerializedSize(type_object->complete().enumerated_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for (int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("TryConstructFailAction", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("TryConstructFailAction", true);
 }
 
-} // try_construct namespace
+const TypeIdentifier* Gettry_constructIdentifier(
+        bool complete)
+{
+    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("try_construct", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    {
+        return c_identifier;
+    }
+
+    Gettry_constructObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("try_construct", complete);
+}
+
+const TypeObject* Gettry_constructObject(
+        bool complete)
+{
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("try_construct", complete);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+    else if (complete)
+    {
+        return GetCompletetry_constructObject();
+    }
+    // else
+    return GetMinimaltry_constructObject();
+}
+
+const TypeObject* GetMinimaltry_constructObject()
+{
+    using namespace autoid;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("try_construct", false);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+
+    TypeObject* type_object = new TypeObject();
+    type_object->_d(EK_MINIMAL);
+    type_object->minimal()._d(TK_ANNOTATION);
+
+    MinimalAnnotationParameter mam_value;
+    const TypeIdentifier* member_type_id = GetTryConstructFailActionIdentifier(false);
+    assert(nullptr != member_type_id);
+    mam_value.common().member_type_id(*member_type_id);
+    MD5 value_hash("value");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_value.name_hash()[i] = value_hash.digest[i];
+    }
+
+    AnnotationParameterValue def_value_value;
+    const TypeObject* member_type_object = GetTryConstructFailActionObject(false);
+    assert(nullptr != member_type_object);
+    def_value_value._d(member_type_object->minimal()._d());
+    // Default value: USE_DEFAULT (enumerated value: 1)
+    def_value_value.enumerated_value(1);
+    mam_value.default_value(def_value_value);
+    type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
+
+
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+                MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for (int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("try_construct", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("try_construct", false);
+}
+
+const TypeObject* GetCompletetry_constructObject()
+{
+    using namespace autoid;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("try_construct", true);
+    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    {
+        return c_type_object;
+    }
+
+    TypeObject* type_object = new TypeObject();
+    type_object->_d(EK_COMPLETE);
+    type_object->complete()._d(TK_ANNOTATION);
+    type_object->complete().annotation_type().header().annotation_name("try_construct");
+
+    CompleteAnnotationParameter cam_value;
+    const TypeIdentifier* member_type_id = GetTryConstructFailActionIdentifier(true);
+    assert(nullptr != member_type_id);
+    cam_value.common().member_type_id(*member_type_id);
+    cam_value.name("value");
+
+    AnnotationParameterValue def_value_value;
+    const TypeObject* member_type_object = GetTryConstructFailActionObject(true);
+    assert(nullptr != member_type_object);
+    def_value_value._d(member_type_object->complete()._d());
+    // Default value: USE_DEFAULT (enumerated value: 1)
+    def_value_value.enumerated_value(1);
+    cam_value.default_value(def_value_value);
+    type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
+
+
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+                CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for (int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("try_construct", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("try_construct", true);
+}
 
 const TypeIdentifier* Getnon_serializedIdentifier(
         bool complete)
@@ -4284,11 +4717,15 @@ const TypeObject* GetMinimalnon_serializedObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bool", false));
-// TODO(jlbueno): XTypes    mam_value.name("value");
+    MD5 value_hash("value");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_value.name_hash()[i] = value_hash.digest[i];
+    }
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(mam_value.common().member_type_id()._d());
-//TODO(jlbueno): XTypes    def_value_value.from_string("true");
+    def_value_value.boolean_value(true);
     mam_value.default_value(def_value_value);
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -4331,16 +4768,6 @@ const TypeObject* GetCompletenon_serializedObject()
     TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
     type_object->complete()._d(TK_ANNOTATION);
-
-    // No flags apply
-    //type_object->complete().annotation_type().annotation_flags().IS_FINAL(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_APPENDABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_MUTABLE(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_NESTED(false);
-    //type_object->complete().annotation_type().annotation_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().annotation_type().header().detail().ann_builtin()...
-    //type_object->complete().annotation_type().header().detail().ann_custom()...
     type_object->complete().annotation_type().header().annotation_name("non_serialized");
 
     CompleteAnnotationParameter cam_value;
@@ -4349,7 +4776,7 @@ const TypeObject* GetCompletenon_serializedObject()
 
     AnnotationParameterValue def_value_value;
     def_value_value._d(cam_value.common().member_type_id()._d());
-//TODO(jlbueno): XTypes    def_value_value.from_string("true");
+    def_value_value.boolean_value(true);
     cam_value.default_value(def_value_value);
     type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
 
@@ -4384,71 +4811,565 @@ const TypeObject* GetCompletenon_serializedObject()
 const TypeIdentifier* GetDataRepresentationMaskIdentifier(
         bool complete)
 {
-    static_cast<void>(complete);
-    return nullptr;
+    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("DataRepresentationMask", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    {
+        return c_identifier;
+    }
+
+    GetDataRepresentationMaskObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("DataRepresentationMask", complete);
 }
 
 const TypeObject* GetDataRepresentationMaskObject(
         bool complete)
 {
-    static_cast<void>(complete);
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("DataRepresentationMask", complete);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+    else if (complete)
+    {
+        return GetCompleteDataRepresentationMaskObject();
+    }
+    // else
+    return GetMinimalDataRepresentationMaskObject();
 }
 
 const TypeObject* GetMinimalDataRepresentationMaskObject()
 {
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("DataRepresentationMask", false);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+
+    TypeObject *type_object = new TypeObject();
+    type_object->_d(EK_MINIMAL);
+    // MinimalTypeObject
+    type_object->minimal()._d(TK_BITMASK);
+
+    // MinimalBitmaskType
+
+    // BitmaskTypeFlag: Unused. No flags apply
+    // MinimalBitmaskHeader (MinimalEnumeratedHeader)
+
+    // CommonEnumeratedHeader
+    // BitBound
+    type_object->minimal().bitmask_type().header().common().bit_bound(32);
+
+    // MinimalBitflagSeq
+
+    // MinimalBitflag
+    MinimalBitflag mbf_XCDR1;
+
+    // CommonBitflag
+    // unsigned short: position
+    mbf_XCDR1.common().position(0);
+    // BitflagFlag: Unused. No flags apply
+
+    // MinimalMemberDetail
+    // NameHash
+    MD5 XCDR1_hash("XCDR1");
+    for(int i = 0; i < 4; ++i)
+    {
+        mbf_XCDR1.detail().name_hash()[i] = XCDR1_hash.digest[i];
+    }
+    type_object->minimal().bitmask_type().flag_seq().emplace_back(mbf_XCDR1);
+
+    MinimalBitflag mbf_XML;
+    mbf_XML.common().position(1);
+    MD5 XML_hash("XML");
+    for(int i = 0; i < 4; ++i)
+    {
+        mbf_XML.detail().name_hash()[i] = XML_hash.digest[i];
+    }
+    type_object->minimal().bitmask_type().flag_seq().emplace_back(mbf_XML);
+
+    MinimalBitflag mbf_XCDR2;
+    mbf_XCDR2.common().position(2);
+    MD5 XCDR2_hash("XCDR2");
+    for(int i = 0; i < 4; ++i)
+    {
+        mbf_XCDR2.detail().name_hash()[i] = XCDR2_hash.digest[i];
+    }
+    type_object->minimal().bitmask_type().flag_seq().emplace_back(mbf_XCDR2);
+
+
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        MinimalBitmaskType::getCdrSerializedSize(type_object->minimal().bitmask_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("DataRepresentationMask", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("DataRepresentationMask", false);
 }
 
 const TypeObject* GetCompleteDataRepresentationMaskObject()
 {
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("DataRepresentationMask", true);
+    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    {
+        return c_type_object;
+    }
+
+    TypeObject *type_object = new TypeObject();
+    type_object->_d(EK_COMPLETE);
+
+    // CompleteTypeObject
+    type_object->complete()._d(TK_BITMASK);
+
+    // CompleteBitmaskType
+
+    // BitmaskTypeFlag: Unused. No flags apply
+    // CompleteBitmaskHeader (CompleteEnumeratedHeader)
+
+    // CommonEnumeratedHeader
+    // BitBound
+    type_object->complete().bitmask_type().header().common().bit_bound(32);
+    // CompleteTypeDetail
+
+    // @optional AppliedBuiltinTypeAnnotations (@verbatim)
+    // AppliedAnnotationSeq
+
+    // AppliedAnnotation: @bit_bound
+    AppliedAnnotation ann_bit_bound;
+    // TypeIdentifier
+    ann_bit_bound.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("bit_bound"));
+    // AppliedAnnotationParameterSeq
+
+    // AppliedAnnotationParameter
+    AppliedAnnotationParameter ann_bit_bound_parameter;
+
+    // NameHash
+    MD5 value_hash("value");
+    for(int i = 0; i < 4; ++i)
+    {
+        ann_bit_bound_parameter.paramname_hash()[i] = value_hash.digest[i];
+    }
+
+    // AnnotationParameterValue
+    ann_bit_bound_parameter.value()._d(TK_UINT16);
+    ann_bit_bound_parameter.value().uint16_value(32);
+
+    ann_bit_bound.param_seq().push_back(ann_bit_bound_parameter);
+    type_object->complete().bitmask_type().header().detail().ann_custom().push_back(ann_bit_bound);
+
+    // QualifiedTypeName
+    type_object->complete().bitmask_type().header().detail().type_name("DataRepresentationMask");
+
+    // CompleteBitflagSeq
+
+    // CompleteBitflag
+    CompleteBitflag cbf_XCDR1;
+    // CommonBitflag
+
+    // unsigned short: position
+    cbf_XCDR1.common().position(0);
+    // BitflagFlag: Unused. No flags apply
+
+    // CompleteMemberDetail
+
+    // MemberName
+    cbf_XCDR1.detail().name("XCDR1");
+    // AppliedBuiltinMemberAnnotations (@unit, @range, @min, @max, @hashid)
+    // AppliedAnnotationSeq
+
+    {
+        // AppliedAnnotation: @position
+        AppliedAnnotation ann_position;
+        // TypeIdentifier
+        ann_position.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+        // AppliedAnnotationParameterSeq
+
+        // AppliedAnnotationParameter
+        AppliedAnnotationParameter ann_position_parameter;
+
+        // NameHash
+        MD5 value_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            ann_position_parameter.paramname_hash()[i] = value_hash.digest[i];
+        }
+
+        // AnnotationParameterValue
+        ann_position_parameter.value()._d(TK_UINT16);
+        ann_position_parameter.value().uint16_value(0);
+
+        ann_position.param_seq().push_back(ann_position_parameter);
+        cbf_XCDR1.detail().ann_custom().push_back(ann_position);
+    }
+
+    type_object->complete().bitmask_type().flag_seq().emplace_back(cbf_XCDR1);
+
+    CompleteBitflag cbf_XML;
+    cbf_XML.common().position(1);
+    cbf_XML.detail().name("XML");
+    {
+        AppliedAnnotation ann_position;
+        ann_position.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+        AppliedAnnotationParameter ann_position_parameter;
+        MD5 value_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            ann_position_parameter.paramname_hash()[i] = value_hash.digest[i];
+        }
+        ann_position_parameter.value()._d(TK_UINT16);
+        ann_position_parameter.value().uint16_value(1);
+        ann_position.param_seq().push_back(ann_position_parameter);
+
+        cbf_XML.detail().ann_custom().push_back(ann_position);
+    }
+    type_object->complete().bitmask_type().flag_seq().emplace_back(cbf_XML);
+
+    CompleteBitflag cbf_XCDR2;
+    cbf_XCDR2.common().position(2);
+    cbf_XCDR2.detail().name("XCDR2");
+    {
+        AppliedAnnotation ann_position;
+        ann_position.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+        AppliedAnnotationParameter ann_position_parameter;
+        MD5 value_hash("value");
+        for(int i = 0; i < 4; ++i)
+        {
+            ann_position_parameter.paramname_hash()[i] = value_hash.digest[i];
+        }
+        ann_position_parameter.value()._d(TK_UINT16);
+        ann_position_parameter.value().uint16_value(2);
+        ann_position.param_seq().push_back(ann_position_parameter);
+
+        cbf_XCDR2.detail().ann_custom().push_back(ann_position);
+    }
+    type_object->complete().bitmask_type().flag_seq().emplace_back(cbf_XCDR2);
+
+
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+        CompleteBitmaskType::getCdrSerializedSize(type_object->complete().bitmask_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for(int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("DataRepresentationMask", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("DataRepresentationMask", true);
 }
 
 const TypeIdentifier* Getdata_representationIdentifier(
         bool complete)
 {
-    static_cast<void>(complete);
-    return nullptr;
+    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("data_representation", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    {
+        return c_identifier;
+    }
+
+    Getdata_representationObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("data_representation", complete);
 }
 
 const TypeObject* Getdata_representationObject(
         bool complete)
 {
-    static_cast<void>(complete);
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("data_representation", complete);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+    else if (complete)
+    {
+        return GetCompletedata_representationObject();
+    }
+    // else
+    return GetMinimaldata_representationObject();
 }
 
 const TypeObject* GetMinimaldata_representationObject()
 {
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("data_representation", false);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+
+    TypeObject* type_object = new TypeObject();
+    type_object->_d(EK_MINIMAL);
+    // MinimalTypeObject
+    type_object->minimal()._d(TK_ANNOTATION);
+
+    MinimalAnnotationParameter mam_allowed_kinds;
+    const TypeIdentifier* member_type_id = GetDataRepresentationMaskIdentifier(false);
+    assert(nullptr != member_type_id);
+    mam_allowed_kinds.common().member_type_id(*member_type_id);
+    MD5 allowed_kinds_hash("allowed_kinds");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_allowed_kinds.name_hash()[i] = allowed_kinds_hash.digest[i];
+    }
+    // AnnotationParameterValue does not include Bitmask type. But bitmasks are Enumerated types.
+    mam_allowed_kinds.default_value()._d(TK_ENUM);
+    // By default is already initialized to 0.
+    type_object->minimal().annotation_type().member_seq().emplace_back(mam_allowed_kinds);
+
+
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+                MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for (int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("data_representation", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("data_representation", false);
 }
 
 const TypeObject* GetCompletedata_representationObject()
 {
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("data_representation", true);
+    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    {
+        return c_type_object;
+    }
+
+    TypeObject* type_object = new TypeObject();
+    type_object->_d(EK_COMPLETE);
+    type_object->complete()._d(TK_ANNOTATION);
+    type_object->complete().annotation_type().header().annotation_name("data_representation");
+
+    CompleteAnnotationParameter cam_value;
+    const TypeIdentifier* member_type_id = GetDataRepresentationMaskIdentifier(true);
+    assert(nullptr != member_type_id);
+    cam_value.common().member_type_id(*member_type_id);
+    cam_value.name("allowed_kinds");
+    cam_value.default_value()._d(TK_ENUM);
+
+    type_object->complete().annotation_type().member_seq().emplace_back(cam_value);
+
+
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+                CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for (int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("data_representation", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("data_representation", true);
 }
 
 const TypeIdentifier* GettopicIdentifier(
         bool complete)
 {
-    static_cast<void>(complete);
-    return nullptr;
+    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("topic", complete);
+    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
+    {
+        return c_identifier;
+    }
+
+    GettopicObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("topic", complete);
 }
 
 const TypeObject* GettopicObject(
         bool complete)
 {
-    static_cast<void>(complete);
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("topic", complete);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+    else if (complete)
+    {
+        return GetCompletetopicObject();
+    }
+    // else
+    return GetMinimaltopicObject();
 }
 
 const TypeObject* GetMinimaltopicObject()
 {
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("topic", false);
+    if (c_type_object != nullptr)
+    {
+        return c_type_object;
+    }
+
+    TypeObject* type_object = new TypeObject();
+    type_object->_d(EK_MINIMAL);
+    type_object->minimal()._d(TK_ANNOTATION);
+
+    MinimalAnnotationParameter mam_name;
+    mam_name.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(0, false));
+    MD5 name_hash("name");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_name.name_hash()[i] = name_hash.digest[i];
+    }
+    mam_name.default_value()._d(TK_STRING8);
+
+    type_object->minimal().annotation_type().member_seq().emplace_back(mam_name);
+
+    MinimalAnnotationParameter mam_platform;
+    mam_platform.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(0, false));
+    MD5 platform_hash("platform");
+    for (int i = 0; i < 4; ++i)
+    {
+        mam_platform.name_hash()[i] = platform_hash.digest[i];
+    }
+
+    AnnotationParameterValue def_value_platform;
+    def_value_platform._d(TK_STRING8);
+    def_value_platform.string8_value("*");
+    mam_platform.default_value(def_value_platform);
+    type_object->minimal().annotation_type().member_seq().emplace_back(mam_platform);
+
+
+    TypeIdentifier identifier;
+    identifier._d(EK_MINIMAL);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+                MinimalAnnotationType::getCdrSerializedSize(type_object->minimal().annotation_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for (int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("topic", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("topic", false);
 }
 
 const TypeObject* GetCompletetopicObject()
 {
-    return nullptr;
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("topic", true);
+    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
+    {
+        return c_type_object;
+    }
+
+    TypeObject* type_object = new TypeObject();
+    type_object->_d(EK_COMPLETE);
+    type_object->complete()._d(TK_ANNOTATION);
+    type_object->complete().annotation_type().header().annotation_name("topic");
+
+    CompleteAnnotationParameter cam_name;
+    cam_name.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(0, false));
+    cam_name.name("name");
+    cam_name.default_value()._d(TK_STRING8);
+    type_object->complete().annotation_type().member_seq().emplace_back(cam_name);
+
+    CompleteAnnotationParameter cam_platform;
+    cam_platform.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(0, false));
+    cam_platform.name("platform");
+
+    AnnotationParameterValue def_value_platform;
+    def_value_platform._d(TK_STRING8);
+    def_value_platform.string8_value("*");
+    cam_platform.default_value(def_value_platform);
+    type_object->complete().annotation_type().member_seq().emplace_back(cam_platform);
+
+
+    TypeIdentifier identifier;
+    identifier._d(EK_COMPLETE);
+
+    SerializedPayload_t payload(static_cast<uint32_t>(
+                CompleteAnnotationType::getCdrSerializedSize(type_object->complete().annotation_type()) + 4));
+    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
+    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
+    eprosima::fastcdr::Cdr ser(
+        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
+        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+    payload.encapsulation = CDR_LE;
+
+    type_object->serialize(ser);
+    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    MD5 objectHash;
+    objectHash.update((char*)payload.data, payload.length);
+    objectHash.finalize();
+    for (int i = 0; i < 14; ++i)
+    {
+        identifier.equivalence_hash()[i] = objectHash.digest[i];
+    }
+
+    TypeObjectFactory::get_instance()->add_type_object("topic", &identifier, type_object);
+    delete type_object;
+    return TypeObjectFactory::get_instance()->get_type_object("topic", true);
 }

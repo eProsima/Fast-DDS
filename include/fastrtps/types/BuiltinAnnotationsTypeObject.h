@@ -198,13 +198,10 @@ const TypeObject* Gettry_constructObject(bool complete = false);
 const TypeObject* GetMinimaltry_constructObject();
 const TypeObject* GetCompletetry_constructObject();
 
-namespace try_construct
-{
 const TypeIdentifier* GetTryConstructFailActionIdentifier(bool complete = false);
 const TypeObject* GetTryConstructFailActionObject(bool complete = false);
 const TypeObject* GetMinimalTryConstructFailActionObject();
 const TypeObject* GetCompleteTryConstructFailActionObject();
-}
 
 const TypeIdentifier* Getnon_serializedIdentifier(bool complete = false);
 const TypeObject* Getnon_serializedObject(bool complete = false);
