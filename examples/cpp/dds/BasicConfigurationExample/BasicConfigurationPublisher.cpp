@@ -167,7 +167,7 @@ bool HelloWorldPublisher::init(
     DataWriterQos wqos = DATAWRITER_QOS_DEFAULT;
 
     // Data sharing set in endpoint. If it is not default, set it to off
-    if (transport != DEFAULT)
+    if (true/*transport != DEFAULT*/)
     {
         wqos.data_sharing().off();
     }
