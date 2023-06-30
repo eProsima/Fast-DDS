@@ -45,7 +45,7 @@ struct SampleLoanManager
     using CacheChange_t = eprosima::fastrtps::rtps::CacheChange_t;
     using IPayloadPool = eprosima::fastrtps::rtps::IPayloadPool;
     using PoolConfig = eprosima::fastrtps::rtps::PoolConfig;
-    using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+    using eprosima::fastrtps::types::ReturnCode_t;
     using SampleIdentity = eprosima::fastrtps::rtps::SampleIdentity;
     using SerializedPayload_t = eprosima::fastrtps::rtps::SerializedPayload_t;
 

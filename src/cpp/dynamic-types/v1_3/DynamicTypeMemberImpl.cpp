@@ -24,7 +24,7 @@
 
 using namespace eprosima::fastrtps::types::v1_3;
 
-using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+using eprosima::fastrtps::types::ReturnCode_t;
 
 bool DynamicTypeMemberImpl::operator ==(
         const DynamicTypeMemberImpl& other) const

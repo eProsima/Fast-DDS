@@ -37,7 +37,7 @@
 
 #define SIZE 512
 
-using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+using eprosima::fastrtps::types::ReturnCode_t;
 
 class SystemInfoTests : public ::testing::Test
 {

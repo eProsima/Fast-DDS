@@ -269,18 +269,18 @@ bool TypeState::equals(
 }
 
 void TypeState::set_base_type(
-        const std::shared_ptr<DynamicTypeImpl>& type)
+        const std::shared_ptr<const DynamicTypeImpl>& type)
 {
     base_type_ = type;
 }
 
 void TypeState::set_base_type(
-        std::shared_ptr<DynamicTypeImpl>&& type)
+        std::shared_ptr<const DynamicTypeImpl>&& type)
 {
     base_type_ = std::move(type);
 }
 
-std::shared_ptr<DynamicTypeImpl> TypeState::get_base_type() const
+std::shared_ptr<const DynamicTypeImpl> TypeState::get_base_type() const
 {
     return base_type_;
 }
@@ -304,17 +304,17 @@ uint32_t TypeState::get_bounds_size() const
     return static_cast<uint32_t>(bound_.size());
 }
 
-std::shared_ptr<DynamicTypeImpl> TypeState::get_discriminator_type() const
+std::shared_ptr<const DynamicTypeImpl> TypeState::get_discriminator_type() const
 {
     return discriminator_type_;
 }
 
-std::shared_ptr<DynamicTypeImpl> TypeState::get_element_type() const
+std::shared_ptr<const DynamicTypeImpl> TypeState::get_element_type() const
 {
     return element_type_;
 }
 
-std::shared_ptr<DynamicTypeImpl> TypeState::get_key_element_type() const
+std::shared_ptr<const DynamicTypeImpl> TypeState::get_key_element_type() const
 {
     return key_element_type_;
 }

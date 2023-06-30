@@ -36,7 +36,7 @@ namespace dds {
  */
 struct IContentFilterFactory
 {
-    using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+    using eprosima::fastrtps::types::ReturnCode_t;
     using ParameterSeq = LoanableTypedCollection<const char*>;
     using TypeDescriptor = eprosima::fastrtps::types::v1_3::TypeDescriptor;
 

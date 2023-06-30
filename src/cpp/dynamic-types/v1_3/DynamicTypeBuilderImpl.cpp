@@ -12,36 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/v1_3/DynamicTypeBuilder.hpp>
-#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
-#include <fastrtps/types/v1_3/DynamicType.hpp>
-#include <fastrtps/types/v1_3/TypeDescriptor.hpp>
-#include <fastrtps/types/v1_3/MemberDescriptor.hpp>
-#include <fastrtps/types/v1_3/DynamicTypeMember.hpp>
-#include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
+#include <dynamic-types/v1_3/DynamicTypeBuilderFactoryImpl.hpp>
+#include <dynamic-types/v1_3/DynamicTypeBuilderImpl.hpp>
+#include <dynamic-types/v1_3/DynamicTypeImpl.hpp>
+#include <dynamic-types/v1_3/DynamicTypeMemberImpl.hpp>
+#include <dynamic-types/v1_3/MemberDescriptorImpl.hpp>
+#include <dynamic-types/v1_3/TypeState.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
 #include <tuple>
 
 using namespace eprosima::fastrtps::types::v1_3;
+using eprosima::fastrtps::types::ReturnCode_t;
 
-DynamicTypeBuilder::DynamicTypeBuilder(
+DynamicTypeBuilderImpl::DynamicTypeBuilderImpl(
         use_the_create_method)
 {
 }
 
-DynamicTypeBuilder::DynamicTypeBuilder(
+DynamicTypeBuilderImpl::DynamicTypeBuilderImpl(
         use_the_create_method,
-        const DynamicTypeBuilder& builder)
+        const DynamicTypeBuilderImpl& builder)
 {
     *this = builder;
 }
 
-DynamicTypeBuilder::DynamicTypeBuilder(
+DynamicTypeBuilderImpl::DynamicTypeBuilderImpl(
         use_the_create_method,
-        const TypeDescriptor& descriptor,
+        const TypeState& descriptor,
         bool is_static)
-    : TypeDescriptor(descriptor)
+    : TypeState(descriptor)
     , current_member_id_(0)
 {
     // the factory should only create consistent builders
@@ -51,8 +51,8 @@ DynamicTypeBuilder::DynamicTypeBuilder(
     if (is_static)
     {
         // create on heap
-        instance_ = std::make_shared<DynamicType>(
-            DynamicType::use_the_create_method{},
+        instance_ = std::make_shared<DynamicTypeImpl>(
+            DynamicTypeImpl::use_the_create_method{},
             *this);
 
         // notify the tracker
@@ -60,19 +60,19 @@ DynamicTypeBuilder::DynamicTypeBuilder(
     }
 }
 
-void DynamicTypeBuilder::after_construction(
-        DynamicType* type)
+void DynamicTypeBuilderImpl::after_construction(
+        DynamicTypeImpl* type)
 {
     dynamic_tracker<selected_mode>::get_dynamic_tracker().add(type);
 }
 
-void DynamicTypeBuilder::before_destruction(
-        DynamicType* type)
+void DynamicTypeBuilderImpl::before_destruction(
+        DynamicTypeImpl* type)
 {
     dynamic_tracker<selected_mode>::get_dynamic_tracker().remove(type);
 }
 
-DynamicTypeBuilder::member_iterator DynamicTypeBuilder::add_empty_member(
+DynamicTypeBuilderImpl::member_iterator DynamicTypeBuilderImpl::add_empty_member(
         uint32_t index,
         const std::string& name)
 {
@@ -122,8 +122,8 @@ DynamicTypeBuilder::member_iterator DynamicTypeBuilder::add_empty_member(
     return it;
 }
 
-ReturnCode_t DynamicTypeBuilder::add_member(
-        MemberDescriptor&& descriptor) noexcept
+ReturnCode_t DynamicTypeBuilderImpl::add_member(
+        MemberDescriptorImpl&& descriptor) noexcept
 {
     try
     {
@@ -188,7 +188,7 @@ ReturnCode_t DynamicTypeBuilder::add_member(
 
         auto it = add_empty_member(descriptor.get_index(), member_name);
 
-        DynamicTypeMember& newMember = *it;
+        DynamicTypeMemberImpl& newMember = *it;
         // Copy all elements but keep the index
         descriptor.index_ = newMember.index_;
         newMember = std::move(descriptor);
@@ -224,7 +224,7 @@ ReturnCode_t DynamicTypeBuilder::add_member(
     return ReturnCode_t::RETCODE_OK;
 }
 
-const DynamicType* DynamicTypeBuilder::build() const
+const DynamicTypeImpl* DynamicTypeBuilderImpl::build() const
 {
     // check if an instance is already available
     // and is still valid
@@ -233,9 +233,9 @@ const DynamicType* DynamicTypeBuilder::build() const
         try
         {
             // otherwise, create a new one. Check total consistency
-            instance_ = std::allocate_shared<DynamicType>(
+            instance_ = std::allocate_shared<DynamicTypeImpl>(
                 builder_allocator{},
-                DynamicType::use_the_create_method{},
+                DynamicTypeImpl::use_the_create_method{},
                 *this);
         }
         catch(const std::bad_alloc& e)
@@ -256,8 +256,8 @@ const DynamicType* DynamicTypeBuilder::build() const
     return instance_.get();
 }
 
-bool DynamicTypeBuilder::check_union_configuration(
-        const MemberDescriptor& descriptor)
+bool DynamicTypeBuilderImpl::check_union_configuration(
+        const MemberDescriptorImpl& descriptor)
 {
     if (get_kind() == TypeKind::TK_UNION)
     {
@@ -279,14 +279,14 @@ bool DynamicTypeBuilder::check_union_configuration(
     return true;
 }
 
-void DynamicTypeBuilder::clear()
+void DynamicTypeBuilderImpl::clear()
 {
-    TypeDescriptor::clean();
+    TypeState::clean();
     current_member_id_ = 0;
     instance_.reset();
 }
 
-bool DynamicTypeBuilder::is_discriminator_type() const
+bool DynamicTypeBuilderImpl::is_discriminator_type() const
 {
     auto base = get_base_type();
     auto kind = get_kind();
@@ -303,14 +303,8 @@ bool DynamicTypeBuilder::is_discriminator_type() const
            kind == TypeKind::TK_ENUM || kind == TypeKind::TK_BITMASK;
 }
 
-bool DynamicTypeBuilder::equals(
-        const DynamicType& other) const
-{
-    return *this == other;
-}
-
-ReturnCode_t DynamicTypeBuilder::delete_type(
-        const DynamicType* type) noexcept
+ReturnCode_t DynamicTypeBuilderImpl::delete_type(
+        const DynamicTypeImpl* type) noexcept
 {
     if (type != nullptr)
     {
@@ -321,15 +315,15 @@ ReturnCode_t DynamicTypeBuilder::delete_type(
     return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
-const DynamicType* DynamicTypeBuilder::create_copy(
-        const DynamicType& type) noexcept
+const DynamicTypeImpl* DynamicTypeBuilderImpl::create_copy(
+        const DynamicTypeImpl& type) noexcept
 {
     // increase external reference counting
     type.add_ref();
     return &type;
 }
 
-void DynamicTypeBuilder::external_dynamic_object_deleter(const DynamicTypeBuilder* pDT)
+void DynamicTypeBuilderImpl::external_dynamic_object_deleter(const DynamicTypeBuilderImpl* pDT)
 {
     if (pDT)
     {
@@ -337,27 +331,27 @@ void DynamicTypeBuilder::external_dynamic_object_deleter(const DynamicTypeBuilde
     }
 }
 
-void DynamicTypeBuilder::internal_dynamic_object_deleter(const DynamicTypeBuilder* pDT)
+void DynamicTypeBuilderImpl::internal_dynamic_object_deleter(const DynamicTypeBuilderImpl* pDT)
 {
     if (pDT)
     {
-        std::default_delete<const DynamicTypeBuilder> del;
+        std::default_delete<const DynamicTypeBuilderImpl> del;
         del(pDT);
     }
 }
 
 void (*eprosima::fastrtps::types::v1_3::dynamic_object_deleter(
-        const DynamicTypeBuilder* pDT))(const DynamicTypeBuilder*)
+        const DynamicTypeBuilderImpl* pDT))(const DynamicTypeBuilderImpl*)
 {
    if ( pDT != nullptr)
    {
         if (pDT->use_count())
         {
-            return DynamicTypeBuilder::external_dynamic_object_deleter;
+            return DynamicTypeBuilderImpl::external_dynamic_object_deleter;
         }
         else
         {
-            return DynamicTypeBuilder::internal_dynamic_object_deleter;
+            return DynamicTypeBuilderImpl::internal_dynamic_object_deleter;
         }
    }
 

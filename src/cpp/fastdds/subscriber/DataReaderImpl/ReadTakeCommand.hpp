@@ -50,7 +50,7 @@ namespace detail {
 
 struct ReadTakeCommand
 {
-    using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+    using eprosima::fastrtps::types::ReturnCode_t;
     using history_type = eprosima::fastdds::dds::detail::DataReaderHistory;
     using CacheChange_t = eprosima::fastrtps::rtps::CacheChange_t;
     using RTPSReader = eprosima::fastrtps::rtps::RTPSReader;

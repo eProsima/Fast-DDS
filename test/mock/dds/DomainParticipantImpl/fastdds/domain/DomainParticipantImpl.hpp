@@ -48,7 +48,7 @@
 #include <fastdds/topic/TopicImpl.hpp>
 #include <fastdds/topic/TopicProxy.hpp>
 
-using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastdds {

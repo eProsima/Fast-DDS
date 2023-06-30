@@ -53,7 +53,7 @@ namespace eprosima {
 namespace fastdds {
 namespace dds {
 
-using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+using eprosima::fastrtps::types::ReturnCode_t;
 
 /**
  * This test checks whether it is safe to delete not enabled DDS entities *

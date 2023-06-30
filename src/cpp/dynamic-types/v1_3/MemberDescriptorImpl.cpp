@@ -22,7 +22,7 @@
 
 using namespace eprosima::fastrtps::types::v1_3;
 
-using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+using eprosima::fastrtps::types::ReturnCode_t;
 
 void MemberDescriptorImpl::add_union_case_index(
         uint64_t value)

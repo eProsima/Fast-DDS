@@ -45,11 +45,11 @@ struct TypeStateData
 {
     std::string name_;                                    //!< Type Name.
     TypeKind kind_ = TypeKind::TK_NONE;                   //!< Type Kind.
-    std::shared_ptr<DynamicTypeImpl> base_type_;          //!< SuperType of an structure or base type of an alias type.
-    std::shared_ptr<DynamicTypeImpl> discriminator_type_; //!< Discrimination type for a union.
+    std::shared_ptr<const DynamicTypeImpl> base_type_;          //!< SuperType of an structure or base type of an alias type.
+    std::shared_ptr<const DynamicTypeImpl> discriminator_type_; //!< Discrimination type for a union.
     std::vector<uint32_t> bound_;                         //!< Length for strings, arrays, sequences, maps and bitmasks.
-    std::shared_ptr<DynamicTypeImpl> element_type_;       //!< Value Type for arrays, sequences, maps, bitmasks.
-    std::shared_ptr<DynamicTypeImpl> key_element_type_;   //!< Key Type for maps.
+    std::shared_ptr<const DynamicTypeImpl> element_type_;       //!< Value Type for arrays, sequences, maps, bitmasks.
+    std::shared_ptr<const DynamicTypeImpl> key_element_type_;   //!< Key Type for maps.
     std::list<DynamicTypeMemberImpl> members_;                //!< Member descriptors sequence
 };
 
@@ -158,17 +158,17 @@ protected:
 
     /**
      * Modifies the underlying base type by copy
-     * @param[in] type std::shared_ptr<DynamicTypeImpl> l-value reference
+     * @param[in] type std::shared_ptr<const DynamicTypeImpl> l-value reference
      */
     void set_base_type(
-            const std::shared_ptr<DynamicTypeImpl>& type);
+            const std::shared_ptr<const DynamicTypeImpl>& type);
 
     /**
      * Modifies the underlying base type by copy
-     * @param[in] type std::shared_ptr<DynamicTypeImpl> r-value reference
+     * @param[in] type std::shared_ptr<const DynamicTypeImpl> r-value reference
      */
     void set_base_type(
-            std::shared_ptr<DynamicTypeImpl>&& type);
+            std::shared_ptr<const DynamicTypeImpl>&& type);
 
 public:
 
@@ -294,7 +294,7 @@ public:
      * @return @ref DynamicTypeImpl
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    std::shared_ptr<DynamicTypeImpl> get_base_type() const;
+    std::shared_ptr<const DynamicTypeImpl> get_base_type() const;
 
     /**
      * Getter for @b bound property (see [standard] table 50)
@@ -316,21 +316,21 @@ public:
      * @return @ref DynamicTypeImpl
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    std::shared_ptr<DynamicTypeImpl> get_discriminator_type() const;
+    std::shared_ptr<const DynamicTypeImpl> get_discriminator_type() const;
 
     /**
      * Getter for @b element_type property (see [standard] table 50)
      * @return @ref DynamicTypeImpl
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    std::shared_ptr<DynamicTypeImpl> get_element_type() const;
+    std::shared_ptr<const DynamicTypeImpl> get_element_type() const;
 
     /**
      * Getter for @b key_element_type property (see [standard] table 50)
      * @return @ref DynamicTypeImpl
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    std::shared_ptr<DynamicTypeImpl> get_key_element_type() const;
+    std::shared_ptr<const DynamicTypeImpl> get_key_element_type() const;
 
     /**
      * Returns the @ref eprosima::fastrtps::types::TypeKind associated

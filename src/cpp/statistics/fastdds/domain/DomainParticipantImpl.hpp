@@ -42,7 +42,7 @@
 
 namespace efd = eprosima::fastdds::dds;
 
-using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
 namespace fastdds {

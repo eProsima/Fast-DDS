@@ -121,8 +121,8 @@ constexpr type_tracking selected_mode = type_tracking::complete;
 constexpr type_tracking selected_mode = type_tracking::none;
 #endif // if defined(ENABLE_DYNAMIC_MEMORY_CHECK) ...
 
-class TypeDescriptor;
-class MemberDescriptor;
+class TypeState;
+class MemberDescriptorImpl;
 
 /**
  * This class is conceived as a singleton charged of creation of @ref DynamicTypeBuilderImpl objects.
@@ -156,76 +156,76 @@ class DynamicTypeBuilderFactoryImpl final
     DynamicTypeBuilderFactoryImpl() = default;
 
     //! auxiliary method for primitive creation that atomically modifies the dynamic_tracker
-    DynamicTypeBuilder_ptr new_primitive_builder(
+    std::shared_ptr<DynamicTypeBuilderImpl> new_primitive_builder(
             TypeKind kind) noexcept;
 
     //! auxiliary method for string creation that atomically modifies the dynamic_tracker
-    DynamicTypeBuilder_ptr new_unlimited_string_builder(
+    std::shared_ptr<DynamicTypeBuilderImpl> new_unlimited_string_builder(
             bool large) noexcept;
 
     void build_alias_type_code(
-            const TypeDescriptor& descriptor,
+            const TypeState& descriptor,
             TypeObject& object,
             bool complete = true) const;
 
     void build_string8_type_code(
-            const TypeDescriptor& descriptor) const;
+            const TypeState& descriptor) const;
 
     void build_string16_type_code(
-            const TypeDescriptor& descriptor) const;
+            const TypeState& descriptor) const;
 
     void build_sequence_type_code(
-            const TypeDescriptor& descriptor,
+            const TypeState& descriptor,
             TypeObject& object,
             bool complete = true) const;
 
     void build_array_type_code(
-            const TypeDescriptor& descriptor,
+            const TypeState& descriptor,
             TypeObject& object,
             bool complete = true) const;
 
     void build_map_type_code(
-            const TypeDescriptor& descriptor,
+            const TypeState& descriptor,
             TypeObject& object,
             bool complete = true) const;
 
     void build_enum_type_code(
-            const TypeDescriptor& descriptor,
+            const TypeState& descriptor,
             TypeObject& object,
             bool complete = true) const;
 
     void build_struct_type_code(
-            const TypeDescriptor& descriptor,
+            const TypeState& descriptor,
             TypeObject& object,
             bool complete = true) const;
 
     void build_union_type_code(
-            const TypeDescriptor& descriptor,
+            const TypeState& descriptor,
             TypeObject& object,
             bool complete = true) const;
 
     void build_bitset_type_code(
-            const TypeDescriptor& descriptor,
+            const TypeState& descriptor,
             TypeObject& object,
             bool complete = true) const;
 
     void build_bitmask_type_code(
-            const TypeDescriptor& descriptor,
+            const TypeState& descriptor,
             TypeObject& object,
             bool complete = true) const;
 
     void build_annotation_type_code(
-            const TypeDescriptor& descriptor,
+            const TypeState& descriptor,
             TypeObject& object,
             bool complete = true) const;
 
     void set_annotation_default_value(
             AnnotationParameterValue& apv,
-            const MemberDescriptor& member) const;
+            const MemberDescriptorImpl& member) const;
 
     void apply_type_annotations(
             AppliedAnnotationSeq& annotations,
-            const TypeDescriptor& descriptor) const;
+            const TypeState& descriptor) const;
 
 public:
 
@@ -249,7 +249,7 @@ public:
     static ReturnCode_t delete_instance() noexcept;
 
     /**
-     * Create a new @ref DynamicTypeBuilderImpl object based on the given @ref TypeDescriptor state.
+     * Create a new @ref DynamicTypeBuilderImpl object based on the given @ref TypeState state.
      * @remark This method is thread-safe.
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.6 this method is
      *         called `create_type` which is misguiding. Note it returns a builder associated with the type.
@@ -259,7 +259,7 @@ public:
      * @return new @ref DynamicTypeBuilderImpl object
      */
     DynamicTypeBuilderImpl* create_type(
-            const TypeDescriptor& td) noexcept;
+            const TypeState& td) noexcept;
 
     /**
      * Create a new @ref DynamicTypeBuilderImpl object based on the given @ref DynamicTypeImpl object.
@@ -293,6 +293,84 @@ public:
      */
     const DynamicTypeImpl* get_primitive_type(
             TypeKind kind) noexcept;
+
+    //! alias of `create_type(TypeKind::TK_INT32)`
+    const DynamicTypeBuilderImpl* create_int32_type() noexcept;
+
+    //! alias of `create_type(TypeKind::TK_UINT32)`
+    const DynamicTypeBuilderImpl* create_uint32_type() noexcept;
+
+    //! alias of `create_type(TypeKind::TK_INT16)`
+    const DynamicTypeBuilderImpl* create_int16_type() noexcept;
+
+    //! alias of `create_type(TypeKind::TK_UINT16)`
+    const DynamicTypeBuilderImpl* create_uint16_type() noexcept;
+
+    //! alias of `create_type(TypeKind::TK_INT64)`
+    const DynamicTypeBuilderImpl* create_int64_type() noexcept;
+
+    //! alias of `create_type(TypeKind::TK_UINT64)`
+    const DynamicTypeBuilderImpl* create_uint64_type() noexcept;
+
+    //! alias of `create_type(TypeKind::TK_FLOAT32)`
+    const DynamicTypeBuilderImpl* create_float32_type() noexcept;
+
+    //! alias of `create_type(TypeKind::TK_FLOAT64)`
+    const DynamicTypeBuilderImpl* create_float64_type() noexcept;
+
+    //! alias of `create_type(TypeKind::TK_FLOAT128)`
+    const DynamicTypeBuilderImpl* create_float128_type() noexcept;
+
+    //! alias of `create_type(TypeKind::TK_CHAR8)`
+    const DynamicTypeBuilderImpl* create_char8_type() noexcept;
+
+    //! alias of `create_type(TypeKind::TK_CHAR16)`
+    const DynamicTypeBuilderImpl* create_char16_type() noexcept;
+
+    //! alias of `create_type(TypeKind::TK_BOOLEAN)`
+    const DynamicTypeBuilderImpl* create_bool_type() noexcept;
+
+    //! alias of `create_type(TypeKind::TK_BYTE)`
+    const DynamicTypeBuilderImpl* create_byte_type() noexcept;
+
+    //! returns the cache type associated to create_int16_type()
+    const DynamicTypeImpl* get_int16_type();
+
+    //! returns the cache type associated to create_uint16_type()
+    const DynamicTypeImpl* get_uint16_type();
+
+    //! returns the cache type associated to create_int32_type()
+    const DynamicTypeImpl* get_int32_type();
+
+    //! returns the cache type associated to create_uint32_type()
+    const DynamicTypeImpl* get_uint32_type();
+
+    //! returns the cache type associated to create_int64_type()
+    const DynamicTypeImpl* get_int64_type();
+
+    //! returns the cache type associated to create_uint64_type()
+    const DynamicTypeImpl* get_uint64_type();
+
+    //! returns the cache type associated to create_float32_type()
+    const DynamicTypeImpl* get_float32_type();
+
+    //! returns the cache type associated to create_float64_type()
+    const DynamicTypeImpl* get_float64_type();
+
+    //! returns the cache type associated to create_float128_type()
+    const DynamicTypeImpl* get_float128_type();
+
+    //! returns the cache type associated to create_char8_type()
+    const DynamicTypeImpl* get_char8_type();
+
+    //! returns the cache type associated to create_char16_type()
+    const DynamicTypeImpl* get_char16_type();
+
+    //! returns the cache type associated to create_bool_type()
+    const DynamicTypeImpl* get_bool_type();
+
+    //! returns the cache type associated to get_byte_type()
+    const DynamicTypeImpl* get_byte_type();
 
     /**
      * Frees any framework resources associated with the given type according with [standard] section 7.5.2.2.10.
@@ -331,7 +409,7 @@ public:
     create_primitive_type() noexcept
     {
         // C++11 compiler uses double-checked locking pattern to avoid concurrency issues
-        static DynamicTypeBuilder_cptr builder = { new_primitive_builder(kind) };
+        static std::shared_ptr<const DynamicTypeBuilderImpl> builder = { new_primitive_builder(kind) };
         if (builder)
         {
             builder->add_ref();
@@ -496,12 +574,12 @@ public:
             uint32_t bound);
 
     void build_type_identifier(
-            const TypeDescriptor& descriptor,
+            const TypeState& descriptor,
             TypeIdentifier& identifier,
             bool complete = true) const;
 
     void build_type_object(
-            const TypeDescriptor& descriptor,
+            const TypeState& descriptor,
             TypeObject& object,
             bool complete = true,
             bool force = false) const;
