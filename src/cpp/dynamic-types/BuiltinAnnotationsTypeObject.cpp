@@ -63,10 +63,10 @@ void register_builtin_annotations_types(
     factory->add_type_object("position", GetpositionIdentifier(true), GetpositionObject(true));
     factory->add_type_object("position", GetpositionIdentifier(false), GetpositionObject(false));
 
-/* TODO: pending any definition
-    factory->add_type_object("value", GetvalueIdentifier(true), GetvalueObject(true));
-    factory->add_type_object("value", GetvalueIdentifier(false), GetvalueObject(false));
-*/
+    /* TODO: pending any definition
+        factory->add_type_object("value", GetvalueIdentifier(true), GetvalueObject(true));
+        factory->add_type_object("value", GetvalueIdentifier(false), GetvalueObject(false));
+     */
 
     factory->add_type_object("extensibility", GetextensibilityIdentifier(true), GetextensibilityObject(true));
     factory->add_type_object("extensibility", GetextensibilityIdentifier(false), GetextensibilityObject(false));
@@ -102,19 +102,19 @@ void register_builtin_annotations_types(
     factory->add_type_object("default_literal", Getdefault_literalIdentifier(true), Getdefault_literalObject(true));
     factory->add_type_object("default_literal", Getdefault_literalIdentifier(false), Getdefault_literalObject(false));
 
-/* TODO: pending any definition
-    factory->add_type_object("default", GetdefaultIdentifier(true), GetdefaultObject(true));
-    factory->add_type_object("default", GetdefaultIdentifier(false), GetdefaultObject(false));
+    /* TODO: pending any definition
+        factory->add_type_object("default", GetdefaultIdentifier(true), GetdefaultObject(true));
+        factory->add_type_object("default", GetdefaultIdentifier(false), GetdefaultObject(false));
 
-    factory->add_type_object("range", GetrangeIdentifier(true), GetrangeObject(true));
-    factory->add_type_object("range", GetrangeIdentifier(false), GetrangeObject(false));
+        factory->add_type_object("range", GetrangeIdentifier(true), GetrangeObject(true));
+        factory->add_type_object("range", GetrangeIdentifier(false), GetrangeObject(false));
 
-    factory->add_type_object("min", GetminIdentifier(true), GetminObject(true));
-    factory->add_type_object("min", GetminIdentifier(false), GetminObject(false));
+        factory->add_type_object("min", GetminIdentifier(true), GetminObject(true));
+        factory->add_type_object("min", GetminIdentifier(false), GetminObject(false));
 
-    factory->add_type_object("max", GetmaxIdentifier(true), GetmaxObject(true));
-    factory->add_type_object("max", GetmaxIdentifier(false), GetmaxObject(false));
-*/
+        factory->add_type_object("max", GetmaxIdentifier(true), GetmaxObject(true));
+        factory->add_type_object("max", GetmaxIdentifier(false), GetmaxObject(false));
+     */
 
     factory->add_type_object("unit", GetunitIdentifier(true), GetunitObject(true));
     factory->add_type_object("unit", GetunitIdentifier(false), GetunitObject(false));
@@ -153,23 +153,31 @@ void register_builtin_annotations_types(
     factory->add_type_object("default_nested", Getdefault_nestedIdentifier(true), Getdefault_nestedObject(true));
     factory->add_type_object("default_nested", Getdefault_nestedIdentifier(false), Getdefault_nestedObject(false));
 
-    factory->add_type_object("ignore_literal_names", Getignore_literal_namesIdentifier(true), Getignore_literal_namesObject(true));
-    factory->add_type_object("ignore_literal_names", Getignore_literal_namesIdentifier(false), Getignore_literal_namesObject(false));
+    factory->add_type_object("ignore_literal_names", Getignore_literal_namesIdentifier(
+                true), Getignore_literal_namesObject(true));
+    factory->add_type_object("ignore_literal_names", Getignore_literal_namesIdentifier(
+                false), Getignore_literal_namesObject(false));
 
     factory->add_type_object("try_construct", Gettry_constructIdentifier(true), Gettry_constructObject(true));
     factory->add_type_object("try_construct", Gettry_constructIdentifier(false), Gettry_constructObject(false));
 
-    factory->add_type_object("TryConstructFailAction", GetTryConstructFailActionIdentifier(true), GetTryConstructFailActionObject(true));
-    factory->add_type_object("TryConstructFailAction", GetTryConstructFailActionIdentifier(false), GetTryConstructFailActionObject(false));
+    factory->add_type_object("TryConstructFailAction", GetTryConstructFailActionIdentifier(
+                true), GetTryConstructFailActionObject(true));
+    factory->add_type_object("TryConstructFailAction", GetTryConstructFailActionIdentifier(
+                false), GetTryConstructFailActionObject(false));
 
     factory->add_type_object("non_serialized", Getnon_serializedIdentifier(true), Getnon_serializedObject(true));
     factory->add_type_object("non_serialized", Getnon_serializedIdentifier(false), Getnon_serializedObject(false));
 
-    factory->add_type_object("DataRepresentationMask", GetDataRepresentationMaskIdentifier(true), GetDataRepresentationMaskObject(true));
-    factory->add_type_object("DataRepresentationMask", GetDataRepresentationMaskIdentifier(false), GetDataRepresentationMaskObject(false));
+    factory->add_type_object("DataRepresentationMask", GetDataRepresentationMaskIdentifier(
+                true), GetDataRepresentationMaskObject(true));
+    factory->add_type_object("DataRepresentationMask", GetDataRepresentationMaskIdentifier(
+                false), GetDataRepresentationMaskObject(false));
 
-    factory->add_type_object("data_representation", Getdata_representationIdentifier(true), Getdata_representationObject(true));
-    factory->add_type_object("data_representation", Getdata_representationIdentifier(false), Getdata_representationObject(false));
+    factory->add_type_object("data_representation", Getdata_representationIdentifier(true), Getdata_representationObject(
+                true));
+    factory->add_type_object("data_representation", Getdata_representationIdentifier(
+                false), Getdata_representationObject(false));
 
     factory->add_type_object("topic", GettopicIdentifier(true), GettopicObject(true));
     factory->add_type_object("topic", GettopicIdentifier(false), GettopicObject(false));
@@ -950,9 +958,9 @@ const TypeObject* GetCompletepositionObject()
 }
 
 /* TODO: pending any definition
-const TypeIdentifier* GetvalueIdentifier(
+   const TypeIdentifier* GetvalueIdentifier(
         bool complete)
-{
+   {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("value", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
@@ -961,11 +969,11 @@ const TypeIdentifier* GetvalueIdentifier(
 
     GetvalueObject(complete); // Generated inside
     return TypeObjectFactory::get_instance()->get_type_identifier("value", complete);
-}
+   }
 
-const TypeObject* GetvalueObject(
+   const TypeObject* GetvalueObject(
         bool complete)
-{
+   {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("value", complete);
     if (c_type_object != nullptr)
     {
@@ -977,10 +985,10 @@ const TypeObject* GetvalueObject(
     }
     // else
     return GetMinimalvalueObject();
-}
+   }
 
-const TypeObject* GetMinimalvalueObject()
-{
+   const TypeObject* GetMinimalvalueObject()
+   {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("value", false);
     if (c_type_object != nullptr)
     {
@@ -993,7 +1001,7 @@ const TypeObject* GetMinimalvalueObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
-// TODO(jlbueno): XTypes    mam_value.name("value");
+   // TODO(jlbueno): XTypes    mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -1023,10 +1031,10 @@ const TypeObject* GetMinimalvalueObject()
     TypeObjectFactory::get_instance()->add_type_object("value", &identifier, type_object);
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("value", false);
-}
+   }
 
-const TypeObject* GetCompletevalueObject()
-{
+   const TypeObject* GetCompletevalueObject()
+   {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("value", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
@@ -1080,8 +1088,8 @@ const TypeObject* GetCompletevalueObject()
     TypeObjectFactory::get_instance()->add_type_object("value", &identifier, type_object);
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("value", true);
-}
-*/
+   }
+ */
 
 const TypeIdentifier* GetextensibilityIdentifier(
         bool complete)
@@ -2098,9 +2106,9 @@ const TypeObject* GetCompletedefault_literalObject()
 }
 
 /* TODO: pending any definition
-const TypeIdentifier* GetdefaultIdentifier(
+   const TypeIdentifier* GetdefaultIdentifier(
         bool complete)
-{
+   {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("default", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
@@ -2109,11 +2117,11 @@ const TypeIdentifier* GetdefaultIdentifier(
 
     GetdefaultObject(complete); // Generated inside
     return TypeObjectFactory::get_instance()->get_type_identifier("default", complete);
-}
+   }
 
-const TypeObject* GetdefaultObject(
+   const TypeObject* GetdefaultObject(
         bool complete)
-{
+   {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("default", complete);
     if (c_type_object != nullptr)
     {
@@ -2125,10 +2133,10 @@ const TypeObject* GetdefaultObject(
     }
     // else
     return GetMinimaldefaultObject();
-}
+   }
 
-const TypeObject* GetMinimaldefaultObject()
-{
+   const TypeObject* GetMinimaldefaultObject()
+   {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("default", false);
     if (c_type_object != nullptr)
     {
@@ -2141,7 +2149,7 @@ const TypeObject* GetMinimaldefaultObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
-// TODO(jlbueno): XTypes    mam_value.name("value");
+   // TODO(jlbueno): XTypes    mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -2171,10 +2179,10 @@ const TypeObject* GetMinimaldefaultObject()
     TypeObjectFactory::get_instance()->add_type_object("default", &identifier, type_object);
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("default", false);
-}
+   }
 
-const TypeObject* GetCompletedefaultObject()
-{
+   const TypeObject* GetCompletedefaultObject()
+   {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("default", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
@@ -2228,11 +2236,11 @@ const TypeObject* GetCompletedefaultObject()
     TypeObjectFactory::get_instance()->add_type_object("default", &identifier, type_object);
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("default", true);
-}
+   }
 
-const TypeIdentifier* GetrangeIdentifier(
+   const TypeIdentifier* GetrangeIdentifier(
         bool complete)
-{
+   {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("range", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
@@ -2241,11 +2249,11 @@ const TypeIdentifier* GetrangeIdentifier(
 
     GetrangeObject(complete); // Generated inside
     return TypeObjectFactory::get_instance()->get_type_identifier("range", complete);
-}
+   }
 
-const TypeObject* GetrangeObject(
+   const TypeObject* GetrangeObject(
         bool complete)
-{
+   {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("range", complete);
     if (c_type_object != nullptr)
     {
@@ -2257,10 +2265,10 @@ const TypeObject* GetrangeObject(
     }
     // else
     return GetMinimalrangeObject();
-}
+   }
 
-const TypeObject* GetMinimalrangeObject()
-{
+   const TypeObject* GetMinimalrangeObject()
+   {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("range", false);
     if (c_type_object != nullptr)
     {
@@ -2273,13 +2281,13 @@ const TypeObject* GetMinimalrangeObject()
 
     MinimalAnnotationParameter mam_min;
     mam_min.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
-// TODO(jlbueno): XTypes    mam_min.name("min");
+   // TODO(jlbueno): XTypes    mam_min.name("min");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_min);
 
     MinimalAnnotationParameter mam_max;
     mam_max.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
-// TODO(jlbueno): XTypes    mam_max.name("max");
+   // TODO(jlbueno): XTypes    mam_max.name("max");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_max);
 
@@ -2309,10 +2317,10 @@ const TypeObject* GetMinimalrangeObject()
     TypeObjectFactory::get_instance()->add_type_object("range", &identifier, type_object);
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("range", false);
-}
+   }
 
-const TypeObject* GetCompleterangeObject()
-{
+   const TypeObject* GetCompleterangeObject()
+   {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("range", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
@@ -2372,11 +2380,11 @@ const TypeObject* GetCompleterangeObject()
     TypeObjectFactory::get_instance()->add_type_object("range", &identifier, type_object);
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("range", true);
-}
+   }
 
-const TypeIdentifier* GetminIdentifier(
+   const TypeIdentifier* GetminIdentifier(
         bool complete)
-{
+   {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("min", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
@@ -2385,11 +2393,11 @@ const TypeIdentifier* GetminIdentifier(
 
     GetminObject(complete); // Generated inside
     return TypeObjectFactory::get_instance()->get_type_identifier("min", complete);
-}
+   }
 
-const TypeObject* GetminObject(
+   const TypeObject* GetminObject(
         bool complete)
-{
+   {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("min", complete);
     if (c_type_object != nullptr)
     {
@@ -2401,10 +2409,10 @@ const TypeObject* GetminObject(
     }
     // else
     return GetMinimalminObject();
-}
+   }
 
-const TypeObject* GetMinimalminObject()
-{
+   const TypeObject* GetMinimalminObject()
+   {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("min", false);
     if (c_type_object != nullptr)
     {
@@ -2417,7 +2425,7 @@ const TypeObject* GetMinimalminObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
-// TODO(jlbueno): XTypes    mam_value.name("value");
+   // TODO(jlbueno): XTypes    mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -2447,10 +2455,10 @@ const TypeObject* GetMinimalminObject()
     TypeObjectFactory::get_instance()->add_type_object("min", &identifier, type_object);
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("min", false);
-}
+   }
 
-const TypeObject* GetCompleteminObject()
-{
+   const TypeObject* GetCompleteminObject()
+   {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("min", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
@@ -2504,11 +2512,11 @@ const TypeObject* GetCompleteminObject()
     TypeObjectFactory::get_instance()->add_type_object("min", &identifier, type_object);
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("min", true);
-}
+   }
 
-const TypeIdentifier* GetmaxIdentifier(
+   const TypeIdentifier* GetmaxIdentifier(
         bool complete)
-{
+   {
     const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("max", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
@@ -2517,11 +2525,11 @@ const TypeIdentifier* GetmaxIdentifier(
 
     GetmaxObject(complete); // Generated inside
     return TypeObjectFactory::get_instance()->get_type_identifier("max", complete);
-}
+   }
 
-const TypeObject* GetmaxObject(
+   const TypeObject* GetmaxObject(
         bool complete)
-{
+   {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("max", complete);
     if (c_type_object != nullptr)
     {
@@ -2533,10 +2541,10 @@ const TypeObject* GetmaxObject(
     }
     // else
     return GetMinimalmaxObject();
-}
+   }
 
-const TypeObject* GetMinimalmaxObject()
-{
+   const TypeObject* GetMinimalmaxObject()
+   {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("max", false);
     if (c_type_object != nullptr)
     {
@@ -2549,7 +2557,7 @@ const TypeObject* GetMinimalmaxObject()
 
     MinimalAnnotationParameter mam_value;
     mam_value.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
-// TODO(jlbueno): XTypes    mam_value.name("value");
+   // TODO(jlbueno): XTypes    mam_value.name("value");
 
     type_object->minimal().annotation_type().member_seq().emplace_back(mam_value);
 
@@ -2579,10 +2587,10 @@ const TypeObject* GetMinimalmaxObject()
     TypeObjectFactory::get_instance()->add_type_object("max", &identifier, type_object);
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("max", false);
-}
+   }
 
-const TypeObject* GetCompletemaxObject()
-{
+   const TypeObject* GetCompletemaxObject()
+   {
     const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("max", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
@@ -2636,8 +2644,8 @@ const TypeObject* GetCompletemaxObject()
     TypeObjectFactory::get_instance()->add_type_object("max", &identifier, type_object);
     delete type_object;
     return TypeObjectFactory::get_instance()->get_type_object("max", true);
-}
-*/
+   }
+ */
 
 const TypeIdentifier* GetunitIdentifier(
         bool complete)
@@ -4099,7 +4107,8 @@ const TypeObject* GetCompletehashidObject()
 const TypeIdentifier* Getdefault_nestedIdentifier(
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("default_nested", complete);
+    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("default_nested",
+                    complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
@@ -4233,7 +4242,8 @@ const TypeObject* GetCompletedefault_nestedObject()
 const TypeIdentifier* Getignore_literal_namesIdentifier(
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ignore_literal_names", complete);
+    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ignore_literal_names",
+                    complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
@@ -4246,7 +4256,8 @@ const TypeIdentifier* Getignore_literal_namesIdentifier(
 const TypeObject* Getignore_literal_namesObject(
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ignore_literal_names", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ignore_literal_names",
+                    complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4367,8 +4378,9 @@ const TypeObject* GetCompleteignore_literal_namesObject()
 const TypeIdentifier* GetTryConstructFailActionIdentifier(
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("TryConstructFailAction",
-                    complete);
+    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier(
+        "TryConstructFailAction",
+        complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
@@ -4381,7 +4393,8 @@ const TypeIdentifier* GetTryConstructFailActionIdentifier(
 const TypeObject* GetTryConstructFailActionObject(
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("TryConstructFailAction", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("TryConstructFailAction",
+                    complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4396,7 +4409,8 @@ const TypeObject* GetTryConstructFailActionObject(
 
 const TypeObject* GetMinimalTryConstructFailActionObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("TryConstructFailAction", false);
+    const TypeObject* c_type_object =
+            TypeObjectFactory::get_instance()->get_type_object("TryConstructFailAction", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4468,7 +4482,8 @@ const TypeObject* GetMinimalTryConstructFailActionObject()
 
 const TypeObject* GetCompleteTryConstructFailActionObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("TryConstructFailAction", true);
+    const TypeObject* c_type_object =
+            TypeObjectFactory::get_instance()->get_type_object("TryConstructFailAction", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -4530,7 +4545,8 @@ const TypeObject* GetCompleteTryConstructFailActionObject()
 const TypeIdentifier* Gettry_constructIdentifier(
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("try_construct", complete);
+    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("try_construct",
+                    complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
@@ -4811,7 +4827,8 @@ const TypeObject* GetCompletenon_serializedObject()
 const TypeIdentifier* GetDataRepresentationMaskIdentifier(
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("DataRepresentationMask", complete);
+    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier(
+        "DataRepresentationMask", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
@@ -4824,7 +4841,8 @@ const TypeIdentifier* GetDataRepresentationMaskIdentifier(
 const TypeObject* GetDataRepresentationMaskObject(
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("DataRepresentationMask", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("DataRepresentationMask",
+                    complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4839,13 +4857,14 @@ const TypeObject* GetDataRepresentationMaskObject(
 
 const TypeObject* GetMinimalDataRepresentationMaskObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("DataRepresentationMask", false);
+    const TypeObject* c_type_object =
+            TypeObjectFactory::get_instance()->get_type_object("DataRepresentationMask", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
 
-    TypeObject *type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject();
     type_object->_d(EK_MINIMAL);
     // MinimalTypeObject
     type_object->minimal()._d(TK_BITMASK);
@@ -4872,7 +4891,7 @@ const TypeObject* GetMinimalDataRepresentationMaskObject()
     // MinimalMemberDetail
     // NameHash
     MD5 XCDR1_hash("XCDR1");
-    for(int i = 0; i < 4; ++i)
+    for (int i = 0; i < 4; ++i)
     {
         mbf_XCDR1.detail().name_hash()[i] = XCDR1_hash.digest[i];
     }
@@ -4881,7 +4900,7 @@ const TypeObject* GetMinimalDataRepresentationMaskObject()
     MinimalBitflag mbf_XML;
     mbf_XML.common().position(1);
     MD5 XML_hash("XML");
-    for(int i = 0; i < 4; ++i)
+    for (int i = 0; i < 4; ++i)
     {
         mbf_XML.detail().name_hash()[i] = XML_hash.digest[i];
     }
@@ -4890,7 +4909,7 @@ const TypeObject* GetMinimalDataRepresentationMaskObject()
     MinimalBitflag mbf_XCDR2;
     mbf_XCDR2.common().position(2);
     MD5 XCDR2_hash("XCDR2");
-    for(int i = 0; i < 4; ++i)
+    for (int i = 0; i < 4; ++i)
     {
         mbf_XCDR2.detail().name_hash()[i] = XCDR2_hash.digest[i];
     }
@@ -4901,7 +4920,7 @@ const TypeObject* GetMinimalDataRepresentationMaskObject()
     identifier._d(EK_MINIMAL);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalBitmaskType::getCdrSerializedSize(type_object->minimal().bitmask_type()) + 4));
+                MinimalBitmaskType::getCdrSerializedSize(type_object->minimal().bitmask_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -4914,7 +4933,7 @@ const TypeObject* GetMinimalDataRepresentationMaskObject()
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
-    for(int i = 0; i < 14; ++i)
+    for (int i = 0; i < 14; ++i)
     {
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
@@ -4926,13 +4945,14 @@ const TypeObject* GetMinimalDataRepresentationMaskObject()
 
 const TypeObject* GetCompleteDataRepresentationMaskObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("DataRepresentationMask", true);
+    const TypeObject* c_type_object =
+            TypeObjectFactory::get_instance()->get_type_object("DataRepresentationMask", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
     }
 
-    TypeObject *type_object = new TypeObject();
+    TypeObject* type_object = new TypeObject();
     type_object->_d(EK_COMPLETE);
 
     // CompleteTypeObject
@@ -4962,7 +4982,7 @@ const TypeObject* GetCompleteDataRepresentationMaskObject()
 
     // NameHash
     MD5 value_hash("value");
-    for(int i = 0; i < 4; ++i)
+    for (int i = 0; i < 4; ++i)
     {
         ann_bit_bound_parameter.paramname_hash()[i] = value_hash.digest[i];
     }
@@ -4998,7 +5018,8 @@ const TypeObject* GetCompleteDataRepresentationMaskObject()
         // AppliedAnnotation: @position
         AppliedAnnotation ann_position;
         // TypeIdentifier
-        ann_position.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+        ann_position.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+                    "position"));
         // AppliedAnnotationParameterSeq
 
         // AppliedAnnotationParameter
@@ -5006,7 +5027,7 @@ const TypeObject* GetCompleteDataRepresentationMaskObject()
 
         // NameHash
         MD5 value_hash("value");
-        for(int i = 0; i < 4; ++i)
+        for (int i = 0; i < 4; ++i)
         {
             ann_position_parameter.paramname_hash()[i] = value_hash.digest[i];
         }
@@ -5026,10 +5047,11 @@ const TypeObject* GetCompleteDataRepresentationMaskObject()
     cbf_XML.detail().name("XML");
     {
         AppliedAnnotation ann_position;
-        ann_position.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+        ann_position.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+                    "position"));
         AppliedAnnotationParameter ann_position_parameter;
         MD5 value_hash("value");
-        for(int i = 0; i < 4; ++i)
+        for (int i = 0; i < 4; ++i)
         {
             ann_position_parameter.paramname_hash()[i] = value_hash.digest[i];
         }
@@ -5046,10 +5068,11 @@ const TypeObject* GetCompleteDataRepresentationMaskObject()
     cbf_XCDR2.detail().name("XCDR2");
     {
         AppliedAnnotation ann_position;
-        ann_position.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("position"));
+        ann_position.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(
+                    "position"));
         AppliedAnnotationParameter ann_position_parameter;
         MD5 value_hash("value");
-        for(int i = 0; i < 4; ++i)
+        for (int i = 0; i < 4; ++i)
         {
             ann_position_parameter.paramname_hash()[i] = value_hash.digest[i];
         }
@@ -5066,7 +5089,7 @@ const TypeObject* GetCompleteDataRepresentationMaskObject()
     identifier._d(EK_COMPLETE);
 
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteBitmaskType::getCdrSerializedSize(type_object->complete().bitmask_type()) + 4));
+                CompleteBitmaskType::getCdrSerializedSize(type_object->complete().bitmask_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -5079,7 +5102,7 @@ const TypeObject* GetCompleteDataRepresentationMaskObject()
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
-    for(int i = 0; i < 14; ++i)
+    for (int i = 0; i < 14; ++i)
     {
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
@@ -5092,7 +5115,8 @@ const TypeObject* GetCompleteDataRepresentationMaskObject()
 const TypeIdentifier* Getdata_representationIdentifier(
         bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("data_representation", complete);
+    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("data_representation",
+                    complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
@@ -5105,7 +5129,8 @@ const TypeIdentifier* Getdata_representationIdentifier(
 const TypeObject* Getdata_representationObject(
         bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("data_representation", complete);
+    const TypeObject* c_type_object =
+            TypeObjectFactory::get_instance()->get_type_object("data_representation", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
