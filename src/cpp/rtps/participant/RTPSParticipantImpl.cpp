@@ -2682,7 +2682,7 @@ void RTPSParticipantImpl::set_enabled_statistics_writers_mask(
 }
 
 const fastdds::statistics::rtps::IStatusListener* RTPSParticipantImpl::create_monitor_service(
-        fastdds::statistics::rtps::IStatusQueryable& /*sq*/)
+        fastdds::statistics::rtps::IStatusQueryable& /*status_queryable*/)
 {
     return nullptr;
 }

@@ -1133,14 +1133,14 @@ public:
      * Creates the monitor service in this RTPSParticipant with the provided interfaces.
      *
      * @param sq reference to the object implementing the StatusQueryable interface.
-     * It will usually be the DDS DoaminParticipant
+     * It will usually be the DDS DomainParticipant
      *
      * @return A const pointer to the listener (implemented within the RTPSParticipant)
      *
      * @note Not supported yet. Currently always returns nullptr
      */
     const fastdds::statistics::rtps::IStatusListener* create_monitor_service(
-            fastdds::statistics::rtps::IStatusQueryable& sq);
+            fastdds::statistics::rtps::IStatusQueryable& status_queryable);
 
     /**
      * Creates the monitor service in this RTPSParticipant with a simple default
