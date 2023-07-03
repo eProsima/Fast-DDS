@@ -1,0 +1,122 @@
+// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * @file include/fastdds/statistics/monitorservice_types.idl
+ */
+
+#include "types.idl"
+
+module eprosima {
+module fastdds {
+module statistics {
+
+	enum ConnectionMode
+	{
+		DATA_SHARING,
+		INTRAPROCESS,
+		TRANSPORT
+	};
+
+	struct Connection
+	{
+		ConnectionMode mode;
+		detail::GUID_s guid;
+		sequence<detail::Locator_s> announced_locators;
+		sequence<detail::Locator_s> used_locators;
+	};
+
+	struct QosPolicyCount_s
+	{
+		unsigned long policy_id;
+		unsigned long count;
+	};
+
+	struct BaseStatus_s
+	{
+		unsigned long total_count;
+	};
+
+	typedef sequence<QosPolicyCount_s> QosPolicyCountSeq_s;
+
+	struct IncompatibleQoSStatus_s
+	{
+		unsigned long total_count;
+		unsigned long last_policy_id;
+		QosPolicyCountSeq_s policies;
+	};
+
+	struct LivelinessChangedStatus_s
+	{
+		unsigned long alive_count;
+		unsigned long not_alive_count;
+		octet last_publication_handle[16];
+	};
+
+	struct DeadlineMissedStatus_s
+	{
+		unsigned long total_count;
+		octet last_instance_handle[16];
+	};
+
+	typedef BaseStatus_s LivelinessLostStatus_s;
+	typedef BaseStatus_s InconsistentTopicStatus_s;
+	typedef BaseStatus_s SampleLostStatus_s;
+
+	enum StatusKind
+	{
+		PROXY,
+		CONNECTION_LIST,
+		INCOMPATIBLE_QOS,
+		INCONSISTENT_TOPIC,
+		LIVELINESS_LOST,
+		LIVELINESS_CHANGED,
+		DEADLINE_MISSED,
+		SAMPLE_LOST,
+		STATUSES_SIZE
+	};
+
+	union MonitorServiceData switch(StatusKind)
+	{
+		case PROXY:
+			sequence<octet> entity_proxy;
+		case CONNECTION_LIST:
+			sequence<Connection> connection_list;
+		case INCOMPATIBLE_QOS:
+			IncompatibleQoSStatus_s incompatible_qos_status;
+		case INCONSISTENT_TOPIC:
+			InconsistentTopicStatus_s inconsistent_topic_status;
+		case LIVELINESS_LOST:
+			LivelinessLostStatus_s liveliness_lost_status;
+		case LIVELINESS_CHANGED:
+			LivelinessChangedStatus_s liveliness_changed_status;
+		case DEADLINE_MISSED:
+			DeadlineMissedStatus_s deadline_missed_status;
+		case SAMPLE_LOST:
+			SampleLostStatus_s sample_lost_status;
+		case STATUSES_SIZE:
+			octet statuses_size;
+	};
+
+	struct MonitorServiceStatusData
+	{
+		@Key detail::GUID_s local_entity;
+		@Key StatusKind status_kind;
+		MonitorServiceData value;
+	};
+
+}; // namespace statisitcs
+}; // namespace fastdds
+}; // namespace eprosima
+
