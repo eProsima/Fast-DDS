@@ -161,6 +161,18 @@ public:
         return strncmp(string_data, rhs.c_str(), MAX_CHARS) != 0;
     }
 
+    template<size_t N>  bool operator < (
+            const fixed_string<N>& rhs) const noexcept
+    {
+        return 0 > compare(rhs);
+    }
+
+    template<size_t N>  bool operator > (
+            const fixed_string<N>& rhs) const noexcept
+    {
+        return 0 < compare(rhs);
+    }
+
     bool operator < (
             const std::string& rhs) const noexcept
     {
