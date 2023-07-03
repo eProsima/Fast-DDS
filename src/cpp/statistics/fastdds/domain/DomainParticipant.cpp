@@ -94,6 +94,24 @@ const DomainParticipant* DomainParticipant::narrow(
 #endif // FASTDDS_STATISTICS
 }
 
+ReturnCode_t DomainParticipant::enable_monitor_service() const
+{
+#ifdef FASTDDS_STATISTICS
+    return static_cast<DomainParticipantImpl*>(impl_)->enable_monitor_service();
+#else
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+#endif // FASTDDS_STATISTICS
+}
+
+ReturnCode_t DomainParticipant::disable_monitor_service() const
+{
+#ifdef FASTDDS_STATISTICS
+    return static_cast<DomainParticipantImpl*>(impl_)->disable_monitor_service();
+#else
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+#endif // FASTDDS_STATISTICS
+}
+
 } // dds
 } // statistics
 } // fastdds

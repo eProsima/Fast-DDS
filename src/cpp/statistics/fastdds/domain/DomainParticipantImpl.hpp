@@ -122,6 +122,29 @@ public:
      */
     ReturnCode_t delete_contained_entities() override;
 
+    /**
+     * Enables the monitor service in this DomainParticipant.
+     *
+     * @return RETCODE_OK if the monitor service could be correctly enabled.
+     * @return RETCODE_ERROR if the monitor service could not be enabled properly.
+     * @return RETCODE_UNSUPPORTED if FASTDDS_STATISTICS is not enabled.
+     *
+     * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
+     */
+    ReturnCode_t enable_monitor_service() const;
+
+    /**
+     * Disables the monitor service in this DomainParticipant. Does nothing if the service was not enabled before.
+     *
+     * @return RETCODE_OK if the monitor service could be correctly disabled.
+     * @return RETCODE_NOT_ENABLED if the monitor service was not previously enabled.
+     * @return RETCODE_ERROR if the service could not be properly disabled.
+     * @return RETCODE_UNSUPPORTED if FASTDDS_STATISTICS is not enabled.
+     *
+     * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
+     */
+    ReturnCode_t disable_monitor_service() const;
+
 protected:
 
     /**
