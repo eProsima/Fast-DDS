@@ -24,8 +24,8 @@ files_needing_case_sensitive=(
 
 files_needing_output_dir=(
     './include/fastdds/statistics/types.idl|../../../src/cpp/statistics/types|../../../test/blackbox/types/statistics'
+    './include/fastdds/statistics/monitorservice_types.idl|../../../src/cpp/statistics/types'
     )
-
 
 red='\E[1;31m'
 yellow='\E[1;33m'
