@@ -21,23 +21,13 @@
 
 #include <gtest/gtest.h>
 
-#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
-#include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
-#include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
-#include <fastdds/rtps/participant/RTPSParticipant.h>
-#include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/log/Log.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#include "RTPSAsSocketReader.hpp"
-#include "RTPSAsSocketWriter.hpp"
-#include "RTPSWithRegistrationReader.hpp"
-#include "RTPSWithRegistrationWriter.hpp"
-
-#include "PubSubReader.hpp"
-#include "PubSubWriter.hpp"
+#include "../api/dds-pim/PubSubReader.hpp"
+#include "../api/dds-pim/PubSubWriter.hpp"
 #include <rtps/transport/test_UDPv4Transport.h>
 
 using namespace eprosima::fastrtps;
@@ -46,37 +36,35 @@ using test_UDPv4Transport = eprosima::fastdds::rtps::test_UDPv4Transport;
 
 enum communication_type
 {
-    INTERPROCESS,
-    INTRAPROCESS
+    TRANSPORT,
+    INTRAPROCESS,
+    DATASHARING
 };
 
-enum data_sharing_status
-{
-    ENABLED,
-    DISABLED
-};
-
-struct test_parameters
-{
-    communication_type type;
-    data_sharing_status status;
-};
-
-class RTPS : public testing::TestWithParam<test_parameters>
+class RTPS : public testing::TestWithParam<communication_type>
 {
 public:
 
     void SetUp() override
     {
         LibrarySettingsAttributes library_settings;
-        switch (GetParam().type)
+        switch (GetParam())
         {
             case INTRAPROCESS:
+                enable_datasharing = false;
                 library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
                 xmlparser::XMLProfileManager::library_settings(library_settings);
                 break;
-            case INTERPROCESS:
+            case DATASHARING:
+                enable_datasharing = true;
+                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+                xmlparser::XMLProfileManager::library_settings(library_settings);
+                break;
+            case TRANSPORT:
             default:
+                enable_datasharing = false;
+                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
+                xmlparser::XMLProfileManager::library_settings(library_settings);
                 break;
         }
     }
@@ -84,35 +72,27 @@ public:
     void TearDown() override
     {
         LibrarySettingsAttributes library_settings;
-        switch (GetParam().type)
+        switch (GetParam())
         {
             case INTRAPROCESS:
-                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
+                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
                 xmlparser::XMLProfileManager::library_settings(library_settings);
                 break;
-            case INTERPROCESS:
+            case DATASHARING:
+                enable_datasharing = false;
+                break;
+            case TRANSPORT:
             default:
                 break;
         }
     }
+
 };
 
-TEST_P(RTPS, RTPSTransport_SHM_UDP_test)
+TEST_P(RTPS, Transport_SHM_UDP_test)
 {
-    bool enable_data_sharing = false;
-    switch (GetParam().status)
-    {
-        case ENABLED:
-            enable_data_sharing = true;
-            break;
-        case DISABLED:
-        default:
-            enable_data_sharing = false;
-            break;
-    }
-
     static struct test_conditions{
-        uint32_t pub_unicast_port = 7525;
+        uint32_t pub_unicast_port = 7411;
         uint32_t pub_metatraffic_unicast_port = 7526;
         uint32_t sub_unicast_port = 7527;
         uint32_t sub_metatraffic_unicast_port = 7528;
@@ -129,13 +109,17 @@ TEST_P(RTPS, RTPSTransport_SHM_UDP_test)
     reader.disable_builtin_transport()
             .add_user_transport_to_pparams(sub_shm_descriptor)
             .add_user_transport_to_pparams(sub_udp_descriptor)
-            .data_sharing(enable_data_sharing)
+            .data_sharing(enable_datasharing)
             .reliability(BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(VOLATILE_DURABILITY_QOS)
+            .history_kind(KEEP_ALL_HISTORY_QOS)
             .add_to_unicast_locator_list("localhost", conditions.sub_unicast_port)
             .add_to_metatraffic_unicast_locator_list("localhost", conditions.sub_metatraffic_unicast_port)
             .init();
     ASSERT_TRUE(reader.isInitialized());
+
+    //reader.unicastLocatorList()
+    // get locator list and obtain port
 
     auto pub_shm_descriptor = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
     pub_shm_descriptor->segment_size(2 * 1024 * 1024);
@@ -144,9 +128,10 @@ TEST_P(RTPS, RTPSTransport_SHM_UDP_test)
     writer.disable_builtin_transport()
             .add_user_transport_to_pparams(pub_shm_descriptor)
             .add_user_transport_to_pparams(pub_udp_descriptor)
-            .data_sharing(enable_data_sharing)
+            .data_sharing(enable_datasharing)
             .reliability(BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(VOLATILE_DURABILITY_QOS)
+            .history_kind(KEEP_ALL_HISTORY_QOS)
             .asynchronously(SYNCHRONOUS_PUBLISH_MODE)
             .add_to_unicast_locator_list("localhost", conditions.pub_unicast_port)
             .add_to_metatraffic_unicast_locator_list("localhost", conditions.pub_metatraffic_unicast_port)
@@ -159,6 +144,7 @@ TEST_P(RTPS, RTPSTransport_SHM_UDP_test)
 
     // Send some data.
     auto data = default_helloworld_data_generator();
+    reader.startReception(data);
     writer.send(data);
     // In this test all data should be sent.
     ASSERT_TRUE(data.empty());
@@ -170,6 +156,7 @@ TEST_P(RTPS, RTPSTransport_SHM_UDP_test)
     uint32_t n_packages_sent = sizeof(uint32_t);
     for (std::map<uint32_t,uint32_t>::iterator it = test_UDPv4Transport::messages_sent.begin(); it != test_UDPv4Transport::messages_sent.end(); ++it)
     {
+        std::cout << "port: " << it->first << ", n_packages: " << it->second << std::endl;
         if (it->first == conditions.pub_unicast_port)
         {
             n_packages_sent = it->second;
@@ -186,23 +173,19 @@ TEST_P(RTPS, RTPSTransport_SHM_UDP_test)
 
 GTEST_INSTANTIATE_TEST_MACRO(RTPS,
         RTPS,
-        testing::Values(INTERPROCESS, INTRAPROCESS, ENABLED, DISABLED),
+        testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
         [](const testing::TestParamInfo<RTPS::ParamType>& info)
         {
             switch (info.param)
             {
                 case INTRAPROCESS:
-                    return "Communication intraprocess";
+                    return "Intraprocess";
                     break;
-                case INTERPROCESS:
-                    return "Communication interprocess";
+                case DATASHARING:
+                    return "Datasharing";
                     break;
-                case ENABLED:
-                    return "Data sharing automatic (enabled)";
-                    break;
-                case DISABLED:
+                case TRANSPORT:
                 default:
-                    return "Data sharing disabled";
+                    return "Transport";
             }
-
         });
