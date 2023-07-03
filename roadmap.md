@@ -15,7 +15,7 @@ at any time.
 
 Disclaimer:
 
-* This section has been last updated in December 2022.
+* This section has been last updated in June 2023.
   Please take into account its content could be obsolete.
 
 ## Short term
