@@ -265,6 +265,8 @@ if (FASTDDS_STATISTICS)
         statistics/types/monitorservice_typesPubSubTypes.cxx
         statistics/types/types.cxx
         statistics/types/typesPubSubTypes.cxx
+        statistics/types/monitorservice_typesPubSubTypes.cxx
+        statistics/types/monitorservice_types.cxx
         )
 
     list(APPEND ${PROJECT_NAME}_source_files
