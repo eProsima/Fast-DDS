@@ -283,6 +283,16 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
     return ret;
 }
 
+ReturnCode_t DomainParticipantImpl::enable_monitor_service() const
+{
+    return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
+ReturnCode_t DomainParticipantImpl::disable_monitor_service() const
+{
+    return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
+}
+
 efd::PublisherImpl* DomainParticipantImpl::create_publisher_impl(
         const efd::PublisherQos& qos,
         efd::PublisherListener* listener)
