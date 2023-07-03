@@ -1010,6 +1010,20 @@ public:
         return *this;
     }
 
+    PubSubReader& data_sharing(
+            bool enable)
+    {
+        if (enable)
+        {
+            datareader_qos_.data_sharing().automatic();
+        }
+        else
+        {
+            datareader_qos_.data_sharing().off();
+        }
+        return *this;
+    }
+
     PubSubReader& unicastLocatorList(
             const eprosima::fastdds::rtps::LocatorList& unicast_locators)
     {

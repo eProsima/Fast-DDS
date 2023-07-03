@@ -972,6 +972,20 @@ public:
         return *this;
     }
 
+    PubSubWriter& data_sharing(
+            bool enable)
+    {
+        if (enable)
+        {
+            datawriter_qos_.data_sharing().automatic();
+        }
+        else
+        {
+            datawriter_qos_.data_sharing().off();
+        }
+        return *this;
+    }
+
     PubSubWriter& matched_readers_allocation(
             size_t initial,
             size_t maximum)

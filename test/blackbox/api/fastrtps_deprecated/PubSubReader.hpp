@@ -1180,20 +1180,6 @@ public:
         return subscriber_->updateAttributes(subscriber_attr_);
     }
 
-    PubSubReader& data_sharing(
-            bool enable)
-    {
-        if (enable)
-        {
-            subscriber_attr_.qos.data_sharing().automatic();
-        }
-        else
-        {
-            subscriber_attr_.qos.data_sharing().off();
-        }
-        return *this;
-    }
-
     /*** Function for discovery callback ***/
 
     void wait_discovery_result()

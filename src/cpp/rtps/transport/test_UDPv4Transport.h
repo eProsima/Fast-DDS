@@ -104,8 +104,8 @@ private:
     std::vector<fastrtps::rtps::SequenceNumber_t> sequence_number_data_messages_to_drop_;
     test_UDPv4TransportDescriptor::DestinationLocatorFilter locator_filter_;
 
-    void increase_message_sent(
-            uint32_t port);
+    /*void increase_message_sent(
+            uint32_t port);*/
 
     bool should_drop_locator(
             const Locator& remote_locator);
