@@ -60,7 +60,7 @@ macro(fastrtps_load_targets type)
         return()
     endif ()
 
-    # find OpenSSL
+    # find related dependency packages like OpenSSL
     @FASTRTPS_INSTALLER_OPT_DEPS@
     @FASTRTPS_PACKAGE_WIN32_OPT_DEPS@
 
