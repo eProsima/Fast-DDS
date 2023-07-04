@@ -1484,7 +1484,7 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
         // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
         eprosima::fastcdr::Cdr ser(
             fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+            eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
         payload.encapsulation = CDR_LE;
 
         object.serialize(ser);
@@ -1538,7 +1538,7 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
         // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
         eprosima::fastcdr::Cdr ser(
             fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+            eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
         payload.encapsulation = CDR_LE;
 
         object.serialize(ser);
@@ -1598,7 +1598,7 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
         // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
         eprosima::fastcdr::Cdr ser(
             fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+            eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
         payload.encapsulation = CDR_LE;
 
         object.serialize(ser);
@@ -1641,7 +1641,7 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
         // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
         eprosima::fastcdr::Cdr ser(
             fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+            eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
         payload.encapsulation = CDR_LE;
 
         object.serialize(ser);
@@ -1743,7 +1743,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
         eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-                eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+                eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
         payload.encapsulation = CDR_LE;
         // Serialize encapsulation
 
@@ -1834,7 +1834,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
         eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-                eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+                eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
         payload.encapsulation = CDR_LE;
         // Serialize encapsulation
 
@@ -1949,7 +1949,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
         eprosima::fastcdr::Cdr ser(
             fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+            eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
         payload.encapsulation = CDR_LE;
 
         object.serialize(ser);
@@ -2050,7 +2050,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
         eprosima::fastcdr::Cdr ser(
             fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-            eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+            eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
         payload.encapsulation = CDR_LE;
 
         object.serialize(ser);
@@ -2125,7 +2125,7 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
         eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-                eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+                eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
         payload.encapsulation = CDR_LE;
         // Serialize encapsulation
 
@@ -2190,7 +2190,7 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
         eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-                eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+                eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
         payload.encapsulation = CDR_LE;
         // Serialize encapsulation
 
@@ -2256,7 +2256,7 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
         eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-                eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+                eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
         payload.encapsulation = CDR_LE;
         // Serialize encapsulation
 
@@ -2307,7 +2307,7 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
         eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-                eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+                eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
         payload.encapsulation = CDR_LE;
         // Serialize encapsulation
 
@@ -2380,7 +2380,7 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
         eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-                eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+                eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
         payload.encapsulation = CDR_LE;
         // Serialize encapsulation
 
@@ -2443,7 +2443,7 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
         eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
         eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-                eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+                eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
         payload.encapsulation = CDR_LE;
         // Serialize encapsulation
 
