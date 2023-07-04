@@ -23,7 +23,9 @@
 #define _FAST_DDS_GENERATED_BENCHMARK_SMALL_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
 
 #include <stdint.h>
 #include <array>
@@ -44,16 +46,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(Benchmark_small_SOURCE)
-#define Benchmark_small_DllAPI __declspec( dllexport )
+#if defined(BENCHMARK_SMALL_SOURCE)
+#define BENCHMARK_SMALL_DllAPI __declspec( dllexport )
 #else
-#define Benchmark_small_DllAPI __declspec( dllimport )
-#endif // Benchmark_small_SOURCE
+#define BENCHMARK_SMALL_DllAPI __declspec( dllimport )
+#endif // BENCHMARK_SMALL_SOURCE
 #else
-#define Benchmark_small_DllAPI
+#define BENCHMARK_SMALL_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define Benchmark_small_DllAPI
+#define BENCHMARK_SMALL_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +67,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure BenchMarkSmall defined by the user in the IDL file.
- * @ingroup BENCHMARK_SMALL
+ * @ingroup Benchmark_small
  */
 class BenchMarkSmall
 {
@@ -183,7 +185,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const BenchMarkSmall& data,
             size_t current_alignment = 0);
 
@@ -227,8 +230,8 @@ public:
 
 private:
 
-    std::array<char, 16384> m_array;
-    uint32_t m_index;
+    std::array<char, 16384> m_array{0};
+    uint32_t m_index{0};
 
 };
 

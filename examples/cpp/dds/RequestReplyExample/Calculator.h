@@ -23,7 +23,9 @@
 #define _FAST_DDS_GENERATED_CALCULATOR_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
 
 #include <stdint.h>
 #include <array>
@@ -44,16 +46,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(Calculator_SOURCE)
-#define Calculator_DllAPI __declspec( dllexport )
+#if defined(CALCULATOR_SOURCE)
+#define CALCULATOR_DllAPI __declspec( dllexport )
 #else
-#define Calculator_DllAPI __declspec( dllimport )
-#endif // Calculator_SOURCE
+#define CALCULATOR_DllAPI __declspec( dllimport )
+#endif // CALCULATOR_SOURCE
 #else
-#define Calculator_DllAPI
+#define CALCULATOR_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define Calculator_DllAPI
+#define CALCULATOR_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +67,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the enumeration OperationType defined by the user in the IDL file.
- * @ingroup CALCULATOR
+ * @ingroup Calculator
  */
 enum OperationType : uint32_t
 {
@@ -76,7 +78,7 @@ enum OperationType : uint32_t
 };
 /*!
  * @brief This class represents the structure RequestType defined by the user in the IDL file.
- * @ingroup CALCULATOR
+ * @ingroup Calculator
  */
 class RequestType
 {
@@ -207,7 +209,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const RequestType& data,
             size_t current_alignment = 0);
 
@@ -251,14 +254,14 @@ public:
 
 private:
 
-    OperationType m_operation;
-    int32_t m_x;
-    int32_t m_y;
+    OperationType m_operation{::ADDITION};
+    int32_t m_x{0};
+    int32_t m_y{0};
 
 };
 /*!
  * @brief This class represents the structure ReplyType defined by the user in the IDL file.
- * @ingroup CALCULATOR
+ * @ingroup Calculator
  */
 class ReplyType
 {
@@ -335,7 +338,6 @@ public:
      */
     eProsima_user_DllExport int64_t& z();
 
-
     /*!
     * @brief This function returns the maximum serialized size of an object
     * depending on the buffer alignment.
@@ -351,7 +353,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const ReplyType& data,
             size_t current_alignment = 0);
 
@@ -395,7 +398,7 @@ public:
 
 private:
 
-    int64_t m_z;
+    int64_t m_z{0};
 
 };
 

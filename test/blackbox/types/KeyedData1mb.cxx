@@ -34,14 +34,12 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define KeyedData1mb_max_cdr_typesize 1024004ULL;
+#define KeyedData1mb_max_cdr_typesize 1024008ULL;
 #define KeyedData1mb_max_key_cdr_typesize 2ULL;
 
 KeyedData1mb::KeyedData1mb()
 {
-    // unsigned short m_key
-    m_key = 0;
-    // sequence<octet, 1023996> m_data
+
 
 
 }
@@ -106,26 +104,28 @@ size_t KeyedData1mb::getMaxCdrSerializedSize(
     return KeyedData1mb_max_cdr_typesize;
 }
 
-size_t KeyedData1mb::getCdrSerializedSize(
+size_t KeyedData1mb::calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
         const KeyedData1mb& data,
         size_t current_alignment)
 {
     (void)data;
     size_t initial_alignment = current_alignment;
 
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    if (data.data().size() > 0)
-    {
-        current_alignment += (data.data().size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    }
+    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
+eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+ :
+eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+,
+            current_alignment);
 
 
+                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_key, current_alignment);
+                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1), data.m_data, current_alignment);
 
+    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
 
     return current_alignment - initial_alignment;
 }
@@ -133,18 +133,46 @@ size_t KeyedData1mb::getCdrSerializedSize(
 void KeyedData1mb::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
+    eprosima::fastcdr::Cdr::state current_state(scdr);
+    scdr.begin_serialize_type(current_state,
+            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
+eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+ :
+eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+);
 
-    scdr << m_key;
-    scdr << m_data;
+    scdr << eprosima::fastcdr::MemberId(0) << m_key;scdr << eprosima::fastcdr::MemberId(1) << m_data;
 
+    scdr.end_serialize_type(current_state);
 }
 
 void KeyedData1mb::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
+        eprosima::fastcdr::Cdr& cdr)
 {
-
-    dcdr >> m_key;
-    dcdr >> m_data;
+    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
+eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+ :
+eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+,
+            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
+            {
+                bool ret_value = true;
+                switch (mid.id)
+                {
+                                        case 0:
+                                            dcdr >> m_key;
+                                            break;
+                                        
+                    case 1:
+                        dcdr >> m_data;
+ret_value = false;
+                        break;
+                    default:
+                        ret_value = false;
+                        break;
+                }
+                return ret_value;
+            });
 }
 
 /*!
@@ -230,7 +258,6 @@ void KeyedData1mb::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-   scdr << m_key;
-   
+   scdr << eprosima::fastcdr::MemberId(0) << m_key;   
   
 }

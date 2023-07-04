@@ -1281,13 +1281,14 @@ void TypeLookup_Reply::deserialize(
 // TypeSupports
 bool TypeLookup_RequestTypeSupport::serialize(
         void* data,
-        fastrtps::rtps::SerializedPayload_t* payload)
+        fastrtps::rtps::SerializedPayload_t* payload,
+        DataRepresentationId_t data_representation)
 {
     TypeLookup_Request* type = static_cast<TypeLookup_Request*>(data);
     //eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::Cdr::DDS_CDR);
+            eprosima::fastcdr::CdrVersion::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     try
@@ -1308,13 +1309,14 @@ bool TypeLookup_RequestTypeSupport::serialize(
 
 bool TypeLookup_RequestTypeSupport::deserialize(
         fastrtps::rtps::SerializedPayload_t* payload,
-        void* data)
+        void* data,
+        DataRepresentationId_t data_representation)
 {
     TypeLookup_Request* p_type = static_cast<TypeLookup_Request*>(data);    //Convert DATA to pointer of your type
     //eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);    // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
+            eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that deserializes the data.
 
     try
     {
@@ -1334,6 +1336,7 @@ bool TypeLookup_RequestTypeSupport::deserialize(
 
 size_t TypeLookup_RequestTypeSupport::getCdrSerializedSize(
         const TypeLookup_Request& data,
+        DataRepresentationId_t data_representation,
         size_t current_alignment)
 {
     return TypeLookup_Request::getCdrSerializedSize(data, current_alignment);
@@ -1382,12 +1385,13 @@ void TypeLookup_RequestTypeSupport::delete_data(
  */
 bool TypeLookup_ReplyTypeSupport::serialize(
         void* data,
-        fastrtps::rtps::SerializedPayload_t* payload)
+        fastrtps::rtps::SerializedPayload_t* payload,
+        DataRepresentationId_t data_representation)
 {
     TypeLookup_Reply* type = static_cast<TypeLookup_Reply*>(data);
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::Cdr::DDS_CDR);
+            eprosima::fastcdr::CdrVersion::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     try
@@ -1408,12 +1412,13 @@ bool TypeLookup_ReplyTypeSupport::serialize(
 
 bool TypeLookup_ReplyTypeSupport::deserialize(
         fastrtps::rtps::SerializedPayload_t* payload,
-        void* data)
+        void* data,
+        DataRepresentationId_t data_representation)
 {
     TypeLookup_Reply* p_type = static_cast<TypeLookup_Reply*>(data);    //Convert DATA to pointer of your type
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);  // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
+            eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that deserializes the data.
 
     try
     {
@@ -1433,6 +1438,7 @@ bool TypeLookup_ReplyTypeSupport::deserialize(
 
 size_t TypeLookup_ReplyTypeSupport::getCdrSerializedSize(
         const TypeLookup_Reply& data,
+        DataRepresentationId_t data_representation,
         size_t current_alignment)
 {
     return TypeLookup_Reply::getCdrSerializedSize(data, current_alignment);

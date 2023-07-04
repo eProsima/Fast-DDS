@@ -23,7 +23,9 @@
 #define _FAST_DDS_GENERATED_FLOWCONTROLEXAMPLE_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
 
 #include <stdint.h>
 #include <array>
@@ -44,16 +46,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(FlowControlExample_SOURCE)
-#define FlowControlExample_DllAPI __declspec( dllexport )
+#if defined(FLOWCONTROLEXAMPLE_SOURCE)
+#define FLOWCONTROLEXAMPLE_DllAPI __declspec( dllexport )
 #else
-#define FlowControlExample_DllAPI __declspec( dllimport )
-#endif // FlowControlExample_SOURCE
+#define FLOWCONTROLEXAMPLE_DllAPI __declspec( dllimport )
+#endif // FLOWCONTROLEXAMPLE_SOURCE
 #else
-#define FlowControlExample_DllAPI
+#define FLOWCONTROLEXAMPLE_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define FlowControlExample_DllAPI
+#define FLOWCONTROLEXAMPLE_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +67,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure FlowControlExample defined by the user in the IDL file.
- * @ingroup FLOWCONTROLEXAMPLE
+ * @ingroup FlowControlExample
  */
 class FlowControlExample
 {
@@ -183,7 +185,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const FlowControlExample& data,
             size_t current_alignment = 0);
 
@@ -227,8 +230,8 @@ public:
 
 private:
 
-    std::array<char, 600000> m_message;
-    char m_wasFast;
+    std::array<char, 600000> m_message{0};
+    char m_wasFast{0};
 
 };
 

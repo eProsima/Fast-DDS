@@ -23,7 +23,9 @@
 #define _FAST_DDS_GENERATED_HELLOWORLD_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
 
 #include <stdint.h>
 #include <array>
@@ -44,16 +46,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(HelloWorld_SOURCE)
-#define HelloWorld_DllAPI __declspec( dllexport )
+#if defined(HELLOWORLD_SOURCE)
+#define HELLOWORLD_DllAPI __declspec( dllexport )
 #else
-#define HelloWorld_DllAPI __declspec( dllimport )
-#endif // HelloWorld_SOURCE
+#define HELLOWORLD_DllAPI __declspec( dllimport )
+#endif // HELLOWORLD_SOURCE
 #else
-#define HelloWorld_DllAPI
+#define HELLOWORLD_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define HelloWorld_DllAPI
+#define HELLOWORLD_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +67,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure HelloWorld defined by the user in the IDL file.
- * @ingroup HELLOWORLD
+ * @ingroup HelloWorld
  */
 class HelloWorld
 {
@@ -183,7 +185,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const HelloWorld& data,
             size_t current_alignment = 0);
 
@@ -227,8 +230,8 @@ public:
 
 private:
 
-    uint32_t m_index;
-    std::array<char, 20> m_message;
+    uint32_t m_index{0};
+    std::array<char, 20> m_message{0};
 
 };
 

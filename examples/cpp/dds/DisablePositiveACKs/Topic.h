@@ -23,7 +23,9 @@
 #define _FAST_DDS_GENERATED_TOPIC_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
 
 #include <stdint.h>
 #include <array>
@@ -44,16 +46,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(Topic_SOURCE)
-#define Topic_DllAPI __declspec( dllexport )
+#if defined(TOPIC_SOURCE)
+#define TOPIC_DllAPI __declspec( dllexport )
 #else
-#define Topic_DllAPI __declspec( dllimport )
-#endif // Topic_SOURCE
+#define TOPIC_DllAPI __declspec( dllimport )
+#endif // TOPIC_SOURCE
 #else
-#define Topic_DllAPI
+#define TOPIC_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define Topic_DllAPI
+#define TOPIC_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +67,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure Topic defined by the user in the IDL file.
- * @ingroup TOPIC
+ * @ingroup Topic
  */
 class Topic
 {
@@ -183,7 +185,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const Topic& data,
             size_t current_alignment = 0);
 
@@ -227,7 +230,7 @@ public:
 
 private:
 
-    uint32_t m_index;
+    uint32_t m_index{0};
     std::string m_message;
 
 };

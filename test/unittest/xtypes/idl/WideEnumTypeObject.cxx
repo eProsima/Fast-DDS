@@ -26,6 +26,7 @@ namespace { char dummy; }
 
 #include "WideEnum.h"
 #include "WideEnumTypeObject.h"
+#include <mutex>
 #include <utility>
 #include <sstream>
 #include <fastrtps/rtps/common/SerializedPayload.h>
@@ -35,32 +36,37 @@ namespace { char dummy; }
 #include <fastrtps/types/AnnotationParameterValue.h>
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>
+#include <fastcdr/CdrSizeCalculator.h>
 
 using namespace eprosima::fastrtps::rtps;
 
 void registerWideEnumTypes()
 {
-    TypeObjectFactory *factory = TypeObjectFactory::get_instance();
-    factory->add_type_object("MyEnumWide", GetMyEnumWideIdentifier(true),
-    GetMyEnumWideObject(true));
-    factory->add_type_object("MyEnumWide", GetMyEnumWideIdentifier(false),
-    GetMyEnumWideObject(false));
+    static std::once_flag once_flag;
+    std::call_once(once_flag, []()
+            {
+                TypeObjectFactory *factory = TypeObjectFactory::get_instance();
+                factory->add_type_object("MyEnumWide", GetMyEnumWideIdentifier(true),
+                GetMyEnumWideObject(true));
+                factory->add_type_object("MyEnumWide", GetMyEnumWideIdentifier(false),
+                GetMyEnumWideObject(false));
 
-    factory->add_type_object("MyEnumWideStruct", GetMyEnumWideStructIdentifier(true),
-    GetMyEnumWideStructObject(true));
-    factory->add_type_object("MyEnumWideStruct", GetMyEnumWideStructIdentifier(false),
-    GetMyEnumWideStructObject(false));
+                factory->add_type_object("MyEnumWideStruct", GetMyEnumWideStructIdentifier(true),
+                GetMyEnumWideStructObject(true));
+                factory->add_type_object("MyEnumWideStruct", GetMyEnumWideStructIdentifier(false),
+                GetMyEnumWideStructObject(false));
 
-    factory->add_type_object("SimpleWideUnion", GetSimpleWideUnionIdentifier(true),
-    GetSimpleWideUnionObject(true));
-    factory->add_type_object("SimpleWideUnion", GetSimpleWideUnionIdentifier(false),
-    GetSimpleWideUnionObject(false));
+                factory->add_type_object("SimpleWideUnion", GetSimpleWideUnionIdentifier(true),
+                GetSimpleWideUnionObject(true));
+                factory->add_type_object("SimpleWideUnion", GetSimpleWideUnionIdentifier(false),
+                GetSimpleWideUnionObject(false));
 
-    factory->add_type_object("SimpleWideUnionStruct", GetSimpleWideUnionStructIdentifier(true),
-    GetSimpleWideUnionStructObject(true));
-    factory->add_type_object("SimpleWideUnionStruct", GetSimpleWideUnionStructIdentifier(false),
-    GetSimpleWideUnionStructObject(false));
+                factory->add_type_object("SimpleWideUnionStruct", GetSimpleWideUnionStructIdentifier(true),
+                GetSimpleWideUnionStructObject(true));
+                factory->add_type_object("SimpleWideUnionStruct", GetSimpleWideUnionStructIdentifier(false),
+                GetSimpleWideUnionStructObject(false));
 
+            });
 }
 
 const TypeIdentifier* GetMyEnumWideIdentifier(bool complete)
@@ -180,8 +186,9 @@ const TypeObject* GetMinimalMyEnumWideObject()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalEnumeratedType::getCdrSerializedSize(type_object->minimal().enumerated_type()) + 4));
+        MinimalEnumeratedType::calculate_serialized_size(calculator, type_object->minimal().enumerated_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -284,8 +291,9 @@ const TypeObject* GetCompleteMyEnumWideObject()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteEnumeratedType::getCdrSerializedSize(type_object->complete().enumerated_type()) + 4));
+        CompleteEnumeratedType::calculate_serialized_size(calculator, type_object->complete().enumerated_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -348,7 +356,7 @@ const TypeObject* GetMinimalMyEnumWideStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -363,7 +371,8 @@ const TypeObject* GetMinimalMyEnumWideStructObject()
     mst_my_enum_wide.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_enum_wide.common().member_flags().IS_KEY(false);
     mst_my_enum_wide.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_my_enum_wide.common().member_type_id(*GetMyEnumWideIdentifier(false));
+    mst_my_enum_wide.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyEnumWide", false));
+
     MD5 my_enum_wide_hash("my_enum_wide");
     for(int i = 0; i < 4; ++i)
     {
@@ -380,8 +389,9 @@ const TypeObject* GetMinimalMyEnumWideStructObject()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
+        MinimalStructType::calculate_serialized_size(calculator, type_object->minimal().struct_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -417,7 +427,7 @@ const TypeObject* GetCompleteMyEnumWideStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -432,7 +442,8 @@ const TypeObject* GetCompleteMyEnumWideStructObject()
     cst_my_enum_wide.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_enum_wide.common().member_flags().IS_KEY(false);
     cst_my_enum_wide.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_my_enum_wide.common().member_type_id(*GetMyEnumWideIdentifier(true));
+    cst_my_enum_wide.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyEnumWide", false));
+
     cst_my_enum_wide.detail().name("my_enum_wide");
 
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_enum_wide);
@@ -446,8 +457,9 @@ const TypeObject* GetCompleteMyEnumWideStructObject()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
+        CompleteStructType::calculate_serialized_size(calculator, type_object->complete().struct_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -510,7 +522,7 @@ const TypeObject* GetMinimalSimpleWideUnionObject()
     type_object->minimal()._d(TK_UNION);
 
     type_object->minimal().union_type().union_flags().IS_FINAL(false);
-    type_object->minimal().union_type().union_flags().IS_APPENDABLE(false);
+    type_object->minimal().union_type().union_flags().IS_APPENDABLE(true);
     type_object->minimal().union_type().union_flags().IS_MUTABLE(false);
     type_object->minimal().union_type().union_flags().IS_NESTED(false);
     type_object->minimal().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -590,8 +602,9 @@ const TypeObject* GetMinimalSimpleWideUnionObject()
     TypeIdentifier* identifier = new TypeIdentifier();
     identifier->_d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalUnionType::getCdrSerializedSize(type_object->minimal().union_type()) + 4));
+        MinimalUnionType::calculate_serialized_size(calculator, type_object->minimal().union_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -628,7 +641,7 @@ const TypeObject* GetCompleteSimpleWideUnionObject()
     type_object->complete()._d(TK_UNION);
 
     type_object->complete().union_type().union_flags().IS_FINAL(false);
-    type_object->complete().union_type().union_flags().IS_APPENDABLE(false);
+    type_object->complete().union_type().union_flags().IS_APPENDABLE(true);
     type_object->complete().union_type().union_flags().IS_MUTABLE(false);
     type_object->complete().union_type().union_flags().IS_NESTED(false);
     type_object->complete().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -701,8 +714,9 @@ const TypeObject* GetCompleteSimpleWideUnionObject()
     TypeIdentifier* identifier = new TypeIdentifier();
     identifier->_d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteUnionType::getCdrSerializedSize(type_object->complete().union_type()) + 4));
+        CompleteUnionType::calculate_serialized_size(calculator, type_object->complete().union_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -766,7 +780,7 @@ const TypeObject* GetMinimalSimpleWideUnionStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -798,8 +812,9 @@ const TypeObject* GetMinimalSimpleWideUnionStructObject()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
+        MinimalStructType::calculate_serialized_size(calculator, type_object->minimal().struct_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -835,7 +850,7 @@ const TypeObject* GetCompleteSimpleWideUnionStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -864,8 +879,9 @@ const TypeObject* GetCompleteSimpleWideUnionStructObject()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
+        CompleteStructType::calculate_serialized_size(calculator, type_object->complete().struct_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(

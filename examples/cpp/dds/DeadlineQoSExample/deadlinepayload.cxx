@@ -34,15 +34,13 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define HelloMsg_max_cdr_typesize 265ULL;
+#define HelloMsg_max_cdr_typesize 269ULL;
 #define HelloMsg_max_key_cdr_typesize 2ULL;
 
 HelloMsg::HelloMsg()
 {
-    // unsigned short m_deadlinekey
-    m_deadlinekey = 0;
-    // string m_payload
-    m_payload ="";
+
+
 
 }
 
@@ -106,19 +104,28 @@ size_t HelloMsg::getMaxCdrSerializedSize(
     return HelloMsg_max_cdr_typesize;
 }
 
-size_t HelloMsg::getCdrSerializedSize(
+size_t HelloMsg::calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
         const HelloMsg& data,
         size_t current_alignment)
 {
     (void)data;
     size_t initial_alignment = current_alignment;
 
+    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
+eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+ :
+eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+,
+            current_alignment);
 
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
+                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_deadlinekey, current_alignment);
+                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1), data.m_payload, current_alignment);
 
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.payload().size() + 1;
-
+    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
 
     return current_alignment - initial_alignment;
 }
@@ -126,22 +133,46 @@ size_t HelloMsg::getCdrSerializedSize(
 void HelloMsg::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
+    eprosima::fastcdr::Cdr::state current_state(scdr);
+    scdr.begin_serialize_type(current_state,
+            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
+eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+ :
+eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+);
 
-    scdr << m_deadlinekey;
-    scdr << m_payload.c_str();
+    scdr << eprosima::fastcdr::MemberId(0) << m_deadlinekey;scdr << eprosima::fastcdr::MemberId(1) << m_payload;
 
+    scdr.end_serialize_type(current_state);
 }
 
 void HelloMsg::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
+        eprosima::fastcdr::Cdr& cdr)
 {
-
-    dcdr >> m_deadlinekey;
-    {
-        std::string aux;
-        dcdr >> aux;
-        m_payload = aux.c_str();
-    }
+    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
+eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+ :
+eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+,
+            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
+            {
+                bool ret_value = true;
+                switch (mid.id)
+                {
+                                        case 0:
+                                            dcdr >> m_deadlinekey;
+                                            break;
+                                        
+                    case 1:
+                        dcdr >> m_payload;
+ret_value = false;
+                        break;
+                    default:
+                        ret_value = false;
+                        break;
+                }
+                return ret_value;
+            });
 }
 
 /*!
@@ -177,7 +208,7 @@ uint16_t& HelloMsg::deadlinekey()
  * @param _payload New value to be copied in member payload
  */
 void HelloMsg::payload(
-        const eprosima::fastrtps::fixed_string<256>& _payload)
+        const eprosima::fastcdr::fixed_string<256>& _payload)
 {
     m_payload = _payload;
 }
@@ -187,7 +218,7 @@ void HelloMsg::payload(
  * @param _payload New value to be moved in member payload
  */
 void HelloMsg::payload(
-        eprosima::fastrtps::fixed_string<256>&& _payload)
+        eprosima::fastcdr::fixed_string<256>&& _payload)
 {
     m_payload = std::move(_payload);
 }
@@ -196,7 +227,7 @@ void HelloMsg::payload(
  * @brief This function returns a constant reference to member payload
  * @return Constant reference to member payload
  */
-const eprosima::fastrtps::fixed_string<256>& HelloMsg::payload() const
+const eprosima::fastcdr::fixed_string<256>& HelloMsg::payload() const
 {
     return m_payload;
 }
@@ -205,7 +236,7 @@ const eprosima::fastrtps::fixed_string<256>& HelloMsg::payload() const
  * @brief This function returns a reference to member payload
  * @return Reference to member payload
  */
-eprosima::fastrtps::fixed_string<256>& HelloMsg::payload()
+eprosima::fastcdr::fixed_string<256>& HelloMsg::payload()
 {
     return m_payload;
 }
@@ -227,7 +258,6 @@ void HelloMsg::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-   scdr << m_deadlinekey;
-   
+   scdr << eprosima::fastcdr::MemberId(0) << m_deadlinekey;   
   
 }

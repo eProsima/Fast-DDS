@@ -23,7 +23,9 @@
 #define _FAST_DDS_GENERATED_CONTENTFILTERTESTTYPE_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
 
 #include <stdint.h>
 #include <array>
@@ -44,16 +46,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(ContentFilterTestType_SOURCE)
-#define ContentFilterTestType_DllAPI __declspec( dllexport )
+#if defined(CONTENTFILTERTESTTYPE_SOURCE)
+#define CONTENTFILTERTESTTYPE_DllAPI __declspec( dllexport )
 #else
-#define ContentFilterTestType_DllAPI __declspec( dllimport )
-#endif // ContentFilterTestType_SOURCE
+#define CONTENTFILTERTESTTYPE_DllAPI __declspec( dllimport )
+#endif // CONTENTFILTERTESTTYPE_SOURCE
 #else
-#define ContentFilterTestType_DllAPI
+#define CONTENTFILTERTESTTYPE_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define ContentFilterTestType_DllAPI
+#define CONTENTFILTERTESTTYPE_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +67,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the enumeration Color defined by the user in the IDL file.
- * @ingroup CONTENTFILTERTESTTYPE
+ * @ingroup ContentFilterTestType
  */
 enum Color : uint32_t
 {
@@ -77,7 +79,7 @@ enum Color : uint32_t
 };
 /*!
  * @brief This class represents the enumeration Material defined by the user in the IDL file.
- * @ingroup CONTENTFILTERTESTTYPE
+ * @ingroup ContentFilterTestType
  */
 enum Material : uint32_t
 {
@@ -89,7 +91,7 @@ enum Material : uint32_t
 };
 /*!
  * @brief This class represents the structure StructType defined by the user in the IDL file.
- * @ingroup CONTENTFILTERTESTTYPE
+ * @ingroup ContentFilterTestType
  */
 class StructType
 {
@@ -454,7 +456,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const StructType& data,
             size_t current_alignment = 0);
 
@@ -498,28 +501,28 @@ public:
 
 private:
 
-    char m_char_field;
-    uint8_t m_uint8_field;
-    int16_t m_int16_field;
-    uint16_t m_uint16_field;
-    int32_t m_int32_field;
-    uint32_t m_uint32_field;
-    int64_t m_int64_field;
-    uint64_t m_uint64_field;
-    float m_float_field;
-    double m_double_field;
-    long double m_long_double_field;
-    bool m_bool_field;
+    char m_char_field{0};
+    uint8_t m_uint8_field{0};
+    int16_t m_int16_field{0};
+    uint16_t m_uint16_field{0};
+    int32_t m_int32_field{0};
+    uint32_t m_uint32_field{0};
+    int64_t m_int64_field{0};
+    uint64_t m_uint64_field{0};
+    float m_float_field{0.0};
+    double m_double_field{0.0};
+    long double m_long_double_field{0.0};
+    bool m_bool_field{false};
     std::string m_string_field;
-    Color m_enum_field;
-    Material m_enum2_field;
+    Color m_enum_field{::RED};
+    Material m_enum2_field{::WOOD};
 
 };
 const uint32_t max_array_size = 3;
 const uint32_t max_seq_size = 5;
 /*!
  * @brief This class represents the structure ContentFilterTestType defined by the user in the IDL file.
- * @ingroup CONTENTFILTERTESTTYPE
+ * @ingroup ContentFilterTestType
  */
 class ContentFilterTestType
 {
@@ -2109,7 +2112,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const ContentFilterTestType& data,
             size_t current_alignment = 0);
 
@@ -2153,37 +2157,37 @@ public:
 
 private:
 
-    char m_char_field;
-    uint8_t m_uint8_field;
-    int16_t m_int16_field;
-    uint16_t m_uint16_field;
-    int32_t m_int32_field;
-    uint32_t m_uint32_field;
-    int64_t m_int64_field;
-    uint64_t m_uint64_field;
-    float m_float_field;
-    double m_double_field;
-    long double m_long_double_field;
-    bool m_bool_field;
+    char m_char_field{0};
+    uint8_t m_uint8_field{0};
+    int16_t m_int16_field{0};
+    uint16_t m_uint16_field{0};
+    int32_t m_int32_field{0};
+    uint32_t m_uint32_field{0};
+    int64_t m_int64_field{0};
+    uint64_t m_uint64_field{0};
+    float m_float_field{0.0};
+    double m_double_field{0.0};
+    long double m_long_double_field{0.0};
+    bool m_bool_field{false};
     std::string m_string_field;
-    Color m_enum_field;
-    Material m_enum2_field;
+    Color m_enum_field{::RED};
+    Material m_enum2_field{::WOOD};
     StructType m_struct_field;
-    std::array<char, 3> m_array_char_field;
-    std::array<uint8_t, 3> m_array_uint8_field;
-    std::array<int16_t, 3> m_array_int16_field;
-    std::array<uint16_t, 3> m_array_uint16_field;
-    std::array<int32_t, 3> m_array_int32_field;
-    std::array<uint32_t, 3> m_array_uint32_field;
-    std::array<int64_t, 3> m_array_int64_field;
-    std::array<uint64_t, 3> m_array_uint64_field;
-    std::array<float, 3> m_array_float_field;
-    std::array<double, 3> m_array_double_field;
-    std::array<long double, 3> m_array_long_double_field;
-    std::array<bool, 3> m_array_bool_field;
+    std::array<char, 3> m_array_char_field{0};
+    std::array<uint8_t, 3> m_array_uint8_field{0};
+    std::array<int16_t, 3> m_array_int16_field{0};
+    std::array<uint16_t, 3> m_array_uint16_field{0};
+    std::array<int32_t, 3> m_array_int32_field{0};
+    std::array<uint32_t, 3> m_array_uint32_field{0};
+    std::array<int64_t, 3> m_array_int64_field{0};
+    std::array<uint64_t, 3> m_array_uint64_field{0};
+    std::array<float, 3> m_array_float_field{0.0};
+    std::array<double, 3> m_array_double_field{0.0};
+    std::array<long double, 3> m_array_long_double_field{0.0};
+    std::array<bool, 3> m_array_bool_field{false};
     std::array<std::string, 3> m_array_string_field;
-    std::array<Color, 3> m_array_enum_field;
-    std::array<Material, 3> m_array_enum2_field;
+    std::array<Color, 3> m_array_enum_field{::RED};
+    std::array<Material, 3> m_array_enum2_field{::WOOD};
     std::array<StructType, 3> m_array_struct_field;
     std::vector<char> m_bounded_sequence_char_field;
     std::vector<uint8_t> m_bounded_sequence_uint8_field;

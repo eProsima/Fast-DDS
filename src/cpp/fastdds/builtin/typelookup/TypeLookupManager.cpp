@@ -564,7 +564,7 @@ bool TypeLookupManager::send_request(
         SerializedPayload_t payload;
         payload.max_size = change->serializedPayload.max_size - 4;
         payload.data = change->serializedPayload.data + 4;
-        if (valid && request_type_.serialize(&req, &payload))
+        if (valid && request_type_.serialize(&req, &payload, DataRepresentationId_t::XCDR_DATA_REPRESENTATION))
         {
             change->serializedPayload.length += payload.length;
             change->serializedPayload.pos += payload.pos;
@@ -605,7 +605,7 @@ bool TypeLookupManager::send_reply(
         SerializedPayload_t payload;
         payload.max_size = change->serializedPayload.max_size - 4;
         payload.data = change->serializedPayload.data + 4;
-        if (valid && reply_type_.serialize(&rep, &payload))
+        if (valid && reply_type_.serialize(&rep, &payload, DataRepresentationId_t::XCDR_DATA_REPRESENTATION))
         {
             change->serializedPayload.length += payload.length;
             change->serializedPayload.pos += payload.pos;
@@ -644,7 +644,7 @@ bool TypeLookupManager::recv_request(
     payload.max_size = change.serializedPayload.max_size - 4;
     payload.length = change.serializedPayload.length - 4;
     payload.data = change.serializedPayload.data + 4;
-    bool result = request_type_.deserialize(&payload, &req);
+    bool result = request_type_.deserialize(&payload, &req, DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
     payload.data = nullptr;
     return result;
 }
@@ -676,7 +676,7 @@ bool TypeLookupManager::recv_reply(
     payload.max_size = change.serializedPayload.max_size - 4;
     payload.length = change.serializedPayload.length - 4;
     payload.data = change.serializedPayload.data + 4;
-    bool result = reply_type_.deserialize(&payload, &rep);
+    bool result = reply_type_.deserialize(&payload, &rep, DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
     payload.data = nullptr;
     return result;
 }

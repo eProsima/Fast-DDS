@@ -23,7 +23,9 @@
 #define _FAST_DDS_GENERATED_OWNERSHIPSTRENGTH_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
 
 #include <stdint.h>
 #include <array>
@@ -44,16 +46,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(OwnershipStrength_SOURCE)
-#define OwnershipStrength_DllAPI __declspec( dllexport )
+#if defined(OWNERSHIPSTRENGTH_SOURCE)
+#define OWNERSHIPSTRENGTH_DllAPI __declspec( dllexport )
 #else
-#define OwnershipStrength_DllAPI __declspec( dllimport )
-#endif // OwnershipStrength_SOURCE
+#define OWNERSHIPSTRENGTH_DllAPI __declspec( dllimport )
+#endif // OWNERSHIPSTRENGTH_SOURCE
 #else
-#define OwnershipStrength_DllAPI
+#define OWNERSHIPSTRENGTH_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define OwnershipStrength_DllAPI
+#define OWNERSHIPSTRENGTH_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +67,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure ExampleMessage defined by the user in the IDL file.
- * @ingroup OWNERSHIPSTRENGTH
+ * @ingroup OwnershipStrength
  */
 class ExampleMessage
 {
@@ -202,7 +204,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const ExampleMessage& data,
             size_t current_alignment = 0);
 
@@ -246,8 +249,8 @@ public:
 
 private:
 
-    uint32_t m_index;
-    uint32_t m_ownershipStrength;
+    uint32_t m_index{0};
+    uint32_t m_ownershipStrength{0};
     std::string m_message;
 
 };

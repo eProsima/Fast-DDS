@@ -201,7 +201,7 @@ const TypeObject* GetMinimalidObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -258,7 +258,7 @@ const TypeObject* GetCompleteidObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -338,7 +338,7 @@ const TypeObject* GetMinimalautoidObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -400,7 +400,7 @@ const TypeObject* GetCompleteautoidObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -512,7 +512,7 @@ const TypeObject* GetMinimalAutoidKindObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -593,7 +593,7 @@ const TypeObject* GetCompleteAutoidKindObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -673,7 +673,7 @@ const TypeObject* GetMinimaloptionalObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -734,7 +734,7 @@ const TypeObject* GetCompleteoptionalObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -809,7 +809,7 @@ const TypeObject* GetMinimalpositionObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -866,7 +866,7 @@ const TypeObject* GetCompletepositionObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -941,7 +941,7 @@ const TypeObject* GetMinimalvalueObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -998,7 +998,7 @@ const TypeObject* GetCompletevalueObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -1075,7 +1075,7 @@ const TypeObject* GetMinimalextensibilityObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -1133,7 +1133,7 @@ const TypeObject* GetCompleteextensibilityObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -1262,7 +1262,7 @@ const TypeObject* GetMinimalExtensibilityKindObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -1357,7 +1357,7 @@ const TypeObject* GetCompleteExtensibilityKindObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -1427,7 +1427,7 @@ const TypeObject* GetMinimalfinalObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -1478,7 +1478,7 @@ const TypeObject* GetCompletefinalObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -1547,7 +1547,7 @@ const TypeObject* GetMinimalappendableObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -1598,7 +1598,7 @@ const TypeObject* GetCompleteappendableObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -1667,7 +1667,7 @@ const TypeObject* GetMinimalmutableObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -1718,7 +1718,7 @@ const TypeObject* GetCompletemutableObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -1797,7 +1797,7 @@ const TypeObject* GetMinimalkeyObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -1858,7 +1858,7 @@ const TypeObject* GetCompletekeyObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -1938,7 +1938,7 @@ const TypeObject* GetMinimalmust_understandObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -1999,7 +1999,7 @@ const TypeObject* GetCompletemust_understandObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -2069,7 +2069,7 @@ const TypeObject* GetMinimaldefault_literalObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -2120,7 +2120,7 @@ const TypeObject* GetCompletedefault_literalObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -2195,7 +2195,7 @@ const TypeObject* GetMinimaldefaultObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -2252,7 +2252,7 @@ const TypeObject* GetCompletedefaultObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -2333,7 +2333,7 @@ const TypeObject* GetMinimalrangeObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -2396,7 +2396,7 @@ const TypeObject* GetCompleterangeObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -2471,7 +2471,7 @@ const TypeObject* GetMinimalminObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -2528,7 +2528,7 @@ const TypeObject* GetCompleteminObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -2603,7 +2603,7 @@ const TypeObject* GetMinimalmaxObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -2660,7 +2660,7 @@ const TypeObject* GetCompletemaxObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -2735,7 +2735,7 @@ const TypeObject* GetMinimalunitObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -2792,7 +2792,7 @@ const TypeObject* GetCompleteunitObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -2867,7 +2867,7 @@ const TypeObject* GetMinimalbit_boundObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -2924,7 +2924,7 @@ const TypeObject* GetCompletebit_boundObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -3003,7 +3003,7 @@ const TypeObject* GetMinimalexternalObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -3064,7 +3064,7 @@ const TypeObject* GetCompleteexternalObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -3143,7 +3143,7 @@ const TypeObject* GetMinimalnestedObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -3204,7 +3204,7 @@ const TypeObject* GetCompletenestedObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -3300,7 +3300,7 @@ const TypeObject* GetMinimalverbatimObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -3378,7 +3378,7 @@ const TypeObject* GetCompleteverbatimObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -3555,7 +3555,7 @@ const TypeObject* GetMinimalPlacementKindObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -3692,7 +3692,7 @@ const TypeObject* GetCompletePlacementKindObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -3772,7 +3772,7 @@ const TypeObject* GetMinimalserviceObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -3833,7 +3833,7 @@ const TypeObject* GetCompleteserviceObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -3912,7 +3912,7 @@ const TypeObject* GetMinimalonewayObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -3973,7 +3973,7 @@ const TypeObject* GetCompleteonewayObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -4052,7 +4052,7 @@ const TypeObject* GetMinimalamiObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -4113,7 +4113,7 @@ const TypeObject* GetCompleteamiObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -4193,7 +4193,7 @@ const TypeObject* GetMinimalnon_serializedObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);
@@ -4254,7 +4254,7 @@ const TypeObject* GetCompletenon_serializedObject()
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
         fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
+        eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
     payload.encapsulation = CDR_LE;
 
     type_object->serialize(ser);

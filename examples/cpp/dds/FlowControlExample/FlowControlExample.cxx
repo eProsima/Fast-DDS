@@ -34,15 +34,13 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define FlowControlExample_max_cdr_typesize 600002ULL;
+#define FlowControlExample_max_cdr_typesize 600005ULL;
 #define FlowControlExample_max_key_cdr_typesize 0ULL;
 
 FlowControlExample::FlowControlExample()
 {
-    // char m_message
-    memset(&m_message, 0, (600000) * 1);
-    // char m_wasFast
-    m_wasFast = 0;
+
+
 
 }
 
@@ -106,19 +104,28 @@ size_t FlowControlExample::getMaxCdrSerializedSize(
     return FlowControlExample_max_cdr_typesize;
 }
 
-size_t FlowControlExample::getCdrSerializedSize(
+size_t FlowControlExample::calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
         const FlowControlExample& data,
         size_t current_alignment)
 {
     (void)data;
     size_t initial_alignment = current_alignment;
 
+    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
+eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+ :
+eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+,
+            current_alignment);
 
-    current_alignment += ((600000) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_message, current_alignment);
+                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1), data.m_wasFast, current_alignment);
 
-
+    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
 
     return current_alignment - initial_alignment;
 }
@@ -126,20 +133,46 @@ size_t FlowControlExample::getCdrSerializedSize(
 void FlowControlExample::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
+    eprosima::fastcdr::Cdr::state current_state(scdr);
+    scdr.begin_serialize_type(current_state,
+            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
+eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+ :
+eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+);
 
-    scdr << m_message;
+    scdr << eprosima::fastcdr::MemberId(0) << m_message;scdr << eprosima::fastcdr::MemberId(1) << m_wasFast;
 
-    scdr << m_wasFast;
-
+    scdr.end_serialize_type(current_state);
 }
 
 void FlowControlExample::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
+        eprosima::fastcdr::Cdr& cdr)
 {
-
-    dcdr >> m_message;
-
-    dcdr >> m_wasFast;
+    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
+eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+ :
+eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+,
+            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
+            {
+                bool ret_value = true;
+                switch (mid.id)
+                {
+                                        case 0:
+                                            dcdr >> m_message;
+                                            break;
+                                        
+                    case 1:
+                        dcdr >> m_wasFast;
+ret_value = false;
+                        break;
+                    default:
+                        ret_value = false;
+                        break;
+                }
+                return ret_value;
+            });
 }
 
 /*!

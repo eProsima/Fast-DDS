@@ -23,7 +23,9 @@
 #define _FAST_DDS_GENERATED_TYPES_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
 
 #include <stdint.h>
 #include <array>
@@ -44,16 +46,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(Types_SOURCE)
-#define Types_DllAPI __declspec( dllexport )
+#if defined(TYPES_SOURCE)
+#define TYPES_DllAPI __declspec( dllexport )
 #else
-#define Types_DllAPI __declspec( dllimport )
-#endif // Types_SOURCE
+#define TYPES_DllAPI __declspec( dllimport )
+#endif // TYPES_SOURCE
 #else
-#define Types_DllAPI
+#define TYPES_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define Types_DllAPI
+#define TYPES_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +67,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the enumeration MyEnum defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 enum MyEnum : uint32_t
 {
@@ -75,7 +77,7 @@ enum MyEnum : uint32_t
 };
 /*!
  * @brief This class represents the enumeration MyBadEnum defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 enum MyBadEnum : uint32_t
 {
@@ -85,7 +87,7 @@ enum MyBadEnum : uint32_t
 };
 /*!
  * @brief This class represents the structure MyEnumStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MyEnumStruct
 {
@@ -162,7 +164,6 @@ public:
      */
     eProsima_user_DllExport MyEnum& my_enum();
 
-
     /*!
     * @brief This function returns the maximum serialized size of an object
     * depending on the buffer alignment.
@@ -178,7 +179,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const MyEnumStruct& data,
             size_t current_alignment = 0);
 
@@ -222,12 +224,12 @@ public:
 
 private:
 
-    MyEnum m_my_enum;
+    MyEnum m_my_enum{::A};
 
 };
 /*!
  * @brief This class represents the structure MyBadEnumStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MyBadEnumStruct
 {
@@ -304,7 +306,6 @@ public:
      */
     eProsima_user_DllExport MyBadEnum& my_enum();
 
-
     /*!
     * @brief This function returns the maximum serialized size of an object
     * depending on the buffer alignment.
@@ -320,7 +321,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const MyBadEnumStruct& data,
             size_t current_alignment = 0);
 
@@ -364,13 +366,13 @@ public:
 
 private:
 
-    MyBadEnum m_my_enum;
+    MyBadEnum m_my_enum{::A1};
 
 };
 typedef MyEnum MyAliasEnum;
 /*!
  * @brief This class represents the structure MyAliasEnumStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MyAliasEnumStruct
 {
@@ -447,7 +449,6 @@ public:
      */
     eProsima_user_DllExport MyAliasEnum& my_enum();
 
-
     /*!
     * @brief This function returns the maximum serialized size of an object
     * depending on the buffer alignment.
@@ -463,7 +464,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const MyAliasEnumStruct& data,
             size_t current_alignment = 0);
 
@@ -507,12 +509,12 @@ public:
 
 private:
 
-    MyAliasEnum m_my_enum;
+    MyAliasEnum m_my_enum{::A};
 
 };
 /*!
  * @brief This class represents the structure BasicStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class BasicStruct
 {
@@ -649,7 +651,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const BasicStruct& data,
             size_t current_alignment = 0);
 
@@ -693,14 +696,14 @@ public:
 
 private:
 
-    bool m_my_bool;
-    int32_t m_my_int32;
+    bool m_my_bool{false};
+    int32_t m_my_int32{0};
     std::string m_my_string;
 
 };
 /*!
  * @brief This class represents the structure BasicNamesStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class BasicNamesStruct
 {
@@ -837,7 +840,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const BasicNamesStruct& data,
             size_t current_alignment = 0);
 
@@ -881,14 +885,14 @@ public:
 
 private:
 
-    bool m_my_bool_name;
-    int32_t m_my_int32_name;
+    bool m_my_bool_name{false};
+    int32_t m_my_int32_name{0};
     std::string m_my_string_name;
 
 };
 /*!
  * @brief This class represents the structure BasicBadStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class BasicBadStruct
 {
@@ -1025,7 +1029,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const BasicBadStruct& data,
             size_t current_alignment = 0);
 
@@ -1069,14 +1074,14 @@ public:
 
 private:
 
-    uint8_t m_my_bool;
-    int32_t m_my_int32;
+    uint8_t m_my_bool{0};
+    int32_t m_my_int32{0};
     std::string m_my_string;
 
 };
 /*!
  * @brief This class represents the structure BasicWideStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class BasicWideStruct
 {
@@ -1257,7 +1262,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const BasicWideStruct& data,
             size_t current_alignment = 0);
 
@@ -1301,16 +1307,16 @@ public:
 
 private:
 
-    bool m_my_bool;
-    int32_t m_my_int32;
+    bool m_my_bool{false};
+    int32_t m_my_int32{0};
     std::string m_my_string;
-    int32_t m_new_int32;
+    int32_t m_new_int32{0};
     std::string m_new_string;
 
 };
 /*!
  * @brief This class represents the structure BadBasicWideStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class BadBasicWideStruct
 {
@@ -1491,7 +1497,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const BadBasicWideStruct& data,
             size_t current_alignment = 0);
 
@@ -1535,16 +1542,16 @@ public:
 
 private:
 
-    int32_t m_new_int32;
+    int32_t m_new_int32{0};
     std::string m_new_string;
-    bool m_my_bool;
-    int32_t m_my_int32;
+    bool m_my_bool{false};
+    int32_t m_my_int32{0};
     std::string m_my_string;
 
 };
 /*!
  * @brief This class represents the structure StringStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class StringStruct
 {
@@ -1643,7 +1650,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const StringStruct& data,
             size_t current_alignment = 0);
 
@@ -1692,7 +1700,7 @@ private:
 };
 /*!
  * @brief This class represents the structure LargeStringStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class LargeStringStruct
 {
@@ -1755,26 +1763,26 @@ public:
      * @param _my_large_string New value to be copied in member my_large_string
      */
     eProsima_user_DllExport void my_large_string(
-            const eprosima::fastrtps::fixed_string<41925>& _my_large_string);
+            const eprosima::fastcdr::fixed_string<41925>& _my_large_string);
 
     /*!
      * @brief This function moves the value in member my_large_string
      * @param _my_large_string New value to be moved in member my_large_string
      */
     eProsima_user_DllExport void my_large_string(
-            eprosima::fastrtps::fixed_string<41925>&& _my_large_string);
+            eprosima::fastcdr::fixed_string<41925>&& _my_large_string);
 
     /*!
      * @brief This function returns a constant reference to member my_large_string
      * @return Constant reference to member my_large_string
      */
-    eProsima_user_DllExport const eprosima::fastrtps::fixed_string<41925>& my_large_string() const;
+    eProsima_user_DllExport const eprosima::fastcdr::fixed_string<41925>& my_large_string() const;
 
     /*!
      * @brief This function returns a reference to member my_large_string
      * @return Reference to member my_large_string
      */
-    eProsima_user_DllExport eprosima::fastrtps::fixed_string<41925>& my_large_string();
+    eProsima_user_DllExport eprosima::fastcdr::fixed_string<41925>& my_large_string();
 
     /*!
     * @brief This function returns the maximum serialized size of an object
@@ -1791,7 +1799,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const LargeStringStruct& data,
             size_t current_alignment = 0);
 
@@ -1835,12 +1844,12 @@ public:
 
 private:
 
-    eprosima::fastrtps::fixed_string<41925> m_my_large_string;
+    eprosima::fastcdr::fixed_string<41925> m_my_large_string;
 
 };
 /*!
  * @brief This class represents the structure WStringStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class WStringStruct
 {
@@ -1939,7 +1948,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const WStringStruct& data,
             size_t current_alignment = 0);
 
@@ -1988,7 +1998,7 @@ private:
 };
 /*!
  * @brief This class represents the structure LargeWStringStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class LargeWStringStruct
 {
@@ -2087,7 +2097,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const LargeWStringStruct& data,
             size_t current_alignment = 0);
 
@@ -2136,7 +2147,7 @@ private:
 };
 /*!
  * @brief This class represents the structure ArrayStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class ArrayStruct
 {
@@ -2235,7 +2246,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const ArrayStruct& data,
             size_t current_alignment = 0);
 
@@ -2279,12 +2291,12 @@ public:
 
 private:
 
-    std::array<int32_t, 2> m_my_array;
+    std::array<int32_t, 2> m_my_array{0};
 
 };
 /*!
  * @brief This class represents the structure ArrayStructEqual defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class ArrayStructEqual
 {
@@ -2383,7 +2395,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const ArrayStructEqual& data,
             size_t current_alignment = 0);
 
@@ -2427,12 +2440,12 @@ public:
 
 private:
 
-    std::array<int32_t, 2> m_my_array_equal;
+    std::array<int32_t, 2> m_my_array_equal{0};
 
 };
 /*!
  * @brief This class represents the structure ArrayBadStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class ArrayBadStruct
 {
@@ -2531,7 +2544,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const ArrayBadStruct& data,
             size_t current_alignment = 0);
 
@@ -2575,12 +2589,12 @@ public:
 
 private:
 
-    std::array<uint8_t, 2> m_my_array;
+    std::array<uint8_t, 2> m_my_array{0};
 
 };
 /*!
  * @brief This class represents the structure ArrayDimensionsStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class ArrayDimensionsStruct
 {
@@ -2679,7 +2693,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const ArrayDimensionsStruct& data,
             size_t current_alignment = 0);
 
@@ -2723,12 +2738,12 @@ public:
 
 private:
 
-    std::array<std::array<int32_t, 2>, 2> m_my_array;
+    std::array<std::array<int32_t, 2>, 2> m_my_array{0};
 
 };
 /*!
  * @brief This class represents the structure ArraySizeStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class ArraySizeStruct
 {
@@ -2827,7 +2842,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const ArraySizeStruct& data,
             size_t current_alignment = 0);
 
@@ -2871,12 +2887,12 @@ public:
 
 private:
 
-    std::array<int32_t, 5> m_my_array;
+    std::array<int32_t, 5> m_my_array{0};
 
 };
 /*!
  * @brief This class represents the structure SequenceStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SequenceStruct
 {
@@ -2975,7 +2991,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const SequenceStruct& data,
             size_t current_alignment = 0);
 
@@ -3024,7 +3041,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SequenceStructEqual defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SequenceStructEqual
 {
@@ -3123,7 +3140,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const SequenceStructEqual& data,
             size_t current_alignment = 0);
 
@@ -3172,7 +3190,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SequenceBadStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SequenceBadStruct
 {
@@ -3271,7 +3289,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const SequenceBadStruct& data,
             size_t current_alignment = 0);
 
@@ -3320,7 +3339,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SequenceBoundsStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SequenceBoundsStruct
 {
@@ -3419,7 +3438,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const SequenceBoundsStruct& data,
             size_t current_alignment = 0);
 
@@ -3468,7 +3488,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SequenceSequenceStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SequenceSequenceStruct
 {
@@ -3567,7 +3587,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const SequenceSequenceStruct& data,
             size_t current_alignment = 0);
 
@@ -3616,7 +3637,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SequenceSequenceBoundsStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SequenceSequenceBoundsStruct
 {
@@ -3715,7 +3736,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const SequenceSequenceBoundsStruct& data,
             size_t current_alignment = 0);
 
@@ -3764,7 +3786,7 @@ private:
 };
 /*!
  * @brief This class represents the structure MapStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapStruct
 {
@@ -3863,7 +3885,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const MapStruct& data,
             size_t current_alignment = 0);
 
@@ -3912,7 +3935,7 @@ private:
 };
 /*!
  * @brief This class represents the structure MapStructEqual defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapStructEqual
 {
@@ -4011,7 +4034,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const MapStructEqual& data,
             size_t current_alignment = 0);
 
@@ -4060,7 +4084,7 @@ private:
 };
 /*!
  * @brief This class represents the structure MapBadKeyStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapBadKeyStruct
 {
@@ -4159,7 +4183,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const MapBadKeyStruct& data,
             size_t current_alignment = 0);
 
@@ -4208,7 +4233,7 @@ private:
 };
 /*!
  * @brief This class represents the structure MapBadElemStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapBadElemStruct
 {
@@ -4307,7 +4332,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const MapBadElemStruct& data,
             size_t current_alignment = 0);
 
@@ -4356,7 +4382,7 @@ private:
 };
 /*!
  * @brief This class represents the structure MapBoundsStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapBoundsStruct
 {
@@ -4455,7 +4481,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const MapBoundsStruct& data,
             size_t current_alignment = 0);
 
@@ -4504,7 +4531,7 @@ private:
 };
 /*!
  * @brief This class represents the structure MapMapStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapMapStruct
 {
@@ -4603,7 +4630,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const MapMapStruct& data,
             size_t current_alignment = 0);
 
@@ -4652,7 +4680,7 @@ private:
 };
 /*!
  * @brief This class represents the structure MapMapBoundsStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class MapMapBoundsStruct
 {
@@ -4751,7 +4779,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const MapMapBoundsStruct& data,
             size_t current_alignment = 0);
 
@@ -4800,7 +4829,7 @@ private:
 };
 /*!
  * @brief This class represents the union SimpleUnion defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleUnion
 {
@@ -4927,7 +4956,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const SimpleUnion& data,
             size_t current_alignment = 0);
 
@@ -4953,12 +4983,12 @@ private:
 
     int32_t m__d;
 
-    int32_t m_first;
-    int64_t m_second;
+    int32_t m_first{0};
+    int64_t m_second{0};
 };
 /*!
  * @brief This class represents the union SimpleUnionNames defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleUnionNames
 {
@@ -5085,7 +5115,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const SimpleUnionNames& data,
             size_t current_alignment = 0);
 
@@ -5111,12 +5142,12 @@ private:
 
     int32_t m__d;
 
-    int32_t m_first_case;
-    int64_t m_second_case;
+    int32_t m_first_case{0};
+    int64_t m_second_case{0};
 };
 /*!
  * @brief This class represents the union SimpleTypeUnion defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleTypeUnion
 {
@@ -5243,7 +5274,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const SimpleTypeUnion& data,
             size_t current_alignment = 0);
 
@@ -5269,12 +5301,12 @@ private:
 
     int32_t m__d;
 
-    uint8_t m_first;
-    int64_t m_second;
+    uint8_t m_first{0};
+    int64_t m_second{0};
 };
 /*!
  * @brief This class represents the union SimpleBadUnion defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleBadUnion
 {
@@ -5401,7 +5433,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const SimpleBadUnion& data,
             size_t current_alignment = 0);
 
@@ -5427,12 +5460,12 @@ private:
 
     int32_t m__d;
 
-    int32_t m_first;
-    int64_t m_second;
+    int32_t m_first{0};
+    int64_t m_second{0};
 };
 /*!
  * @brief This class represents the union SimpleBadDiscUnion defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleBadDiscUnion
 {
@@ -5559,7 +5592,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const SimpleBadDiscUnion& data,
             size_t current_alignment = 0);
 
@@ -5585,12 +5619,12 @@ private:
 
     uint8_t m__d;
 
-    int32_t m_first;
-    int64_t m_second;
+    int32_t m_first{0};
+    int64_t m_second{0};
 };
 /*!
  * @brief This class represents the structure SimpleUnionStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleUnionStruct
 {
@@ -5689,7 +5723,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const SimpleUnionStruct& data,
             size_t current_alignment = 0);
 
@@ -5738,7 +5773,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SimpleUnionStructEqual defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleUnionStructEqual
 {
@@ -5837,7 +5872,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const SimpleUnionStructEqual& data,
             size_t current_alignment = 0);
 
@@ -5886,7 +5922,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SimpleUnionNamesStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleUnionNamesStruct
 {
@@ -5985,7 +6021,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const SimpleUnionNamesStruct& data,
             size_t current_alignment = 0);
 
@@ -6034,7 +6071,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SimpleTypeUnionStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleTypeUnionStruct
 {
@@ -6133,7 +6170,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const SimpleTypeUnionStruct& data,
             size_t current_alignment = 0);
 
@@ -6182,7 +6220,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SimpleBadUnionStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimpleBadUnionStruct
 {
@@ -6281,7 +6319,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const SimpleBadUnionStruct& data,
             size_t current_alignment = 0);
 
@@ -6330,7 +6369,7 @@ private:
 };
 /*!
  * @brief This class represents the structure SimplBadDiscUnionStruct defined by the user in the IDL file.
- * @ingroup TYPES
+ * @ingroup Types
  */
 class SimplBadDiscUnionStruct
 {
@@ -6429,7 +6468,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const SimplBadDiscUnionStruct& data,
             size_t current_alignment = 0);
 

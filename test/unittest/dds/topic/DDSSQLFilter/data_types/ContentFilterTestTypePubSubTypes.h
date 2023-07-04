@@ -28,6 +28,7 @@
 
 #include "ContentFilterTestType.h"
 
+
 #if !defined(GEN_API_VER) || (GEN_API_VER != 1)
 #error \
     Generated ContentFilterTestType is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
@@ -35,9 +36,10 @@
 
 
 
+
 /*!
  * @brief This class represents the TopicDataType of the type StructType defined by the user in the IDL file.
- * @ingroup CONTENTFILTERTESTTYPE
+ * @ingroup ContentFilterTestType
  */
 class StructTypePubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -51,14 +53,17 @@ public:
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport virtual bool deserialize(
             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
-            void* data) override;
+            void* data,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-            void* data) override;
+            void* data,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport virtual bool getKey(
             void* data,
@@ -98,12 +103,14 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
+
 
 
 /*!
  * @brief This class represents the TopicDataType of the type ContentFilterTestType defined by the user in the IDL file.
- * @ingroup CONTENTFILTERTESTTYPE
+ * @ingroup ContentFilterTestType
  */
 class ContentFilterTestTypePubSubType : public eprosima::fastdds::dds::TopicDataType
 {
@@ -117,14 +124,17 @@ public:
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport virtual bool deserialize(
             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
-            void* data) override;
+            void* data,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-            void* data) override;
+            void* data,
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
     eProsima_user_DllExport virtual bool getKey(
             void* data,
@@ -164,6 +174,7 @@ public:
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
+
 };
 
 #endif // _FAST_DDS_GENERATED_CONTENTFILTERTESTTYPE_PUBSUBTYPES_H_

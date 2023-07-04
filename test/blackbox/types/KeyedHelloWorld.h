@@ -23,7 +23,9 @@
 #define _FAST_DDS_GENERATED_KEYEDHELLOWORLD_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
 
 #include <stdint.h>
 #include <array>
@@ -44,16 +46,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(KeyedHelloWorld_SOURCE)
-#define KeyedHelloWorld_DllAPI __declspec( dllexport )
+#if defined(KEYEDHELLOWORLD_SOURCE)
+#define KEYEDHELLOWORLD_DllAPI __declspec( dllexport )
 #else
-#define KeyedHelloWorld_DllAPI __declspec( dllimport )
-#endif // KeyedHelloWorld_SOURCE
+#define KEYEDHELLOWORLD_DllAPI __declspec( dllimport )
+#endif // KEYEDHELLOWORLD_SOURCE
 #else
-#define KeyedHelloWorld_DllAPI
+#define KEYEDHELLOWORLD_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define KeyedHelloWorld_DllAPI
+#define KEYEDHELLOWORLD_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +67,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure KeyedHelloWorld defined by the user in the IDL file.
- * @ingroup KEYEDHELLOWORLD
+ * @ingroup KeyedHelloWorld
  */
 class KeyedHelloWorld
 {
@@ -166,26 +168,26 @@ public:
      * @param _message New value to be copied in member message
      */
     eProsima_user_DllExport void message(
-            const eprosima::fastrtps::fixed_string<128>& _message);
+            const eprosima::fastcdr::fixed_string<128>& _message);
 
     /*!
      * @brief This function moves the value in member message
      * @param _message New value to be moved in member message
      */
     eProsima_user_DllExport void message(
-            eprosima::fastrtps::fixed_string<128>&& _message);
+            eprosima::fastcdr::fixed_string<128>&& _message);
 
     /*!
      * @brief This function returns a constant reference to member message
      * @return Constant reference to member message
      */
-    eProsima_user_DllExport const eprosima::fastrtps::fixed_string<128>& message() const;
+    eProsima_user_DllExport const eprosima::fastcdr::fixed_string<128>& message() const;
 
     /*!
      * @brief This function returns a reference to member message
      * @return Reference to member message
      */
-    eProsima_user_DllExport eprosima::fastrtps::fixed_string<128>& message();
+    eProsima_user_DllExport eprosima::fastcdr::fixed_string<128>& message();
 
     /*!
     * @brief This function returns the maximum serialized size of an object
@@ -202,7 +204,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const KeyedHelloWorld& data,
             size_t current_alignment = 0);
 
@@ -246,9 +249,9 @@ public:
 
 private:
 
-    uint16_t m_key;
-    uint16_t m_index;
-    eprosima::fastrtps::fixed_string<128> m_message;
+    uint16_t m_key{0};
+    uint16_t m_index{0};
+    eprosima::fastcdr::fixed_string<128> m_message;
 
 };
 

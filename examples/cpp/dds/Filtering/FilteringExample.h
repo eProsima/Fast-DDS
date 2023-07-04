@@ -23,7 +23,9 @@
 #define _FAST_DDS_GENERATED_FILTERINGEXAMPLE_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
 
 #include <stdint.h>
 #include <array>
@@ -44,16 +46,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(FilteringExample_SOURCE)
-#define FilteringExample_DllAPI __declspec( dllexport )
+#if defined(FILTERINGEXAMPLE_SOURCE)
+#define FILTERINGEXAMPLE_DllAPI __declspec( dllexport )
 #else
-#define FilteringExample_DllAPI __declspec( dllimport )
-#endif // FilteringExample_SOURCE
+#define FILTERINGEXAMPLE_DllAPI __declspec( dllimport )
+#endif // FILTERINGEXAMPLE_SOURCE
 #else
-#define FilteringExample_DllAPI
+#define FILTERINGEXAMPLE_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define FilteringExample_DllAPI
+#define FILTERINGEXAMPLE_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +67,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure FilteringExample defined by the user in the IDL file.
- * @ingroup FILTERINGEXAMPLE
+ * @ingroup FilteringExample
  */
 class FilteringExample
 {
@@ -142,7 +144,6 @@ public:
      */
     eProsima_user_DllExport int32_t& sampleNumber();
 
-
     /*!
     * @brief This function returns the maximum serialized size of an object
     * depending on the buffer alignment.
@@ -158,7 +159,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const FilteringExample& data,
             size_t current_alignment = 0);
 
@@ -202,7 +204,7 @@ public:
 
 private:
 
-    int32_t m_sampleNumber;
+    int32_t m_sampleNumber{0};
 
 };
 

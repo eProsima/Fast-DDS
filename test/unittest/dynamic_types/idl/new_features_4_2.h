@@ -23,7 +23,9 @@
 #define _FAST_DDS_GENERATED_NEW_FEATURES_4_2_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
 
 #include <stdint.h>
 #include <array>
@@ -44,16 +46,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(new_features_4_2_SOURCE)
-#define new_features_4_2_DllAPI __declspec( dllexport )
+#if defined(NEW_FEATURES_4_2_SOURCE)
+#define NEW_FEATURES_4_2_DllAPI __declspec( dllexport )
 #else
-#define new_features_4_2_DllAPI __declspec( dllimport )
-#endif // new_features_4_2_SOURCE
+#define NEW_FEATURES_4_2_DllAPI __declspec( dllimport )
+#endif // NEW_FEATURES_4_2_SOURCE
 #else
-#define new_features_4_2_DllAPI
+#define NEW_FEATURES_4_2_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define new_features_4_2_DllAPI
+#define NEW_FEATURES_4_2_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +67,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure NewAliases defined by the user in the IDL file.
- * @ingroup NEW_FEATURES_4_2
+ * @ingroup new_features_4_2
  */
 class NewAliases
 {
@@ -316,7 +318,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const NewAliases& data,
             size_t current_alignment = 0);
 
@@ -360,20 +363,21 @@ public:
 
 private:
 
-    int8_t m_int8_;
-    uint8_t m_uint8_;
-    int16_t m_int16_;
-    uint16_t m_uint16_;
-    int32_t m_int32_;
-    uint32_t m_uint32_;
-    int64_t m_int64_;
-    uint64_t m_uint64_;
+    int8_t m_int8_{0};
+    uint8_t m_uint8_{0};
+    int16_t m_int16_{0};
+    uint16_t m_uint16_{0};
+    int32_t m_int32_{0};
+    uint32_t m_uint32_{0};
+    int64_t m_int64_{0};
+    uint64_t m_uint64_{555}
+    ;
     std::string m_local_string;
 
 };
 /*!
  * @brief This class represents the union WCharUnion defined by the user in the IDL file.
- * @ingroup NEW_FEATURES_4_2
+ * @ingroup new_features_4_2
  */
 class WCharUnion
 {
@@ -500,7 +504,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const WCharUnion& data,
             size_t current_alignment = 0);
 
@@ -526,12 +531,12 @@ private:
 
     wchar_t m__d;
 
-    int32_t m_case_zero;
-    int32_t m_case_one;
+    int32_t m_case_zero{0};
+    int32_t m_case_one{0};
 };
 /*!
  * @brief This class represents the union OctetUnion defined by the user in the IDL file.
- * @ingroup NEW_FEATURES_4_2
+ * @ingroup new_features_4_2
  */
 class OctetUnion
 {
@@ -658,7 +663,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const OctetUnion& data,
             size_t current_alignment = 0);
 
@@ -684,12 +690,12 @@ private:
 
     uint8_t m__d;
 
-    int32_t m_case_five;
-    int32_t m_case_seven;
+    int32_t m_case_five{0};
+    int32_t m_case_seven{0};
 };
 /*!
  * @brief This class represents the union Int8Union defined by the user in the IDL file.
- * @ingroup NEW_FEATURES_4_2
+ * @ingroup new_features_4_2
  */
 class Int8Union
 {
@@ -816,7 +822,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const Int8Union& data,
             size_t current_alignment = 0);
 
@@ -842,13 +849,13 @@ private:
 
     int8_t m__d;
 
-    int32_t m_case_three;
-    int32_t m_case_six;
+    int32_t m_case_three{0};
+    int32_t m_case_six{0};
 };
 namespace bitmodule {
     /*!
      * @brief This class represents the structure ParentBitset defined by the user in the IDL file.
-     * @ingroup NEW_FEATURES_4_2
+     * @ingroup new_features_4_2
      */
     class ParentBitset
     {
@@ -925,7 +932,8 @@ namespace bitmodule {
          * @param current_alignment Buffer alignment.
          * @return Serialized size.
          */
-        eProsima_user_DllExport static size_t getCdrSerializedSize(
+        eProsima_user_DllExport static size_t calculate_serialized_size(
+                eprosima::fastcdr::CdrSizeCalculator& calculator,
                 const bitmodule::ParentBitset& data,
                 size_t current_alignment = 0);
 
@@ -953,7 +961,7 @@ namespace bitmodule {
     };
     /*!
      * @brief This class represents the structure MyBitset defined by the user in the IDL file.
-     * @ingroup NEW_FEATURES_4_2
+     * @ingroup new_features_4_2
      */
     class MyBitset : public bitmodule::ParentBitset 
     {
@@ -1091,7 +1099,8 @@ namespace bitmodule {
          * @param current_alignment Buffer alignment.
          * @return Serialized size.
          */
-        eProsima_user_DllExport static size_t getCdrSerializedSize(
+        eProsima_user_DllExport static size_t calculate_serialized_size(
+                eprosima::fastcdr::CdrSizeCalculator& calculator,
                 const bitmodule::MyBitset& data,
                 size_t current_alignment = 0);
 
@@ -1119,19 +1128,19 @@ namespace bitmodule {
     };
     /*!
      * @brief This class represents the bitmask MyBitMask defined by the user in the IDL file.
-     * @ingroup NEW_FEATURES_4_2
+     * @ingroup new_features_4_2
      */
     enum MyBitMask : uint8_t
     {
-        flag0 = 0x01 << 0,
-        flag1 = 0x01 << 1,
-        flag4 = 0x01 << 4,
-        flag6 = 0x01 << 6,
-        flag7 = 0x01 << 7
+        flag0 = 0x01ull << 0,
+        flag1 = 0x01ull << 1,
+        flag4 = 0x01ull << 4,
+        flag6 = 0x01ull << 6,
+        flag7 = 0x01ull << 7
     };
     /*!
      * @brief This class represents the structure BitsetBitmask defined by the user in the IDL file.
-     * @ingroup NEW_FEATURES_4_2
+     * @ingroup new_features_4_2
      */
     class BitsetBitmask
     {
@@ -1249,7 +1258,8 @@ namespace bitmodule {
          * @param current_alignment Buffer alignment.
          * @return Serialized size.
          */
-        eProsima_user_DllExport static size_t getCdrSerializedSize(
+        eProsima_user_DllExport static size_t calculate_serialized_size(
+                eprosima::fastcdr::CdrSizeCalculator& calculator,
                 const bitmodule::BitsetBitmask& data,
                 size_t current_alignment = 0);
 
@@ -1294,12 +1304,12 @@ namespace bitmodule {
     private:
 
         bitmodule::MyBitset m_mybitset;
-        bitmodule::MyBitMask m_mybitmask;
+        bitmodule::MyBitMask m_mybitmask{bitmodule::flag0};
 
     };
     /*!
      * @brief This class represents the structure BM2 defined by the user in the IDL file.
-     * @ingroup NEW_FEATURES_4_2
+     * @ingroup new_features_4_2
      */
     class BM2 : public bitmodule::BitsetBitmask 
     {
@@ -1411,7 +1421,8 @@ namespace bitmodule {
          * @param current_alignment Buffer alignment.
          * @return Serialized size.
          */
-        eProsima_user_DllExport static size_t getCdrSerializedSize(
+        eProsima_user_DllExport static size_t calculate_serialized_size(
+                eprosima::fastcdr::CdrSizeCalculator& calculator,
                 const bitmodule::BM2& data,
                 size_t current_alignment = 0);
 
@@ -1455,14 +1466,14 @@ namespace bitmodule {
 
     private:
 
-        bitmodule::MyBitMask m_two;
-        int32_t m_mylong;
+        bitmodule::MyBitMask m_two{bitmodule::flag0};
+        int32_t m_mylong{0};
 
     };
 } // namespace bitmodule
 /*!
  * @brief This class represents the structure StructTest defined by the user in the IDL file.
- * @ingroup NEW_FEATURES_4_2
+ * @ingroup new_features_4_2
  */
 class StructTest : public NewAliases 
 {
@@ -1636,7 +1647,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const StructTest& data,
             size_t current_alignment = 0);
 

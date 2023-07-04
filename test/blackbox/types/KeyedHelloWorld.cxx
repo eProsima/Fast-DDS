@@ -34,17 +34,14 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define KeyedHelloWorld_max_cdr_typesize 137ULL;
+#define KeyedHelloWorld_max_cdr_typesize 141ULL;
 #define KeyedHelloWorld_max_key_cdr_typesize 2ULL;
 
 KeyedHelloWorld::KeyedHelloWorld()
 {
-    // unsigned short m_key
-    m_key = 0;
-    // unsigned short m_index
-    m_index = 0;
-    // string m_message
-    m_message ="";
+
+
+
 
 }
 
@@ -113,22 +110,29 @@ size_t KeyedHelloWorld::getMaxCdrSerializedSize(
     return KeyedHelloWorld_max_cdr_typesize;
 }
 
-size_t KeyedHelloWorld::getCdrSerializedSize(
+size_t KeyedHelloWorld::calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
         const KeyedHelloWorld& data,
         size_t current_alignment)
 {
     (void)data;
     size_t initial_alignment = current_alignment;
 
+    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
+eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+ :
+eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+,
+            current_alignment);
 
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 
+                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_key, current_alignment);
+                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1), data.m_index, current_alignment);
+                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2), data.m_message, current_alignment);
 
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.message().size() + 1;
-
+    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
 
     return current_alignment - initial_alignment;
 }
@@ -136,24 +140,50 @@ size_t KeyedHelloWorld::getCdrSerializedSize(
 void KeyedHelloWorld::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
+    eprosima::fastcdr::Cdr::state current_state(scdr);
+    scdr.begin_serialize_type(current_state,
+            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
+eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+ :
+eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+);
 
-    scdr << m_key;
-    scdr << m_index;
-    scdr << m_message.c_str();
+    scdr << eprosima::fastcdr::MemberId(0) << m_key;scdr << eprosima::fastcdr::MemberId(1) << m_index;scdr << eprosima::fastcdr::MemberId(2) << m_message;
 
+    scdr.end_serialize_type(current_state);
 }
 
 void KeyedHelloWorld::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
+        eprosima::fastcdr::Cdr& cdr)
 {
-
-    dcdr >> m_key;
-    dcdr >> m_index;
-    {
-        std::string aux;
-        dcdr >> aux;
-        m_message = aux.c_str();
-    }
+    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
+eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+ :
+eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+,
+            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
+            {
+                bool ret_value = true;
+                switch (mid.id)
+                {
+                                        case 0:
+                                            dcdr >> m_key;
+                                            break;
+                                        
+                                        case 1:
+                                            dcdr >> m_index;
+                                            break;
+                                        
+                    case 2:
+                        dcdr >> m_message;
+ret_value = false;
+                        break;
+                    default:
+                        ret_value = false;
+                        break;
+                }
+                return ret_value;
+            });
 }
 
 /*!
@@ -217,7 +247,7 @@ uint16_t& KeyedHelloWorld::index()
  * @param _message New value to be copied in member message
  */
 void KeyedHelloWorld::message(
-        const eprosima::fastrtps::fixed_string<128>& _message)
+        const eprosima::fastcdr::fixed_string<128>& _message)
 {
     m_message = _message;
 }
@@ -227,7 +257,7 @@ void KeyedHelloWorld::message(
  * @param _message New value to be moved in member message
  */
 void KeyedHelloWorld::message(
-        eprosima::fastrtps::fixed_string<128>&& _message)
+        eprosima::fastcdr::fixed_string<128>&& _message)
 {
     m_message = std::move(_message);
 }
@@ -236,7 +266,7 @@ void KeyedHelloWorld::message(
  * @brief This function returns a constant reference to member message
  * @return Constant reference to member message
  */
-const eprosima::fastrtps::fixed_string<128>& KeyedHelloWorld::message() const
+const eprosima::fastcdr::fixed_string<128>& KeyedHelloWorld::message() const
 {
     return m_message;
 }
@@ -245,7 +275,7 @@ const eprosima::fastrtps::fixed_string<128>& KeyedHelloWorld::message() const
  * @brief This function returns a reference to member message
  * @return Reference to member message
  */
-eprosima::fastrtps::fixed_string<128>& KeyedHelloWorld::message()
+eprosima::fastcdr::fixed_string<128>& KeyedHelloWorld::message()
 {
     return m_message;
 }
@@ -267,8 +297,7 @@ void KeyedHelloWorld::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-   scdr << m_key;
-   
+   scdr << eprosima::fastcdr::MemberId(0) << m_key;   
  
   
 }

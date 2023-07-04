@@ -23,7 +23,9 @@
 #define _FAST_DDS_GENERATED_WIDEENUM_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
 
 #include <stdint.h>
 #include <array>
@@ -44,16 +46,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(WideEnum_SOURCE)
-#define WideEnum_DllAPI __declspec( dllexport )
+#if defined(WIDEENUM_SOURCE)
+#define WIDEENUM_DllAPI __declspec( dllexport )
 #else
-#define WideEnum_DllAPI __declspec( dllimport )
-#endif // WideEnum_SOURCE
+#define WIDEENUM_DllAPI __declspec( dllimport )
+#endif // WIDEENUM_SOURCE
 #else
-#define WideEnum_DllAPI
+#define WIDEENUM_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define WideEnum_DllAPI
+#define WIDEENUM_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +67,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the enumeration MyEnumWide defined by the user in the IDL file.
- * @ingroup WIDEENUM
+ * @ingroup WideEnum
  */
 enum MyEnumWide : uint32_t
 {
@@ -76,7 +78,7 @@ enum MyEnumWide : uint32_t
 };
 /*!
  * @brief This class represents the structure MyEnumWideStruct defined by the user in the IDL file.
- * @ingroup WIDEENUM
+ * @ingroup WideEnum
  */
 class MyEnumWideStruct
 {
@@ -153,7 +155,6 @@ public:
      */
     eProsima_user_DllExport MyEnumWide& my_enum_wide();
 
-
     /*!
     * @brief This function returns the maximum serialized size of an object
     * depending on the buffer alignment.
@@ -169,7 +170,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const MyEnumWideStruct& data,
             size_t current_alignment = 0);
 
@@ -213,12 +215,12 @@ public:
 
 private:
 
-    MyEnumWide m_my_enum_wide;
+    MyEnumWide m_my_enum_wide{::A};
 
 };
 /*!
  * @brief This class represents the union SimpleWideUnion defined by the user in the IDL file.
- * @ingroup WIDEENUM
+ * @ingroup WideEnum
  */
 class SimpleWideUnion
 {
@@ -366,7 +368,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const SimpleWideUnion& data,
             size_t current_alignment = 0);
 
@@ -392,13 +395,13 @@ private:
 
     int32_t m__d;
 
-    int32_t m_first;
-    int64_t m_second;
-    uint8_t m_third;
+    int32_t m_first{0};
+    int64_t m_second{0};
+    uint8_t m_third{0};
 };
 /*!
  * @brief This class represents the structure SimpleWideUnionStruct defined by the user in the IDL file.
- * @ingroup WIDEENUM
+ * @ingroup WideEnum
  */
 class SimpleWideUnionStruct
 {
@@ -497,7 +500,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const SimpleWideUnionStruct& data,
             size_t current_alignment = 0);
 

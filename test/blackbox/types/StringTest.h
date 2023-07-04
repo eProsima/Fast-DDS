@@ -23,7 +23,9 @@
 #define _FAST_DDS_GENERATED_STRINGTEST_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
 
 #include <stdint.h>
 #include <array>
@@ -44,16 +46,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(StringTest_SOURCE)
-#define StringTest_DllAPI __declspec( dllexport )
+#if defined(STRINGTEST_SOURCE)
+#define STRINGTEST_DllAPI __declspec( dllexport )
 #else
-#define StringTest_DllAPI __declspec( dllimport )
-#endif // StringTest_SOURCE
+#define STRINGTEST_DllAPI __declspec( dllimport )
+#endif // STRINGTEST_SOURCE
 #else
-#define StringTest_DllAPI
+#define STRINGTEST_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define StringTest_DllAPI
+#define STRINGTEST_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +67,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure StringTest defined by the user in the IDL file.
- * @ingroup STRINGTEST
+ * @ingroup StringTest
  */
 class StringTest
 {
@@ -128,26 +130,26 @@ public:
      * @param _message New value to be copied in member message
      */
     eProsima_user_DllExport void message(
-            const eprosima::fastrtps::fixed_string<10000>& _message);
+            const eprosima::fastcdr::fixed_string<10000>& _message);
 
     /*!
      * @brief This function moves the value in member message
      * @param _message New value to be moved in member message
      */
     eProsima_user_DllExport void message(
-            eprosima::fastrtps::fixed_string<10000>&& _message);
+            eprosima::fastcdr::fixed_string<10000>&& _message);
 
     /*!
      * @brief This function returns a constant reference to member message
      * @return Constant reference to member message
      */
-    eProsima_user_DllExport const eprosima::fastrtps::fixed_string<10000>& message() const;
+    eProsima_user_DllExport const eprosima::fastcdr::fixed_string<10000>& message() const;
 
     /*!
      * @brief This function returns a reference to member message
      * @return Reference to member message
      */
-    eProsima_user_DllExport eprosima::fastrtps::fixed_string<10000>& message();
+    eProsima_user_DllExport eprosima::fastcdr::fixed_string<10000>& message();
 
     /*!
     * @brief This function returns the maximum serialized size of an object
@@ -164,7 +166,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const StringTest& data,
             size_t current_alignment = 0);
 
@@ -208,7 +211,7 @@ public:
 
 private:
 
-    eprosima::fastrtps::fixed_string<10000> m_message;
+    eprosima::fastcdr::fixed_string<10000> m_message;
 
 };
 

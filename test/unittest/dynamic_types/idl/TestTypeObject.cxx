@@ -26,6 +26,7 @@ namespace { char dummy; }
 
 #include "Test.h"
 #include "TestTypeObject.h"
+#include <mutex>
 #include <utility>
 #include <sstream>
 #include <fastrtps/rtps/common/SerializedPayload.h>
@@ -35,87 +36,92 @@ namespace { char dummy; }
 #include <fastrtps/types/AnnotationParameterValue.h>
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>
+#include <fastcdr/CdrSizeCalculator.h>
 
 using namespace eprosima::fastrtps::rtps;
 
 void registerTestTypes()
 {
-    TypeObjectFactory *factory = TypeObjectFactory::get_instance();
-    factory->add_type_object("MyEnum", GetMyEnumIdentifier(true),
-    GetMyEnumObject(true));
-    factory->add_type_object("MyEnum", GetMyEnumIdentifier(false),
-    GetMyEnumObject(false));
+    static std::once_flag once_flag;
+    std::call_once(once_flag, []()
+            {
+                TypeObjectFactory *factory = TypeObjectFactory::get_instance();
+                factory->add_type_object("MyEnum", GetMyEnumIdentifier(true),
+                GetMyEnumObject(true));
+                factory->add_type_object("MyEnum", GetMyEnumIdentifier(false),
+                GetMyEnumObject(false));
 
-    factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(true),
-    GetMyAliasEnumObject(true));
-    factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(false),
-    GetMyAliasEnumObject(false));
+                factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(true),
+                GetMyAliasEnumObject(true));
+                factory->add_type_object("MyAliasEnum", GetMyAliasEnumIdentifier(false),
+                GetMyAliasEnumObject(false));
 
-    factory->add_type_object("MyAliasEnum2", GetMyAliasEnum2Identifier(true),
-    GetMyAliasEnum2Object(true));
-    factory->add_type_object("MyAliasEnum2", GetMyAliasEnum2Identifier(false),
-    GetMyAliasEnum2Object(false));
+                factory->add_type_object("MyAliasEnum2", GetMyAliasEnum2Identifier(true),
+                GetMyAliasEnum2Object(true));
+                factory->add_type_object("MyAliasEnum2", GetMyAliasEnum2Identifier(false),
+                GetMyAliasEnum2Object(false));
 
-    factory->add_type_object("MyAliasEnum3", GetMyAliasEnum3Identifier(true),
-    GetMyAliasEnum3Object(true));
-    factory->add_type_object("MyAliasEnum3", GetMyAliasEnum3Identifier(false),
-    GetMyAliasEnum3Object(false));
+                factory->add_type_object("MyAliasEnum3", GetMyAliasEnum3Identifier(true),
+                GetMyAliasEnum3Object(true));
+                factory->add_type_object("MyAliasEnum3", GetMyAliasEnum3Identifier(false),
+                GetMyAliasEnum3Object(false));
 
-    factory->add_type_object("BasicStruct", GetBasicStructIdentifier(true),
-    GetBasicStructObject(true));
-    factory->add_type_object("BasicStruct", GetBasicStructIdentifier(false),
-    GetBasicStructObject(false));
+                factory->add_type_object("BasicStruct", GetBasicStructIdentifier(true),
+                GetBasicStructObject(true));
+                factory->add_type_object("BasicStruct", GetBasicStructIdentifier(false),
+                GetBasicStructObject(false));
 
-    factory->add_type_object("MyOctetArray500", GetMyOctetArray500Identifier(true),
-    GetMyOctetArray500Object(true));
-    factory->add_type_object("MyOctetArray500", GetMyOctetArray500Identifier(false),
-    GetMyOctetArray500Object(false));
+                factory->add_type_object("MyOctetArray500", GetMyOctetArray500Identifier(true),
+                GetMyOctetArray500Object(true));
+                factory->add_type_object("MyOctetArray500", GetMyOctetArray500Identifier(false),
+                GetMyOctetArray500Object(false));
 
-    factory->add_type_object("BSAlias5", GetBSAlias5Identifier(true),
-    GetBSAlias5Object(true));
-    factory->add_type_object("BSAlias5", GetBSAlias5Identifier(false),
-    GetBSAlias5Object(false));
+                factory->add_type_object("BSAlias5", GetBSAlias5Identifier(true),
+                GetBSAlias5Object(true));
+                factory->add_type_object("BSAlias5", GetBSAlias5Identifier(false),
+                GetBSAlias5Object(false));
 
-    factory->add_type_object("MA3", GetMA3Identifier(true),
-    GetMA3Object(true));
-    factory->add_type_object("MA3", GetMA3Identifier(false),
-    GetMA3Object(false));
+                factory->add_type_object("MA3", GetMA3Identifier(true),
+                GetMA3Object(true));
+                factory->add_type_object("MA3", GetMA3Identifier(false),
+                GetMA3Object(false));
 
-    factory->add_type_object("MyMiniArray", GetMyMiniArrayIdentifier(true),
-    GetMyMiniArrayObject(true));
-    factory->add_type_object("MyMiniArray", GetMyMiniArrayIdentifier(false),
-    GetMyMiniArrayObject(false));
+                factory->add_type_object("MyMiniArray", GetMyMiniArrayIdentifier(true),
+                GetMyMiniArrayObject(true));
+                factory->add_type_object("MyMiniArray", GetMyMiniArrayIdentifier(false),
+                GetMyMiniArrayObject(false));
 
-    factory->add_type_object("MySequenceLong", GetMySequenceLongIdentifier(true),
-    GetMySequenceLongObject(true));
-    factory->add_type_object("MySequenceLong", GetMySequenceLongIdentifier(false),
-    GetMySequenceLongObject(false));
+                factory->add_type_object("MySequenceLong", GetMySequenceLongIdentifier(true),
+                GetMySequenceLongObject(true));
+                factory->add_type_object("MySequenceLong", GetMySequenceLongIdentifier(false),
+                GetMySequenceLongObject(false));
 
-    factory->add_type_object("ComplexStruct", GetComplexStructIdentifier(true),
-    GetComplexStructObject(true));
-    factory->add_type_object("ComplexStruct", GetComplexStructIdentifier(false),
-    GetComplexStructObject(false));
+                factory->add_type_object("ComplexStruct", GetComplexStructIdentifier(true),
+                GetComplexStructObject(true));
+                factory->add_type_object("ComplexStruct", GetComplexStructIdentifier(false),
+                GetComplexStructObject(false));
 
-    factory->add_type_object("MyUnion", GetMyUnionIdentifier(true),
-    GetMyUnionObject(true));
-    factory->add_type_object("MyUnion", GetMyUnionIdentifier(false),
-    GetMyUnionObject(false));
+                factory->add_type_object("MyUnion", GetMyUnionIdentifier(true),
+                GetMyUnionObject(true));
+                factory->add_type_object("MyUnion", GetMyUnionIdentifier(false),
+                GetMyUnionObject(false));
 
-    factory->add_type_object("MyUnion2", GetMyUnion2Identifier(true),
-    GetMyUnion2Object(true));
-    factory->add_type_object("MyUnion2", GetMyUnion2Identifier(false),
-    GetMyUnion2Object(false));
+                factory->add_type_object("MyUnion2", GetMyUnion2Identifier(true),
+                GetMyUnion2Object(true));
+                factory->add_type_object("MyUnion2", GetMyUnion2Identifier(false),
+                GetMyUnion2Object(false));
 
-    factory->add_type_object("CompleteStruct", GetCompleteStructIdentifier(true),
-    GetCompleteStructObject(true));
-    factory->add_type_object("CompleteStruct", GetCompleteStructIdentifier(false),
-    GetCompleteStructObject(false));
+                factory->add_type_object("CompleteStruct", GetCompleteStructIdentifier(true),
+                GetCompleteStructObject(true));
+                factory->add_type_object("CompleteStruct", GetCompleteStructIdentifier(false),
+                GetCompleteStructObject(false));
 
-    factory->add_type_object("KeyedStruct", GetKeyedStructIdentifier(true),
-    GetKeyedStructObject(true));
-    factory->add_type_object("KeyedStruct", GetKeyedStructIdentifier(false),
-    GetKeyedStructObject(false));
+                factory->add_type_object("KeyedStruct", GetKeyedStructIdentifier(true),
+                GetKeyedStructObject(true));
+                factory->add_type_object("KeyedStruct", GetKeyedStructIdentifier(false),
+                GetKeyedStructObject(false));
 
+            });
 }
 
 const TypeIdentifier* GetMyEnumIdentifier(bool complete)
@@ -219,8 +225,9 @@ const TypeObject* GetMinimalMyEnumObject()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalEnumeratedType::getCdrSerializedSize(type_object->minimal().enumerated_type()) + 4));
+        MinimalEnumeratedType::calculate_serialized_size(calculator, type_object->minimal().enumerated_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -310,8 +317,9 @@ const TypeObject* GetCompleteMyEnumObject()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteEnumeratedType::getCdrSerializedSize(type_object->complete().enumerated_type()) + 4));
+        CompleteEnumeratedType::calculate_serialized_size(calculator, type_object->complete().enumerated_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -411,8 +419,9 @@ const TypeObject* GetMinimalMyAliasEnumObject()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
+        MinimalAliasType::calculate_serialized_size(calculator, type_object->minimal().alias_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -493,8 +502,9 @@ const TypeObject* GetCompleteMyAliasEnumObject()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
+        CompleteAliasType::calculate_serialized_size(calculator, type_object->complete().alias_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -597,8 +607,9 @@ const TypeObject* GetMinimalMyAliasEnum2Object()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
+        MinimalAliasType::calculate_serialized_size(calculator, type_object->minimal().alias_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -679,8 +690,9 @@ const TypeObject* GetCompleteMyAliasEnum2Object()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
+        CompleteAliasType::calculate_serialized_size(calculator, type_object->complete().alias_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -783,8 +795,9 @@ const TypeObject* GetMinimalMyAliasEnum3Object()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
+        MinimalAliasType::calculate_serialized_size(calculator, type_object->minimal().alias_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -865,8 +878,9 @@ const TypeObject* GetCompleteMyAliasEnum3Object()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
+        CompleteAliasType::calculate_serialized_size(calculator, type_object->complete().alias_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -932,7 +946,7 @@ const TypeObject* GetMinimalBasicStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -1219,8 +1233,9 @@ const TypeObject* GetMinimalBasicStructObject()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
+        MinimalStructType::calculate_serialized_size(calculator, type_object->minimal().struct_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -1256,7 +1271,7 @@ const TypeObject* GetCompleteBasicStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -1498,8 +1513,9 @@ const TypeObject* GetCompleteBasicStructObject()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
+        CompleteStructType::calculate_serialized_size(calculator, type_object->complete().struct_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -1599,8 +1615,9 @@ const TypeObject* GetMinimalMyOctetArray500Object()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
+        MinimalAliasType::calculate_serialized_size(calculator, type_object->minimal().alias_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -1681,8 +1698,9 @@ const TypeObject* GetCompleteMyOctetArray500Object()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
+        CompleteAliasType::calculate_serialized_size(calculator, type_object->complete().alias_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -1785,8 +1803,9 @@ const TypeObject* GetMinimalBSAlias5Object()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
+        MinimalAliasType::calculate_serialized_size(calculator, type_object->minimal().alias_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -1867,8 +1886,9 @@ const TypeObject* GetCompleteBSAlias5Object()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
+        CompleteAliasType::calculate_serialized_size(calculator, type_object->complete().alias_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -1971,8 +1991,9 @@ const TypeObject* GetMinimalMA3Object()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
+        MinimalAliasType::calculate_serialized_size(calculator, type_object->minimal().alias_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -2053,8 +2074,9 @@ const TypeObject* GetCompleteMA3Object()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
+        CompleteAliasType::calculate_serialized_size(calculator, type_object->complete().alias_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -2157,8 +2179,9 @@ const TypeObject* GetMinimalMyMiniArrayObject()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
+        MinimalAliasType::calculate_serialized_size(calculator, type_object->minimal().alias_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -2239,8 +2262,9 @@ const TypeObject* GetCompleteMyMiniArrayObject()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
+        CompleteAliasType::calculate_serialized_size(calculator, type_object->complete().alias_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -2343,8 +2367,9 @@ const TypeObject* GetMinimalMySequenceLongObject()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
+        MinimalAliasType::calculate_serialized_size(calculator, type_object->minimal().alias_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -2425,8 +2450,9 @@ const TypeObject* GetCompleteMySequenceLongObject()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
+        CompleteAliasType::calculate_serialized_size(calculator, type_object->complete().alias_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -2492,7 +2518,7 @@ const TypeObject* GetMinimalComplexStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -2542,7 +2568,8 @@ const TypeObject* GetMinimalComplexStructObject()
     mst_my_alias_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_alias_enum.common().member_flags().IS_KEY(false);
     mst_my_alias_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_my_alias_enum.common().member_type_id(*GetMyAliasEnumIdentifier(false));
+    mst_my_alias_enum.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyAliasEnum", false));
+
     MD5 my_alias_enum_hash("my_alias_enum");
     for(int i = 0; i < 4; ++i)
     {
@@ -2559,7 +2586,8 @@ const TypeObject* GetMinimalComplexStructObject()
     mst_my_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_enum.common().member_flags().IS_KEY(false);
     mst_my_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_my_enum.common().member_type_id(*GetMyEnumIdentifier(false));
+    mst_my_enum.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyEnum", false));
+
     MD5 my_enum_hash("my_enum");
     for(int i = 0; i < 4; ++i)
     {
@@ -2633,7 +2661,8 @@ const TypeObject* GetMinimalComplexStructObject()
     mst_my_octet_array_500.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_octet_array_500.common().member_flags().IS_KEY(false);
     mst_my_octet_array_500.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_my_octet_array_500.common().member_type_id(*GetMyOctetArray500Identifier(false));
+    mst_my_octet_array_500.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyOctetArray500", false));
+
     MD5 my_octet_array_500_hash("my_octet_array_500");
     for(int i = 0; i < 4; ++i)
     {
@@ -2859,7 +2888,8 @@ const TypeObject* GetMinimalComplexStructObject()
     mst_multi_alias_array_42.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_multi_alias_array_42.common().member_flags().IS_KEY(false);
     mst_multi_alias_array_42.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_multi_alias_array_42.common().member_type_id(*GetMA3Identifier(false));
+    mst_multi_alias_array_42.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MA3", false));
+
     MD5 multi_alias_array_42_hash("multi_alias_array_42");
     for(int i = 0; i < 4; ++i)
     {
@@ -2914,8 +2944,9 @@ const TypeObject* GetMinimalComplexStructObject()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
+        MinimalStructType::calculate_serialized_size(calculator, type_object->minimal().struct_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -2951,7 +2982,7 @@ const TypeObject* GetCompleteComplexStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -2995,7 +3026,8 @@ const TypeObject* GetCompleteComplexStructObject()
     cst_my_alias_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_alias_enum.common().member_flags().IS_KEY(false);
     cst_my_alias_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_my_alias_enum.common().member_type_id(*GetMyAliasEnumIdentifier(true));
+    cst_my_alias_enum.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyAliasEnum", false));
+
     cst_my_alias_enum.detail().name("my_alias_enum");
 
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_alias_enum);
@@ -3009,7 +3041,8 @@ const TypeObject* GetCompleteComplexStructObject()
     cst_my_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_enum.common().member_flags().IS_KEY(false);
     cst_my_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_my_enum.common().member_type_id(*GetMyEnumIdentifier(true));
+    cst_my_enum.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyEnum", false));
+
     cst_my_enum.detail().name("my_enum");
 
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_enum);
@@ -3071,7 +3104,8 @@ const TypeObject* GetCompleteComplexStructObject()
     cst_my_octet_array_500.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_octet_array_500.common().member_flags().IS_KEY(false);
     cst_my_octet_array_500.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_my_octet_array_500.common().member_type_id(*GetMyOctetArray500Identifier(true));
+    cst_my_octet_array_500.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyOctetArray500", false));
+
     cst_my_octet_array_500.detail().name("my_octet_array_500");
 
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_octet_array_500);
@@ -3261,7 +3295,8 @@ const TypeObject* GetCompleteComplexStructObject()
     cst_multi_alias_array_42.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_multi_alias_array_42.common().member_flags().IS_KEY(false);
     cst_multi_alias_array_42.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_multi_alias_array_42.common().member_type_id(*GetMA3Identifier(true));
+    cst_multi_alias_array_42.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MA3", false));
+
     cst_multi_alias_array_42.detail().name("multi_alias_array_42");
 
     type_object->complete().struct_type().member_seq().emplace_back(cst_multi_alias_array_42);
@@ -3307,8 +3342,9 @@ const TypeObject* GetCompleteComplexStructObject()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
+        CompleteStructType::calculate_serialized_size(calculator, type_object->complete().struct_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -3371,7 +3407,7 @@ const TypeObject* GetMinimalMyUnionObject()
     type_object->minimal()._d(TK_UNION);
 
     type_object->minimal().union_type().union_flags().IS_FINAL(false);
-    type_object->minimal().union_type().union_flags().IS_APPENDABLE(false);
+    type_object->minimal().union_type().union_flags().IS_APPENDABLE(true);
     type_object->minimal().union_type().union_flags().IS_MUTABLE(false);
     type_object->minimal().union_type().union_flags().IS_NESTED(false);
     type_object->minimal().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -3384,7 +3420,7 @@ const TypeObject* GetMinimalMyUnionObject()
     type_object->minimal().union_type().discriminator().common().member_flags().IS_KEY(false); // Unsupported
     type_object->minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false); // Doesn't apply
 
-    type_object->minimal().union_type().discriminator().common().type_id(*GetMyEnumIdentifier(false));
+    type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyEnum", false));
 
     MemberId memberId = 0;
     MinimalUnionMember mst_basic;
@@ -3431,8 +3467,9 @@ const TypeObject* GetMinimalMyUnionObject()
     TypeIdentifier* identifier = new TypeIdentifier();
     identifier->_d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalUnionType::getCdrSerializedSize(type_object->minimal().union_type()) + 4));
+        MinimalUnionType::calculate_serialized_size(calculator, type_object->minimal().union_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -3469,7 +3506,7 @@ const TypeObject* GetCompleteMyUnionObject()
     type_object->complete()._d(TK_UNION);
 
     type_object->complete().union_type().union_flags().IS_FINAL(false);
-    type_object->complete().union_type().union_flags().IS_APPENDABLE(false);
+    type_object->complete().union_type().union_flags().IS_APPENDABLE(true);
     type_object->complete().union_type().union_flags().IS_MUTABLE(false);
     type_object->complete().union_type().union_flags().IS_NESTED(false);
     type_object->complete().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -3482,7 +3519,7 @@ const TypeObject* GetCompleteMyUnionObject()
     type_object->complete().union_type().discriminator().common().member_flags().IS_KEY(false); // Unsupported
     type_object->complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false); // Doesn't apply
 
-    type_object->complete().union_type().discriminator().common().type_id(*GetMyEnumIdentifier(true));
+    type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyEnum", false));
 
 
     MemberId memberId = 0;
@@ -3525,8 +3562,9 @@ const TypeObject* GetCompleteMyUnionObject()
     TypeIdentifier* identifier = new TypeIdentifier();
     identifier->_d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteUnionType::getCdrSerializedSize(type_object->complete().union_type()) + 4));
+        CompleteUnionType::calculate_serialized_size(calculator, type_object->complete().union_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -3590,7 +3628,7 @@ const TypeObject* GetMinimalMyUnion2Object()
     type_object->minimal()._d(TK_UNION);
 
     type_object->minimal().union_type().union_flags().IS_FINAL(false);
-    type_object->minimal().union_type().union_flags().IS_APPENDABLE(false);
+    type_object->minimal().union_type().union_flags().IS_APPENDABLE(true);
     type_object->minimal().union_type().union_flags().IS_MUTABLE(false);
     type_object->minimal().union_type().union_flags().IS_NESTED(false);
     type_object->minimal().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -3671,8 +3709,9 @@ const TypeObject* GetMinimalMyUnion2Object()
     TypeIdentifier* identifier = new TypeIdentifier();
     identifier->_d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalUnionType::getCdrSerializedSize(type_object->minimal().union_type()) + 4));
+        MinimalUnionType::calculate_serialized_size(calculator, type_object->minimal().union_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -3709,7 +3748,7 @@ const TypeObject* GetCompleteMyUnion2Object()
     type_object->complete()._d(TK_UNION);
 
     type_object->complete().union_type().union_flags().IS_FINAL(false);
-    type_object->complete().union_type().union_flags().IS_APPENDABLE(false);
+    type_object->complete().union_type().union_flags().IS_APPENDABLE(true);
     type_object->complete().union_type().union_flags().IS_MUTABLE(false);
     type_object->complete().union_type().union_flags().IS_NESTED(false);
     type_object->complete().union_type().union_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -3783,8 +3822,9 @@ const TypeObject* GetCompleteMyUnion2Object()
     TypeIdentifier* identifier = new TypeIdentifier();
     identifier->_d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteUnionType::getCdrSerializedSize(type_object->complete().union_type()) + 4));
+        CompleteUnionType::calculate_serialized_size(calculator, type_object->complete().union_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -3848,7 +3888,7 @@ const TypeObject* GetMinimalCompleteStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -3897,8 +3937,9 @@ const TypeObject* GetMinimalCompleteStructObject()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
+        MinimalStructType::calculate_serialized_size(calculator, type_object->minimal().struct_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -3934,7 +3975,7 @@ const TypeObject* GetCompleteCompleteStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -3977,8 +4018,9 @@ const TypeObject* GetCompleteCompleteStructObject()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
+        CompleteStructType::calculate_serialized_size(calculator, type_object->complete().struct_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -4041,7 +4083,7 @@ const TypeObject* GetMinimalKeyedStructObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -4091,8 +4133,9 @@ const TypeObject* GetMinimalKeyedStructObject()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
+        MinimalStructType::calculate_serialized_size(calculator, type_object->minimal().struct_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
@@ -4128,7 +4171,7 @@ const TypeObject* GetCompleteKeyedStructObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -4193,8 +4236,9 @@ const TypeObject* GetCompleteKeyedStructObject()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv1);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
+        CompleteStructType::calculate_serialized_size(calculator, type_object->complete().struct_type()) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(

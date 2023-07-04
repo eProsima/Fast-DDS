@@ -23,7 +23,9 @@
 #define _FAST_DDS_GENERATED_DEADLINEPAYLOAD_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
 
 #include <stdint.h>
 #include <array>
@@ -44,16 +46,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(deadlinepayload_SOURCE)
-#define deadlinepayload_DllAPI __declspec( dllexport )
+#if defined(DEADLINEPAYLOAD_SOURCE)
+#define DEADLINEPAYLOAD_DllAPI __declspec( dllexport )
 #else
-#define deadlinepayload_DllAPI __declspec( dllimport )
-#endif // deadlinepayload_SOURCE
+#define DEADLINEPAYLOAD_DllAPI __declspec( dllimport )
+#endif // DEADLINEPAYLOAD_SOURCE
 #else
-#define deadlinepayload_DllAPI
+#define DEADLINEPAYLOAD_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define deadlinepayload_DllAPI
+#define DEADLINEPAYLOAD_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +67,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure HelloMsg defined by the user in the IDL file.
- * @ingroup DEADLINEPAYLOAD
+ * @ingroup deadlinepayload
  */
 class HelloMsg
 {
@@ -147,26 +149,26 @@ public:
      * @param _payload New value to be copied in member payload
      */
     eProsima_user_DllExport void payload(
-            const eprosima::fastrtps::fixed_string<256>& _payload);
+            const eprosima::fastcdr::fixed_string<256>& _payload);
 
     /*!
      * @brief This function moves the value in member payload
      * @param _payload New value to be moved in member payload
      */
     eProsima_user_DllExport void payload(
-            eprosima::fastrtps::fixed_string<256>&& _payload);
+            eprosima::fastcdr::fixed_string<256>&& _payload);
 
     /*!
      * @brief This function returns a constant reference to member payload
      * @return Constant reference to member payload
      */
-    eProsima_user_DllExport const eprosima::fastrtps::fixed_string<256>& payload() const;
+    eProsima_user_DllExport const eprosima::fastcdr::fixed_string<256>& payload() const;
 
     /*!
      * @brief This function returns a reference to member payload
      * @return Reference to member payload
      */
-    eProsima_user_DllExport eprosima::fastrtps::fixed_string<256>& payload();
+    eProsima_user_DllExport eprosima::fastcdr::fixed_string<256>& payload();
 
     /*!
     * @brief This function returns the maximum serialized size of an object
@@ -183,7 +185,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const HelloMsg& data,
             size_t current_alignment = 0);
 
@@ -227,8 +230,8 @@ public:
 
 private:
 
-    uint16_t m_deadlinekey;
-    eprosima::fastrtps::fixed_string<256> m_payload;
+    uint16_t m_deadlinekey{0};
+    eprosima::fastcdr::fixed_string<256> m_payload;
 
 };
 

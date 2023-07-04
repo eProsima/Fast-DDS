@@ -23,7 +23,9 @@
 #define _FAST_DDS_GENERATED_TEST_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
 
 #include <stdint.h>
 #include <array>
@@ -44,16 +46,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(Test_SOURCE)
-#define Test_DllAPI __declspec( dllexport )
+#if defined(TEST_SOURCE)
+#define TEST_DllAPI __declspec( dllexport )
 #else
-#define Test_DllAPI __declspec( dllimport )
-#endif // Test_SOURCE
+#define TEST_DllAPI __declspec( dllimport )
+#endif // TEST_SOURCE
 #else
-#define Test_DllAPI
+#define TEST_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define Test_DllAPI
+#define TEST_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +67,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the enumeration MyEnum defined by the user in the IDL file.
- * @ingroup TEST
+ * @ingroup Test
  */
 enum MyEnum : uint32_t
 {
@@ -78,7 +80,7 @@ typedef MyAliasEnum MyAliasEnum2;
 typedef MyAliasEnum2 MyAliasEnum3;
 /*!
  * @brief This class represents the structure BasicStruct defined by the user in the IDL file.
- * @ingroup TEST
+ * @ingroup Test
  */
 class BasicStruct
 {
@@ -449,7 +451,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const BasicStruct& data,
             size_t current_alignment = 0);
 
@@ -493,19 +496,19 @@ public:
 
 private:
 
-    bool m_my_bool;
-    uint8_t m_my_octet;
-    int16_t m_my_int16;
-    int32_t m_my_int32;
-    int64_t m_my_int64;
-    uint16_t m_my_uint16;
-    uint32_t m_my_uint32;
-    uint64_t m_my_uint64;
-    float m_my_float32;
-    double m_my_float64;
-    long double m_my_float128;
-    char m_my_char;
-    wchar_t m_my_wchar;
+    bool m_my_bool{false};
+    uint8_t m_my_octet{0};
+    int16_t m_my_int16{0};
+    int32_t m_my_int32{0};
+    int64_t m_my_int64{0};
+    uint16_t m_my_uint16{0};
+    uint32_t m_my_uint32{0};
+    uint64_t m_my_uint64{0};
+    float m_my_float32{0.0};
+    double m_my_float64{0.0};
+    long double m_my_float128{0.0};
+    char m_my_char{0};
+    wchar_t m_my_wchar{0};
     std::string m_my_string;
     std::wstring m_my_wstring;
 
@@ -517,7 +520,7 @@ typedef std::array<int32_t, 2> MyMiniArray;
 typedef std::vector<int32_t> MySequenceLong;
 /*!
  * @brief This class represents the structure ComplexStruct defined by the user in the IDL file.
- * @ingroup TEST
+ * @ingroup Test
  */
 class ComplexStruct
 {
@@ -912,26 +915,26 @@ public:
      * @param _my_small_string_8 New value to be copied in member my_small_string_8
      */
     eProsima_user_DllExport void my_small_string_8(
-            const eprosima::fastrtps::fixed_string<128>& _my_small_string_8);
+            const eprosima::fastcdr::fixed_string<128>& _my_small_string_8);
 
     /*!
      * @brief This function moves the value in member my_small_string_8
      * @param _my_small_string_8 New value to be moved in member my_small_string_8
      */
     eProsima_user_DllExport void my_small_string_8(
-            eprosima::fastrtps::fixed_string<128>&& _my_small_string_8);
+            eprosima::fastcdr::fixed_string<128>&& _my_small_string_8);
 
     /*!
      * @brief This function returns a constant reference to member my_small_string_8
      * @return Constant reference to member my_small_string_8
      */
-    eProsima_user_DllExport const eprosima::fastrtps::fixed_string<128>& my_small_string_8() const;
+    eProsima_user_DllExport const eprosima::fastcdr::fixed_string<128>& my_small_string_8() const;
 
     /*!
      * @brief This function returns a reference to member my_small_string_8
      * @return Reference to member my_small_string_8
      */
-    eProsima_user_DllExport eprosima::fastrtps::fixed_string<128>& my_small_string_8();
+    eProsima_user_DllExport eprosima::fastcdr::fixed_string<128>& my_small_string_8();
     /*!
      * @brief This function copies the value in member my_small_string_16
      * @param _my_small_string_16 New value to be copied in member my_small_string_16
@@ -962,26 +965,26 @@ public:
      * @param _my_large_string_8 New value to be copied in member my_large_string_8
      */
     eProsima_user_DllExport void my_large_string_8(
-            const eprosima::fastrtps::fixed_string<500>& _my_large_string_8);
+            const eprosima::fastcdr::fixed_string<500>& _my_large_string_8);
 
     /*!
      * @brief This function moves the value in member my_large_string_8
      * @param _my_large_string_8 New value to be moved in member my_large_string_8
      */
     eProsima_user_DllExport void my_large_string_8(
-            eprosima::fastrtps::fixed_string<500>&& _my_large_string_8);
+            eprosima::fastcdr::fixed_string<500>&& _my_large_string_8);
 
     /*!
      * @brief This function returns a constant reference to member my_large_string_8
      * @return Constant reference to member my_large_string_8
      */
-    eProsima_user_DllExport const eprosima::fastrtps::fixed_string<500>& my_large_string_8() const;
+    eProsima_user_DllExport const eprosima::fastcdr::fixed_string<500>& my_large_string_8() const;
 
     /*!
      * @brief This function returns a reference to member my_large_string_8
      * @return Reference to member my_large_string_8
      */
-    eProsima_user_DllExport eprosima::fastrtps::fixed_string<500>& my_large_string_8();
+    eProsima_user_DllExport eprosima::fastcdr::fixed_string<500>& my_large_string_8();
     /*!
      * @brief This function copies the value in member my_large_string_16
      * @param _my_large_string_16 New value to be copied in member my_large_string_16
@@ -1012,26 +1015,26 @@ public:
      * @param _my_array_string New value to be copied in member my_array_string
      */
     eProsima_user_DllExport void my_array_string(
-            const std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>& _my_array_string);
+            const std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5>& _my_array_string);
 
     /*!
      * @brief This function moves the value in member my_array_string
      * @param _my_array_string New value to be moved in member my_array_string
      */
     eProsima_user_DllExport void my_array_string(
-            std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>&& _my_array_string);
+            std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5>&& _my_array_string);
 
     /*!
      * @brief This function returns a constant reference to member my_array_string
      * @return Constant reference to member my_array_string
      */
-    eProsima_user_DllExport const std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>& my_array_string() const;
+    eProsima_user_DllExport const std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5>& my_array_string() const;
 
     /*!
      * @brief This function returns a reference to member my_array_string
      * @return Reference to member my_array_string
      */
-    eProsima_user_DllExport std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5>& my_array_string();
+    eProsima_user_DllExport std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5>& my_array_string();
     /*!
      * @brief This function copies the value in member multi_alias_array_42
      * @param _multi_alias_array_42 New value to be copied in member multi_alias_array_42
@@ -1123,7 +1126,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const ComplexStruct& data,
             size_t current_alignment = 0);
 
@@ -1167,33 +1171,33 @@ public:
 
 private:
 
-    uint8_t m_my_octet;
+    uint8_t m_my_octet{0};
     BasicStruct m_my_basic_struct;
-    MyAliasEnum m_my_alias_enum;
-    MyEnum m_my_enum;
+    MyAliasEnum m_my_alias_enum{::A};
+    MyEnum m_my_enum{::A};
     std::vector<uint8_t> m_my_sequence_octet;
     std::vector<BasicStruct> m_my_sequence_struct;
-    std::array<std::array<std::array<char, 4>, 5>, 500> m_my_array_octet;
-    MyOctetArray500 m_my_octet_array_500;
+    std::array<std::array<std::array<char, 4>, 5>, 500> m_my_array_octet{0};
+    MyOctetArray500 m_my_octet_array_500{0};
     std::array<BasicStruct, 5> m_my_array_struct;
     std::map<uint8_t, int16_t> m_my_map_octet_short;
     std::map<int32_t, BasicStruct> m_my_map_long_struct;
     std::map<int32_t, std::vector<std::vector<uint8_t>>> m_my_map_long_seq_octet;
     std::map<int32_t, MyOctetArray500> m_my_map_long_octet_array_500;
     std::map<int32_t, std::map<uint8_t, BSAlias5>> m_my_map_long_lol_type;
-    eprosima::fastrtps::fixed_string<128> m_my_small_string_8;
+    eprosima::fastcdr::fixed_string<128> m_my_small_string_8;
     std::wstring m_my_small_string_16;
-    eprosima::fastrtps::fixed_string<500> m_my_large_string_8;
+    eprosima::fastcdr::fixed_string<500> m_my_large_string_8;
     std::wstring m_my_large_string_16;
-    std::array<std::array<eprosima::fastrtps::fixed_string<75>, 5>, 5> m_my_array_string;
-    MA3 m_multi_alias_array_42;
-    std::array<MyMiniArray, 5> m_my_array_arrays;
+    std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5> m_my_array_string;
+    MA3 m_multi_alias_array_42{::A};
+    std::array<MyMiniArray, 5> m_my_array_arrays{0};
     std::array<MySequenceLong, 23> m_my_sequences_array;
 
 };
 /*!
  * @brief This class represents the union MyUnion defined by the user in the IDL file.
- * @ingroup TEST
+ * @ingroup Test
  */
 class MyUnion
 {
@@ -1332,7 +1336,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const MyUnion& data,
             size_t current_alignment = 0);
 
@@ -1363,7 +1368,7 @@ private:
 };
 /*!
  * @brief This class represents the union MyUnion2 defined by the user in the IDL file.
- * @ingroup TEST
+ * @ingroup Test
  */
 class MyUnion2
 {
@@ -1517,7 +1522,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const MyUnion2& data,
             size_t current_alignment = 0);
 
@@ -1543,13 +1549,13 @@ private:
 
     uint8_t m__d;
 
-    int32_t m_uno;
+    int32_t m_uno{0};
     std::string m_imString;
-    int32_t m_tres;
+    int32_t m_tres{0};
 };
 /*!
  * @brief This class represents the structure CompleteStruct defined by the user in the IDL file.
- * @ingroup TEST
+ * @ingroup Test
  */
 class CompleteStruct
 {
@@ -1673,7 +1679,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const CompleteStruct& data,
             size_t current_alignment = 0);
 
@@ -1723,7 +1730,7 @@ private:
 };
 /*!
  * @brief This class represents the structure KeyedStruct defined by the user in the IDL file.
- * @ingroup TEST
+ * @ingroup Test
  */
 class KeyedStruct
 {
@@ -1841,7 +1848,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const KeyedStruct& data,
             size_t current_alignment = 0);
 
@@ -1885,7 +1893,7 @@ public:
 
 private:
 
-    uint8_t m_key;
+    uint8_t m_key{0};
     BasicStruct m_basic;
 
 };

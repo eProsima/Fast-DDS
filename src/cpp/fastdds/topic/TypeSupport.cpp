@@ -18,6 +18,7 @@
  */
 
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 
 #include <fastcdr/exceptions/Exception.h>
@@ -44,12 +45,13 @@ ReturnCode_t TypeSupport::register_type(
 
 bool TypeSupport::serialize(
         void* data,
-        fastrtps::rtps::SerializedPayload_t* payload)
+        fastrtps::rtps::SerializedPayload_t* payload,
+        DataRepresentationId_t data_representation)
 {
     bool result = false;
     try
     {
-        result = get()->serialize(data, payload);
+        result = get()->serialize(data, payload, data_representation);
     }
     catch (eprosima::fastcdr::exception::Exception&)
     {
@@ -61,12 +63,13 @@ bool TypeSupport::serialize(
 
 bool TypeSupport::deserialize(
         fastrtps::rtps::SerializedPayload_t* payload,
-        void* data)
+        void* data,
+        DataRepresentationId_t data_representation)
 {
     bool result = false;
     try
     {
-        result = get()->deserialize(payload, data);
+        result = get()->deserialize(payload, data, data_representation);
     }
     catch (eprosima::fastcdr::exception::Exception&)
     {

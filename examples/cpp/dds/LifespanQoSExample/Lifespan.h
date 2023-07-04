@@ -23,7 +23,9 @@
 #define _FAST_DDS_GENERATED_LIFESPAN_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
 
 #include <stdint.h>
 #include <array>
@@ -44,16 +46,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(Lifespan_SOURCE)
-#define Lifespan_DllAPI __declspec( dllexport )
+#if defined(LIFESPAN_SOURCE)
+#define LIFESPAN_DllAPI __declspec( dllexport )
 #else
-#define Lifespan_DllAPI __declspec( dllimport )
-#endif // Lifespan_SOURCE
+#define LIFESPAN_DllAPI __declspec( dllimport )
+#endif // LIFESPAN_SOURCE
 #else
-#define Lifespan_DllAPI
+#define LIFESPAN_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define Lifespan_DllAPI
+#define LIFESPAN_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +67,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure Lifespan defined by the user in the IDL file.
- * @ingroup LIFESPAN
+ * @ingroup Lifespan
  */
 class Lifespan
 {
@@ -183,7 +185,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const Lifespan& data,
             size_t current_alignment = 0);
 
@@ -227,7 +230,7 @@ public:
 
 private:
 
-    uint32_t m_index;
+    uint32_t m_index{0};
     std::string m_message;
 
 };

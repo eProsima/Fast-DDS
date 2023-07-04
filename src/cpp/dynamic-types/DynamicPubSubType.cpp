@@ -103,11 +103,12 @@ void DynamicPubSubType::deleteData(
 
 bool DynamicPubSubType::deserialize(
         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
-        void* data)
+        void* data,
+        fastdds::dds::DataRepresentationId_t data_representation)
 {
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::Cdr::DDS_CDR); // Object that deserializes the data.
+            eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that deserializes the data.
 
     try
     {
@@ -166,7 +167,8 @@ bool DynamicPubSubType::getKey(
 }
 
 std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(
-        void* data)
+        void* data,
+        fastdds::dds::DataRepresentationId_t data_representation)
 {
     return [data]() -> uint32_t
            {
@@ -176,13 +178,15 @@ std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(
 
 bool DynamicPubSubType::serialize(
         void* data,
-        eprosima::fastrtps::rtps::SerializedPayload_t* payload)
+        eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+        fastdds::dds::DataRepresentationId_t data_representation)
 {
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
 
     // Object that serializes the data.
-    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+            eprosima::fastcdr::CdrVersion::DDS_CDR);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     try

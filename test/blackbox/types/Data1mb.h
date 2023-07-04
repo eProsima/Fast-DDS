@@ -23,7 +23,9 @@
 #define _FAST_DDS_GENERATED_DATA1MB_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
 
 #include <stdint.h>
 #include <array>
@@ -44,16 +46,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(Data1mb_SOURCE)
-#define Data1mb_DllAPI __declspec( dllexport )
+#if defined(DATA1MB_SOURCE)
+#define DATA1MB_DllAPI __declspec( dllexport )
 #else
-#define Data1mb_DllAPI __declspec( dllimport )
-#endif // Data1mb_SOURCE
+#define DATA1MB_DllAPI __declspec( dllimport )
+#endif // DATA1MB_SOURCE
 #else
-#define Data1mb_DllAPI
+#define DATA1MB_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define Data1mb_DllAPI
+#define DATA1MB_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +67,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure Data1mb defined by the user in the IDL file.
- * @ingroup DATA1MB
+ * @ingroup Data1mb
  */
 class Data1mb
 {
@@ -164,7 +166,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const Data1mb& data,
             size_t current_alignment = 0);
 

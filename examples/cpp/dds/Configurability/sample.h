@@ -23,7 +23,9 @@
 #define _FAST_DDS_GENERATED_SAMPLE_H_
 
 
-#include <fastrtps/utils/fixed_size_string.hpp>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
 
 #include <stdint.h>
 #include <array>
@@ -44,16 +46,16 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(sample_SOURCE)
-#define sample_DllAPI __declspec( dllexport )
+#if defined(SAMPLE_SOURCE)
+#define SAMPLE_DllAPI __declspec( dllexport )
 #else
-#define sample_DllAPI __declspec( dllimport )
-#endif // sample_SOURCE
+#define SAMPLE_DllAPI __declspec( dllimport )
+#endif // SAMPLE_SOURCE
 #else
-#define sample_DllAPI
+#define SAMPLE_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define sample_DllAPI
+#define SAMPLE_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
@@ -65,7 +67,7 @@ class Cdr;
 
 /*!
  * @brief This class represents the structure sample defined by the user in the IDL file.
- * @ingroup SAMPLE
+ * @ingroup sample
  */
 class sample
 {
@@ -177,7 +179,8 @@ public:
      * @param current_alignment Buffer alignment.
      * @return Serialized size.
      */
-    eProsima_user_DllExport static size_t getCdrSerializedSize(
+    eProsima_user_DllExport static size_t calculate_serialized_size(
+            eprosima::fastcdr::CdrSizeCalculator& calculator,
             const sample& data,
             size_t current_alignment = 0);
 
@@ -221,8 +224,8 @@ public:
 
 private:
 
-    uint8_t m_index;
-    uint8_t m_key_value;
+    uint8_t m_index{0};
+    uint8_t m_key_value{0};
 
 };
 

@@ -34,13 +34,11 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define BenchMark_max_cdr_typesize 4ULL;
+#define BenchMark_max_cdr_typesize 8ULL;
 #define BenchMark_max_key_cdr_typesize 0ULL;
 
 BenchMark::BenchMark()
 {
-    // unsigned long m_index
-    m_index = 0;
 
 }
 
@@ -98,16 +96,27 @@ size_t BenchMark::getMaxCdrSerializedSize(
     return BenchMark_max_cdr_typesize;
 }
 
-size_t BenchMark::getCdrSerializedSize(
+size_t BenchMark::calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
         const BenchMark& data,
         size_t current_alignment)
 {
     (void)data;
     size_t initial_alignment = current_alignment;
 
+    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
+eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+ :
+eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+,
+            current_alignment);
 
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
+                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_index, current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
 
     return current_alignment - initial_alignment;
 }
@@ -115,16 +124,42 @@ size_t BenchMark::getCdrSerializedSize(
 void BenchMark::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
+    eprosima::fastcdr::Cdr::state current_state(scdr);
+    scdr.begin_serialize_type(current_state,
+            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
+eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+ :
+eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+);
 
-    scdr << m_index;
+    scdr << eprosima::fastcdr::MemberId(0) << m_index;
 
+    scdr.end_serialize_type(current_state);
 }
 
 void BenchMark::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
+        eprosima::fastcdr::Cdr& cdr)
 {
-
-    dcdr >> m_index;
+    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
+eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+ :
+eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+,
+            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
+            {
+                bool ret_value = true;
+                switch (mid.id)
+                {
+                    case 0:
+                        dcdr >> m_index;
+ret_value = false;
+                        break;
+                    default:
+                        ret_value = false;
+                        break;
+                }
+                return ret_value;
+            });
 }
 
 /*!
@@ -154,7 +189,6 @@ uint32_t& BenchMark::index()
 {
     return m_index;
 }
-
 
 
 size_t BenchMark::getKeyMaxCdrSerializedSize(
