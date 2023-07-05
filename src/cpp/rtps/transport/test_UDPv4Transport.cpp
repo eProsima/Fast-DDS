@@ -41,7 +41,7 @@ test_UDPv4TransportDescriptor::DestinationLocatorFilter test_UDPv4Transport::loc
         {
             return false;
         });
-std::map<uint32_t,uint32_t> test_UDPv4Transport::messages_sent{};
+std::map<uint32_t, uint32_t> test_UDPv4Transport::messages_sent{};
 
 test_UDPv4Transport::test_UDPv4Transport(
         const test_UDPv4TransportDescriptor& descriptor)
