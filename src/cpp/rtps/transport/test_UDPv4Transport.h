@@ -62,6 +62,9 @@ public:
 
     RTPS_DllAPI static test_UDPv4TransportDescriptor::DestinationLocatorFilter locator_filter;
 
+    // Record the number of packages sent to the different ports (key)
+    RTPS_DllAPI static std::map<uint32_t, uint32_t> messages_sent;
+
 protected:
 
     virtual void get_ips(

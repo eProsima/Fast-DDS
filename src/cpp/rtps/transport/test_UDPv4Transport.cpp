@@ -41,6 +41,7 @@ test_UDPv4TransportDescriptor::DestinationLocatorFilter test_UDPv4Transport::loc
         {
             return false;
         });
+std::map<uint32_t, uint32_t> test_UDPv4Transport::messages_sent{};
 
 test_UDPv4Transport::test_UDPv4Transport(
         const test_UDPv4TransportDescriptor& descriptor)
@@ -201,6 +202,12 @@ bool test_UDPv4Transport::send(
 
     while (it != *destination_locators_end)
     {
+        if (!IsLocatorSupported(*it))
+        {
+            ++it;
+            continue;
+        }
+
         auto now = std::chrono::steady_clock::now();
 
         if (now < max_blocking_time_point)
@@ -245,6 +252,7 @@ bool test_UDPv4Transport::send(
         }
         else
         {
+            messages_sent[remote_locator.port]++;
             return UDPv4Transport::send(send_buffer, send_buffer_size, socket, remote_locator, only_multicast_purpose,
                            whitelisted, timeout);
         }
