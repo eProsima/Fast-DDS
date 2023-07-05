@@ -85,9 +85,11 @@ public:
 
 TEST_P(SHMUDP, Transport_SHM_UDP_test)
 {
-    static struct test_conditions{
+    static struct test_conditions
+    {
         uint32_t sub_unicast_port = 7527;
-    } conditions;
+    }
+    conditions;
 
     // Set up
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
@@ -104,10 +106,10 @@ TEST_P(SHMUDP, Transport_SHM_UDP_test)
             .reliability(BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(VOLATILE_DURABILITY_QOS)
             .history_kind(KEEP_ALL_HISTORY_QOS)
-            // .add_to_default_unicast_locator_list("127.0.0.1", conditions.sub_unicast_port)
-            // .add_to_default_unicast_locator_list("127.0.0.1", conditions.sub_unicast_port, true) // SHM (extend method)
-            // .add_to_unicast_locator_list("127.0.0.1", conditions.sub_unicast_port)
-            // .add_to_unicast_locator_list("127.0.0.1", conditions.sub_unicast_port, true) // SHM (extend method)
+    // .add_to_default_unicast_locator_list("127.0.0.1", conditions.sub_unicast_port)
+    // .add_to_default_unicast_locator_list("127.0.0.1", conditions.sub_unicast_port, true) // SHM (extend method)
+    // .add_to_unicast_locator_list("127.0.0.1", conditions.sub_unicast_port)
+    // .add_to_unicast_locator_list("127.0.0.1", conditions.sub_unicast_port, true) // SHM (extend method)
             .init();
     ASSERT_TRUE(reader.isInitialized());
 
@@ -148,7 +150,8 @@ TEST_P(SHMUDP, Transport_SHM_UDP_test)
     // even and user ones odd.
     // uint32_t n_packages_sent = test_UDPv4Transport::messages_sent[conditions.sub_unicast_port];
     uint32_t n_packages_sent = 0;
-    for (std::map<uint32_t,uint32_t>::iterator it = test_UDPv4Transport::messages_sent.begin(); it != test_UDPv4Transport::messages_sent.end(); ++it)
+    for (std::map<uint32_t, uint32_t>::iterator it = test_UDPv4Transport::messages_sent.begin();
+            it != test_UDPv4Transport::messages_sent.end(); ++it)
     {
         if (it->first % 2)
         {
