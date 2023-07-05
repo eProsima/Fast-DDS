@@ -41,7 +41,7 @@ enum communication_type
     DATASHARING
 };
 
-class RTPS : public testing::TestWithParam<communication_type>
+class SHMUDP : public testing::TestWithParam<communication_type>
 {
 public:
 
@@ -51,20 +51,14 @@ public:
         switch (GetParam())
         {
             case INTRAPROCESS:
-                enable_datasharing = false;
                 library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_FULL;
                 xmlparser::XMLProfileManager::library_settings(library_settings);
                 break;
             case DATASHARING:
                 enable_datasharing = true;
-                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                xmlparser::XMLProfileManager::library_settings(library_settings);
                 break;
             case TRANSPORT:
             default:
-                enable_datasharing = false;
-                library_settings.intraprocess_delivery = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-                xmlparser::XMLProfileManager::library_settings(library_settings);
                 break;
         }
     }
@@ -89,13 +83,10 @@ public:
 
 };
 
-TEST_P(RTPS, Transport_SHM_UDP_test)
+TEST_P(SHMUDP, Transport_SHM_UDP_test)
 {
     static struct test_conditions{
-        uint32_t pub_unicast_port = 7411;
-        uint32_t pub_metatraffic_unicast_port = 7526;
         uint32_t sub_unicast_port = 7527;
-        uint32_t sub_metatraffic_unicast_port = 7528;
     } conditions;
 
     // Set up
@@ -106,35 +97,31 @@ TEST_P(RTPS, Transport_SHM_UDP_test)
     sub_shm_descriptor->segment_size(2 * 1024 * 1024);
     std::shared_ptr<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor> sub_udp_descriptor =
             std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+
     reader.disable_builtin_transport()
             .add_user_transport_to_pparams(sub_shm_descriptor)
             .add_user_transport_to_pparams(sub_udp_descriptor)
-            .data_sharing(enable_datasharing)
             .reliability(BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(VOLATILE_DURABILITY_QOS)
             .history_kind(KEEP_ALL_HISTORY_QOS)
-            .add_to_unicast_locator_list("localhost", conditions.sub_unicast_port)
-            .add_to_metatraffic_unicast_locator_list("localhost", conditions.sub_metatraffic_unicast_port)
+            // .add_to_default_unicast_locator_list("127.0.0.1", conditions.sub_unicast_port)
+            // .add_to_default_unicast_locator_list("127.0.0.1", conditions.sub_unicast_port, true) // SHM (extend method)
+            // .add_to_unicast_locator_list("127.0.0.1", conditions.sub_unicast_port)
+            // .add_to_unicast_locator_list("127.0.0.1", conditions.sub_unicast_port, true) // SHM (extend method)
             .init();
     ASSERT_TRUE(reader.isInitialized());
 
-    //reader.unicastLocatorList()
-    // get locator list and obtain port
-
     auto pub_shm_descriptor = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
     pub_shm_descriptor->segment_size(2 * 1024 * 1024);
-
     auto pub_udp_descriptor = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+
     writer.disable_builtin_transport()
             .add_user_transport_to_pparams(pub_shm_descriptor)
             .add_user_transport_to_pparams(pub_udp_descriptor)
-            .data_sharing(enable_datasharing)
             .reliability(BEST_EFFORT_RELIABILITY_QOS)
             .durability_kind(VOLATILE_DURABILITY_QOS)
             .history_kind(KEEP_ALL_HISTORY_QOS)
             .asynchronously(SYNCHRONOUS_PUBLISH_MODE)
-            .add_to_unicast_locator_list("localhost", conditions.pub_unicast_port)
-            .add_to_metatraffic_unicast_locator_list("localhost", conditions.pub_metatraffic_unicast_port)
             .init();
     ASSERT_TRUE(writer.isInitialized());
 
@@ -152,14 +139,20 @@ TEST_P(RTPS, Transport_SHM_UDP_test)
     // Check that reader receives the unmatched.
     reader.block_for_all();
 
-    // check that no data has been received in the udp transport
-    uint32_t n_packages_sent = sizeof(uint32_t);
+    // check that no (user) data has been sent via UDP transport
+    // TODO: check no data is sent for a specific port (set with add_to_default_unicast_locator_list or
+    // add_to_unicast_locator_list). Currently this cannot be achieved, as adding a non-default UDP locator makes it
+    // necessary to also add a non-default SHM one (if SHM communication is desired, as it is the case), but this cannot
+    // be done until the creation of SHM locators is exposed (currently available in internal SHMLocator::create_locator).
+    // As a workaround, it is checked that no user data is sent at any port, knowing that metatraffic ports are always
+    // even and user ones odd.
+    // uint32_t n_packages_sent = test_UDPv4Transport::messages_sent[conditions.sub_unicast_port];
+    uint32_t n_packages_sent = 0;
     for (std::map<uint32_t,uint32_t>::iterator it = test_UDPv4Transport::messages_sent.begin(); it != test_UDPv4Transport::messages_sent.end(); ++it)
     {
-        std::cout << "port: " << it->first << ", n_packages: " << it->second << std::endl;
-        if (it->first == conditions.pub_unicast_port)
+        if (it->first % 2)
         {
-            n_packages_sent = it->second;
+            n_packages_sent += it->second;
         }
     }
     ASSERT_EQ(n_packages_sent, 0u);
@@ -171,10 +164,10 @@ TEST_P(RTPS, Transport_SHM_UDP_test)
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_CASE_P(x, y, z, w)
 #endif // ifdef INSTANTIATE_TEST_SUITE_P
 
-GTEST_INSTANTIATE_TEST_MACRO(RTPS,
-        RTPS,
+GTEST_INSTANTIATE_TEST_MACRO(SHMUDP,
+        SHMUDP,
         testing::Values(TRANSPORT, INTRAPROCESS, DATASHARING),
-        [](const testing::TestParamInfo<RTPS::ParamType>& info)
+        [](const testing::TestParamInfo<SHMUDP::ParamType>& info)
         {
             switch (info.param)
             {

@@ -799,34 +799,6 @@ public:
         return *this;
     }
 
-    PubSubWriterReader& pub_data_sharing(
-            bool enable)
-    {
-        if (enable)
-        {
-            datawriter_qos_.data_sharing().automatic();
-        }
-        else
-        {
-            datawriter_qos_.data_sharing().off();
-        }
-        return *this;
-    }
-
-    PubSubWriterReader& sub_data_sharing(
-            bool enable)
-    {
-        if (enable)
-        {
-            datareader_qos_.data_sharing().automatic();
-        }
-        else
-        {
-            datareader_qos_.data_sharing().off();
-        }
-        return *this;
-    }
-
     void assert_liveliness()
     {
         datawriter_->assert_liveliness();
