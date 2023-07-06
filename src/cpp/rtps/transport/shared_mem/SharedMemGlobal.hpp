@@ -286,9 +286,9 @@ public:
                         if (status.is_processing)
                         {
                             if ((last_checked_buffer.validity_id == status.descriptor.validity_id) &&
-                               (last_checked_buffer.source_segment_id == status.descriptor.source_segment_id) &&
-                               (last_checked_buffer.buffer_node_offset == status.descriptor.buffer_node_offset)) 
-                                
+                                    (last_checked_buffer.source_segment_id == status.descriptor.source_segment_id) &&
+                                    (last_checked_buffer.buffer_node_offset == status.descriptor.buffer_node_offset))
+
                             {
                                 return false;
                             }
@@ -308,7 +308,7 @@ public:
                                 {
                                     return false;
                                 }
-                            } 
+                            }
                         }
                         if (listeners_found == port_node->num_listeners)
                         {
