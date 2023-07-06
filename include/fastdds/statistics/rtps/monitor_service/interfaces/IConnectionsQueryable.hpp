@@ -38,14 +38,15 @@ struct IConnectionsQueryable
     using ConnectionList = std::vector<Connection>;
 
     /**
-    * @brief Interface for retrieving a list of Connections
-    * (announced locators, used_locators and mode)
-    * of a given entity, by guid
-    *
-    * @param guid The GUID_t identifying the target entity
-    * @return ConnectionList The Connections collection
-    */
-    virtual ConnectionList get_entity_connections(const fastrtps::rtps::GUID_t& guid) = 0;
+     * @brief Interface for retrieving a list of Connections
+     * (announced locators, used_locators and mode)
+     * of a given entity, by guid
+     *
+     * @param guid The GUID_t identifying the target entity
+     * @return ConnectionList The Connections collection
+     */
+    virtual ConnectionList get_entity_connections(
+            const fastrtps::rtps::GUID_t& guid) = 0;
 };
 
 } // rtps

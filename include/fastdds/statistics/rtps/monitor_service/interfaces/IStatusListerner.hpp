@@ -30,16 +30,16 @@ namespace rtps {
 struct IStatusListener
 {
     /**
-    * @brief Interface used to notify about any change in the statuses
-    * (IncompatibleQoS, InconsistenTopic,...) of a local entity
-    *
-    * @param guid The GUID_t identifying the target entity
-    * @param id The id of the status changing
-    * @return Whether the implementor has been properly notified
-    */
+     * @brief Interface used to notify about any change in the statuses
+     * (IncompatibleQoS, InconsistenTopic,...) of a local entity
+     *
+     * @param guid The GUID_t identifying the target entity
+     * @param id The id of the status changing
+     * @return Whether the implementor has been properly notified
+     */
     virtual bool on_local_entity_status_change(
             const fastrtps::rtps::GUID_t& guid,
-            const uint32_t &id) = 0;
+            const uint32_t& id) = 0;
 };
 
 } // rtps

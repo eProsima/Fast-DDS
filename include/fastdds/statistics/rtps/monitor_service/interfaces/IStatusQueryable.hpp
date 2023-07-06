@@ -34,75 +34,75 @@ namespace rtps {
 struct IStatusQueryable
 {
     /**
-    * @brief Interface for requesting the IncompatibleQosStatus
-    * of and entity identified by its guid.
-    *
-    * @param[in] guid The GUID_t identifying the target entity
-    * @param[out] status The requested entity status
-    * @return Whether the operation succeeded or not
-    */
+     * @brief Interface for requesting the IncompatibleQosStatus
+     * of and entity identified by its guid.
+     *
+     * @param[in] guid The GUID_t identifying the target entity
+     * @param[out] status The requested entity status
+     * @return Whether the operation succeeded or not
+     */
     virtual bool get_incompatible_qos_status(
             const fastrtps::rtps::GUID_t& guid,
             dds::IncompatibleQosStatus& status) = 0;
 
     /**
-    * @brief Interface for requesting the InconsistentTopicStatus
-    * of and entity identified by its guid.
-    *
-    * @param[in] guid The GUID_t identifying the target entity
-    * @param[out] status The requested entity status
-    * @return Whether the operation succeeded or not
-    */
+     * @brief Interface for requesting the InconsistentTopicStatus
+     * of and entity identified by its guid.
+     *
+     * @param[in] guid The GUID_t identifying the target entity
+     * @param[out] status The requested entity status
+     * @return Whether the operation succeeded or not
+     */
     virtual bool get_inconsistent_topic_status(
             const fastrtps::rtps::GUID_t& guid,
             dds::InconsistentTopicStatus& status) = 0;
 
     /**
-    * @brief Interface for requesting the LivelinessLostStatus
-    * of a writer identified by its guid.
-    *
-    * @param[in] guid The GUID_t identifying the target entity
-    * @param[out] status The requested entity status
-    * @return Whether the operation succeeded or not
-    */
+     * @brief Interface for requesting the LivelinessLostStatus
+     * of a writer identified by its guid.
+     *
+     * @param[in] guid The GUID_t identifying the target entity
+     * @param[out] status The requested entity status
+     * @return Whether the operation succeeded or not
+     */
     virtual bool get_liveliness_lost_status(
             const fastrtps::rtps::GUID_t& guid,
             dds::LivelinessLostStatus& status) = 0;
 
     /**
-    * @brief Interface for requesting the LivelinessChangedStatus
-    * of a reader identified by its guid.
-    *
-    * @param[in] guid The GUID_t identifying the target entity
-    * @param[out] status The requested entity status
-    * @return Whether the operation succeeded or not
-    */
+     * @brief Interface for requesting the LivelinessChangedStatus
+     * of a reader identified by its guid.
+     *
+     * @param[in] guid The GUID_t identifying the target entity
+     * @param[out] status The requested entity status
+     * @return Whether the operation succeeded or not
+     */
     virtual bool get_liveliness_changed_status(
             const fastrtps::rtps::GUID_t& guid,
             dds::LivelinessChangedStatus& status) = 0;
 
     /**
-    * @brief Interface for requesting the DeadlineMissedStatus
-    * of an entity identified by its guid.
-    * [offered] for the writer
-    * [requested] for the reader
-    *
-    * @param[in] guid The GUID_t identifying the target entity
-    * @param[out] status The requested entity status
-    * @return Whether the operation succeeded or not
-    */
+     * @brief Interface for requesting the DeadlineMissedStatus
+     * of an entity identified by its guid.
+     * [offered] for the writer
+     * [requested] for the reader
+     *
+     * @param[in] guid The GUID_t identifying the target entity
+     * @param[out] status The requested entity status
+     * @return Whether the operation succeeded or not
+     */
     virtual bool get_deadline_missed_status(
             const fastrtps::rtps::GUID_t& guid,
             dds::DeadlineMissedStatus& status) = 0;
 
     /**
-    * @brief Interface for requesting the SampleLostStatus
-    * of a reader identified by its guid.
-    *
-    * @param[in] guid The GUID_t identifying the target entity
-    * @param[out] status The requested entity status
-    * @return Whether the operation succeeded or not
-    */
+     * @brief Interface for requesting the SampleLostStatus
+     * of a reader identified by its guid.
+     *
+     * @param[in] guid The GUID_t identifying the target entity
+     * @param[out] status The requested entity status
+     * @return Whether the operation succeeded or not
+     */
     virtual bool get_sample_lost_status(
             const fastrtps::rtps::GUID_t& guid,
             dds::SampleLostStatus& status) = 0;

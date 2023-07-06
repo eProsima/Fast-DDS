@@ -36,12 +36,12 @@ class Connection;
 struct IConnectionsObserver
 {
     /**
-    * @brief Interface use to notify any connection change
-    * in an entity
-    *
-    * @param guid The GUID_t identifying the target entity
-    * @return Whether the implementor has been properly notified
-    */
+     * @brief Interface use to notify any connection change
+     * in an entity
+     *
+     * @param guid The GUID_t identifying the target entity
+     * @return Whether the implementor has been properly notified
+     */
     virtual bool on_local_entity_connections_change(
             const fastrtps::rtps::GUID_t& guid) = 0;
 };

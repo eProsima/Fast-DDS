@@ -30,14 +30,14 @@ namespace rtps {
 struct IEDPObserver
 {
     /**
-    * @brief Interface use to notify about any updates
-    * on the local entities (updates in the proxy,
-    * new matches, unpairs,...)
-    *
-    * @param guid The GUID_t identifying the target entity
-    * @param guid Whether this entity is alive
-    * @return Whether the implementor has been properly notified
-    */
+     * @brief Interface use to notify about any updates
+     * on the local entities (updates in the proxy,
+     * new matches, unpairs,...)
+     *
+     * @param guid The GUID_t identifying the target entity
+     * @param guid Whether this entity is alive
+     * @return Whether the implementor has been properly notified
+     */
     virtual bool on_local_entity_change(
             const fastrtps::rtps::GUID_t& guid,
             bool is_alive) = 0;

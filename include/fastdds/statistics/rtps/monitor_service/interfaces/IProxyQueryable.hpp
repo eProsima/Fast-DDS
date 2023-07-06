@@ -35,27 +35,27 @@ using namespace eprosima::fastdds::statistics;
 struct IProxyQueryable
 {
     /**
-    * @brief Interface for retrieving the serialized
-    * proxy of an entity. This is in the form of
-    * a sequence of octets.
-    *
-    * @param[in] guid The GUID_t identifying the target entity
-    * @param[out] msg Pointer containig the serialized proxy
-    * @return Whether the operation succeeds or not
-    */
+     * @brief Interface for retrieving the serialized
+     * proxy of an entity. This is in the form of
+     * a sequence of octets.
+     *
+     * @param[in] guid The GUID_t identifying the target entity
+     * @param[out] msg Pointer containig the serialized proxy
+     * @return Whether the operation succeeds or not
+     */
     virtual bool get_serialized_proxy(
             const fastrtps::rtps::GUID_t& guid,
-            fastrtps::rtps::CDRMessage_t *msg) = 0;
+            fastrtps::rtps::CDRMessage_t* msg) = 0;
 
     /**
-    * @brief Interface for retrieving all the guids of the
-    * local entities. This includes the participant
-    * and user endpoints
-    *
-    * @param[out] guids The collections of GUID_t of the local entities
-    */
+     * @brief Interface for retrieving all the guids of the
+     * local entities. This includes the participant
+     * and user endpoints
+     *
+     * @param[out] guids The collections of GUID_t of the local entities
+     */
     virtual bool get_all_local_proxies(
-            std::vector<fastrtps::rtps::GUID_t> &guids) = 0;
+            std::vector<fastrtps::rtps::GUID_t>& guids) = 0;
 };
 
 } // rtps
