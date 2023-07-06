@@ -643,10 +643,10 @@ private:
             Endpoint* pend);
 
     /** Add participant's external locators to endpoint's when none available
-        @param pend - Pointer to the endpoint whose external locators are to be set
+        @param endpoint - Pointer to the endpoint whose external locators are to be set
      */
-    void setupExternalLocators(
-            Endpoint* pend);
+    void setup_external_locators(
+            Endpoint* endpoint);
 
     /** When we want to create a new Resource but the physical channel specified by the Locator
         can not be opened, we want to mutate the Locator to open a more or less equivalent channel.

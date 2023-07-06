@@ -73,6 +73,7 @@ test_UDPv4Transport::test_UDPv4Transport(
     }
     test_UDPv4Transport_DropLog.clear();
     test_UDPv4Transport_DropLogLength = descriptor.dropLogLength;
+    messages_sent.clear();
 }
 
 test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor()

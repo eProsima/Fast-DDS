@@ -83,13 +83,15 @@ public:
 
 };
 
-TEST_P(SHMUDP, Transport_SHM_UDP_test)
+void run_parametrized_test(
+        bool reliable_writer,
+        bool reliable_reader)
 {
-    static struct test_conditions
-    {
-        uint32_t sub_unicast_port = 7527;
-    }
-    conditions;
+    // Set test parameters
+    ReliabilityQosPolicyKind writer_reliability =
+            reliable_writer ? RELIABLE_RELIABILITY_QOS : BEST_EFFORT_RELIABILITY_QOS;
+    ReliabilityQosPolicyKind reader_reliability =
+            reliable_reader ? RELIABLE_RELIABILITY_QOS : BEST_EFFORT_RELIABILITY_QOS;
 
     // Set up
     PubSubReader<HelloWorldPubSubType> reader(TEST_TOPIC_NAME);
@@ -103,13 +105,9 @@ TEST_P(SHMUDP, Transport_SHM_UDP_test)
     reader.disable_builtin_transport()
             .add_user_transport_to_pparams(sub_shm_descriptor)
             .add_user_transport_to_pparams(sub_udp_descriptor)
-            .reliability(BEST_EFFORT_RELIABILITY_QOS)
+            .reliability(reader_reliability)
             .durability_kind(VOLATILE_DURABILITY_QOS)
             .history_kind(KEEP_ALL_HISTORY_QOS)
-    // .add_to_default_unicast_locator_list("127.0.0.1", conditions.sub_unicast_port)
-    // .add_to_default_unicast_locator_list("127.0.0.1", conditions.sub_unicast_port, true) // SHM (extend method)
-    // .add_to_unicast_locator_list("127.0.0.1", conditions.sub_unicast_port)
-    // .add_to_unicast_locator_list("127.0.0.1", conditions.sub_unicast_port, true) // SHM (extend method)
             .init();
     ASSERT_TRUE(reader.isInitialized());
 
@@ -120,7 +118,7 @@ TEST_P(SHMUDP, Transport_SHM_UDP_test)
     writer.disable_builtin_transport()
             .add_user_transport_to_pparams(pub_shm_descriptor)
             .add_user_transport_to_pparams(pub_udp_descriptor)
-            .reliability(BEST_EFFORT_RELIABILITY_QOS)
+            .reliability(writer_reliability)
             .durability_kind(VOLATILE_DURABILITY_QOS)
             .history_kind(KEEP_ALL_HISTORY_QOS)
             .asynchronously(SYNCHRONOUS_PUBLISH_MODE)
@@ -150,15 +148,26 @@ TEST_P(SHMUDP, Transport_SHM_UDP_test)
     // even and user ones odd.
     // uint32_t n_packages_sent = test_UDPv4Transport::messages_sent[conditions.sub_unicast_port];
     uint32_t n_packages_sent = 0;
-    for (std::map<uint32_t, uint32_t>::iterator it = test_UDPv4Transport::messages_sent.begin();
-            it != test_UDPv4Transport::messages_sent.end(); ++it)
+    for (const std::pair<uint32_t, uint32_t>& item : test_UDPv4Transport::messages_sent)
     {
-        if (it->first % 2)
+        if (item.first % 2)
         {
-            n_packages_sent += it->second;
+            n_packages_sent += item.second;
         }
     }
     ASSERT_EQ(n_packages_sent, 0u);
+}
+
+TEST_P(SHMUDP, Transport_SHM_UDP_test)
+{
+    // Test BEST_EFFORT writer and reader
+    run_parametrized_test(false, false);
+
+    // Test RELIABLE writer and BEST_EFFORT reader
+    run_parametrized_test(true, false);
+
+    // Test RELIABLE writer and reader
+    run_parametrized_test(true, true);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P

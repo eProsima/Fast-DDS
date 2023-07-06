@@ -735,7 +735,9 @@ bool RTPSParticipantImpl::create_writer(
     }
 
     // Use participant's external locators if writer has none
-    setupExternalLocators(SWriter);
+    // WARNING: call before createAndAssociateReceiverswithEndpoint, as the latter intentionally clears external
+    // locators list when using unique_flows feature
+    setup_external_locators(SWriter);
 
 #if HAVE_SECURITY
     if (!is_builtin)
@@ -870,7 +872,7 @@ bool RTPSParticipantImpl::create_reader(
     // Use participant's external locators if reader has none
     // WARNING: call before createAndAssociateReceiverswithEndpoint, as the latter intentionally clears external
     // locators list when using unique_flows feature
-    setupExternalLocators(SReader);
+    setup_external_locators(SReader);
 
 #if HAVE_SECURITY
 
@@ -1666,10 +1668,10 @@ bool RTPSParticipantImpl::createSendResources(
     return true;
 }
 
-void RTPSParticipantImpl::setupExternalLocators(
-        Endpoint* pend)
+void RTPSParticipantImpl::setup_external_locators(
+        Endpoint* endpoint)
 {
-    auto& attributes = pend->getAttributes();
+    auto& attributes = endpoint->getAttributes();
     if (attributes.external_unicast_locators.empty())
     {
         // Take external locators from the participant.
