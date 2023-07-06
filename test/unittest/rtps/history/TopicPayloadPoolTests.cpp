@@ -326,6 +326,72 @@ protected:
     uint32_t num_of_infinite_histories;         //< Number of infinite histories reserved
 };
 
+void do_dynamic_topic_payload_pool_zero_size_test(
+        const PoolConfig& config)
+{
+    //! Create Pool
+    std::unique_ptr<ITopicPayloadPool> pool = TopicPayloadPool::get(config);
+
+    //! Update maximum size of the pool
+    pool->reserve_history(config, false);
+
+    //! Temporal CacheChange with no payload owner
+    CacheChange_t* change = new CacheChange_t();
+
+    //! A CacheChange to copy to
+    CacheChange_t* change_to_add = new CacheChange_t();
+
+    //! Fill minimum fields
+    change_to_add->writerGUID = GUID_t(GuidPrefix_t(), 1);
+    change_to_add->sequenceNumber = SequenceNumber_t(0, 1);
+
+    //! Retrieve owner (nullptr)
+    IPayloadPool* payload_owner = change->payload_owner();
+
+    //! get the payload of size 0.
+    //! Allocate it on the pool
+    //! Set change_to_add owner
+    ASSERT_TRUE(pool->get_payload(change->serializedPayload, payload_owner, *change_to_add));
+
+    //! Now set the payload ownership on the source change
+    change->payload_owner(payload_owner);
+
+    //! Release the payload from the source change
+    pool->release_payload(*change);
+
+    //! Temporal CacheChange whose payload is owned by the pool
+    CacheChange_t* another_change = new CacheChange_t();
+
+    //! Max size was reached, should fail
+    ASSERT_FALSE(pool->get_payload(0, *another_change));
+
+    //! Release the second payload owner
+    pool->release_payload(*change_to_add);
+
+    //! Now a free cache is avaiable
+    ASSERT_TRUE(pool->get_payload(0, *another_change));
+
+    //! Retrieve owner (the created pool)
+    payload_owner = another_change->payload_owner();
+
+    ASSERT_TRUE(pool->get_payload(another_change->serializedPayload, payload_owner, *change_to_add));
+
+    //! Release
+    pool->release_payload(*another_change);
+    pool->release_payload(*change_to_add);
+
+    //! Release history
+    pool->release_history(config, false);
+
+    //! Expect the available sizes after releasing
+    EXPECT_EQ(pool->payload_pool_available_size(), 0u);
+    EXPECT_EQ(pool->payload_pool_allocated_size(), 0u);
+
+    delete change_to_add;
+    delete another_change;
+    delete change;
+}
+
 TEST_P(TopicPayloadPoolTests, reserve_history_reader_same_size)
 {
     // A new history reserved for a reader. Same limits as fixture.
@@ -404,6 +470,22 @@ TEST_P(TopicPayloadPoolTests, release_history_writer_finite_size)
     uint32_t reserve_size = test_input_pool_size;
     uint32_t reserve_max_size = 100;
     do_history_test(reserve_size, reserve_max_size, false);
+}
+
+//! This unittest was introduced as part of #1929
+//! Claiming a payload with size 0 is properly handled with DYNAMIC_RESERVED Memory Mode
+TEST(TopicPayloalPoolTests, dynamic_reserve_memory_zero_size)
+{
+    PoolConfig config{ DYNAMIC_RESERVE_MEMORY_MODE, 128, 0, 1};
+    do_dynamic_topic_payload_pool_zero_size_test(config);
+}
+
+//! This unittest was introduced as part of #1929
+//! Claiming a payload with size 0 is properly handled with DYNAMIC_REUSABLE Memory Modes
+TEST(TopicPayloalPoolTests, dynamic_reusable_memory_zero_size)
+{
+    PoolConfig config{ DYNAMIC_REUSABLE_MEMORY_MODE, 128, 0, 1};
+    do_dynamic_topic_payload_pool_zero_size_test(config);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
