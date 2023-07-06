@@ -158,14 +158,20 @@ void run_parametrized_test(
     ASSERT_EQ(n_packages_sent, 0u);
 }
 
-TEST_P(SHMUDP, Transport_SHM_UDP_test)
+TEST_P(SHMUDP, Transport_BestEffort_BestEffort_test)
 {
     // Test BEST_EFFORT writer and reader
     run_parametrized_test(false, false);
+}
 
+TEST_P(SHMUDP, Transport_Reliable_BestEffort_test)
+{
     // Test RELIABLE writer and BEST_EFFORT reader
     run_parametrized_test(true, false);
+}
 
+TEST_P(SHMUDP, Transport_Reliable_Reliable_test)
+{
     // Test RELIABLE writer and reader
     run_parametrized_test(true, true);
 }
