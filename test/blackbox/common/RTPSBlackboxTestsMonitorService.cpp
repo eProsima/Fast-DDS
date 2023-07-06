@@ -16,10 +16,11 @@
 
 #include "BlackboxTests.hpp"
 
+#include <fastdds/rtps/participant/RTPSParticipant.h>
 #include <fastdds/rtps/RTPSDomain.h>
 #include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 
-using namespace eprosima::fastdds::rtps;
+using namespace eprosima::fastrtps::rtps;
 
 /*
  * Abbreviations
@@ -34,7 +35,50 @@ using namespace eprosima::fastdds::rtps;
  * +--------+----------------------------+
  * | MSP    | Monitor Service Topic      |
  * +--------+----------------------------+
-*/
+ */
+
+class MonitorServiceRTPSParticipant
+{
+
+public:
+
+    MonitorServiceRTPSParticipant()
+    {
+
+    }
+
+    void init()
+    {
+        rtps_participant_ = RTPSDomain::createParticipant(
+            static_cast<uint32_t>(GET_PID()) % 230, RTPSParticipantAttributes());
+
+        ASSERT_NE(rtps_participant_, nullptr);
+    }
+
+    bool enable_monitor_service()
+    {
+        return rtps_participant_->enable_monitor_service();
+    }
+
+    bool disable_monitor_service()
+    {
+        return rtps_participant_->disable_monitor_service();
+    }
+
+    bool is_monitor_service_created()
+    {
+        return rtps_participant_->is_monitor_service_created();
+    }
+
+    bool create_monitor_service()
+    {
+        return rtps_participant_->create_monitor_service();
+    }
+
+protected:
+
+    RTPSParticipant* rtps_participant_;
+};
 
 /**
  * Refers to RTPS-MS-API-01 from the test plan.
@@ -46,14 +90,15 @@ using namespace eprosima::fastdds::rtps;
 TEST(RTPSMonitorServiceTest, monitor_service_create_is_created)
 {
     //! Setup
-    auto participant = eprosima::fastrtps::rtps::RTPSDomain::createParticipant(
-                static_cast<uint32_t>(GET_PID()) % 230, eprosima::fastrtps::rtps::RTPSParticipantAttributes());
+    MonitorServiceRTPSParticipant MSRTPS;
 
-    ASSERT_NE(participant, nullptr);
+    //! Procedure
+    MSRTPS.init();
 
-    ASSERT_TRUE(participant->is_monitor_service_created());
-    ASSERT_TRUE(participant->create_monitor_service());
-    ASSERT_TRUE(participant->is_monitor_service_created());
+    //! Assertions
+    ASSERT_TRUE(MSRTPS.is_monitor_service_created());
+    ASSERT_TRUE(MSRTPS.create_monitor_service());
+    ASSERT_TRUE(MSRTPS.is_monitor_service_created());
 }
 
 /**
@@ -65,13 +110,14 @@ TEST(RTPSMonitorServiceTest, monitor_service_create_is_created)
 TEST(RTPSMonitorServiceTest, monitor_service_create_enable_disable)
 {
     //! Setup
-    auto participant = RTPSDomain::createParticipant(
-                static_cast<uint32_t>(GET_PID()) % 230, RTPSParticipantAttributes());
+    MonitorServiceRTPSParticipant MSRTPS;
 
-    ASSERT_NE(participant, nullptr);
+    //! Procedure
+    MSRTPS.init();
 
-    ASSERT_TRUE(participant->create_monitor_service());
-    ASSERT_TRUE(participant->enable_monitor_service());
-    ASSERT_TRUE(participant->disable_monitor_service());
+    //! Assertions
+    ASSERT_TRUE(MSRTPS.create_monitor_service());
+    ASSERT_TRUE(MSRTPS.enable_monitor_service());
+    ASSERT_TRUE(MSRTPS.disable_monitor_service());
 }
 

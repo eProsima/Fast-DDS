@@ -1687,9 +1687,9 @@ public:
         return status;
     }
 
-private:
+protected:
 
-    void receive_one(
+    virtual void receive_one(
             eprosima::fastdds::dds::DataReader* datareader,
             bool& returnedValue)
     {
@@ -1788,8 +1788,6 @@ private:
 
     //! functor to check which API to retrieve samples
     std::function<void (eprosima::fastdds::dds::DataReader* datareader, bool&)> receive_;
-
-protected:
 
     void receive(
             eprosima::fastdds::dds::DataReader* datareader,
