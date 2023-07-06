@@ -667,6 +667,41 @@ TEST(DDSDiscovery, DDSDiscoveryDoesNotDropUDPLocator)
 }
 
 /**
+ * This is a regression test for #1929
+ * Checks that the disposal of an matched Endpoint is correctly received
+ * by a remote participant when DYNAMIC_REUSABLE memory mode is used
+ */
+TEST(DDSDiscovery, WriterAndReaderMatchUsingDynamicReusableMemoryMode)
+{
+    using namespace eprosima::fastdds::dds;
+    using namespace eprosima::fastrtps::rtps;
+
+    WireProtocolConfigQos qos;
+
+    qos.builtin.readerHistoryMemoryPolicy = eprosima::fastrtps::rtps::DYNAMIC_REUSABLE_MEMORY_MODE;
+
+    PubSubWriter<HelloWorldPubSubType> writer("test");
+    PubSubReader<HelloWorldPubSubType> reader("test");
+
+    writer.set_wire_protocol_qos(qos).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.set_wire_protocol_qos(qos).init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    writer.wait_discovery();
+    reader.wait_discovery();
+
+    ASSERT_TRUE(reader.is_matched());
+    ASSERT_TRUE(writer.is_matched());
+
+    reader.delete_datareader();
+
+    ASSERT_TRUE(writer.wait_reader_undiscovery(std::chrono::seconds(3)));
+
+}
+
+/**
  * This test checks the missing file case of DomainParticipantFactory->check_xml_static_discovery
  * method and checks it returns RETCODE_ERROR
  */

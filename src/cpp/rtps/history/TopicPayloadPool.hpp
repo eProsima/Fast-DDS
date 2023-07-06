@@ -139,9 +139,21 @@ protected:
         explicit PayloadNode(
                 uint32_t size)
         {
-            assert(size > 0);
+            if (!size)
+            {
+                //! At least, we need this to allocate space for a NodeInfo.
+                //! In order to be able to place-construct later
+                buffer = (octet*)calloc(sizeof(NodeInfo), sizeof(octet));
+            }
+            else
+            {
+                buffer = (octet*)calloc(size + sizeof(NodeInfo) - 1, sizeof(octet));
+            }
 
+<<<<<<< HEAD
             buffer = (octet*)calloc(size + offsetof(NodeInfo, data), sizeof(octet));
+=======
+>>>>>>> 67268967b (Dynamic memory topic payload pool properly handle Zero sized payloads (#3606))
             if (buffer == nullptr)
             {
                 throw std::bad_alloc();
