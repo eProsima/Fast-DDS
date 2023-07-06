@@ -461,7 +461,11 @@ public:
 
 // auxiliary conversion functions
 detail::Locator_s to_statistics_type(fastrtps::rtps::Locator_t);
+fastrtps::rtps::Locator_t to_fastdds_type(
+        detail::Locator_s);
 detail::GUID_s to_statistics_type(fastrtps::rtps::GUID_t);
+fastrtps::rtps::GUID_t to_fastdds_type(
+        detail::GUID_s);
 detail::SampleIdentity_s to_statistics_type(fastrtps::rtps::SampleIdentity);
 
 #else // dummy implementation
