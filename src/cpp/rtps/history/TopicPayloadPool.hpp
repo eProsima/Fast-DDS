@@ -139,9 +139,17 @@ protected:
         explicit PayloadNode(
                 uint32_t size)
         {
-            assert(size > 0);
+            if (!size)
+            {
+                //! At least, we need this to allocate space for a NodeInfo.
+                //! In order to be able to place-construct later
+                buffer = (octet*)calloc(sizeof(NodeInfo), sizeof(octet));
+            }
+            else
+            {
+                buffer = (octet*)calloc(size + sizeof(NodeInfo) - 1, sizeof(octet));
+            }
 
-            buffer = (octet*)calloc(size + sizeof(NodeInfo) - 1, sizeof(octet));
             if (buffer == nullptr)
             {
                 throw std::bad_alloc();

@@ -645,6 +645,35 @@ public:
         std::cout << "Writer removal finished..." << std::endl;
     }
 
+    bool wait_reader_undiscovery(
+            std::chrono::seconds timeout,
+            unsigned int matched = 0)
+    {
+        bool ret_value = true;
+        std::unique_lock<std::mutex> lock(mutexDiscovery_);
+
+        std::cout << "Writer is waiting removal..." << std::endl;
+
+        if (!cv_.wait_for(lock, timeout, [&]()
+                {
+                    return matched_ <= matched;
+                }))
+        {
+            ret_value = false;
+        }
+
+        if (ret_value)
+        {
+            std::cout << "Writer removal finished successfully..." << std::endl;
+        }
+        else
+        {
+            std::cout << "Writer removal finished unsuccessfully..." << std::endl;
+        }
+
+        return ret_value;
+    }
+
     void wait_liveliness_lost(
             unsigned int times = 1)
     {
@@ -920,6 +949,13 @@ public:
     PubSubWriter& disable_builtin_transport()
     {
         participant_qos_.transport().use_builtin_transports = false;
+        return *this;
+    }
+
+    PubSubWriter& set_wire_protocol_qos(
+            const eprosima::fastdds::dds::WireProtocolConfigQos& qos)
+    {
+        participant_qos_.wire_protocol() = qos;
         return *this;
     }
 
