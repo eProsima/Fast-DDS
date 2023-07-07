@@ -32,6 +32,7 @@ using SubmessageHeader_t = fastrtps::rtps::SubmessageHeader_t;
 using SequenceNumber_t = fastrtps::rtps::SequenceNumber_t;
 using EntityId_t = fastrtps::rtps::EntityId_t;
 
+std::map<const test_UDPv4TransportDescriptor*, test_UDPv4Transport*> test_UDPv4Transport::created_transports{};
 std::vector<std::vector<octet>> test_UDPv4Transport::test_UDPv4Transport_DropLog;
 std::atomic<uint32_t> test_UDPv4Transport::test_UDPv4Transport_DropLogLength(0);
 std::atomic<bool> test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork(false);
@@ -41,7 +42,6 @@ test_UDPv4TransportDescriptor::DestinationLocatorFilter test_UDPv4Transport::loc
         {
             return false;
         });
-std::map<uint32_t, uint32_t> test_UDPv4Transport::messages_sent{};
 
 test_UDPv4Transport::test_UDPv4Transport(
         const test_UDPv4TransportDescriptor& descriptor)
@@ -122,7 +122,9 @@ test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor()
 
 TransportInterface* test_UDPv4TransportDescriptor::create_transport() const
 {
-    return new test_UDPv4Transport(*this);
+    test_UDPv4Transport* transport = new test_UDPv4Transport(*this);
+    test_UDPv4Transport::created_transports[this] = transport;
+    return transport;
 }
 
 bool test_UDPv4TransportDescriptor::operator ==(
