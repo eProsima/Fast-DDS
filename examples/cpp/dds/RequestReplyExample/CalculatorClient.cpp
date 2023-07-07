@@ -227,7 +227,7 @@ int main(
     }
     else if (0 == strcmp(argv[1], "-"))
     {
-        operation = OperationType::SUBSTRACTION;
+        operation = OperationType::SUBTRACTION;
     }
     else if (0 == strcmp(argv[1], "x"))
     {
