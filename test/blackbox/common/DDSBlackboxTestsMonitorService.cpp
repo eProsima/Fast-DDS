@@ -1176,7 +1176,7 @@ TEST_P(DDSMonitorServiceTest, monitor_service_simple_connection_list)
 
     std::string xml_profile = "MonitorServiceConnectionList_profile.xml";
     std::pair<std::string, std::string> participant_profiles =
-            {"monitor_service_connections_list_participant_1", "monitor_service_connections_list_participant_2"};
+    {"monitor_service_connections_list_participant_1", "monitor_service_connections_list_participant_2"};
 
     MSP1.setup(xml_profile, participant_profiles.first);
     MSP2.setup(xml_profile, participant_profiles.second);
