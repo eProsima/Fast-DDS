@@ -506,7 +506,7 @@ class MonitorServiceConsumer : protected PubSubReader<MonitorServiceType>
 public:
 
     MonitorServiceConsumer()
-        : PubSubReader<MonitorServiceType>("fastrtps_monitor_service_status", true, true)
+        : PubSubReader<MonitorServiceType>("fastdds_monitor_service_status", true, true)
         , sample_validator_( new SampleValidator())
     {
 
