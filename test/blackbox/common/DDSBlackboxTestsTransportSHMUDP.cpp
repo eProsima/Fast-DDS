@@ -148,7 +148,7 @@ void run_parametrized_test(
     // even and user ones odd.
     // uint32_t n_packages_sent = test_UDPv4Transport::messages_sent[conditions.sub_unicast_port];
     uint32_t n_packages_sent = 0;
-    for (const std::pair<uint32_t, uint32_t>& item : test_UDPv4Transport::messages_sent)
+    for (const auto& item : test_UDPv4Transport::messages_sent)
     {
         if (item.first % 2)
         {
