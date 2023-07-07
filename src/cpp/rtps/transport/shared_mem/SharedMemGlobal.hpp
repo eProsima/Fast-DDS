@@ -461,7 +461,7 @@ public:
             node_->ref_counter.fetch_add(1);
 
             auto port_context = std::make_shared<Port::WatchTask::PortContext>();
-            *port_context = {port_segment_, node_, buffer_.get(), BufferDescriptor{}};
+            *port_context = {port_segment_, node_, buffer_.get(), { BufferDescriptor{} } };
             Port::WatchTask::get()->add_port(std::move(port_context));
         }
 
