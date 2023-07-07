@@ -336,6 +336,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/StatisticsDomainParticipant_profile.x
     ${CMAKE_CURRENT_BINARY_DIR}/StatisticsDomainParticipant_profile.xml)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/MonitorServiceDomainParticipant_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/MonitorServiceDomainParticipant_profile.xml)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/MonitorServiceConnectionList_profile.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/MonitorServiceConnectionList_profile.xml)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utils/check_guid.py
     ${CMAKE_CURRENT_BINARY_DIR}/check_guid.py)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/partitions_profile.xml

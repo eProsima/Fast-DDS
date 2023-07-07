@@ -14,8 +14,6 @@
 
 #include <gtest/gtest.h>
 
-#include <future>
-
 #include "BlackboxTests.hpp"
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
@@ -104,6 +102,20 @@ class MonitorServiceParticipant
 
 public:
 
+    enum CallbackIndex
+    {
+        OFFERED_DEADLINE_MISSED_IDX,
+        OFFERED_INCOMPATIBLE_QOS_IDX,
+        LIVELINESS_LOST_IDX,
+        PUBLICATION_MATCHED_IDX,
+        REQUESTED_DEADLINE_MISSED_IDX,
+        REQUESTED_INCOMPATIBLE_QOS_IDX,
+        LIVELINESS_CHANGED_IDX,
+        SUBSCRIPTION_MATCHED_IDX,
+        SAMPLE_LOST_IDX,
+        MAX_SIZE
+    };
+
     MonitorServiceParticipant()
         : type_support_(new HelloWorldPubSubType())
     {
@@ -191,6 +203,12 @@ public:
     ReturnCode_t disable_monitor_service()
     {
         return statistics_part_->disable_monitor_service();
+    }
+
+    const uint32_t& get_cb_count(
+            CallbackIndex cb_idx)
+    {
+        return listener_.get_cb_cout_of(cb_idx);
     }
 
     void create_topic(
@@ -286,7 +304,7 @@ public:
         return false;
     }
 
-    virtual void reset()
+    void reset()
     {
         ASSERT_EQ(ReturnCode_t::RETCODE_OK, statistics_part_->delete_contained_entities());
         ASSERT_EQ(ReturnCode_t::RETCODE_OK,
@@ -294,86 +312,6 @@ public:
     }
 
 protected:
-
-    struct MonitorServiceParticipantListener : public DataReaderListener,
-        public DataWriterListener
-    {
-        virtual ~MonitorServiceParticipantListener()
-        {
-        }
-
-        void on_offered_deadline_missed (
-                DataWriter* writer,
-                const OfferedDeadlineMissedStatus& status) override
-        {
-            std::cout << "on_offered_deadline_missed() " << writer->guid() << " total_count " << status.total_count <<
-                std::endl;
-        }
-
-        void on_offered_incompatible_qos (
-                DataWriter* writer,
-                const OfferedIncompatibleQosStatus& status) override
-        {
-            std::cout << "on_offered_incompatible_qos " << writer->guid() << " total_count " << status.total_count <<
-                std::endl;
-        }
-
-        void on_liveliness_lost (
-                DataWriter* writer,
-                const LivelinessLostStatus& status) override
-        {
-            std::cout << "on_liveliness_lost " << writer->guid() << " total_count " << status.total_count << std::endl;
-        }
-
-        void on_publication_matched (
-                DataWriter* writer,
-                const PublicationMatchedStatus& status) override
-        {
-            std::cout << "on_publication_matched " << writer->guid() << " total_count " << status.total_count <<
-                std::endl;
-        }
-
-        void on_requested_deadline_missed (
-                DataReader* reader,
-                const RequestedDeadlineMissedStatus& status) override
-        {
-            std::cout << "on_requested_deadline_missed" << reader->guid() << " total_count " << status.total_count <<
-                std::endl;
-        }
-
-        void on_requested_incompatible_qos (
-                DataReader* reader,
-                const RequestedIncompatibleQosStatus& status) override
-        {
-            std::cout << "on_requested_incompatible_qos" << reader->guid() << " total_count " << status.total_count <<
-                std::endl;
-        }
-
-        void on_liveliness_changed (
-                DataReader* reader,
-                const LivelinessChangedStatus& status) override
-        {
-            std::cout << "on_liveliness_changed " << reader->guid() << " not_alive_count " << status.not_alive_count <<
-                std::endl;
-        }
-
-        void on_subscription_matched (
-                DataReader* reader,
-                const SubscriptionMatchedStatus& status) override
-        {
-            std::cout << "on_subscription_matched " << reader->guid() << " total_count " << status.total_count <<
-                std::endl;
-        }
-
-        void on_sample_lost (
-                DataReader* reader,
-                const SampleLostStatus& status) override
-        {
-            std::cout << "on_sample_lost " << reader->guid() << " total_count " << status.total_count << std::endl;
-        }
-
-    }
-    listener_;
 
     statistics::dds::DomainParticipant* statistics_part_;
 
@@ -389,6 +327,162 @@ protected:
     StatisticsGUIDList reader_stat_guids_;
 
     TypeSupport type_support_;
+
+    struct MonitorServiceParticipantListener : public DataReaderListener,
+        public DataWriterListener
+    {
+        MonitorServiceParticipantListener()
+        {
+            cb_counters_.fill(0);
+        }
+
+        MonitorServiceParticipantListener(
+                const MonitorServiceParticipantListener& other)
+        {
+            std::unique_lock<std::mutex> lock(other.mtx_);
+            this->cb_counters_ = other.cb_counters_;
+        }
+
+        MonitorServiceParticipantListener(
+                MonitorServiceParticipantListener&& other)
+        {
+            std::unique_lock<std::mutex> lock(other.mtx_);
+            this->cb_counters_ = std::move(other.cb_counters_);
+        }
+
+        virtual ~MonitorServiceParticipantListener()
+        {
+        }
+
+        void on_offered_deadline_missed (
+                DataWriter* writer,
+                const OfferedDeadlineMissedStatus& status) override
+        {
+            {
+                std::unique_lock<std::mutex> lock(mtx_);
+                ++cb_counters_[OFFERED_DEADLINE_MISSED_IDX];
+            }
+
+            std::cout << "on_offered_deadline_missed() " << writer->guid() << " total_count " << status.total_count <<
+                std::endl;
+        }
+
+        void on_offered_incompatible_qos (
+                DataWriter* writer,
+                const OfferedIncompatibleQosStatus& status) override
+        {
+            {
+                std::unique_lock<std::mutex> lock(mtx_);
+                ++cb_counters_[OFFERED_INCOMPATIBLE_QOS_IDX];
+            }
+
+            std::cout << "on_offered_incompatible_qos " << writer->guid() << " total_count " << status.total_count <<
+                std::endl;
+        }
+
+        void on_liveliness_lost (
+                DataWriter* writer,
+                const LivelinessLostStatus& status) override
+        {
+            {
+                std::unique_lock<std::mutex> lock(mtx_);
+                ++cb_counters_[LIVELINESS_LOST_IDX];
+            }
+
+            std::cout << "on_liveliness_lost " << writer->guid() << " total_count " << status.total_count << std::endl;
+        }
+
+        void on_publication_matched (
+                DataWriter* writer,
+                const PublicationMatchedStatus& status) override
+        {
+            {
+                std::unique_lock<std::mutex> lock(mtx_);
+                ++cb_counters_[PUBLICATION_MATCHED_IDX];
+            }
+
+            std::cout << "on_publication_matched " << writer->guid() << " total_count " << status.total_count <<
+                std::endl;
+        }
+
+        void on_requested_deadline_missed (
+                DataReader* reader,
+                const RequestedDeadlineMissedStatus& status) override
+        {
+            {
+                std::unique_lock<std::mutex> lock(mtx_);
+                ++cb_counters_[REQUESTED_DEADLINE_MISSED_IDX];
+            }
+
+            std::cout << "on_requested_deadline_missed" << reader->guid() << " total_count " << status.total_count <<
+                std::endl;
+        }
+
+        void on_requested_incompatible_qos (
+                DataReader* reader,
+                const RequestedIncompatibleQosStatus& status) override
+        {
+            {
+                std::unique_lock<std::mutex> lock(mtx_);
+                ++cb_counters_[REQUESTED_INCOMPATIBLE_QOS_IDX];
+            }
+
+            std::cout << "on_requested_incompatible_qos" << reader->guid() << " total_count " << status.total_count <<
+                std::endl;
+        }
+
+        void on_liveliness_changed (
+                DataReader* reader,
+                const LivelinessChangedStatus& status) override
+        {
+            {
+                std::unique_lock<std::mutex> lock(mtx_);
+                ++cb_counters_[LIVELINESS_CHANGED_IDX];
+            }
+
+            std::cout << "on_liveliness_changed " << reader->guid() << " not_alive_count " << status.not_alive_count <<
+                std::endl;
+        }
+
+        void on_subscription_matched (
+                DataReader* reader,
+                const SubscriptionMatchedStatus& status) override
+        {
+            {
+                std::unique_lock<std::mutex> lock(mtx_);
+                ++cb_counters_[SUBSCRIPTION_MATCHED_IDX];
+            }
+
+            std::cout << "on_subscription_matched " << reader->guid() << " total_count " << status.total_count <<
+                std::endl;
+        }
+
+        void on_sample_lost (
+                DataReader* reader,
+                const SampleLostStatus& status) override
+        {
+            {
+                std::unique_lock<std::mutex> lock(mtx_);
+                ++cb_counters_[SAMPLE_LOST_IDX];
+            }
+
+            std::cout << "on_sample_lost " << reader->guid() << " total_count " << status.total_count << std::endl;
+        }
+
+        const uint32_t& get_cb_cout_of(
+                CallbackIndex cb_idx)
+        {
+            std::unique_lock<std::mutex> lock(mtx_);
+            return cb_counters_[cb_idx];
+        }
+
+    private:
+
+        mutable std::mutex mtx_;
+        std::array<uint32_t, CallbackIndex::MAX_SIZE> cb_counters_;
+
+    }
+    listener_;
 };
 
 struct SampleValidator
@@ -567,15 +661,6 @@ struct ConnectionListSampleValidator : public SampleValidator
         if (info.valid_data
                 && info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
         {
-            auto it = std::find_if(total_msgs.begin(), total_msgs.end(),
-                            [&](const MonitorServiceType::type& elem)
-                            {
-                                return (data.status_kind() == elem.status_kind()) &&
-                                data.local_entity() == elem.local_entity();
-                            });
-
-            ASSERT_NE(it, total_msgs.end());
-
             std::cout << "Received ConnectionList on local_entity "
                       << statistics::to_fastdds_type(data.local_entity()) << std::endl;
 
@@ -590,6 +675,72 @@ struct ConnectionListSampleValidator : public SampleValidator
                 }
                 std::cout << std::endl;
             }
+
+            auto it = std::find_if(total_msgs.begin(), total_msgs.end(),
+                            [&](const MonitorServiceType::type& elem)
+                            {
+                                if ((data.status_kind() == elem.status_kind()) &&
+                                (data.local_entity() == elem.local_entity()))
+                                {
+                                    //! Check for connections
+                                    bool expected_locators_found = true;
+                                    for (auto& incoming_connection : data.value().connection_list())
+                                    {
+                                        auto conn_it = std::find_if(elem.value().connection_list().begin(),
+                                        elem.value().connection_list().end(),
+                                        [&](const statistics::Connection&  connection)
+                                        {
+                                            if (connection.mode() == incoming_connection.mode())
+                                            {
+                                                //! check locators
+                                                bool same_locators = true;
+                                                for (size_t i = 0; i < connection.announced_locators().size(); i++)
+                                                {
+                                                    bool locator_found = false;
+                                                    for (size_t j = 0;
+                                                    j < incoming_connection.announced_locators().size(); j++)
+                                                    {
+                                                        //! provided comparison operator
+                                                        if (connection.announced_locators()[i] ==
+                                                        incoming_connection.announced_locators()[j])
+                                                        {
+                                                            locator_found = true;
+                                                        }
+                                                    }
+
+                                                    if (!locator_found)
+                                                    {
+                                                        same_locators = false;
+                                                        break;
+                                                    }
+                                                }
+
+                                                return same_locators;
+                                            }
+                                            else
+                                            {
+                                                return false;
+                                            }
+                                        });
+
+                                        if (conn_it != elem.value().connection_list().end())
+                                        {
+                                            expected_locators_found = false;
+                                            break;
+                                        }
+                                    }
+
+                                    return expected_locators_found;
+                                }
+                                else
+                                {
+                                    return false;
+                                }
+
+                                return true;
+                            });
+
+            ASSERT_NE(it, total_msgs.end());
 
             total_msgs.erase(it);
             ++processed_count;
@@ -998,8 +1149,8 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_proxy)
     MSC.start_reception(expected_msgs);
 
     //! Assertions
+    //! The assertion checking whether the on_data_availble() was called is assumed in the following one
     ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(3)), expected_msgs.size());
-
 #endif //FASTDDS_STATISTICS
 }
 
@@ -1008,6 +1159,10 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_proxy)
  *
  * A MSC correctly shall receive the corresponding connection list update in the MST
  * after creating two MSP with a pair of matched endpoints.
+ *
+ * TODO: Extend the connection list test cases that checks for intraprocess and datasharing
+ * connection modes
+ *
  */
 TEST_P(DDSMonitorServiceTest, monitor_service_simple_connection_list)
 {
@@ -1019,10 +1174,14 @@ TEST_P(DDSMonitorServiceTest, monitor_service_simple_connection_list)
     //! Procedure
     MSC.init_monitor_service_reader();
 
-    MSP1.setup();
-    MSP2.setup();
+    std::string xml_profile = "MonitorServiceConnectionList_profile.xml";
+    std::pair<std::string, std::string> participant_profiles =
+            {"monitor_service_connections_list_participant_1", "monitor_service_connections_list_participant_2"};
 
-    MSP1.enable_monitor_service();
+    MSP1.setup(xml_profile, participant_profiles.first);
+    MSP2.setup(xml_profile, participant_profiles.second);
+
+    ///MSP1.enable_monitor_service();
     MSP2.enable_monitor_service();
 
     std::list<MonitorServiceType::type> expected_msgs;
@@ -1032,10 +1191,44 @@ TEST_P(DDSMonitorServiceTest, monitor_service_simple_connection_list)
     participant_connection_msg.status_kind(eprosima::fastdds::statistics::CONNECTION_LIST);
     participant_connection_msg.local_entity(MSP1.get_participant_guid());
 
+    std::vector<statistics::detail::Locator_s> locators;
+    statistics::detail::Locator_s loc;
+
+    //! For the participant, assert the unicast locators
+    constexpr const char* LOCAL_ADDRESS = "127.0.0.1";
+    constexpr const char* MULTICAST_ADDRESS = "239.255.0.1";
+    Locator_t metatraffic_unicast_local_addr_locator(LOCATOR_KIND_UDPv4, 7399);
+    IPLocator::setIPv4(metatraffic_unicast_local_addr_locator, LOCAL_ADDRESS);
+    Locator_t default_unicast_local_addr_locator(LOCATOR_KIND_UDPv4, 2020);
+    IPLocator::setIPv4(default_unicast_local_addr_locator, LOCAL_ADDRESS);
+    Locator_t metatraffic_multicast_addr_locator(LOCATOR_KIND_UDPv4, 7400);
+    IPLocator::setIPv4(metatraffic_multicast_addr_locator, MULTICAST_ADDRESS);
+
+    locators.push_back(statistics::to_statistics_type(metatraffic_unicast_local_addr_locator));
+    locators.push_back(statistics::to_statistics_type(default_unicast_local_addr_locator));
+    locators.push_back(statistics::to_statistics_type(metatraffic_multicast_addr_locator));
+
+    std::vector<statistics::Connection> connection_list;
+    statistics::Connection conn;
+    conn.guid() = MSP2.get_participant_guid();
+    conn.mode() = statistics::ConnectionMode::TRANSPORT;
+    conn.announced_locators(locators);
+    connection_list.push_back(conn);
+
+    participant_connection_msg.value().connection_list(connection_list);
+
     expected_msgs.push_back(participant_connection_msg);
 
     participant_connection_msg.status_kind(eprosima::fastdds::statistics::CONNECTION_LIST);
     participant_connection_msg.local_entity(MSP2.get_participant_guid());
+
+    ASSERT_FALSE(participant_connection_msg.value().connection_list().empty());
+    ASSERT_EQ(participant_connection_msg.value().connection_list().back().announced_locators().size(), 3u);
+
+    participant_connection_msg.value().connection_list().back().guid() = MSP1.get_participant_guid();
+    participant_connection_msg.value().connection_list().back().mode() = statistics::ConnectionMode::TRANSPORT;
+    participant_connection_msg.value().connection_list().back().announced_locators()[0].port() = 7398;//unicast
+    participant_connection_msg.value().connection_list().back().announced_locators()[1].port() = 2019;//unicast
 
     expected_msgs.push_back(participant_connection_msg);
 
@@ -1046,20 +1239,30 @@ TEST_P(DDSMonitorServiceTest, monitor_service_simple_connection_list)
     endpoint_connections_msg.status_kind(eprosima::fastdds::statistics::CONNECTION_LIST);
     w_guids = MSP1.get_writer_guids();
     ASSERT_EQ(w_guids.size(), 1);
+    r_guids = MSP2.get_reader_guids();
+    ASSERT_EQ(r_guids.size(), 1);
+
     endpoint_connections_msg.local_entity(w_guids.back());
+    endpoint_connections_msg.value().connection_list(connection_list);
+    endpoint_connections_msg.value().connection_list().back().guid() = r_guids.back();
+    endpoint_connections_msg.value().connection_list().back().mode() = statistics::ConnectionMode::TRANSPORT;
+    endpoint_connections_msg.value().connection_list().back().announced_locators()[0].port() = 2020;//unicast
+    endpoint_connections_msg.value().connection_list().back().announced_locators()[1].port() = 2022;//multicast
 
     expected_msgs.push_back(endpoint_connections_msg);
 
-    endpoint_connections_msg.status_kind(eprosima::fastdds::statistics::CONNECTION_LIST);
-    r_guids = MSP2.get_reader_guids();
-    ASSERT_EQ(r_guids.size(), 1);
     endpoint_connections_msg.local_entity(r_guids.back());
+    endpoint_connections_msg.value().connection_list().back().guid() = w_guids.back();
+    endpoint_connections_msg.value().connection_list().back().mode() = statistics::ConnectionMode::TRANSPORT;
+    endpoint_connections_msg.value().connection_list().back().announced_locators()[0].port() = 2019;//unicast
+    endpoint_connections_msg.value().connection_list().back().announced_locators()[1].port() = 2021;//multicast
 
     expected_msgs.push_back(endpoint_connections_msg);
 
     MSC.start_reception(expected_msgs);
 
     //! Assertions
+    //! The assertion checking whether the on_data_availble() was called is assumed in the following one
     ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(3)), expected_msgs.size());
 #endif //FASTDDS_STATISTICS
 }
@@ -1117,7 +1320,8 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_qos_incompatibility_status)
     expected_msgs.push_back(endpoint_qos_msg);
 
     MSC.start_reception(expected_msgs);
-    //! Procedure
+    //! Assertions
+    //! The assertion checking whether the on_data_availble() was called is assumed in the following one
     ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(3)), expected_msgs.size());
 #endif //FASTDDS_STATISTICS
 }
@@ -1129,8 +1333,8 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_qos_incompatibility_status)
 
    TEST(DDSMonitorServiceTest, monitor_service_simple_inconsistent_topic)
    {
- #endif //FASTDDS_STATISTICS
-   }*/
+   }
+ */
 
 /**
  * Refers to DDS-MS-SIMPLE-05 from the test plan.
@@ -1177,9 +1381,10 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_liveliness_lost_status)
 
     MSC.start_reception(expected_msgs);
 
-
     //! Assertions
+    //! The assertion checking whether the on_data_availble() was called is assumed in the following one
     ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(3)), expected_msgs.size());
+    ASSERT_TRUE(MSP.get_cb_count(MonitorServiceParticipant::LIVELINESS_LOST_IDX) > 0);
 #endif //FASTDDS_STATISTICS
 }
 
@@ -1237,7 +1442,9 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_liveliness_changed_status)
     MSC.start_reception(expected_msgs);
 
     //! Assertions
+    //! The assertion checking whether the on_data_availble() was called is assumed in the following one
     ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(5)), expected_msgs.size());
+    ASSERT_TRUE(MSP.get_cb_count(MonitorServiceParticipant::LIVELINESS_CHANGED_IDX) > 0);
 #endif //FASTDDS_STATISTICS
 }
 
@@ -1297,7 +1504,10 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_deadline_missed_status)
 
 
     //! Assertions
+    //! The assertion checking whether the on_data_availble() was called is assumed in the following one
     ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(3)), expected_msgs.size());
+    ASSERT_TRUE(MSP.get_cb_count(MonitorServiceParticipant::OFFERED_DEADLINE_MISSED_IDX) > 0);
+    ASSERT_TRUE(MSP.get_cb_count(MonitorServiceParticipant::REQUESTED_DEADLINE_MISSED_IDX) > 0);
 #endif //FASTDDS_STATISTICS
 }
 
@@ -1386,7 +1596,9 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_sample_lost_status)
 
 
     //! Assertions
+    //! The assertion checking whether the on_data_availble() was called is assumed in the following one
     ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(5)), expected_msgs.size());
+    ASSERT_TRUE(MSP2.get_cb_count(MonitorServiceParticipant::SAMPLE_LOST_IDX) > 0);
 #endif //FASTDDS_STATISTICS
 }
 
@@ -1421,6 +1633,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_instance_disposals)
     MSP.delete_writer();
 
     //! Assertions
+    //! The assertion checking whether the on_data_availble() was called is assumed in the following one
     ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(3)), expected_msgs.size());
 
 #endif //FASTDDS_STATISTICS
@@ -1477,6 +1690,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_late_joiner)
     MSC.start_reception(expected_msgs);
 
     //! Assertions
+    //! The assertion checking whether the on_data_availble() was called is assumed in the following one
     ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(3)), expected_msgs.size());
 
 #endif //FASTDDS_STATISTICS
@@ -1538,6 +1752,7 @@ TEST(DDSMonitorServiceTest, monitor_service_simple_enable_disable_enable)
     MSC.start_reception(expected_msgs);
 
     //! Assertions
+    //! The assertion checking whether the on_data_availble() was called is assumed in the following one
     ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(3)), expected_msgs.size());
 #endif //FASTDDS_STATISTICS
 }
@@ -1602,6 +1817,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_proxy)
     MSC.start_reception(expected_msgs);
 
     //! Assertions
+    //! The assertion checking whether the on_data_availble() was called is assumed in the following one
     ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(10)), expected_msgs.size());
 #endif //FASTDDS_STATISTICS
 }
@@ -1656,6 +1872,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_instance_disposals)
 
 
     //! Assertions
+    //! The assertion checking whether the on_data_availble() was called is assumed in the following one
     ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(3)), expected_msgs.size());
 #endif //FASTDDS_STATISTICS
 }
@@ -1730,6 +1947,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_late_joiners)
     MSC.start_reception(expected_msgs);
 
     //! Assertions
+    //! The assertion checking whether the on_data_availble() was called is assumed in the following one
     ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(10)), expected_msgs.size());
 #endif //FASTDDS_STATISTICS
 }
