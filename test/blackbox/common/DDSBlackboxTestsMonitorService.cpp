@@ -1181,7 +1181,7 @@ TEST_P(DDSMonitorServiceTest, monitor_service_simple_connection_list)
     MSP1.setup(xml_profile, participant_profiles.first);
     MSP2.setup(xml_profile, participant_profiles.second);
 
-    ///MSP1.enable_monitor_service();
+    MSP1.enable_monitor_service();
     MSP2.enable_monitor_service();
 
     std::list<MonitorServiceType::type> expected_msgs;
