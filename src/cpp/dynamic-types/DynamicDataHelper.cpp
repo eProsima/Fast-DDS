@@ -301,7 +301,7 @@ void DynamicDataHelper::print_basic_element(
         }
         case TK_ENUM:
         {
-            output << std::to_string(data->get_uint32_value(id));
+            output << std::to_string(data->get_enum_value(id));
             break;
         }
         default:
@@ -768,6 +768,7 @@ void DynamicDataHelper::print_member(
         }
         case TK_SEQUENCE:
         case TK_ARRAY:
+        case TK_ALIAS:
         {
             DynamicData* st_data = data->loan_value(type->get_id());
             print_collection(st_data, tabs + "\t");

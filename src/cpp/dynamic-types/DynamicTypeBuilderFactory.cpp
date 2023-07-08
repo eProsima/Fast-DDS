@@ -1581,10 +1581,12 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
             mel.common().value(member->get_index());
             mel.detail().name(member->get_name());
 
-            // Apply member annotations
-            TypeDescriptor member_type_descriptor;
-            member->type_->get_descriptor(&member_type_descriptor);
-            apply_type_annotations(mel.detail().ann_custom(), &member_type_descriptor);
+            if (member->type_) {
+                // Apply member annotations
+                TypeDescriptor member_type_descriptor;
+                member->type_->get_descriptor(&member_type_descriptor);
+                apply_type_annotations(mel.detail().ann_custom(), &member_type_descriptor);
+            }
 
             object.complete().enumerated_type().literal_seq().emplace_back(mel);
         }
