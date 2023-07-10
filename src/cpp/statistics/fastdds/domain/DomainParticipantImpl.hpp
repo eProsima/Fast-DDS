@@ -48,6 +48,8 @@ namespace eprosima {
 namespace fastdds {
 namespace statistics {
 
+class MonitorServiceStatusData;
+
 enum EventKind : uint32_t;
 
 namespace dds {
@@ -144,6 +146,45 @@ public:
      * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     ReturnCode_t disable_monitor_service() const;
+
+    /**
+     * Fills the in ParticipantProxyData from a MonitorService Message
+     *
+     * @param [out] data Proxy to fill
+     * @param [in] msg MonitorService Message to get the proxy information from.
+     *
+     * @return RETCODE_OK if the operation succeeds.
+     * @return RETCODE_ERROR if the  operation fails.
+     */
+    RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
+            fastrtps::rtps::ParticipantProxyData &data,
+            const fastdds::statistics::MonitorServiceStatusData &msg);
+
+    /**
+     * Fills the in WriterProxyData from a MonitorService Message
+     *
+     * @param [out] data Proxy to fill.
+     * @param [in] msg MonitorService Message to get the proxy information from.
+     *
+     * @return RETCODE_OK if the operation succeeds.
+     * @return RETCODE_ERROR if the  operation fails.
+     */
+    RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
+            fastrtps::rtps::WriterProxyData &data,
+            const fastdds::statistics::MonitorServiceStatusData &msg);
+
+    /**
+     * Fills the in ReaderProxyData from a MonitorService Message
+     *
+     * @param [out] data Proxy to fill.
+     * @param [in] msg MonitorService Message to get the proxy information from.
+     *
+     * @return RETCODE_OK if the operation succeeds.
+     * @return RETCODE_ERROR if the  operation fails.
+     */
+    RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
+            fastrtps::rtps::ReaderProxyData &data,
+            const fastdds::statistics::MonitorServiceStatusData &msg);
 
 protected:
 
