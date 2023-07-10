@@ -13,9 +13,9 @@
 // limitations under the License.
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/types/v1_3/DynamicData.hpp>
+#include <fastrtps/types/v1_3/DynamicDataFactory.hpp>
 #include <dynamic-types/v1_3/AnnotationDescriptorImpl.hpp>
-#include <dynamic-types/v1_3/DynamicData.hpp>
-#include <dynamic-types/v1_3/DynamicDataFactory.hpp>
 #include <dynamic-types/v1_3/DynamicTypeImpl.hpp>
 // #include <dynamic-types/v1_3/DynamicTypeBuilderImpl.hpp>
 #include <dynamic-types/v1_3/DynamicTypeBuilderFactoryImpl.hpp>

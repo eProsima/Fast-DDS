@@ -372,20 +372,36 @@ void DynamicTypeBuilderFactoryImpl::before_destruction(
     dynamic_tracker<selected_mode>::get_dynamic_tracker().remove(builder);
 }
 
-DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_type(
+std::shared_ptr<DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_type(
         const TypeState& td) noexcept
 {
     try
     {
         if (td.is_consistent())
         {
-            auto sp = std::allocate_shared<DynamicTypeBuilderImpl>(
-                get_allocator(),
+            std::shared_ptr<DynamicTypeBuilderImpl> sp;
+            auto & al = DynamicTypeBuilderFactoryImpl::get_instance().get_allocator();
+
+#if _MSC_VER >= 1921
+            // MSVC v142 can allocate on a single block
+            sp = std::allocate_shared<DynamicTypeBuilderImpl>(
+                al,
                 DynamicTypeBuilderImpl::use_the_create_method{},
                 td);
+#else
+            using traits = std::allocator_traits<builder_allocator>;
+            auto new_instance = al.allocate(sizeof(DynamicTypeBuilderImpl));
+            traits::construct(
+                al,
+                new_instance,
+                DynamicTypeBuilder::use_the_create_method{},
+                td);
+
+            sp.reset(new_instance);
+#endif
             // Keep alive on external references
             sp->add_ref();
-            return sp.get();
+            return sp;
         }
         else
         {
@@ -400,65 +416,65 @@ DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_type(
     return {};
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderFactoryImpl::create_copy(
+const DynamicTypeImpl& DynamicTypeBuilderFactoryImpl::create_copy(
         const DynamicTypeImpl& type) noexcept
 {
     return DynamicTypeBuilderImpl::create_copy(type);
 }
 
-DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_type_copy(
+std::shared_ptr<DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_type_copy(
         const DynamicTypeImpl& type) noexcept
 {
     assert(type.is_consistent());
     return create_type(type);
 }
 
-DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_alias_type(
+std::shared_ptr<DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_alias_type(
         const DynamicTypeImpl& base_type,
         const std::string& sName)
 {
-    TypeState descriptor;
-    descriptor.set_kind(TypeKind::TK_ALIAS);
-    descriptor.set_base_type(base_type.shared_from_this());
-    descriptor.set_name(sName);
+    TypeState state;
+    state.set_kind(TypeKind::TK_ALIAS);
+    state.set_base_type(base_type.shared_from_this());
+    state.set_name(sName);
 
-    return create_type(descriptor);
+    return create_type(state);
 }
 
-DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_array_type(
+std::shared_ptr<DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_array_type(
         const DynamicTypeImpl& type,
         const std::vector<uint32_t>& bounds) noexcept
 {
-    TypeState descriptor;
-    descriptor.set_kind(TypeKind::TK_ARRAY);
-    descriptor.set_name(TypeNamesGenerator::get_array_type_name(type.get_name(), bounds, false));
-    descriptor.element_type_ = type.shared_from_this();
-    descriptor.bound_ = bounds;
+    TypeState state;
+    state.set_kind(TypeKind::TK_ARRAY);
+    state.set_name(TypeNamesGenerator::get_array_type_name(type.get_name(), bounds, false));
+    state.element_type_ = type.shared_from_this();
+    state.bound_ = bounds;
 
-    for (uint32_t i = 0; i < descriptor.bound_.size(); ++i)
+    for (uint32_t i = 0; i < state.bound_.size(); ++i)
     {
-        if (descriptor.bound_[i] == 0)
+        if (state.bound_[i] == 0)
         {
-            descriptor.bound_[i] = MAX_ELEMENTS_COUNT;
+            state.bound_[i] = MAX_ELEMENTS_COUNT;
         }
     }
 
-    return create_type(descriptor);
+    return create_type(state);
 }
 
-DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_bitmask_type(
+std::shared_ptr<DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_bitmask_type(
         uint32_t bound) noexcept
 {
     if (bound <= MAX_BITMASK_LENGTH)
     {
-        TypeState descriptor;
-        descriptor.set_kind(TypeKind::TK_BITMASK);
+        TypeState state;
+        state.set_kind(TypeKind::TK_BITMASK);
         // TODO review on implementation for IDL
-        descriptor.set_name(GenerateTypeName(get_type_name(TypeKind::TK_BITMASK)));
-        descriptor.element_type_.reset(get_bool_type());
-        descriptor.bound_.push_back(bound);
+        state.set_name(GenerateTypeName(get_type_name(TypeKind::TK_BITMASK)));
+        state.element_type_ = get_bool_type();
+        state.bound_.push_back(bound);
 
-        return create_type(descriptor);
+        return create_type(state);
     }
     else
     {
@@ -468,17 +484,17 @@ DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_bitmask_type(
     return {};
 }
 
-DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_bitset_type(
+std::shared_ptr<DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_bitset_type(
         uint32_t bound) noexcept
 {
     if (bound <= MAX_BITMASK_LENGTH)
     {
-        TypeState descriptor;
-        descriptor.set_kind(TypeKind::TK_BITSET);
+        TypeState state;
+        state.set_kind(TypeKind::TK_BITSET);
         // TODO Review on implementation for IDL
-        descriptor.set_name(GenerateTypeName(get_type_name(TypeKind::TK_BITSET)));
-        descriptor.bound_.push_back(bound);
-        return create_type(descriptor);
+        state.set_name(GenerateTypeName(get_type_name(TypeKind::TK_BITSET)));
+        state.bound_.push_back(bound);
+        return create_type(state);
     }
     else
     {
@@ -496,10 +512,21 @@ std::shared_ptr<DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::new_primi
     try
     {
         // create on heap
-        std::shared_ptr<DynamicTypeBuilderImpl> builder = std::make_shared<DynamicTypeBuilderImpl>(
+        std::shared_ptr<DynamicTypeBuilderImpl> builder;
+        TypeState td{GenerateTypeName(get_type_name(kind)), kind};
+
+#if _MSC_VER >= 1921
+        builder = std::make_shared<DynamicTypeBuilderImpl>(
             DynamicTypeBuilderImpl::use_the_create_method{},
-            TypeState{GenerateTypeName(get_type_name(kind)), kind},
+            td,
             true);         // will be a static object
+#else
+        builder.reset(new DynamicTypeBuilderImpl(
+            DynamicTypeBuilderImpl::use_the_create_method{},
+            td,
+            true);         // will be a static object
+#endif // _MSC_VER
+
         // notify the tracker
         dynamic_tracker<selected_mode>::get_dynamic_tracker().add_primitive(builder.get());
         return builder;
@@ -517,22 +544,33 @@ std::shared_ptr<DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::new_primi
 std::shared_ptr<DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::new_unlimited_string_builder(
         bool large) noexcept
 {
-    TypeState descriptor;
-    descriptor.set_kind(large ? TypeKind::TK_STRING16 : TypeKind::TK_STRING8);
-    descriptor.set_name(TypeNamesGenerator::get_string_type_name(MAX_STRING_LENGTH, large, true));
-    descriptor.element_type_.reset(large ? get_char16_type() : get_char8_type());
-    descriptor.bound_.push_back(MAX_STRING_LENGTH);
+    TypeState td;
+    td.set_kind(large ? TypeKind::TK_STRING16 : TypeKind::TK_STRING8);
+    td.set_name(TypeNamesGenerator::get_string_type_name(MAX_STRING_LENGTH, large, true));
+    td.element_type_ = large ? get_char16_type() : get_char8_type();
+    td.bound_.push_back(MAX_STRING_LENGTH);
 
     try
     {
         // create on heap
-        std::shared_ptr<DynamicTypeBuilderImpl> builder = std::make_shared<DynamicTypeBuilderImpl>(
+        std::shared_ptr<DynamicTypeBuilderImpl> builder;
+
+#if _MSC_VER >= 1921
+        builder = std::make_shared<DynamicTypeBuilderImpl>(
             DynamicTypeBuilderImpl::use_the_create_method{},
-            descriptor,
+            td,
             true);         // will be a static object
+#else
+        builder.reset(new DynamicTypeBuilderImpl(
+            DynamicTypeBuilderImpl::use_the_create_method{},
+            td,
+            true);         // will be a static object
+#endif // _MSC_VER
+
         // notify the tracker
         dynamic_tracker<selected_mode>::get_dynamic_tracker().add_primitive(builder.get());
         return builder;
+
     }
     catch(const std::bad_alloc& e)
     {
@@ -543,75 +581,75 @@ std::shared_ptr<DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::new_unlim
     return {};
 }
 
-const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_bool_type() noexcept
+std::shared_ptr<const DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_bool_type() noexcept
 {
     return create_primitive_type<TypeKind::TK_BOOLEAN>();
 }
 
-const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_byte_type() noexcept
+std::shared_ptr<const DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_byte_type() noexcept
 {
     return create_primitive_type<TypeKind::TK_BYTE>();
 }
 
-const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_char8_type() noexcept
+std::shared_ptr<const DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_char8_type() noexcept
 {
     return create_primitive_type<TypeKind::TK_CHAR8>();
 }
 
-const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_char16_type() noexcept
+std::shared_ptr<const DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_char16_type() noexcept
 {
     return create_primitive_type<TypeKind::TK_CHAR16>();
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderFactoryImpl::create_annotation_primitive(
+std::shared_ptr<const DynamicTypeImpl> DynamicTypeBuilderFactoryImpl::create_annotation_primitive(
         const std::string& name)
 {
-    TypeState descriptor;
-    descriptor.set_kind(TypeKind::TK_ANNOTATION);
-    descriptor.set_name(name);
-    return std::shared_ptr<DynamicTypeBuilderImpl>{create_type(descriptor)}->build();
+    TypeState state;
+    state.set_kind(TypeKind::TK_ANNOTATION);
+    state.set_name(name);
+    return create_type(state)->build();
 }
 
-DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_enum_type()
+std::shared_ptr<DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_enum_type()
 {
-    TypeState pEnumDescriptor;
-    pEnumDescriptor.set_kind(TypeKind::TK_ENUM);
+    TypeState state;
+    state.set_kind(TypeKind::TK_ENUM);
     // Enum currently is an alias for uint32_t
-    pEnumDescriptor.set_name(GenerateTypeName(get_type_name(TypeKind::TK_UINT32)));
-    return create_type(pEnumDescriptor);
+    state.set_name(GenerateTypeName(get_type_name(TypeKind::TK_UINT32)));
+    return create_type(state);
 }
 
-const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_float32_type() noexcept
+std::shared_ptr<const DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_float32_type() noexcept
 {
     return create_primitive_type<TypeKind::TK_FLOAT32>();
 }
 
-const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_float64_type() noexcept
+std::shared_ptr<const DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_float64_type() noexcept
 {
     return create_primitive_type<TypeKind::TK_FLOAT64>();
 }
 
-const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_float128_type() noexcept
+std::shared_ptr<const DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_float128_type() noexcept
 {
     return create_primitive_type<TypeKind::TK_FLOAT128>();
 }
 
-const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_int16_type() noexcept
+std::shared_ptr<const DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_int16_type() noexcept
 {
     return create_primitive_type<TypeKind::TK_INT16>();
 }
 
-const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_int32_type() noexcept
+std::shared_ptr<const DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_int32_type() noexcept
 {
     return create_primitive_type<TypeKind::TK_INT32>();
 }
 
-const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_int64_type() noexcept
+std::shared_ptr<const DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_int64_type() noexcept
 {
     return create_primitive_type<TypeKind::TK_INT64>();
 }
 
-DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_map_type(
+std::shared_ptr<DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_map_type(
         const DynamicTypeImpl& key_type,
         const DynamicTypeImpl& value_type,
         uint32_t bound /* = LENGTH_UNLIMITED */) noexcept
@@ -621,20 +659,20 @@ DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_map_type(
         bound = MAX_ELEMENTS_COUNT;
     }
 
-    TypeState descriptor;
-    descriptor.set_kind(TypeKind::TK_MAP);
-    descriptor.bound_.push_back(bound);
-    descriptor.key_element_type_ = key_type.shared_from_this();
-    descriptor.element_type_ = value_type.shared_from_this();
-    descriptor.set_name(
+    TypeState state;
+    state.set_kind(TypeKind::TK_MAP);
+    state.bound_.push_back(bound);
+    state.key_element_type_ = key_type.shared_from_this();
+    state.element_type_ = value_type.shared_from_this();
+    state.set_name(
         TypeNamesGenerator::get_map_type_name(
             key_type.get_name(),
             value_type.get_name(),
             bound, false));
-    return create_type(descriptor);
+    return create_type(state);
 }
 
-DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_sequence_type(
+std::shared_ptr<DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_sequence_type(
         const DynamicTypeImpl& type,
         uint32_t bound /* = LENGTH_UNLIMITED */) noexcept
 {
@@ -643,16 +681,16 @@ DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_sequence_type(
         bound = MAX_ELEMENTS_COUNT;
     }
 
-    TypeState descriptor;
-    descriptor.set_kind(TypeKind::TK_SEQUENCE);
-    descriptor.set_name(TypeNamesGenerator::get_sequence_type_name(type.get_name(), bound, false));
-    descriptor.bound_.push_back(bound);
-    descriptor.element_type_ = type.shared_from_this();
+    TypeState state;
+    state.set_kind(TypeKind::TK_SEQUENCE);
+    state.set_name(TypeNamesGenerator::get_sequence_type_name(type.get_name(), bound, false));
+    state.bound_.push_back(bound);
+    state.element_type_ = type.shared_from_this();
 
-    return create_type(descriptor);
+    return create_type(state);
 }
 
-const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_string_type(
+std::shared_ptr<const DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_string_type(
         uint32_t bound /* = LENGTH_UNLIMITED */) noexcept
 {
     // C++11 compiler uses double-checked locking pattern to avoid concurrency issues
@@ -660,7 +698,7 @@ const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_string_type(
 
     if (!unlimited_builder)
     {
-        return nullptr;
+        return {};
     }
 
     if ( 0 == bound )
@@ -672,17 +710,17 @@ const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_string_type(
     {
         // TODO:Barro refactor unbounded to be unbounded and not 256
         unlimited_builder->add_ref();
-        return unlimited_builder.get();
+        return unlimited_builder;
     }
 
     // otherwise allocate one on the heap
-    TypeState descriptor(*unlimited_builder);
-    descriptor.set_name(TypeNamesGenerator::get_string_type_name(bound, false, true));
-    descriptor.bound_[0] = bound;
-    return create_type(descriptor);
+    TypeState state(*unlimited_builder);
+    state.set_name(TypeNamesGenerator::get_string_type_name(bound, false, true));
+    state.bound_[0] = bound;
+    return create_type(state);
 }
 
-const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_wstring_type(
+std::shared_ptr<const DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_wstring_type(
         uint32_t bound /* = LENGTH_UNLIMITED */) noexcept
 {
     // C++11 compiler uses double-checked locking pattern to avoid concurrency issues
@@ -690,7 +728,7 @@ const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_wstring_type
 
     if (!unlimited_builder)
     {
-        return nullptr;
+        return {};
     }
 
     if ( 0 == bound )
@@ -702,39 +740,38 @@ const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_wstring_type
     {
         // TODO:Barro refactor unbounded to be unbounded and not 256
         unlimited_builder->add_ref();
-        return unlimited_builder.get();
+        return unlimited_builder;
     }
 
     // otherwise allocate one on the heap
-    TypeState descriptor(*unlimited_builder);
-    descriptor.set_name(TypeNamesGenerator::get_string_type_name(bound, true, true));
-    descriptor.bound_[0] = bound;
-    return create_type(descriptor);
+    TypeState state(*unlimited_builder);
+    state.set_name(TypeNamesGenerator::get_string_type_name(bound, true, true));
+    state.bound_[0] = bound;
+    return create_type(state);
 }
 
-DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_child_struct_type(
+std::shared_ptr<DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_child_struct_type(
         const DynamicTypeImpl& parent_type)
 {
     auto kind = parent_type.get_kind();
 
     if (kind == TypeKind::TK_STRUCTURE || kind == TypeKind::TK_BITSET)
     {
-        TypeState descriptor;
-        descriptor.set_kind(kind);
-        descriptor.set_name(GenerateTypeName(get_type_name(kind)));
-        descriptor.base_type_ = parent_type.shared_from_this();
+        TypeState state;
+        state.set_kind(kind);
+        state.set_name(GenerateTypeName(get_type_name(kind)));
+        state.base_type_ = parent_type.shared_from_this();
 
-        return create_type(descriptor);
+        return create_type(state);
     }
     else if (kind == TypeKind::TK_ALIAS)
     {
         // Resolve aliases
-        const DynamicTypeImpl* p = &parent_type;
+        auto p = parent_type.shared_from_this();
 
         do
         {
-            p = p->base_type_.get();
-            assert(p);
+            p = p->base_type_;
         }
         while ( p->kind_ == TypeKind::TK_ALIAS );
 
@@ -747,41 +784,41 @@ DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_child_struct_type(
     }
 }
 
-DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_struct_type() noexcept
+std::shared_ptr<DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_struct_type() noexcept
 {
-    TypeState descriptor;
-    descriptor.set_kind(TypeKind::TK_STRUCTURE);
-    descriptor.set_name(GenerateTypeName(get_type_name(TypeKind::TK_STRUCTURE)));
+    TypeState state;
+    state.set_kind(TypeKind::TK_STRUCTURE);
+    state.set_name(GenerateTypeName(get_type_name(TypeKind::TK_STRUCTURE)));
 
-    return create_type(descriptor);
+    return create_type(state);
 }
 
-const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_uint16_type() noexcept
+std::shared_ptr<const DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_uint16_type() noexcept
 {
     return create_primitive_type<TypeKind::TK_UINT16>();
 }
 
-const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_uint32_type() noexcept
+std::shared_ptr<const DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_uint32_type() noexcept
 {
     return create_primitive_type<TypeKind::TK_UINT32>();
 }
 
-const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_uint64_type() noexcept
+std::shared_ptr<const DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_uint64_type() noexcept
 {
     return create_primitive_type<TypeKind::TK_UINT64>();
 }
 
-DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_union_type(
+std::shared_ptr<DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_union_type(
         const DynamicTypeImpl& discriminator_type)
 {
     if (discriminator_type.is_discriminator_type())
     {
-        TypeState descriptor;
-        descriptor.set_kind(TypeKind::TK_UNION);
-        descriptor.set_name(GenerateTypeName(get_type_name(TypeKind::TK_UNION)));
-        descriptor.discriminator_type_ = discriminator_type.shared_from_this();
+        TypeState state;
+        state.set_kind(TypeKind::TK_UNION);
+        state.set_name(GenerateTypeName(get_type_name(TypeKind::TK_UNION)));
+        state.discriminator_type_ = discriminator_type.shared_from_this();
 
-        return create_type(descriptor);
+        return create_type(state);
     }
 
     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building Union, invalid discriminator type");
@@ -789,24 +826,19 @@ DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_union_type(
 }
 
 ReturnCode_t DynamicTypeBuilderFactoryImpl::delete_type(
-        const DynamicTypeImpl* type) noexcept
+        const DynamicTypeImpl& type) noexcept
 {
     return DynamicTypeBuilderImpl::delete_type(type);
 }
 
 ReturnCode_t DynamicTypeBuilderFactoryImpl::delete_type(
-        const DynamicTypeBuilderImpl* builder) noexcept
+        const DynamicTypeBuilderImpl& builder) noexcept
 {
-    if (builder != nullptr)
-    {
-        builder->release();
-        return ReturnCode_t::RETCODE_OK;
-    }
-
-    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    builder.release();
+    return ReturnCode_t::RETCODE_OK;
 }
 
-const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_primitive_type(
+std::shared_ptr<const DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_primitive_type(
         TypeKind kind) noexcept
 {
     switch (kind)
@@ -839,11 +871,11 @@ const DynamicTypeBuilderImpl* DynamicTypeBuilderFactoryImpl::create_primitive_ty
             return create_char16_type();
         default:
             EPROSIMA_LOG_ERROR(DYN_TYPES, "The type provided " << int(kind) << " is not primitive");
-            return nullptr;
+            return {};
     }
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderFactoryImpl::get_primitive_type(
+std::shared_ptr<const DynamicTypeImpl> DynamicTypeBuilderFactoryImpl::get_primitive_type(
         TypeKind kind) noexcept
 {
     std::shared_ptr<const DynamicTypeBuilderImpl> builder{create_primitive_type(kind)};
@@ -2577,100 +2609,128 @@ void DynamicTypeBuilderFactoryImpl::set_annotation_default_value(
     }
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderFactoryImpl::get_alias_type(
+std::shared_ptr<const DynamicTypeImpl> DynamicTypeBuilderFactoryImpl::get_alias_type(
         const DynamicTypeImpl& base_type,
         const std::string& sName)
 {
-    std::shared_ptr<const DynamicTypeBuilderImpl> builder{create_alias_type(base_type, sName)};
-    return builder ? builder->build() : nullptr;
+    auto builder  = create_alias_type(base_type, sName);
+    std::shared_ptr<const DynamicTypeImpl> ret;
+
+    if (builder)
+    {
+        ret = builder->build();
+    }
+
+    return ret;
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderFactoryImpl::get_int32_type()
+std::shared_ptr<const DynamicTypeImpl> DynamicTypeBuilderFactoryImpl::get_int32_type()
 {
-    return std::shared_ptr<const DynamicTypeBuilderImpl>{create_int32_type()}->build();
+    return create_int32_type()->build();
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderFactoryImpl::get_uint32_type()
+std::shared_ptr<const DynamicTypeImpl> DynamicTypeBuilderFactoryImpl::get_uint32_type()
 {
-    return std::shared_ptr<const DynamicTypeBuilderImpl>{create_uint32_type()}->build();
+    return create_uint32_type()->build();
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderFactoryImpl::get_int16_type()
+std::shared_ptr<const DynamicTypeImpl> DynamicTypeBuilderFactoryImpl::get_int16_type()
 {
-    return std::shared_ptr<const DynamicTypeBuilderImpl>{create_int16_type()}->build();
+    return create_int16_type()->build();
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderFactoryImpl::get_uint16_type()
+std::shared_ptr<const DynamicTypeImpl> DynamicTypeBuilderFactoryImpl::get_uint16_type()
 {
-    return std::shared_ptr<const DynamicTypeBuilderImpl>{create_uint16_type()}->build();
+    return create_uint16_type()->build();
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderFactoryImpl::get_int64_type()
+std::shared_ptr<const DynamicTypeImpl> DynamicTypeBuilderFactoryImpl::get_int64_type()
 {
-    return std::shared_ptr<const DynamicTypeBuilderImpl>{create_int64_type()}->build();
+    return create_int64_type()->build();
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderFactoryImpl::get_uint64_type()
+std::shared_ptr<const DynamicTypeImpl> DynamicTypeBuilderFactoryImpl::get_uint64_type()
 {
-    return std::shared_ptr<const DynamicTypeBuilderImpl>{create_uint64_type()}->build();
+    return create_uint64_type()->build();
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderFactoryImpl::get_float32_type()
+std::shared_ptr<const DynamicTypeImpl> DynamicTypeBuilderFactoryImpl::get_float32_type()
 {
-    return std::shared_ptr<const DynamicTypeBuilderImpl>{create_float32_type()}->build();
+    return create_float32_type()->build();
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderFactoryImpl::get_float64_type()
+std::shared_ptr<const DynamicTypeImpl> DynamicTypeBuilderFactoryImpl::get_float64_type()
 {
-    return std::shared_ptr<const DynamicTypeBuilderImpl>{create_float64_type()}->build();
+    return create_float64_type()->build();
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderFactoryImpl::get_float128_type()
+std::shared_ptr<const DynamicTypeImpl> DynamicTypeBuilderFactoryImpl::get_float128_type()
 {
-    return std::shared_ptr<const DynamicTypeBuilderImpl>{create_float128_type()}->build();
+    return create_float128_type()->build();
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderFactoryImpl::get_char8_type()
+std::shared_ptr<const DynamicTypeImpl> DynamicTypeBuilderFactoryImpl::get_char8_type()
 {
-    return std::shared_ptr<const DynamicTypeBuilderImpl>{create_char8_type()}->build();
+    return create_char8_type()->build();
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderFactoryImpl::get_char16_type()
+std::shared_ptr<const DynamicTypeImpl> DynamicTypeBuilderFactoryImpl::get_char16_type()
 {
-    return std::shared_ptr<const DynamicTypeBuilderImpl>{create_char16_type()}->build();
+    return create_char16_type()->build();
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderFactoryImpl::get_bool_type()
+std::shared_ptr<const DynamicTypeImpl> DynamicTypeBuilderFactoryImpl::get_bool_type()
 {
-    return std::shared_ptr<const DynamicTypeBuilderImpl>{create_bool_type()}->build();
+    return create_bool_type()->build();
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderFactoryImpl::get_byte_type()
+std::shared_ptr<const DynamicTypeImpl> DynamicTypeBuilderFactoryImpl::get_byte_type()
 {
-    return std::shared_ptr<const DynamicTypeBuilderImpl>{create_byte_type()}->build();
+    return create_byte_type()->build();
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderFactoryImpl::get_string_type(
+std::shared_ptr<const DynamicTypeImpl> DynamicTypeBuilderFactoryImpl::get_string_type(
         uint32_t bound /* = LENGTH_UNLIMITED */) noexcept
 {
-    std::shared_ptr<const DynamicTypeBuilderImpl> builder {
-            bound == LENGTH_UNLIMITED ? create_string_type() : create_string_type(bound)};
-    return builder ? builder->build() : nullptr;
+    std::shared_ptr<const DynamicTypeImpl> ret;
+    auto builder = bound == LENGTH_UNLIMITED ?
+                   create_string_type() : create_string_type(bound);
+
+    if (builder)
+    {
+        ret = builder->build();
+    }
+
+    return ret;
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderFactoryImpl::get_wstring_type(
+std::shared_ptr<const DynamicTypeImpl> DynamicTypeBuilderFactoryImpl::get_wstring_type(
         uint32_t bound /* = LENGTH_UNLIMITED */) noexcept
 {
-    std::shared_ptr<const DynamicTypeBuilderImpl> builder {
-            bound == LENGTH_UNLIMITED ? create_wstring_type() : create_wstring_type(bound)};
-    return builder ? builder->build() : nullptr;
+    std::shared_ptr<const DynamicTypeImpl> ret;
+    auto builder = bound == LENGTH_UNLIMITED ?
+                   create_wstring_type() : create_wstring_type(bound);
+
+    if (builder)
+    {
+        ret = builder->build();
+    }
+
+    return ret;
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderFactoryImpl::get_bitset_type(
+std::shared_ptr<const DynamicTypeImpl> DynamicTypeBuilderFactoryImpl::get_bitset_type(
         uint32_t bound)
 {
-    std::shared_ptr<DynamicTypeBuilderImpl> builder{create_bitset_type(bound)};
-    return builder ? builder->build() : nullptr;
+    std::shared_ptr<const DynamicTypeImpl> ret;
+    auto builder = create_bitset_type(bound);
+
+    if (builder)
+    {
+        ret = builder->build();
+    }
+
+    return ret;
 }
 
 void DynamicTypeBuilderFactoryImpl::apply_type_annotations(

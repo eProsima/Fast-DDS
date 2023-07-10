@@ -16,6 +16,7 @@
 #define TYPES_1_3_DYNAMIC_TYPE_IMPL_HPP
 
 #include <dynamic-types/v1_3/TypeState.hpp>
+#include <fastrtps/types/v1_3/DynamicType.hpp>
 #include <fastrtps/utils/custom_allocators.hpp>
 
 namespace eprosima {
@@ -46,6 +47,8 @@ class DynamicTypeImpl final
         explicit use_the_create_method() = default;
     };
 
+    DynamicType interface_;
+
 public:
 
     DynamicTypeImpl(
@@ -60,6 +63,22 @@ public:
             TypeState&& descriptor);
 
     ~DynamicTypeImpl();
+
+    static const DynamicTypeImpl& get_implementation(const DynamicType& t)
+    {
+        return *(DynamicTypeImpl*)((const char*)&t -
+                (::size_t)&reinterpret_cast<char const volatile&>((((DynamicTypeImpl*)0)->interface_)));
+    }
+
+    DynamicType& get_interface()
+    {
+       return interface_;
+    }
+
+    const DynamicType& get_interface() const
+    {
+       return interface_;
+    }
 
 protected:
 

@@ -15,6 +15,7 @@
 #ifndef TYPES_1_3_DYNAMIC_TYPE_BUILDER_FACTORY_IMPL_H
 #define TYPES_1_3_DYNAMIC_TYPE_BUILDER_FACTORY_IMPL_H
 
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
 #include <fastrtps/types/AnnotationParameterValue.h>
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/utils/custom_allocators.hpp>
@@ -113,13 +114,11 @@ class dynamic_tracker
 
 };
 
-#if defined(ENABLE_DYNAMIC_MEMORY_CHECK) \
-    && (!defined(_MSC_VER) || _MSC_VER >= 1921) \
-    && (!defined(__APPLE__) || _LIBCPP_STD_VER >= 20)
-constexpr type_tracking selected_mode = type_tracking::complete;
-#else
+#if NDEBUG
 constexpr type_tracking selected_mode = type_tracking::none;
-#endif // if defined(ENABLE_DYNAMIC_MEMORY_CHECK) ...
+#else
+constexpr type_tracking selected_mode = type_tracking::complete;
+#endif // NDEBUG
 
 class TypeState;
 class MemberDescriptorImpl;
@@ -258,7 +257,7 @@ public:
      * @param[in] td object state to copy
      * @return new @ref DynamicTypeBuilderImpl object
      */
-    DynamicTypeBuilderImpl* create_type(
+    std::shared_ptr<DynamicTypeBuilderImpl> create_type(
             const TypeState& td) noexcept;
 
     /**
@@ -271,7 +270,7 @@ public:
      * @param[in] type @ref DynamicTypeImpl object
      * @return new @ref DynamicTypeBuilderImpl object
      */
-    DynamicTypeBuilderImpl* create_type_copy(
+    std::shared_ptr<DynamicTypeBuilderImpl> create_type_copy(
             const DynamicTypeImpl& type) noexcept;
 
     /**
@@ -282,7 +281,7 @@ public:
      * @param[in] type @ref DynamicTypeImpl object
      * @return new @ref DynamicTypeImpl object copy
      */
-    const DynamicTypeImpl* create_copy(
+    const DynamicTypeImpl& create_copy(
             const DynamicTypeImpl& type) noexcept;
 
     /**
@@ -291,86 +290,86 @@ public:
      * @param[in] kind type identifying the primitive type to retrieve
      * @return @ref DynamicTypeImpl object
      */
-    const DynamicTypeImpl* get_primitive_type(
+    std::shared_ptr<const DynamicTypeImpl> get_primitive_type(
             TypeKind kind) noexcept;
 
     //! alias of `create_type(TypeKind::TK_INT32)`
-    const DynamicTypeBuilderImpl* create_int32_type() noexcept;
+    std::shared_ptr<const DynamicTypeBuilderImpl> create_int32_type() noexcept;
 
     //! alias of `create_type(TypeKind::TK_UINT32)`
-    const DynamicTypeBuilderImpl* create_uint32_type() noexcept;
+    std::shared_ptr<const DynamicTypeBuilderImpl> create_uint32_type() noexcept;
 
     //! alias of `create_type(TypeKind::TK_INT16)`
-    const DynamicTypeBuilderImpl* create_int16_type() noexcept;
+    std::shared_ptr<const DynamicTypeBuilderImpl> create_int16_type() noexcept;
 
     //! alias of `create_type(TypeKind::TK_UINT16)`
-    const DynamicTypeBuilderImpl* create_uint16_type() noexcept;
+    std::shared_ptr<const DynamicTypeBuilderImpl> create_uint16_type() noexcept;
 
     //! alias of `create_type(TypeKind::TK_INT64)`
-    const DynamicTypeBuilderImpl* create_int64_type() noexcept;
+    std::shared_ptr<const DynamicTypeBuilderImpl> create_int64_type() noexcept;
 
     //! alias of `create_type(TypeKind::TK_UINT64)`
-    const DynamicTypeBuilderImpl* create_uint64_type() noexcept;
+    std::shared_ptr<const DynamicTypeBuilderImpl> create_uint64_type() noexcept;
 
     //! alias of `create_type(TypeKind::TK_FLOAT32)`
-    const DynamicTypeBuilderImpl* create_float32_type() noexcept;
+    std::shared_ptr<const DynamicTypeBuilderImpl> create_float32_type() noexcept;
 
     //! alias of `create_type(TypeKind::TK_FLOAT64)`
-    const DynamicTypeBuilderImpl* create_float64_type() noexcept;
+    std::shared_ptr<const DynamicTypeBuilderImpl> create_float64_type() noexcept;
 
     //! alias of `create_type(TypeKind::TK_FLOAT128)`
-    const DynamicTypeBuilderImpl* create_float128_type() noexcept;
+    std::shared_ptr<const DynamicTypeBuilderImpl> create_float128_type() noexcept;
 
     //! alias of `create_type(TypeKind::TK_CHAR8)`
-    const DynamicTypeBuilderImpl* create_char8_type() noexcept;
+    std::shared_ptr<const DynamicTypeBuilderImpl> create_char8_type() noexcept;
 
     //! alias of `create_type(TypeKind::TK_CHAR16)`
-    const DynamicTypeBuilderImpl* create_char16_type() noexcept;
+    std::shared_ptr<const DynamicTypeBuilderImpl> create_char16_type() noexcept;
 
     //! alias of `create_type(TypeKind::TK_BOOLEAN)`
-    const DynamicTypeBuilderImpl* create_bool_type() noexcept;
+    std::shared_ptr<const DynamicTypeBuilderImpl> create_bool_type() noexcept;
 
     //! alias of `create_type(TypeKind::TK_BYTE)`
-    const DynamicTypeBuilderImpl* create_byte_type() noexcept;
+    std::shared_ptr<const DynamicTypeBuilderImpl> create_byte_type() noexcept;
 
     //! returns the cache type associated to create_int16_type()
-    const DynamicTypeImpl* get_int16_type();
+    std::shared_ptr<const DynamicTypeImpl> get_int16_type();
 
     //! returns the cache type associated to create_uint16_type()
-    const DynamicTypeImpl* get_uint16_type();
+    std::shared_ptr<const DynamicTypeImpl> get_uint16_type();
 
     //! returns the cache type associated to create_int32_type()
-    const DynamicTypeImpl* get_int32_type();
+    std::shared_ptr<const DynamicTypeImpl> get_int32_type();
 
     //! returns the cache type associated to create_uint32_type()
-    const DynamicTypeImpl* get_uint32_type();
+    std::shared_ptr<const DynamicTypeImpl> get_uint32_type();
 
     //! returns the cache type associated to create_int64_type()
-    const DynamicTypeImpl* get_int64_type();
+    std::shared_ptr<const DynamicTypeImpl> get_int64_type();
 
     //! returns the cache type associated to create_uint64_type()
-    const DynamicTypeImpl* get_uint64_type();
+    std::shared_ptr<const DynamicTypeImpl> get_uint64_type();
 
     //! returns the cache type associated to create_float32_type()
-    const DynamicTypeImpl* get_float32_type();
+    std::shared_ptr<const DynamicTypeImpl> get_float32_type();
 
     //! returns the cache type associated to create_float64_type()
-    const DynamicTypeImpl* get_float64_type();
+    std::shared_ptr<const DynamicTypeImpl> get_float64_type();
 
     //! returns the cache type associated to create_float128_type()
-    const DynamicTypeImpl* get_float128_type();
+    std::shared_ptr<const DynamicTypeImpl> get_float128_type();
 
     //! returns the cache type associated to create_char8_type()
-    const DynamicTypeImpl* get_char8_type();
+    std::shared_ptr<const DynamicTypeImpl> get_char8_type();
 
     //! returns the cache type associated to create_char16_type()
-    const DynamicTypeImpl* get_char16_type();
+    std::shared_ptr<const DynamicTypeImpl> get_char16_type();
 
     //! returns the cache type associated to create_bool_type()
-    const DynamicTypeImpl* get_bool_type();
+    std::shared_ptr<const DynamicTypeImpl> get_bool_type();
 
     //! returns the cache type associated to get_byte_type()
-    const DynamicTypeImpl* get_byte_type();
+    std::shared_ptr<const DynamicTypeImpl> get_byte_type();
 
     /**
      * Frees any framework resources associated with the given type according with [standard] section 7.5.2.2.10.
@@ -382,7 +381,7 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
      */
     ReturnCode_t delete_type(
-            const DynamicTypeImpl* type) noexcept;
+            const DynamicTypeImpl& type) noexcept;
 
     /**
      * Frees any framework resources associated with the given type according with [standard] section 7.5.2.2.10.
@@ -394,7 +393,7 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
      */
     ReturnCode_t delete_type(
-            const DynamicTypeBuilderImpl* type) noexcept;
+            const DynamicTypeBuilderImpl& type) noexcept;
 
     /**
      * Returns a singleton @ref DynamicTypeBuilderImpl object
@@ -405,7 +404,7 @@ public:
      * @return singleton @ref DynamicTypeBuilderImpl object
      */
     template<TypeKind kind>
-    typename std::enable_if<is_primitive_t<kind>::value, const DynamicTypeBuilderImpl*>::type
+    typename std::enable_if<is_primitive_t<kind>::value, std::shared_ptr<const DynamicTypeBuilderImpl>>::type
     create_primitive_type() noexcept
     {
         // C++11 compiler uses double-checked locking pattern to avoid concurrency issues
@@ -414,7 +413,7 @@ public:
         {
             builder->add_ref();
         }
-        return builder.get();
+        return builder;
     }
 
     /**
@@ -425,7 +424,7 @@ public:
      * @param kind @ref eprosima::fastrtps::types::TypeKind that identifies the singleton to return
      * @return singleton @ref DynamicTypeBuilderImpl object
      */
-    const DynamicTypeBuilderImpl* create_primitive_type(
+    std::shared_ptr<const DynamicTypeBuilderImpl> create_primitive_type(
             TypeKind kind) noexcept;
 
     /**
@@ -436,7 +435,7 @@ public:
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilderImpl object
      */
-    const DynamicTypeBuilderImpl* create_string_type(
+    std::shared_ptr<const DynamicTypeBuilderImpl> create_string_type(
             uint32_t bound = LENGTH_UNLIMITED) noexcept;
 
     /**
@@ -447,7 +446,7 @@ public:
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilderImpl object
      */
-    const DynamicTypeBuilderImpl* create_wstring_type(
+    std::shared_ptr<const DynamicTypeBuilderImpl> create_wstring_type(
             uint32_t bound = LENGTH_UNLIMITED) noexcept;
 
     /**
@@ -458,7 +457,7 @@ public:
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilderImpl object
      */
-    DynamicTypeBuilderImpl* create_sequence_type(
+    std::shared_ptr<DynamicTypeBuilderImpl> create_sequence_type(
             const DynamicTypeImpl& type,
             uint32_t bound = LENGTH_UNLIMITED) noexcept;
 
@@ -470,7 +469,7 @@ public:
      * @param[in] bounds `uint32_t` representing the desired dimensions
      * @return new @ref DynamicTypeBuilderImpl object
      */
-    DynamicTypeBuilderImpl* create_array_type(
+    std::shared_ptr<DynamicTypeBuilderImpl> create_array_type(
             const DynamicTypeImpl& type,
             const std::vector<uint32_t>& bounds) noexcept;
 
@@ -483,7 +482,7 @@ public:
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilderImpl object
      */
-    DynamicTypeBuilderImpl* create_map_type(
+    std::shared_ptr<DynamicTypeBuilderImpl> create_map_type(
             const DynamicTypeImpl& key_type,
             const DynamicTypeImpl& value_type,
             uint32_t bound = LENGTH_UNLIMITED) noexcept;
@@ -495,7 +494,7 @@ public:
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilderImpl object
      */
-    DynamicTypeBuilderImpl* create_bitmask_type(
+    std::shared_ptr<DynamicTypeBuilderImpl> create_bitmask_type(
             uint32_t bound = 32) noexcept;
 
     /**
@@ -503,7 +502,7 @@ public:
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilderImpl object
      */
-    DynamicTypeBuilderImpl* create_bitset_type(
+    std::shared_ptr<DynamicTypeBuilderImpl> create_bitset_type(
             uint32_t bound = 32) noexcept;
 
     /**
@@ -512,7 +511,7 @@ public:
      * @param[in] sName new alias name
      * @return new @ref DynamicTypeBuilderImpl object
      */
-    DynamicTypeBuilderImpl* create_alias_type(
+    std::shared_ptr<DynamicTypeBuilderImpl> create_alias_type(
             const DynamicTypeImpl& base_type,
             const std::string& sName);
 
@@ -520,20 +519,20 @@ public:
      * Creates a new @ref DynamicTypeBuilderImpl object representing an enum
      * @return new @ref DynamicTypeBuilderImpl object
      */
-    DynamicTypeBuilderImpl* create_enum_type();
+    std::shared_ptr<DynamicTypeBuilderImpl> create_enum_type();
 
     /**
      * Returns a @ref DynamicTypeBuilderImpl associated with a `TypeKind::TK_STRUCTURE`
      * @return @ref DynamicTypeBuilderImpl object
      */
-    DynamicTypeBuilderImpl* create_struct_type() noexcept;
+    std::shared_ptr<DynamicTypeBuilderImpl> create_struct_type() noexcept;
 
     /**
      * Creates a new @ref DynamicTypeBuilderImpl object representing a subclass
      * @param[in] parent_type @ref DynamicTypeImpl identifying the desired superclass
      * @return new @ref DynamicTypeBuilderImpl object
      */
-    DynamicTypeBuilderImpl* create_child_struct_type(
+    std::shared_ptr<DynamicTypeBuilderImpl> create_child_struct_type(
             const DynamicTypeImpl& parent_type);
 
     /**
@@ -541,7 +540,7 @@ public:
      * @param[in] discriminator_type @ref DynamicTypeImpl associated to the union's discriminator
      * @return new @ref DynamicTypeBuilderImpl object
      */
-    DynamicTypeBuilderImpl* create_union_type(
+    std::shared_ptr<DynamicTypeBuilderImpl> create_union_type(
             const DynamicTypeImpl& discriminator_type);
 
     /**
@@ -549,20 +548,20 @@ public:
      * @param[in] name string annotation identifier
      * @return new @ref DynamicTypeBuilderImpl object
      */
-    const DynamicTypeImpl* create_annotation_primitive(
+    std::shared_ptr<const DynamicTypeImpl> create_annotation_primitive(
             const std::string& name);
 
     //! returns type instantiation of the @ref DynamicTypeBuilderFactoryImpl::create_alias_type builder
-    const DynamicTypeImpl* get_alias_type(
+    std::shared_ptr<const DynamicTypeImpl> get_alias_type(
             const DynamicTypeImpl& base_type,
             const std::string& sName);
 
     //! returns the cache type associated to create_string_type()
-    const DynamicTypeImpl* get_string_type(
+    std::shared_ptr<const DynamicTypeImpl> get_string_type(
             uint32_t bound = LENGTH_UNLIMITED) noexcept;
 
     //! returns the cache type associated to create_wstring_type()
-    const DynamicTypeImpl* get_wstring_type(
+    std::shared_ptr<const DynamicTypeImpl> get_wstring_type(
             uint32_t bound = LENGTH_UNLIMITED) noexcept;
 
     /**
@@ -570,7 +569,7 @@ public:
      * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
      * @return new @ref DynamicTypeBuilderImpl object
      */
-    const DynamicTypeImpl* get_bitset_type(
+    std::shared_ptr<const DynamicTypeImpl> get_bitset_type(
             uint32_t bound);
 
     void build_type_identifier(

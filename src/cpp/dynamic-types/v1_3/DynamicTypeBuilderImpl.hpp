@@ -17,6 +17,7 @@
 
 #include <fastdds/dds/log/Log.hpp>
 #include <dynamic-types/v1_3/TypeState.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeBuilder.hpp>
 #include <fastrtps/utils/custom_allocators.hpp>
 
 namespace eprosima {
@@ -43,9 +44,9 @@ class DynamicTypeBuilderImpl final
             DynamicTypeImpl* b);
 
     static ReturnCode_t delete_type(
-            const DynamicTypeImpl* type) noexcept;
+            const DynamicTypeImpl& type) noexcept;
 
-    static const DynamicTypeImpl* create_copy(
+    static const DynamicTypeImpl& create_copy(
             const DynamicTypeImpl& type) noexcept;
 
     // Only create objects from the associated factory
@@ -53,6 +54,8 @@ class DynamicTypeBuilderImpl final
     {
         explicit use_the_create_method() = default;
     };
+
+    DynamicTypeBuilder interface_;
 
     static void external_dynamic_object_deleter(const DynamicTypeBuilderImpl*);
     static void internal_dynamic_object_deleter(const DynamicTypeBuilderImpl*);
@@ -96,6 +99,22 @@ public:
             bool is_static = false);
 
     ~DynamicTypeBuilderImpl() = default;
+
+    static const DynamicTypeBuilderImpl& get_implementation(const DynamicTypeBuilder& t)
+    {
+        return *(DynamicTypeBuilderImpl*)((const char*)&t -
+                (::size_t)&reinterpret_cast<char const volatile&>((((DynamicTypeBuilderImpl*)0)->interface_)));
+    }
+
+    DynamicTypeBuilder& get_interface()
+    {
+       return interface_;
+    }
+
+    const DynamicTypeBuilder& get_interface() const
+    {
+       return interface_;
+    }
 
     friend class DynamicTypeBuilderFactoryImpl;
 
@@ -165,7 +184,7 @@ public:
      *            non-const method usage.
      * @return new @ref DynamicTypeImpl object reference
      */
-    const DynamicTypeImpl* build() const;
+    std::shared_ptr<const DynamicTypeImpl> build() const;
 
     using TypeState::get_member_count;
 

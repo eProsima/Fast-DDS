@@ -16,6 +16,7 @@
 #define TYPES_1_3_DYNAMIC_TYPE_BUILDER_FACTORY_H
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/v1_3/TypeDescriptor.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -137,7 +138,8 @@ public:
      */
     DynamicTypeBuilder* create_array_type(
             const DynamicType& type,
-            const std::vector<uint32_t>& bounds) noexcept;
+            const uint32_t* bounds,
+            uint32_t count) noexcept;
 
     /**
      * Creates a new @ref DynamicTypeBuilder object representing a map
@@ -170,6 +172,73 @@ public:
      */
     DynamicTypeBuilder* create_bitset_type(
             uint32_t bound = 32) noexcept;
+
+    /**
+     * Creates a new @ref DynamicTypeBuilderobject representing an alias
+     * @param[in] base_type @ref DynamicTypeto be referenced
+     * @param[in] sName new alias name
+     * @return new @ref DynamicTypeBuilder object
+     */
+    DynamicTypeBuilder* create_alias_type(
+            const DynamicType& base_type,
+            const std::string& sName);
+
+    /**
+     * Creates a new @ref DynamicTypeBuilder object representing an enum
+     * @return new @ref DynamicTypeBuilder object
+     */
+    DynamicTypeBuilder* create_enum_type();
+
+    /**
+     * Returns a @ref DynamicTypeBuilder associated with a `TypeKind::TK_STRUCTURE`
+     * @return @ref DynamicTypeBuilder object
+     */
+    DynamicTypeBuilder* create_struct_type() noexcept;
+
+    /**
+     * Creates a new @ref DynamicTypeBuilder object representing a subclass
+     * @param[in] parent_type @ref DynamicType identifying the desired superclass
+     * @return new @ref DynamicTypeBuilder object
+     */
+    DynamicTypeBuilder* create_child_struct_type(
+            const DynamicType& parent_type);
+
+    /**
+     * Creates a new @ref DynamicTypeBuilder object representing a union
+     * @param[in] discriminator_type @ref DynamicType associated to the union's discriminator
+     * @return new @ref DynamicTypeBuilder object
+     */
+    DynamicTypeBuilder* create_union_type(
+            const DynamicType& discriminator_type);
+
+    /**
+     * Creates a new @ref DynamicTypeBuilder object representing an annotation
+     * @param[in] name string annotation identifier
+     * @return new @ref DynamicTypeBuilder object
+     */
+    const DynamicType* create_annotation_primitive(
+            const char* name);
+
+    //! returns type instantiation of the @ref DynamicTypeBuilderFactory::create_alias_type builder
+    const DynamicType* get_alias_type(
+            const DynamicType& base_type,
+            const char* sName);
+
+    //! returns the cache type associated to create_string_type()
+    const DynamicType* get_string_type(
+            uint32_t bound = LENGTH_UNLIMITED) noexcept;
+
+    //! returns the cache type associated to create_wstring_type()
+    const DynamicType* get_wstring_type(
+            uint32_t bound = LENGTH_UNLIMITED) noexcept;
+
+    /**
+     * Creates a new @ref DynamicTypeBuilder object representing a bitset
+     * @param[in] bound `uint32_t` representing the maximum number of elements that may be stored.
+     * @return new @ref DynamicTypeBuilder object
+     */
+    const DynamicType* get_bitset_type(
+            uint32_t bound);
 
     /**
      * Frees any framework resources associated with the given type according with [standard] section 7.5.2.2.10.

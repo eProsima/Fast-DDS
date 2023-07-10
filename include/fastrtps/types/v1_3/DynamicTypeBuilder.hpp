@@ -31,7 +31,7 @@ class DynamicTypeBuilder final
 
     DynamicTypeBuilder() noexcept = default;
 
-    friend class DynamicTypeImpl;
+    friend class DynamicTypeBuilderImpl;
 
 public:
 

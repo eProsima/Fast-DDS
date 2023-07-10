@@ -51,9 +51,15 @@ DynamicTypeBuilderImpl::DynamicTypeBuilderImpl(
     if (is_static)
     {
         // create on heap
+#if _MSC_VER >= 1921
         instance_ = std::make_shared<DynamicTypeImpl>(
             DynamicTypeImpl::use_the_create_method{},
             *this);
+#else
+        instance_.reset(new DynamicTypeImpl(
+            DynamicTypeImpl::use_the_create_method{},
+            *this));
+#endif // _MSC_VER
 
         // notify the tracker
         dynamic_tracker<selected_mode>::get_dynamic_tracker().add_primitive(instance_.get());
@@ -224,7 +230,7 @@ ReturnCode_t DynamicTypeBuilderImpl::add_member(
     return ReturnCode_t::RETCODE_OK;
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderImpl::build() const
+std::shared_ptr<const DynamicTypeImpl> DynamicTypeBuilderImpl::build() const
 {
     // check if an instance is already available
     // and is still valid
@@ -232,28 +238,41 @@ const DynamicTypeImpl* DynamicTypeBuilderImpl::build() const
     {
         try
         {
+            builder_allocator al;
             // otherwise, create a new one. Check total consistency
+#if _MSC_VER >= 1921
+            // MSVC v142 can allocate on a single block
             instance_ = std::allocate_shared<DynamicTypeImpl>(
-                builder_allocator{},
+                al,
                 DynamicTypeImpl::use_the_create_method{},
                 *this);
+#else
+        using traits = std::allocator_traits<builder_allocator>;
+        auto new_instance = al.allocate(sizeof(DynamicTypeImpl));
+        traits::construct(
+            al,
+            new_instance,
+            DynamicTypeImpl::use_the_create_method{},
+            *this);
+        instance_.reset(new_instance);
+#endif
         }
         catch(const std::bad_alloc& e)
         {
             EPROSIMA_LOG_ERROR(DYN_TYPES,
                     "Error building type. It couldn't be allocated: " << e.what());
-            return nullptr;
+            return {};
         }
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error building type. The current descriptor isn't consistent.");
         instance_.reset();
-        return nullptr;
+        return {};
     }
 
     instance_->add_ref();
-    return instance_.get();
+    return instance_;
 }
 
 bool DynamicTypeBuilderImpl::check_union_configuration(
@@ -304,23 +323,18 @@ bool DynamicTypeBuilderImpl::is_discriminator_type() const
 }
 
 ReturnCode_t DynamicTypeBuilderImpl::delete_type(
-        const DynamicTypeImpl* type) noexcept
+        const DynamicTypeImpl& type) noexcept
 {
-    if (type != nullptr)
-    {
-        type->release();
-        return ReturnCode_t::RETCODE_OK;
-    }
-
-    return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
+    type.release();
+    return ReturnCode_t::RETCODE_OK;
 }
 
-const DynamicTypeImpl* DynamicTypeBuilderImpl::create_copy(
+const DynamicTypeImpl& DynamicTypeBuilderImpl::create_copy(
         const DynamicTypeImpl& type) noexcept
 {
     // increase external reference counting
     type.add_ref();
-    return &type;
+    return type;
 }
 
 void DynamicTypeBuilderImpl::external_dynamic_object_deleter(const DynamicTypeBuilderImpl* pDT)
