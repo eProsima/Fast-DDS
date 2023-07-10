@@ -53,7 +53,7 @@ class CalculatorServer
                 {
                     reply.z(request.x() + request.y());
                 }
-                else if (OperationType::SUBSTRACTION == request.operation())
+                else if (OperationType::SUBTRACTION == request.operation())
                 {
                     reply.z(request.x() - request.y());
                 }
