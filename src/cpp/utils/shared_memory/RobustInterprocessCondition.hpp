@@ -207,9 +207,6 @@ public:
 
 private:
 
-    /*!
-     * @warning Changing this class means no communication with previous versions of SHM transport.
-     */
     struct SemaphoreNode
     {
         SemaphoreNode()
@@ -225,8 +222,9 @@ private:
         {
             bi::interprocess_semaphore sem;
         };
-        uint32_t next {SemaphoreList::LIST_NULL};
-        uint32_t prev {SemaphoreList::LIST_NULL};
+        bool initialized = false;
+        uint32_t next;
+        uint32_t prev;
     };
 
     static constexpr uint32_t MAX_LISTENERS = 512;
@@ -236,8 +234,8 @@ private:
     {
     private:
 
-        uint32_t head_ {LIST_NULL};
-        uint32_t tail_ {LIST_NULL};
+        uint32_t head_;
+        uint32_t tail_;
 
     public:
 
@@ -358,7 +356,11 @@ private:
     inline uint32_t enqueue_listener()
     {
         auto sem_index = list_free_.pop(semaphores_pool_);
-        new (&semaphores_pool_[sem_index].sem) bi::interprocess_semaphore(0);
+        if (!semaphores_pool_[sem_index].initialized)
+        {
+            new (&semaphores_pool_[sem_index].sem) bi::interprocess_semaphore(0);
+            semaphores_pool_[sem_index].initialized = true;
+        }
         list_listening_.push(sem_index, semaphores_pool_);
         return sem_index;
     }
@@ -367,7 +369,6 @@ private:
             uint32_t sem_index)
     {
         list_listening_.remove(sem_index, semaphores_pool_);
-        (&semaphores_pool_[sem_index])->~SemaphoreNode();
         list_free_.push(sem_index, semaphores_pool_);
     }
 
