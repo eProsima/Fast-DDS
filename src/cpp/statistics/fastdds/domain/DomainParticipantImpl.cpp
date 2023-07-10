@@ -294,8 +294,8 @@ ReturnCode_t DomainParticipantImpl::disable_monitor_service() const
 }
 
 ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
-        fastrtps::rtps::ParticipantProxyData &data,
-        const fastdds::statistics::MonitorServiceStatusData &msg)
+        fastrtps::rtps::ParticipantProxyData& data,
+        const fastdds::statistics::MonitorServiceStatusData& msg)
 {
     ReturnCode_t ret{ReturnCode_t::RETCODE_OK};
 
@@ -308,8 +308,8 @@ ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
 }
 
 ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
-        fastrtps::rtps::WriterProxyData &data,
-        const fastdds::statistics::MonitorServiceStatusData &msg)
+        fastrtps::rtps::WriterProxyData& data,
+        const fastdds::statistics::MonitorServiceStatusData& msg)
 {
     ReturnCode_t ret{ReturnCode_t::RETCODE_OK};
 
@@ -322,8 +322,8 @@ ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
 }
 
 ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
-        fastrtps::rtps::ReaderProxyData &data,
-        const fastdds::statistics::MonitorServiceStatusData &msg)
+        fastrtps::rtps::ReaderProxyData& data,
+        const fastdds::statistics::MonitorServiceStatusData& msg)
 {
     ReturnCode_t ret{ReturnCode_t::RETCODE_OK};
 

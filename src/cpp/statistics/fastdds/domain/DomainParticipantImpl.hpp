@@ -157,8 +157,8 @@ public:
      * @return RETCODE_ERROR if the  operation fails.
      */
     RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::ParticipantProxyData &data,
-            const fastdds::statistics::MonitorServiceStatusData &msg);
+            fastrtps::rtps::ParticipantProxyData& data,
+            const fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
      * Fills the in WriterProxyData from a MonitorService Message
@@ -170,8 +170,8 @@ public:
      * @return RETCODE_ERROR if the  operation fails.
      */
     RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::WriterProxyData &data,
-            const fastdds::statistics::MonitorServiceStatusData &msg);
+            fastrtps::rtps::WriterProxyData& data,
+            const fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
      * Fills the in ReaderProxyData from a MonitorService Message
@@ -183,8 +183,8 @@ public:
      * @return RETCODE_ERROR if the  operation fails.
      */
     RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::ReaderProxyData &data,
-            const fastdds::statistics::MonitorServiceStatusData &msg);
+            fastrtps::rtps::ReaderProxyData& data,
+            const fastdds::statistics::MonitorServiceStatusData& msg);
 
 protected:
 

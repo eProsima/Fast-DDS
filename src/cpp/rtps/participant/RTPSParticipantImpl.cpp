@@ -2708,62 +2708,62 @@ bool RTPSParticipantImpl::disable_monitor_service() const
 }
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::ParticipantProxyData &data,
-            const fastdds::statistics::MonitorServiceStatusData &msg)
+        fastrtps::rtps::ParticipantProxyData& data,
+        const fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
     auto serialized_proxy = msg.value();
     CDRMessage_t serialized_msg;
 
     serialized_msg.init(serialized_proxy.entity_proxy().data(),
-        serialized_proxy.getCdrSerializedSize(msg.value()));
+            serialized_proxy.getCdrSerializedSize(msg.value()));
 
     ret = data.readFromCDRMessage(
-                    &serialized_msg,
-                    true,
-                    network_factory(),
-                    has_shm_transport(),
-                    false);
+        &serialized_msg,
+        true,
+        network_factory(),
+        has_shm_transport(),
+        false);
 
-    return ret && (data.m_guid.entityId == c_EntityId_RTPSParticipant) ;
+    return ret && (data.m_guid.entityId == c_EntityId_RTPSParticipant);
 }
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::WriterProxyData &data,
-            const fastdds::statistics::MonitorServiceStatusData &msg)
+        fastrtps::rtps::WriterProxyData& data,
+        const fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
     auto serialized_proxy = msg.value();
     CDRMessage_t serialized_msg;
 
     serialized_msg.init(serialized_proxy.entity_proxy().data(),
-        serialized_proxy.getCdrSerializedSize(msg.value()));
+            serialized_proxy.getCdrSerializedSize(msg.value()));
 
     ret = data.readFromCDRMessage(
-                    &serialized_msg,
-                    network_factory(),
-                    has_shm_transport(),
-                    false);
+        &serialized_msg,
+        network_factory(),
+        has_shm_transport(),
+        false);
 
     return ret && (data.guid().entityId.is_writer());
 }
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::ReaderProxyData &data,
-            const fastdds::statistics::MonitorServiceStatusData &msg)
+        fastrtps::rtps::ReaderProxyData& data,
+        const fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
     auto serialized_proxy = msg.value();
     CDRMessage_t serialized_msg;
 
     serialized_msg.init(serialized_proxy.entity_proxy().data(),
-        serialized_proxy.getCdrSerializedSize(msg.value()));
+            serialized_proxy.getCdrSerializedSize(msg.value()));
 
     ret = data.readFromCDRMessage(
-                    &serialized_msg,
-                    network_factory(),
-                    has_shm_transport(),
-                    false);
+        &serialized_msg,
+        network_factory(),
+        has_shm_transport(),
+        false);
 
     return ret && (data.guid().entityId.is_reader());
 }

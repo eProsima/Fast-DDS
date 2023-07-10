@@ -36,9 +36,9 @@ namespace fastdds {
 
 namespace statistics {
 
-    class MonitorServiceStatusData;
+class MonitorServiceStatusData;
 
-}
+} // namespace statistics
 
 #endif // FASTDDS_STATISTICS
 
@@ -121,22 +121,22 @@ public:
     }
 
     bool fill_discovery_data_from_cdr_message(
-                fastrtps::rtps::ParticipantProxyData &/*data*/,
-                const fastdds::statistics::MonitorServiceStatusData& /*msg*/)
+            fastrtps::rtps::ParticipantProxyData& /*data*/,
+            const fastdds::statistics::MonitorServiceStatusData& /*msg*/)
     {
         return true;
     }
 
     bool fill_discovery_data_from_cdr_message(
-                fastrtps::rtps::WriterProxyData &/*data*/,
-                const fastdds::statistics::MonitorServiceStatusData& /*msg*/)
+            fastrtps::rtps::WriterProxyData& /*data*/,
+            const fastdds::statistics::MonitorServiceStatusData& /*msg*/)
     {
         return true;
     }
 
     bool fill_discovery_data_from_cdr_message(
-                fastrtps::rtps::ReaderProxyData &/*data*/,
-                const fastdds::statistics::MonitorServiceStatusData& /*msg*/)
+            fastrtps::rtps::ReaderProxyData& /*data*/,
+            const fastdds::statistics::MonitorServiceStatusData& /*msg*/)
     {
         return true;
     }

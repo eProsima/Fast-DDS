@@ -30,17 +30,17 @@
 using eprosima::fastrtps::types::ReturnCode_t;
 
 namespace eprosima {
-namespace fastrtps{
-namespace rtps{
+namespace fastrtps {
+namespace rtps {
 
-    class ReaderProxyData;
-    class WriterProxyData;
-}
-}
+class ReaderProxyData;
+class WriterProxyData;
+} // namespace rtps
+} // namespace fastrtps
 namespace fastdds {
 namespace statistics {
 
-    class MonitorServiceStatusData;
+class MonitorServiceStatusData;
 
 namespace dds {
 
@@ -147,8 +147,8 @@ public:
      * @return RETCODE_ERROR if the  operation fails.
      */
     RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::ParticipantProxyData &data,
-            const statistics::MonitorServiceStatusData &msg);
+            fastrtps::rtps::ParticipantProxyData& data,
+            const statistics::MonitorServiceStatusData& msg);
 
     /**
      * Fills the in WriterProxyData from a MonitorService Message
@@ -160,8 +160,8 @@ public:
      * @return RETCODE_ERROR if the  operation fails.
      */
     RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::WriterProxyData &data,
-            const statistics::MonitorServiceStatusData &msg);
+            fastrtps::rtps::WriterProxyData& data,
+            const statistics::MonitorServiceStatusData& msg);
 
     /**
      * Fills the in ReaderProxyData from a MonitorService Message
@@ -173,8 +173,8 @@ public:
      * @return RETCODE_ERROR if the  operation fails.
      */
     RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::ReaderProxyData &data,
-            const statistics::MonitorServiceStatusData &msg);
+            fastrtps::rtps::ReaderProxyData& data,
+            const statistics::MonitorServiceStatusData& msg);
 
 };
 

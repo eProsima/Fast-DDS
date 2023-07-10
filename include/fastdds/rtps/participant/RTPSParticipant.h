@@ -410,8 +410,8 @@ public:
      * @return true if the operation succeeds.
      */
     bool fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::ParticipantProxyData &data,
-            const fastdds::statistics::MonitorServiceStatusData &msg);
+            fastrtps::rtps::ParticipantProxyData& data,
+            const fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
      * Fills the in WriterProxyData from a MonitorService Message
@@ -422,8 +422,8 @@ public:
      * @return true if the operation succeeds.
      */
     bool fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::WriterProxyData &data,
-            const fastdds::statistics::MonitorServiceStatusData &msg);
+            fastrtps::rtps::WriterProxyData& data,
+            const fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
      * Fills the in ReaderProxyData from a MonitorService Message
@@ -434,8 +434,8 @@ public:
      * @return true if the operation succeeds.
      */
     bool fill_discovery_data_from_cdr_message(
-            fastrtps::rtps::ReaderProxyData &data,
-            const fastdds::statistics::MonitorServiceStatusData &msg);
+            fastrtps::rtps::ReaderProxyData& data,
+            const fastdds::statistics::MonitorServiceStatusData& msg);
 
 #endif // FASTDDS_STATISTICS
 
