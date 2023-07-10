@@ -1,23 +1,41 @@
-# eProsima Fast DDS
+[![Fast DDS](doc/images/fastdds_github_banner.png)](https://eprosima.com/index.php/products-all/eprosima-fast-dds)
 
-[![FIWARE Robotics](https://nexus.lab.fiware.org/static/badges/chapters/robotics.svg)](https://www.fiware.org/developers/catalogue/)
-[![License](https://img.shields.io/github/license/eProsima/Fast-RTPS.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Releases](https://img.shields.io/github/v/release/eProsima/Fast-RTPS?sort=semver)](https://github.com/eProsima/Fast-RTPS/releases)
-[![Issues](https://img.shields.io/github/issues/eProsima/Fast-RTPS.svg)](https://github.com/eProsima/Fast-RTPS/issues)
-[![Forks](https://img.shields.io/github/forks/eProsima/Fast-RTPS.svg)](https://github.com/eProsima/Fast-RTPS/network/members)
-[![Stars](https://img.shields.io/github/stars/eProsima/Fast-RTPS.svg)](https://github.com/eProsima/Fast-RTPS/stargazers)
-[![Twitter Follow](https://img.shields.io/twitter/follow/eprosima?style=social)](https://twitter.com/EProsima)
-<br/>
-[![Documentation badge](https://img.shields.io/readthedocs/eprosima-fast-rtps.svg)](https://eprosima-fast-rtps.readthedocs.io)
-![Status](https://nexus.lab.fiware.org/static/badges/statuses/incubating.svg)
-[![Linux ci](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_linux/badge/icon?subject=%20%20%20Linux%20CI%20)](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_linux)
-[![Linux arm64 ci](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_linux_aarch64/badge/icon?subject=%20%20%20Linux-aarch64%20CI%20)](http://jenkins.eprosima.com:8080/view/Nightly/job/nightly_fastdds_sec_master_linux_aarch64/)
-[![Windows ci](https://github.com/eProsima/Fast-DDS/actions/workflows/nightly-windows-ci.yml/badge.svg)](https://github.com/eProsima/Fast-DDS/actions/workflows/nightly-windows-ci.yml)
-[![Mac ci](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_mac/badge/icon?subject=%20%20%20%20%20%20%20Mac%20CI%20)](http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_mac)
-[![Coverage](https://img.shields.io/jenkins/coverage/cobertura.svg?jobUrl=http%3A%2F%2Fjenkins.eprosima.com%3A8080%2Fjob%2Fnightly_fastdds_coverage_linux)](http://jenkins.eprosima.com:8080/job/nightly_fastdds_coverage_linux)
+<br>
 
+<div class="menu" align="center">
+    <strong>
+        <a href="https://eprosima.com/index.php/downloads-all">Download</a>
+        <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+        <a href="https://eprosima.com/index.php/products-all/eprosima-fast-dds#Available_Documentation">Docs</a>
+        <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+        <a href="https://eprosima.com/index.php/company-all/news">News</a>
+        <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+        <a href="https://twitter.com/EProsima">Twitter</a>
+        <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
+        <a href="mailto:info@eprosima.com">Contact Us</a>
+    </strong>
+</div>
 
-<a href="http://www.eprosima.com"><img src="https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSd0PDlVz1U_7MgdTe0FRIWD0Jc9_YH-gGi0ZpLkr-qgCI6ZEoJZ5GBqQ" align="left" hspace="8" vspace="2" width="100" height="100" ></a>
+<br><br>
+
+<div class="badges" align="center">
+    <a href="https://www.fiware.org/developers/catalogue/"><img alt="FIWARE Robotics" src="https://nexus.lab.fiware.org/static/badges/chapters/robotics.svg"/></a>
+    <a href="https://opensource.org/licenses/Apache-2.0"><img alt="License" src="https://img.shields.io/github/license/eProsima/Fast-RTPS.svg"/></a>
+    <a href="https://github.com/eProsima/Fast-RTPS/releases"><img alt="Releases" src="https://img.shields.io/github/v/release/eProsima/Fast-RTPS?sort=semver"/></a>
+    <a href="https://github.com/eProsima/Fast-RTPS/issues"><img alt="Issues" src="https://img.shields.io/github/issues/eProsima/Fast-RTPS.svg"/></a>
+    <a href="https://github.com/eProsima/Fast-RTPS/network/members"><img alt="Forks" src="https://img.shields.io/github/forks/eProsima/Fast-RTPS.svg"/></a>
+    <a href="https://github.com/eProsima/Fast-RTPS/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/eProsima/Fast-RTPS.svg"/></a>
+    <a href="https://eprosima-fast-rtps.readthedocs.io"><img alt="Documentation badge" src="https://img.shields.io/readthedocs/eprosima-fast-rtps.svg"/></a>
+    <br>
+    <a href=""><img alt="Status" src="https://nexus.lab.fiware.org/static/badges/statuses/incubating.svg"/></a>
+    <a href="http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_linux"><img alt="Linux ci" src="http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_linux/badge/icon?subject=%20%20%20Linux%20CI%20"/></a>
+    <a href="http://jenkins.eprosima.com:8080/view/Nightly/job/nightly_fastdds_sec_master_linux_aarch64/"><img alt="Linux arm64 ci" src="http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_linux_aarch64/badge/icon?subject=%20%20%20Linux-aarch64%20CI%20"/></a>
+    <a href="https://github.com/eProsima/Fast-DDS/actions/workflows/nightly-windows-ci.yml"><img alt="Windows ci" src="https://github.com/eProsima/Fast-DDS/actions/workflows/nightly-windows-ci.yml/badge.svg"/></a>
+    <a href="http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_mac"><img alt="Mac ci" src="http://jenkins.eprosima.com:8080/job/nightly_fastdds_sec_master_mac/badge/icon?subject=%20%20%20%20%20%20%20Mac%20CI%20"/></a>
+    <a href="http://jenkins.eprosima.com:8080/job/nightly_fastdds_coverage_linux"><img alt="Coverage" src="https://img.shields.io/jenkins/coverage/cobertura.svg?jobUrl=http%3A%2F%2Fjenkins.eprosima.com%3A8080%2Fjob%2Fnightly_fastdds_coverage_linux"/></a>
+</div>
+
+<br><br>
 
 *eprosima Fast DDS* (formerly Fast RTPS) is a C++ implementation of the DDS (Data Distribution Service) standard of the OMG (Object Management Group). eProsima Fast DDS implements the RTPS (Real Time Publish Subscribe) protocol, which provides publisher-subscriber communications over unreliable transports such as UDP,
 as defined and maintained by the Object Management Group (OMG) consortium. RTPS is also the wire interoperability protocol defined for the Data Distribution
