@@ -413,7 +413,8 @@ public:
     bool readFromCDRMessage(
             CDRMessage_t* msg,
             const NetworkFactory& network,
-            bool is_shm_transport_available);
+            bool is_shm_transport_available,
+            bool should_filter_locators);
 
     //!
     bool m_expectsInlineQos;
