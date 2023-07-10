@@ -119,7 +119,7 @@ void run_parametrized_test(
     pub_udp_descriptor->locator_filter_ = [&messages_on_odd_port](
         const eprosima::fastdds::rtps::Locator& destination)
             {
-                if (destination.port % 2)
+                if (0 != (destination.port % 2))
                 {
                     ++messages_on_odd_port;
                 }
