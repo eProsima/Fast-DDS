@@ -31,6 +31,17 @@
 namespace eprosima {
 
 namespace fastdds {
+
+#ifdef FASTDDS_STATISTICS
+
+namespace statistics {
+
+    class MonitorServiceStatusData;
+
+}
+
+#endif // FASTDDS_STATISTICS
+
 namespace dds {
 namespace builtin {
 
@@ -107,6 +118,27 @@ public:
     void set_enabled_statistics_writers_mask(
             uint32_t /*enabled_writers*/)
     {
+    }
+
+    bool fill_discovery_data_from_cdr_message(
+                fastrtps::rtps::ParticipantProxyData &/*data*/,
+                const fastdds::statistics::MonitorServiceStatusData& /*msg*/)
+    {
+        return true;
+    }
+
+    bool fill_discovery_data_from_cdr_message(
+                fastrtps::rtps::WriterProxyData &/*data*/,
+                const fastdds::statistics::MonitorServiceStatusData& /*msg*/)
+    {
+        return true;
+    }
+
+    bool fill_discovery_data_from_cdr_message(
+                fastrtps::rtps::ReaderProxyData &/*data*/,
+                const fastdds::statistics::MonitorServiceStatusData& /*msg*/)
+    {
+        return true;
     }
 
 #endif // FASTDDS_STATISTICS
