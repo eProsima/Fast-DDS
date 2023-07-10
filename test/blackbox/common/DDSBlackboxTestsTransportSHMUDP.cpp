@@ -113,7 +113,18 @@ void run_parametrized_test(
 
     auto pub_shm_descriptor = std::make_shared<eprosima::fastdds::rtps::SharedMemTransportDescriptor>();
     pub_shm_descriptor->segment_size(2 * 1024 * 1024);
+
     auto pub_udp_descriptor = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
+    std::atomic<uint32_t> messages_on_odd_port{ 0 };  // Messages corresponding to user data
+    pub_udp_descriptor->locator_filter_ = [&messages_on_odd_port](
+        const eprosima::fastdds::rtps::Locator& destination)
+            {
+                if (destination.port % 2)
+                {
+                    ++messages_on_odd_port;
+                }
+                return false;
+            };
 
     writer.disable_builtin_transport()
             .add_user_transport_to_pparams(pub_shm_descriptor)
@@ -146,16 +157,7 @@ void run_parametrized_test(
     // be done until the creation of SHM locators is exposed (currently available in internal SHMLocator::create_locator).
     // As a workaround, it is checked that no user data is sent at any port, knowing that metatraffic ports are always
     // even and user ones odd.
-    // uint32_t n_packages_sent = test_UDPv4Transport::messages_sent[conditions.sub_unicast_port];
-    uint32_t n_packages_sent = 0;
-    for (const auto& item : test_UDPv4Transport::created_transports[pub_udp_descriptor.get()]->messages_sent)
-    {
-        if (item.first % 2)
-        {
-            n_packages_sent += item.second;
-        }
-    }
-    ASSERT_EQ(n_packages_sent, 0u);
+    ASSERT_EQ(messages_on_odd_port, 0u);
 }
 
 TEST_P(SHMUDP, Transport_BestEffort_BestEffort_test)

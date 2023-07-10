@@ -32,7 +32,6 @@ using SubmessageHeader_t = fastrtps::rtps::SubmessageHeader_t;
 using SequenceNumber_t = fastrtps::rtps::SequenceNumber_t;
 using EntityId_t = fastrtps::rtps::EntityId_t;
 
-std::map<const test_UDPv4TransportDescriptor*, test_UDPv4Transport*> test_UDPv4Transport::created_transports{};
 std::vector<std::vector<octet>> test_UDPv4Transport::test_UDPv4Transport_DropLog;
 std::atomic<uint32_t> test_UDPv4Transport::test_UDPv4Transport_DropLogLength(0);
 std::atomic<bool> test_UDPv4Transport::test_UDPv4Transport_ShutdownAllNetwork(false);
@@ -73,7 +72,6 @@ test_UDPv4Transport::test_UDPv4Transport(
     }
     test_UDPv4Transport_DropLog.clear();
     test_UDPv4Transport_DropLogLength = descriptor.dropLogLength;
-    messages_sent.clear();
 }
 
 test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor()
@@ -122,9 +120,7 @@ test_UDPv4TransportDescriptor::test_UDPv4TransportDescriptor()
 
 TransportInterface* test_UDPv4TransportDescriptor::create_transport() const
 {
-    test_UDPv4Transport* transport = new test_UDPv4Transport(*this);
-    test_UDPv4Transport::created_transports[this] = transport;
-    return transport;
+    return new test_UDPv4Transport(*this);
 }
 
 bool test_UDPv4TransportDescriptor::operator ==(
@@ -255,7 +251,6 @@ bool test_UDPv4Transport::send(
         }
         else
         {
-            messages_sent[remote_locator.port]++;
             return UDPv4Transport::send(send_buffer, send_buffer_size, socket, remote_locator, only_multicast_purpose,
                            whitelisted, timeout);
         }
