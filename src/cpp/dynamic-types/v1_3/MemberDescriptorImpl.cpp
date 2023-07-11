@@ -24,6 +24,40 @@ using namespace eprosima::fastrtps::types::v1_3;
 
 using eprosima::fastrtps::types::ReturnCode_t;
 
+MemberDescriptorImpl::MemberDescriptorImpl(
+        const MemberDescriptor& descriptor)
+    : id_{descriptor.get_id()}
+    , index_{descriptor.get_index()}
+    , default_label_{descriptor.get_default_label()}
+{
+    // copy name
+    const char * name = descriptor.get_name();
+    if (name != nullptr)
+    {
+        name_ = name;
+    }
+
+    // copy type
+    const DynamicType* type = descriptor.get_type();
+    if (type != nullptr)
+    {
+        type_ = DynamicTypeImpl::get_implementation(*type).shared_from_this();
+        DynamicTypeBuilderFactory::get_instance().delete_type(type);
+    }
+
+    // copy flag
+    const char * default_value = descriptor.get_default_value();
+    if (default_value != nullptr)
+    {
+        default_value_ = default_value;
+    }
+
+    // copy labels
+    uint32_t count;
+    const uint32_t* labels = descriptor.get_labels(count);
+    labels_ = std::set<uint64_t>{labels, labels + count};
+}
+
 void MemberDescriptorImpl::add_union_case_index(
         uint64_t value)
 {

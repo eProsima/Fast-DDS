@@ -215,9 +215,10 @@ public:
 
     /**
      * Indicates whether the states of all of this descriptor's properties are consistent.
+     * @param[in] parentKind @ref eprosima::fastrtps::types::TypeKind collection's owner kind
      * @return \b bool `true` if consistent
      */
-    bool is_consistent() const noexcept;
+    bool is_consistent(TypeKind parentKind = TypeKind::TK_STRUCTURE) const noexcept;
 };
 
 } // namespace v1_3

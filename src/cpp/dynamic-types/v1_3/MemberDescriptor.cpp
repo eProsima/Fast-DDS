@@ -13,13 +13,17 @@
 // limitations under the License.
 
 #include <fastrtps/types/v1_3/MemberDescriptor.hpp>
+#include <fastrtps/types/v1_3/DynamicType.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
+#include <dynamic-types/v1_3/MemberDescriptorImpl.hpp>
 
 using namespace eprosima::fastrtps::types::v1_3;
+using eprosima::fastrtps::types::ReturnCode_t;
 
-MemberDescriptor::MemberDescriptor()
+MemberDescriptor::MemberDescriptor() noexcept
     : name_(new(std::nothrow) std::string)
     , default_value_(new(std::nothrow) std::string)
-    , labels_(new(std::nothrow) std::vector<uint32_t>) noexcept
+    , labels_(new(std::nothrow) std::vector<uint32_t>)
 {}
 
 MemberDescriptor::~MemberDescriptor() noexcept
@@ -34,85 +38,87 @@ MemberDescriptor::~MemberDescriptor() noexcept
     delete labels_;
 }
 
-MemberDescriptor::MemberDescriptor(const MemberDescriptor& type) noexcept
+MemberDescriptor::MemberDescriptor(const MemberDescriptor& member) noexcept
     : name_(new(std::nothrow) std::string)
-    , id_(type.id_)
+    , id_(member.id_)
     , default_value_(new(std::nothrow) std::string)
-    , index_(type.index_)
+    , index_(member.index_)
     , labels_(new(std::nothrow) std::vector<uint32_t>)
-    , default_label_(type.default_label_)
+    , default_label_(member.default_label_)
 {
-    if (type.type_ != nullptr)
+    if (member.type_ != nullptr)
     {
-        type_ = DynamicTypeBuilderFactory::get_instance().create_copy(*type.type_);
+        type_ = DynamicTypeBuilderFactory::get_instance().create_copy(*member.type_);
     }
 
-    if (name_ != nullptr && type.name_ != nullptr)
+    if (name_ != nullptr && member.name_ != nullptr)
     {
-        *name_ = *type.name_;
+        *name_ = *member.name_;
     }
 
-    if (default_value_ != nullptr && type.default_value_ != nullptr)
+    if (default_value_ != nullptr && member.default_value_ != nullptr)
     {
-        *default_value_ = *type.default_value_;
+        *default_value_ = *member.default_value_;
     }
 
-    if (labels_ != nullptr && type.labels != nullptr)
+    if (labels_ != nullptr && member.labels_ != nullptr)
     {
-        *labels_ = *type.labels;
+        *labels_ = *member.labels_;
     }
 }
 
-MemberDescriptor::MemberDescriptor(MemberDescriptor&& type) noexcept
-    : name_(type.name_)
-    , id_(type.id_)
-    , type_(type.type_)
-    , default_value_(type.default_value_)
-    , index_(type.index_)
-    , labels_(type.labels_)
-    , default_label_(type.default_label_)
+MemberDescriptor::MemberDescriptor(MemberDescriptor&& member) noexcept
+    : name_(member.name_)
+    , id_(member.id_)
+    , type_(member.type_)
+    , default_value_(member.default_value_)
+    , index_(member.index_)
+    , labels_(member.labels_)
+    , default_label_(member.default_label_)
 {
 }
 
-MemberDescriptor::MemberDescriptor& operator=(const MemberDescriptor& type) noexcept
+MemberDescriptor& MemberDescriptor::operator=(const MemberDescriptor& member) noexcept
 {
     name_ = new(std::nothrow) std::string;
-    id_ = type.id_;
+    id_ = member.id_;
     default_value_ = new(std::nothrow) std::string;
-    index_ = type.index_;
+    index_ = member.index_;
     labels_ = new(std::nothrow) std::vector<uint32_t>;
-    default_label_ = type.default_label_;
+    default_label_ = member.default_label_;
 
-    if (type.type_ != nullptr)
+    if (member.type_ != nullptr)
     {
-        type_ = DynamicTypeBuilderFactory::get_instance().create_copy(*type.type_);
+        type_ = DynamicTypeBuilderFactory::get_instance().create_copy(*member.type_);
     }
 
-    if (name_ != nullptr && type.name_ != nullptr)
+    if (name_ != nullptr && member.name_ != nullptr)
     {
-        *name_ = *type.name_;
+        *name_ = *member.name_;
     }
 
-    if (default_value_ != nullptr && type.default_value_ != nullptr)
+    if (default_value_ != nullptr && member.default_value_ != nullptr)
     {
-        *default_value_ = *type.default_value_;
+        *default_value_ = *member.default_value_;
     }
 
-    if (labels_ != nullptr && type.labels != nullptr)
+    if (labels_ != nullptr && member.labels_ != nullptr)
     {
-        *labels_ = *type.labels;
+        *labels_ = *member.labels_;
     }
+
+    return *this;
 }
 
-MemberDescriptor& MemberDescriptor::operator=(MemberDescriptor&& type) noexcept
+MemberDescriptor& MemberDescriptor::operator=(MemberDescriptor&& member) noexcept
 {
-    name_ = type.name_;
-    id_ = type.id_;
-    type_ = type.type_;
-    default_value_ = type.default_value_;
-    index_ = type.index_;
-    labels_ = type.labels_;
-    default_label_ = type.default_label_;
+    name_ = member.name_;
+    id_ = member.id_;
+    type_ = member.type_;
+    default_value_ = member.default_value_;
+    index_ = member.index_;
+    labels_ = member.labels_;
+    default_label_ = member.default_label_;
 
     return *this;
 }
@@ -120,19 +126,19 @@ MemberDescriptor& MemberDescriptor::operator=(MemberDescriptor&& type) noexcept
 bool MemberDescriptor::operator==(
         const MemberDescriptor& d) const noexcept
 {
-    return (name_ == type.name_ || (name_ != nullptr && d.name_ != nullptr && *name_ == *d.name_))
-        && id_ == type.id_
-        && (type_ == type.type_ || (type_ != nullptr && d.type_ != nullptr && *type_ == *d.type_ ))
-        && (default_value_ == type.default_value_ || (default_value_ != nullptr && d.default_value_ != nullptr && *default_value_ == *d.default_value_))
-        && index_ == type.index_
-        && (labels_ == type.labels_ || (labels_ != nullptr && d.labels_ != nullptr && *labels_ == *d.labels_))
-        && default_label_ == type.default_label_;
+    return (name_ == d.name_ || (name_ != nullptr && d.name_ != nullptr && *name_ == *d.name_))
+        && id_ == d.id_
+        && (type_ == d.type_ || (type_ != nullptr && d.type_ != nullptr && *type_ == *d.type_ ))
+        && (default_value_ == d.default_value_ || (default_value_ != nullptr && d.default_value_ != nullptr && *default_value_ == *d.default_value_))
+        && index_ == d.index_
+        && (labels_ == d.labels_ || (labels_ != nullptr && d.labels_ != nullptr && *labels_ == *d.labels_))
+        && default_label_ == d.default_label_;
 }
 
 bool MemberDescriptor::operator !=(
         const MemberDescriptor& descriptor) const noexcept
 {
-    return !this->operator==(d);
+    return !this->operator==(descriptor);
 }
 
 const char* MemberDescriptor::get_name() const noexcept
@@ -169,7 +175,7 @@ const DynamicType* MemberDescriptor::get_type() const noexcept
 {
     if (type_ != nullptr)
     {
-        type_ = DynamicTypeBuilderFactory::get_instance().create_copy(*type.type_);
+        return DynamicTypeBuilderFactory::get_instance().create_copy(*type_);
     }
 
     return nullptr;
@@ -241,11 +247,11 @@ void MemberDescriptor::set_labels(
 {
     if (nullptr == labels_ )
     {
-        labels_ = new(std::nowthrow) std::vector<uint32_t>(labels, labels + count);
+        labels_ = new(std::nothrow) std::vector<uint32_t>(labels, labels + count);
     }
     else
     {
-        *labels.assign(labels, labels + count);
+        labels_->assign(labels, labels + count);
     }
 }
 
@@ -262,8 +268,7 @@ bool MemberDescriptor::equals(
     return this->operator==(descriptor);
 }
 
-
-bool MemberDescriptor::is_consistent() const noexcept
+bool MemberDescriptor::is_consistent(TypeKind parentKind /* = TypeKind::TK_STRUCTURE*/) const noexcept
 {
-    // TODO: rely on implementation definition
+    return MemberDescriptorImpl(*this).is_consistent(parentKind);
 }

@@ -29,6 +29,7 @@ class TypeObjectFactory;
 
 namespace v1_3 {
 
+class MemberDescriptor;
 class AnnotationDescriptorImpl;
 class DynamicTypeImpl;
 
@@ -80,6 +81,10 @@ public:
     //! Default move constructor
     MemberDescriptorImpl(
             MemberDescriptorImpl&& descriptor) = default;
+
+    //! build from interface
+    MemberDescriptorImpl(
+            const MemberDescriptor& descriptor);
 
     /**
      * convenience constructor
