@@ -27,15 +27,13 @@
 namespace eprosima {
 namespace fastdds {
 namespace statistics {
-namespace rtps {
-
-using namespace eprosima::fastdds::statistics;
 
 class Connection;
+namespace rtps {
 
 struct IConnectionsQueryable
 {
-    using ConnectionList = std::vector<Connection>;
+    using ConnectionList = std::vector<eprosima::fastdds::statistics::Connection>;
 
     /**
      * @brief Interface for retrieving a list of Connections
