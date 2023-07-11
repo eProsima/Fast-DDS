@@ -152,9 +152,10 @@ public:
         request.x(x);
         request.y(y);
 
+        std::unique_lock<std::mutex> lock(listener_.reception_mutex);
+
         if (request_writer_->write(static_cast<void*>(&request), listener_.write_params))
         {
-            std::unique_lock<std::mutex> lock(listener_.reception_mutex);
             listener_.reception_cv.wait(lock, [&]()
                     {
                         return listener_.received_reply;
