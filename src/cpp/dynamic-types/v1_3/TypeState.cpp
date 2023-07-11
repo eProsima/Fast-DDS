@@ -324,7 +324,7 @@ TypeKind TypeState::get_kind() const noexcept
     return kind_;
 }
 
-std::string TypeState::get_name() const
+const std::string& TypeState::get_name() const
 {
     return name_;
 }
@@ -555,7 +555,7 @@ std::map<MemberId, const DynamicTypeMemberImpl*> TypeState::get_all_members_by_i
     return res;
 }
 
-const MemberDescriptorImpl& TypeState::get_member_by_index(uint32_t index) const
+const DynamicTypeMemberImpl& TypeState::get_member_by_index(uint32_t index) const
 {
     uint32_t offset = 0;
 
@@ -584,12 +584,12 @@ const MemberDescriptorImpl& TypeState::get_member_by_index(uint32_t index) const
     return *it;
 }
 
-const MemberDescriptorImpl& TypeState::get_member_by_name(const std::string& name) const
+const DynamicTypeMemberImpl& TypeState::get_member_by_name(const std::string& name) const
 {
     auto it = member_by_name_.find(name);
     if (it != member_by_name_.end())
     {
-        return it->second->get_descriptor();
+        return *it->second;
     }
     else if (base_type_)
     {
@@ -608,7 +608,7 @@ const MemberDescriptorImpl& TypeState::get_member_by_name(const std::string& nam
             "Error getting member by name, member not found.");
 }
 
-const MemberDescriptorImpl& TypeState::get_member(MemberId id) const
+const DynamicTypeMemberImpl& TypeState::get_member(MemberId id) const
 {
     auto it = member_by_id_.find(id);
     if (it != member_by_id_.end())

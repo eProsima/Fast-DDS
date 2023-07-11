@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <dynamic-types/v1_3/AnnotationManager.hpp>
 #include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
 #include <fastrtps/types/v1_3/DynamicType.hpp>
 #include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
@@ -254,4 +255,24 @@ bool AnnotationDescriptor::is_consistent() const noexcept
 
     //TODO: Check consistency of value_
     return true;
+}
+
+AnnotationDescriptor* Annotations::operator[](uint64_t pos) const noexcept
+{
+    const auto& manager = get_manager(*this);
+    auto res = manager.get_annotation(pos);
+    return res.second ? &res.first->get_descriptor() : nullptr;
+}
+
+//! get collection size
+uint64_t Annotations::size() const noexcept
+{
+    const auto& manager = get_manager(*this);
+    return manager.get_annotation_count();
+}
+
+//! check contents
+bool Annotations::empty() const noexcept
+{
+    return !size();
 }

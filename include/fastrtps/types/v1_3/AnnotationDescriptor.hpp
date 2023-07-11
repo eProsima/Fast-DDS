@@ -191,9 +191,11 @@ public:
 
 class Annotations final
 {
-    // TODO: wait until the AnnotationManger is refactored
-
     friend class AnnotationManager;
+
+    Annotations() = default;
+    Annotations(const Annotations&) = delete;
+    Annotations(Annotations&&) = delete;
 
     public:
 
@@ -203,7 +205,6 @@ class Annotations final
      * @return associated member or nullptr if not present
      */
     RTPS_DllAPI AnnotationDescriptor* operator[](uint64_t pos) const noexcept;
-    RTPS_DllAPI AnnotationDescriptor* at(uint64_t pos) const noexcept;
 
     //! get collection size
     RTPS_DllAPI uint64_t size() const noexcept;

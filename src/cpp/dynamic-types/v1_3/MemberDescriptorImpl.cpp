@@ -63,7 +63,7 @@ TypeKind MemberDescriptorImpl::get_kind() const
     return type_ ? type_->get_kind() : TypeKind::TK_NONE;
 }
 
-std::string MemberDescriptorImpl::get_name() const
+const std::string& MemberDescriptorImpl::get_name() const
 {
     return name_;
 }

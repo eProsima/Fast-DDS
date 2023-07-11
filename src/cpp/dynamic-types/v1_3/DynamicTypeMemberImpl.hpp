@@ -16,6 +16,7 @@
 #define TYPES_1_3_DYNAMIC_TYPE_MEMBER_IMPL_H
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/v1_3/DynamicTypeMember.hpp>
 #include <dynamic-types/v1_3/MemberDescriptorImpl.hpp>
 #include <dynamic-types/v1_3/AnnotationManager.hpp>
 
@@ -31,14 +32,17 @@ class DynamicTypeMemberImpl final
     : public MemberDescriptorImpl
     , protected AnnotationManager
 {
+    DynamicTypeMember interface_;
+
 protected:
 
-    friend class DynamicTypeBuilderImpl;
-    friend class DynamicTypeImpl;
-    friend class DynamicData;
+    static const DynamicTypeMemberImpl& get_implementation(const DynamicTypeMember& t)
+    {
+        return *(DynamicTypeMemberImpl*)((const char*)&t -
+                (::size_t)&reinterpret_cast<char const volatile&>((((DynamicTypeMemberImpl*)0)->interface_)));
+    }
 
-    using MemberDescriptorImpl::MemberDescriptorImpl;
-    using MemberDescriptorImpl::operator =;
+    friend class DynamicData;
 
 public:
 
@@ -56,14 +60,23 @@ public:
     using AnnotationManager::annotation_is_optional;
     using AnnotationManager::annotation_is_must_understand;
     using AnnotationManager::annotation_get_position;
+    using AnnotationManager::annotation_set_position;
     using AnnotationManager::annotation_get_bit_bound;
 
 public:
+
+    using MemberDescriptorImpl::MemberDescriptorImpl;
+    using MemberDescriptorImpl::operator =;
 
     using MemberDescriptorImpl::operator ==;
     using MemberDescriptorImpl::operator !=;
 
     using MemberDescriptorImpl::get_descriptor;
+
+    const DynamicTypeMember& get_interface() const
+    {
+       return interface_;
+    }
 
     /**
      * Getter for \b default_value property (see [standard] section 7.5.2.7.3)

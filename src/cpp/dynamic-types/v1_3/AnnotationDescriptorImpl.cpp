@@ -12,32 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
 #include <fastrtps/types/v1_3/DynamicType.hpp>
-#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
+#include <dynamic-types/v1_3/AnnotationDescriptorImpl.hpp>
+#include <dynamic-types/v1_3/DynamicTypeBuilderFactoryImpl.hpp>
+#include <dynamic-types/v1_3/DynamicTypeImpl.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
 #include <iomanip>
 
 using namespace eprosima::fastrtps::types::v1_3;
 
-ReturnCode_t AnnotationDescriptor::copy_from(
-        const AnnotationDescriptor* descriptor)
-{
-    if (descriptor != nullptr)
-    {
-        *this = *descriptor;
-    }
-    else
-    {
-        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error copying AnnotationDescriptor, invalid input descriptor");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    }
-    return ReturnCode_t::RETCODE_OK;
-}
-
-bool AnnotationDescriptor::operator ==(
-        const AnnotationDescriptor& other) const
+bool AnnotationDescriptorImpl::operator ==(
+        const AnnotationDescriptorImpl& other) const
 {
     if ( type_ == other.type_ || (type_ && other.type_ && type_->equals(*other.type_)))
     {
@@ -46,28 +32,21 @@ bool AnnotationDescriptor::operator ==(
     return true;
 }
 
-bool AnnotationDescriptor::operator !=(
-        const AnnotationDescriptor& other) const
+bool AnnotationDescriptorImpl::operator !=(
+        const AnnotationDescriptorImpl& other) const
 {
     return !(*this == other);
 }
 
-bool AnnotationDescriptor::operator <(
-        const AnnotationDescriptor& other) const
+bool AnnotationDescriptorImpl::operator <(
+        const AnnotationDescriptorImpl& other) const
 {
     auto name = type_->get_name();
     auto other_name = other.type_->get_name();
     return name == other_name ? value_ < other.value_ : name < other_name;
 }
 
-bool AnnotationDescriptor::equals(
-        const AnnotationDescriptor* other) const
-{
-    assert(other);
-    return *this == *other;
-}
-
-bool AnnotationDescriptor::key_annotation() const
+bool AnnotationDescriptorImpl::key_annotation() const
 {
     auto it = value_.find(ANNOTATION_KEY_ID);
     if (it == value_.end())
@@ -77,13 +56,13 @@ bool AnnotationDescriptor::key_annotation() const
     return (it != value_.end() && it->second == CONST_TRUE);
 }
 
-ReturnCode_t AnnotationDescriptor::get_value(
+ReturnCode_t AnnotationDescriptorImpl::get_value(
         std::string& value) const
 {
     return get_value(value, "value");
 }
 
-ReturnCode_t AnnotationDescriptor::get_value(
+ReturnCode_t AnnotationDescriptorImpl::get_value(
         std::string& value,
         const std::string& key) const
 {
@@ -96,14 +75,14 @@ ReturnCode_t AnnotationDescriptor::get_value(
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-ReturnCode_t AnnotationDescriptor::get_all_value(
+ReturnCode_t AnnotationDescriptorImpl::get_all_value(
         std::map<std::string, std::string>& value) const
 {
     value = value_;
     return ReturnCode_t::RETCODE_OK;
 }
 
-bool AnnotationDescriptor::is_consistent() const
+bool AnnotationDescriptorImpl::is_consistent() const
 {
     if (!type_ || type_->get_kind() != TypeKind::TK_ANNOTATION)
     {
@@ -114,7 +93,7 @@ bool AnnotationDescriptor::is_consistent() const
     return true;
 }
 
-ReturnCode_t AnnotationDescriptor::set_value(
+ReturnCode_t AnnotationDescriptorImpl::set_value(
         const std::string& key,
         const std::string& value)
 {
@@ -122,18 +101,32 @@ ReturnCode_t AnnotationDescriptor::set_value(
     return ReturnCode_t::RETCODE_OK;
 }
 
+const AnnotationDescriptor& AnnotationDescriptorImpl::get_descriptor() const
+{
+    if (type_)
+    {
+        interface_.set_type(type_->get_interface());
+    }
+    else
+    {
+        interface_.reset_type();
+    }
+
+    return interface_;
+}
+
 std::ostream& eprosima::fastrtps::types::v1_3::operator <<(
         std::ostream& os,
-        const AnnotationDescriptor& ad)
+        const AnnotationDescriptorImpl& ad)
 {
     using namespace std;
 
     // indentation increment
-    ++os.iword(DynamicTypeBuilderFactory::indentation_index);
+    ++os.iword(DynamicTypeBuilderFactoryImpl::indentation_index);
 
     auto manips = [](ostream& os) -> ostream&
             {
-                long indent = os.iword(DynamicTypeBuilderFactory::indentation_index);
+                long indent = os.iword(DynamicTypeBuilderFactoryImpl::indentation_index);
                 return os << string(indent, '\t') << setw(10) << left;
             };
 
@@ -151,7 +144,7 @@ std::ostream& eprosima::fastrtps::types::v1_3::operator <<(
     }
 
     // indentation decrement
-    --os.iword(DynamicTypeBuilderFactory::indentation_index);
+    --os.iword(DynamicTypeBuilderFactoryImpl::indentation_index);
 
     return os;
 }

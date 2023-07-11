@@ -299,7 +299,7 @@ public:
      * Queries the desired or actual member name
      * @return std::string name
      */
-    std::string get_name() const;
+    const std::string& get_name() const;
 
     //! getter for the labels member
     const std::set<uint64_t>& get_union_labels() const;

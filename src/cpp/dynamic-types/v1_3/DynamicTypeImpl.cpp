@@ -617,7 +617,7 @@ bool DynamicTypeImpl::deserialize(
                         value_col.insert(std::make_pair(it->first, member_data));
                     }
 
-                    res &= member_data != nullptr ? m.type_->deserialize(*member_data, cdr) : false;
+                    res &= member_data != nullptr ? m.get_type()->deserialize(*member_data, cdr) : false;
                 }
             }
         }
@@ -1649,7 +1649,7 @@ void DynamicTypeImpl::serialize(
                     if (it != value_col.end())
                     {
                         DynamicData* member_data = static_cast<DynamicData*>(it->second);
-                        m.type_->serialize(*member_data, cdr);
+                        m.get_type()->serialize(*member_data, cdr);
                     }
                 }
             }

@@ -16,6 +16,7 @@
 #define TYPES_1_3_ANNOTATION_DESCRIPTOR_IMPL_H
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
 
 #include <functional>
 #include <map>
@@ -39,18 +40,17 @@ protected:
     std::shared_ptr<const DynamicTypeImpl> type_;
     std::map<std::string, std::string> value_;
 
+    // interface
+    mutable AnnotationDescriptor interface_ = {value_};
+
 public:
 
-    ReturnCode_t copy_from(
-            const AnnotationDescriptorImpl* other);
     bool operator ==(
             const AnnotationDescriptorImpl&) const;
     bool operator !=(
             const AnnotationDescriptorImpl&) const;
     bool operator <(
             const AnnotationDescriptorImpl&) const;
-    bool equals(
-            const AnnotationDescriptorImpl*) const;
     bool is_consistent() const;
     bool key_annotation() const;
 
@@ -81,7 +81,7 @@ public:
             const D& type)
     {
         std::shared_ptr<const DynamicTypeImpl> tmp{type};
-        type_.swap(tmp);
+        set_type(std::move(tmp));
     }
 
     void set_type(
@@ -94,6 +94,8 @@ public:
     {
         return type_;
     }
+
+    const AnnotationDescriptor& get_descriptor() const;
 
 };
 

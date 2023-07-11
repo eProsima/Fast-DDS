@@ -40,6 +40,21 @@ AnnotationManager::get_annotation(
     return std::make_pair(it, false);
 }
 
+std::pair<AnnotationManager::annotation_iterator, bool>
+AnnotationManager::get_annotation(
+            std::size_t idx) const
+{
+    // zero based
+    if (idx >= annotation_.size() )
+    {
+        return std::make_pair(annotation_.end(), false);
+    }
+
+    auto it = annotation_.begin();
+    std::advance(it, idx);
+    return std::make_pair(it, true);
+}
+
 // Annotations application
 
 bool AnnotationManager::annotation_is_optional() const

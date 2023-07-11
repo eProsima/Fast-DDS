@@ -342,7 +342,7 @@ public:
      * Returns the fully qualified name of this type
      * @return std::string type name
      */
-    std::string get_name() const;
+    const std::string& get_name() const;
 
     /**
      * Returns a member sequence collection
@@ -379,21 +379,21 @@ public:
      * @param[in] id MemberId identifier to query
      * @return standard MemberDescriptorImpl
      */
-    const MemberDescriptorImpl& get_member(MemberId id) const;
+    const DynamicTypeMemberImpl& get_member(MemberId id) const;
 
     /**
      * This operation returns the member that corresponds to the specified index
      * @param[in] index uint32_t collection position to query
      * @return standard MemberDescriptorImpl
      */
-    const MemberDescriptorImpl& get_member_by_index(uint32_t index) const;
+    const DynamicTypeMemberImpl& get_member_by_index(uint32_t index) const;
 
     /**
      * This operation returns the member that corresponds to the specified name
      * @param[in] name std::string collection member name to query
      * @return standard MemberDescriptorImpl
      */
-    const MemberDescriptorImpl& get_member_by_name(const std::string& name) const;
+    const DynamicTypeMemberImpl& get_member_by_name(const std::string& name) const;
 };
 
 //! @ref TypeState expected `std::ostream` non-member override of `operator<<`

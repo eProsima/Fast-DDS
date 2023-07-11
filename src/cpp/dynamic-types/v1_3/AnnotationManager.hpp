@@ -46,6 +46,9 @@ class AnnotationManager
             const std::string& id,
             const char* new_val);
 
+    // external interface
+    Annotations col_interface_;
+
 protected:
 
     //! reset
@@ -61,11 +64,31 @@ protected:
         return annotation_ == other.annotation_;
     }
 
-    //! retrive a specific annotation by name
-    std::pair<annotation_iterator, bool> get_annotation(
-            const std::string& name) const;
-
 public:
+
+    AnnotationManager() = default;
+
+    AnnotationManager(const AnnotationManager& m)
+        : annotation_(m.annotation_)
+    {
+    }
+
+    AnnotationManager(AnnotationManager&& m)
+        : annotation_(std::move(m.annotation_))
+    {
+    }
+
+    AnnotationManager& operator=(const AnnotationManager& m)
+    {
+        annotation_ = m.annotation_;
+        return *this;
+    }
+
+    AnnotationManager& operator=(AnnotationManager&& m)
+    {
+        annotation_ = std::move(m.annotation_);
+        return *this;
+    }
 
     //! retrieve a collection of all annotations
     const std::set<AnnotationDescriptorImpl>& get_all_annotations() const
@@ -224,6 +247,14 @@ public:
             const std::string& key,
             const std::string& value);
 
+    //! retrieve a specific annotation by name
+    std::pair<annotation_iterator, bool> get_annotation(
+            const std::string& name) const;
+
+    //! retrieve a specific annotation by index
+    std::pair<annotation_iterator, bool> get_annotation(
+            std::size_t idx) const;
+
     /**
      * This operation returns the annotation that corresponds to the specified index,
      * if any (see [standard] section 7.5.2.8.5)
@@ -243,6 +274,22 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
     std::size_t get_annotation_count() const;
+
+    /**
+     * Provides an STL independent interface to traverse the internal collection
+     * @return @ref Annotations object
+     */
+    const Annotations& get_annotations() const
+    {
+        return col_interface_;
+    }
+
+    //! retrieve manager from the Annotations collection
+    static const AnnotationManager& get_manager(const Annotations& col)
+    {
+        return *(AnnotationManager*)((const char*)&col -
+                (::size_t)&reinterpret_cast<char const volatile&>((((AnnotationManager*)0)->col_interface_)));
+    }
 };
 
 } // namespace v1_3
