@@ -69,7 +69,7 @@ The issue may be reopened if the required information is provided.
 ### Feature request
 
 Feature requests and improvements suggestions should be opened in the Ideas [discussion forum](https://github.com/eProsima/Fast-DDS/discussions/new).
-Please, remember to select the corresponging category while opening the discussion.
+Please, remember to select the corresponding category while opening the discussion.
 It is also encouraged to contact directly with [eProsima support team](https://github.com/eProsima/Fast-DDS#getting-help) for a feature evaluation.
 
 ### Q&A
