@@ -34,6 +34,7 @@ class DynamicDataHelper;
 namespace v1_3 {
 
 class DynamicType;
+class DynamicTypeMember;
 class DynamicTypeImpl;
 class DynamicTypeBuilder;
 class DynamicTypeBuilderImpl;
@@ -82,19 +83,9 @@ public:
     TypeState(
             TypeState&& other) = default;
 
-    //! Create from descriptor
-    TypeState(
-            const TypeDescriptor& descriptor);
-
-    /**
-     * Default copy assignment
-     * @remark Note that the no member uses mutable references, thus the default
-     *         copy operator provides an actual deep copy.
-     * @param[in] descriptor l-value @ref TypeState reference to copy from
-     * @result own @ref TypeState reference
-     */
+    //! Copy assignment
     TypeState& operator =(
-            const TypeState& descriptor) noexcept;
+            const TypeState& other) noexcept;
 
     //! Move assignment
     TypeState& operator =(
@@ -110,6 +101,16 @@ public:
      */
     ~TypeState() noexcept;
 
+    //! Create from descriptor
+    TypeState(
+            const TypeDescriptor& descriptor);
+
+    /**
+     * Returns the TypeDescriptor object that partially describes the state
+     * @return @ref TypeDescriptor object
+     */
+    TypeDescriptor get_descriptor() const noexcept;
+
     static bool is_type_name_consistent(
             const std::string& sName);
 
@@ -123,12 +124,6 @@ protected:
 
     static const DynamicTypeImpl& resolve_alias_type(
             const DynamicTypeImpl& alias);
-
-    /**
-     * Returns the TypeDescriptor object that partially describes the state
-     * @return @ref TypeDescriptor object
-     */
-    TypeDescriptor get_descriptor() const noexcept;
 
     using member_iterator = std::list<DynamicTypeMemberImpl>::iterator;
 
@@ -169,6 +164,12 @@ protected:
      */
     void set_base_type(
             std::shared_ptr<const DynamicTypeImpl>&& type);
+
+    //! public interface common implementation for DynamicType and DynamicTypeBuilder
+    const DynamicTypeMember* get_member_by_name(const char* name, ReturnCode_t* ec) const noexcept;
+
+    //! public interface common implementation for DynamicType and DynamicTypeBuilder
+    DynamicTypeMembersByName get_all_members_by_name(ReturnCode_t* ec) const noexcept;
 
 public:
 

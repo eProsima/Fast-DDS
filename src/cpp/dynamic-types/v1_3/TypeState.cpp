@@ -549,6 +549,16 @@ std::map<std::string, const DynamicTypeMemberImpl*> TypeState::get_all_members_b
     return res;
 }
 
+DynamicTypeMembersByName TypeState::get_all_members_by_name(ReturnCode_t* ec) const noexcept
+{
+    if (ec != nullptr)
+    {
+        *ec = ReturnCode_t{};
+    }
+
+    return DynamicTypeMembersByName{get_all_members_by_name()};
+}
+
 std::map<MemberId, const DynamicTypeMemberImpl*> TypeState::get_all_members_by_id() const
 {
     std::map<MemberId, const DynamicTypeMemberImpl*> res;
@@ -616,6 +626,32 @@ const DynamicTypeMemberImpl& TypeState::get_member_by_name(const std::string& na
     throw std::system_error(
             make_error_code(ReturnCode_t::RETCODE_ERROR),
             "Error getting member by name, member not found.");
+}
+
+const DynamicTypeMember* TypeState::get_member_by_name(
+        const char* name,
+        ReturnCode_t* ec) const noexcept
+{
+    try
+    {
+        if (ec)
+        {
+            *ec = ReturnCode_t::RETCODE_OK;
+        }
+
+        return &get_member_by_name(name).get_interface();
+    }
+    catch(std::system_error& e)
+    {
+        if (ec)
+        {
+            *ec = static_cast<uint32_t>(e.code().value());
+        }
+
+        EPROSIMA_LOG_ERROR(DYN_TYPES, e.what());
+
+        return nullptr;
+    }
 }
 
 const DynamicTypeMemberImpl& TypeState::get_member(MemberId id) const

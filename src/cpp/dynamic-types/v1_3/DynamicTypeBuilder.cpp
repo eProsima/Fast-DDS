@@ -50,26 +50,5 @@ const DynamicTypeMember* DynamicTypeBuilder::get_member_by_name(
         const char* name,
         ReturnCode_t* ec /*= nullptr*/) const noexcept
 {
-    try
-    {
-        const auto& desc = DynamicTypeBuilderImpl::get_implementation(*this).get_member_by_name(name);
-
-        if (ec)
-        {
-            *ec = ReturnCode_t::RETCODE_OK;
-        }
-
-        return &desc.get_interface();
-    }
-    catch(std::system_error& e)
-    {
-        if (ec)
-        {
-            *ec = static_cast<uint32_t>(e.code().value());
-        }
-
-        EPROSIMA_LOG_ERROR(DYN_TYPES, e.what());
-
-        return nullptr;
-    }
+    return DynamicTypeBuilderImpl::get_implementation(*this).get_member_by_name(name, ec);
 }

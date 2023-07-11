@@ -193,6 +193,10 @@ public:
     using TypeState::set_name;
 
     using TypeState::set_base_type;
+
+    using TypeState::get_member_by_name;
+
+    using TypeState::get_all_members_by_name;
 };
 
 } // namespace v1_3

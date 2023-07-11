@@ -82,23 +82,28 @@ public:
 
 };
 
+class DynamicTypeMemberImpl;
+
 class DynamicTypeMembersByName final
 {
     // const because we don't want to modify the ref map from this class
-    using mapping = const std::map<std::string, const DynamicTypeMember*>;
-    mapping& map_;
+    using mapping = const std::map<std::string, const DynamicTypeMemberImpl*>;
+    mapping* map_;
 
     // only retrievable from DynamicType and DynamicTypeBuilder
     DynamicTypeMembersByName() = delete;
 
-    DynamicTypeMembersByName(mapping& map) : map_(map) {}
-
-    // liveliness associated to DynamicType and DynamicTypeBuilder
-    ~DynamicTypeMembersByName() = default;
+    DynamicTypeMembersByName(mapping&& map) : map_(new mapping{std::move(map)}) {}
 
     friend class TypeState;
 
 public:
+
+    //! This class is conceived for stack use only
+    RTPS_DllAPI ~DynamicTypeMembersByName()
+    {
+        delete map_;
+    }
 
     /*
      * Retrieve values from keys:
@@ -106,7 +111,6 @@ public:
      * @return associated member or nullptr if not present
      */
     RTPS_DllAPI const DynamicTypeMember* operator[](const char* key) const noexcept;
-    RTPS_DllAPI const DynamicTypeMember* at(const char* key) const noexcept;
 
     //! get collection size
     RTPS_DllAPI uint64_t size() const noexcept;
@@ -126,20 +130,23 @@ public:
 class DynamicTypeMembersById final
 {
     // const because we don't want to modify the ref map from this class
-    using mapping = const std::map<MemberId, const DynamicTypeMember*>;
-    mapping& map_;
+    using mapping = const std::map<MemberId, const DynamicTypeMemberImpl*>;
+    mapping* map_ = nullptr;
 
     // only retrievable from DynamicType and DynamicTypeBuilder
     DynamicTypeMembersById() = delete;
 
-    DynamicTypeMembersById(mapping& map) : map_(map) {}
-
-    // liveliness associated to DynamicType and DynamicTypeBuilder
-    ~DynamicTypeMembersById() = default;
+    DynamicTypeMembersById(mapping&& map) : map_(new mapping{std::move(map)}) {}
 
     friend class TypeState;
 
 public:
+
+    //! This class is conceived for stack use only
+    RTPS_DllAPI ~DynamicTypeMembersById()
+    {
+        delete map_;
+    }
 
     /*
      * Retrieve values from keys:
@@ -147,7 +154,6 @@ public:
      * @return associated member or nullptr if not present
      */
     RTPS_DllAPI const DynamicTypeMember* operator[](MemberId) const noexcept;
-    RTPS_DllAPI const DynamicTypeMember* at(MemberId) const noexcept;
 
     //! get collection size
     RTPS_DllAPI uint64_t size() const noexcept;

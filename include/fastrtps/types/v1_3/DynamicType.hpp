@@ -80,7 +80,7 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference. Livecycle is linked to the referenced members.
      */
-    const DynamicTypeMembersByName* get_all_members_by_name(ReturnCode_t* ec = nullptr) const noexcept;
+    DynamicTypeMembersByName get_all_members_by_name(ReturnCode_t* ec = nullptr) const noexcept;
 
     /**
      * Provides a mapping from the member id to the member itself (see [standard] 7.5.2.8.2)
@@ -99,7 +99,7 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference. Livecycle is linked to the referenced members.
      */
-    const DynamicTypeMembersById* get_all_members(ReturnCode_t* ec = nullptr) const noexcept;
+    DynamicTypeMembersById get_all_members(ReturnCode_t* ec = nullptr) const noexcept;
 
     /**
      * This operation returns the current number of members (see [standard] 7.5.2.8.12)
