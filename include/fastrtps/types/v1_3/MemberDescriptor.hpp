@@ -37,7 +37,7 @@ class RTPS_DllAPI MemberDescriptor final
     std::string* default_value_;              //!< Default value of the member in string.
     uint32_t index_ = INDEX_INVALID;          //!< Definition order of the member inside it's parent.
     std::vector<uint32_t>* labels_ = nullptr; //!< Case Labels for unions.
-    bool default_label_ = false;              //!< TRUE if it's the default option of a union.
+bool default_label_ = false;              //!< TRUE if it's the default option of a union.
 
 public:
 
@@ -109,6 +109,14 @@ public:
      */
     void set_type(
                 const DynamicType& type) noexcept;
+
+    /**
+     * Modifies the underlying type by copy
+     * @param[in] type reference
+     * @attention There is ownership transference.
+     */
+    void set_type(
+                const DynamicType* type) noexcept;
 
     //! Clears the base type reference
     void reset_type() noexcept;

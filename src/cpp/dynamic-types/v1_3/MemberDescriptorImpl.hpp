@@ -64,10 +64,7 @@ protected:
             const std::string& sName) const;
 
     //! builtin cast inherited on subclasses
-    const MemberDescriptorImpl& get_descriptor() const
-    {
-        return *this;
-    }
+    MemberDescriptor get_descriptor() const;
 
 public:
 

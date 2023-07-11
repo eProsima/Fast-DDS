@@ -188,6 +188,12 @@ void MemberDescriptor::set_type(
     type_ = DynamicTypeBuilderFactory::get_instance().create_copy(type);
 }
 
+void MemberDescriptor::set_type(
+            const DynamicType* type) noexcept
+{
+    type_ = type;
+}
+
 void MemberDescriptor::reset_type() noexcept
 {
     if (type_ != nullptr)

@@ -21,18 +21,20 @@ using eprosima::fastrtps::types::ReturnCode_t;
 bool DynamicTypeMember::operator ==(
         const DynamicTypeMember& descriptor) const noexcept
 {
-    return get_implementation(*this) == get_implementation(descriptor);
+    return DynamicTypeMemberImpl::get_implementation(*this)
+           == DynamicTypeMemberImpl::get_implementation(descriptor);
 }
 
 bool DynamicTypeMember::operator !=(
         const DynamicTypeMember& descriptor) const noexcept
 {
-    return get_implementation(*this) != get_implementation(descriptor);
+    return DynamicTypeMemberImpl::get_implementation(*this)
+           != DynamicTypeMemberImpl::get_implementation(descriptor);
 }
 
 ReturnCode_t DynamicTypeMember::get_descriptor(MemberDescriptor & md) const noexcept
 {
-    md = get_implementation(*this).get_descriptor();
+    md = DynamicTypeMemberImpl::get_implementation(*this).get_descriptor();
     return ReturnCode_t::RETCODE_OK;
 }
 
@@ -44,16 +46,15 @@ bool DynamicTypeMember::equals(
 
 const char* DynamicTypeMember::get_name() const noexcept
 {
-    return get_implementation(*this).get_name().c_str();
+    return DynamicTypeMemberImpl::get_implementation(*this).get_name().c_str();
 }
 
 MemberId DynamicTypeMember::get_id() const noexcept
 {
-    return get_implementation(*this).get_id();
+    return DynamicTypeMemberImpl::get_implementation(*this).get_id();
 }
 
 const Annotations* DynamicTypeMember::get_annotation() const noexcept
 {
-    get_implementation(*this).get_all_annotations();
-    // TODO Barro: implement this
+    return &DynamicTypeMemberImpl::get_implementation(*this).get_annotations();
 }

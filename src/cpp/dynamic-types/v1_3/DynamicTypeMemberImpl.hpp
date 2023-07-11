@@ -34,20 +34,13 @@ class DynamicTypeMemberImpl final
 {
     DynamicTypeMember interface_;
 
-protected:
-
-    static const DynamicTypeMemberImpl& get_implementation(const DynamicTypeMember& t)
-    {
-        return *(DynamicTypeMemberImpl*)((const char*)&t -
-                (::size_t)&reinterpret_cast<char const volatile&>((((DynamicTypeMemberImpl*)0)->interface_)));
-    }
-
     friend class DynamicData;
 
 public:
 
     using AnnotationManager::get_all_annotations;
     using AnnotationManager::get_annotation_count;
+    using AnnotationManager::get_annotations;
     using AnnotationManager::get_annotation;
 
     using AnnotationManager::annotation_is_bit_bound;
@@ -107,6 +100,13 @@ public:
     //! more accurate that base class because it has access to annotations
     bool is_consistent(
             TypeKind parentKind) const;
+
+    //! get implementation from public interface
+    static const DynamicTypeMemberImpl& get_implementation(const DynamicTypeMember& t)
+    {
+        return *(DynamicTypeMemberImpl*)((const char*)&t -
+                (::size_t)&reinterpret_cast<char const volatile&>((((DynamicTypeMemberImpl*)0)->interface_)));
+    }
 };
 
 //! @ref DynamicTypeMemberImpl expected `std::ostream` non-member override of `operator<<`

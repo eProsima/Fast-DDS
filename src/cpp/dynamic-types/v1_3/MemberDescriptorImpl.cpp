@@ -18,7 +18,9 @@
 #include <dynamic-types/v1_3/DynamicTypeBuilderFactoryImpl.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
+#include <algorithm>
 #include <iomanip>
+#include <vector>
 
 using namespace eprosima::fastrtps::types::v1_3;
 
@@ -320,6 +322,50 @@ void MemberDescriptorImpl::set_default_union_value(
         bool bDefault)
 {
     default_label_ = bDefault;
+}
+
+MemberDescriptor MemberDescriptorImpl::get_descriptor() const
+{
+    MemberDescriptor md;
+
+    if (!name_.empty())
+    {
+        md.set_name(name_.c_str());
+    }
+
+    md.set_id(id_);
+
+    if (type_)
+    {
+        md.set_type(&type_->get_interface());
+    }
+
+    if (!default_value_.empty())
+    {
+        md.set_default_value(default_value_.c_str());
+    }
+
+    md.set_index(index_);
+    md.set_default_label(default_label_);
+
+    if (!labels_.empty())
+    {
+        uint32_t size = static_cast<uint32_t>(labels_.size());
+        std::vector<uint32_t> tmp(size);
+
+        std::transform(
+                labels_.begin(),
+                labels_.end(),
+                tmp.begin(),
+                [](uint64_t val)
+                {
+                    return static_cast<uint32_t>(val);
+                });
+
+        md.set_labels(tmp.data(), size);
+    }
+
+    return md;
 }
 
 std::ostream& eprosima::fastrtps::types::v1_3::operator <<(
