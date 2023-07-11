@@ -201,6 +201,12 @@ bool test_UDPv4Transport::send(
 
     while (it != *destination_locators_end)
     {
+        if (!IsLocatorSupported(*it))
+        {
+            ++it;
+            continue;
+        }
+
         auto now = std::chrono::steady_clock::now();
 
         if (now < max_blocking_time_point)
