@@ -101,6 +101,14 @@ public:
     void set_base_type(
             const DynamicType& type) noexcept;
 
+    /**
+     * Modifies the underlying base type by copy
+     * @param[in] type reference
+     * @attention There is ownership transference.
+     */
+    void set_base_type(
+            const DynamicType* type) noexcept;
+
     //! Clears the base type reference
     void reset_base_type() noexcept;
 
@@ -119,6 +127,14 @@ public:
      */
     void set_discriminator_type(
             const DynamicType& type) noexcept;
+
+    /**
+     * Modifies the underlying discriminator type by copy
+     * @param[in] type reference
+     * @attention There is ownership transference.
+     */
+    void set_discriminator_type(
+            const DynamicType* type) noexcept;
 
     //! Clears the discriminator type reference
     void reset_discriminator_type() noexcept;
@@ -139,6 +155,14 @@ public:
     void set_element_type(
             const DynamicType& type) noexcept;
 
+    /**
+     * Modifies the underlying element type by copy
+     * @param[in] type reference
+     * @attention There is ownership transference.
+     */
+    void set_element_type(
+            const DynamicType* type) noexcept;
+
     //! Clears the element type reference
     void reset_element_type() noexcept;
 
@@ -157,6 +181,14 @@ public:
      */
     void set_key_element_type(
             const DynamicType& type) noexcept;
+
+    /**
+     * Modifies the underlying key element type by copy
+     * @param[in] type reference
+     * @attention There is ownership transference.
+     */
+    void set_key_element_type(
+            const DynamicType* type) noexcept;
 
     //! Clears the key element type reference
     void reset_key_element_type() noexcept;

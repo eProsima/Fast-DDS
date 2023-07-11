@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastrtps/types/v1_3/TypeBuilderFactory.hpp>
-#include <fastrtps/types/v1_3/TypeDescriptor.hpp>
 #include <dynamic-types/v1_3/TypeState.hpp>
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
+#include <fastrtps/types/v1_3/TypeDescriptor.hpp>
 
 #include <algorithm>
 
@@ -91,7 +91,7 @@ TypeDescriptor& TypeDescriptor::operator=(const TypeDescriptor& type) noexcept
 
 TypeDescriptor& TypeDescriptor::operator=(TypeDescriptor&& type) noexcept
 {
-    name = type.name_;
+    name_ = type.name_;
     kind_ = type.kind_;
     base_type_ = type.base_type_;
     discriminator_type_ = type.discriminator_type_;
@@ -117,7 +117,7 @@ bool TypeDescriptor::operator!=(
 
 const char* TypeDescriptor::get_name() const noexcept
 {
-    return name_.c_str();
+    return name_->c_str();
 }
 
 void TypeDescriptor::set_name(
@@ -148,21 +148,28 @@ const DynamicType* TypeDescriptor::get_base_type() const noexcept
 {
     return nullptr == base_type_ ?
         nullptr :
-        TypeBuilderFactory::get_instance().create_copy(*base_type_);
+        DynamicTypeBuilderFactory::get_instance().create_copy(*base_type_);
 }
 
 void TypeDescriptor::set_base_type(
         const DynamicType& type) noexcept
 {
     reset_base_type();
-    base_type_ = TypeBuilderFactory::get_instance().create_copy(type);
+    base_type_ = DynamicTypeBuilderFactory::get_instance().create_copy(type);
+}
+
+void TypeDescriptor::set_base_type(
+        const DynamicType* type) noexcept
+{
+    reset_base_type();
+    base_type_ = type;
 }
 
 void TypeDescriptor::reset_base_type() noexcept
 {
     if (base_type_ != nullptr)
     {
-        TypeBuilderFactory::get_instance().delete_type(base_type_);
+        DynamicTypeBuilderFactory::get_instance().delete_type(base_type_);
     }
 
     base_type_ = nullptr;
@@ -172,21 +179,28 @@ const DynamicType* TypeDescriptor::get_discriminator_type() const noexcept
 {
     return nullptr == discriminator_type_ ?
         nullptr :
-        TypeBuilderFactory::get_instance().create_copy(*discriminator_type_);
+        DynamicTypeBuilderFactory::get_instance().create_copy(*discriminator_type_);
 }
 
 void TypeDescriptor::set_discriminator_type(
         const DynamicType& type) noexcept
 {
     reset_discriminator_type();
-    discriminator_type_ = TypeBuilderFactory::get_instance().create_copy(type);
+    discriminator_type_ = DynamicTypeBuilderFactory::get_instance().create_copy(type);
+}
+
+void TypeDescriptor::set_discriminator_type(
+        const DynamicType* type) noexcept
+{
+    reset_discriminator_type();
+    discriminator_type_ = type;
 }
 
 void TypeDescriptor::reset_discriminator_type() noexcept
 {
     if (discriminator_type_ != nullptr)
     {
-        TypeBuilderFactory::get_instance().delete_type(discriminator_type_);
+        DynamicTypeBuilderFactory::get_instance().delete_type(discriminator_type_);
     }
 
     discriminator_type_ = nullptr;
@@ -196,21 +210,28 @@ const DynamicType* TypeDescriptor::get_element_type() const noexcept
 {
     return nullptr == element_type_ ?
         nullptr :
-        TypeBuilderFactory::get_instance().create_copy(*element_type_);
+        DynamicTypeBuilderFactory::get_instance().create_copy(*element_type_);
 }
 
 void TypeDescriptor::set_element_type(
         const DynamicType& type) noexcept
 {
     reset_element_type();
-    element_type_ = TypeBuilderFactory::get_instance().create_copy(type);
+    element_type_ = DynamicTypeBuilderFactory::get_instance().create_copy(type);
+}
+
+void TypeDescriptor::set_element_type(
+        const DynamicType* type) noexcept
+{
+    reset_element_type();
+    element_type_ = type;
 }
 
 void TypeDescriptor::reset_element_type() noexcept
 {
     if (element_type_ != nullptr)
     {
-        TypeBuilderFactory::get_instance().delete_type(element_type_);
+        DynamicTypeBuilderFactory::get_instance().delete_type(element_type_);
     }
 
     element_type_ = nullptr;
@@ -220,21 +241,28 @@ const DynamicType* TypeDescriptor::get_key_element_type() const noexcept
 {
     return nullptr == key_element_type_ ?
         nullptr :
-        TypeBuilderFactory::get_instance().create_copy(*key_element_type_);
+        DynamicTypeBuilderFactory::get_instance().create_copy(*key_element_type_);
 }
 
 void TypeDescriptor::set_key_element_type(
         const DynamicType& type) noexcept
 {
     reset_key_element_type();
-    key_element_type_ = TypeBuilderFactory::get_instance().create_copy(type);
+    key_element_type_ = DynamicTypeBuilderFactory::get_instance().create_copy(type);
+}
+
+void TypeDescriptor::set_key_element_type(
+        const DynamicType* type) noexcept
+{
+    reset_key_element_type();
+    key_element_type_ = type;
 }
 
 void TypeDescriptor::reset_key_element_type() noexcept
 {
     if (key_element_type_ != nullptr)
     {
-        TypeBuilderFactory::get_instance().delete_type(key_element_type_);
+        DynamicTypeBuilderFactory::get_instance().delete_type(key_element_type_);
     }
 
     key_element_type_ = nullptr;
