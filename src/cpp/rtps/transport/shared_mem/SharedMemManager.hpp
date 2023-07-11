@@ -841,13 +841,19 @@ public:
             return *this;
         }
 
+        /**
+         * Checks if a port is OK and opened for reading with listeners active 
+         */
         bool has_listeners() const
         {
             return global_port_->port_has_listeners();
         }
 
+
         /**
          * Try to enqueue a buffer in the port.
+         * @param[in, out] buffer reference to the SHM buffer to push to
+         * @param[out] is_port_ok true if the port is ok
          * @returns false If the port's queue is full so buffer couldn't be enqueued.
          */
         bool try_push(

@@ -1549,6 +1549,9 @@ TEST_F(SHMTransportTests, buffer_recover)
 
     // Test 1 (without port overflow)
     uint32_t send_counter = 0u;
+
+    bool is_port_ok = false;
+
     while (listener1_recv_count.load() < 16u)
     {
         {
@@ -1556,12 +1559,12 @@ TEST_F(SHMTransportTests, buffer_recover)
             auto buf = segment->alloc_buffer(1, std::chrono::steady_clock::time_point());
 
             {
-                bool is_port_ok = false;
+                is_port_ok = false;
                 ASSERT_TRUE(pub_sub1_write->try_push(buf, is_port_ok));
                 ASSERT_TRUE(is_port_ok);
             }
             {
-                bool is_port_ok = false;
+                is_port_ok = false;
                 ASSERT_TRUE(pub_sub2_write->try_push(buf, is_port_ok));
                 ASSERT_TRUE(is_port_ok);
             }
@@ -1600,7 +1603,7 @@ TEST_F(SHMTransportTests, buffer_recover)
             auto buf = segment->alloc_buffer(1u, std::chrono::steady_clock::time_point());
 
             {
-                bool is_port_ok = false;
+                is_port_ok = false;
                 if (!pub_sub1_write->try_push(buf, is_port_ok))
                 {
                     EXPECT_TRUE(is_port_ok);
@@ -1609,7 +1612,7 @@ TEST_F(SHMTransportTests, buffer_recover)
             }
 
             {
-                bool is_port_ok = false;
+                is_port_ok = false;
                 if (!pub_sub2_write->try_push(buf, is_port_ok))
                 {
                     EXPECT_TRUE(is_port_ok);
@@ -1639,12 +1642,12 @@ TEST_F(SHMTransportTests, buffer_recover)
     {
         auto buf = segment->alloc_buffer(1u, std::chrono::steady_clock::time_point());
         {
-            bool is_port_ok = false;
+            is_port_ok = false;
             ASSERT_TRUE(pub_sub1_write->try_push(buf, is_port_ok));
             ASSERT_TRUE(is_port_ok);
         }
         {
-            bool is_port_ok = false;
+            is_port_ok = false;
             ASSERT_TRUE(pub_sub2_write->try_push(buf, is_port_ok));
             ASSERT_TRUE(is_port_ok);
         }
