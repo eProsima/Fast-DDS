@@ -2716,7 +2716,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
     CDRMessage_t serialized_msg;
 
     serialized_msg.init(serialized_proxy.entity_proxy().data(),
-            serialized_proxy.getCdrSerializedSize(msg.value()));
+            static_cast<uint32_t>(serialized_proxy.getCdrSerializedSize(msg.value())));
 
     ret = data.readFromCDRMessage(
         &serialized_msg,
@@ -2737,7 +2737,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
     CDRMessage_t serialized_msg;
 
     serialized_msg.init(serialized_proxy.entity_proxy().data(),
-            serialized_proxy.getCdrSerializedSize(msg.value()));
+            static_cast<uint32_t>(serialized_proxy.getCdrSerializedSize(msg.value())));
 
     ret = data.readFromCDRMessage(
         &serialized_msg,
@@ -2757,7 +2757,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
     CDRMessage_t serialized_msg;
 
     serialized_msg.init(serialized_proxy.entity_proxy().data(),
-            serialized_proxy.getCdrSerializedSize(msg.value()));
+            static_cast<uint32_t>(serialized_proxy.getCdrSerializedSize(msg.value())));
 
     ret = data.readFromCDRMessage(
         &serialized_msg,
