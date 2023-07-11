@@ -98,7 +98,7 @@ public:
             const fastrtps::rtps::GUID_t& guid,
             IProxyQueryable* proxy_q,
             IConnectionsQueryable* conns_q,
-            const IStatusQueryable& status_q = SimpleQueryable());
+            IStatusQueryable& status_q);
 
     ~MonitorService();
 
@@ -205,7 +205,7 @@ private:
 
     IConnectionsQueryable* conns_queryable_;
 
-    const IStatusQueryable& status_queryeble_;
+    IStatusQueryable& status_queryable_;
 
     //! Stores the local entities.
     //! For each entitiy, a bitset indicating the

@@ -27,7 +27,8 @@ MonitorServiceListener::MonitorServiceListener(
         MonitorService* ms)
     : monitor_srv_(ms)
 {
-
+    //! TODO
+    static_cast<void>(monitor_srv_);
 }
 
 bool MonitorServiceListener::on_local_entity_status_change(

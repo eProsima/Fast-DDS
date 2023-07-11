@@ -27,12 +27,22 @@ MonitorService::MonitorService(
         const fastrtps::rtps::GUID_t& guid,
         IProxyQueryable* proxy_q,
         IConnectionsQueryable* conns_q,
-        const IStatusQueryable& status_q)
-    : local_participant_guid_(guid)
+        IStatusQueryable& status_q)
+    : enabled_(false)
+    , initialized_(false)
+    , local_participant_guid_(guid)
     , proxy_queryable_(proxy_q)
     , conns_queryable_(conns_q)
-    , status_queryeble_(status_q)
+    , status_queryable_(status_q)
 {
+    //! TODO
+    static_cast<void>(enabled_);
+    static_cast<void>(initialized_);
+    static_cast<void>(proxy_queryable_);
+    static_cast<void>(conns_queryable_);
+    static_cast<void>(status_queryable_);
+    static_cast<void>(status_writer_);
+    static_cast<void>(status_writer_history_);
 
 }
 
