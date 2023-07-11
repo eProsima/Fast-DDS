@@ -256,14 +256,16 @@ if (FASTDDS_STATISTICS)
     set(statistics_sources
         statistics/fastdds/domain/DomainParticipantImpl.cpp
         statistics/fastdds/domain/DomainParticipantStatisticsListener.cpp
-        statistics/rtps/StatisticsBase.cpp
+        statistics/rtps/monitor-service/MonitorService.cpp
+        statistics/rtps/monitor-service/MonitorServiceListener.cpp
         statistics/rtps/reader/StatisticsReaderImpl.cpp
+        statistics/rtps/StatisticsBase.cpp
         statistics/rtps/writer/StatisticsWriterImpl.cpp
         statistics/types/typesPubSubTypes.cxx
         statistics/types/types.cxx
         statistics/types/typesv1.cxx
-        statistics/types/monitorservice_typesPubSubTypes.cxx
         statistics/types/monitorservice_types.cxx
+        statistics/types/monitorservice_typesPubSubTypes.cxx
         )
 
     list(APPEND ${PROJECT_NAME}_source_files
