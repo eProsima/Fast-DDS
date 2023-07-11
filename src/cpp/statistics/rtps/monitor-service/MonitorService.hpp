@@ -45,8 +45,10 @@ namespace rtps {
 class MonitorService
 {
     //! Dummy implementation
-    struct SimpleQueryable : public IStatusQueryable
+    class SimpleQueryable : public IStatusQueryable
     {
+
+    public:
 
         inline bool get_incompatible_qos_status(
                 const fastrtps::rtps::GUID_t&,
@@ -237,3 +239,4 @@ private:
 } // namespace eprosima
 
 #endif // _STATISTICS_RTPS_MONITOR_SERVICE_MONITORSERVICE_HPP_
+

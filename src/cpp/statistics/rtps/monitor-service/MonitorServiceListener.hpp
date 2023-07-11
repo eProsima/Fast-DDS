@@ -56,7 +56,7 @@ public:
     bool on_local_entity_connections_change(
             const fastrtps::rtps::GUID_t& guid) override;
 
-private:
+protected:
 
     MonitorService* monitor_srv_;
 
