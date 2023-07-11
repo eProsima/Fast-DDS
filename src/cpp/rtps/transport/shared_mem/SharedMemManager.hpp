@@ -842,13 +842,12 @@ public:
         }
 
         /**
-         * Checks if a port is OK and opened for reading with listeners active 
+         * Checks if a port is OK and opened for reading with listeners active
          */
         bool has_listeners() const
         {
             return global_port_->port_has_listeners();
         }
-
 
         /**
          * Try to enqueue a buffer in the port.
