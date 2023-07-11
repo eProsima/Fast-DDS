@@ -257,9 +257,9 @@ bool AnnotationDescriptor::is_consistent() const noexcept
     return true;
 }
 
-AnnotationDescriptor* Annotations::operator[](uint64_t pos) const noexcept
+const AnnotationDescriptor* Annotations::operator[](uint64_t pos) const noexcept
 {
-    const auto& manager = get_manager(*this);
+    const auto& manager = AnnotationManager::get_manager(*this);
     auto res = manager.get_annotation(pos);
     return res.second ? &res.first->get_descriptor() : nullptr;
 }
@@ -267,7 +267,7 @@ AnnotationDescriptor* Annotations::operator[](uint64_t pos) const noexcept
 //! get collection size
 uint64_t Annotations::size() const noexcept
 {
-    const auto& manager = get_manager(*this);
+    const auto& manager = AnnotationManager::get_manager(*this);
     return manager.get_annotation_count();
 }
 

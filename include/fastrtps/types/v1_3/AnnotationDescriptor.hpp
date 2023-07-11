@@ -204,7 +204,7 @@ class Annotations final
      * @param pos uint64_t zero based position
      * @return associated member or nullptr if not present
      */
-    RTPS_DllAPI AnnotationDescriptor* operator[](uint64_t pos) const noexcept;
+    RTPS_DllAPI const AnnotationDescriptor* operator[](uint64_t pos) const noexcept;
 
     //! get collection size
     RTPS_DllAPI uint64_t size() const noexcept;
