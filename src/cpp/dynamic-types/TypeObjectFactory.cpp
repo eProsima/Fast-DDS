@@ -16,7 +16,9 @@
 #include <fastrtps/types/TypeNamesGenerator.h>
 #include <fastrtps/types/BuiltinAnnotationsTypeObject.h>
 #include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/MemberDescriptor.h>
@@ -25,11 +27,10 @@
 #include <fastrtps/utils/md5.h>
 #include <fastdds/dds/log/Log.hpp>
 
+#include <cassert>
 #include <sstream>
 
-namespace eprosima {
-namespace fastrtps {
-namespace types {
+using namespace eprosima::fastrtps::types;
 
 class TypeObjectFactoryReleaser
 {
@@ -1757,13 +1758,13 @@ v1_1::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
 }
 
 ReturnCode_t TypeObjectFactory::build_dynamic_type(
-        v1_3::DynamicType_ptr& ret,
+        const v1_3::DynamicType*& ret,
         const std::string& name,
         const TypeIdentifier* identifier,
         const TypeObject* object) const
 {
     TypeKind kind = GetTypeKindFromIdentifier(identifier);
-    v1_3::TypeDescriptor descriptor(name, kind);
+    v1_3::TypeDescriptor descriptor(name.c_str(), kind);
     switch (kind)
     {
         // Basic types goes as default!
@@ -1788,81 +1789,99 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
         {
             if (identifier->_d() == TypeKind::TI_STRING8_SMALL)
             {
-                descriptor.bound_.emplace_back(static_cast<uint32_t>(identifier->string_sdefn().bound()));
+                uint32_t len = identifier->string_sdefn().bound();
+                descriptor.set_bounds(&len, 1);
             }
             else
             {
-                descriptor.bound_.emplace_back(identifier->string_ldefn().bound());
+                uint32_t len = identifier->string_ldefn().bound();
+                descriptor.set_bounds(&len, 1);
             }
-            descriptor.element_type_.reset(v1_3::DynamicTypeBuilderFactory::get_instance().get_char8_type());
+
+            descriptor.set_element_type(v1_3::DynamicTypeBuilderFactory::get_instance().get_char8_type());
             break;
         }
         case TypeKind::TK_STRING16:
         {
             if (identifier->_d() == TypeKind::TI_STRING16_SMALL)
             {
-                descriptor.bound_.emplace_back(static_cast<uint32_t>(identifier->string_sdefn().bound()));
+                uint32_t len = identifier->string_sdefn().bound();
+                descriptor.set_bounds(&len, 1);
             }
             else
             {
-                descriptor.bound_.emplace_back(identifier->string_ldefn().bound());
+                uint32_t len = identifier->string_ldefn().bound();
+                descriptor.set_bounds(&len, 1);
             }
-            descriptor.element_type_.reset(v1_3::DynamicTypeBuilderFactory::get_instance().get_char16_type());
+            descriptor.set_element_type(v1_3::DynamicTypeBuilderFactory::get_instance().get_char16_type());
             break;
         }
         case TypeKind::TK_SEQUENCE:
         {
+            const TypeIdentifier* aux = nullptr;
+
             if (identifier->_d() == TypeKind::TI_PLAIN_SEQUENCE_SMALL)
             {
-                const TypeIdentifier* aux = try_get_complete(identifier->seq_sdefn().element_identifier());
-                descriptor.bound_.emplace_back(static_cast<uint32_t>(identifier->seq_sdefn().bound()));
-                build_dynamic_type(descriptor.element_type_, get_type_name(aux), aux, get_type_object(aux));
+                aux = try_get_complete(identifier->seq_sdefn().element_identifier());
+
+                uint32_t len = identifier->seq_sdefn().bound();
+                descriptor.set_bounds(&len, 1);
             }
             else
             {
-                const TypeIdentifier* aux = try_get_complete(identifier->seq_ldefn().element_identifier());
-                descriptor.bound_.emplace_back(identifier->seq_ldefn().bound());
-                build_dynamic_type(descriptor.element_type_, get_type_name(aux), aux, get_type_object(aux));
+                aux = try_get_complete(identifier->seq_ldefn().element_identifier());
+
+                uint32_t len = identifier->seq_ldefn().bound();
+                descriptor.set_bounds(&len, 1);
             }
+
+            descriptor.set_element_type(build_dynamic_type_v1_3(get_type_name(aux), aux, get_type_object(aux)));
             break;
         }
         case TypeKind::TK_ARRAY:
         {
+            const TypeIdentifier* aux = nullptr;
+
             if (identifier->_d() == TypeKind::TI_PLAIN_ARRAY_SMALL)
             {
-                const TypeIdentifier* aux = try_get_complete(identifier->array_sdefn().element_identifier());
-                for (octet b : identifier->array_sdefn().array_bound_seq())
-                {
-                    descriptor.bound_.emplace_back(static_cast<uint32_t>(b));
-                }
-                build_dynamic_type(descriptor.element_type_, get_type_name(aux), aux, get_type_object(aux));
+                aux = try_get_complete(identifier->array_sdefn().element_identifier());
+                auto& sb = identifier->array_sdefn().array_bound_seq();
+                std::vector<uint32_t> bounds(sb.begin(), sb.end());
+                descriptor.set_bounds(bounds.data(), static_cast<uint32_t>(bounds.size()));
             }
             else
             {
-                const TypeIdentifier* aux = identifier->array_ldefn().element_identifier();
-                descriptor.bound_ = identifier->array_ldefn().array_bound_seq();
-                build_dynamic_type(descriptor.element_type_, get_type_name(aux), aux, get_type_object(aux));
+                aux = identifier->array_ldefn().element_identifier();
+                auto& bounds = identifier->array_ldefn().array_bound_seq();
+                descriptor.set_bounds(bounds.data(), static_cast<uint32_t>(bounds.size()));
             }
+
+            descriptor.set_element_type(build_dynamic_type_v1_3(get_type_name(aux), aux, get_type_object(aux)));
             break;
         }
         case TypeKind::TK_MAP:
         {
+            const TypeIdentifier* aux = nullptr,* aux2 = nullptr;
+
             if (identifier->_d() == TypeKind::TI_PLAIN_MAP_SMALL)
             {
-                const TypeIdentifier* aux = try_get_complete(identifier->map_sdefn().element_identifier());
-                const TypeIdentifier* aux2 = try_get_complete(identifier->map_sdefn().key_identifier());
-                descriptor.bound_.emplace_back(static_cast<uint32_t>(identifier->map_sdefn().bound()));
-                build_dynamic_type(descriptor.element_type_, get_type_name(aux), aux, get_type_object(aux));
-                build_dynamic_type(descriptor.key_element_type_, get_type_name(aux2), aux2, get_type_object(aux2));
+                aux = try_get_complete(identifier->map_sdefn().element_identifier());
+                aux2 = try_get_complete(identifier->map_sdefn().key_identifier());
+
+                uint32_t len = identifier->map_sdefn().bound();
+                descriptor.set_bounds(&len, 1);
             }
             else
             {
-                const TypeIdentifier* aux = try_get_complete(identifier->map_ldefn().element_identifier());
-                const TypeIdentifier* aux2 = try_get_complete(identifier->map_ldefn().key_identifier());
-                descriptor.bound_.emplace_back(identifier->map_ldefn().bound());
-                build_dynamic_type(descriptor.element_type_, get_type_name(aux), aux, get_type_object(aux));
-                build_dynamic_type(descriptor.key_element_type_, get_type_name(aux2), aux2, get_type_object(aux2));
+                aux = try_get_complete(identifier->map_ldefn().element_identifier());
+                aux2 = try_get_complete(identifier->map_ldefn().key_identifier());
+
+                uint32_t len = identifier->map_ldefn().bound();
+                descriptor.set_bounds(&len, 1);
             }
+
+            descriptor.set_element_type(build_dynamic_type_v1_3(get_type_name(aux), aux, get_type_object(aux)));
+            descriptor.set_key_element_type(build_dynamic_type_v1_3(get_type_name(aux2), aux2, get_type_object(aux2)));
             break;
         }
         case TypeKind::EK_MINIMAL:
@@ -1884,7 +1903,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
     //outputType->set_name(name);
     if (outputType)
     {
-        ret.reset(outputType->build());
+        ret = outputType->build();
         return ReturnCode_t::RETCODE_OK;
     }
     return ReturnCode_t::RETCODE_ERROR;
@@ -2036,10 +2055,10 @@ v1_1::DynamicType_ptr TypeObjectFactory::build_dynamic_type(
 
 // TODO annotations
 ReturnCode_t TypeObjectFactory::build_dynamic_type(
-        v1_3::DynamicType_ptr& ret,
+        const v1_3::DynamicType*& ret,
         v1_3::TypeDescriptor& descriptor,
         const TypeObject* object,
-        const v1_3::DynamicType_ptr annotation_member_type) const
+        const v1_3::DynamicType* annotation_member_type) const
 {
     if (object == nullptr || object->_d() != TypeKind::EK_COMPLETE)
     {
@@ -2056,15 +2075,15 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
         {
             const TypeIdentifier* aux =
                     get_stored_type_identifier(&object->complete().alias_type().body().common().related_type());
-            build_dynamic_type(descriptor.base_type_, get_type_name(aux), aux, get_type_object(aux));
-            descriptor.set_name(object->complete().alias_type().header().detail().type_name());
+            descriptor.set_base_type(build_dynamic_type_v1_3(get_type_name(aux), aux, get_type_object(aux)));
+            descriptor.set_name(object->complete().alias_type().header().detail().type_name().c_str());
             v1_3::DynamicTypeBuilder_ptr alias_type{
                     v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor)};
 
             // Apply type's annotations
-            apply_type_annotations(alias_type, object->complete().alias_type().header().detail().ann_custom());
+            apply_type_annotations(*alias_type, object->complete().alias_type().header().detail().ann_custom());
 
-            ret.reset(alias_type->build());
+            ret = alias_type->build();
             return ReturnCode_t::RETCODE_OK;
         }
         case TypeKind::TK_STRUCTURE:
@@ -2072,14 +2091,14 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             const TypeIdentifier* aux = &object->complete().struct_type().header().base_type();
             if (aux->_d() == TypeKind::EK_COMPLETE)
             {
-                build_dynamic_type(descriptor.base_type_, get_type_name(aux), aux, get_type_object(aux));
+                descriptor.set_base_type(build_dynamic_type_v1_3(get_type_name(aux), aux, get_type_object(aux)));
             }
 
             v1_3::DynamicTypeBuilder_ptr struct_type{
                     v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor)};
 
             // Apply type's annotations
-            apply_type_annotations(struct_type, object->complete().struct_type().header().detail().ann_custom());
+            apply_type_annotations(*struct_type, object->complete().struct_type().header().detail().ann_custom());
 
             const CompleteStructMemberSeq& structVector = object->complete().struct_type().member_seq();
             for (auto member = structVector.begin(); member != structVector.end(); ++member)
@@ -2092,23 +2111,21 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
                             << (int)member->common().member_type_id()._d());
                 }
 
-                v1_3::DynamicType_ptr type;
-                build_dynamic_type(type, get_type_name(auxMem), auxMem, get_type_object(auxMem));
-
                 v1_3::MemberDescriptor memDesc;
                 memDesc.set_id(member->common().member_id());
-                memDesc.set_type(type);
-                memDesc.set_name(member->detail().name());
+                memDesc.set_type(build_dynamic_type_v1_3(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
+                memDesc.set_name(member->detail().name().c_str());
 
                 struct_type->add_member(memDesc);
+
                 if (MEMBER_ID_INVALID == memDesc.get_id())
                 {
-                    memDesc.set_id(struct_type->get_member_id_by_name(memDesc.get_name()));
+                    memDesc.set_id(struct_type->get_member_by_name(memDesc.get_name())->get_id());
                 }
 
-                apply_member_annotations(struct_type, memDesc.get_id(), member->detail().ann_custom());
+                apply_member_annotations(*struct_type, memDesc.get_id(), member->detail().ann_custom());
             }
-            ret.reset(struct_type->build());
+            ret = struct_type->build();
             return ReturnCode_t::RETCODE_OK;
         }
         case TypeKind::TK_ENUM:
@@ -2624,7 +2641,7 @@ void TypeObjectFactory::apply_type_annotations(
 }
 
 void TypeObjectFactory::apply_type_annotations(
-        v1_3::DynamicTypeBuilder_ptr& type_builder,
+        v1_3::DynamicTypeBuilder& type_builder,
         const AppliedAnnotationSeq& annotations) const
 {
     for (const AppliedAnnotation& annotation : annotations)
@@ -2678,7 +2695,7 @@ void TypeObjectFactory::apply_member_annotations(
 }
 
 void TypeObjectFactory::apply_member_annotations(
-        v1_3::DynamicTypeBuilder_ptr& parent_type_builder,
+        v1_3::DynamicTypeBuilder& parent_type_builder,
         v1_3::MemberId member_id,
         const AppliedAnnotationSeq& annotations) const
 {
@@ -2730,7 +2747,7 @@ std::string TypeObjectFactory::get_key_from_hash(
 }
 
 std::string TypeObjectFactory::get_key_from_hash(
-        const v1_3::DynamicType_ptr annotation_descriptor_type,
+        const v1_3::DynamicType& annotation_descriptor_type,
         const NameHash& hash) const
 {
     for (auto it : annotation_descriptor_type->get_all_members_by_id())
@@ -2875,6 +2892,12 @@ const TypeObject* TypeObjectFactory::typelookup_get_type_object_from_information
     return nullptr;
 }
 
-} // namespace types
-} // namespace fastrtps
-} // namespace eprosima
+const v1_3::DynamicType* build_dynamic_type_v1_3(
+        const std::string& name,
+        const TypeIdentifier* identifier,
+        const TypeObject* object = nullptr) const
+{
+    v1_3::DynamicType* element_type = nullptr;
+    build_dynamic_type(element_type, name, identifier, object);
+    return element_type;
+}

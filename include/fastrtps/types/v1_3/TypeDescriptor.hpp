@@ -45,6 +45,8 @@ public:
 
     TypeDescriptor() noexcept;
 
+    TypeDescriptor(const char* name, TypeKind kind) noexcept;
+
     TypeDescriptor(const TypeDescriptor& type) noexcept;
 
     TypeDescriptor(TypeDescriptor&& type) noexcept;

@@ -26,6 +26,13 @@ TypeDescriptor::TypeDescriptor() noexcept
 {
 }
 
+TypeDescriptor::TypeDescriptor(const char* name, TypeKind kind) noexcept
+    : name_(new(std::nothrow) std::string{name})
+    , kind_{kind}
+    , bounds_(new(std::nothrow) std::vector<uint32_t>)
+{
+}
+
 TypeDescriptor::TypeDescriptor(const TypeDescriptor& type) noexcept
     : name_(new(std::nothrow) std::string)
     , kind_(type.get_kind())
