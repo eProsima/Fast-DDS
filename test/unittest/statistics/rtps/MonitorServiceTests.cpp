@@ -138,6 +138,7 @@ TEST_F(MonitorServiceTests, enabling_monitor_service_routine)
     //! Enable the service
     ASSERT_FALSE(monitor_srv_.disable_monitor_service());
     ASSERT_TRUE(monitor_srv_.enable_monitor_service());
+    ASSERT_TRUE(monitor_srv_.is_enabled());
 
     //! Verify expectations
     std::this_thread::sleep_for(std::chrono::seconds(3));
@@ -151,7 +152,9 @@ TEST_F(MonitorServiceTests, multiple_proxy_and_connection_updates)
     //! Enable the service
     ASSERT_FALSE(monitor_srv_.disable_monitor_service());
     ASSERT_TRUE(monitor_srv_.enable_monitor_service());
+    ASSERT_TRUE(monitor_srv_.is_enabled());
 
+    //! Skip initial transient
     std::this_thread::sleep_for(std::chrono::seconds(3));
 
     //! Expect the getters for each status that is going to be updated
@@ -177,6 +180,7 @@ TEST_F(MonitorServiceTests, multiple_dds_status_updates)
     //! Enable the service
     ASSERT_FALSE(monitor_srv_.disable_monitor_service());
     ASSERT_TRUE(monitor_srv_.enable_monitor_service());
+    ASSERT_TRUE(monitor_srv_.is_enabled());
 
     //! Expect the getters for each status that is going to be updated
     EXPECT_CALL(mock_status_q_, get_incompatible_qos_status(::testing::_, ::testing::_)).
@@ -202,6 +206,52 @@ TEST_F(MonitorServiceTests, multiple_dds_status_updates)
 
     //! Verify expectations
     std::this_thread::sleep_for(std::chrono::seconds(5));
+    ::testing::Mock::VerifyAndClearExpectations(&mock_status_q_);
+}
+
+TEST_F(MonitorServiceTests, entity_removal_correctly_performs)
+{
+    //! Enable the service
+    ASSERT_FALSE(monitor_srv_.disable_monitor_service());
+    ASSERT_TRUE(monitor_srv_.enable_monitor_service());
+    ASSERT_TRUE(monitor_srv_.is_enabled());
+
+    //! Trigger entity deletion
+    for (auto& entity : mock_guids)
+    {
+        listener_.on_local_entity_change(entity, false);
+    }
+
+    EXPECT_CALL(mock_proxy_q_, get_serialized_proxy(::testing::_, ::testing::_)).
+            Times(0);
+    EXPECT_CALL(mock_conns_q_, get_entity_connections(::testing::_)).
+            Times(0);
+
+    //! Expect the getters for each status that is going to be updated
+    EXPECT_CALL(mock_status_q_, get_incompatible_qos_status(::testing::_, ::testing::_)).
+            Times(0);
+    EXPECT_CALL(mock_status_q_, get_liveliness_lost_status(::testing::_, ::testing::_)).
+            Times(0);
+    EXPECT_CALL(mock_status_q_, get_liveliness_changed_status(::testing::_, ::testing::_)).
+            Times(0);
+    EXPECT_CALL(mock_status_q_, get_deadline_missed_status(::testing::_, ::testing::_)).
+            Times(0);
+    EXPECT_CALL(mock_status_q_, get_sample_lost_status(::testing::_, ::testing::_)).
+            Times(0);
+
+    //! Trigger statuses updates for each of the non-existent entity
+    for (auto& entity : mock_guids)
+    {
+        listener_.on_local_entity_connections_change(entity);
+        listener_.on_local_entity_status_change(entity, statistics::INCOMPATIBLE_QOS);
+        listener_.on_local_entity_status_change(entity, statistics::LIVELINESS_CHANGED);
+        listener_.on_local_entity_status_change(entity, statistics::LIVELINESS_LOST);
+        listener_.on_local_entity_status_change(entity, statistics::DEADLINE_MISSED);
+        listener_.on_local_entity_status_change(entity, statistics::SAMPLE_LOST);
+    }
+
+    //! Verify expectations
+    std::this_thread::sleep_for(std::chrono::seconds(3));
     ::testing::Mock::VerifyAndClearExpectations(&mock_status_q_);
 }
 
