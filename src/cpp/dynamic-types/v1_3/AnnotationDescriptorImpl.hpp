@@ -16,7 +16,6 @@
 #define TYPES_1_3_ANNOTATION_DESCRIPTOR_IMPL_H
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
 
 #include <functional>
 #include <map>
@@ -29,12 +28,11 @@ namespace v1_3 {
 
 class DynamicTypeImpl;
 class DynamicTypeBuilderFactoryImpl;
+class AnnotationDescriptor;
 
 class AnnotationDescriptorImpl final
 {
 protected:
-
-    friend class DynamicTypeBuilderFactoryImpl;
 
     // Reference to the annotation type
     std::shared_ptr<const DynamicTypeImpl> type_;
@@ -42,12 +40,17 @@ protected:
 
 public:
 
+    AnnotationDescriptorImpl() = default;
+
+    AnnotationDescriptorImpl(const AnnotationDescriptor&);
+
     bool operator ==(
             const AnnotationDescriptorImpl&) const;
     bool operator !=(
             const AnnotationDescriptorImpl&) const;
     bool operator <(
             const AnnotationDescriptorImpl&) const;
+
     bool is_consistent() const;
     bool key_annotation() const;
 

@@ -2741,7 +2741,7 @@ void DynamicTypeBuilderFactoryImpl::apply_type_annotations(
     {
         AppliedAnnotation ann;
         ann.annotation_typeid(
-            *TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(annotation.type_->get_name()));
+            *TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(annotation.type()->get_name()));
         std::map<std::string, std::string> values;
         annotation.get_all_value(values);
         for (auto it : values)
@@ -2753,7 +2753,7 @@ void DynamicTypeBuilderFactoryImpl::apply_type_annotations(
                 ann_param.paramname_hash()[i] = message_hash.digest[i];
             }
             AnnotationParameterValue param_value;
-            param_value._d(annotation.type_->get_kind());
+            param_value._d(annotation.type()->get_kind());
             param_value.from_string(it.second);
             ann_param.value(param_value);
             ann.param_seq().push_back(ann_param);

@@ -38,6 +38,7 @@ class DynamicTypeMemberImpl final
 
 public:
 
+    using AnnotationManager::apply_annotation;
     using AnnotationManager::get_all_annotations;
     using AnnotationManager::get_annotation_count;
     using AnnotationManager::get_annotations;

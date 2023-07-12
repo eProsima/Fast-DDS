@@ -16,6 +16,7 @@
 #define TYPES_1_3_ANNOTATION_MANAGER_H
 
 #include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
 #include <dynamic-types/v1_3/AnnotationDescriptorImpl.hpp>
 
 #include <set>

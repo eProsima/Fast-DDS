@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <fastrtps/types/v1_3/DynamicType.hpp>
+#include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
 #include <dynamic-types/v1_3/AnnotationDescriptorImpl.hpp>
 #include <dynamic-types/v1_3/DynamicTypeBuilderFactoryImpl.hpp>
 #include <dynamic-types/v1_3/DynamicTypeImpl.hpp>
@@ -21,6 +22,27 @@
 #include <iomanip>
 
 using namespace eprosima::fastrtps::types::v1_3;
+
+AnnotationDescriptorImpl::AnnotationDescriptorImpl(const AnnotationDescriptor& d)
+{
+    // copy type
+    const DynamicType* type = d.get_type();
+    if (type != nullptr)
+    {
+        type_ = DynamicTypeImpl::get_implementation(*type).shared_from_this();
+        DynamicTypeBuilderFactory::get_instance().delete_type(type);
+    }
+
+    // copy contents
+    const Parameters& par = *d.get_all_value();
+    const char* key = par.next_key();
+
+    while (key != nullptr)
+    {
+       value_.emplace(key, par[key]);
+       key = par.next_key(key);
+    }
+}
 
 bool AnnotationDescriptorImpl::operator ==(
         const AnnotationDescriptorImpl& other) const

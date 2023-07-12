@@ -102,6 +102,11 @@ public:
 
     static const DynamicTypeBuilderImpl& get_implementation(const DynamicTypeBuilder& t)
     {
+        return get_implementation(const_cast<DynamicTypeBuilder&>(t));
+    }
+
+    static DynamicTypeBuilderImpl& get_implementation(DynamicTypeBuilder& t)
+    {
         return *(DynamicTypeBuilderImpl*)((const char*)&t -
                 (::size_t)&reinterpret_cast<char const volatile&>((((DynamicTypeBuilderImpl*)0)->interface_)));
     }
@@ -142,7 +147,7 @@ public:
     ReturnCode_t add_member(
             Ts&&... Args) noexcept
     {
-        return add_member(MemberDescriptorImpl(std::forward<Ts>(Args)...));
+        return add_member(MemberDescriptorImpl{std::forward<Ts>(Args)...});
     }
 
     using AnnotationManager::apply_annotation;
