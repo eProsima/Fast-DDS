@@ -304,7 +304,7 @@ public:
                                 {
                                     status.last_verified_counter = status.counter;
                                 }
-                                else             // Counter is freeze => this listener is blocked!!!
+                                else             // Counter is frozen => this listener is blocked!!!
                                 {
                                     return false;
                                 }
