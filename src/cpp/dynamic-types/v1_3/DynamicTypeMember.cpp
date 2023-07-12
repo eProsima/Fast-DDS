@@ -58,3 +58,86 @@ const Annotations* DynamicTypeMember::get_annotation() const noexcept
 {
     return &DynamicTypeMemberImpl::get_implementation(*this).get_annotations();
 }
+
+const DynamicTypeMember* DynamicTypeMembersByName::operator[](const char* key) const noexcept
+{
+    auto it = map_->find(key);
+
+    if (it != map_->end())
+    {
+        return &it->second->get_interface();
+    }
+
+    return nullptr;
+}
+
+uint64_t DynamicTypeMembersByName::size() const noexcept
+{
+    return map_->size();
+}
+
+bool DynamicTypeMembersByName::empty() const noexcept
+{
+    return map_->empty();
+}
+
+const char* DynamicTypeMembersByName::next_key(const char* key)
+{
+    if (nullptr == key)
+    {
+        return map_->begin()->first.c_str();
+    }
+    else
+    {
+        auto it = map_->find(key);
+
+        if (it++ != map_->end() && it != map_->end())
+        {
+            return it->first.c_str();
+        }
+    }
+
+    return nullptr;
+}
+
+const DynamicTypeMember* DynamicTypeMembersById::operator[](MemberId key) const noexcept
+{
+    auto it = map_->find(key);
+
+    if (it != map_->end())
+    {
+        return &it->second->get_interface();
+    }
+
+    return nullptr;
+}
+
+uint64_t DynamicTypeMembersById::size() const noexcept
+{
+    return map_->size();
+}
+
+bool DynamicTypeMembersById::empty() const noexcept
+{
+    return map_->empty();
+}
+
+MemberId DynamicTypeMembersById::next_key(MemberId key)
+{
+    if (MEMBER_ID_INVALID == key)
+    {
+        return map_->begin()->first;
+    }
+    else
+    {
+        auto it = map_->find(key);
+
+        if (it++ != map_->end() && it != map_->end())
+        {
+            return it->first;
+        }
+    }
+
+    return MEMBER_ID_INVALID;
+}
+
