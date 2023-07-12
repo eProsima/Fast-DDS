@@ -42,7 +42,10 @@ add_gtest(RTPSStatisticsTests SOURCES ${STATISTICS_RTPS_TESTS_SOURCE})
 
 set(STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE
     MonitorServiceTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/monitor-service/MonitorService.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/monitor-service/MonitorServiceListener.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_types.cxx
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
     )
 
 add_executable(MonitorServiceTests ${STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE})
