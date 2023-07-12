@@ -14,9 +14,12 @@
 
 #include <fastdds/dds/log/Log.hpp>
 
+#include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
 #include <dynamic-types/v1_3/AnnotationManager.hpp>
 #include <dynamic-types/v1_3/DynamicTypeImpl.hpp>
 #include <dynamic-types/v1_3/DynamicTypeBuilderFactoryImpl.hpp>
+
+#include <tuple>
 
 using namespace eprosima::fastrtps::types::v1_3;
 
@@ -494,14 +497,20 @@ std::size_t AnnotationManager::get_annotation_count() const
 }
 
 ReturnCode_t AnnotationManager::get_annotation(
-        AnnotationDescriptorImpl& descriptor,
-        std::size_t idx) const
+        AnnotationDescriptor& annotation,
+        uint32_t index) const noexcept
 {
-    assert(idx < get_annotation_count());
-    auto it = annotation_.begin();
-    std::advance(it, idx);
-    descriptor = *it;
-    return ReturnCode_t::RETCODE_OK;
+    AnnotationManager::annotation_iterator it;
+    bool found;
+    std::tie(it, found) = get_annotation(index);
+
+    if (found)
+    {
+        annotation = it->get_descriptor();
+        return ReturnCode_t::RETCODE_OK;
+    }
+
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
 bool AnnotationManager::key_annotation() const

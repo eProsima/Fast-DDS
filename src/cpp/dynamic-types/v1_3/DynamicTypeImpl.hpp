@@ -132,6 +132,8 @@ public:
 
     using TypeState::get_member_by_name;
     using TypeState::get_all_members_by_name;
+    using TypeState::get_all_members_by_id;
+    using TypeState::get_annotation;
 
     //! check if the type is complex
     bool is_complex_kind() const;

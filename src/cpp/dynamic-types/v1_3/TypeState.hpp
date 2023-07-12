@@ -171,6 +171,9 @@ protected:
     //! public interface common implementation for DynamicType and DynamicTypeBuilder
     DynamicTypeMembersByName get_all_members_by_name(ReturnCode_t* ec) const noexcept;
 
+    //! public interface common implementation for DynamicType and DynamicTypeBuilder
+    DynamicTypeMembersById get_all_members_by_id(ReturnCode_t* ec) const noexcept;
+
 public:
 
     using AnnotationManager::get_all_annotations;

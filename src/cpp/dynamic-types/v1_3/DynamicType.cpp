@@ -58,8 +58,82 @@ const DynamicTypeMember* DynamicType::get_member_by_name(
     return DynamicTypeImpl::get_implementation(*this).get_member_by_name(name, ec);
 }
 
-//const DynamicTypeMembersByName* DynamicType::get_all_members_by_name(
-//        ReturnCode_t* ec /*= nullptr*/) const noexcept
-//{
-//
-//}
+DynamicTypeMembersByName DynamicType::get_all_members_by_name(
+        ReturnCode_t* ec /*= nullptr*/) const noexcept
+{
+    return DynamicTypeImpl::get_implementation(*this).get_all_members_by_name(ec);
+}
+
+const DynamicTypeMember* DynamicType::get_member(
+        MemberId id,
+        ReturnCode_t* ec /*= nullptr*/) const noexcept
+{
+    try
+    {
+        if (ec)
+        {
+            *ec = ReturnCode_t{};
+        }
+
+        return &DynamicTypeImpl::get_implementation(*this).get_member(id).get_interface();
+    }
+    catch(std::system_error& e)
+    {
+        if (ec)
+        {
+            *ec = static_cast<uint32_t>(e.code().value());
+        }
+
+        EPROSIMA_LOG_ERROR(DYN_TYPES, e.what());
+
+        return nullptr;
+    }
+}
+
+DynamicTypeMembersById DynamicType::get_all_members(ReturnCode_t* ec /*= nullptr*/) const noexcept
+{
+    return DynamicTypeImpl::get_implementation(*this).get_all_members_by_id(ec);
+}
+
+uint32_t DynamicType::get_member_count() const noexcept
+{
+    return DynamicTypeImpl::get_implementation(*this).get_member_count();
+}
+
+const DynamicTypeMember* DynamicType::get_member_by_index(
+        uint32_t index,
+        ReturnCode_t* ec /*= nullptr*/) const noexcept
+{
+    try
+    {
+        if (ec)
+        {
+            *ec = ReturnCode_t{};
+        }
+
+        return &DynamicTypeImpl::get_implementation(*this).get_member_by_index(index).get_interface();
+    }
+    catch(std::system_error& e)
+    {
+        if (ec)
+        {
+            *ec = static_cast<uint32_t>(e.code().value());
+        }
+
+        EPROSIMA_LOG_ERROR(DYN_TYPES, e.what());
+
+        return nullptr;
+    }
+}
+
+uint32_t DynamicType::get_annotation_count() const noexcept
+{
+    return static_cast<uint32_t>(DynamicTypeImpl::get_implementation(*this).get_annotation_count());
+}
+
+ReturnCode_t DynamicType::get_annotation(
+        AnnotationDescriptor& annotation,
+        uint32_t index) const noexcept
+{
+    return DynamicTypeImpl::get_implementation(*this).get_annotation(annotation, index);
+}

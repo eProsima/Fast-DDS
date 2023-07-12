@@ -258,14 +258,12 @@ public:
     /**
      * This operation returns the annotation that corresponds to the specified index,
      * if any (see [standard] section 7.5.2.8.5)
-     * @param[out] descriptor @ref AnnotationDescriptorImpl to populate
+     * @param[out] descriptor @ref AnnotationDescriptor to populate
      * @param[in] idx index associated to the annotation to retrieve
      * @return standard @ref ReturnCode_t
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    ReturnCode_t get_annotation(
-            AnnotationDescriptorImpl& descriptor,
-            std::size_t idx) const;
+    ReturnCode_t get_annotation(AnnotationDescriptor& annotation, uint32_t index) const noexcept;
 
     /**
      * This operation returns the current number of annotations applied to the type

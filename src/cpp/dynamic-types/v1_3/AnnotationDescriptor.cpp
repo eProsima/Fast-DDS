@@ -23,39 +23,31 @@ using eprosima::fastrtps::types::ReturnCode_t;
 
 Parameters::Parameters()
     : map_(new mapping)
-    , ownership_(true)
 {
 }
 
 Parameters::~Parameters()
 {
-    if (ownership_)
-    {
-        delete map_;
-    }
+    delete map_;
 }
 
 Parameters::Parameters(const Parameters& type) noexcept
-    : map_(type.ownership_ ? new mapping(*type.map_) : type.map_)
-    , ownership_(type.ownership_)
+    : map_(new mapping(*type.map_))
 {}
 
 Parameters::Parameters(Parameters&& type) noexcept
     : map_(type.map_)
-    , ownership_(type.ownership_)
 {}
 
 Parameters& Parameters::operator=(const Parameters& type) noexcept
 {
-    ownership_ = type.ownership_;
-    map_ = type.ownership_ ? new mapping(*type.map_) : type.map_;
+    map_ = new mapping(*type.map_);
     return *this;
 }
 
 Parameters& Parameters::operator=(Parameters&& type) noexcept
 {
     map_ = type.map_;
-    ownership_ = type.ownership_;
     return *this;
 }
 
@@ -257,11 +249,9 @@ bool AnnotationDescriptor::is_consistent() const noexcept
     return true;
 }
 
-const AnnotationDescriptor* Annotations::operator[](uint64_t pos) const noexcept
+ReturnCode_t Annotations::get(AnnotationDescriptor& d, uint32_t pos) const noexcept
 {
-    const auto& manager = AnnotationManager::get_manager(*this);
-    auto res = manager.get_annotation(pos);
-    return res.second ? &res.first->get_descriptor() : nullptr;
+    return AnnotationManager::get_manager(*this).get_annotation(d, pos);
 }
 
 //! get collection size

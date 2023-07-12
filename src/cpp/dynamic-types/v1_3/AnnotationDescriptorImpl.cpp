@@ -101,18 +101,16 @@ ReturnCode_t AnnotationDescriptorImpl::set_value(
     return ReturnCode_t::RETCODE_OK;
 }
 
-const AnnotationDescriptor& AnnotationDescriptorImpl::get_descriptor() const
+AnnotationDescriptor AnnotationDescriptorImpl::get_descriptor() const
 {
+    AnnotationDescriptor res{value_};
+
     if (type_)
     {
-        interface_.set_type(type_->get_interface());
-    }
-    else
-    {
-        interface_.reset_type();
+        res.set_type(type_->get_interface());
     }
 
-    return interface_;
+    return res;
 }
 
 std::ostream& eprosima::fastrtps::types::v1_3::operator <<(

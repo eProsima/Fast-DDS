@@ -575,6 +575,16 @@ std::map<MemberId, const DynamicTypeMemberImpl*> TypeState::get_all_members_by_i
     return res;
 }
 
+DynamicTypeMembersById TypeState::get_all_members_by_id(ReturnCode_t* ec) const noexcept
+{
+    if (ec != nullptr)
+    {
+        *ec = ReturnCode_t{};
+    }
+
+    return DynamicTypeMembersById{get_all_members_by_id()};
+}
+
 const DynamicTypeMemberImpl& TypeState::get_member_by_index(uint32_t index) const
 {
     uint32_t offset = 0;

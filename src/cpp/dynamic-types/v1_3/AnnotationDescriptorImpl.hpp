@@ -40,9 +40,6 @@ protected:
     std::shared_ptr<const DynamicTypeImpl> type_;
     std::map<std::string, std::string> value_;
 
-    // interface
-    mutable AnnotationDescriptor interface_ = {value_};
-
 public:
 
     bool operator ==(
@@ -95,7 +92,7 @@ public:
         return type_;
     }
 
-    const AnnotationDescriptor& get_descriptor() const;
+    AnnotationDescriptor get_descriptor() const;
 
 };
 

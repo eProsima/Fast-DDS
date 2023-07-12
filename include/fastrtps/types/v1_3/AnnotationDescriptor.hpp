@@ -34,9 +34,8 @@ class RTPS_DllAPI Parameters final
 {
     using mapping = std::map<std::string, std::string>;
     mapping* map_ = nullptr;
-    bool ownership_ = false;
 
-    Parameters(mapping& map) : map_(&map) {}
+    Parameters(const mapping& map) : map_(new mapping{map}) {}
 
     friend class AnnotationDescriptor;
 
@@ -91,7 +90,7 @@ class RTPS_DllAPI AnnotationDescriptor final
     const DynamicType* type_ = nullptr;         //!< Member's Type.
     Parameters map_;                            //!< Mapping
 
-    AnnotationDescriptor(Parameters::mapping& map) : map_(map) {}
+    AnnotationDescriptor(const Parameters::mapping& map) : map_(map) {}
 
     friend class AnnotationDescriptorImpl;
 
@@ -201,10 +200,11 @@ class Annotations final
 
     /*
      * Retrieve values:
+     * @param d annotation to populate if associated member exists
      * @param pos uint64_t zero based position
-     * @return associated member or nullptr if not present
+     * @return ReturnCode_t
      */
-    RTPS_DllAPI const AnnotationDescriptor* operator[](uint64_t pos) const noexcept;
+    RTPS_DllAPI ReturnCode_t get(AnnotationDescriptor& d, uint32_t pos) const noexcept;
 
     //! get collection size
     RTPS_DllAPI uint64_t size() const noexcept;
