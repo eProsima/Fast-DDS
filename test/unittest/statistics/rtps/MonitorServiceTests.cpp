@@ -99,7 +99,7 @@ public:
                         guids.reserve(n_local_entities);
                         mock_guids.reserve(n_local_entities);
 
-                        for (size_t i = 1; i <= n_local_entities; i++)
+                        for (size_t i = 1; i <= static_cast<size_t>(n_local_entities); i++)
                         {
                             fastrtps::rtps::GUID_t guid;
                             guid.entityId.value[3] = i;
@@ -123,7 +123,7 @@ protected:
 
     MonitorService monitor_srv_;
     MonitorServiceListener listener_;
-    size_t n_local_entities;
+    int n_local_entities;
     std::vector<fastrtps::rtps::GUID_t> mock_guids;
 };
 
