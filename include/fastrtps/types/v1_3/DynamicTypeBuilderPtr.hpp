@@ -16,18 +16,7 @@
 #define TYPES_1_3_DYNAMIC_TYPE_BUILDER_PTR_HPP
 
 #include <fastrtps/types/TypesBase.h>
-
-namespace eprosima {
-namespace fastrtps {
-namespace types {
-namespace v1_3 {
-
-RTPS_DllAPI void (*dynamic_object_deleter(const DynamicTypeBuilder* ))(const DynamicTypeBuilder*);
-
-} // namespace v1_3
-} // namespace types
-} // namespace fastrtps
-} // namespace eprosima
+#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
 
 namespace std
 {
@@ -41,10 +30,20 @@ public:
     using element_type = const eprosima::fastrtps::types::v1_3::DynamicTypeBuilder;
     using base = shared_ptr<const void>;
 
+protected:
+
+    static void deleter(element_type * pA)
+    {
+        auto& inst = eprosima::fastrtps::types::v1_3::DynamicTypeBuilderFactory::get_instance();
+        inst.delete_type(pA);
+    }
+
+public:
+
     constexpr shared_ptr() = default;
 
-    explicit shared_ptr(const element_type* pA)
-        : base(pA, dynamic_object_deleter(pA)) {}
+    explicit shared_ptr(element_type* pA)
+        : base(pA, deleter) {}
 
     shared_ptr(const shared_ptr& r) noexcept
         : base(r) {}
@@ -77,7 +76,7 @@ public:
 
     void reset(element_type* pA)
     {
-        base::reset(pA, dynamic_object_deleter(pA));
+        base::reset(pA, deleter);
     }
 
     element_type* get() const noexcept

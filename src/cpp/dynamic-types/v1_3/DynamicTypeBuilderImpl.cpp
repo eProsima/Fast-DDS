@@ -336,38 +336,3 @@ const DynamicTypeImpl& DynamicTypeBuilderImpl::create_copy(
     type.add_ref();
     return type;
 }
-
-void DynamicTypeBuilderImpl::external_dynamic_object_deleter(const DynamicTypeBuilderImpl* pDT)
-{
-    if (pDT)
-    {
-        pDT->release();
-    }
-}
-
-void DynamicTypeBuilderImpl::internal_dynamic_object_deleter(const DynamicTypeBuilderImpl* pDT)
-{
-    if (pDT)
-    {
-        std::default_delete<const DynamicTypeBuilderImpl> del;
-        del(pDT);
-    }
-}
-
-void (*eprosima::fastrtps::types::v1_3::dynamic_object_deleter(
-        const DynamicTypeBuilderImpl* pDT))(const DynamicTypeBuilderImpl*)
-{
-   if ( pDT != nullptr)
-   {
-        if (pDT->use_count())
-        {
-            return DynamicTypeBuilderImpl::external_dynamic_object_deleter;
-        }
-        else
-        {
-            return DynamicTypeBuilderImpl::internal_dynamic_object_deleter;
-        }
-   }
-
-   return nullptr;
-}

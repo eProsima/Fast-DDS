@@ -57,10 +57,6 @@ class DynamicTypeBuilderImpl final
 
     DynamicTypeBuilder interface_;
 
-    static void external_dynamic_object_deleter(const DynamicTypeBuilderImpl*);
-    static void internal_dynamic_object_deleter(const DynamicTypeBuilderImpl*);
-    friend void (*dynamic_object_deleter(const DynamicTypeBuilderImpl* ))(const DynamicTypeBuilderImpl*);
-
     MemberId current_member_id_{0};
 
     mutable std::shared_ptr<const DynamicTypeImpl> instance_; //!< Instance of the associated type object
