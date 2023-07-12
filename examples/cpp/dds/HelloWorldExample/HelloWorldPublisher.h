@@ -38,10 +38,6 @@ public:
     bool init(
             bool use_env);
 
-    //!Publish a sample
-    bool publish(
-            bool waitForListener = true);
-
     //!Run for number samples
     void run(
             uint32_t number,
@@ -66,8 +62,6 @@ private:
     public:
 
         PubListener()
-            : matched_(0)
-            , firstConnected_(false)
         {
         }
 
@@ -79,15 +73,8 @@ private:
                 eprosima::fastdds::dds::DataWriter* writer,
                 const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
 
-        int matched_;
-
-        bool firstConnected_;
     }
     listener_;
-
-    void runThread(
-            uint32_t number,
-            uint32_t sleep);
 
     eprosima::fastdds::dds::TypeSupport type_;
 };

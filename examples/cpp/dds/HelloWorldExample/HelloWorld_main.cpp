@@ -307,7 +307,7 @@ int main(
             HelloWorldSubscriber mysub;
             if (mysub.init(use_environment_qos))
             {
-                mysub.run();
+                mysub.run(count);
             }
             break;
         }

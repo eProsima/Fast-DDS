@@ -22,6 +22,9 @@
 
 #include "HelloWorldPubSubTypes.h"
 
+#include <condition_variable>
+#include <mutex>
+
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
@@ -39,9 +42,6 @@ public:
     bool init(
             bool use_env);
 
-    //!RUN the subscriber
-    void run();
-
     //!Run the subscriber until number samples have been received.
     void run(
             uint32_t number);
@@ -58,13 +58,20 @@ private:
 
     eprosima::fastdds::dds::TypeSupport type_;
 
+    mutable std::mutex stop_mutex_;
+
+    std::condition_variable stop_cv_;
+
     class SubListener : public eprosima::fastdds::dds::DataReaderListener
     {
     public:
 
-        SubListener()
-            : matched_(0)
-            , samples_(0)
+        SubListener(
+                std::mutex* stop_mutex,
+                std::condition_variable* stop_cv)
+            : samples_(0)
+            , stop_mutex_(stop_mutex)
+            , stop_cv_(stop_cv)
         {
         }
 
@@ -81,9 +88,11 @@ private:
 
         HelloWorld hello_;
 
-        int matched_;
-
         uint32_t samples_;
+
+        std::mutex* stop_mutex_;
+        std::condition_variable* stop_cv_;
+
     }
     listener_;
 };

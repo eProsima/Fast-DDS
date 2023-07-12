@@ -143,13 +143,10 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
 {
     if (info.current_count_change == 1)
     {
-        matched_ = info.total_count;
-        firstConnected_ = true;
         std::cout << "Publisher matched." << std::endl;
     }
     else if (info.current_count_change == -1)
     {
-        matched_ = info.total_count;
         std::cout << "Publisher unmatched." << std::endl;
     }
     else
@@ -159,67 +156,23 @@ void HelloWorldPublisher::PubListener::on_publication_matched(
     }
 }
 
-void HelloWorldPublisher::runThread(
-        uint32_t samples,
-        uint32_t sleep)
-{
-    if (samples == 0)
-    {
-        while (!stop_)
-        {
-            if (publish(false))
-            {
-                std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
-                          << " SENT" << std::endl;
-            }
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
-        }
-    }
-    else
-    {
-        for (uint32_t i = 0; i < samples; ++i)
-        {
-            if (!publish())
-            {
-                --i;
-            }
-            else
-            {
-                std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
-                          << " SENT" << std::endl;
-            }
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
-        }
-    }
-}
-
 void HelloWorldPublisher::run(
         uint32_t samples,
         uint32_t sleep)
 {
-    stop_ = false;
-    std::thread thread(&HelloWorldPublisher::runThread, this, samples, sleep);
-    if (samples == 0)
-    {
-        std::cout << "Publisher running. Please press enter to stop the Publisher at any time." << std::endl;
-        std::cin.ignore();
-        stop_ = true;
-    }
-    else
-    {
-        std::cout << "Publisher running " << samples << " samples." << std::endl;
-    }
-    thread.join();
-}
-
-bool HelloWorldPublisher::publish(
-        bool waitForListener)
-{
-    if (listener_.firstConnected_ || !waitForListener || listener_.matched_ > 0)
+    size_t c = 0;
+    for (uint32_t i = 1; i <= samples; i++)
     {
         hello_.index(hello_.index() + 1);
-        writer_->write(&hello_);
-        return true;
+        for (uint32_t j = 1; j <= samples; j++)
+        {
+            c++;
+            writer_->write(&hello_);
+            std::cout << c << " - Message: " << hello_.message() << " with index: " << hello_.index()
+                      << " SENT" << std::endl;
+            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
+        }
     }
-    return false;
+    std::cout << "All samples " << samples << " are sent, waiting 10 seconds before closing..." << std::endl;
+    std::this_thread::sleep_for(std::chrono::seconds(10));
 }

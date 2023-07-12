@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+    <profiles>
+        <participant profile_name="name_is_mandatory" is_default_profile="true">
+            <rtps>
+                <name>Profiles example name</name>
+            </rtps>
+        </participant>
+        <data_writer profile_name="datawriter_name_is_mandatory" is_default_profile="true">
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+            </qos>
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>4</depth>
+                </historyQos>
+            </topic>
+        </data_writer>
+        <data_reader profile_name="datareader_name_is_mandatory" is_default_profile="true">
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+            </qos>
+            <topic>
+                <historyQos>
+                    <kind>KEEP_LAST</kind>
+                    <depth>4</depth>
+                </historyQos>
+            </topic>
+        </data_reader>
+    </profiles>
+</dds>

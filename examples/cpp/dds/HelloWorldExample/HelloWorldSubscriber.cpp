@@ -34,6 +34,7 @@ HelloWorldSubscriber::HelloWorldSubscriber()
     , topic_(nullptr)
     , reader_(nullptr)
     , type_(new HelloWorldPubSubType())
+    , listener_(&stop_mutex_, &stop_cv_)
 {
 }
 
@@ -135,12 +136,10 @@ void HelloWorldSubscriber::SubListener::on_subscription_matched(
 {
     if (info.current_count_change == 1)
     {
-        matched_ = info.total_count;
         std::cout << "Subscriber matched." << std::endl;
     }
     else if (info.current_count_change == -1)
     {
-        matched_ = info.total_count;
         std::cout << "Subscriber unmatched." << std::endl;
     }
     else
@@ -158,25 +157,23 @@ void HelloWorldSubscriber::SubListener::on_data_available(
     {
         if (info.instance_state == ALIVE_INSTANCE_STATE)
         {
+            std::unique_lock<std::mutex> lck(*stop_mutex_);
             samples_++;
             // Print your structure data here.
             std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
+            lck.unlock();
+            stop_cv_->notify_one();
         }
     }
-}
-
-void HelloWorldSubscriber::run()
-{
-    std::cout << "Subscriber running. Please press enter to stop the Subscriber" << std::endl;
-    std::cin.ignore();
 }
 
 void HelloWorldSubscriber::run(
         uint32_t number)
 {
-    std::cout << "Subscriber running until " << number << "samples have been received" << std::endl;
-    while (number > listener_.samples_)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-    }
+    std::cout << "Subscriber running until " << number << " samples have been received" << std::endl;
+    std::unique_lock<std::mutex> lck(stop_mutex_);
+    stop_cv_.wait(lck, [&]
+            {
+                return listener_.samples_ >= number;
+            });
 }
