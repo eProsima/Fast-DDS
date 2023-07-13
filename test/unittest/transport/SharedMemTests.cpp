@@ -1299,7 +1299,11 @@ TEST_F(SHMTransportTests, port_listener_dead_recover)
     ASSERT_TRUE(buf != nullptr);
     memset(buf->data(), 0, buf->size());
     *static_cast<uint8_t*>(buf->data()) = 1u;
-    ASSERT_TRUE(port_sender->try_push(buf));
+    {
+        bool is_port_ok = false;
+        ASSERT_TRUE(port_sender->try_push(buf, is_port_ok));
+        ASSERT_TRUE(is_port_ok);
+    }
 
     // Wait until message received
     while (thread_listener2_state.load() < 1u)
@@ -1324,10 +1328,18 @@ TEST_F(SHMTransportTests, port_listener_dead_recover)
 
     *static_cast<uint8_t*>(buf->data()) = 2u;
     // This push must fail because port is not OK
-    ASSERT_FALSE(port_sender->try_push(buf));
+    {
+        bool is_port_ok = false;
+        ASSERT_FALSE(port_sender->try_push(buf, is_port_ok));
+        ASSERT_FALSE(is_port_ok);
+    }
 
     // This push must success because port was regenerated in the last try_push call.
-    ASSERT_TRUE(port_sender->try_push(buf));
+    {
+        bool is_port_ok = false;
+        ASSERT_TRUE(port_sender->try_push(buf, is_port_ok));
+        ASSERT_TRUE(is_port_ok);
+    }
 
     // Wait until port is regenerated
     while (thread_listener2_state.load() < 3u)
@@ -1458,8 +1470,16 @@ TEST_F(SHMTransportTests, port_not_ok_listener_recover)
     auto buffer = data_segment->alloc_buffer(1, std::chrono::steady_clock::now() + std::chrono::milliseconds(100));
     *static_cast<uint8_t*>(buffer->data()) = 6;
     // Fail because port regeneration
-    ASSERT_FALSE(managed_port->try_push(buffer));
-    ASSERT_TRUE(managed_port->try_push(buffer));
+    {
+        bool is_port_ok = false;
+        ASSERT_FALSE(managed_port->try_push(buffer, is_port_ok));
+        ASSERT_FALSE(is_port_ok);
+    }
+    {
+        bool is_port_ok = false;
+        ASSERT_TRUE(managed_port->try_push(buffer, is_port_ok));
+        ASSERT_TRUE(is_port_ok);
+    }
 
     thread_listener.join();
 }
@@ -1529,14 +1549,25 @@ TEST_F(SHMTransportTests, buffer_recover)
 
     // Test 1 (without port overflow)
     uint32_t send_counter = 0u;
+
+    bool is_port_ok = false;
+
     while (listener1_recv_count.load() < 16u)
     {
         {
             // The segment should never overflow
             auto buf = segment->alloc_buffer(1, std::chrono::steady_clock::time_point());
 
-            ASSERT_EQ(true, pub_sub1_write->try_push(buf));
-            ASSERT_EQ(true, pub_sub2_write->try_push(buf));
+            {
+                is_port_ok = false;
+                ASSERT_TRUE(pub_sub1_write->try_push(buf, is_port_ok));
+                ASSERT_TRUE(is_port_ok);
+            }
+            {
+                is_port_ok = false;
+                ASSERT_TRUE(pub_sub2_write->try_push(buf, is_port_ok));
+                ASSERT_TRUE(is_port_ok);
+            }
         }
 
         {
@@ -1571,14 +1602,22 @@ TEST_F(SHMTransportTests, buffer_recover)
             // The segment should never overflow
             auto buf = segment->alloc_buffer(1u, std::chrono::steady_clock::time_point());
 
-            if (!pub_sub1_write->try_push(buf))
             {
-                port_overflows1++;
+                is_port_ok = false;
+                if (!pub_sub1_write->try_push(buf, is_port_ok))
+                {
+                    EXPECT_TRUE(is_port_ok);
+                    port_overflows1++;
+                }
             }
 
-            if (!pub_sub2_write->try_push(buf))
             {
-                port_overflows2++;
+                is_port_ok = false;
+                if (!pub_sub2_write->try_push(buf, is_port_ok))
+                {
+                    EXPECT_TRUE(is_port_ok);
+                    port_overflows2++;
+                }
             }
         }
 
@@ -1602,8 +1641,16 @@ TEST_F(SHMTransportTests, buffer_recover)
 
     {
         auto buf = segment->alloc_buffer(1u, std::chrono::steady_clock::time_point());
-        ASSERT_EQ(true, pub_sub1_write->try_push(buf));
-        ASSERT_EQ(true, pub_sub2_write->try_push(buf));
+        {
+            is_port_ok = false;
+            ASSERT_TRUE(pub_sub1_write->try_push(buf, is_port_ok));
+            ASSERT_TRUE(is_port_ok);
+        }
+        {
+            is_port_ok = false;
+            ASSERT_TRUE(pub_sub2_write->try_push(buf, is_port_ok));
+            ASSERT_TRUE(is_port_ok);
+        }
     }
 
     thread_listener1.join();
@@ -1645,7 +1692,9 @@ TEST_F(SHMTransportTests, remote_segments_free)
         {
             if (j != i)
             {
-                ASSERT_TRUE(ports[j]->try_push(buf));
+                bool is_port_ok = false;
+                ASSERT_TRUE(ports[j]->try_push(buf, is_port_ok));
+                ASSERT_TRUE(is_port_ok);
                 ASSERT_TRUE(listeners[j]->pop() != nullptr);
             }
         }
