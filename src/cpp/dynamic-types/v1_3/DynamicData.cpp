@@ -4205,7 +4205,7 @@ ReturnCode_t DynamicData::set_enum_value(
 #ifdef DYNAMIC_TYPES_CHECKING
     if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
     {
-        if (!type_->exists_member_by_id(value))
+        if (!type_->exists_member_by_id(MemberId(value)))
         {
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }

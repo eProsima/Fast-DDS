@@ -190,6 +190,16 @@ public:
      */
     bool equals(
             const DynamicType& other) const noexcept;
+
+
+    /**
+     * Set the `@bit_bound` annotation in an enumerated type (bitmask included)
+     * @param[in] bit_bound word value with type context dependent meaning (see [standard] section \b 7.3.1.2.2)
+     * @return @ReturCode_t
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
+     */
+    ReturnCode_t annotation_set_bit_bound(
+            uint16_t bit_bound);
 };
 
 } // namespace v1_3

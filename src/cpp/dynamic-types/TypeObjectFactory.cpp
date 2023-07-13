@@ -2130,14 +2130,14 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
         }
         case TypeKind::TK_ENUM:
         {
-            // bit_bound annotation effect!
-            descriptor.annotation_set_bit_bound(object->complete().enumerated_type().header().common().bit_bound());
-
             v1_3::DynamicTypeBuilder_ptr enum_type{
                     v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor)};
 
+            // bit_bound annotation effect!
+            enum_type->annotation_set_bit_bound(object->complete().enumerated_type().header().common().bit_bound());
+
             // Apply type's annotations
-            apply_type_annotations(enum_type, object->complete().enumerated_type().header().detail().ann_custom());
+            apply_type_annotations(*enum_type, object->complete().enumerated_type().header().detail().ann_custom());
             /*
                {
                 const AppliedAnnotationSeq& annotations =
@@ -2166,41 +2166,55 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             const CompleteEnumeratedLiteralSeq& enumVector = object->complete().enumerated_type().literal_seq();
             for (auto member = enumVector.begin(); member != enumVector.end(); ++member)
             {
-                enum_type->add_member(member->common().value(), member->detail().name());
-                apply_member_annotations(enum_type, v1_3::MemberId(member->common().value()),
+                v1_3::MemberDescriptor m;
+                v1_3::MemberId id{member->common().value()};
+                m.set_id(id);
+                m.set_name(member->detail().name().c_str());
+
+                enum_type->add_member(m);
+
+                apply_member_annotations(*enum_type,
+                        id,
                         member->detail().ann_custom());
+
                 if (member->common().flags().IS_DEFAULT())
                 {
                     v1_3::AnnotationDescriptor def_flag;
-                    def_flag.set_value(ANNOTATION_DEFAULT_LITERAL_ID, CONST_TRUE);
-                    enum_type->apply_annotation_to_member(v1_3::MemberId(member->common().value()), def_flag);
+                    def_flag.set_value(ANNOTATION_DEFAULT_LITERAL_ID.c_str(), CONST_TRUE.c_str());
+                    enum_type->apply_annotation_to_member(id, def_flag);
                 }
             }
-            ret.reset(enum_type->build());
+            ret = enum_type->build();
             return ReturnCode_t::RETCODE_OK;
         }
         case TypeKind::TK_BITMASK:
         {
-            descriptor.annotation_set_bit_bound(object->complete().bitmask_type().header().common().bit_bound());
-            descriptor.bound_.emplace_back(static_cast<uint32_t>(
-                        object->complete().bitmask_type().header().common().bit_bound()));
-            descriptor.element_type_.reset(v1_3::DynamicTypeBuilderFactory::get_instance().get_bool_type());
+            descriptor.set_element_type(v1_3::DynamicTypeBuilderFactory::get_instance().get_bool_type());
+            uint32_t len = object->complete().bitmask_type().header().common().bit_bound();
+            descriptor.set_bounds(&len, 1);
 
             v1_3::DynamicTypeBuilder_ptr bitmask_type{
                     v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor)};
 
+            bitmask_type->annotation_set_bit_bound(object->complete().bitmask_type().header().common().bit_bound());
+
             // Apply type's annotations
-            apply_type_annotations(bitmask_type, object->complete().bitmask_type().header().detail().ann_custom());
+            apply_type_annotations(*bitmask_type, object->complete().bitmask_type().header().detail().ann_custom());
 
             const CompleteBitflagSeq& seq = object->complete().bitmask_type().flag_seq();
             for (auto member = seq.begin(); member != seq.end(); ++member)
             {
+                v1_3::MemberDescriptor m;
                 v1_3::MemberId id{member->common().position()};
-                bitmask_type->add_member(id, member->detail().name());
+                m.set_id(id);
+                m.set_name(member->detail().name().c_str());
+
+                bitmask_type->add_member(m);
                 // member->common().position() should be already an annotation
-                apply_member_annotations(bitmask_type, id, member->detail().ann_custom());
+                apply_member_annotations(*bitmask_type, id, member->detail().ann_custom());
             }
-            ret.reset(bitmask_type->build());
+
+            ret = bitmask_type->build();
             return ReturnCode_t::RETCODE_OK;
         }
         case TypeKind::TK_BITSET:
@@ -2208,14 +2222,14 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
             const TypeIdentifier* aux = &object->complete().bitset_type().header().base_type();
             if (aux->_d() == TypeKind::EK_COMPLETE)
             {
-                build_dynamic_type(descriptor.base_type_, get_type_name(aux), aux, get_type_object(aux));
+                descriptor.set_base_type(build_dynamic_type_v1_3(get_type_name(aux), aux, get_type_object(aux)));
             }
 
             v1_3::DynamicTypeBuilder_ptr bitsetType{
                     v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor)};
 
             // Apply type's annotations
-            apply_type_annotations(bitsetType, object->complete().bitset_type().header().detail().ann_custom());
+            apply_type_annotations(*bitsetType, object->complete().bitset_type().header().detail().ann_custom());
 
             //uint32_t order = 0;
             const CompleteBitfieldSeq& fields = object->complete().bitset_type().field_seq();
@@ -2229,34 +2243,36 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
                             << (int)member->common().holder_type());
                 }
 
-                v1_3::DynamicType_ptr type;
-                build_dynamic_type(type, get_type_name(auxMem), auxMem, get_type_object(auxMem));
-
                 v1_3::MemberDescriptor memDesc;
                 //memDesc.id_ = order++;
-                memDesc.set_type(type);
-                memDesc.set_name(member->detail().name());
+                memDesc.set_type(build_dynamic_type_v1_3(get_type_name(auxMem), auxMem, get_type_object(auxMem)));
+                memDesc.set_name(member->detail().name().c_str());
                 // bounds are meant for string, arrays, sequences, maps, but not for bitset!
                 // Lack in the standard?
                 bitsetType->add_member(memDesc);
-                v1_3::MemberId m_id = bitsetType->get_member_id_by_name(memDesc.get_name());
+
                 // member->common().position() and member->common().bitcount() should be annotations
-                apply_member_annotations(bitsetType, m_id, member->detail().ann_custom());
+                apply_member_annotations(
+                        *bitsetType,
+                        bitsetType->get_member_by_name(memDesc.get_name())->get_id(),
+                        member->detail().ann_custom());
             }
-            ret.reset(bitsetType->build());
+            ret = bitsetType->build();
             return ReturnCode_t::RETCODE_OK;
         }
         case TypeKind::TK_UNION:
         {
             const TypeIdentifier* aux =
                     get_stored_type_identifier(&object->complete().union_type().discriminator().common().type_id());
-            build_dynamic_type(descriptor.discriminator_type_, get_type_name(aux), aux, get_type_object(aux));
+
+            v1_3::DynamicType_ptr disc{build_dynamic_type_v1_3(get_type_name(aux), aux, get_type_object(aux))};
+            descriptor.set_discriminator_type(*disc);
 
             v1_3::DynamicTypeBuilder_ptr union_type{
                     v1_3::DynamicTypeBuilderFactory::get_instance().create_type(descriptor)};
 
             // Apply type's annotations
-            apply_type_annotations(union_type, object->complete().union_type().header().detail().ann_custom());
+            apply_type_annotations(*union_type, object->complete().union_type().header().detail().ann_custom());
 
             //uint32_t order = 0;
             const CompleteUnionMemberSeq& unionVector = object->complete().union_type().member_seq();
@@ -2269,38 +2285,35 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
                             << (int)member->common().type_id()._d());
                 }
 
-                v1_3::DynamicType_ptr type;
-                build_dynamic_type(type, get_type_name(auxMem), auxMem, get_type_object(auxMem));
+                v1_3::DynamicType_ptr type {
+                        build_dynamic_type_v1_3(get_type_name(auxMem), auxMem, get_type_object(auxMem))};
 
+                v1_3::MemberId id{member->common().member_id()};
                 v1_3::MemberDescriptor memDesc;
-                memDesc.set_type(type);
+                memDesc.set_type(*type);
                 //memDesc.set_index(order++);
-                memDesc.id_ = member->common().member_id();
-                memDesc.set_name(member->detail().name());
-                memDesc.set_default_union_value(member->common().member_flags().IS_DEFAULT());
-                if (descriptor.discriminator_type_->get_kind() == TypeKind::TK_ENUM)
+                memDesc.set_id(id);
+                memDesc.set_name(member->detail().name().c_str());
+                memDesc.set_default_label(member->common().member_flags().IS_DEFAULT());
+
+                if (type->get_kind() == TypeKind::TK_ENUM)
                 {
-                    v1_3::MemberDescriptor enumMember;
-                    descriptor.discriminator_type_->get_member(enumMember, memDesc.id_);
-                    memDesc.default_value_ = enumMember.get_name();
-                    for (uint32_t lab : member->common().label_seq())
-                    {
-                        memDesc.add_union_case_index(lab);
-                    }
+                    memDesc.set_default_value(disc->get_member(id)->get_name());
                 }
                 else
                 {
-                    memDesc.default_value_ = std::to_string(*memDesc.id_);
-                    for (uint32_t lab : member->common().label_seq())
-                    {
-                        memDesc.add_union_case_index(lab);
-                    }
+                    memDesc.set_default_value(std::to_string(*id).c_str());
                 }
+
+                auto& slabels = member->common().label_seq();
+                std::vector<uint32_t> labels(slabels.begin(), slabels.end());
+                memDesc.set_labels(labels.data(), static_cast<uint32_t>(labels.size()));
+
                 union_type->add_member(memDesc);
-                apply_member_annotations(union_type, member->common().member_id(), member->detail().ann_custom());
+                apply_member_annotations(*union_type, member->common().member_id(), member->detail().ann_custom());
             }
 
-            ret.reset(union_type->build());
+            ret = union_type->build();
             return ReturnCode_t::RETCODE_OK;
         }
         case TypeKind::TK_ANNOTATION:
@@ -2318,23 +2331,21 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
                 }
 
                 v1_3::MemberDescriptor mem_desc;
-                mem_desc.set_name(member.name());
+                mem_desc.set_name(member.name().c_str());
                 if (annotation_member_type != nullptr)
                 {
                     mem_desc.set_type(annotation_member_type);
                 }
                 else
                 {
-                    v1_3::DynamicType_ptr type;
-                    build_dynamic_type(type, get_type_name(aux_mem), aux_mem, get_type_object(aux_mem));
-                    mem_desc.set_type(type);
+                    mem_desc.set_type(build_dynamic_type_v1_3(get_type_name(aux_mem), aux_mem, get_type_object(aux_mem)));
                 }
-                mem_desc.set_default_value(member.default_value().to_string());
+                mem_desc.set_default_value(member.default_value().to_string().c_str());
                 annotation_type->add_member(mem_desc);
             }
             // Annotation inner definitions?
 
-            ret.reset(annotation_type->build());
+            ret = annotation_type->build();;
             return ReturnCode_t::RETCODE_OK;
         }
         default:
@@ -2653,19 +2664,19 @@ void TypeObjectFactory::apply_type_annotations(
                     << (int)annotation.annotation_typeid()._d());
         }
 
-        v1_3::DynamicType_ptr type;
-        build_dynamic_type(type, get_type_name(anno_id), anno_id, get_type_object(anno_id));
+        v1_3::DynamicType_ptr type {
+                build_dynamic_type_v1_3(get_type_name(anno_id), anno_id, get_type_object(anno_id))};
 
         v1_3::AnnotationDescriptor anno_desc;
-        anno_desc.set_type(type);
+        anno_desc.set_type(*type);
 
         const AppliedAnnotationParameterSeq& anno_params = annotation.param_seq();
         for (const AppliedAnnotationParameter& a_param : anno_params)
         {
-            std::string param_key = get_key_from_hash(anno_desc.type(), a_param.paramname_hash());
-            anno_desc.set_value(param_key, a_param.value().to_string());
+            std::string param_key = get_key_from_hash(*type, a_param.paramname_hash());
+            anno_desc.set_value(param_key.c_str(), a_param.value().to_string().c_str());
         }
-        type_builder->apply_annotation(anno_desc);
+        type_builder.apply_annotation(anno_desc);
     }
 }
 
@@ -2708,18 +2719,19 @@ void TypeObjectFactory::apply_member_annotations(
                     << (int)annotation.annotation_typeid()._d());
         }
 
-        v1_3::DynamicType_ptr type;
-        build_dynamic_type(type, get_type_name(anno_id), anno_id, get_type_object(anno_id));
+        v1_3::DynamicType_ptr type {
+                build_dynamic_type_v1_3(get_type_name(anno_id), anno_id, get_type_object(anno_id))};
 
         v1_3::AnnotationDescriptor anno_desc;
-        anno_desc.set_type(type);
+        anno_desc.set_type(*type);
+
         const AppliedAnnotationParameterSeq& anno_params = annotation.param_seq();
         for (const AppliedAnnotationParameter& a_param : anno_params)
         {
-            std::string param_key = get_key_from_hash(anno_desc.type(), a_param.paramname_hash());
-            anno_desc.set_value(param_key, a_param.value().to_string());
+            std::string param_key = get_key_from_hash(*type, a_param.paramname_hash());
+            anno_desc.set_value(param_key.c_str(), a_param.value().to_string().c_str());
         }
-        parent_type_builder->apply_annotation_to_member(member_id, anno_desc);
+        parent_type_builder.apply_annotation_to_member(member_id, anno_desc);
     }
 }
 
@@ -2750,9 +2762,13 @@ std::string TypeObjectFactory::get_key_from_hash(
         const v1_3::DynamicType& annotation_descriptor_type,
         const NameHash& hash) const
 {
-    for (auto it : annotation_descriptor_type->get_all_members_by_id())
+    auto members = annotation_descriptor_type.get_all_members();
+    v1_3::MemberId id;
+
+    while (!!id)
     {
-        std::string name = it.second->get_name();
+        std::string name = members[id]->get_name();
+
         NameHash memberHash;
         MD5 message_hash(name);
         for (int i = 0; i < 4; ++i)
@@ -2763,8 +2779,11 @@ std::string TypeObjectFactory::get_key_from_hash(
         {
             return name;
         }
+
+        id = members.next_key(id);
     }
-    return "";
+
+    return {};
 }
 
 TypeIdentifierWithSizeSeq TypeObjectFactory::typelookup_get_type_dependencies(
@@ -2892,12 +2911,12 @@ const TypeObject* TypeObjectFactory::typelookup_get_type_object_from_information
     return nullptr;
 }
 
-const v1_3::DynamicType* build_dynamic_type_v1_3(
+const v1_3::DynamicType* TypeObjectFactory::build_dynamic_type_v1_3(
         const std::string& name,
         const TypeIdentifier* identifier,
-        const TypeObject* object = nullptr) const
+        const TypeObject* object /*= nullptr*/) const
 {
-    v1_3::DynamicType* element_type = nullptr;
+    const v1_3::DynamicType* element_type = nullptr;
     build_dynamic_type(element_type, name, identifier, object);
     return element_type;
 }

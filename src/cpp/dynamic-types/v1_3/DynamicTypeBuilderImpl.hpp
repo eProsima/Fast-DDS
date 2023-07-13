@@ -127,6 +127,7 @@ public:
     using TypeState::annotation_set_mutable;
     using TypeState::annotation_set_final;
     using TypeState::annotation_set_appendable;
+    using TypeState::annotation_set_bit_bound;
 
     using TypeState::get_descriptor;
 

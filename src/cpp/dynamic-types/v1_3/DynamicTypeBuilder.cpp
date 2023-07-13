@@ -177,3 +177,21 @@ bool DynamicTypeBuilder::equals(
     return DynamicTypeBuilderImpl::get_implementation(*this)
            == DynamicTypeImpl::get_implementation(other);
 }
+
+ReturnCode_t DynamicTypeBuilder::annotation_set_bit_bound(
+        uint16_t bit_bound)
+{
+    auto& impl = DynamicTypeBuilderImpl::get_implementation(*this);
+
+    switch (impl.get_kind())
+    {
+        case TypeKind::TK_ENUM:
+        case TypeKind::TK_BITMASK:
+            impl.annotation_set_bit_bound(bit_bound);
+            break;
+        default:
+            return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+
+    return {};
+}
