@@ -57,7 +57,7 @@ bool DDSFilterExpression::evaluate(
     try
     {
         FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
-        Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::CdrVersion::DDS_CDR);
+        Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::CdrVersion::XCDRv1);
         deser.read_encapsulation();
         dyn_data_->deserialize(deser);
     }

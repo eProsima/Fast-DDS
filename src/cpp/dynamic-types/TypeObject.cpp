@@ -18,6 +18,7 @@
 #include <fastdds/dds/log/Log.hpp>
 #include <fastcdr/exceptions/BadParamException.h>
 #include <fastcdr/Cdr.h>
+#include <fastcdr/CdrSizeCalculator.hpp>
 
 // The types in this file shall be serialized with XCDR encoding version 2
 namespace eprosima {
@@ -70,19 +71,6 @@ CommonStructMember& CommonStructMember::operator =(
     m_member_type_id = std::move(x.m_member_type_id);
 
     return *this;
-}
-
-size_t CommonStructMember::getCdrSerializedSize(
-        const CommonStructMember& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += StructMemberFlag::getCdrSerializedSize(data.member_flags(), current_alignment);
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.member_type_id(), current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 void CommonStructMember::serialize(
@@ -161,24 +149,6 @@ CompleteMemberDetail& CompleteMemberDetail::operator =(
     return *this;
 }
 
-size_t CompleteMemberDetail::getCdrSerializedSize(
-        const CompleteMemberDetail& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.name().size()  + 1;
-    current_alignment += AppliedBuiltinMemberAnnotations::getCdrSerializedSize(data.ann_builtin(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.ann_custom().size(); ++a)
-    {
-        current_alignment += AppliedAnnotation::getCdrSerializedSize(data.ann_custom().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
-}
-
 void CompleteMemberDetail::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -251,17 +221,6 @@ MinimalMemberDetail& MinimalMemberDetail::operator =(
     return *this;
 }
 
-size_t MinimalMemberDetail::getCdrSerializedSize(
-        const MinimalMemberDetail&,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-    return current_alignment - initial_alignment;
-}
-
 void MinimalMemberDetail::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -327,18 +286,6 @@ CompleteStructMember& CompleteStructMember::operator =(
     m_detail = std::move(x.m_detail);
 
     return *this;
-}
-
-size_t CompleteStructMember::getCdrSerializedSize(
-        const CompleteStructMember& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonStructMember::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += CompleteMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 void CompleteStructMember::serialize(
@@ -411,18 +358,6 @@ MinimalStructMember& MinimalStructMember::operator =(
     return *this;
 }
 
-size_t MinimalStructMember::getCdrSerializedSize(
-        const MinimalStructMember& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonStructMember::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += MinimalMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void MinimalStructMember::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -489,17 +424,6 @@ AppliedBuiltinTypeAnnotations& AppliedBuiltinTypeAnnotations::operator =(
     return *this;
 }
 
-size_t AppliedBuiltinTypeAnnotations::getCdrSerializedSize(
-        const AppliedBuiltinTypeAnnotations& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += AppliedVerbatimAnnotation::getCdrSerializedSize(data.verbatim(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void AppliedBuiltinTypeAnnotations::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -555,14 +479,6 @@ MinimalTypeDetail& MinimalTypeDetail::operator =(
         MinimalTypeDetail&&)
 {
     return *this;
-}
-
-size_t MinimalTypeDetail::getCdrSerializedSize(
-        const MinimalTypeDetail&,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-    return current_alignment - initial_alignment;
 }
 
 void MinimalTypeDetail::serialize(
@@ -624,23 +540,6 @@ CompleteTypeDetail& CompleteTypeDetail::operator =(
     m_type_name = std::move(x.m_type_name);
 
     return *this;
-}
-
-size_t CompleteTypeDetail::getCdrSerializedSize(
-        const CompleteTypeDetail& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += AppliedBuiltinTypeAnnotations::getCdrSerializedSize(data.ann_builtin(), current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.ann_custom().size(); ++a)
-    {
-        current_alignment += AppliedAnnotation::getCdrSerializedSize(data.ann_custom().at(a), current_alignment);
-    }
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.type_name().size() + 1;
-
-    return current_alignment - initial_alignment;
 }
 
 void CompleteTypeDetail::serialize(
@@ -722,18 +621,6 @@ CompleteStructHeader& CompleteStructHeader::operator =(
     return *this;
 }
 
-size_t CompleteStructHeader::getCdrSerializedSize(
-        const CompleteStructHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.base_type(), current_alignment);
-    current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void CompleteStructHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -802,18 +689,6 @@ MinimalStructHeader& MinimalStructHeader::operator =(
     m_detail = std::move(x.m_detail);
 
     return *this;
-}
-
-size_t MinimalStructHeader::getCdrSerializedSize(
-        const MinimalStructHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.base_type(), current_alignment);
-    current_alignment += MinimalTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 void MinimalStructHeader::serialize(
@@ -888,23 +763,6 @@ CompleteStructType& CompleteStructType::operator =(
     m_member_seq = std::move(x.m_member_seq);
 
     return *this;
-}
-
-size_t CompleteStructType::getCdrSerializedSize(
-        const CompleteStructType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += StructTypeFlag::getCdrSerializedSize(data.struct_flags(), current_alignment);
-    current_alignment += CompleteStructHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.member_seq().size(); ++a)
-    {
-        current_alignment += CompleteStructMember::getCdrSerializedSize(data.member_seq().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 void CompleteStructType::serialize(
@@ -1044,23 +902,6 @@ MinimalStructType& MinimalStructType::operator =(
     m_member_seq = std::move(x.m_member_seq);
 
     return *this;
-}
-
-size_t MinimalStructType::getCdrSerializedSize(
-        const MinimalStructType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += StructTypeFlag::getCdrSerializedSize(data.struct_flags(), current_alignment);
-    current_alignment += MinimalStructHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.member_seq().size(); ++a)
-    {
-        current_alignment += MinimalStructMember::getCdrSerializedSize(data.member_seq().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 void MinimalStructType::serialize(
@@ -1206,25 +1047,6 @@ CommonUnionMember& CommonUnionMember::operator =(
     return *this;
 }
 
-size_t CommonUnionMember::getCdrSerializedSize(
-        const CommonUnionMember& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += UnionMemberFlag::getCdrSerializedSize(data.member_flags(), current_alignment);
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.type_id(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.label_seq().size(); ++a)
-    {
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    }
-
-    return current_alignment - initial_alignment;
-}
-
 void CommonUnionMember::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -1325,18 +1147,6 @@ CompleteUnionMember& CompleteUnionMember::operator =(
     return *this;
 }
 
-size_t CompleteUnionMember::getCdrSerializedSize(
-        const CompleteUnionMember& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonUnionMember::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += CompleteMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void CompleteUnionMember::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -1407,18 +1217,6 @@ MinimalUnionMember& MinimalUnionMember::operator =(
     return *this;
 }
 
-size_t MinimalUnionMember::getCdrSerializedSize(
-        const MinimalUnionMember& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonUnionMember::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += MinimalMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void MinimalUnionMember::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -1487,18 +1285,6 @@ CommonDiscriminatorMember& CommonDiscriminatorMember::operator =(
     m_type_id = std::move(x.m_type_id);
 
     return *this;
-}
-
-size_t CommonDiscriminatorMember::getCdrSerializedSize(
-        const CommonDiscriminatorMember& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += UnionDiscriminatorFlag::getCdrSerializedSize(data.member_flags(), current_alignment);
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.type_id(), current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 void CommonDiscriminatorMember::serialize(
@@ -1574,24 +1360,6 @@ CompleteDiscriminatorMember& CompleteDiscriminatorMember::operator =(
     return *this;
 }
 
-size_t CompleteDiscriminatorMember::getCdrSerializedSize(
-        const CompleteDiscriminatorMember& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonDiscriminatorMember::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += AppliedBuiltinTypeAnnotations::getCdrSerializedSize(data.ann_builtin(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.ann_custom().size(); ++a)
-    {
-        current_alignment += AppliedAnnotation::getCdrSerializedSize(data.ann_custom().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
-}
-
 void CompleteDiscriminatorMember::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -1664,17 +1432,6 @@ MinimalDiscriminatorMember& MinimalDiscriminatorMember::operator =(
     return *this;
 }
 
-size_t MinimalDiscriminatorMember::getCdrSerializedSize(
-        const MinimalDiscriminatorMember& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonDiscriminatorMember::getCdrSerializedSize(data.common(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void MinimalDiscriminatorMember::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -1737,17 +1494,6 @@ CompleteUnionHeader& CompleteUnionHeader::operator =(
     return *this;
 }
 
-size_t CompleteUnionHeader::getCdrSerializedSize(
-        const CompleteUnionHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void CompleteUnionHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -1808,17 +1554,6 @@ MinimalUnionHeader& MinimalUnionHeader::operator =(
     m_detail = std::move(x.m_detail);
 
     return *this;
-}
-
-size_t MinimalUnionHeader::getCdrSerializedSize(
-        const MinimalUnionHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += MinimalTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 void MinimalUnionHeader::serialize(
@@ -1893,25 +1628,6 @@ CompleteUnionType& CompleteUnionType::operator =(
     m_member_seq = std::move(x.m_member_seq);
 
     return *this;
-}
-
-size_t CompleteUnionType::getCdrSerializedSize(
-        const CompleteUnionType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += UnionTypeFlag::getCdrSerializedSize(data.union_flags(), current_alignment);
-    current_alignment += CompleteUnionHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += CompleteDiscriminatorMember::getCdrSerializedSize(data.discriminator(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.member_seq().size(); ++a)
-    {
-        current_alignment += CompleteUnionMember::getCdrSerializedSize(data.member_seq().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 void CompleteUnionType::serialize(
@@ -2061,25 +1777,6 @@ MinimalUnionType& MinimalUnionType::operator =(
     return *this;
 }
 
-size_t MinimalUnionType::getCdrSerializedSize(
-        const MinimalUnionType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += UnionTypeFlag::getCdrSerializedSize(data.union_flags(), current_alignment);
-    current_alignment += MinimalUnionHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += MinimalDiscriminatorMember::getCdrSerializedSize(data.discriminator(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.member_seq().size(); ++a)
-    {
-        current_alignment += MinimalUnionMember::getCdrSerializedSize(data.member_seq().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
-}
-
 void MinimalUnionType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -2219,18 +1916,6 @@ CommonAnnotationParameter& CommonAnnotationParameter::operator =(
     return *this;
 }
 
-size_t CommonAnnotationParameter::getCdrSerializedSize(
-        const CommonAnnotationParameter& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += AnnotationParameterFlag::getCdrSerializedSize(data.member_flags(), current_alignment);
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.member_type_id(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void CommonAnnotationParameter::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -2303,19 +1988,6 @@ CompleteAnnotationParameter& CompleteAnnotationParameter::operator =(
     m_default_value = std::move(x.m_default_value);
 
     return *this;
-}
-
-size_t CompleteAnnotationParameter::getCdrSerializedSize(
-        const CompleteAnnotationParameter& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonAnnotationParameter::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.name().size() + 1;
-    current_alignment += AnnotationParameterValue::getCdrSerializedSize(data.default_value(), current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 void CompleteAnnotationParameter::serialize(
@@ -2395,19 +2067,6 @@ MinimalAnnotationParameter& MinimalAnnotationParameter::operator =(
     return *this;
 }
 
-size_t MinimalAnnotationParameter::getCdrSerializedSize(
-        const MinimalAnnotationParameter& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonAnnotationParameter::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.name().size() + 1;
-    current_alignment += AnnotationParameterValue::getCdrSerializedSize(data.default_value(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void MinimalAnnotationParameter::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -2477,18 +2136,6 @@ CompleteAnnotationHeader& CompleteAnnotationHeader::operator =(
     return *this;
 }
 
-size_t CompleteAnnotationHeader::getCdrSerializedSize(
-        const CompleteAnnotationHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 +
-            eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.annotation_name().size() + 1;
-
-    return current_alignment - initial_alignment;
-}
-
 void CompleteAnnotationHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -2544,15 +2191,6 @@ MinimalAnnotationHeader& MinimalAnnotationHeader::operator =(
         MinimalAnnotationHeader&&)
 {
     return *this;
-}
-
-size_t MinimalAnnotationHeader::getCdrSerializedSize(
-        const MinimalAnnotationHeader&,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    return current_alignment - initial_alignment;
 }
 
 void MinimalAnnotationHeader::serialize(
@@ -2615,25 +2253,6 @@ CompleteAnnotationType& CompleteAnnotationType::operator =(
     m_member_seq = std::move(x.m_member_seq);
 
     return *this;
-}
-
-size_t CompleteAnnotationType::getCdrSerializedSize(
-        const CompleteAnnotationType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += AnnotationTypeFlag::getCdrSerializedSize(data.annotation_flag(), current_alignment);
-    current_alignment += CompleteAnnotationHeader::getCdrSerializedSize(data.header(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.member_seq().size(); ++a)
-    {
-        current_alignment += CompleteAnnotationParameter::getCdrSerializedSize(data.member_seq().at(
-                            a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 void CompleteAnnotationType::serialize(
@@ -2716,26 +2335,6 @@ MinimalAnnotationType& MinimalAnnotationType::operator =(
     return *this;
 }
 
-size_t MinimalAnnotationType::getCdrSerializedSize(
-        const MinimalAnnotationType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += AnnotationTypeFlag::getCdrSerializedSize(data.annotation_flag(), current_alignment);
-    current_alignment += MinimalAnnotationHeader::getCdrSerializedSize(data.header(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.member_seq().size(); ++a)
-    {
-        current_alignment +=
-                MinimalAnnotationParameter::getCdrSerializedSize(data.member_seq().at(a),
-                        current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
-}
-
 void MinimalAnnotationType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -2812,18 +2411,6 @@ CommonAliasBody& CommonAliasBody::operator =(
     return *this;
 }
 
-size_t CommonAliasBody::getCdrSerializedSize(
-        const CommonAliasBody& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += AliasMemberFlag::getCdrSerializedSize(data.related_flags(), current_alignment);
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.related_type(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void CommonAliasBody::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -2893,24 +2480,6 @@ CompleteAliasBody& CompleteAliasBody::operator =(
     m_ann_custom = std::move(x.m_ann_custom);
 
     return *this;
-}
-
-size_t CompleteAliasBody::getCdrSerializedSize(
-        const CompleteAliasBody& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonAliasBody::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += AppliedBuiltinMemberAnnotations::getCdrSerializedSize(data.ann_builtin(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.ann_custom().size(); ++a)
-    {
-        current_alignment += AppliedAnnotation::getCdrSerializedSize(data.ann_custom().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 void CompleteAliasBody::serialize(
@@ -2983,17 +2552,6 @@ MinimalAliasBody& MinimalAliasBody::operator =(
     return *this;
 }
 
-size_t MinimalAliasBody::getCdrSerializedSize(
-        const MinimalAliasBody& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonAliasBody::getCdrSerializedSize(data.common(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void MinimalAliasBody::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -3054,17 +2612,6 @@ CompleteAliasHeader& CompleteAliasHeader::operator =(
     return *this;
 }
 
-size_t CompleteAliasHeader::getCdrSerializedSize(
-        const CompleteAliasHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void CompleteAliasHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -3117,15 +2664,6 @@ MinimalAliasHeader& MinimalAliasHeader::operator =(
         MinimalAliasHeader&&)
 {
     return *this;
-}
-
-size_t MinimalAliasHeader::getCdrSerializedSize(
-        const MinimalAliasHeader&,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    return current_alignment - initial_alignment;
 }
 
 void MinimalAliasHeader::serialize(
@@ -3186,19 +2724,6 @@ CompleteAliasType& CompleteAliasType::operator =(
     m_body = std::move(x.m_body);
 
     return *this;
-}
-
-size_t CompleteAliasType::getCdrSerializedSize(
-        const CompleteAliasType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += AliasTypeFlag::getCdrSerializedSize(data.alias_flags(), current_alignment);
-    current_alignment += CompleteAliasHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += CompleteAliasBody::getCdrSerializedSize(data.body(), current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 void CompleteAliasType::serialize(
@@ -3276,19 +2801,6 @@ MinimalAliasType& MinimalAliasType::operator =(
     return *this;
 }
 
-size_t MinimalAliasType::getCdrSerializedSize(
-        const MinimalAliasType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += AliasTypeFlag::getCdrSerializedSize(data.alias_flags(), current_alignment);
-    current_alignment += MinimalAliasHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += MinimalAliasBody::getCdrSerializedSize(data.body(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void MinimalAliasType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -3358,23 +2870,6 @@ CompleteElementDetail& CompleteElementDetail::operator =(
     m_ann_custom = std::move(x.m_ann_custom);
 
     return *this;
-}
-
-size_t CompleteElementDetail::getCdrSerializedSize(
-        const CompleteElementDetail& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += AppliedBuiltinMemberAnnotations::getCdrSerializedSize(data.ann_builtin(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.ann_custom().size(); ++a)
-    {
-        current_alignment += AppliedAnnotation::getCdrSerializedSize(data.ann_custom().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 void CompleteElementDetail::serialize(
@@ -3450,18 +2945,6 @@ CommonCollectionElement& CommonCollectionElement::operator =(
     return *this;
 }
 
-size_t CommonCollectionElement::getCdrSerializedSize(
-        const CommonCollectionElement& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CollectionElementFlag::getCdrSerializedSize(data.element_flags(), current_alignment);
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.type(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void CommonCollectionElement::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -3531,18 +3014,6 @@ CompleteCollectionElement& CompleteCollectionElement::operator =(
     return *this;
 }
 
-size_t CompleteCollectionElement::getCdrSerializedSize(
-        const CompleteCollectionElement& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonCollectionElement::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += CompleteElementDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void CompleteCollectionElement::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -3609,17 +3080,6 @@ MinimalCollectionElement& MinimalCollectionElement::operator =(
     return *this;
 }
 
-size_t MinimalCollectionElement::getCdrSerializedSize(
-        const MinimalCollectionElement& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonCollectionElement::getCdrSerializedSize(data.common(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void MinimalCollectionElement::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -3680,17 +3140,6 @@ CommonCollectionHeader& CommonCollectionHeader::operator =(
     m_bound = std::move(x.m_bound);
 
     return *this;
-}
-
-size_t CommonCollectionHeader::getCdrSerializedSize(
-        const CommonCollectionHeader&,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255  + 1;
-
-    return current_alignment - initial_alignment;
 }
 
 void CommonCollectionHeader::serialize(
@@ -3760,18 +3209,6 @@ CompleteCollectionHeader& CompleteCollectionHeader::operator =(
     return *this;
 }
 
-size_t CompleteCollectionHeader::getCdrSerializedSize(
-        const CompleteCollectionHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonCollectionHeader::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void CompleteCollectionHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -3836,17 +3273,6 @@ MinimalCollectionHeader& MinimalCollectionHeader::operator =(
     m_common = std::move(x.m_common);
 
     return *this;
-}
-
-size_t MinimalCollectionHeader::getCdrSerializedSize(
-        const MinimalCollectionHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonCollectionHeader::getCdrSerializedSize(data.common(), current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 void MinimalCollectionHeader::serialize(
@@ -3917,30 +3343,6 @@ CompleteSequenceType& CompleteSequenceType::operator =(
     m_element = std::move(x.m_element);
 
     return *this;
-}
-
-size_t CompleteSequenceType::getCdrSerializedSize(
-        const CompleteSequenceType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    // FIXED_SIXE current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
-    current_alignment += CompleteCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += CompleteCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
-
-    // STRING current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.str().size() + 1;
-    // SEQUENCE
-    /*
-       current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-       for(size_t a = 0; a < data.param_seq().size(); ++a)
-       {
-        current_alignment += AppliedAnnotationParameter::getCdrSerializedSize(data.param_seq().at(a), current_alignment);
-       }
-     */
-
-    return current_alignment - initial_alignment;
 }
 
 void CompleteSequenceType::serialize(
@@ -4020,30 +3422,6 @@ MinimalSequenceType& MinimalSequenceType::operator =(
     return *this;
 }
 
-size_t MinimalSequenceType::getCdrSerializedSize(
-        const MinimalSequenceType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    // FIXED_SIXE current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
-    current_alignment += MinimalCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += MinimalCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
-
-    // STRING current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.str().size() + 1;
-    // SEQUENCE
-    /*
-       current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-       for(size_t a = 0; a < data.param_seq().size(); ++a)
-       {
-        current_alignment += AppliedAnnotationParameter::getCdrSerializedSize(data.param_seq().at(a), current_alignment);
-       }
-     */
-
-    return current_alignment - initial_alignment;
-}
-
 void MinimalSequenceType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -4111,21 +3489,6 @@ CommonArrayHeader& CommonArrayHeader::operator =(
     m_bound_seq = std::move(x.m_bound_seq);
 
     return *this;
-}
-
-size_t CommonArrayHeader::getCdrSerializedSize(
-        const CommonArrayHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.bound_seq().size(); ++a)
-    {
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 void CommonArrayHeader::serialize(
@@ -4211,18 +3574,6 @@ CompleteArrayHeader& CompleteArrayHeader::operator =(
     return *this;
 }
 
-size_t CompleteArrayHeader::getCdrSerializedSize(
-        const CompleteArrayHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonArrayHeader::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void CompleteArrayHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -4287,17 +3638,6 @@ MinimalArrayHeader& MinimalArrayHeader::operator =(
     m_common = std::move(x.m_common);
 
     return *this;
-}
-
-size_t MinimalArrayHeader::getCdrSerializedSize(
-        const MinimalArrayHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonArrayHeader::getCdrSerializedSize(data.common(), current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 void MinimalArrayHeader::serialize(
@@ -4368,19 +3708,6 @@ CompleteArrayType& CompleteArrayType::operator =(
     m_element = std::move(x.m_element);
 
     return *this;
-}
-
-size_t CompleteArrayType::getCdrSerializedSize(
-        const CompleteArrayType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
-    current_alignment += CompleteArrayHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += CompleteCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 void CompleteArrayType::serialize(
@@ -4458,19 +3785,6 @@ MinimalArrayType& MinimalArrayType::operator =(
     m_element = std::move(x.m_element);
 
     return *this;
-}
-
-size_t MinimalArrayType::getCdrSerializedSize(
-        const MinimalArrayType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
-    current_alignment += MinimalArrayHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += MinimalCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 void MinimalArrayType::serialize(
@@ -4552,20 +3866,6 @@ CompleteMapType& CompleteMapType::operator =(
     m_element = std::move(x.m_element);
 
     return *this;
-}
-
-size_t CompleteMapType::getCdrSerializedSize(
-        const CompleteMapType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
-    current_alignment += CompleteCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += CompleteCollectionElement::getCdrSerializedSize(data.key(), current_alignment);
-    current_alignment += CompleteCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 void CompleteMapType::serialize(
@@ -4653,20 +3953,6 @@ MinimalMapType& MinimalMapType::operator =(
     return *this;
 }
 
-size_t MinimalMapType::getCdrSerializedSize(
-        const MinimalMapType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CollectionTypeFlag::getCdrSerializedSize(data.collection_flag(), current_alignment);
-    current_alignment += MinimalCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += MinimalCollectionElement::getCdrSerializedSize(data.key(), current_alignment);
-    current_alignment += MinimalCollectionElement::getCdrSerializedSize(data.element(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void MinimalMapType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -4744,18 +4030,6 @@ CommonEnumeratedLiteral& CommonEnumeratedLiteral::operator =(
     return *this;
 }
 
-size_t CommonEnumeratedLiteral::getCdrSerializedSize(
-        const CommonEnumeratedLiteral& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += EnumeratedLiteralFlag::getCdrSerializedSize(data.flags(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void CommonEnumeratedLiteral::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -4823,18 +4097,6 @@ CompleteEnumeratedLiteral& CompleteEnumeratedLiteral::operator =(
     m_detail = std::move(x.m_detail);
 
     return *this;
-}
-
-size_t CompleteEnumeratedLiteral::getCdrSerializedSize(
-        const CompleteEnumeratedLiteral& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonEnumeratedLiteral::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += CompleteMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 void CompleteEnumeratedLiteral::serialize(
@@ -4907,18 +4169,6 @@ MinimalEnumeratedLiteral& MinimalEnumeratedLiteral::operator =(
     return *this;
 }
 
-size_t MinimalEnumeratedLiteral::getCdrSerializedSize(
-        const MinimalEnumeratedLiteral& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonEnumeratedLiteral::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += MinimalMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void MinimalEnumeratedLiteral::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -4983,17 +4233,6 @@ CommonEnumeratedHeader& CommonEnumeratedHeader::operator =(
     m_bit_bound = std::move(x.m_bit_bound);
 
     return *this;
-}
-
-size_t CommonEnumeratedHeader::getCdrSerializedSize(
-        const CommonEnumeratedHeader&,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-    return current_alignment - initial_alignment;
 }
 
 void CommonEnumeratedHeader::serialize(
@@ -5064,18 +4303,6 @@ CompleteEnumeratedHeader& CompleteEnumeratedHeader::operator =(
     return *this;
 }
 
-size_t CompleteEnumeratedHeader::getCdrSerializedSize(
-        const CompleteEnumeratedHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonEnumeratedHeader::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void CompleteEnumeratedHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -5140,17 +4367,6 @@ MinimalEnumeratedHeader& MinimalEnumeratedHeader::operator =(
     m_common = std::move(x.m_common);
 
     return *this;
-}
-
-size_t MinimalEnumeratedHeader::getCdrSerializedSize(
-        const MinimalEnumeratedHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonEnumeratedHeader::getCdrSerializedSize(data.common(), current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 void MinimalEnumeratedHeader::serialize(
@@ -5221,26 +4437,6 @@ CompleteEnumeratedType& CompleteEnumeratedType::operator =(
     m_literal_seq = std::move(x.m_literal_seq);
 
     return *this;
-}
-
-size_t CompleteEnumeratedType::getCdrSerializedSize(
-        const CompleteEnumeratedType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += EnumTypeFlag::getCdrSerializedSize(data.enum_flags(), current_alignment);
-    current_alignment += CompleteEnumeratedHeader::getCdrSerializedSize(data.header(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.literal_seq().size(); ++a)
-    {
-        current_alignment +=
-                CompleteEnumeratedLiteral::getCdrSerializedSize(data.literal_seq().at(a),
-                        current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 void CompleteEnumeratedType::serialize(
@@ -5382,25 +4578,6 @@ MinimalEnumeratedType& MinimalEnumeratedType::operator =(
     return *this;
 }
 
-size_t MinimalEnumeratedType::getCdrSerializedSize(
-        const MinimalEnumeratedType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += EnumTypeFlag::getCdrSerializedSize(data.enum_flags(), current_alignment);
-    current_alignment += MinimalEnumeratedHeader::getCdrSerializedSize(data.header(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.literal_seq().size(); ++a)
-    {
-        current_alignment +=
-                MinimalEnumeratedLiteral::getCdrSerializedSize(data.literal_seq().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
-}
-
 void MinimalEnumeratedType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -5536,18 +4713,6 @@ CommonBitflag& CommonBitflag::operator =(
     return *this;
 }
 
-size_t CommonBitflag::getCdrSerializedSize(
-        const CommonBitflag& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-    current_alignment += BitflagFlag::getCdrSerializedSize(data.flags(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void CommonBitflag::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -5615,18 +4780,6 @@ CompleteBitflag& CompleteBitflag::operator =(
     m_detail = std::move(x.m_detail);
 
     return *this;
-}
-
-size_t CompleteBitflag::getCdrSerializedSize(
-        const CompleteBitflag& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonBitflag::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += CompleteMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 void CompleteBitflag::serialize(
@@ -5699,18 +4852,6 @@ MinimalBitflag& MinimalBitflag::operator =(
     return *this;
 }
 
-size_t MinimalBitflag::getCdrSerializedSize(
-        const MinimalBitflag& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonBitflag::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += MinimalMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void MinimalBitflag::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -5775,17 +4916,6 @@ CommonBitmaskHeader& CommonBitmaskHeader::operator =(
     m_bit_bound = std::move(x.m_bit_bound);
 
     return *this;
-}
-
-size_t CommonBitmaskHeader::getCdrSerializedSize(
-        const CommonBitmaskHeader&,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-    return current_alignment - initial_alignment;
 }
 
 void CommonBitmaskHeader::serialize(
@@ -5858,24 +4988,6 @@ CompleteBitmaskType& CompleteBitmaskType::operator =(
     m_flag_seq = std::move(x.m_flag_seq);
 
     return *this;
-}
-
-size_t CompleteBitmaskType::getCdrSerializedSize(
-        const CompleteBitmaskType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += BitmaskTypeFlag::getCdrSerializedSize(data.bitmask_flags(), current_alignment);
-    current_alignment += CompleteBitmaskHeader::getCdrSerializedSize(data.header(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.flag_seq().size(); ++a)
-    {
-        current_alignment += CompleteBitflag::getCdrSerializedSize(data.flag_seq().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 void CompleteBitmaskType::serialize(
@@ -6015,24 +5127,6 @@ MinimalBitmaskType& MinimalBitmaskType::operator =(
     m_flag_seq = std::move(x.m_flag_seq);
 
     return *this;
-}
-
-size_t MinimalBitmaskType::getCdrSerializedSize(
-        const MinimalBitmaskType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += BitmaskTypeFlag::getCdrSerializedSize(data.bitmask_flags(), current_alignment);
-    current_alignment += MinimalBitmaskHeader::getCdrSerializedSize(data.header(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.flag_seq().size(); ++a)
-    {
-        current_alignment += MinimalBitflag::getCdrSerializedSize(data.flag_seq().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 void MinimalBitmaskType::serialize(
@@ -6178,20 +5272,6 @@ CommonBitfield& CommonBitfield::operator =(
     return *this;
 }
 
-size_t CommonBitfield::getCdrSerializedSize(
-        const CommonBitfield& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-    current_alignment += BitsetMemberFlag::getCdrSerializedSize(data.flags(), current_alignment);
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-    return current_alignment - initial_alignment;
-}
-
 void CommonBitfield::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -6270,18 +5350,6 @@ CompleteBitfield& CompleteBitfield::operator =(
     return *this;
 }
 
-size_t CompleteBitfield::getCdrSerializedSize(
-        const CompleteBitfield& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonBitfield::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += CompleteMemberDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void CompleteBitfield::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -6350,18 +5418,6 @@ MinimalBitfield& MinimalBitfield::operator =(
     m_common = std::move(x.m_common);
 
     return *this;
-}
-
-size_t MinimalBitfield::getCdrSerializedSize(
-        const MinimalBitfield& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += CommonBitfield::getCdrSerializedSize(data.common(), current_alignment);
-    current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-    return current_alignment - initial_alignment;
 }
 
 void MinimalBitfield::serialize(
@@ -6438,18 +5494,6 @@ CompleteBitsetHeader& CompleteBitsetHeader::operator =(
     return *this;
 }
 
-size_t CompleteBitsetHeader::getCdrSerializedSize(
-        const CompleteBitsetHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.base_type(), current_alignment);
-    current_alignment += CompleteTypeDetail::getCdrSerializedSize(data.detail(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void CompleteBitsetHeader::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -6511,17 +5555,6 @@ MinimalBitsetHeader& MinimalBitsetHeader::operator =(
 {
     m_base_type = std::move(x.m_base_type);
     return *this;
-}
-
-size_t MinimalBitsetHeader::getCdrSerializedSize(
-        const MinimalBitsetHeader& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.base_type(), current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 void MinimalBitsetHeader::serialize(
@@ -6591,24 +5624,6 @@ CompleteBitsetType& CompleteBitsetType::operator =(
     m_field_seq = std::move(x.m_field_seq);
 
     return *this;
-}
-
-size_t CompleteBitsetType::getCdrSerializedSize(
-        const CompleteBitsetType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += BitsetTypeFlag::getCdrSerializedSize(data.bitset_flags(), current_alignment);
-    current_alignment += CompleteBitsetHeader::getCdrSerializedSize(data.header(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.field_seq().size(); ++a)
-    {
-        current_alignment += CompleteBitfield::getCdrSerializedSize(data.field_seq().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 void CompleteBitsetType::serialize(
@@ -6750,24 +5765,6 @@ MinimalBitsetType& MinimalBitsetType::operator =(
     return *this;
 }
 
-size_t MinimalBitsetType::getCdrSerializedSize(
-        const MinimalBitsetType& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += BitsetTypeFlag::getCdrSerializedSize(data.bitset_flags(), current_alignment);
-    current_alignment += MinimalBitsetHeader::getCdrSerializedSize(data.header(), current_alignment);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.field_seq().size(); ++a)
-    {
-        current_alignment += MinimalBitfield::getCdrSerializedSize(data.field_seq().at(a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
-}
-
 void MinimalBitsetType::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -6893,15 +5890,6 @@ CompleteExtendedType& CompleteExtendedType::operator =(
     return *this;
 }
 
-size_t CompleteExtendedType::getCdrSerializedSize(
-        const CompleteExtendedType&,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    return current_alignment - initial_alignment;
-}
-
 void CompleteExtendedType::serialize(
         eprosima::fastcdr::Cdr&) const
 {
@@ -6947,15 +5935,6 @@ MinimalExtendedType& MinimalExtendedType::operator =(
         MinimalExtendedType&&)
 {
     return *this;
-}
-
-size_t MinimalExtendedType::getCdrSerializedSize(
-        const MinimalExtendedType&,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    return current_alignment - initial_alignment;
 }
 
 void MinimalExtendedType::serialize(
@@ -7015,18 +5994,6 @@ TypeIdentifierTypeObjectPair& TypeIdentifierTypeObjectPair::operator =(
     return *this;
 }
 
-size_t TypeIdentifierTypeObjectPair::getCdrSerializedSize(
-        const TypeIdentifierTypeObjectPair& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.type_identifier(), current_alignment);
-    current_alignment += TypeObject::getCdrSerializedSize(data.type_object(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void TypeIdentifierTypeObjectPair::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -7079,18 +6046,6 @@ TypeIdentifierPair& TypeIdentifierPair::operator =(
     m_type_identifier2 = std::move(x.m_type_identifier2);
 
     return *this;
-}
-
-size_t TypeIdentifierPair::getCdrSerializedSize(
-        const TypeIdentifierPair& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.type_identifier1(), current_alignment);
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.type_identifier2(), current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 void TypeIdentifierPair::serialize(
@@ -7146,18 +6101,6 @@ TypeIdentifierWithSize& TypeIdentifierWithSize::operator =(
     m_typeobject_serialized_size = std::move(x.m_typeobject_serialized_size);
 
     return *this;
-}
-
-size_t TypeIdentifierWithSize::getCdrSerializedSize(
-        const TypeIdentifierWithSize& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.type_id(), current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    return current_alignment - initial_alignment;
 }
 
 void TypeIdentifierWithSize::serialize(
@@ -7217,25 +6160,6 @@ TypeIdentifierWithDependencies& TypeIdentifierWithDependencies::operator =(
     m_dependent_typeids = std::move(x.m_dependent_typeids);
 
     return *this;
-}
-
-size_t TypeIdentifierWithDependencies::getCdrSerializedSize(
-        const TypeIdentifierWithDependencies& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifierWithSize::getCdrSerializedSize(data.typeid_with_size(), current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for (size_t a = 0; a < data.dependent_typeids().size(); ++a)
-    {
-        current_alignment += TypeIdentifierWithSize::getCdrSerializedSize(data.dependent_typeids().at(
-                            a), current_alignment);
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 void TypeIdentifierWithDependencies::serialize(
@@ -8013,55 +6937,6 @@ CompleteExtendedType& CompleteTypeObject::extended_type()
 
 
     return m_extended_type;
-}
-
-size_t CompleteTypeObject::getCdrSerializedSize(
-        const CompleteTypeObject& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    switch (data.m__d)
-    {
-        case TK_ALIAS:
-            current_alignment += CompleteAliasType::getCdrSerializedSize(data.alias_type(), current_alignment);
-            break;
-        case TK_ANNOTATION:
-            current_alignment +=
-                    CompleteAnnotationType::getCdrSerializedSize(data.annotation_type(), current_alignment);
-            break;
-        case TK_STRUCTURE:
-            current_alignment += CompleteStructType::getCdrSerializedSize(data.struct_type(), current_alignment);
-            break;
-        case TK_UNION:
-            current_alignment += CompleteUnionType::getCdrSerializedSize(data.union_type(), current_alignment);
-            break;
-        case TK_BITSET:
-            current_alignment += CompleteBitsetType::getCdrSerializedSize(data.bitset_type(), current_alignment);
-            break;
-        case TK_SEQUENCE:
-            current_alignment += CompleteSequenceType::getCdrSerializedSize(data.sequence_type(), current_alignment);
-            break;
-        case TK_ARRAY:
-            current_alignment += CompleteArrayType::getCdrSerializedSize(data.array_type(), current_alignment);
-            break;
-        case TK_MAP:
-            current_alignment += CompleteMapType::getCdrSerializedSize(data.map_type(), current_alignment);
-            break;
-        case TK_ENUM:
-            current_alignment +=
-                    CompleteEnumeratedType::getCdrSerializedSize(data.enumerated_type(), current_alignment);
-            break;
-        case TK_BITMASK:
-            current_alignment += CompleteBitmaskType::getCdrSerializedSize(data.bitmask_type(), current_alignment);
-            break;
-        default:
-            current_alignment += CompleteExtendedType::getCdrSerializedSize(data.extended_type(), current_alignment);
-            break;
-    }
-
-    return current_alignment - initial_alignment;
 }
 
 void CompleteTypeObject::serialize(
@@ -9008,53 +7883,6 @@ MinimalExtendedType& MinimalTypeObject::extended_type()
     return m_extended_type;
 }
 
-size_t MinimalTypeObject::getCdrSerializedSize(
-        const MinimalTypeObject& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    switch (data.m__d)
-    {
-        case TK_ALIAS:
-            current_alignment += MinimalAliasType::getCdrSerializedSize(data.alias_type(), current_alignment);
-            break;
-        case TK_ANNOTATION:
-            current_alignment += MinimalAnnotationType::getCdrSerializedSize(data.annotation_type(), current_alignment);
-            break;
-        case TK_STRUCTURE:
-            current_alignment += MinimalStructType::getCdrSerializedSize(data.struct_type(), current_alignment);
-            break;
-        case TK_UNION:
-            current_alignment += MinimalUnionType::getCdrSerializedSize(data.union_type(), current_alignment);
-            break;
-        case TK_BITSET:
-            current_alignment += MinimalBitsetType::getCdrSerializedSize(data.bitset_type(), current_alignment);
-            break;
-        case TK_SEQUENCE:
-            current_alignment += MinimalSequenceType::getCdrSerializedSize(data.sequence_type(), current_alignment);
-            break;
-        case TK_ARRAY:
-            current_alignment += MinimalArrayType::getCdrSerializedSize(data.array_type(), current_alignment);
-            break;
-        case TK_MAP:
-            current_alignment += MinimalMapType::getCdrSerializedSize(data.map_type(), current_alignment);
-            break;
-        case TK_ENUM:
-            current_alignment += MinimalEnumeratedType::getCdrSerializedSize(data.enumerated_type(), current_alignment);
-            break;
-        case TK_BITMASK:
-            current_alignment += MinimalBitmaskType::getCdrSerializedSize(data.bitmask_type(), current_alignment);
-            break;
-        default:
-            current_alignment += MinimalExtendedType::getCdrSerializedSize(data.extended_type(), current_alignment);
-            break;
-    }
-
-    return current_alignment - initial_alignment;
-}
-
 void MinimalTypeObject::serialize(
         eprosima::fastcdr::Cdr& cdr) const
 {
@@ -9512,30 +8340,6 @@ MinimalTypeObject& TypeObject::minimal()
     return m_minimal;
 }
 
-// TODO(Ricardo) Review
-size_t TypeObject::getCdrSerializedSize(
-        const TypeObject& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-    switch (data.m__d)
-    {
-        case EK_COMPLETE:
-            current_alignment += CompleteTypeObject::getCdrSerializedSize(data.complete(), current_alignment);
-            break;
-        case EK_MINIMAL:
-            current_alignment += MinimalTypeObject::getCdrSerializedSize(data.minimal(), current_alignment);
-            break;
-        default:
-            break;
-    }
-
-    return current_alignment - initial_alignment;
-}
-
 void TypeObject::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -9628,18 +8432,6 @@ TypeInformation& TypeInformation::operator =(
     m_complete = std::move(x.m_complete);
 
     return *this;
-}
-
-size_t TypeInformation::getCdrSerializedSize(
-        const TypeInformation& data,
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifierWithDependencies::getCdrSerializedSize(data.minimal(), current_alignment);
-    current_alignment += TypeIdentifierWithDependencies::getCdrSerializedSize(data.complete(), current_alignment);
-
-    return current_alignment - initial_alignment;
 }
 
 void TypeInformation::serialize(
@@ -9749,4 +8541,1838 @@ size_t to_size_t(
 
 } // namespace types
 } // namespace fastrtps
+} // namespace eprosima
+
+namespace eprosima {
+namespace fastcdr {
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CommonStructMember& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.member_id(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.member_flags(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.member_type_id(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteMemberDetail& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.name(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.ann_builtin(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.ann_custom(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalMemberDetail& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.name_hash(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteStructMember& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.detail(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalStructMember& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.detail(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::AppliedBuiltinTypeAnnotations& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.verbatim(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator&,
+        const eprosima::fastrtps::types::MinimalTypeDetail&,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteTypeDetail& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.ann_builtin(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.ann_custom(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.type_name(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteStructHeader& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.base_type(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.detail(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalStructHeader& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.base_type(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.detail(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteStructType& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.struct_flags(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.member_seq(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalStructType& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.struct_flags(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.member_seq(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CommonUnionMember& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.member_id(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.member_flags(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.type_id(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        3), data.label_seq(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteUnionMember& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.detail(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalUnionMember& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.detail(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CommonDiscriminatorMember& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.member_flags(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.type_id(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteDiscriminatorMember& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.ann_builtin(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.ann_custom(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalDiscriminatorMember& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteUnionHeader& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.detail(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalUnionHeader& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.detail(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteUnionType& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.union_flags(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.discriminator(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        3), data.member_seq(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalUnionType& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.union_flags(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.discriminator(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        3), data.member_seq(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CommonAnnotationParameter& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.member_flags(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.member_type_id(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteAnnotationParameter& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.name(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.default_value(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalAnnotationParameter& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.name(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.default_value(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteAnnotationHeader& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.annotation_name(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator&,
+        const eprosima::fastrtps::types::MinimalAnnotationHeader&,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteAnnotationType& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.annotation_flag(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.member_seq(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalAnnotationType& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.annotation_flag(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.member_seq(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CommonAliasBody& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.related_flags(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.related_type(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteAliasBody& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.ann_builtin(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.ann_custom(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalAliasBody& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteAliasHeader& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.detail(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator&,
+        const eprosima::fastrtps::types::MinimalAliasHeader&,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteAliasType& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.alias_flags(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.body(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalAliasType& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.alias_flags(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.body(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteElementDetail& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.ann_builtin(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.ann_custom(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CommonCollectionElement& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.element_flags(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.type(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteCollectionElement& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.detail(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalCollectionElement& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CommonCollectionHeader& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.bound(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteCollectionHeader& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.detail(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalCollectionHeader& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalSequenceType& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.collection_flag(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.element(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteSequenceType& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.collection_flag(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.element(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CommonArrayHeader& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.bound_seq(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteArrayHeader& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.detail(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalArrayHeader& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteArrayType& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.collection_flag(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.element(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalArrayType& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.collection_flag(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.element(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteMapType& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.collection_flag(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.key(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        3), data.element(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalMapType& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.collection_flag(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.key(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.element(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CommonEnumeratedLiteral& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.value(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.flags(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteEnumeratedLiteral& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.detail(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalEnumeratedLiteral& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.detail(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CommonEnumeratedHeader& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.bit_bound(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteEnumeratedHeader& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.detail(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalEnumeratedHeader& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteEnumeratedType& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.enum_flags(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.literal_seq(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalEnumeratedType& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.enum_flags(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.literal_seq(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CommonBitflag& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.position(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.flags(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteBitflag& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.detail(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalBitflag& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.detail(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CommonBitmaskHeader& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.bit_bound(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteBitmaskType& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.bitmask_flags(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.flag_seq(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalBitmaskType& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.bitmask_flags(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.flag_seq(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CommonBitfield& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.position(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.flags(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.bitcount(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        3), data.holder_type(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteBitfield& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.common(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.detail(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalBitfield& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.name_hash(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.common(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteBitsetHeader& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.detail(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.base_type(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalBitsetHeader& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.base_type(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteBitsetType& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.bitset_flags(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.field_seq(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalBitsetType& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.bitset_flags(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.field_seq(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator&,
+        const eprosima::fastrtps::types::CompleteExtendedType&,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator&,
+        const eprosima::fastrtps::types::MinimalExtendedType&,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::TypeIdentifierTypeObjectPair& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.type_identifier(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.type_object(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::TypeIdentifierPair& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.type_identifier1(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.type_identifier2(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::TypeIdentifierWithSize& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.type_id(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.typeobject_serialized_size(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::TypeIdentifierWithDependencies& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.typeid_with_size(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.dependent_typeid_count(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.dependent_typeids(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::CompleteTypeObject& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data._d(), current_alignment);
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::TK_ALIAS:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                1), data.alias_type(), current_alignment);
+            break;
+        case eprosima::fastrtps::types::TK_ANNOTATION:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                2), data.annotation_type(), current_alignment);
+            break;
+        case eprosima::fastrtps::types::TK_STRUCTURE:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                3), data.struct_type(), current_alignment);
+            break;
+        case eprosima::fastrtps::types::TK_UNION:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                4), data.union_type(), current_alignment);
+            break;
+        case eprosima::fastrtps::types::TK_BITSET:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                5), data.bitset_type(), current_alignment);
+            break;
+        case eprosima::fastrtps::types::TK_SEQUENCE:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                6), data.sequence_type(), current_alignment);
+            break;
+        case eprosima::fastrtps::types::TK_ARRAY:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                7), data.array_type(), current_alignment);
+            break;
+        case eprosima::fastrtps::types::TK_MAP:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                8), data.map_type(), current_alignment);
+            break;
+        case eprosima::fastrtps::types::TK_ENUM:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                9), data.enumerated_type(), current_alignment);
+            break;
+        case eprosima::fastrtps::types::TK_BITMASK:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                10), data.bitmask_type(), current_alignment);
+            break;
+        default:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                11), data.extended_type(), current_alignment);
+            break;
+    }
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::MinimalTypeObject& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data._d(), current_alignment);
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::TK_ALIAS:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                1), data.alias_type(), current_alignment);
+            break;
+        case eprosima::fastrtps::types::TK_ANNOTATION:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                2), data.annotation_type(), current_alignment);
+            break;
+        case eprosima::fastrtps::types::TK_STRUCTURE:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                3), data.struct_type(), current_alignment);
+            break;
+        case eprosima::fastrtps::types::TK_UNION:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                4), data.union_type(), current_alignment);
+            break;
+        case eprosima::fastrtps::types::TK_BITSET:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                5), data.bitset_type(), current_alignment);
+            break;
+        case eprosima::fastrtps::types::TK_SEQUENCE:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                6), data.sequence_type(), current_alignment);
+            break;
+        case eprosima::fastrtps::types::TK_ARRAY:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                7), data.array_type(), current_alignment);
+            break;
+        case eprosima::fastrtps::types::TK_MAP:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                8), data.map_type(), current_alignment);
+            break;
+        case eprosima::fastrtps::types::TK_ENUM:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                9), data.enumerated_type(), current_alignment);
+            break;
+        case eprosima::fastrtps::types::TK_BITMASK:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                10), data.bitmask_type(), current_alignment);
+            break;
+        default:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                11), data.extended_type(), current_alignment);
+            break;
+    }
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::TypeObject& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data._d(), current_alignment);
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::EK_COMPLETE:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                1), data.complete(), current_alignment);
+            break;
+        case eprosima::fastrtps::types::EK_MINIMAL:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                2), data.minimal(), current_alignment);
+            break;
+        default:
+            break;
+    }
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::TypeInformation& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.minimal(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.complete(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+} // namespace fastcdr
 } // namespace eprosima

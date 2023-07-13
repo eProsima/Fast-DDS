@@ -63,13 +63,12 @@ bool TypeSupport::serialize(
 
 bool TypeSupport::deserialize(
         fastrtps::rtps::SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     bool result = false;
     try
     {
-        result = get()->deserialize(payload, data, data_representation);
+        result = get()->deserialize(payload, data);
     }
     catch (eprosima::fastcdr::exception::Exception&)
     {

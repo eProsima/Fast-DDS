@@ -15,18 +15,19 @@
 #ifndef TYPES_TYPE_OBJECT_H
 #define TYPES_TYPE_OBJECT_H
 
+#include <cstdint>
+#include <array>
+
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/TypeObjectHashId.h>
 #include <fastrtps/types/TypeIdentifier.h>
 #include <fastrtps/types/AnnotationParameterValue.h>
-#include <cstdint>
-#include <array>
 
 namespace eprosima {
 namespace fastcdr {
 class Cdr;
-}
-}
+} // namespace fastcdr
+} // namespace eprosima
 
 // The types in this file shall be serialized with XCDR encoding version 2
 namespace eprosima {
@@ -49,41 +50,83 @@ public:
             const CommonStructMember& x);
     RTPS_DllAPI CommonStructMember(
             CommonStructMember&& x);
-    RTPS_DllAPI CommonStructMember& operator=(
+    RTPS_DllAPI CommonStructMember& operator =(
             const CommonStructMember& x);
-    RTPS_DllAPI CommonStructMember& operator=(
+    RTPS_DllAPI CommonStructMember& operator =(
             CommonStructMember&& x);
 
     RTPS_DllAPI inline void member_id(
-            const MemberId& _member_id) { m_member_id = _member_id; }
+            const MemberId& _member_id)
+    {
+        m_member_id = _member_id;
+    }
+
     RTPS_DllAPI inline void member_id(
-            MemberId&& _member_id) { m_member_id = std::move(_member_id); }
-    RTPS_DllAPI inline const MemberId& member_id() const { return m_member_id; }
-    RTPS_DllAPI inline MemberId& member_id() { return m_member_id; }
+            MemberId&& _member_id)
+    {
+        m_member_id = std::move(_member_id);
+    }
+
+    RTPS_DllAPI inline const MemberId& member_id() const
+    {
+        return m_member_id;
+    }
+
+    RTPS_DllAPI inline MemberId& member_id()
+    {
+        return m_member_id;
+    }
 
     RTPS_DllAPI inline void member_flags(
-            const StructMemberFlag& _member_flags) { m_member_flags = _member_flags; }
+            const StructMemberFlag& _member_flags)
+    {
+        m_member_flags = _member_flags;
+    }
+
     RTPS_DllAPI inline void member_flags(
-            StructMemberFlag&& _member_flags) { m_member_flags = std::move(_member_flags); }
-    RTPS_DllAPI inline const StructMemberFlag& member_flags() const { return m_member_flags; }
-    RTPS_DllAPI inline StructMemberFlag& member_flags() { return m_member_flags; }
+            StructMemberFlag&& _member_flags)
+    {
+        m_member_flags = std::move(_member_flags);
+    }
+
+    RTPS_DllAPI inline const StructMemberFlag& member_flags() const
+    {
+        return m_member_flags;
+    }
+
+    RTPS_DllAPI inline StructMemberFlag& member_flags()
+    {
+        return m_member_flags;
+    }
 
     RTPS_DllAPI inline void member_type_id(
-            const TypeIdentifier& _member_type_id) { m_member_type_id = _member_type_id; }
-    RTPS_DllAPI inline void member_type_id(
-            TypeIdentifier&& _member_type_id) { m_member_type_id = std::move(_member_type_id); }
-    RTPS_DllAPI inline const TypeIdentifier& member_type_id() const { return m_member_type_id; }
-    RTPS_DllAPI inline TypeIdentifier& member_type_id() { return m_member_type_id; }
+            const TypeIdentifier& _member_type_id)
+    {
+        m_member_type_id = _member_type_id;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CommonStructMember& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void member_type_id(
+            TypeIdentifier&& _member_type_id)
+    {
+        m_member_type_id = std::move(_member_type_id);
+    }
+
+    RTPS_DllAPI inline const TypeIdentifier& member_type_id() const
+    {
+        return m_member_type_id;
+    }
+
+    RTPS_DllAPI inline TypeIdentifier& member_type_id()
+    {
+        return m_member_type_id;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CommonStructMember& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -113,41 +156,83 @@ public:
             const CompleteMemberDetail& x);
     RTPS_DllAPI CompleteMemberDetail(
             CompleteMemberDetail&& x);
-    RTPS_DllAPI CompleteMemberDetail& operator=(
+    RTPS_DllAPI CompleteMemberDetail& operator =(
             const CompleteMemberDetail& x);
-    RTPS_DllAPI CompleteMemberDetail& operator=(
+    RTPS_DllAPI CompleteMemberDetail& operator =(
             CompleteMemberDetail&& x);
 
     RTPS_DllAPI inline void name(
-            const MemberName& _name) { m_name = _name; }
+            const MemberName& _name)
+    {
+        m_name = _name;
+    }
+
     RTPS_DllAPI inline void name(
-            MemberName&& _name) { m_name = std::move(_name); }
-    RTPS_DllAPI inline const MemberName& name() const { return m_name; }
-    RTPS_DllAPI inline MemberName& name() { return m_name; }
+            MemberName&& _name)
+    {
+        m_name = std::move(_name);
+    }
+
+    RTPS_DllAPI inline const MemberName& name() const
+    {
+        return m_name;
+    }
+
+    RTPS_DllAPI inline MemberName& name()
+    {
+        return m_name;
+    }
 
     RTPS_DllAPI inline void ann_builtin(
-            const AppliedBuiltinMemberAnnotations& _ann_builtin) { m_ann_builtin = _ann_builtin; }
+            const AppliedBuiltinMemberAnnotations& _ann_builtin)
+    {
+        m_ann_builtin = _ann_builtin;
+    }
+
     RTPS_DllAPI inline void ann_builtin(
-            AppliedBuiltinMemberAnnotations&& _ann_builtin) { m_ann_builtin = std::move(_ann_builtin); }
-    RTPS_DllAPI inline const AppliedBuiltinMemberAnnotations& ann_builtin() const { return m_ann_builtin; }
-    RTPS_DllAPI inline AppliedBuiltinMemberAnnotations& ann_builtin() { return m_ann_builtin; }
+            AppliedBuiltinMemberAnnotations&& _ann_builtin)
+    {
+        m_ann_builtin = std::move(_ann_builtin);
+    }
+
+    RTPS_DllAPI inline const AppliedBuiltinMemberAnnotations& ann_builtin() const
+    {
+        return m_ann_builtin;
+    }
+
+    RTPS_DllAPI inline AppliedBuiltinMemberAnnotations& ann_builtin()
+    {
+        return m_ann_builtin;
+    }
 
     RTPS_DllAPI inline void ann_custom(
-            const AppliedAnnotationSeq& _ann_custom) { m_ann_custom = _ann_custom; }
-    RTPS_DllAPI inline void ann_custom(
-            AppliedAnnotationSeq&& _ann_custom) { m_ann_custom = std::move(_ann_custom); }
-    RTPS_DllAPI inline const AppliedAnnotationSeq& ann_custom() const { return m_ann_custom; }
-    RTPS_DllAPI inline AppliedAnnotationSeq& ann_custom() { return m_ann_custom; }
+            const AppliedAnnotationSeq& _ann_custom)
+    {
+        m_ann_custom = _ann_custom;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteMemberDetail& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void ann_custom(
+            AppliedAnnotationSeq&& _ann_custom)
+    {
+        m_ann_custom = std::move(_ann_custom);
+    }
+
+    RTPS_DllAPI inline const AppliedAnnotationSeq& ann_custom() const
+    {
+        return m_ann_custom;
+    }
+
+    RTPS_DllAPI inline AppliedAnnotationSeq& ann_custom()
+    {
+        return m_ann_custom;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteMemberDetail& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -176,27 +261,39 @@ public:
             const MinimalMemberDetail& x);
     RTPS_DllAPI MinimalMemberDetail(
             MinimalMemberDetail&& x);
-    RTPS_DllAPI MinimalMemberDetail& operator=(
+    RTPS_DllAPI MinimalMemberDetail& operator =(
             const MinimalMemberDetail& x);
-    RTPS_DllAPI MinimalMemberDetail& operator=(
+    RTPS_DllAPI MinimalMemberDetail& operator =(
             MinimalMemberDetail&& x);
 
     RTPS_DllAPI inline void name_hash(
-            const NameHash& _name_hash) { m_name_hash = _name_hash; }
-    RTPS_DllAPI inline void name_hash(
-            NameHash&& _name_hash) { m_name_hash = std::move(_name_hash); }
-    RTPS_DllAPI inline const NameHash& name_hash() const { return m_name_hash; }
-    RTPS_DllAPI inline NameHash& name_hash() { return m_name_hash; }
+            const NameHash& _name_hash)
+    {
+        m_name_hash = _name_hash;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalMemberDetail& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void name_hash(
+            NameHash&& _name_hash)
+    {
+        m_name_hash = std::move(_name_hash);
+    }
+
+    RTPS_DllAPI inline const NameHash& name_hash() const
+    {
+        return m_name_hash;
+    }
+
+    RTPS_DllAPI inline NameHash& name_hash()
+    {
+        return m_name_hash;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalMemberDetail& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -223,34 +320,61 @@ public:
             const CompleteStructMember& x);
     RTPS_DllAPI CompleteStructMember(
             CompleteStructMember&& x);
-    RTPS_DllAPI CompleteStructMember& operator=(
+    RTPS_DllAPI CompleteStructMember& operator =(
             const CompleteStructMember& x);
-    RTPS_DllAPI CompleteStructMember& operator=(
+    RTPS_DllAPI CompleteStructMember& operator =(
             CompleteStructMember&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonStructMember& _common) { m_common = _common; }
+            const CommonStructMember& _common)
+    {
+        m_common = _common;
+    }
+
     RTPS_DllAPI inline void common(
-            CommonStructMember&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonStructMember& common() const { return m_common; }
-    RTPS_DllAPI inline CommonStructMember& common() { return m_common; }
+            CommonStructMember&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonStructMember& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonStructMember& common()
+    {
+        return m_common;
+    }
 
     RTPS_DllAPI inline void detail(
-            const CompleteMemberDetail& _detail) { m_detail = _detail; }
-    RTPS_DllAPI inline void detail(
-            CompleteMemberDetail&& _detail) { m_detail = std::move(_detail); }
-    RTPS_DllAPI inline const CompleteMemberDetail& detail() const { return m_detail; }
-    RTPS_DllAPI inline CompleteMemberDetail& detail() { return m_detail; }
+            const CompleteMemberDetail& _detail)
+    {
+        m_detail = _detail;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteStructMember& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void detail(
+            CompleteMemberDetail&& _detail)
+    {
+        m_detail = std::move(_detail);
+    }
+
+    RTPS_DllAPI inline const CompleteMemberDetail& detail() const
+    {
+        return m_detail;
+    }
+
+    RTPS_DllAPI inline CompleteMemberDetail& detail()
+    {
+        return m_detail;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteStructMember& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -281,34 +405,61 @@ public:
             const MinimalStructMember& x);
     RTPS_DllAPI MinimalStructMember(
             MinimalStructMember&& x);
-    RTPS_DllAPI MinimalStructMember& operator=(
+    RTPS_DllAPI MinimalStructMember& operator =(
             const MinimalStructMember& x);
-    RTPS_DllAPI MinimalStructMember& operator=(
+    RTPS_DllAPI MinimalStructMember& operator =(
             MinimalStructMember&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonStructMember& _common) { m_common = _common; }
+            const CommonStructMember& _common)
+    {
+        m_common = _common;
+    }
+
     RTPS_DllAPI inline void common(
-            CommonStructMember&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonStructMember& common() const { return m_common; }
-    RTPS_DllAPI inline CommonStructMember& common() { return m_common; }
+            CommonStructMember&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonStructMember& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonStructMember& common()
+    {
+        return m_common;
+    }
 
     RTPS_DllAPI inline void detail(
-            const MinimalMemberDetail& _detail) { m_detail = _detail; }
-    RTPS_DllAPI inline void detail(
-            MinimalMemberDetail&& _detail) { m_detail = std::move(_detail); }
-    RTPS_DllAPI inline const MinimalMemberDetail& detail() const { return m_detail; }
-    RTPS_DllAPI inline MinimalMemberDetail& detail() { return m_detail; }
+            const MinimalMemberDetail& _detail)
+    {
+        m_detail = _detail;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalStructMember& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void detail(
+            MinimalMemberDetail&& _detail)
+    {
+        m_detail = std::move(_detail);
+    }
+
+    RTPS_DllAPI inline const MinimalMemberDetail& detail() const
+    {
+        return m_detail;
+    }
+
+    RTPS_DllAPI inline MinimalMemberDetail& detail()
+    {
+        return m_detail;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalStructMember& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -337,27 +488,39 @@ public:
             const AppliedBuiltinTypeAnnotations& x);
     RTPS_DllAPI AppliedBuiltinTypeAnnotations(
             AppliedBuiltinTypeAnnotations&& x);
-    RTPS_DllAPI AppliedBuiltinTypeAnnotations& operator=(
+    RTPS_DllAPI AppliedBuiltinTypeAnnotations& operator =(
             const AppliedBuiltinTypeAnnotations& x);
-    RTPS_DllAPI AppliedBuiltinTypeAnnotations& operator=(
+    RTPS_DllAPI AppliedBuiltinTypeAnnotations& operator =(
             AppliedBuiltinTypeAnnotations&& x);
 
     RTPS_DllAPI inline void verbatim(
-            const AppliedVerbatimAnnotation& _verbatim) { m_verbatim = _verbatim; }
-    RTPS_DllAPI inline void verbatim(
-            AppliedVerbatimAnnotation&& _verbatim) { m_verbatim = std::move(_verbatim); }
-    RTPS_DllAPI inline const AppliedVerbatimAnnotation& verbatim() const { return m_verbatim; }
-    RTPS_DllAPI inline AppliedVerbatimAnnotation& verbatim() { return m_verbatim; }
+            const AppliedVerbatimAnnotation& _verbatim)
+    {
+        m_verbatim = _verbatim;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const AppliedBuiltinTypeAnnotations& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void verbatim(
+            AppliedVerbatimAnnotation&& _verbatim)
+    {
+        m_verbatim = std::move(_verbatim);
+    }
+
+    RTPS_DllAPI inline const AppliedVerbatimAnnotation& verbatim() const
+    {
+        return m_verbatim;
+    }
+
+    RTPS_DllAPI inline AppliedVerbatimAnnotation& verbatim()
+    {
+        return m_verbatim;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const AppliedBuiltinTypeAnnotations& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -382,21 +545,21 @@ public:
             const MinimalTypeDetail& x);
     RTPS_DllAPI MinimalTypeDetail(
             MinimalTypeDetail&& x);
-    RTPS_DllAPI MinimalTypeDetail& operator=(
+    RTPS_DllAPI MinimalTypeDetail& operator =(
             const MinimalTypeDetail& x);
-    RTPS_DllAPI MinimalTypeDetail& operator=(
+    RTPS_DllAPI MinimalTypeDetail& operator =(
             MinimalTypeDetail&& x);
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalTypeDetail& data,
-            size_t current_alignment = 0);
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
-            const MinimalTypeDetail&) const { return true; }
+    RTPS_DllAPI bool operator ==(
+            const MinimalTypeDetail&) const
+    {
+        return true;
+    }
 
     RTPS_DllAPI bool consistent(
             const MinimalTypeDetail& x,
@@ -421,41 +584,83 @@ public:
             const CompleteTypeDetail& x);
     RTPS_DllAPI CompleteTypeDetail(
             CompleteTypeDetail&& x);
-    RTPS_DllAPI CompleteTypeDetail& operator=(
+    RTPS_DllAPI CompleteTypeDetail& operator =(
             const CompleteTypeDetail& x);
-    RTPS_DllAPI CompleteTypeDetail& operator=(
+    RTPS_DllAPI CompleteTypeDetail& operator =(
             CompleteTypeDetail&& x);
 
     RTPS_DllAPI inline void ann_builtin(
-            const AppliedBuiltinTypeAnnotations& _ann_builtin) { m_ann_builtin = _ann_builtin; }
+            const AppliedBuiltinTypeAnnotations& _ann_builtin)
+    {
+        m_ann_builtin = _ann_builtin;
+    }
+
     RTPS_DllAPI inline void ann_builtin(
-            AppliedBuiltinTypeAnnotations&& _ann_builtin) { m_ann_builtin = std::move(_ann_builtin); }
-    RTPS_DllAPI inline const AppliedBuiltinTypeAnnotations& ann_builtin() const { return m_ann_builtin; }
-    RTPS_DllAPI inline AppliedBuiltinTypeAnnotations& ann_builtin() { return m_ann_builtin; }
+            AppliedBuiltinTypeAnnotations&& _ann_builtin)
+    {
+        m_ann_builtin = std::move(_ann_builtin);
+    }
+
+    RTPS_DllAPI inline const AppliedBuiltinTypeAnnotations& ann_builtin() const
+    {
+        return m_ann_builtin;
+    }
+
+    RTPS_DllAPI inline AppliedBuiltinTypeAnnotations& ann_builtin()
+    {
+        return m_ann_builtin;
+    }
 
     RTPS_DllAPI inline void ann_custom(
-            const AppliedAnnotationSeq& _ann_custom) { m_ann_custom = _ann_custom; }
+            const AppliedAnnotationSeq& _ann_custom)
+    {
+        m_ann_custom = _ann_custom;
+    }
+
     RTPS_DllAPI inline void ann_custom(
-            AppliedAnnotationSeq&& _ann_custom) { m_ann_custom = std::move(_ann_custom); }
-    RTPS_DllAPI inline const AppliedAnnotationSeq& ann_custom() const { return m_ann_custom; }
-    RTPS_DllAPI inline AppliedAnnotationSeq& ann_custom() { return m_ann_custom; }
+            AppliedAnnotationSeq&& _ann_custom)
+    {
+        m_ann_custom = std::move(_ann_custom);
+    }
+
+    RTPS_DllAPI inline const AppliedAnnotationSeq& ann_custom() const
+    {
+        return m_ann_custom;
+    }
+
+    RTPS_DllAPI inline AppliedAnnotationSeq& ann_custom()
+    {
+        return m_ann_custom;
+    }
 
     RTPS_DllAPI inline void type_name(
-            const QualifiedTypeName& _type_name) { m_type_name = _type_name; }
-    RTPS_DllAPI inline void type_name(
-            QualifiedTypeName&& _type_name) { m_type_name = std::move(_type_name); }
-    RTPS_DllAPI inline const QualifiedTypeName& type_name() const { return m_type_name; }
-    RTPS_DllAPI inline QualifiedTypeName& type_name() { return m_type_name; }
+            const QualifiedTypeName& _type_name)
+    {
+        m_type_name = _type_name;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteTypeDetail& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void type_name(
+            QualifiedTypeName&& _type_name)
+    {
+        m_type_name = std::move(_type_name);
+    }
+
+    RTPS_DllAPI inline const QualifiedTypeName& type_name() const
+    {
+        return m_type_name;
+    }
+
+    RTPS_DllAPI inline QualifiedTypeName& type_name()
+    {
+        return m_type_name;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteTypeDetail& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -482,34 +687,61 @@ public:
             const CompleteStructHeader& x);
     RTPS_DllAPI CompleteStructHeader(
             CompleteStructHeader&& x);
-    RTPS_DllAPI CompleteStructHeader& operator=(
+    RTPS_DllAPI CompleteStructHeader& operator =(
             const CompleteStructHeader& x);
-    RTPS_DllAPI CompleteStructHeader& operator=(
+    RTPS_DllAPI CompleteStructHeader& operator =(
             CompleteStructHeader&& x);
 
     RTPS_DllAPI inline void base_type(
-            const TypeIdentifier& _base_type) { m_base_type = _base_type; }
+            const TypeIdentifier& _base_type)
+    {
+        m_base_type = _base_type;
+    }
+
     RTPS_DllAPI inline void base_type(
-            TypeIdentifier&& _base_type) { m_base_type = std::move(_base_type); }
-    RTPS_DllAPI inline const TypeIdentifier& base_type() const { return m_base_type; }
-    RTPS_DllAPI inline TypeIdentifier& base_type() { return m_base_type; }
+            TypeIdentifier&& _base_type)
+    {
+        m_base_type = std::move(_base_type);
+    }
+
+    RTPS_DllAPI inline const TypeIdentifier& base_type() const
+    {
+        return m_base_type;
+    }
+
+    RTPS_DllAPI inline TypeIdentifier& base_type()
+    {
+        return m_base_type;
+    }
 
     RTPS_DllAPI inline void detail(
-            const CompleteTypeDetail& _detail) { m_detail = _detail; }
-    RTPS_DllAPI inline void detail(
-            CompleteTypeDetail&& _detail) { m_detail = std::move(_detail); }
-    RTPS_DllAPI inline const CompleteTypeDetail& detail() const { return m_detail; }
-    RTPS_DllAPI inline CompleteTypeDetail& detail() { return m_detail; }
+            const CompleteTypeDetail& _detail)
+    {
+        m_detail = _detail;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteStructHeader& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void detail(
+            CompleteTypeDetail&& _detail)
+    {
+        m_detail = std::move(_detail);
+    }
+
+    RTPS_DllAPI inline const CompleteTypeDetail& detail() const
+    {
+        return m_detail;
+    }
+
+    RTPS_DllAPI inline CompleteTypeDetail& detail()
+    {
+        return m_detail;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteStructHeader& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -535,34 +767,61 @@ public:
             const MinimalStructHeader& x);
     RTPS_DllAPI MinimalStructHeader(
             MinimalStructHeader&& x);
-    RTPS_DllAPI MinimalStructHeader& operator=(
+    RTPS_DllAPI MinimalStructHeader& operator =(
             const MinimalStructHeader& x);
-    RTPS_DllAPI MinimalStructHeader& operator=(
+    RTPS_DllAPI MinimalStructHeader& operator =(
             MinimalStructHeader&& x);
 
     RTPS_DllAPI inline void base_type(
-            const TypeIdentifier& _base_type) { m_base_type = _base_type; }
+            const TypeIdentifier& _base_type)
+    {
+        m_base_type = _base_type;
+    }
+
     RTPS_DllAPI inline void base_type(
-            TypeIdentifier&& _base_type) { m_base_type = std::move(_base_type); }
-    RTPS_DllAPI inline const TypeIdentifier& base_type() const { return m_base_type; }
-    RTPS_DllAPI inline TypeIdentifier& base_type() { return m_base_type; }
+            TypeIdentifier&& _base_type)
+    {
+        m_base_type = std::move(_base_type);
+    }
+
+    RTPS_DllAPI inline const TypeIdentifier& base_type() const
+    {
+        return m_base_type;
+    }
+
+    RTPS_DllAPI inline TypeIdentifier& base_type()
+    {
+        return m_base_type;
+    }
 
     RTPS_DllAPI inline void detail(
-            const MinimalTypeDetail& _detail) { m_detail = _detail; }
-    RTPS_DllAPI inline void detail(
-            MinimalTypeDetail&& _detail) { m_detail = std::move(_detail); }
-    RTPS_DllAPI inline const MinimalTypeDetail& detail() const { return m_detail; }
-    RTPS_DllAPI inline MinimalTypeDetail& detail() { return m_detail; }
+            const MinimalTypeDetail& _detail)
+    {
+        m_detail = _detail;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalStructHeader& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void detail(
+            MinimalTypeDetail&& _detail)
+    {
+        m_detail = std::move(_detail);
+    }
+
+    RTPS_DllAPI inline const MinimalTypeDetail& detail() const
+    {
+        return m_detail;
+    }
+
+    RTPS_DllAPI inline MinimalTypeDetail& detail()
+    {
+        return m_detail;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalStructHeader& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -590,41 +849,83 @@ public:
             const CompleteStructType& x);
     RTPS_DllAPI CompleteStructType(
             CompleteStructType&& x);
-    RTPS_DllAPI CompleteStructType& operator=(
+    RTPS_DllAPI CompleteStructType& operator =(
             const CompleteStructType& x);
-    RTPS_DllAPI CompleteStructType& operator=(
+    RTPS_DllAPI CompleteStructType& operator =(
             CompleteStructType&& x);
 
     RTPS_DllAPI inline void struct_flags(
-            const StructTypeFlag& _struct_flags) { m_struct_flags = _struct_flags; }
+            const StructTypeFlag& _struct_flags)
+    {
+        m_struct_flags = _struct_flags;
+    }
+
     RTPS_DllAPI inline void struct_flags(
-            StructTypeFlag&& _struct_flags) { m_struct_flags = std::move(_struct_flags); }
-    RTPS_DllAPI inline const StructTypeFlag& struct_flags() const { return m_struct_flags; }
-    RTPS_DllAPI inline StructTypeFlag& struct_flags() { return m_struct_flags; }
+            StructTypeFlag&& _struct_flags)
+    {
+        m_struct_flags = std::move(_struct_flags);
+    }
+
+    RTPS_DllAPI inline const StructTypeFlag& struct_flags() const
+    {
+        return m_struct_flags;
+    }
+
+    RTPS_DllAPI inline StructTypeFlag& struct_flags()
+    {
+        return m_struct_flags;
+    }
 
     RTPS_DllAPI inline void header(
-            const CompleteStructHeader& _header) { m_header = _header; }
+            const CompleteStructHeader& _header)
+    {
+        m_header = _header;
+    }
+
     RTPS_DllAPI inline void header(
-            CompleteStructHeader&& _header) { m_header = std::move(_header); }
-    RTPS_DllAPI inline const CompleteStructHeader& header() const { return m_header; }
-    RTPS_DllAPI inline CompleteStructHeader& header() { return m_header; }
+            CompleteStructHeader&& _header)
+    {
+        m_header = std::move(_header);
+    }
+
+    RTPS_DllAPI inline const CompleteStructHeader& header() const
+    {
+        return m_header;
+    }
+
+    RTPS_DllAPI inline CompleteStructHeader& header()
+    {
+        return m_header;
+    }
 
     RTPS_DllAPI inline void member_seq(
-            const CompleteStructMemberSeq& _member_seq) { m_member_seq = _member_seq; }
-    RTPS_DllAPI inline void member_seq(
-            CompleteStructMemberSeq&& _member_seq) { m_member_seq = std::move(_member_seq); }
-    RTPS_DllAPI inline const CompleteStructMemberSeq& member_seq() const { return m_member_seq; }
-    RTPS_DllAPI inline CompleteStructMemberSeq& member_seq() { return m_member_seq; }
+            const CompleteStructMemberSeq& _member_seq)
+    {
+        m_member_seq = _member_seq;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteStructType& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void member_seq(
+            CompleteStructMemberSeq&& _member_seq)
+    {
+        m_member_seq = std::move(_member_seq);
+    }
+
+    RTPS_DllAPI inline const CompleteStructMemberSeq& member_seq() const
+    {
+        return m_member_seq;
+    }
+
+    RTPS_DllAPI inline CompleteStructMemberSeq& member_seq()
+    {
+        return m_member_seq;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteStructType& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -653,41 +954,83 @@ public:
             const MinimalStructType& x);
     RTPS_DllAPI MinimalStructType(
             MinimalStructType&& x);
-    RTPS_DllAPI MinimalStructType& operator=(
+    RTPS_DllAPI MinimalStructType& operator =(
             const MinimalStructType& x);
-    RTPS_DllAPI MinimalStructType& operator=(
+    RTPS_DllAPI MinimalStructType& operator =(
             MinimalStructType&& x);
 
     RTPS_DllAPI inline void struct_flags(
-            const StructTypeFlag& _struct_flags) { m_struct_flags = _struct_flags; }
+            const StructTypeFlag& _struct_flags)
+    {
+        m_struct_flags = _struct_flags;
+    }
+
     RTPS_DllAPI inline void struct_flags(
-            StructTypeFlag&& _struct_flags) { m_struct_flags = std::move(_struct_flags); }
-    RTPS_DllAPI inline const StructTypeFlag& struct_flags() const { return m_struct_flags; }
-    RTPS_DllAPI inline StructTypeFlag& struct_flags() { return m_struct_flags; }
+            StructTypeFlag&& _struct_flags)
+    {
+        m_struct_flags = std::move(_struct_flags);
+    }
+
+    RTPS_DllAPI inline const StructTypeFlag& struct_flags() const
+    {
+        return m_struct_flags;
+    }
+
+    RTPS_DllAPI inline StructTypeFlag& struct_flags()
+    {
+        return m_struct_flags;
+    }
 
     RTPS_DllAPI inline void header(
-            const MinimalStructHeader& _header) { m_header = _header; }
+            const MinimalStructHeader& _header)
+    {
+        m_header = _header;
+    }
+
     RTPS_DllAPI inline void header(
-            MinimalStructHeader&& _header) { m_header = std::move(_header); }
-    RTPS_DllAPI inline const MinimalStructHeader& header() const { return m_header; }
-    RTPS_DllAPI inline MinimalStructHeader& header() { return m_header; }
+            MinimalStructHeader&& _header)
+    {
+        m_header = std::move(_header);
+    }
+
+    RTPS_DllAPI inline const MinimalStructHeader& header() const
+    {
+        return m_header;
+    }
+
+    RTPS_DllAPI inline MinimalStructHeader& header()
+    {
+        return m_header;
+    }
 
     RTPS_DllAPI inline void member_seq(
-            const MinimalStructMemberSeq& _member_seq) { m_member_seq = _member_seq; }
-    RTPS_DllAPI inline void member_seq(
-            MinimalStructMemberSeq&& _member_seq) { m_member_seq = std::move(_member_seq); }
-    RTPS_DllAPI inline const MinimalStructMemberSeq& member_seq() const { return m_member_seq; }
-    RTPS_DllAPI inline MinimalStructMemberSeq& member_seq() { return m_member_seq; }
+            const MinimalStructMemberSeq& _member_seq)
+    {
+        m_member_seq = _member_seq;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalStructType& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void member_seq(
+            MinimalStructMemberSeq&& _member_seq)
+    {
+        m_member_seq = std::move(_member_seq);
+    }
+
+    RTPS_DllAPI inline const MinimalStructMemberSeq& member_seq() const
+    {
+        return m_member_seq;
+    }
+
+    RTPS_DllAPI inline MinimalStructMemberSeq& member_seq()
+    {
+        return m_member_seq;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalStructType& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -723,48 +1066,105 @@ public:
             const CommonUnionMember& x);
     RTPS_DllAPI CommonUnionMember(
             CommonUnionMember&& x);
-    RTPS_DllAPI CommonUnionMember& operator=(
+    RTPS_DllAPI CommonUnionMember& operator =(
             const CommonUnionMember& x);
-    RTPS_DllAPI CommonUnionMember& operator=(
+    RTPS_DllAPI CommonUnionMember& operator =(
             CommonUnionMember&& x);
 
     RTPS_DllAPI inline void member_id(
-            const MemberId& _member_id) { m_member_id = _member_id; }
+            const MemberId& _member_id)
+    {
+        m_member_id = _member_id;
+    }
+
     RTPS_DllAPI inline void member_id(
-            MemberId&& _member_id) { m_member_id = std::move(_member_id); }
-    RTPS_DllAPI inline const MemberId& member_id() const { return m_member_id; }
-    RTPS_DllAPI inline MemberId& member_id() { return m_member_id; }
+            MemberId&& _member_id)
+    {
+        m_member_id = std::move(_member_id);
+    }
+
+    RTPS_DllAPI inline const MemberId& member_id() const
+    {
+        return m_member_id;
+    }
+
+    RTPS_DllAPI inline MemberId& member_id()
+    {
+        return m_member_id;
+    }
 
     RTPS_DllAPI inline void member_flags(
-            const UnionMemberFlag& _member_flags) { m_member_flags = _member_flags; }
+            const UnionMemberFlag& _member_flags)
+    {
+        m_member_flags = _member_flags;
+    }
+
     RTPS_DllAPI inline void member_flags(
-            UnionMemberFlag&& _member_flags) { m_member_flags = std::move(_member_flags); }
-    RTPS_DllAPI inline const UnionMemberFlag& member_flags() const { return m_member_flags; }
-    RTPS_DllAPI inline UnionMemberFlag& member_flags() { return m_member_flags; }
+            UnionMemberFlag&& _member_flags)
+    {
+        m_member_flags = std::move(_member_flags);
+    }
+
+    RTPS_DllAPI inline const UnionMemberFlag& member_flags() const
+    {
+        return m_member_flags;
+    }
+
+    RTPS_DllAPI inline UnionMemberFlag& member_flags()
+    {
+        return m_member_flags;
+    }
 
     RTPS_DllAPI inline void type_id(
-            const TypeIdentifier& _type_id) { m_type_id = _type_id; }
+            const TypeIdentifier& _type_id)
+    {
+        m_type_id = _type_id;
+    }
+
     RTPS_DllAPI inline void type_id(
-            TypeIdentifier&& _type_id) { m_type_id = std::move(_type_id); }
-    RTPS_DllAPI inline const TypeIdentifier& type_id() const { return m_type_id; }
-    RTPS_DllAPI inline TypeIdentifier& type_id() { return m_type_id; }
+            TypeIdentifier&& _type_id)
+    {
+        m_type_id = std::move(_type_id);
+    }
+
+    RTPS_DllAPI inline const TypeIdentifier& type_id() const
+    {
+        return m_type_id;
+    }
+
+    RTPS_DllAPI inline TypeIdentifier& type_id()
+    {
+        return m_type_id;
+    }
 
     RTPS_DllAPI inline void label_seq(
-            const UnionCaseLabelSeq& _label_seq) { m_label_seq = _label_seq; }
-    RTPS_DllAPI inline void label_seq(
-            UnionCaseLabelSeq&& _label_seq) { m_label_seq = std::move(_label_seq); }
-    RTPS_DllAPI inline const UnionCaseLabelSeq& label_seq() const { return m_label_seq; }
-    RTPS_DllAPI inline UnionCaseLabelSeq& label_seq() { return m_label_seq; }
+            const UnionCaseLabelSeq& _label_seq)
+    {
+        m_label_seq = _label_seq;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CommonUnionMember& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void label_seq(
+            UnionCaseLabelSeq&& _label_seq)
+    {
+        m_label_seq = std::move(_label_seq);
+    }
+
+    RTPS_DllAPI inline const UnionCaseLabelSeq& label_seq() const
+    {
+        return m_label_seq;
+    }
+
+    RTPS_DllAPI inline UnionCaseLabelSeq& label_seq()
+    {
+        return m_label_seq;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CommonUnionMember& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -794,34 +1194,61 @@ public:
             const CompleteUnionMember& x);
     RTPS_DllAPI CompleteUnionMember(
             CompleteUnionMember&& x);
-    RTPS_DllAPI CompleteUnionMember& operator=(
+    RTPS_DllAPI CompleteUnionMember& operator =(
             const CompleteUnionMember& x);
-    RTPS_DllAPI CompleteUnionMember& operator=(
+    RTPS_DllAPI CompleteUnionMember& operator =(
             CompleteUnionMember&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonUnionMember& _common) { m_common = _common; }
+            const CommonUnionMember& _common)
+    {
+        m_common = _common;
+    }
+
     RTPS_DllAPI inline void common(
-            CommonUnionMember&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonUnionMember& common() const { return m_common; }
-    RTPS_DllAPI inline CommonUnionMember& common() { return m_common; }
+            CommonUnionMember&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonUnionMember& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonUnionMember& common()
+    {
+        return m_common;
+    }
 
     RTPS_DllAPI inline void detail(
-            const CompleteMemberDetail& _detail) { m_detail = _detail; }
-    RTPS_DllAPI inline void detail(
-            CompleteMemberDetail&& _detail) { m_detail = std::move(_detail); }
-    RTPS_DllAPI inline const CompleteMemberDetail& detail() const { return m_detail; }
-    RTPS_DllAPI inline CompleteMemberDetail& detail() { return m_detail; }
+            const CompleteMemberDetail& _detail)
+    {
+        m_detail = _detail;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteUnionMember& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void detail(
+            CompleteMemberDetail&& _detail)
+    {
+        m_detail = std::move(_detail);
+    }
+
+    RTPS_DllAPI inline const CompleteMemberDetail& detail() const
+    {
+        return m_detail;
+    }
+
+    RTPS_DllAPI inline CompleteMemberDetail& detail()
+    {
+        return m_detail;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteUnionMember& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -852,34 +1279,61 @@ public:
             const MinimalUnionMember& x);
     RTPS_DllAPI MinimalUnionMember(
             MinimalUnionMember&& x);
-    RTPS_DllAPI MinimalUnionMember& operator=(
+    RTPS_DllAPI MinimalUnionMember& operator =(
             const MinimalUnionMember& x);
-    RTPS_DllAPI MinimalUnionMember& operator=(
+    RTPS_DllAPI MinimalUnionMember& operator =(
             MinimalUnionMember&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonUnionMember& _common) { m_common = _common; }
+            const CommonUnionMember& _common)
+    {
+        m_common = _common;
+    }
+
     RTPS_DllAPI inline void common(
-            CommonUnionMember&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonUnionMember& common() const { return m_common; }
-    RTPS_DllAPI inline CommonUnionMember& common() { return m_common; }
+            CommonUnionMember&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonUnionMember& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonUnionMember& common()
+    {
+        return m_common;
+    }
 
     RTPS_DllAPI inline void detail(
-            const MinimalMemberDetail& _detail) { m_detail = _detail; }
-    RTPS_DllAPI inline void detail(
-            MinimalMemberDetail&& _detail) { m_detail = std::move(_detail); }
-    RTPS_DllAPI inline const MinimalMemberDetail& detail() const { return m_detail; }
-    RTPS_DllAPI inline MinimalMemberDetail& detail() { return m_detail; }
+            const MinimalMemberDetail& _detail)
+    {
+        m_detail = _detail;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalUnionMember& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void detail(
+            MinimalMemberDetail&& _detail)
+    {
+        m_detail = std::move(_detail);
+    }
+
+    RTPS_DllAPI inline const MinimalMemberDetail& detail() const
+    {
+        return m_detail;
+    }
+
+    RTPS_DllAPI inline MinimalMemberDetail& detail()
+    {
+        return m_detail;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalUnionMember& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -909,34 +1363,61 @@ public:
             const CommonDiscriminatorMember& x);
     RTPS_DllAPI CommonDiscriminatorMember(
             CommonDiscriminatorMember&& x);
-    RTPS_DllAPI CommonDiscriminatorMember& operator=(
+    RTPS_DllAPI CommonDiscriminatorMember& operator =(
             const CommonDiscriminatorMember& x);
-    RTPS_DllAPI CommonDiscriminatorMember& operator=(
+    RTPS_DllAPI CommonDiscriminatorMember& operator =(
             CommonDiscriminatorMember&& x);
 
     RTPS_DllAPI inline void member_flags(
-            const UnionDiscriminatorFlag& _member_flags) { m_member_flags = _member_flags; }
+            const UnionDiscriminatorFlag& _member_flags)
+    {
+        m_member_flags = _member_flags;
+    }
+
     RTPS_DllAPI inline void member_flags(
-            UnionDiscriminatorFlag&& _member_flags) { m_member_flags = std::move(_member_flags); }
-    RTPS_DllAPI inline const UnionDiscriminatorFlag& member_flags() const { return m_member_flags; }
-    RTPS_DllAPI inline UnionDiscriminatorFlag& member_flags() { return m_member_flags; }
+            UnionDiscriminatorFlag&& _member_flags)
+    {
+        m_member_flags = std::move(_member_flags);
+    }
+
+    RTPS_DllAPI inline const UnionDiscriminatorFlag& member_flags() const
+    {
+        return m_member_flags;
+    }
+
+    RTPS_DllAPI inline UnionDiscriminatorFlag& member_flags()
+    {
+        return m_member_flags;
+    }
 
     RTPS_DllAPI inline void type_id(
-            const TypeIdentifier& _type_id) { m_type_id = _type_id; }
-    RTPS_DllAPI inline void type_id(
-            TypeIdentifier&& _type_id) { m_type_id = std::move(_type_id); }
-    RTPS_DllAPI inline const TypeIdentifier& type_id() const { return m_type_id; }
-    RTPS_DllAPI inline TypeIdentifier& type_id() { return m_type_id; }
+            const TypeIdentifier& _type_id)
+    {
+        m_type_id = _type_id;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CommonDiscriminatorMember& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void type_id(
+            TypeIdentifier&& _type_id)
+    {
+        m_type_id = std::move(_type_id);
+    }
+
+    RTPS_DllAPI inline const TypeIdentifier& type_id() const
+    {
+        return m_type_id;
+    }
+
+    RTPS_DllAPI inline TypeIdentifier& type_id()
+    {
+        return m_type_id;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CommonDiscriminatorMember& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -965,41 +1446,83 @@ public:
             const CompleteDiscriminatorMember& x);
     RTPS_DllAPI CompleteDiscriminatorMember(
             CompleteDiscriminatorMember&& x);
-    RTPS_DllAPI CompleteDiscriminatorMember& operator=(
+    RTPS_DllAPI CompleteDiscriminatorMember& operator =(
             const CompleteDiscriminatorMember& x);
-    RTPS_DllAPI CompleteDiscriminatorMember& operator=(
+    RTPS_DllAPI CompleteDiscriminatorMember& operator =(
             CompleteDiscriminatorMember&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonDiscriminatorMember& _common) { m_common = _common; }
+            const CommonDiscriminatorMember& _common)
+    {
+        m_common = _common;
+    }
+
     RTPS_DllAPI inline void common(
-            CommonDiscriminatorMember&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonDiscriminatorMember& common() const { return m_common; }
-    RTPS_DllAPI inline CommonDiscriminatorMember& common() { return m_common; }
+            CommonDiscriminatorMember&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonDiscriminatorMember& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonDiscriminatorMember& common()
+    {
+        return m_common;
+    }
 
     RTPS_DllAPI inline void ann_builtin(
-            const AppliedBuiltinTypeAnnotations& _ann_builtin) { m_ann_builtin = _ann_builtin; }
+            const AppliedBuiltinTypeAnnotations& _ann_builtin)
+    {
+        m_ann_builtin = _ann_builtin;
+    }
+
     RTPS_DllAPI inline void ann_builtin(
-            AppliedBuiltinTypeAnnotations&& _ann_builtin) { m_ann_builtin = std::move(_ann_builtin); }
-    RTPS_DllAPI inline const AppliedBuiltinTypeAnnotations& ann_builtin() const { return m_ann_builtin; }
-    RTPS_DllAPI inline AppliedBuiltinTypeAnnotations& ann_builtin() { return m_ann_builtin; }
+            AppliedBuiltinTypeAnnotations&& _ann_builtin)
+    {
+        m_ann_builtin = std::move(_ann_builtin);
+    }
+
+    RTPS_DllAPI inline const AppliedBuiltinTypeAnnotations& ann_builtin() const
+    {
+        return m_ann_builtin;
+    }
+
+    RTPS_DllAPI inline AppliedBuiltinTypeAnnotations& ann_builtin()
+    {
+        return m_ann_builtin;
+    }
 
     RTPS_DllAPI inline void ann_custom(
-            const AppliedAnnotationSeq& _ann_custom) { m_ann_custom = _ann_custom; }
-    RTPS_DllAPI inline void ann_custom(
-            AppliedAnnotationSeq&& _ann_custom) { m_ann_custom = std::move(_ann_custom); }
-    RTPS_DllAPI inline const AppliedAnnotationSeq& ann_custom() const { return m_ann_custom; }
-    RTPS_DllAPI inline AppliedAnnotationSeq& ann_custom() { return m_ann_custom; }
+            const AppliedAnnotationSeq& _ann_custom)
+    {
+        m_ann_custom = _ann_custom;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteDiscriminatorMember& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void ann_custom(
+            AppliedAnnotationSeq&& _ann_custom)
+    {
+        m_ann_custom = std::move(_ann_custom);
+    }
+
+    RTPS_DllAPI inline const AppliedAnnotationSeq& ann_custom() const
+    {
+        return m_ann_custom;
+    }
+
+    RTPS_DllAPI inline AppliedAnnotationSeq& ann_custom()
+    {
+        return m_ann_custom;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteDiscriminatorMember& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -1027,27 +1550,39 @@ public:
             const MinimalDiscriminatorMember& x);
     RTPS_DllAPI MinimalDiscriminatorMember(
             MinimalDiscriminatorMember&& x);
-    RTPS_DllAPI MinimalDiscriminatorMember& operator=(
+    RTPS_DllAPI MinimalDiscriminatorMember& operator =(
             const MinimalDiscriminatorMember& x);
-    RTPS_DllAPI MinimalDiscriminatorMember& operator=(
+    RTPS_DllAPI MinimalDiscriminatorMember& operator =(
             MinimalDiscriminatorMember&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonDiscriminatorMember& _common) { m_common = _common; }
-    RTPS_DllAPI inline void common(
-            CommonDiscriminatorMember&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonDiscriminatorMember& common() const { return m_common; }
-    RTPS_DllAPI inline CommonDiscriminatorMember& common() { return m_common; }
+            const CommonDiscriminatorMember& _common)
+    {
+        m_common = _common;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalDiscriminatorMember& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void common(
+            CommonDiscriminatorMember&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonDiscriminatorMember& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonDiscriminatorMember& common()
+    {
+        return m_common;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalDiscriminatorMember& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -1072,27 +1607,39 @@ public:
             const CompleteUnionHeader& x);
     RTPS_DllAPI CompleteUnionHeader(
             CompleteUnionHeader&& x);
-    RTPS_DllAPI CompleteUnionHeader& operator=(
+    RTPS_DllAPI CompleteUnionHeader& operator =(
             const CompleteUnionHeader& x);
-    RTPS_DllAPI CompleteUnionHeader& operator=(
+    RTPS_DllAPI CompleteUnionHeader& operator =(
             CompleteUnionHeader&& x);
 
     RTPS_DllAPI inline void detail(
-            const CompleteTypeDetail& _detail) { m_detail = _detail; }
-    RTPS_DllAPI inline void detail(
-            CompleteTypeDetail&& _detail) { m_detail = std::move(_detail); }
-    RTPS_DllAPI inline const CompleteTypeDetail& detail() const { return m_detail; }
-    RTPS_DllAPI inline CompleteTypeDetail& detail() { return m_detail; }
+            const CompleteTypeDetail& _detail)
+    {
+        m_detail = _detail;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteUnionHeader& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void detail(
+            CompleteTypeDetail&& _detail)
+    {
+        m_detail = std::move(_detail);
+    }
+
+    RTPS_DllAPI inline const CompleteTypeDetail& detail() const
+    {
+        return m_detail;
+    }
+
+    RTPS_DllAPI inline CompleteTypeDetail& detail()
+    {
+        return m_detail;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteUnionHeader& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -1117,27 +1664,39 @@ public:
             const MinimalUnionHeader& x);
     RTPS_DllAPI MinimalUnionHeader(
             MinimalUnionHeader&& x);
-    RTPS_DllAPI MinimalUnionHeader& operator=(
+    RTPS_DllAPI MinimalUnionHeader& operator =(
             const MinimalUnionHeader& x);
-    RTPS_DllAPI MinimalUnionHeader& operator=(
+    RTPS_DllAPI MinimalUnionHeader& operator =(
             MinimalUnionHeader&& x);
 
     RTPS_DllAPI inline void detail(
-            const MinimalTypeDetail& _detail) { m_detail = _detail; }
-    RTPS_DllAPI inline void detail(
-            MinimalTypeDetail&& _detail) { m_detail = std::move(_detail); }
-    RTPS_DllAPI inline const MinimalTypeDetail& detail() const { return m_detail; }
-    RTPS_DllAPI inline MinimalTypeDetail& detail() { return m_detail; }
+            const MinimalTypeDetail& _detail)
+    {
+        m_detail = _detail;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalUnionHeader& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void detail(
+            MinimalTypeDetail&& _detail)
+    {
+        m_detail = std::move(_detail);
+    }
+
+    RTPS_DllAPI inline const MinimalTypeDetail& detail() const
+    {
+        return m_detail;
+    }
+
+    RTPS_DllAPI inline MinimalTypeDetail& detail()
+    {
+        return m_detail;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalUnionHeader& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -1165,48 +1724,105 @@ public:
             const CompleteUnionType& x);
     RTPS_DllAPI CompleteUnionType(
             CompleteUnionType&& x);
-    RTPS_DllAPI CompleteUnionType& operator=(
+    RTPS_DllAPI CompleteUnionType& operator =(
             const CompleteUnionType& x);
-    RTPS_DllAPI CompleteUnionType& operator=(
+    RTPS_DllAPI CompleteUnionType& operator =(
             CompleteUnionType&& x);
 
     RTPS_DllAPI inline void union_flags(
-            const UnionTypeFlag& _union_flags) { m_union_flags = _union_flags; }
+            const UnionTypeFlag& _union_flags)
+    {
+        m_union_flags = _union_flags;
+    }
+
     RTPS_DllAPI inline void union_flags(
-            UnionTypeFlag&& _union_flags) { m_union_flags = std::move(_union_flags); }
-    RTPS_DllAPI inline const UnionTypeFlag& union_flags() const { return m_union_flags; }
-    RTPS_DllAPI inline UnionTypeFlag& union_flags() { return m_union_flags; }
+            UnionTypeFlag&& _union_flags)
+    {
+        m_union_flags = std::move(_union_flags);
+    }
+
+    RTPS_DllAPI inline const UnionTypeFlag& union_flags() const
+    {
+        return m_union_flags;
+    }
+
+    RTPS_DllAPI inline UnionTypeFlag& union_flags()
+    {
+        return m_union_flags;
+    }
 
     RTPS_DllAPI inline void header(
-            const CompleteUnionHeader& _header) { m_header = _header; }
+            const CompleteUnionHeader& _header)
+    {
+        m_header = _header;
+    }
+
     RTPS_DllAPI inline void header(
-            CompleteUnionHeader&& _header) { m_header = std::move(_header); }
-    RTPS_DllAPI inline const CompleteUnionHeader& header() const { return m_header; }
-    RTPS_DllAPI inline CompleteUnionHeader& header() { return m_header; }
+            CompleteUnionHeader&& _header)
+    {
+        m_header = std::move(_header);
+    }
+
+    RTPS_DllAPI inline const CompleteUnionHeader& header() const
+    {
+        return m_header;
+    }
+
+    RTPS_DllAPI inline CompleteUnionHeader& header()
+    {
+        return m_header;
+    }
 
     RTPS_DllAPI inline void discriminator(
-            const CompleteDiscriminatorMember& _discriminator) { m_discriminator = _discriminator; }
+            const CompleteDiscriminatorMember& _discriminator)
+    {
+        m_discriminator = _discriminator;
+    }
+
     RTPS_DllAPI inline void discriminator(
-            CompleteDiscriminatorMember&& _discriminator) { m_discriminator = std::move(_discriminator); }
-    RTPS_DllAPI inline const CompleteDiscriminatorMember& discriminator() const { return m_discriminator; }
-    RTPS_DllAPI inline CompleteDiscriminatorMember& discriminator() { return m_discriminator; }
+            CompleteDiscriminatorMember&& _discriminator)
+    {
+        m_discriminator = std::move(_discriminator);
+    }
+
+    RTPS_DllAPI inline const CompleteDiscriminatorMember& discriminator() const
+    {
+        return m_discriminator;
+    }
+
+    RTPS_DllAPI inline CompleteDiscriminatorMember& discriminator()
+    {
+        return m_discriminator;
+    }
 
     RTPS_DllAPI inline void member_seq(
-            const CompleteUnionMemberSeq& _member_seq) { m_member_seq = _member_seq; }
-    RTPS_DllAPI inline void member_seq(
-            CompleteUnionMemberSeq&& _member_seq) { m_member_seq = std::move(_member_seq); }
-    RTPS_DllAPI inline const CompleteUnionMemberSeq& member_seq() const { return m_member_seq; }
-    RTPS_DllAPI inline CompleteUnionMemberSeq& member_seq() { return m_member_seq; }
+            const CompleteUnionMemberSeq& _member_seq)
+    {
+        m_member_seq = _member_seq;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteUnionType& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void member_seq(
+            CompleteUnionMemberSeq&& _member_seq)
+    {
+        m_member_seq = std::move(_member_seq);
+    }
+
+    RTPS_DllAPI inline const CompleteUnionMemberSeq& member_seq() const
+    {
+        return m_member_seq;
+    }
+
+    RTPS_DllAPI inline CompleteUnionMemberSeq& member_seq()
+    {
+        return m_member_seq;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteUnionType& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -1237,48 +1853,105 @@ public:
             const MinimalUnionType& x);
     RTPS_DllAPI MinimalUnionType(
             MinimalUnionType&& x);
-    RTPS_DllAPI MinimalUnionType& operator=(
+    RTPS_DllAPI MinimalUnionType& operator =(
             const MinimalUnionType& x);
-    RTPS_DllAPI MinimalUnionType& operator=(
+    RTPS_DllAPI MinimalUnionType& operator =(
             MinimalUnionType&& x);
 
     RTPS_DllAPI inline void union_flags(
-            const UnionTypeFlag& _union_flags) { m_union_flags = _union_flags; }
+            const UnionTypeFlag& _union_flags)
+    {
+        m_union_flags = _union_flags;
+    }
+
     RTPS_DllAPI inline void union_flags(
-            UnionTypeFlag&& _union_flags) { m_union_flags = std::move(_union_flags); }
-    RTPS_DllAPI inline const UnionTypeFlag& union_flags() const { return m_union_flags; }
-    RTPS_DllAPI inline UnionTypeFlag& union_flags() { return m_union_flags; }
+            UnionTypeFlag&& _union_flags)
+    {
+        m_union_flags = std::move(_union_flags);
+    }
+
+    RTPS_DllAPI inline const UnionTypeFlag& union_flags() const
+    {
+        return m_union_flags;
+    }
+
+    RTPS_DllAPI inline UnionTypeFlag& union_flags()
+    {
+        return m_union_flags;
+    }
 
     RTPS_DllAPI inline void header(
-            const MinimalUnionHeader& _header) { m_header = _header; }
+            const MinimalUnionHeader& _header)
+    {
+        m_header = _header;
+    }
+
     RTPS_DllAPI inline void header(
-            MinimalUnionHeader&& _header) { m_header = std::move(_header); }
-    RTPS_DllAPI inline const MinimalUnionHeader& header() const { return m_header; }
-    RTPS_DllAPI inline MinimalUnionHeader& header() { return m_header; }
+            MinimalUnionHeader&& _header)
+    {
+        m_header = std::move(_header);
+    }
+
+    RTPS_DllAPI inline const MinimalUnionHeader& header() const
+    {
+        return m_header;
+    }
+
+    RTPS_DllAPI inline MinimalUnionHeader& header()
+    {
+        return m_header;
+    }
 
     RTPS_DllAPI inline void discriminator(
-            const MinimalDiscriminatorMember& _discriminator) { m_discriminator = _discriminator; }
+            const MinimalDiscriminatorMember& _discriminator)
+    {
+        m_discriminator = _discriminator;
+    }
+
     RTPS_DllAPI inline void discriminator(
-            MinimalDiscriminatorMember&& _discriminator) { m_discriminator = std::move(_discriminator); }
-    RTPS_DllAPI inline const MinimalDiscriminatorMember& discriminator() const { return m_discriminator; }
-    RTPS_DllAPI inline MinimalDiscriminatorMember& discriminator() { return m_discriminator; }
+            MinimalDiscriminatorMember&& _discriminator)
+    {
+        m_discriminator = std::move(_discriminator);
+    }
+
+    RTPS_DllAPI inline const MinimalDiscriminatorMember& discriminator() const
+    {
+        return m_discriminator;
+    }
+
+    RTPS_DllAPI inline MinimalDiscriminatorMember& discriminator()
+    {
+        return m_discriminator;
+    }
 
     RTPS_DllAPI inline void member_seq(
-            const MinimalUnionMemberSeq& _member_seq) { m_member_seq = _member_seq; }
-    RTPS_DllAPI inline void member_seq(
-            MinimalUnionMemberSeq&& _member_seq) { m_member_seq = std::move(_member_seq); }
-    RTPS_DllAPI inline const MinimalUnionMemberSeq& member_seq() const { return m_member_seq; }
-    RTPS_DllAPI inline MinimalUnionMemberSeq& member_seq() { return m_member_seq; }
+            const MinimalUnionMemberSeq& _member_seq)
+    {
+        m_member_seq = _member_seq;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalUnionType& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void member_seq(
+            MinimalUnionMemberSeq&& _member_seq)
+    {
+        m_member_seq = std::move(_member_seq);
+    }
+
+    RTPS_DllAPI inline const MinimalUnionMemberSeq& member_seq() const
+    {
+        return m_member_seq;
+    }
+
+    RTPS_DllAPI inline MinimalUnionMemberSeq& member_seq()
+    {
+        return m_member_seq;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalUnionType& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -1308,34 +1981,61 @@ public:
             const CommonAnnotationParameter& x);
     RTPS_DllAPI CommonAnnotationParameter(
             CommonAnnotationParameter&& x);
-    RTPS_DllAPI CommonAnnotationParameter& operator=(
+    RTPS_DllAPI CommonAnnotationParameter& operator =(
             const CommonAnnotationParameter& x);
-    RTPS_DllAPI CommonAnnotationParameter& operator=(
+    RTPS_DllAPI CommonAnnotationParameter& operator =(
             CommonAnnotationParameter&& x);
 
     RTPS_DllAPI inline void member_flags(
-            const AnnotationParameterFlag& _member_flags) { m_member_flags = _member_flags; }
+            const AnnotationParameterFlag& _member_flags)
+    {
+        m_member_flags = _member_flags;
+    }
+
     RTPS_DllAPI inline void member_flags(
-            AnnotationParameterFlag&& _member_flags) { m_member_flags = std::move(_member_flags); }
-    RTPS_DllAPI inline const AnnotationParameterFlag& member_flags() const { return m_member_flags; }
-    RTPS_DllAPI inline AnnotationParameterFlag& member_flags() { return m_member_flags; }
+            AnnotationParameterFlag&& _member_flags)
+    {
+        m_member_flags = std::move(_member_flags);
+    }
+
+    RTPS_DllAPI inline const AnnotationParameterFlag& member_flags() const
+    {
+        return m_member_flags;
+    }
+
+    RTPS_DllAPI inline AnnotationParameterFlag& member_flags()
+    {
+        return m_member_flags;
+    }
 
     RTPS_DllAPI inline void member_type_id(
-            const TypeIdentifier& _member_type_id) { m_member_type_id = _member_type_id; }
-    RTPS_DllAPI inline void member_type_id(
-            TypeIdentifier&& _member_type_id) { m_member_type_id = std::move(_member_type_id); }
-    RTPS_DllAPI inline const TypeIdentifier& member_type_id() const { return m_member_type_id; }
-    RTPS_DllAPI inline TypeIdentifier& member_type_id() { return m_member_type_id; }
+            const TypeIdentifier& _member_type_id)
+    {
+        m_member_type_id = _member_type_id;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CommonAnnotationParameter& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void member_type_id(
+            TypeIdentifier&& _member_type_id)
+    {
+        m_member_type_id = std::move(_member_type_id);
+    }
+
+    RTPS_DllAPI inline const TypeIdentifier& member_type_id() const
+    {
+        return m_member_type_id;
+    }
+
+    RTPS_DllAPI inline TypeIdentifier& member_type_id()
+    {
+        return m_member_type_id;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CommonAnnotationParameter& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -1365,41 +2065,83 @@ public:
             const CompleteAnnotationParameter& x);
     RTPS_DllAPI CompleteAnnotationParameter(
             CompleteAnnotationParameter&& x);
-    RTPS_DllAPI CompleteAnnotationParameter& operator=(
+    RTPS_DllAPI CompleteAnnotationParameter& operator =(
             const CompleteAnnotationParameter& x);
-    RTPS_DllAPI CompleteAnnotationParameter& operator=(
+    RTPS_DllAPI CompleteAnnotationParameter& operator =(
             CompleteAnnotationParameter&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonAnnotationParameter& _common) { m_common = _common; }
+            const CommonAnnotationParameter& _common)
+    {
+        m_common = _common;
+    }
+
     RTPS_DllAPI inline void common(
-            CommonAnnotationParameter&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonAnnotationParameter& common() const { return m_common; }
-    RTPS_DllAPI inline CommonAnnotationParameter& common() { return m_common; }
+            CommonAnnotationParameter&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonAnnotationParameter& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonAnnotationParameter& common()
+    {
+        return m_common;
+    }
 
     RTPS_DllAPI inline void name(
-            const MemberName& _name) { m_name = _name; }
+            const MemberName& _name)
+    {
+        m_name = _name;
+    }
+
     RTPS_DllAPI inline void name(
-            MemberName&& _name) { m_name = std::move(_name); }
-    RTPS_DllAPI inline const MemberName& name() const { return m_name; }
-    RTPS_DllAPI inline MemberName& name() { return m_name; }
+            MemberName&& _name)
+    {
+        m_name = std::move(_name);
+    }
+
+    RTPS_DllAPI inline const MemberName& name() const
+    {
+        return m_name;
+    }
+
+    RTPS_DllAPI inline MemberName& name()
+    {
+        return m_name;
+    }
 
     RTPS_DllAPI inline void default_value(
-            const AnnotationParameterValue& _default_value) { m_default_value = _default_value; }
-    RTPS_DllAPI inline void default_value(
-            AnnotationParameterValue&& _default_value) { m_default_value = std::move(_default_value); }
-    RTPS_DllAPI inline const AnnotationParameterValue& default_value() const { return m_default_value; }
-    RTPS_DllAPI inline AnnotationParameterValue& default_value() { return m_default_value; }
+            const AnnotationParameterValue& _default_value)
+    {
+        m_default_value = _default_value;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteAnnotationParameter& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void default_value(
+            AnnotationParameterValue&& _default_value)
+    {
+        m_default_value = std::move(_default_value);
+    }
+
+    RTPS_DllAPI inline const AnnotationParameterValue& default_value() const
+    {
+        return m_default_value;
+    }
+
+    RTPS_DllAPI inline AnnotationParameterValue& default_value()
+    {
+        return m_default_value;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteAnnotationParameter& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -1429,41 +2171,83 @@ public:
             const MinimalAnnotationParameter& x);
     RTPS_DllAPI MinimalAnnotationParameter(
             MinimalAnnotationParameter&& x);
-    RTPS_DllAPI MinimalAnnotationParameter& operator=(
+    RTPS_DllAPI MinimalAnnotationParameter& operator =(
             const MinimalAnnotationParameter& x);
-    RTPS_DllAPI MinimalAnnotationParameter& operator=(
+    RTPS_DllAPI MinimalAnnotationParameter& operator =(
             MinimalAnnotationParameter&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonAnnotationParameter& _common) { m_common = _common; }
+            const CommonAnnotationParameter& _common)
+    {
+        m_common = _common;
+    }
+
     RTPS_DllAPI inline void common(
-            CommonAnnotationParameter&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonAnnotationParameter& common() const { return m_common; }
-    RTPS_DllAPI inline CommonAnnotationParameter& common() { return m_common; }
+            CommonAnnotationParameter&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonAnnotationParameter& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonAnnotationParameter& common()
+    {
+        return m_common;
+    }
 
     RTPS_DllAPI inline void name(
-            const MemberName& _name) { m_name = _name; }
+            const MemberName& _name)
+    {
+        m_name = _name;
+    }
+
     RTPS_DllAPI inline void name(
-            MemberName&& _name) { m_name = std::move(_name); }
-    RTPS_DllAPI inline const MemberName& name() const { return m_name; }
-    RTPS_DllAPI inline MemberName& name() { return m_name; }
+            MemberName&& _name)
+    {
+        m_name = std::move(_name);
+    }
+
+    RTPS_DllAPI inline const MemberName& name() const
+    {
+        return m_name;
+    }
+
+    RTPS_DllAPI inline MemberName& name()
+    {
+        return m_name;
+    }
 
     RTPS_DllAPI inline void default_value(
-            const AnnotationParameterValue& _default_value) { m_default_value = _default_value; }
-    RTPS_DllAPI inline void default_value(
-            AnnotationParameterValue&& _default_value) { m_default_value = std::move(_default_value); }
-    RTPS_DllAPI inline const AnnotationParameterValue& default_value() const { return m_default_value; }
-    RTPS_DllAPI inline AnnotationParameterValue& default_value() { return m_default_value; }
+            const AnnotationParameterValue& _default_value)
+    {
+        m_default_value = _default_value;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalAnnotationParameter& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void default_value(
+            AnnotationParameterValue&& _default_value)
+    {
+        m_default_value = std::move(_default_value);
+    }
+
+    RTPS_DllAPI inline const AnnotationParameterValue& default_value() const
+    {
+        return m_default_value;
+    }
+
+    RTPS_DllAPI inline AnnotationParameterValue& default_value()
+    {
+        return m_default_value;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalAnnotationParameter& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -1492,27 +2276,39 @@ public:
             const CompleteAnnotationHeader& x);
     RTPS_DllAPI CompleteAnnotationHeader(
             CompleteAnnotationHeader&& x);
-    RTPS_DllAPI CompleteAnnotationHeader& operator=(
+    RTPS_DllAPI CompleteAnnotationHeader& operator =(
             const CompleteAnnotationHeader& x);
-    RTPS_DllAPI CompleteAnnotationHeader& operator=(
+    RTPS_DllAPI CompleteAnnotationHeader& operator =(
             CompleteAnnotationHeader&& x);
 
     RTPS_DllAPI inline void annotation_name(
-            const QualifiedTypeName& _annotation_name) { m_annotation_name = _annotation_name; }
-    RTPS_DllAPI inline void annotation_name(
-            QualifiedTypeName&& _annotation_name) { m_annotation_name = std::move(_annotation_name); }
-    RTPS_DllAPI inline const QualifiedTypeName& annotation_name() const { return m_annotation_name; }
-    RTPS_DllAPI inline QualifiedTypeName& annotation_name() { return m_annotation_name; }
+            const QualifiedTypeName& _annotation_name)
+    {
+        m_annotation_name = _annotation_name;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteAnnotationHeader& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void annotation_name(
+            QualifiedTypeName&& _annotation_name)
+    {
+        m_annotation_name = std::move(_annotation_name);
+    }
+
+    RTPS_DllAPI inline const QualifiedTypeName& annotation_name() const
+    {
+        return m_annotation_name;
+    }
+
+    RTPS_DllAPI inline QualifiedTypeName& annotation_name()
+    {
+        return m_annotation_name;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteAnnotationHeader& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -1537,21 +2333,21 @@ public:
             const MinimalAnnotationHeader& x);
     RTPS_DllAPI MinimalAnnotationHeader(
             MinimalAnnotationHeader&& x);
-    RTPS_DllAPI MinimalAnnotationHeader& operator=(
+    RTPS_DllAPI MinimalAnnotationHeader& operator =(
             const MinimalAnnotationHeader& x);
-    RTPS_DllAPI MinimalAnnotationHeader& operator=(
+    RTPS_DllAPI MinimalAnnotationHeader& operator =(
             MinimalAnnotationHeader&& x);
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalAnnotationHeader& data,
-            size_t current_alignment = 0);
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
-            const MinimalAnnotationHeader&) const { return true; }
+    RTPS_DllAPI bool operator ==(
+            const MinimalAnnotationHeader&) const
+    {
+        return true;
+    }
 
     RTPS_DllAPI bool consistent(
             const MinimalAnnotationHeader& x,
@@ -1576,41 +2372,83 @@ public:
             const CompleteAnnotationType& x);
     RTPS_DllAPI CompleteAnnotationType(
             CompleteAnnotationType&& x);
-    RTPS_DllAPI CompleteAnnotationType& operator=(
+    RTPS_DllAPI CompleteAnnotationType& operator =(
             const CompleteAnnotationType& x);
-    RTPS_DllAPI CompleteAnnotationType& operator=(
+    RTPS_DllAPI CompleteAnnotationType& operator =(
             CompleteAnnotationType&& x);
 
     RTPS_DllAPI inline void annotation_flag(
-            const AnnotationTypeFlag& _annotation_flag) { m_annotation_flag = _annotation_flag; }
+            const AnnotationTypeFlag& _annotation_flag)
+    {
+        m_annotation_flag = _annotation_flag;
+    }
+
     RTPS_DllAPI inline void annotation_flag(
-            AnnotationTypeFlag&& _annotation_flag) { m_annotation_flag = std::move(_annotation_flag); }
-    RTPS_DllAPI inline const AnnotationTypeFlag& annotation_flag() const { return m_annotation_flag; }
-    RTPS_DllAPI inline AnnotationTypeFlag& annotation_flag() { return m_annotation_flag; }
+            AnnotationTypeFlag&& _annotation_flag)
+    {
+        m_annotation_flag = std::move(_annotation_flag);
+    }
+
+    RTPS_DllAPI inline const AnnotationTypeFlag& annotation_flag() const
+    {
+        return m_annotation_flag;
+    }
+
+    RTPS_DllAPI inline AnnotationTypeFlag& annotation_flag()
+    {
+        return m_annotation_flag;
+    }
 
     RTPS_DllAPI inline void header(
-            const CompleteAnnotationHeader& _header) { m_header = _header; }
+            const CompleteAnnotationHeader& _header)
+    {
+        m_header = _header;
+    }
+
     RTPS_DllAPI inline void header(
-            CompleteAnnotationHeader&& _header) { m_header = std::move(_header); }
-    RTPS_DllAPI inline const CompleteAnnotationHeader& header() const { return m_header; }
-    RTPS_DllAPI inline CompleteAnnotationHeader& header() { return m_header; }
+            CompleteAnnotationHeader&& _header)
+    {
+        m_header = std::move(_header);
+    }
+
+    RTPS_DllAPI inline const CompleteAnnotationHeader& header() const
+    {
+        return m_header;
+    }
+
+    RTPS_DllAPI inline CompleteAnnotationHeader& header()
+    {
+        return m_header;
+    }
 
     RTPS_DllAPI inline void member_seq(
-            const CompleteAnnotationParameterSeq& _member_seq) { m_member_seq = _member_seq; }
-    RTPS_DllAPI inline void member_seq(
-            CompleteAnnotationParameterSeq&& _member_seq) { m_member_seq = std::move(_member_seq); }
-    RTPS_DllAPI inline const CompleteAnnotationParameterSeq& member_seq() const { return m_member_seq; }
-    RTPS_DllAPI inline CompleteAnnotationParameterSeq& member_seq() { return m_member_seq; }
+            const CompleteAnnotationParameterSeq& _member_seq)
+    {
+        m_member_seq = _member_seq;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteAnnotationType& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void member_seq(
+            CompleteAnnotationParameterSeq&& _member_seq)
+    {
+        m_member_seq = std::move(_member_seq);
+    }
+
+    RTPS_DllAPI inline const CompleteAnnotationParameterSeq& member_seq() const
+    {
+        return m_member_seq;
+    }
+
+    RTPS_DllAPI inline CompleteAnnotationParameterSeq& member_seq()
+    {
+        return m_member_seq;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteAnnotationType& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -1638,41 +2476,83 @@ public:
             const MinimalAnnotationType& x);
     RTPS_DllAPI MinimalAnnotationType(
             MinimalAnnotationType&& x);
-    RTPS_DllAPI MinimalAnnotationType& operator=(
+    RTPS_DllAPI MinimalAnnotationType& operator =(
             const MinimalAnnotationType& x);
-    RTPS_DllAPI MinimalAnnotationType& operator=(
+    RTPS_DllAPI MinimalAnnotationType& operator =(
             MinimalAnnotationType&& x);
 
     RTPS_DllAPI inline void annotation_flag(
-            const AnnotationTypeFlag& _annotation_flag) { m_annotation_flag = _annotation_flag; }
+            const AnnotationTypeFlag& _annotation_flag)
+    {
+        m_annotation_flag = _annotation_flag;
+    }
+
     RTPS_DllAPI inline void annotation_flag(
-            AnnotationTypeFlag&& _annotation_flag) { m_annotation_flag = std::move(_annotation_flag); }
-    RTPS_DllAPI inline const AnnotationTypeFlag& annotation_flag() const { return m_annotation_flag; }
-    RTPS_DllAPI inline AnnotationTypeFlag& annotation_flag() { return m_annotation_flag; }
+            AnnotationTypeFlag&& _annotation_flag)
+    {
+        m_annotation_flag = std::move(_annotation_flag);
+    }
+
+    RTPS_DllAPI inline const AnnotationTypeFlag& annotation_flag() const
+    {
+        return m_annotation_flag;
+    }
+
+    RTPS_DllAPI inline AnnotationTypeFlag& annotation_flag()
+    {
+        return m_annotation_flag;
+    }
 
     RTPS_DllAPI inline void header(
-            const MinimalAnnotationHeader& _header) { m_header = _header; }
+            const MinimalAnnotationHeader& _header)
+    {
+        m_header = _header;
+    }
+
     RTPS_DllAPI inline void header(
-            MinimalAnnotationHeader&& _header) { m_header = std::move(_header); }
-    RTPS_DllAPI inline const MinimalAnnotationHeader& header() const { return m_header; }
-    RTPS_DllAPI inline MinimalAnnotationHeader& header() { return m_header; }
+            MinimalAnnotationHeader&& _header)
+    {
+        m_header = std::move(_header);
+    }
+
+    RTPS_DllAPI inline const MinimalAnnotationHeader& header() const
+    {
+        return m_header;
+    }
+
+    RTPS_DllAPI inline MinimalAnnotationHeader& header()
+    {
+        return m_header;
+    }
 
     RTPS_DllAPI inline void member_seq(
-            const MinimalAnnotationParameterSeq& _member_seq) { m_member_seq = _member_seq; }
-    RTPS_DllAPI inline void member_seq(
-            MinimalAnnotationParameterSeq&& _member_seq) { m_member_seq = std::move(_member_seq); }
-    RTPS_DllAPI inline const MinimalAnnotationParameterSeq& member_seq() const { return m_member_seq; }
-    RTPS_DllAPI inline MinimalAnnotationParameterSeq& member_seq() { return m_member_seq; }
+            const MinimalAnnotationParameterSeq& _member_seq)
+    {
+        m_member_seq = _member_seq;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalAnnotationType& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void member_seq(
+            MinimalAnnotationParameterSeq&& _member_seq)
+    {
+        m_member_seq = std::move(_member_seq);
+    }
+
+    RTPS_DllAPI inline const MinimalAnnotationParameterSeq& member_seq() const
+    {
+        return m_member_seq;
+    }
+
+    RTPS_DllAPI inline MinimalAnnotationParameterSeq& member_seq()
+    {
+        return m_member_seq;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalAnnotationType& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -1701,34 +2581,61 @@ public:
             const CommonAliasBody& x);
     RTPS_DllAPI CommonAliasBody(
             CommonAliasBody&& x);
-    RTPS_DllAPI CommonAliasBody& operator=(
+    RTPS_DllAPI CommonAliasBody& operator =(
             const CommonAliasBody& x);
-    RTPS_DllAPI CommonAliasBody& operator=(
+    RTPS_DllAPI CommonAliasBody& operator =(
             CommonAliasBody&& x);
 
     RTPS_DllAPI inline void related_flags(
-            const AliasMemberFlag& _related_flags) { m_related_flags = _related_flags; }
+            const AliasMemberFlag& _related_flags)
+    {
+        m_related_flags = _related_flags;
+    }
+
     RTPS_DllAPI inline void related_flags(
-            AliasMemberFlag&& _related_flags) { m_related_flags = std::move(_related_flags); }
-    RTPS_DllAPI inline const AliasMemberFlag& related_flags() const { return m_related_flags; }
-    RTPS_DllAPI inline AliasMemberFlag& related_flags() { return m_related_flags; }
+            AliasMemberFlag&& _related_flags)
+    {
+        m_related_flags = std::move(_related_flags);
+    }
+
+    RTPS_DllAPI inline const AliasMemberFlag& related_flags() const
+    {
+        return m_related_flags;
+    }
+
+    RTPS_DllAPI inline AliasMemberFlag& related_flags()
+    {
+        return m_related_flags;
+    }
 
     RTPS_DllAPI inline void related_type(
-            const TypeIdentifier& _related_type) { m_related_type = _related_type; }
-    RTPS_DllAPI inline void related_type(
-            TypeIdentifier&& _related_type) { m_related_type = std::move(_related_type); }
-    RTPS_DllAPI inline const TypeIdentifier& related_type() const { return m_related_type; }
-    RTPS_DllAPI inline TypeIdentifier& related_type() { return m_related_type; }
+            const TypeIdentifier& _related_type)
+    {
+        m_related_type = _related_type;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CommonAliasBody& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void related_type(
+            TypeIdentifier&& _related_type)
+    {
+        m_related_type = std::move(_related_type);
+    }
+
+    RTPS_DllAPI inline const TypeIdentifier& related_type() const
+    {
+        return m_related_type;
+    }
+
+    RTPS_DllAPI inline TypeIdentifier& related_type()
+    {
+        return m_related_type;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CommonAliasBody& other) const;
 
     //    RTPS_DllAPI bool consistent(const CommonAliasBody &x,
@@ -1755,41 +2662,83 @@ public:
             const CompleteAliasBody& x);
     RTPS_DllAPI CompleteAliasBody(
             CompleteAliasBody&& x);
-    RTPS_DllAPI CompleteAliasBody& operator=(
+    RTPS_DllAPI CompleteAliasBody& operator =(
             const CompleteAliasBody& x);
-    RTPS_DllAPI CompleteAliasBody& operator=(
+    RTPS_DllAPI CompleteAliasBody& operator =(
             CompleteAliasBody&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonAliasBody& _common) { m_common = _common; }
+            const CommonAliasBody& _common)
+    {
+        m_common = _common;
+    }
+
     RTPS_DllAPI inline void common(
-            CommonAliasBody&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonAliasBody& common() const { return m_common; }
-    RTPS_DllAPI inline CommonAliasBody& common() { return m_common; }
+            CommonAliasBody&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonAliasBody& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonAliasBody& common()
+    {
+        return m_common;
+    }
 
     RTPS_DllAPI inline void ann_builtin(
-            const AppliedBuiltinMemberAnnotations& _ann_builtin) { m_ann_builtin = _ann_builtin; }
+            const AppliedBuiltinMemberAnnotations& _ann_builtin)
+    {
+        m_ann_builtin = _ann_builtin;
+    }
+
     RTPS_DllAPI inline void ann_builtin(
-            AppliedBuiltinMemberAnnotations&& _ann_builtin) { m_ann_builtin = std::move(_ann_builtin); }
-    RTPS_DllAPI inline const AppliedBuiltinMemberAnnotations& ann_builtin() const { return m_ann_builtin; }
-    RTPS_DllAPI inline AppliedBuiltinMemberAnnotations& ann_builtin() { return m_ann_builtin; }
+            AppliedBuiltinMemberAnnotations&& _ann_builtin)
+    {
+        m_ann_builtin = std::move(_ann_builtin);
+    }
+
+    RTPS_DllAPI inline const AppliedBuiltinMemberAnnotations& ann_builtin() const
+    {
+        return m_ann_builtin;
+    }
+
+    RTPS_DllAPI inline AppliedBuiltinMemberAnnotations& ann_builtin()
+    {
+        return m_ann_builtin;
+    }
 
     RTPS_DllAPI inline void ann_custom(
-            const AppliedAnnotationSeq& _ann_custom) { m_ann_custom = _ann_custom; }
-    RTPS_DllAPI inline void ann_custom(
-            AppliedAnnotationSeq&& _ann_custom) { m_ann_custom = std::move(_ann_custom); }
-    RTPS_DllAPI inline const AppliedAnnotationSeq& ann_custom() const { return m_ann_custom; }
-    RTPS_DllAPI inline AppliedAnnotationSeq& ann_custom() { return m_ann_custom; }
+            const AppliedAnnotationSeq& _ann_custom)
+    {
+        m_ann_custom = _ann_custom;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteAliasBody& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void ann_custom(
+            AppliedAnnotationSeq&& _ann_custom)
+    {
+        m_ann_custom = std::move(_ann_custom);
+    }
+
+    RTPS_DllAPI inline const AppliedAnnotationSeq& ann_custom() const
+    {
+        return m_ann_custom;
+    }
+
+    RTPS_DllAPI inline AppliedAnnotationSeq& ann_custom()
+    {
+        return m_ann_custom;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteAliasBody& other) const;
 
     //    RTPS_DllAPI bool consistent(const CompleteAliasBody &x,
@@ -1815,27 +2764,39 @@ public:
             const MinimalAliasBody& x);
     RTPS_DllAPI MinimalAliasBody(
             MinimalAliasBody&& x);
-    RTPS_DllAPI MinimalAliasBody& operator=(
+    RTPS_DllAPI MinimalAliasBody& operator =(
             const MinimalAliasBody& x);
-    RTPS_DllAPI MinimalAliasBody& operator=(
+    RTPS_DllAPI MinimalAliasBody& operator =(
             MinimalAliasBody&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonAliasBody& _common) { m_common = _common; }
-    RTPS_DllAPI inline void common(
-            CommonAliasBody&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonAliasBody& common() const { return m_common; }
-    RTPS_DllAPI inline CommonAliasBody& common() { return m_common; }
+            const CommonAliasBody& _common)
+    {
+        m_common = _common;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalAliasBody& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void common(
+            CommonAliasBody&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonAliasBody& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonAliasBody& common()
+    {
+        return m_common;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalAliasBody& other) const;
 
     //    RTPS_DllAPI bool consistent(const MinimalAliasBody &x,
@@ -1859,27 +2820,39 @@ public:
             const CompleteAliasHeader& x);
     RTPS_DllAPI CompleteAliasHeader(
             CompleteAliasHeader&& x);
-    RTPS_DllAPI CompleteAliasHeader& operator=(
+    RTPS_DllAPI CompleteAliasHeader& operator =(
             const CompleteAliasHeader& x);
-    RTPS_DllAPI CompleteAliasHeader& operator=(
+    RTPS_DllAPI CompleteAliasHeader& operator =(
             CompleteAliasHeader&& x);
 
     RTPS_DllAPI inline void detail(
-            const CompleteTypeDetail& _detail) { m_detail = _detail; }
-    RTPS_DllAPI inline void detail(
-            CompleteTypeDetail&& _detail) { m_detail = std::move(_detail); }
-    RTPS_DllAPI inline const CompleteTypeDetail& detail() const { return m_detail; }
-    RTPS_DllAPI inline CompleteTypeDetail& detail() { return m_detail; }
+            const CompleteTypeDetail& _detail)
+    {
+        m_detail = _detail;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteAliasHeader& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void detail(
+            CompleteTypeDetail&& _detail)
+    {
+        m_detail = std::move(_detail);
+    }
+
+    RTPS_DllAPI inline const CompleteTypeDetail& detail() const
+    {
+        return m_detail;
+    }
+
+    RTPS_DllAPI inline CompleteTypeDetail& detail()
+    {
+        return m_detail;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteAliasHeader& other) const;
 
     //    RTPS_DllAPI bool consistent(const CompleteAliasHeader &x,
@@ -1903,21 +2876,21 @@ public:
             const MinimalAliasHeader& x);
     RTPS_DllAPI MinimalAliasHeader(
             MinimalAliasHeader&& x);
-    RTPS_DllAPI MinimalAliasHeader& operator=(
+    RTPS_DllAPI MinimalAliasHeader& operator =(
             const MinimalAliasHeader& x);
-    RTPS_DllAPI MinimalAliasHeader& operator=(
+    RTPS_DllAPI MinimalAliasHeader& operator =(
             MinimalAliasHeader&& x);
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalAliasHeader& data,
-            size_t current_alignment = 0);
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
-            const MinimalAliasHeader&) const { return true; }
+    RTPS_DllAPI bool operator ==(
+            const MinimalAliasHeader&) const
+    {
+        return true;
+    }
 
     //    RTPS_DllAPI bool consistent(const MinimalAliasHeader &x,
     //        const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
@@ -1941,41 +2914,83 @@ public:
             const CompleteAliasType& x);
     RTPS_DllAPI CompleteAliasType(
             CompleteAliasType&& x);
-    RTPS_DllAPI CompleteAliasType& operator=(
+    RTPS_DllAPI CompleteAliasType& operator =(
             const CompleteAliasType& x);
-    RTPS_DllAPI CompleteAliasType& operator=(
+    RTPS_DllAPI CompleteAliasType& operator =(
             CompleteAliasType&& x);
 
     RTPS_DllAPI inline void alias_flags(
-            const AliasTypeFlag& _alias_flags) { m_alias_flags = _alias_flags; }
+            const AliasTypeFlag& _alias_flags)
+    {
+        m_alias_flags = _alias_flags;
+    }
+
     RTPS_DllAPI inline void alias_flags(
-            AliasTypeFlag&& _alias_flags) { m_alias_flags = std::move(_alias_flags); }
-    RTPS_DllAPI inline const AliasTypeFlag& alias_flags() const { return m_alias_flags; }
-    RTPS_DllAPI inline AliasTypeFlag& alias_flags() { return m_alias_flags; }
+            AliasTypeFlag&& _alias_flags)
+    {
+        m_alias_flags = std::move(_alias_flags);
+    }
+
+    RTPS_DllAPI inline const AliasTypeFlag& alias_flags() const
+    {
+        return m_alias_flags;
+    }
+
+    RTPS_DllAPI inline AliasTypeFlag& alias_flags()
+    {
+        return m_alias_flags;
+    }
 
     RTPS_DllAPI inline void header(
-            const CompleteAliasHeader& _header) { m_header = _header; }
+            const CompleteAliasHeader& _header)
+    {
+        m_header = _header;
+    }
+
     RTPS_DllAPI inline void header(
-            CompleteAliasHeader&& _header) { m_header = std::move(_header); }
-    RTPS_DllAPI inline const CompleteAliasHeader& header() const { return m_header; }
-    RTPS_DllAPI inline CompleteAliasHeader& header() { return m_header; }
+            CompleteAliasHeader&& _header)
+    {
+        m_header = std::move(_header);
+    }
+
+    RTPS_DllAPI inline const CompleteAliasHeader& header() const
+    {
+        return m_header;
+    }
+
+    RTPS_DllAPI inline CompleteAliasHeader& header()
+    {
+        return m_header;
+    }
 
     RTPS_DllAPI inline void body(
-            const CompleteAliasBody& _body) { m_body = _body; }
-    RTPS_DllAPI inline void body(
-            CompleteAliasBody&& _body) { m_body = std::move(_body); }
-    RTPS_DllAPI inline const CompleteAliasBody& body() const { return m_body; }
-    RTPS_DllAPI inline CompleteAliasBody& body() { return m_body; }
+            const CompleteAliasBody& _body)
+    {
+        m_body = _body;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteAliasType& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void body(
+            CompleteAliasBody&& _body)
+    {
+        m_body = std::move(_body);
+    }
+
+    RTPS_DllAPI inline const CompleteAliasBody& body() const
+    {
+        return m_body;
+    }
+
+    RTPS_DllAPI inline CompleteAliasBody& body()
+    {
+        return m_body;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteAliasType& other) const;
 
     //    RTPS_DllAPI bool consistent(const CompleteAliasType &x,
@@ -2002,41 +3017,83 @@ public:
             const MinimalAliasType& x);
     RTPS_DllAPI MinimalAliasType(
             MinimalAliasType&& x);
-    RTPS_DllAPI MinimalAliasType& operator=(
+    RTPS_DllAPI MinimalAliasType& operator =(
             const MinimalAliasType& x);
-    RTPS_DllAPI MinimalAliasType& operator=(
+    RTPS_DllAPI MinimalAliasType& operator =(
             MinimalAliasType&& x);
 
     RTPS_DllAPI inline void alias_flags(
-            const AliasTypeFlag& _alias_flags) { m_alias_flags = _alias_flags; }
+            const AliasTypeFlag& _alias_flags)
+    {
+        m_alias_flags = _alias_flags;
+    }
+
     RTPS_DllAPI inline void alias_flags(
-            AliasTypeFlag&& _alias_flags) { m_alias_flags = std::move(_alias_flags); }
-    RTPS_DllAPI inline const AliasTypeFlag& alias_flags() const { return m_alias_flags; }
-    RTPS_DllAPI inline AliasTypeFlag& alias_flags() { return m_alias_flags; }
+            AliasTypeFlag&& _alias_flags)
+    {
+        m_alias_flags = std::move(_alias_flags);
+    }
+
+    RTPS_DllAPI inline const AliasTypeFlag& alias_flags() const
+    {
+        return m_alias_flags;
+    }
+
+    RTPS_DllAPI inline AliasTypeFlag& alias_flags()
+    {
+        return m_alias_flags;
+    }
 
     RTPS_DllAPI inline void header(
-            const MinimalAliasHeader& _header) { m_header = _header; }
+            const MinimalAliasHeader& _header)
+    {
+        m_header = _header;
+    }
+
     RTPS_DllAPI inline void header(
-            MinimalAliasHeader&& _header) { m_header = std::move(_header); }
-    RTPS_DllAPI inline const MinimalAliasHeader& header() const { return m_header; }
-    RTPS_DllAPI inline MinimalAliasHeader& header() { return m_header; }
+            MinimalAliasHeader&& _header)
+    {
+        m_header = std::move(_header);
+    }
+
+    RTPS_DllAPI inline const MinimalAliasHeader& header() const
+    {
+        return m_header;
+    }
+
+    RTPS_DllAPI inline MinimalAliasHeader& header()
+    {
+        return m_header;
+    }
 
     RTPS_DllAPI inline void body(
-            const MinimalAliasBody& _body) { m_body = _body; }
-    RTPS_DllAPI inline void body(
-            MinimalAliasBody&& _body) { m_body = std::move(_body); }
-    RTPS_DllAPI inline const MinimalAliasBody& body() const { return m_body; }
-    RTPS_DllAPI inline MinimalAliasBody& body() { return m_body; }
+            const MinimalAliasBody& _body)
+    {
+        m_body = _body;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalAliasType& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void body(
+            MinimalAliasBody&& _body)
+    {
+        m_body = std::move(_body);
+    }
+
+    RTPS_DllAPI inline const MinimalAliasBody& body() const
+    {
+        return m_body;
+    }
+
+    RTPS_DllAPI inline MinimalAliasBody& body()
+    {
+        return m_body;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalAliasType& other) const;
 
     //    RTPS_DllAPI bool consistent(const MinimalAliasType &x,
@@ -2064,34 +3121,61 @@ public:
             const CompleteElementDetail& x);
     RTPS_DllAPI CompleteElementDetail(
             CompleteElementDetail&& x);
-    RTPS_DllAPI CompleteElementDetail& operator=(
+    RTPS_DllAPI CompleteElementDetail& operator =(
             const CompleteElementDetail& x);
-    RTPS_DllAPI CompleteElementDetail& operator=(
+    RTPS_DllAPI CompleteElementDetail& operator =(
             CompleteElementDetail&& x);
 
     RTPS_DllAPI inline void ann_builtin(
-            const AppliedBuiltinMemberAnnotations& _ann_builtin) { m_ann_builtin = _ann_builtin; }
+            const AppliedBuiltinMemberAnnotations& _ann_builtin)
+    {
+        m_ann_builtin = _ann_builtin;
+    }
+
     RTPS_DllAPI inline void ann_builtin(
-            AppliedBuiltinMemberAnnotations&& _ann_builtin) { m_ann_builtin = std::move(_ann_builtin); }
-    RTPS_DllAPI inline const AppliedBuiltinMemberAnnotations& ann_builtin() const { return m_ann_builtin; }
-    RTPS_DllAPI inline AppliedBuiltinMemberAnnotations& ann_builtin() { return m_ann_builtin; }
+            AppliedBuiltinMemberAnnotations&& _ann_builtin)
+    {
+        m_ann_builtin = std::move(_ann_builtin);
+    }
+
+    RTPS_DllAPI inline const AppliedBuiltinMemberAnnotations& ann_builtin() const
+    {
+        return m_ann_builtin;
+    }
+
+    RTPS_DllAPI inline AppliedBuiltinMemberAnnotations& ann_builtin()
+    {
+        return m_ann_builtin;
+    }
 
     RTPS_DllAPI inline void ann_custom(
-            const AppliedAnnotationSeq& _ann_custom) { m_ann_custom = _ann_custom; }
-    RTPS_DllAPI inline void ann_custom(
-            AppliedAnnotationSeq&& _ann_custom) { m_ann_custom = std::move(_ann_custom); }
-    RTPS_DllAPI inline const AppliedAnnotationSeq& ann_custom() const { return m_ann_custom; }
-    RTPS_DllAPI inline AppliedAnnotationSeq& ann_custom() { return m_ann_custom; }
+            const AppliedAnnotationSeq& _ann_custom)
+    {
+        m_ann_custom = _ann_custom;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteElementDetail& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void ann_custom(
+            AppliedAnnotationSeq&& _ann_custom)
+    {
+        m_ann_custom = std::move(_ann_custom);
+    }
+
+    RTPS_DllAPI inline const AppliedAnnotationSeq& ann_custom() const
+    {
+        return m_ann_custom;
+    }
+
+    RTPS_DllAPI inline AppliedAnnotationSeq& ann_custom()
+    {
+        return m_ann_custom;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteElementDetail& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -2117,34 +3201,61 @@ public:
             const CommonCollectionElement& x);
     RTPS_DllAPI CommonCollectionElement(
             CommonCollectionElement&& x);
-    RTPS_DllAPI CommonCollectionElement& operator=(
+    RTPS_DllAPI CommonCollectionElement& operator =(
             const CommonCollectionElement& x);
-    RTPS_DllAPI CommonCollectionElement& operator=(
+    RTPS_DllAPI CommonCollectionElement& operator =(
             CommonCollectionElement&& x);
 
     RTPS_DllAPI inline void element_flags(
-            const CollectionElementFlag& _element_flags) { m_element_flags = _element_flags; }
+            const CollectionElementFlag& _element_flags)
+    {
+        m_element_flags = _element_flags;
+    }
+
     RTPS_DllAPI inline void element_flags(
-            CollectionElementFlag&& _element_flags) { m_element_flags = std::move(_element_flags); }
-    RTPS_DllAPI inline const CollectionElementFlag& element_flags() const { return m_element_flags; }
-    RTPS_DllAPI inline CollectionElementFlag& element_flags() { return m_element_flags; }
+            CollectionElementFlag&& _element_flags)
+    {
+        m_element_flags = std::move(_element_flags);
+    }
+
+    RTPS_DllAPI inline const CollectionElementFlag& element_flags() const
+    {
+        return m_element_flags;
+    }
+
+    RTPS_DllAPI inline CollectionElementFlag& element_flags()
+    {
+        return m_element_flags;
+    }
 
     RTPS_DllAPI inline void type(
-            const TypeIdentifier& _type) { m_type = _type; }
-    RTPS_DllAPI inline void type(
-            TypeIdentifier&& _type) { m_type = std::move(_type); }
-    RTPS_DllAPI inline const TypeIdentifier& type() const { return m_type; }
-    RTPS_DllAPI inline TypeIdentifier& type() { return m_type; }
+            const TypeIdentifier& _type)
+    {
+        m_type = _type;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CommonCollectionElement& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void type(
+            TypeIdentifier&& _type)
+    {
+        m_type = std::move(_type);
+    }
+
+    RTPS_DllAPI inline const TypeIdentifier& type() const
+    {
+        return m_type;
+    }
+
+    RTPS_DllAPI inline TypeIdentifier& type()
+    {
+        return m_type;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CommonCollectionElement& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -2171,34 +3282,61 @@ public:
             const CompleteCollectionElement& x);
     RTPS_DllAPI CompleteCollectionElement(
             CompleteCollectionElement&& x);
-    RTPS_DllAPI CompleteCollectionElement& operator=(
+    RTPS_DllAPI CompleteCollectionElement& operator =(
             const CompleteCollectionElement& x);
-    RTPS_DllAPI CompleteCollectionElement& operator=(
+    RTPS_DllAPI CompleteCollectionElement& operator =(
             CompleteCollectionElement&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonCollectionElement& _common) { m_common = _common; }
+            const CommonCollectionElement& _common)
+    {
+        m_common = _common;
+    }
+
     RTPS_DllAPI inline void common(
-            CommonCollectionElement&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonCollectionElement& common() const { return m_common; }
-    RTPS_DllAPI inline CommonCollectionElement& common() { return m_common; }
+            CommonCollectionElement&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonCollectionElement& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonCollectionElement& common()
+    {
+        return m_common;
+    }
 
     RTPS_DllAPI inline void detail(
-            const CompleteElementDetail& _detail) { m_detail = _detail; }
-    RTPS_DllAPI inline void detail(
-            CompleteElementDetail&& _detail) { m_detail = std::move(_detail); }
-    RTPS_DllAPI inline const CompleteElementDetail& detail() const { return m_detail; }
-    RTPS_DllAPI inline CompleteElementDetail& detail() { return m_detail; }
+            const CompleteElementDetail& _detail)
+    {
+        m_detail = _detail;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteCollectionElement& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void detail(
+            CompleteElementDetail&& _detail)
+    {
+        m_detail = std::move(_detail);
+    }
+
+    RTPS_DllAPI inline const CompleteElementDetail& detail() const
+    {
+        return m_detail;
+    }
+
+    RTPS_DllAPI inline CompleteElementDetail& detail()
+    {
+        return m_detail;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteCollectionElement& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -2224,27 +3362,39 @@ public:
             const MinimalCollectionElement& x);
     RTPS_DllAPI MinimalCollectionElement(
             MinimalCollectionElement&& x);
-    RTPS_DllAPI MinimalCollectionElement& operator=(
+    RTPS_DllAPI MinimalCollectionElement& operator =(
             const MinimalCollectionElement& x);
-    RTPS_DllAPI MinimalCollectionElement& operator=(
+    RTPS_DllAPI MinimalCollectionElement& operator =(
             MinimalCollectionElement&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonCollectionElement& _common) { m_common = _common; }
-    RTPS_DllAPI inline void common(
-            CommonCollectionElement&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonCollectionElement& common() const { return m_common; }
-    RTPS_DllAPI inline CommonCollectionElement& common() { return m_common; }
+            const CommonCollectionElement& _common)
+    {
+        m_common = _common;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalCollectionElement& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void common(
+            CommonCollectionElement&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonCollectionElement& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonCollectionElement& common()
+    {
+        return m_common;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalCollectionElement& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -2269,27 +3419,39 @@ public:
             const CommonCollectionHeader& x);
     RTPS_DllAPI CommonCollectionHeader(
             CommonCollectionHeader&& x);
-    RTPS_DllAPI CommonCollectionHeader& operator=(
+    RTPS_DllAPI CommonCollectionHeader& operator =(
             const CommonCollectionHeader& x);
-    RTPS_DllAPI CommonCollectionHeader& operator=(
+    RTPS_DllAPI CommonCollectionHeader& operator =(
             CommonCollectionHeader&& x);
 
     RTPS_DllAPI inline void bound(
-            const LBound& _bound) { m_bound = _bound; }
-    RTPS_DllAPI inline void bound(
-            LBound&& _bound) { m_bound = std::move(_bound); }
-    RTPS_DllAPI inline const LBound& bound() const { return m_bound; }
-    RTPS_DllAPI inline LBound& bound() { return m_bound; }
+            const LBound& _bound)
+    {
+        m_bound = _bound;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CommonCollectionHeader& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void bound(
+            LBound&& _bound)
+    {
+        m_bound = std::move(_bound);
+    }
+
+    RTPS_DllAPI inline const LBound& bound() const
+    {
+        return m_bound;
+    }
+
+    RTPS_DllAPI inline LBound& bound()
+    {
+        return m_bound;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CommonCollectionHeader& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -2315,34 +3477,61 @@ public:
             const CompleteCollectionHeader& x);
     RTPS_DllAPI CompleteCollectionHeader(
             CompleteCollectionHeader&& x);
-    RTPS_DllAPI CompleteCollectionHeader& operator=(
+    RTPS_DllAPI CompleteCollectionHeader& operator =(
             const CompleteCollectionHeader& x);
-    RTPS_DllAPI CompleteCollectionHeader& operator=(
+    RTPS_DllAPI CompleteCollectionHeader& operator =(
             CompleteCollectionHeader&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonCollectionHeader& _common) { m_common = _common; }
+            const CommonCollectionHeader& _common)
+    {
+        m_common = _common;
+    }
+
     RTPS_DllAPI inline void common(
-            CommonCollectionHeader&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonCollectionHeader& common() const { return m_common; }
-    RTPS_DllAPI inline CommonCollectionHeader& common() { return m_common; }
+            CommonCollectionHeader&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonCollectionHeader& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonCollectionHeader& common()
+    {
+        return m_common;
+    }
 
     RTPS_DllAPI inline void detail(
-            const CompleteTypeDetail& _detail) { m_detail = _detail; }
-    RTPS_DllAPI inline void detail(
-            CompleteTypeDetail&& _detail) { m_detail = std::move(_detail); }
-    RTPS_DllAPI inline const CompleteTypeDetail& detail() const { return m_detail; }
-    RTPS_DllAPI inline CompleteTypeDetail& detail() { return m_detail; }
+            const CompleteTypeDetail& _detail)
+    {
+        m_detail = _detail;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteCollectionHeader& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void detail(
+            CompleteTypeDetail&& _detail)
+    {
+        m_detail = std::move(_detail);
+    }
+
+    RTPS_DllAPI inline const CompleteTypeDetail& detail() const
+    {
+        return m_detail;
+    }
+
+    RTPS_DllAPI inline CompleteTypeDetail& detail()
+    {
+        return m_detail;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteCollectionHeader& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -2368,27 +3557,39 @@ public:
             const MinimalCollectionHeader& x);
     RTPS_DllAPI MinimalCollectionHeader(
             MinimalCollectionHeader&& x);
-    RTPS_DllAPI MinimalCollectionHeader& operator=(
+    RTPS_DllAPI MinimalCollectionHeader& operator =(
             const MinimalCollectionHeader& x);
-    RTPS_DllAPI MinimalCollectionHeader& operator=(
+    RTPS_DllAPI MinimalCollectionHeader& operator =(
             MinimalCollectionHeader&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonCollectionHeader& _common) { m_common = _common; }
-    RTPS_DllAPI inline void common(
-            CommonCollectionHeader&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonCollectionHeader& common() const { return m_common; }
-    RTPS_DllAPI inline CommonCollectionHeader& common() { return m_common; }
+            const CommonCollectionHeader& _common)
+    {
+        m_common = _common;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalCollectionHeader& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void common(
+            CommonCollectionHeader&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonCollectionHeader& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonCollectionHeader& common()
+    {
+        return m_common;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalCollectionHeader& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -2416,41 +3617,83 @@ public:
             const CompleteSequenceType& x);
     RTPS_DllAPI CompleteSequenceType(
             CompleteSequenceType&& x);
-    RTPS_DllAPI CompleteSequenceType& operator=(
+    RTPS_DllAPI CompleteSequenceType& operator =(
             const CompleteSequenceType& x);
-    RTPS_DllAPI CompleteSequenceType& operator=(
+    RTPS_DllAPI CompleteSequenceType& operator =(
             CompleteSequenceType&& x);
 
     RTPS_DllAPI inline void collection_flag(
-            const CollectionTypeFlag& _collection_flag) { m_collection_flag = _collection_flag; }
+            const CollectionTypeFlag& _collection_flag)
+    {
+        m_collection_flag = _collection_flag;
+    }
+
     RTPS_DllAPI inline void collection_flag(
-            CollectionTypeFlag&& _collection_flag) { m_collection_flag = std::move(_collection_flag); }
-    RTPS_DllAPI inline const CollectionTypeFlag& collection_flag() const { return m_collection_flag; }
-    RTPS_DllAPI inline CollectionTypeFlag& collection_flag() { return m_collection_flag; }
+            CollectionTypeFlag&& _collection_flag)
+    {
+        m_collection_flag = std::move(_collection_flag);
+    }
+
+    RTPS_DllAPI inline const CollectionTypeFlag& collection_flag() const
+    {
+        return m_collection_flag;
+    }
+
+    RTPS_DllAPI inline CollectionTypeFlag& collection_flag()
+    {
+        return m_collection_flag;
+    }
 
     RTPS_DllAPI inline void header(
-            const CompleteCollectionHeader& _header) { m_header = _header; }
+            const CompleteCollectionHeader& _header)
+    {
+        m_header = _header;
+    }
+
     RTPS_DllAPI inline void header(
-            CompleteCollectionHeader&& _header) { m_header = std::move(_header); }
-    RTPS_DllAPI inline const CompleteCollectionHeader& header() const { return m_header; }
-    RTPS_DllAPI inline CompleteCollectionHeader& header() { return m_header; }
+            CompleteCollectionHeader&& _header)
+    {
+        m_header = std::move(_header);
+    }
+
+    RTPS_DllAPI inline const CompleteCollectionHeader& header() const
+    {
+        return m_header;
+    }
+
+    RTPS_DllAPI inline CompleteCollectionHeader& header()
+    {
+        return m_header;
+    }
 
     RTPS_DllAPI inline void element(
-            const CompleteCollectionElement& _element) { m_element = _element; }
-    RTPS_DllAPI inline void element(
-            CompleteCollectionElement&& _element) { m_element = std::move(_element); }
-    RTPS_DllAPI inline const CompleteCollectionElement& element() const { return m_element; }
-    RTPS_DllAPI inline CompleteCollectionElement& element() { return m_element; }
+            const CompleteCollectionElement& _element)
+    {
+        m_element = _element;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteSequenceType& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void element(
+            CompleteCollectionElement&& _element)
+    {
+        m_element = std::move(_element);
+    }
+
+    RTPS_DllAPI inline const CompleteCollectionElement& element() const
+    {
+        return m_element;
+    }
+
+    RTPS_DllAPI inline CompleteCollectionElement& element()
+    {
+        return m_element;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteSequenceType& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -2479,41 +3722,83 @@ public:
             const MinimalSequenceType& x);
     RTPS_DllAPI MinimalSequenceType(
             MinimalSequenceType&& x);
-    RTPS_DllAPI MinimalSequenceType& operator=(
+    RTPS_DllAPI MinimalSequenceType& operator =(
             const MinimalSequenceType& x);
-    RTPS_DllAPI MinimalSequenceType& operator=(
+    RTPS_DllAPI MinimalSequenceType& operator =(
             MinimalSequenceType&& x);
 
     RTPS_DllAPI inline void collection_flag(
-            const CollectionTypeFlag& _collection_flag) { m_collection_flag = _collection_flag; }
+            const CollectionTypeFlag& _collection_flag)
+    {
+        m_collection_flag = _collection_flag;
+    }
+
     RTPS_DllAPI inline void collection_flag(
-            CollectionTypeFlag&& _collection_flag) { m_collection_flag = std::move(_collection_flag); }
-    RTPS_DllAPI inline const CollectionTypeFlag& collection_flag() const { return m_collection_flag; }
-    RTPS_DllAPI inline CollectionTypeFlag& collection_flag() { return m_collection_flag; }
+            CollectionTypeFlag&& _collection_flag)
+    {
+        m_collection_flag = std::move(_collection_flag);
+    }
+
+    RTPS_DllAPI inline const CollectionTypeFlag& collection_flag() const
+    {
+        return m_collection_flag;
+    }
+
+    RTPS_DllAPI inline CollectionTypeFlag& collection_flag()
+    {
+        return m_collection_flag;
+    }
 
     RTPS_DllAPI inline void header(
-            const MinimalCollectionHeader& _header) { m_header = _header; }
+            const MinimalCollectionHeader& _header)
+    {
+        m_header = _header;
+    }
+
     RTPS_DllAPI inline void header(
-            MinimalCollectionHeader&& _header) { m_header = std::move(_header); }
-    RTPS_DllAPI inline const MinimalCollectionHeader& header() const { return m_header; }
-    RTPS_DllAPI inline MinimalCollectionHeader& header() { return m_header; }
+            MinimalCollectionHeader&& _header)
+    {
+        m_header = std::move(_header);
+    }
+
+    RTPS_DllAPI inline const MinimalCollectionHeader& header() const
+    {
+        return m_header;
+    }
+
+    RTPS_DllAPI inline MinimalCollectionHeader& header()
+    {
+        return m_header;
+    }
 
     RTPS_DllAPI inline void element(
-            const MinimalCollectionElement& _element) { m_element = _element; }
-    RTPS_DllAPI inline void element(
-            MinimalCollectionElement&& _element) { m_element = std::move(_element); }
-    RTPS_DllAPI inline const MinimalCollectionElement& element() const { return m_element; }
-    RTPS_DllAPI inline MinimalCollectionElement& element() { return m_element; }
+            const MinimalCollectionElement& _element)
+    {
+        m_element = _element;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalSequenceType& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void element(
+            MinimalCollectionElement&& _element)
+    {
+        m_element = std::move(_element);
+    }
+
+    RTPS_DllAPI inline const MinimalCollectionElement& element() const
+    {
+        return m_element;
+    }
+
+    RTPS_DllAPI inline MinimalCollectionElement& element()
+    {
+        return m_element;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalSequenceType& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -2541,27 +3826,39 @@ public:
             const CommonArrayHeader& x);
     RTPS_DllAPI CommonArrayHeader(
             CommonArrayHeader&& x);
-    RTPS_DllAPI CommonArrayHeader& operator=(
+    RTPS_DllAPI CommonArrayHeader& operator =(
             const CommonArrayHeader& x);
-    RTPS_DllAPI CommonArrayHeader& operator=(
+    RTPS_DllAPI CommonArrayHeader& operator =(
             CommonArrayHeader&& x);
 
     RTPS_DllAPI inline void bound_seq(
-            const LBoundSeq& _bound_seq) { m_bound_seq = _bound_seq; }
-    RTPS_DllAPI inline void bound_seq(
-            LBoundSeq&& _bound_seq) { m_bound_seq = std::move(_bound_seq); }
-    RTPS_DllAPI inline const LBoundSeq& bound_seq() const { return m_bound_seq; }
-    RTPS_DllAPI inline LBoundSeq& bound_seq() { return m_bound_seq; }
+            const LBoundSeq& _bound_seq)
+    {
+        m_bound_seq = _bound_seq;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CommonArrayHeader& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void bound_seq(
+            LBoundSeq&& _bound_seq)
+    {
+        m_bound_seq = std::move(_bound_seq);
+    }
+
+    RTPS_DllAPI inline const LBoundSeq& bound_seq() const
+    {
+        return m_bound_seq;
+    }
+
+    RTPS_DllAPI inline LBoundSeq& bound_seq()
+    {
+        return m_bound_seq;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CommonArrayHeader& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -2587,34 +3884,61 @@ public:
             const CompleteArrayHeader& x);
     RTPS_DllAPI CompleteArrayHeader(
             CompleteArrayHeader&& x);
-    RTPS_DllAPI CompleteArrayHeader& operator=(
+    RTPS_DllAPI CompleteArrayHeader& operator =(
             const CompleteArrayHeader& x);
-    RTPS_DllAPI CompleteArrayHeader& operator=(
+    RTPS_DllAPI CompleteArrayHeader& operator =(
             CompleteArrayHeader&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonArrayHeader& _common) { m_common = _common; }
+            const CommonArrayHeader& _common)
+    {
+        m_common = _common;
+    }
+
     RTPS_DllAPI inline void common(
-            CommonArrayHeader&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonArrayHeader& common() const { return m_common; }
-    RTPS_DllAPI inline CommonArrayHeader& common() { return m_common; }
+            CommonArrayHeader&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonArrayHeader& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonArrayHeader& common()
+    {
+        return m_common;
+    }
 
     RTPS_DllAPI inline void detail(
-            const CompleteTypeDetail& _detail) { m_detail = _detail; }
-    RTPS_DllAPI inline void detail(
-            CompleteTypeDetail&& _detail) { m_detail = std::move(_detail); }
-    RTPS_DllAPI inline const CompleteTypeDetail& detail() const { return m_detail; }
-    RTPS_DllAPI inline CompleteTypeDetail& detail() { return m_detail; }
+            const CompleteTypeDetail& _detail)
+    {
+        m_detail = _detail;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteArrayHeader& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void detail(
+            CompleteTypeDetail&& _detail)
+    {
+        m_detail = std::move(_detail);
+    }
+
+    RTPS_DllAPI inline const CompleteTypeDetail& detail() const
+    {
+        return m_detail;
+    }
+
+    RTPS_DllAPI inline CompleteTypeDetail& detail()
+    {
+        return m_detail;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteArrayHeader& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -2640,27 +3964,39 @@ public:
             const MinimalArrayHeader& x);
     RTPS_DllAPI MinimalArrayHeader(
             MinimalArrayHeader&& x);
-    RTPS_DllAPI MinimalArrayHeader& operator=(
+    RTPS_DllAPI MinimalArrayHeader& operator =(
             const MinimalArrayHeader& x);
-    RTPS_DllAPI MinimalArrayHeader& operator=(
+    RTPS_DllAPI MinimalArrayHeader& operator =(
             MinimalArrayHeader&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonArrayHeader& _common) { m_common = _common; }
-    RTPS_DllAPI inline void common(
-            CommonArrayHeader&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonArrayHeader& common() const { return m_common; }
-    RTPS_DllAPI inline CommonArrayHeader& common() { return m_common; }
+            const CommonArrayHeader& _common)
+    {
+        m_common = _common;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalArrayHeader& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void common(
+            CommonArrayHeader&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonArrayHeader& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonArrayHeader& common()
+    {
+        return m_common;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalArrayHeader& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -2687,41 +4023,83 @@ public:
             const CompleteArrayType& x);
     RTPS_DllAPI CompleteArrayType(
             CompleteArrayType&& x);
-    RTPS_DllAPI CompleteArrayType& operator=(
+    RTPS_DllAPI CompleteArrayType& operator =(
             const CompleteArrayType& x);
-    RTPS_DllAPI CompleteArrayType& operator=(
+    RTPS_DllAPI CompleteArrayType& operator =(
             CompleteArrayType&& x);
 
     RTPS_DllAPI inline void collection_flag(
-            const CollectionTypeFlag& _collection_flag) { m_collection_flag = _collection_flag; }
+            const CollectionTypeFlag& _collection_flag)
+    {
+        m_collection_flag = _collection_flag;
+    }
+
     RTPS_DllAPI inline void collection_flag(
-            CollectionTypeFlag&& _collection_flag) { m_collection_flag = std::move(_collection_flag); }
-    RTPS_DllAPI inline const CollectionTypeFlag& collection_flag() const { return m_collection_flag; }
-    RTPS_DllAPI inline CollectionTypeFlag& collection_flag() { return m_collection_flag; }
+            CollectionTypeFlag&& _collection_flag)
+    {
+        m_collection_flag = std::move(_collection_flag);
+    }
+
+    RTPS_DllAPI inline const CollectionTypeFlag& collection_flag() const
+    {
+        return m_collection_flag;
+    }
+
+    RTPS_DllAPI inline CollectionTypeFlag& collection_flag()
+    {
+        return m_collection_flag;
+    }
 
     RTPS_DllAPI inline void header(
-            const CompleteArrayHeader& _header) { m_header = _header; }
+            const CompleteArrayHeader& _header)
+    {
+        m_header = _header;
+    }
+
     RTPS_DllAPI inline void header(
-            CompleteArrayHeader&& _header) { m_header = std::move(_header); }
-    RTPS_DllAPI inline const CompleteArrayHeader& header() const { return m_header; }
-    RTPS_DllAPI inline CompleteArrayHeader& header() { return m_header; }
+            CompleteArrayHeader&& _header)
+    {
+        m_header = std::move(_header);
+    }
+
+    RTPS_DllAPI inline const CompleteArrayHeader& header() const
+    {
+        return m_header;
+    }
+
+    RTPS_DllAPI inline CompleteArrayHeader& header()
+    {
+        return m_header;
+    }
 
     RTPS_DllAPI inline void element(
-            const CompleteCollectionElement& _element) { m_element = _element; }
-    RTPS_DllAPI inline void element(
-            CompleteCollectionElement&& _element) { m_element = std::move(_element); }
-    RTPS_DllAPI inline const CompleteCollectionElement& element() const { return m_element; }
-    RTPS_DllAPI inline CompleteCollectionElement& element() { return m_element; }
+            const CompleteCollectionElement& _element)
+    {
+        m_element = _element;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteArrayType& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void element(
+            CompleteCollectionElement&& _element)
+    {
+        m_element = std::move(_element);
+    }
+
+    RTPS_DllAPI inline const CompleteCollectionElement& element() const
+    {
+        return m_element;
+    }
+
+    RTPS_DllAPI inline CompleteCollectionElement& element()
+    {
+        return m_element;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteArrayType& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -2750,41 +4128,83 @@ public:
             const MinimalArrayType& x);
     RTPS_DllAPI MinimalArrayType(
             MinimalArrayType&& x);
-    RTPS_DllAPI MinimalArrayType& operator=(
+    RTPS_DllAPI MinimalArrayType& operator =(
             const MinimalArrayType& x);
-    RTPS_DllAPI MinimalArrayType& operator=(
+    RTPS_DllAPI MinimalArrayType& operator =(
             MinimalArrayType&& x);
 
     RTPS_DllAPI inline void collection_flag(
-            const CollectionTypeFlag& _collection_flag) { m_collection_flag = _collection_flag; }
+            const CollectionTypeFlag& _collection_flag)
+    {
+        m_collection_flag = _collection_flag;
+    }
+
     RTPS_DllAPI inline void collection_flag(
-            CollectionTypeFlag&& _collection_flag) { m_collection_flag = std::move(_collection_flag); }
-    RTPS_DllAPI inline const CollectionTypeFlag& collection_flag() const { return m_collection_flag; }
-    RTPS_DllAPI inline CollectionTypeFlag& collection_flag() { return m_collection_flag; }
+            CollectionTypeFlag&& _collection_flag)
+    {
+        m_collection_flag = std::move(_collection_flag);
+    }
+
+    RTPS_DllAPI inline const CollectionTypeFlag& collection_flag() const
+    {
+        return m_collection_flag;
+    }
+
+    RTPS_DllAPI inline CollectionTypeFlag& collection_flag()
+    {
+        return m_collection_flag;
+    }
 
     RTPS_DllAPI inline void header(
-            const MinimalArrayHeader& _header) { m_header = _header; }
+            const MinimalArrayHeader& _header)
+    {
+        m_header = _header;
+    }
+
     RTPS_DllAPI inline void header(
-            MinimalArrayHeader&& _header) { m_header = std::move(_header); }
-    RTPS_DllAPI inline const MinimalArrayHeader& header() const { return m_header; }
-    RTPS_DllAPI inline MinimalArrayHeader& header() { return m_header; }
+            MinimalArrayHeader&& _header)
+    {
+        m_header = std::move(_header);
+    }
+
+    RTPS_DllAPI inline const MinimalArrayHeader& header() const
+    {
+        return m_header;
+    }
+
+    RTPS_DllAPI inline MinimalArrayHeader& header()
+    {
+        return m_header;
+    }
 
     RTPS_DllAPI inline void element(
-            const MinimalCollectionElement& _element) { m_element = _element; }
-    RTPS_DllAPI inline void element(
-            MinimalCollectionElement&& _element) { m_element = std::move(_element); }
-    RTPS_DllAPI inline const MinimalCollectionElement& element() const { return m_element; }
-    RTPS_DllAPI inline MinimalCollectionElement& element() { return m_element; }
+            const MinimalCollectionElement& _element)
+    {
+        m_element = _element;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalArrayType& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void element(
+            MinimalCollectionElement&& _element)
+    {
+        m_element = std::move(_element);
+    }
+
+    RTPS_DllAPI inline const MinimalCollectionElement& element() const
+    {
+        return m_element;
+    }
+
+    RTPS_DllAPI inline MinimalCollectionElement& element()
+    {
+        return m_element;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalArrayType& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -2815,48 +4235,105 @@ public:
             const CompleteMapType& x);
     RTPS_DllAPI CompleteMapType(
             CompleteMapType&& x);
-    RTPS_DllAPI CompleteMapType& operator=(
+    RTPS_DllAPI CompleteMapType& operator =(
             const CompleteMapType& x);
-    RTPS_DllAPI CompleteMapType& operator=(
+    RTPS_DllAPI CompleteMapType& operator =(
             CompleteMapType&& x);
 
     RTPS_DllAPI inline void collection_flag(
-            const CollectionTypeFlag& _collection_flag) { m_collection_flag = _collection_flag; }
+            const CollectionTypeFlag& _collection_flag)
+    {
+        m_collection_flag = _collection_flag;
+    }
+
     RTPS_DllAPI inline void collection_flag(
-            CollectionTypeFlag&& _collection_flag) { m_collection_flag = std::move(_collection_flag); }
-    RTPS_DllAPI inline const CollectionTypeFlag& collection_flag() const { return m_collection_flag; }
-    RTPS_DllAPI inline CollectionTypeFlag& collection_flag() { return m_collection_flag; }
+            CollectionTypeFlag&& _collection_flag)
+    {
+        m_collection_flag = std::move(_collection_flag);
+    }
+
+    RTPS_DllAPI inline const CollectionTypeFlag& collection_flag() const
+    {
+        return m_collection_flag;
+    }
+
+    RTPS_DllAPI inline CollectionTypeFlag& collection_flag()
+    {
+        return m_collection_flag;
+    }
 
     RTPS_DllAPI inline void header(
-            const CompleteCollectionHeader& _header) { m_header = _header; }
+            const CompleteCollectionHeader& _header)
+    {
+        m_header = _header;
+    }
+
     RTPS_DllAPI inline void header(
-            CompleteCollectionHeader&& _header) { m_header = std::move(_header); }
-    RTPS_DllAPI inline const CompleteCollectionHeader& header() const { return m_header; }
-    RTPS_DllAPI inline CompleteCollectionHeader& header() { return m_header; }
+            CompleteCollectionHeader&& _header)
+    {
+        m_header = std::move(_header);
+    }
+
+    RTPS_DllAPI inline const CompleteCollectionHeader& header() const
+    {
+        return m_header;
+    }
+
+    RTPS_DllAPI inline CompleteCollectionHeader& header()
+    {
+        return m_header;
+    }
 
     RTPS_DllAPI inline void key(
-            const CompleteCollectionElement& _key) { m_key = _key; }
+            const CompleteCollectionElement& _key)
+    {
+        m_key = _key;
+    }
+
     RTPS_DllAPI inline void key(
-            CompleteCollectionElement&& _key) { m_key = std::move(_key); }
-    RTPS_DllAPI inline const CompleteCollectionElement& key() const { return m_key; }
-    RTPS_DllAPI inline CompleteCollectionElement& key() { return m_key; }
+            CompleteCollectionElement&& _key)
+    {
+        m_key = std::move(_key);
+    }
+
+    RTPS_DllAPI inline const CompleteCollectionElement& key() const
+    {
+        return m_key;
+    }
+
+    RTPS_DllAPI inline CompleteCollectionElement& key()
+    {
+        return m_key;
+    }
 
     RTPS_DllAPI inline void element(
-            const CompleteCollectionElement& _element) { m_element = _element; }
-    RTPS_DllAPI inline void element(
-            CompleteCollectionElement&& _element) { m_element = std::move(_element); }
-    RTPS_DllAPI inline const CompleteCollectionElement& element() const { return m_element; }
-    RTPS_DllAPI inline CompleteCollectionElement& element() { return m_element; }
+            const CompleteCollectionElement& _element)
+    {
+        m_element = _element;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteMapType& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void element(
+            CompleteCollectionElement&& _element)
+    {
+        m_element = std::move(_element);
+    }
+
+    RTPS_DllAPI inline const CompleteCollectionElement& element() const
+    {
+        return m_element;
+    }
+
+    RTPS_DllAPI inline CompleteCollectionElement& element()
+    {
+        return m_element;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteMapType& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -2886,48 +4363,105 @@ public:
             const MinimalMapType& x);
     RTPS_DllAPI MinimalMapType(
             MinimalMapType&& x);
-    RTPS_DllAPI MinimalMapType& operator=(
+    RTPS_DllAPI MinimalMapType& operator =(
             const MinimalMapType& x);
-    RTPS_DllAPI MinimalMapType& operator=(
+    RTPS_DllAPI MinimalMapType& operator =(
             MinimalMapType&& x);
 
     RTPS_DllAPI inline void collection_flag(
-            const CollectionTypeFlag& _collection_flag) { m_collection_flag = _collection_flag; }
+            const CollectionTypeFlag& _collection_flag)
+    {
+        m_collection_flag = _collection_flag;
+    }
+
     RTPS_DllAPI inline void collection_flag(
-            CollectionTypeFlag&& _collection_flag) { m_collection_flag = std::move(_collection_flag); }
-    RTPS_DllAPI inline const CollectionTypeFlag& collection_flag() const { return m_collection_flag; }
-    RTPS_DllAPI inline CollectionTypeFlag& collection_flag() { return m_collection_flag; }
+            CollectionTypeFlag&& _collection_flag)
+    {
+        m_collection_flag = std::move(_collection_flag);
+    }
+
+    RTPS_DllAPI inline const CollectionTypeFlag& collection_flag() const
+    {
+        return m_collection_flag;
+    }
+
+    RTPS_DllAPI inline CollectionTypeFlag& collection_flag()
+    {
+        return m_collection_flag;
+    }
 
     RTPS_DllAPI inline void header(
-            const MinimalCollectionHeader& _header) { m_header = _header; }
+            const MinimalCollectionHeader& _header)
+    {
+        m_header = _header;
+    }
+
     RTPS_DllAPI inline void header(
-            MinimalCollectionHeader&& _header) { m_header = std::move(_header); }
-    RTPS_DllAPI inline const MinimalCollectionHeader& header() const { return m_header; }
-    RTPS_DllAPI inline MinimalCollectionHeader& header() { return m_header; }
+            MinimalCollectionHeader&& _header)
+    {
+        m_header = std::move(_header);
+    }
+
+    RTPS_DllAPI inline const MinimalCollectionHeader& header() const
+    {
+        return m_header;
+    }
+
+    RTPS_DllAPI inline MinimalCollectionHeader& header()
+    {
+        return m_header;
+    }
 
     RTPS_DllAPI inline void key(
-            const MinimalCollectionElement& _key) { m_key = _key; }
+            const MinimalCollectionElement& _key)
+    {
+        m_key = _key;
+    }
+
     RTPS_DllAPI inline void key(
-            MinimalCollectionElement&& _key) { m_key = std::move(_key); }
-    RTPS_DllAPI inline const MinimalCollectionElement& key() const { return m_key; }
-    RTPS_DllAPI inline MinimalCollectionElement& key() { return m_key; }
+            MinimalCollectionElement&& _key)
+    {
+        m_key = std::move(_key);
+    }
+
+    RTPS_DllAPI inline const MinimalCollectionElement& key() const
+    {
+        return m_key;
+    }
+
+    RTPS_DllAPI inline MinimalCollectionElement& key()
+    {
+        return m_key;
+    }
 
     RTPS_DllAPI inline void element(
-            const MinimalCollectionElement& _element) { m_element = _element; }
-    RTPS_DllAPI inline void element(
-            MinimalCollectionElement&& _element) { m_element = std::move(_element); }
-    RTPS_DllAPI inline const MinimalCollectionElement& element() const { return m_element; }
-    RTPS_DllAPI inline MinimalCollectionElement& element() { return m_element; }
+            const MinimalCollectionElement& _element)
+    {
+        m_element = _element;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalMapType& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void element(
+            MinimalCollectionElement&& _element)
+    {
+        m_element = std::move(_element);
+    }
+
+    RTPS_DllAPI inline const MinimalCollectionElement& element() const
+    {
+        return m_element;
+    }
+
+    RTPS_DllAPI inline MinimalCollectionElement& element()
+    {
+        return m_element;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalMapType& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -2961,34 +4495,61 @@ public:
             const CommonEnumeratedLiteral& x);
     RTPS_DllAPI CommonEnumeratedLiteral(
             CommonEnumeratedLiteral&& x);
-    RTPS_DllAPI CommonEnumeratedLiteral& operator=(
+    RTPS_DllAPI CommonEnumeratedLiteral& operator =(
             const CommonEnumeratedLiteral& x);
-    RTPS_DllAPI CommonEnumeratedLiteral& operator=(
+    RTPS_DllAPI CommonEnumeratedLiteral& operator =(
             CommonEnumeratedLiteral&& x);
 
     RTPS_DllAPI inline void value(
-            const int32_t& _value) { m_value = _value; }
+            const int32_t& _value)
+    {
+        m_value = _value;
+    }
+
     RTPS_DllAPI inline void value(
-            int32_t&& _value) { m_value = std::move(_value); }
-    RTPS_DllAPI inline const int32_t& value() const { return m_value; }
-    RTPS_DllAPI inline int32_t& value() { return m_value; }
+            int32_t&& _value)
+    {
+        m_value = std::move(_value);
+    }
+
+    RTPS_DllAPI inline const int32_t& value() const
+    {
+        return m_value;
+    }
+
+    RTPS_DllAPI inline int32_t& value()
+    {
+        return m_value;
+    }
 
     RTPS_DllAPI inline void flags(
-            const EnumeratedLiteralFlag& _flags) { m_flags = _flags; }
-    RTPS_DllAPI inline void flags(
-            EnumeratedLiteralFlag&& _flags) { m_flags = std::move(_flags); }
-    RTPS_DllAPI inline const EnumeratedLiteralFlag& flags() const { return m_flags; }
-    RTPS_DllAPI inline EnumeratedLiteralFlag& flags() { return m_flags; }
+            const EnumeratedLiteralFlag& _flags)
+    {
+        m_flags = _flags;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CommonEnumeratedLiteral& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void flags(
+            EnumeratedLiteralFlag&& _flags)
+    {
+        m_flags = std::move(_flags);
+    }
+
+    RTPS_DllAPI inline const EnumeratedLiteralFlag& flags() const
+    {
+        return m_flags;
+    }
+
+    RTPS_DllAPI inline EnumeratedLiteralFlag& flags()
+    {
+        return m_flags;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CommonEnumeratedLiteral& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -3017,34 +4578,61 @@ public:
             const CompleteEnumeratedLiteral& x);
     RTPS_DllAPI CompleteEnumeratedLiteral(
             CompleteEnumeratedLiteral&& x);
-    RTPS_DllAPI CompleteEnumeratedLiteral& operator=(
+    RTPS_DllAPI CompleteEnumeratedLiteral& operator =(
             const CompleteEnumeratedLiteral& x);
-    RTPS_DllAPI CompleteEnumeratedLiteral& operator=(
+    RTPS_DllAPI CompleteEnumeratedLiteral& operator =(
             CompleteEnumeratedLiteral&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonEnumeratedLiteral& _common) { m_common = _common; }
+            const CommonEnumeratedLiteral& _common)
+    {
+        m_common = _common;
+    }
+
     RTPS_DllAPI inline void common(
-            CommonEnumeratedLiteral&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonEnumeratedLiteral& common() const { return m_common; }
-    RTPS_DllAPI inline CommonEnumeratedLiteral& common() { return m_common; }
+            CommonEnumeratedLiteral&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonEnumeratedLiteral& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonEnumeratedLiteral& common()
+    {
+        return m_common;
+    }
 
     RTPS_DllAPI inline void detail(
-            const CompleteMemberDetail& _detail) { m_detail = _detail; }
-    RTPS_DllAPI inline void detail(
-            CompleteMemberDetail&& _detail) { m_detail = std::move(_detail); }
-    RTPS_DllAPI inline const CompleteMemberDetail& detail() const { return m_detail; }
-    RTPS_DllAPI inline CompleteMemberDetail& detail() { return m_detail; }
+            const CompleteMemberDetail& _detail)
+    {
+        m_detail = _detail;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteEnumeratedLiteral& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void detail(
+            CompleteMemberDetail&& _detail)
+    {
+        m_detail = std::move(_detail);
+    }
+
+    RTPS_DllAPI inline const CompleteMemberDetail& detail() const
+    {
+        return m_detail;
+    }
+
+    RTPS_DllAPI inline CompleteMemberDetail& detail()
+    {
+        return m_detail;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteEnumeratedLiteral& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -3075,34 +4663,61 @@ public:
             const MinimalEnumeratedLiteral& x);
     RTPS_DllAPI MinimalEnumeratedLiteral(
             MinimalEnumeratedLiteral&& x);
-    RTPS_DllAPI MinimalEnumeratedLiteral& operator=(
+    RTPS_DllAPI MinimalEnumeratedLiteral& operator =(
             const MinimalEnumeratedLiteral& x);
-    RTPS_DllAPI MinimalEnumeratedLiteral& operator=(
+    RTPS_DllAPI MinimalEnumeratedLiteral& operator =(
             MinimalEnumeratedLiteral&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonEnumeratedLiteral& _common) { m_common = _common; }
+            const CommonEnumeratedLiteral& _common)
+    {
+        m_common = _common;
+    }
+
     RTPS_DllAPI inline void common(
-            CommonEnumeratedLiteral&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonEnumeratedLiteral& common() const { return m_common; }
-    RTPS_DllAPI inline CommonEnumeratedLiteral& common() { return m_common; }
+            CommonEnumeratedLiteral&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonEnumeratedLiteral& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonEnumeratedLiteral& common()
+    {
+        return m_common;
+    }
 
     RTPS_DllAPI inline void detail(
-            const MinimalMemberDetail& _detail) { m_detail = _detail; }
-    RTPS_DllAPI inline void detail(
-            MinimalMemberDetail&& _detail) { m_detail = std::move(_detail); }
-    RTPS_DllAPI inline const MinimalMemberDetail& detail() const { return m_detail; }
-    RTPS_DllAPI inline MinimalMemberDetail& detail() { return m_detail; }
+            const MinimalMemberDetail& _detail)
+    {
+        m_detail = _detail;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalEnumeratedLiteral& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void detail(
+            MinimalMemberDetail&& _detail)
+    {
+        m_detail = std::move(_detail);
+    }
+
+    RTPS_DllAPI inline const MinimalMemberDetail& detail() const
+    {
+        return m_detail;
+    }
+
+    RTPS_DllAPI inline MinimalMemberDetail& detail()
+    {
+        return m_detail;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalEnumeratedLiteral& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -3131,27 +4746,39 @@ public:
             const CommonEnumeratedHeader& x);
     RTPS_DllAPI CommonEnumeratedHeader(
             CommonEnumeratedHeader&& x);
-    RTPS_DllAPI CommonEnumeratedHeader& operator=(
+    RTPS_DllAPI CommonEnumeratedHeader& operator =(
             const CommonEnumeratedHeader& x);
-    RTPS_DllAPI CommonEnumeratedHeader& operator=(
+    RTPS_DllAPI CommonEnumeratedHeader& operator =(
             CommonEnumeratedHeader&& x);
 
     RTPS_DllAPI inline void bit_bound(
-            const BitBound& _bit_bound) { m_bit_bound = _bit_bound; }
-    RTPS_DllAPI inline void bit_bound(
-            BitBound&& _bit_bound) { m_bit_bound = std::move(_bit_bound); }
-    RTPS_DllAPI inline const BitBound& bit_bound() const { return m_bit_bound; }
-    RTPS_DllAPI inline BitBound& bit_bound() { return m_bit_bound; }
+            const BitBound& _bit_bound)
+    {
+        m_bit_bound = _bit_bound;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CommonEnumeratedHeader& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void bit_bound(
+            BitBound&& _bit_bound)
+    {
+        m_bit_bound = std::move(_bit_bound);
+    }
+
+    RTPS_DllAPI inline const BitBound& bit_bound() const
+    {
+        return m_bit_bound;
+    }
+
+    RTPS_DllAPI inline BitBound& bit_bound()
+    {
+        return m_bit_bound;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CommonEnumeratedHeader& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -3177,34 +4804,61 @@ public:
             const CompleteEnumeratedHeader& x);
     RTPS_DllAPI CompleteEnumeratedHeader(
             CompleteEnumeratedHeader&& x);
-    RTPS_DllAPI CompleteEnumeratedHeader& operator=(
+    RTPS_DllAPI CompleteEnumeratedHeader& operator =(
             const CompleteEnumeratedHeader& x);
-    RTPS_DllAPI CompleteEnumeratedHeader& operator=(
+    RTPS_DllAPI CompleteEnumeratedHeader& operator =(
             CompleteEnumeratedHeader&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonEnumeratedHeader& _common) { m_common = _common; }
+            const CommonEnumeratedHeader& _common)
+    {
+        m_common = _common;
+    }
+
     RTPS_DllAPI inline void common(
-            CommonEnumeratedHeader&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonEnumeratedHeader& common() const { return m_common; }
-    RTPS_DllAPI inline CommonEnumeratedHeader& common() { return m_common; }
+            CommonEnumeratedHeader&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonEnumeratedHeader& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonEnumeratedHeader& common()
+    {
+        return m_common;
+    }
 
     RTPS_DllAPI inline void detail(
-            const CompleteTypeDetail& _detail) { m_detail = _detail; }
-    RTPS_DllAPI inline void detail(
-            CompleteTypeDetail&& _detail) { m_detail = std::move(_detail); }
-    RTPS_DllAPI inline const CompleteTypeDetail& detail() const { return m_detail; }
-    RTPS_DllAPI inline CompleteTypeDetail& detail() { return m_detail; }
+            const CompleteTypeDetail& _detail)
+    {
+        m_detail = _detail;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteEnumeratedHeader& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void detail(
+            CompleteTypeDetail&& _detail)
+    {
+        m_detail = std::move(_detail);
+    }
+
+    RTPS_DllAPI inline const CompleteTypeDetail& detail() const
+    {
+        return m_detail;
+    }
+
+    RTPS_DllAPI inline CompleteTypeDetail& detail()
+    {
+        return m_detail;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteEnumeratedHeader& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -3230,27 +4884,39 @@ public:
             const MinimalEnumeratedHeader& x);
     RTPS_DllAPI MinimalEnumeratedHeader(
             MinimalEnumeratedHeader&& x);
-    RTPS_DllAPI MinimalEnumeratedHeader& operator=(
+    RTPS_DllAPI MinimalEnumeratedHeader& operator =(
             const MinimalEnumeratedHeader& x);
-    RTPS_DllAPI MinimalEnumeratedHeader& operator=(
+    RTPS_DllAPI MinimalEnumeratedHeader& operator =(
             MinimalEnumeratedHeader&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonEnumeratedHeader& _common) { m_common = _common; }
-    RTPS_DllAPI inline void common(
-            CommonEnumeratedHeader&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonEnumeratedHeader& common() const { return m_common; }
-    RTPS_DllAPI inline CommonEnumeratedHeader& common() { return m_common; }
+            const CommonEnumeratedHeader& _common)
+    {
+        m_common = _common;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalEnumeratedHeader& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void common(
+            CommonEnumeratedHeader&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonEnumeratedHeader& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonEnumeratedHeader& common()
+    {
+        return m_common;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalEnumeratedHeader& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -3278,41 +4944,83 @@ public:
             const CompleteEnumeratedType& x);
     RTPS_DllAPI CompleteEnumeratedType(
             CompleteEnumeratedType&& x);
-    RTPS_DllAPI CompleteEnumeratedType& operator=(
+    RTPS_DllAPI CompleteEnumeratedType& operator =(
             const CompleteEnumeratedType& x);
-    RTPS_DllAPI CompleteEnumeratedType& operator=(
+    RTPS_DllAPI CompleteEnumeratedType& operator =(
             CompleteEnumeratedType&& x);
 
     RTPS_DllAPI inline void enum_flags(
-            const EnumTypeFlag& _enum_flags) { m_enum_flags = _enum_flags; }
+            const EnumTypeFlag& _enum_flags)
+    {
+        m_enum_flags = _enum_flags;
+    }
+
     RTPS_DllAPI inline void enum_flags(
-            EnumTypeFlag&& _enum_flags) { m_enum_flags = std::move(_enum_flags); }
-    RTPS_DllAPI inline const EnumTypeFlag& enum_flags() const { return m_enum_flags; }
-    RTPS_DllAPI inline EnumTypeFlag& enum_flags() { return m_enum_flags; }
+            EnumTypeFlag&& _enum_flags)
+    {
+        m_enum_flags = std::move(_enum_flags);
+    }
+
+    RTPS_DllAPI inline const EnumTypeFlag& enum_flags() const
+    {
+        return m_enum_flags;
+    }
+
+    RTPS_DllAPI inline EnumTypeFlag& enum_flags()
+    {
+        return m_enum_flags;
+    }
 
     RTPS_DllAPI inline void header(
-            const CompleteEnumeratedHeader& _header) { m_header = _header; }
+            const CompleteEnumeratedHeader& _header)
+    {
+        m_header = _header;
+    }
+
     RTPS_DllAPI inline void header(
-            CompleteEnumeratedHeader&& _header) { m_header = std::move(_header); }
-    RTPS_DllAPI inline const CompleteEnumeratedHeader& header() const { return m_header; }
-    RTPS_DllAPI inline CompleteEnumeratedHeader& header() { return m_header; }
+            CompleteEnumeratedHeader&& _header)
+    {
+        m_header = std::move(_header);
+    }
+
+    RTPS_DllAPI inline const CompleteEnumeratedHeader& header() const
+    {
+        return m_header;
+    }
+
+    RTPS_DllAPI inline CompleteEnumeratedHeader& header()
+    {
+        return m_header;
+    }
 
     RTPS_DllAPI inline void literal_seq(
-            const CompleteEnumeratedLiteralSeq& _literal_seq) { m_literal_seq = _literal_seq; }
-    RTPS_DllAPI inline void literal_seq(
-            CompleteEnumeratedLiteralSeq&& _literal_seq) { m_literal_seq = std::move(_literal_seq); }
-    RTPS_DllAPI inline const CompleteEnumeratedLiteralSeq& literal_seq() const { return m_literal_seq; }
-    RTPS_DllAPI inline CompleteEnumeratedLiteralSeq& literal_seq() { return m_literal_seq; }
+            const CompleteEnumeratedLiteralSeq& _literal_seq)
+    {
+        m_literal_seq = _literal_seq;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteEnumeratedType& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void literal_seq(
+            CompleteEnumeratedLiteralSeq&& _literal_seq)
+    {
+        m_literal_seq = std::move(_literal_seq);
+    }
+
+    RTPS_DllAPI inline const CompleteEnumeratedLiteralSeq& literal_seq() const
+    {
+        return m_literal_seq;
+    }
+
+    RTPS_DllAPI inline CompleteEnumeratedLiteralSeq& literal_seq()
+    {
+        return m_literal_seq;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteEnumeratedType& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -3341,41 +5049,83 @@ public:
             const MinimalEnumeratedType& x);
     RTPS_DllAPI MinimalEnumeratedType(
             MinimalEnumeratedType&& x);
-    RTPS_DllAPI MinimalEnumeratedType& operator=(
+    RTPS_DllAPI MinimalEnumeratedType& operator =(
             const MinimalEnumeratedType& x);
-    RTPS_DllAPI MinimalEnumeratedType& operator=(
+    RTPS_DllAPI MinimalEnumeratedType& operator =(
             MinimalEnumeratedType&& x);
 
     RTPS_DllAPI inline void enum_flags(
-            const EnumTypeFlag& _enum_flags) { m_enum_flags = _enum_flags; }
+            const EnumTypeFlag& _enum_flags)
+    {
+        m_enum_flags = _enum_flags;
+    }
+
     RTPS_DllAPI inline void enum_flags(
-            EnumTypeFlag&& _enum_flags) { m_enum_flags = std::move(_enum_flags); }
-    RTPS_DllAPI inline const EnumTypeFlag& enum_flags() const { return m_enum_flags; }
-    RTPS_DllAPI inline EnumTypeFlag& enum_flags() { return m_enum_flags; }
+            EnumTypeFlag&& _enum_flags)
+    {
+        m_enum_flags = std::move(_enum_flags);
+    }
+
+    RTPS_DllAPI inline const EnumTypeFlag& enum_flags() const
+    {
+        return m_enum_flags;
+    }
+
+    RTPS_DllAPI inline EnumTypeFlag& enum_flags()
+    {
+        return m_enum_flags;
+    }
 
     RTPS_DllAPI inline void header(
-            const MinimalEnumeratedHeader& _header) { m_header = _header; }
+            const MinimalEnumeratedHeader& _header)
+    {
+        m_header = _header;
+    }
+
     RTPS_DllAPI inline void header(
-            MinimalEnumeratedHeader&& _header) { m_header = std::move(_header); }
-    RTPS_DllAPI inline const MinimalEnumeratedHeader& header() const { return m_header; }
-    RTPS_DllAPI inline MinimalEnumeratedHeader& header() { return m_header; }
+            MinimalEnumeratedHeader&& _header)
+    {
+        m_header = std::move(_header);
+    }
+
+    RTPS_DllAPI inline const MinimalEnumeratedHeader& header() const
+    {
+        return m_header;
+    }
+
+    RTPS_DllAPI inline MinimalEnumeratedHeader& header()
+    {
+        return m_header;
+    }
 
     RTPS_DllAPI inline void literal_seq(
-            const MinimalEnumeratedLiteralSeq& _literal_seq) { m_literal_seq = _literal_seq; }
-    RTPS_DllAPI inline void literal_seq(
-            MinimalEnumeratedLiteralSeq&& _literal_seq) { m_literal_seq = std::move(_literal_seq); }
-    RTPS_DllAPI inline const MinimalEnumeratedLiteralSeq& literal_seq() const { return m_literal_seq; }
-    RTPS_DllAPI inline MinimalEnumeratedLiteralSeq& literal_seq() { return m_literal_seq; }
+            const MinimalEnumeratedLiteralSeq& _literal_seq)
+    {
+        m_literal_seq = _literal_seq;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalEnumeratedType& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void literal_seq(
+            MinimalEnumeratedLiteralSeq&& _literal_seq)
+    {
+        m_literal_seq = std::move(_literal_seq);
+    }
+
+    RTPS_DllAPI inline const MinimalEnumeratedLiteralSeq& literal_seq() const
+    {
+        return m_literal_seq;
+    }
+
+    RTPS_DllAPI inline MinimalEnumeratedLiteralSeq& literal_seq()
+    {
+        return m_literal_seq;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalEnumeratedType& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -3405,34 +5155,61 @@ public:
             const CommonBitflag& x);
     RTPS_DllAPI CommonBitflag(
             CommonBitflag&& x);
-    RTPS_DllAPI CommonBitflag& operator=(
+    RTPS_DllAPI CommonBitflag& operator =(
             const CommonBitflag& x);
-    RTPS_DllAPI CommonBitflag& operator=(
+    RTPS_DllAPI CommonBitflag& operator =(
             CommonBitflag&& x);
 
     RTPS_DllAPI inline void position(
-            const uint16_t& _position) { m_position = _position; }
+            const uint16_t& _position)
+    {
+        m_position = _position;
+    }
+
     RTPS_DllAPI inline void position(
-            uint16_t&& _position) { m_position = std::move(_position); }
-    RTPS_DllAPI inline const uint16_t& position() const { return m_position; }
-    RTPS_DllAPI inline uint16_t& position() { return m_position; }
+            uint16_t&& _position)
+    {
+        m_position = std::move(_position);
+    }
+
+    RTPS_DllAPI inline const uint16_t& position() const
+    {
+        return m_position;
+    }
+
+    RTPS_DllAPI inline uint16_t& position()
+    {
+        return m_position;
+    }
 
     RTPS_DllAPI inline void flags(
-            const BitflagFlag& _flags) { m_flags = _flags; }
-    RTPS_DllAPI inline void flags(
-            BitflagFlag&& _flags) { m_flags = std::move(_flags); }
-    RTPS_DllAPI inline const BitflagFlag& flags() const { return m_flags; }
-    RTPS_DllAPI inline BitflagFlag& flags() { return m_flags; }
+            const BitflagFlag& _flags)
+    {
+        m_flags = _flags;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CommonBitflag& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void flags(
+            BitflagFlag&& _flags)
+    {
+        m_flags = std::move(_flags);
+    }
+
+    RTPS_DllAPI inline const BitflagFlag& flags() const
+    {
+        return m_flags;
+    }
+
+    RTPS_DllAPI inline BitflagFlag& flags()
+    {
+        return m_flags;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CommonBitflag& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -3459,34 +5236,61 @@ public:
             const CompleteBitflag& x);
     RTPS_DllAPI CompleteBitflag(
             CompleteBitflag&& x);
-    RTPS_DllAPI CompleteBitflag& operator=(
+    RTPS_DllAPI CompleteBitflag& operator =(
             const CompleteBitflag& x);
-    RTPS_DllAPI CompleteBitflag& operator=(
+    RTPS_DllAPI CompleteBitflag& operator =(
             CompleteBitflag&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonBitflag& _common) { m_common = _common; }
+            const CommonBitflag& _common)
+    {
+        m_common = _common;
+    }
+
     RTPS_DllAPI inline void common(
-            CommonBitflag&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonBitflag& common() const { return m_common; }
-    RTPS_DllAPI inline CommonBitflag& common() { return m_common; }
+            CommonBitflag&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonBitflag& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonBitflag& common()
+    {
+        return m_common;
+    }
 
     RTPS_DllAPI inline void detail(
-            const CompleteMemberDetail& _detail) { m_detail = _detail; }
-    RTPS_DllAPI inline void detail(
-            CompleteMemberDetail&& _detail) { m_detail = std::move(_detail); }
-    RTPS_DllAPI inline const CompleteMemberDetail& detail() const { return m_detail; }
-    RTPS_DllAPI inline CompleteMemberDetail& detail() { return m_detail; }
+            const CompleteMemberDetail& _detail)
+    {
+        m_detail = _detail;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteBitflag& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void detail(
+            CompleteMemberDetail&& _detail)
+    {
+        m_detail = std::move(_detail);
+    }
+
+    RTPS_DllAPI inline const CompleteMemberDetail& detail() const
+    {
+        return m_detail;
+    }
+
+    RTPS_DllAPI inline CompleteMemberDetail& detail()
+    {
+        return m_detail;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteBitflag& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -3514,34 +5318,61 @@ public:
             const MinimalBitflag& x);
     RTPS_DllAPI MinimalBitflag(
             MinimalBitflag&& x);
-    RTPS_DllAPI MinimalBitflag& operator=(
+    RTPS_DllAPI MinimalBitflag& operator =(
             const MinimalBitflag& x);
-    RTPS_DllAPI MinimalBitflag& operator=(
+    RTPS_DllAPI MinimalBitflag& operator =(
             MinimalBitflag&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonBitflag& _common) { m_common = _common; }
+            const CommonBitflag& _common)
+    {
+        m_common = _common;
+    }
+
     RTPS_DllAPI inline void common(
-            CommonBitflag&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonBitflag& common() const { return m_common; }
-    RTPS_DllAPI inline CommonBitflag& common() { return m_common; }
+            CommonBitflag&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonBitflag& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonBitflag& common()
+    {
+        return m_common;
+    }
 
     RTPS_DllAPI inline void detail(
-            const MinimalMemberDetail& _detail) { m_detail = _detail; }
-    RTPS_DllAPI inline void detail(
-            MinimalMemberDetail&& _detail) { m_detail = std::move(_detail); }
-    RTPS_DllAPI inline const MinimalMemberDetail& detail() const { return m_detail; }
-    RTPS_DllAPI inline MinimalMemberDetail& detail() { return m_detail; }
+            const MinimalMemberDetail& _detail)
+    {
+        m_detail = _detail;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalBitflag& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void detail(
+            MinimalMemberDetail&& _detail)
+    {
+        m_detail = std::move(_detail);
+    }
+
+    RTPS_DllAPI inline const MinimalMemberDetail& detail() const
+    {
+        return m_detail;
+    }
+
+    RTPS_DllAPI inline MinimalMemberDetail& detail()
+    {
+        return m_detail;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalBitflag& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -3570,27 +5401,39 @@ public:
             const CommonBitmaskHeader& x);
     RTPS_DllAPI CommonBitmaskHeader(
             CommonBitmaskHeader&& x);
-    RTPS_DllAPI CommonBitmaskHeader& operator=(
+    RTPS_DllAPI CommonBitmaskHeader& operator =(
             const CommonBitmaskHeader& x);
-    RTPS_DllAPI CommonBitmaskHeader& operator=(
+    RTPS_DllAPI CommonBitmaskHeader& operator =(
             CommonBitmaskHeader&& x);
 
     RTPS_DllAPI inline void bit_bound(
-            const BitBound& _bit_bound) { m_bit_bound = _bit_bound; }
-    RTPS_DllAPI inline void bit_bound(
-            BitBound&& _bit_bound) { m_bit_bound = std::move(_bit_bound); }
-    RTPS_DllAPI inline const BitBound& bit_bound() const { return m_bit_bound; }
-    RTPS_DllAPI inline BitBound& bit_bound() { return m_bit_bound; }
+            const BitBound& _bit_bound)
+    {
+        m_bit_bound = _bit_bound;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CommonBitmaskHeader& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void bit_bound(
+            BitBound&& _bit_bound)
+    {
+        m_bit_bound = std::move(_bit_bound);
+    }
+
+    RTPS_DllAPI inline const BitBound& bit_bound() const
+    {
+        return m_bit_bound;
+    }
+
+    RTPS_DllAPI inline BitBound& bit_bound()
+    {
+        return m_bit_bound;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CommonBitmaskHeader& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -3619,41 +5462,83 @@ public:
             const CompleteBitmaskType& x);
     RTPS_DllAPI CompleteBitmaskType(
             CompleteBitmaskType&& x);
-    RTPS_DllAPI CompleteBitmaskType& operator=(
+    RTPS_DllAPI CompleteBitmaskType& operator =(
             const CompleteBitmaskType& x);
-    RTPS_DllAPI CompleteBitmaskType& operator=(
+    RTPS_DllAPI CompleteBitmaskType& operator =(
             CompleteBitmaskType&& x);
 
     RTPS_DllAPI inline void bitmask_flags(
-            const BitmaskTypeFlag& _bitmask_flags) { m_bitmask_flags = _bitmask_flags; }
+            const BitmaskTypeFlag& _bitmask_flags)
+    {
+        m_bitmask_flags = _bitmask_flags;
+    }
+
     RTPS_DllAPI inline void bitmask_flags(
-            BitmaskTypeFlag&& _bitmask_flags) { m_bitmask_flags = std::move(_bitmask_flags); }
-    RTPS_DllAPI inline const BitmaskTypeFlag& bitmask_flags() const { return m_bitmask_flags; }
-    RTPS_DllAPI inline BitmaskTypeFlag& bitmask_flags() { return m_bitmask_flags; }
+            BitmaskTypeFlag&& _bitmask_flags)
+    {
+        m_bitmask_flags = std::move(_bitmask_flags);
+    }
+
+    RTPS_DllAPI inline const BitmaskTypeFlag& bitmask_flags() const
+    {
+        return m_bitmask_flags;
+    }
+
+    RTPS_DllAPI inline BitmaskTypeFlag& bitmask_flags()
+    {
+        return m_bitmask_flags;
+    }
 
     RTPS_DllAPI inline void header(
-            const CompleteBitmaskHeader& _header) { m_header = _header; }
+            const CompleteBitmaskHeader& _header)
+    {
+        m_header = _header;
+    }
+
     RTPS_DllAPI inline void header(
-            CompleteBitmaskHeader&& _header) { m_header = std::move(_header); }
-    RTPS_DllAPI inline const CompleteBitmaskHeader& header() const { return m_header; }
-    RTPS_DllAPI inline CompleteBitmaskHeader& header() { return m_header; }
+            CompleteBitmaskHeader&& _header)
+    {
+        m_header = std::move(_header);
+    }
+
+    RTPS_DllAPI inline const CompleteBitmaskHeader& header() const
+    {
+        return m_header;
+    }
+
+    RTPS_DllAPI inline CompleteBitmaskHeader& header()
+    {
+        return m_header;
+    }
 
     RTPS_DllAPI inline void flag_seq(
-            const CompleteBitflagSeq& _flag_seq) { m_flag_seq = _flag_seq; }
-    RTPS_DllAPI inline void flag_seq(
-            CompleteBitflagSeq&& _flag_seq) { m_flag_seq = std::move(_flag_seq); }
-    RTPS_DllAPI inline const CompleteBitflagSeq& flag_seq() const { return m_flag_seq; }
-    RTPS_DllAPI inline CompleteBitflagSeq& flag_seq() { return m_flag_seq; }
+            const CompleteBitflagSeq& _flag_seq)
+    {
+        m_flag_seq = _flag_seq;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteBitmaskType& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void flag_seq(
+            CompleteBitflagSeq&& _flag_seq)
+    {
+        m_flag_seq = std::move(_flag_seq);
+    }
+
+    RTPS_DllAPI inline const CompleteBitflagSeq& flag_seq() const
+    {
+        return m_flag_seq;
+    }
+
+    RTPS_DllAPI inline CompleteBitflagSeq& flag_seq()
+    {
+        return m_flag_seq;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteBitmaskType& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -3682,41 +5567,83 @@ public:
             const MinimalBitmaskType& x);
     RTPS_DllAPI MinimalBitmaskType(
             MinimalBitmaskType&& x);
-    RTPS_DllAPI MinimalBitmaskType& operator=(
+    RTPS_DllAPI MinimalBitmaskType& operator =(
             const MinimalBitmaskType& x);
-    RTPS_DllAPI MinimalBitmaskType& operator=(
+    RTPS_DllAPI MinimalBitmaskType& operator =(
             MinimalBitmaskType&& x);
 
     RTPS_DllAPI inline void bitmask_flags(
-            const BitmaskTypeFlag& _bitmask_flags) { m_bitmask_flags = _bitmask_flags; }
+            const BitmaskTypeFlag& _bitmask_flags)
+    {
+        m_bitmask_flags = _bitmask_flags;
+    }
+
     RTPS_DllAPI inline void bitmask_flags(
-            BitmaskTypeFlag&& _bitmask_flags) { m_bitmask_flags = std::move(_bitmask_flags); }
-    RTPS_DllAPI inline const BitmaskTypeFlag& bitmask_flags() const { return m_bitmask_flags; }
-    RTPS_DllAPI inline BitmaskTypeFlag& bitmask_flags() { return m_bitmask_flags; }
+            BitmaskTypeFlag&& _bitmask_flags)
+    {
+        m_bitmask_flags = std::move(_bitmask_flags);
+    }
+
+    RTPS_DllAPI inline const BitmaskTypeFlag& bitmask_flags() const
+    {
+        return m_bitmask_flags;
+    }
+
+    RTPS_DllAPI inline BitmaskTypeFlag& bitmask_flags()
+    {
+        return m_bitmask_flags;
+    }
 
     RTPS_DllAPI inline void header(
-            const MinimalBitmaskHeader& _header) { m_header = _header; }
+            const MinimalBitmaskHeader& _header)
+    {
+        m_header = _header;
+    }
+
     RTPS_DllAPI inline void header(
-            MinimalBitmaskHeader&& _header) { m_header = std::move(_header); }
-    RTPS_DllAPI inline const MinimalBitmaskHeader& header() const { return m_header; }
-    RTPS_DllAPI inline MinimalBitmaskHeader& header() { return m_header; }
+            MinimalBitmaskHeader&& _header)
+    {
+        m_header = std::move(_header);
+    }
+
+    RTPS_DllAPI inline const MinimalBitmaskHeader& header() const
+    {
+        return m_header;
+    }
+
+    RTPS_DllAPI inline MinimalBitmaskHeader& header()
+    {
+        return m_header;
+    }
 
     RTPS_DllAPI inline void flag_seq(
-            const MinimalBitflagSeq& _flag_seq) { m_flag_seq = _flag_seq; }
-    RTPS_DllAPI inline void flag_seq(
-            MinimalBitflagSeq&& _flag_seq) { m_flag_seq = std::move(_flag_seq); }
-    RTPS_DllAPI inline const MinimalBitflagSeq& flag_seq() const { return m_flag_seq; }
-    RTPS_DllAPI inline MinimalBitflagSeq& flag_seq() { return m_flag_seq; }
+            const MinimalBitflagSeq& _flag_seq)
+    {
+        m_flag_seq = _flag_seq;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalBitmaskType& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void flag_seq(
+            MinimalBitflagSeq&& _flag_seq)
+    {
+        m_flag_seq = std::move(_flag_seq);
+    }
+
+    RTPS_DllAPI inline const MinimalBitflagSeq& flag_seq() const
+    {
+        return m_flag_seq;
+    }
+
+    RTPS_DllAPI inline MinimalBitflagSeq& flag_seq()
+    {
+        return m_flag_seq;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalBitmaskType& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -3747,48 +5674,105 @@ public:
             const CommonBitfield& x);
     RTPS_DllAPI CommonBitfield(
             CommonBitfield&& x);
-    RTPS_DllAPI CommonBitfield& operator=(
+    RTPS_DllAPI CommonBitfield& operator =(
             const CommonBitfield& x);
-    RTPS_DllAPI CommonBitfield& operator=(
+    RTPS_DllAPI CommonBitfield& operator =(
             CommonBitfield&& x);
 
     RTPS_DllAPI inline void position(
-            const uint16_t& _position) { m_position = _position; }
+            const uint16_t& _position)
+    {
+        m_position = _position;
+    }
+
     RTPS_DllAPI inline void position(
-            uint16_t&& _position) { m_position = std::move(_position); }
-    RTPS_DllAPI inline const uint16_t& position() const { return m_position; }
-    RTPS_DllAPI inline uint16_t& position() { return m_position; }
+            uint16_t&& _position)
+    {
+        m_position = std::move(_position);
+    }
+
+    RTPS_DllAPI inline const uint16_t& position() const
+    {
+        return m_position;
+    }
+
+    RTPS_DllAPI inline uint16_t& position()
+    {
+        return m_position;
+    }
 
     RTPS_DllAPI inline void flags(
-            const BitsetMemberFlag& _flags) { m_flags = _flags; }
+            const BitsetMemberFlag& _flags)
+    {
+        m_flags = _flags;
+    }
+
     RTPS_DllAPI inline void flags(
-            BitsetMemberFlag&& _flags) { m_flags = std::move(_flags); }
-    RTPS_DllAPI inline const BitsetMemberFlag& flags() const { return m_flags; }
-    RTPS_DllAPI inline BitsetMemberFlag& flags() { return m_flags; }
+            BitsetMemberFlag&& _flags)
+    {
+        m_flags = std::move(_flags);
+    }
+
+    RTPS_DllAPI inline const BitsetMemberFlag& flags() const
+    {
+        return m_flags;
+    }
+
+    RTPS_DllAPI inline BitsetMemberFlag& flags()
+    {
+        return m_flags;
+    }
 
     RTPS_DllAPI inline void bitcount(
-            const octet& _bitcount) { m_bitcount = _bitcount; }
+            const octet& _bitcount)
+    {
+        m_bitcount = _bitcount;
+    }
+
     RTPS_DllAPI inline void bitcount(
-            octet&& _bitcount) { m_bitcount = std::move(_bitcount); }
-    RTPS_DllAPI inline const octet& bitcount() const { return m_bitcount; }
-    RTPS_DllAPI inline octet& bitcount() { return m_bitcount; }
+            octet&& _bitcount)
+    {
+        m_bitcount = std::move(_bitcount);
+    }
+
+    RTPS_DllAPI inline const octet& bitcount() const
+    {
+        return m_bitcount;
+    }
+
+    RTPS_DllAPI inline octet& bitcount()
+    {
+        return m_bitcount;
+    }
 
     RTPS_DllAPI inline void holder_type(
-            const TypeKind& _holder_type) { m_holder_type = _holder_type; }
-    RTPS_DllAPI inline void holder_type(
-            TypeKind&& _holder_type) { m_holder_type = std::move(_holder_type); }
-    RTPS_DllAPI inline const TypeKind& holder_type() const { return m_holder_type; }
-    RTPS_DllAPI inline TypeKind& holder_type() { return m_holder_type; }
+            const TypeKind& _holder_type)
+    {
+        m_holder_type = _holder_type;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CommonBitfield& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void holder_type(
+            TypeKind&& _holder_type)
+    {
+        m_holder_type = std::move(_holder_type);
+    }
+
+    RTPS_DllAPI inline const TypeKind& holder_type() const
+    {
+        return m_holder_type;
+    }
+
+    RTPS_DllAPI inline TypeKind& holder_type()
+    {
+        return m_holder_type;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CommonBitfield& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -3817,34 +5801,61 @@ public:
             const CompleteBitfield& x);
     RTPS_DllAPI CompleteBitfield(
             CompleteBitfield&& x);
-    RTPS_DllAPI CompleteBitfield& operator=(
+    RTPS_DllAPI CompleteBitfield& operator =(
             const CompleteBitfield& x);
-    RTPS_DllAPI CompleteBitfield& operator=(
+    RTPS_DllAPI CompleteBitfield& operator =(
             CompleteBitfield&& x);
 
     RTPS_DllAPI inline void common(
-            const CommonBitfield& _common) { m_common = _common; }
+            const CommonBitfield& _common)
+    {
+        m_common = _common;
+    }
+
     RTPS_DllAPI inline void common(
-            CommonBitfield&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonBitfield& common() const { return m_common; }
-    RTPS_DllAPI inline CommonBitfield& common() { return m_common; }
+            CommonBitfield&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonBitfield& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonBitfield& common()
+    {
+        return m_common;
+    }
 
     RTPS_DllAPI inline void detail(
-            const CompleteMemberDetail& _detail) { m_detail = _detail; }
-    RTPS_DllAPI inline void detail(
-            CompleteMemberDetail&& _detail) { m_detail = std::move(_detail); }
-    RTPS_DllAPI inline const CompleteMemberDetail& detail() const { return m_detail; }
-    RTPS_DllAPI inline CompleteMemberDetail& detail() { return m_detail; }
+            const CompleteMemberDetail& _detail)
+    {
+        m_detail = _detail;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteBitfield& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void detail(
+            CompleteMemberDetail&& _detail)
+    {
+        m_detail = std::move(_detail);
+    }
+
+    RTPS_DllAPI inline const CompleteMemberDetail& detail() const
+    {
+        return m_detail;
+    }
+
+    RTPS_DllAPI inline CompleteMemberDetail& detail()
+    {
+        return m_detail;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteBitfield& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -3872,34 +5883,61 @@ public:
             const MinimalBitfield& x);
     RTPS_DllAPI MinimalBitfield(
             MinimalBitfield&& x);
-    RTPS_DllAPI MinimalBitfield& operator=(
+    RTPS_DllAPI MinimalBitfield& operator =(
             const MinimalBitfield& x);
-    RTPS_DllAPI MinimalBitfield& operator=(
+    RTPS_DllAPI MinimalBitfield& operator =(
             MinimalBitfield&& x);
 
     RTPS_DllAPI inline void name_hash(
-            const NameHash& _name_hash) { m_name_hash = _name_hash; }
+            const NameHash& _name_hash)
+    {
+        m_name_hash = _name_hash;
+    }
+
     RTPS_DllAPI inline void name_hash(
-            NameHash&& _name_hash) { m_name_hash = std::move(_name_hash); }
-    RTPS_DllAPI inline const NameHash& name_hash() const { return m_name_hash; }
-    RTPS_DllAPI inline NameHash& name_hash() { return m_name_hash; }
+            NameHash&& _name_hash)
+    {
+        m_name_hash = std::move(_name_hash);
+    }
+
+    RTPS_DllAPI inline const NameHash& name_hash() const
+    {
+        return m_name_hash;
+    }
+
+    RTPS_DllAPI inline NameHash& name_hash()
+    {
+        return m_name_hash;
+    }
 
     RTPS_DllAPI inline void common(
-            const CommonBitfield& _common) { m_common = _common; }
-    RTPS_DllAPI inline void common(
-            CommonBitfield&& _common) { m_common = std::move(_common); }
-    RTPS_DllAPI inline const CommonBitfield& common() const { return m_common; }
-    RTPS_DllAPI inline CommonBitfield& common() { return m_common; }
+            const CommonBitfield& _common)
+    {
+        m_common = _common;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalBitfield& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void common(
+            CommonBitfield&& _common)
+    {
+        m_common = std::move(_common);
+    }
+
+    RTPS_DllAPI inline const CommonBitfield& common() const
+    {
+        return m_common;
+    }
+
+    RTPS_DllAPI inline CommonBitfield& common()
+    {
+        return m_common;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalBitfield& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -3926,34 +5964,61 @@ public:
             const CompleteBitsetHeader& x);
     RTPS_DllAPI CompleteBitsetHeader(
             CompleteBitsetHeader&& x);
-    RTPS_DllAPI CompleteBitsetHeader& operator=(
+    RTPS_DllAPI CompleteBitsetHeader& operator =(
             const CompleteBitsetHeader& x);
-    RTPS_DllAPI CompleteBitsetHeader& operator=(
+    RTPS_DllAPI CompleteBitsetHeader& operator =(
             CompleteBitsetHeader&& x);
 
     RTPS_DllAPI inline void base_type(
-            const TypeIdentifier& _base_type) { m_base_type = _base_type; }
+            const TypeIdentifier& _base_type)
+    {
+        m_base_type = _base_type;
+    }
+
     RTPS_DllAPI inline void base_type(
-            TypeIdentifier&& _base_type) { m_base_type = std::move(_base_type); }
-    RTPS_DllAPI inline const TypeIdentifier& base_type() const { return m_base_type; }
-    RTPS_DllAPI inline TypeIdentifier& base_type() { return m_base_type; }
+            TypeIdentifier&& _base_type)
+    {
+        m_base_type = std::move(_base_type);
+    }
+
+    RTPS_DllAPI inline const TypeIdentifier& base_type() const
+    {
+        return m_base_type;
+    }
+
+    RTPS_DllAPI inline TypeIdentifier& base_type()
+    {
+        return m_base_type;
+    }
 
     RTPS_DllAPI inline void detail(
-            const CompleteTypeDetail& _detail) { m_detail = _detail; }
-    RTPS_DllAPI inline void detail(
-            CompleteTypeDetail&& _detail) { m_detail = std::move(_detail); }
-    RTPS_DllAPI inline const CompleteTypeDetail& detail() const { return m_detail; }
-    RTPS_DllAPI inline CompleteTypeDetail& detail() { return m_detail; }
+            const CompleteTypeDetail& _detail)
+    {
+        m_detail = _detail;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteBitsetHeader& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void detail(
+            CompleteTypeDetail&& _detail)
+    {
+        m_detail = std::move(_detail);
+    }
+
+    RTPS_DllAPI inline const CompleteTypeDetail& detail() const
+    {
+        return m_detail;
+    }
+
+    RTPS_DllAPI inline CompleteTypeDetail& detail()
+    {
+        return m_detail;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteBitsetHeader& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -3979,27 +6044,39 @@ public:
             const MinimalBitsetHeader& x);
     RTPS_DllAPI MinimalBitsetHeader(
             MinimalBitsetHeader&& x);
-    RTPS_DllAPI MinimalBitsetHeader& operator=(
+    RTPS_DllAPI MinimalBitsetHeader& operator =(
             const MinimalBitsetHeader& x);
-    RTPS_DllAPI MinimalBitsetHeader& operator=(
+    RTPS_DllAPI MinimalBitsetHeader& operator =(
             MinimalBitsetHeader&& x);
 
     RTPS_DllAPI inline void base_type(
-            const TypeIdentifier& _base_type) { m_base_type = _base_type; }
-    RTPS_DllAPI inline void base_type(
-            TypeIdentifier&& _base_type) { m_base_type = std::move(_base_type); }
-    RTPS_DllAPI inline const TypeIdentifier& base_type() const { return m_base_type; }
-    RTPS_DllAPI inline TypeIdentifier& base_type() { return m_base_type; }
+            const TypeIdentifier& _base_type)
+    {
+        m_base_type = _base_type;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalBitsetHeader& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void base_type(
+            TypeIdentifier&& _base_type)
+    {
+        m_base_type = std::move(_base_type);
+    }
+
+    RTPS_DllAPI inline const TypeIdentifier& base_type() const
+    {
+        return m_base_type;
+    }
+
+    RTPS_DllAPI inline TypeIdentifier& base_type()
+    {
+        return m_base_type;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalBitsetHeader& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -4025,41 +6102,83 @@ public:
             const CompleteBitsetType& x);
     RTPS_DllAPI CompleteBitsetType(
             CompleteBitsetType&& x);
-    RTPS_DllAPI CompleteBitsetType& operator=(
+    RTPS_DllAPI CompleteBitsetType& operator =(
             const CompleteBitsetType& x);
-    RTPS_DllAPI CompleteBitsetType& operator=(
+    RTPS_DllAPI CompleteBitsetType& operator =(
             CompleteBitsetType&& x);
 
     RTPS_DllAPI inline void bitset_flags(
-            const BitsetTypeFlag& _bitset_flags) { m_bitset_flags = _bitset_flags; }
+            const BitsetTypeFlag& _bitset_flags)
+    {
+        m_bitset_flags = _bitset_flags;
+    }
+
     RTPS_DllAPI inline void bitset_flags(
-            BitsetTypeFlag&& _bitset_flags) { m_bitset_flags = std::move(_bitset_flags); }
-    RTPS_DllAPI inline const BitsetTypeFlag& bitset_flags() const { return m_bitset_flags; }
-    RTPS_DllAPI inline BitsetTypeFlag& bitset_flags() { return m_bitset_flags; }
+            BitsetTypeFlag&& _bitset_flags)
+    {
+        m_bitset_flags = std::move(_bitset_flags);
+    }
+
+    RTPS_DllAPI inline const BitsetTypeFlag& bitset_flags() const
+    {
+        return m_bitset_flags;
+    }
+
+    RTPS_DllAPI inline BitsetTypeFlag& bitset_flags()
+    {
+        return m_bitset_flags;
+    }
 
     RTPS_DllAPI inline void header(
-            const CompleteBitsetHeader& _header) { m_header = _header; }
+            const CompleteBitsetHeader& _header)
+    {
+        m_header = _header;
+    }
+
     RTPS_DllAPI inline void header(
-            CompleteBitsetHeader&& _header) { m_header = std::move(_header); }
-    RTPS_DllAPI inline const CompleteBitsetHeader& header() const { return m_header; }
-    RTPS_DllAPI inline CompleteBitsetHeader& header() { return m_header; }
+            CompleteBitsetHeader&& _header)
+    {
+        m_header = std::move(_header);
+    }
+
+    RTPS_DllAPI inline const CompleteBitsetHeader& header() const
+    {
+        return m_header;
+    }
+
+    RTPS_DllAPI inline CompleteBitsetHeader& header()
+    {
+        return m_header;
+    }
 
     RTPS_DllAPI inline void field_seq(
-            const CompleteBitfieldSeq& _field_seq) { m_field_seq = _field_seq; }
-    RTPS_DllAPI inline void field_seq(
-            CompleteBitfieldSeq&& _field_seq) { m_field_seq = std::move(_field_seq); }
-    RTPS_DllAPI inline const CompleteBitfieldSeq& field_seq() const { return m_field_seq; }
-    RTPS_DllAPI inline CompleteBitfieldSeq& field_seq() { return m_field_seq; }
+            const CompleteBitfieldSeq& _field_seq)
+    {
+        m_field_seq = _field_seq;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteBitsetType& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void field_seq(
+            CompleteBitfieldSeq&& _field_seq)
+    {
+        m_field_seq = std::move(_field_seq);
+    }
+
+    RTPS_DllAPI inline const CompleteBitfieldSeq& field_seq() const
+    {
+        return m_field_seq;
+    }
+
+    RTPS_DllAPI inline CompleteBitfieldSeq& field_seq()
+    {
+        return m_field_seq;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteBitsetType& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -4088,41 +6207,83 @@ public:
             const MinimalBitsetType& x);
     RTPS_DllAPI MinimalBitsetType(
             MinimalBitsetType&& x);
-    RTPS_DllAPI MinimalBitsetType& operator=(
+    RTPS_DllAPI MinimalBitsetType& operator =(
             const MinimalBitsetType& x);
-    RTPS_DllAPI MinimalBitsetType& operator=(
+    RTPS_DllAPI MinimalBitsetType& operator =(
             MinimalBitsetType&& x);
 
     RTPS_DllAPI inline void bitset_flags(
-            const BitsetTypeFlag& _bitset_flags) { m_bitset_flags = _bitset_flags; }
+            const BitsetTypeFlag& _bitset_flags)
+    {
+        m_bitset_flags = _bitset_flags;
+    }
+
     RTPS_DllAPI inline void bitset_flags(
-            BitsetTypeFlag&& _bitset_flags) { m_bitset_flags = std::move(_bitset_flags); }
-    RTPS_DllAPI inline const BitsetTypeFlag& bitset_flags() const { return m_bitset_flags; }
-    RTPS_DllAPI inline BitsetTypeFlag& bitset_flags() { return m_bitset_flags; }
+            BitsetTypeFlag&& _bitset_flags)
+    {
+        m_bitset_flags = std::move(_bitset_flags);
+    }
+
+    RTPS_DllAPI inline const BitsetTypeFlag& bitset_flags() const
+    {
+        return m_bitset_flags;
+    }
+
+    RTPS_DllAPI inline BitsetTypeFlag& bitset_flags()
+    {
+        return m_bitset_flags;
+    }
 
     RTPS_DllAPI inline void header(
-            const MinimalBitsetHeader& _header) { m_header = _header; }
+            const MinimalBitsetHeader& _header)
+    {
+        m_header = _header;
+    }
+
     RTPS_DllAPI inline void header(
-            MinimalBitsetHeader&& _header) { m_header = std::move(_header); }
-    RTPS_DllAPI inline const MinimalBitsetHeader& header() const { return m_header; }
-    RTPS_DllAPI inline MinimalBitsetHeader& header() { return m_header; }
+            MinimalBitsetHeader&& _header)
+    {
+        m_header = std::move(_header);
+    }
+
+    RTPS_DllAPI inline const MinimalBitsetHeader& header() const
+    {
+        return m_header;
+    }
+
+    RTPS_DllAPI inline MinimalBitsetHeader& header()
+    {
+        return m_header;
+    }
 
     RTPS_DllAPI inline void field_seq(
-            const MinimalBitfieldSeq& _field_seq) { m_field_seq = _field_seq; }
-    RTPS_DllAPI inline void field_seq(
-            MinimalBitfieldSeq&& _field_seq) { m_field_seq = std::move(_field_seq); }
-    RTPS_DllAPI inline const MinimalBitfieldSeq& field_seq() const { return m_field_seq; }
-    RTPS_DllAPI inline MinimalBitfieldSeq& field_seq() { return m_field_seq; }
+            const MinimalBitfieldSeq& _field_seq)
+    {
+        m_field_seq = _field_seq;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalBitsetType& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void field_seq(
+            MinimalBitfieldSeq&& _field_seq)
+    {
+        m_field_seq = std::move(_field_seq);
+    }
+
+    RTPS_DllAPI inline const MinimalBitfieldSeq& field_seq() const
+    {
+        return m_field_seq;
+    }
+
+    RTPS_DllAPI inline MinimalBitfieldSeq& field_seq()
+    {
+        return m_field_seq;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalBitsetType& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -4153,21 +6314,21 @@ public:
             const CompleteExtendedType& x);
     RTPS_DllAPI CompleteExtendedType(
             CompleteExtendedType&& x);
-    RTPS_DllAPI CompleteExtendedType& operator=(
+    RTPS_DllAPI CompleteExtendedType& operator =(
             const CompleteExtendedType& x);
-    RTPS_DllAPI CompleteExtendedType& operator=(
+    RTPS_DllAPI CompleteExtendedType& operator =(
             CompleteExtendedType&& x);
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteExtendedType& data,
-            size_t current_alignment = 0);
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
-            const CompleteExtendedType&) const { return true; }
+    RTPS_DllAPI bool operator ==(
+            const CompleteExtendedType&) const
+    {
+        return true;
+    }
 
     RTPS_DllAPI bool consistent(
             const CompleteExtendedType& x,
@@ -4190,21 +6351,21 @@ public:
             const MinimalExtendedType& x);
     RTPS_DllAPI MinimalExtendedType(
             MinimalExtendedType&& x);
-    RTPS_DllAPI MinimalExtendedType& operator=(
+    RTPS_DllAPI MinimalExtendedType& operator =(
             const MinimalExtendedType& x);
-    RTPS_DllAPI MinimalExtendedType& operator=(
+    RTPS_DllAPI MinimalExtendedType& operator =(
             MinimalExtendedType&& x);
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalExtendedType& data,
-            size_t current_alignment = 0);
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
-            const MinimalExtendedType&) const { return true; }
+    RTPS_DllAPI bool operator ==(
+            const MinimalExtendedType&) const
+    {
+        return true;
+    }
 
     RTPS_DllAPI bool consistent(
             const MinimalExtendedType& x,
@@ -4224,9 +6385,9 @@ public:
             const CompleteTypeObject& x);
     RTPS_DllAPI CompleteTypeObject(
             CompleteTypeObject&& x);
-    RTPS_DllAPI CompleteTypeObject& operator=(
+    RTPS_DllAPI CompleteTypeObject& operator =(
             const CompleteTypeObject& x);
-    RTPS_DllAPI CompleteTypeObject& operator=(
+    RTPS_DllAPI CompleteTypeObject& operator =(
             CompleteTypeObject&& x);
     RTPS_DllAPI void _d(
             octet __d);
@@ -4288,15 +6449,12 @@ public:
     RTPS_DllAPI const CompleteExtendedType& extended_type() const;
     RTPS_DllAPI CompleteExtendedType& extended_type();
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const CompleteTypeObject& data,
-            size_t current_alignment = 0);
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const CompleteTypeObject& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -4330,9 +6488,9 @@ public:
             const MinimalTypeObject& x);
     RTPS_DllAPI MinimalTypeObject(
             MinimalTypeObject&& x);
-    RTPS_DllAPI MinimalTypeObject& operator=(
+    RTPS_DllAPI MinimalTypeObject& operator =(
             const MinimalTypeObject& x);
-    RTPS_DllAPI MinimalTypeObject& operator=(
+    RTPS_DllAPI MinimalTypeObject& operator =(
             MinimalTypeObject&& x);
     RTPS_DllAPI void _d(
             octet __d);
@@ -4394,15 +6552,12 @@ public:
     RTPS_DllAPI const MinimalExtendedType& extended_type() const;
     RTPS_DllAPI MinimalExtendedType& extended_type();
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const MinimalTypeObject& data,
-            size_t current_alignment = 0);
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const MinimalTypeObject& other) const;
 
     RTPS_DllAPI bool consistent(
@@ -4457,14 +6612,14 @@ public:
      * @brief Copy assignment.
      * @param x Reference to the object TypeObject that will be copied.
      */
-    RTPS_DllAPI TypeObject& operator=(
+    RTPS_DllAPI TypeObject& operator =(
             const TypeObject& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object TypeObject that will be copied.
      */
-    RTPS_DllAPI TypeObject& operator=(
+    RTPS_DllAPI TypeObject& operator =(
             TypeObject&& x);
 
     /*!
@@ -4543,15 +6698,6 @@ public:
     RTPS_DllAPI MinimalTypeObject& minimal();
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const TypeObject& data,
-            size_t current_alignment = 0);
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -4565,7 +6711,7 @@ public:
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    RTPS_DllAPI bool operator==(
+    RTPS_DllAPI bool operator ==(
             const TypeObject& other) const;
 
     /*!
@@ -4607,28 +6753,55 @@ public:
             const TypeIdentifierTypeObjectPair& x);
     RTPS_DllAPI TypeIdentifierTypeObjectPair(
             TypeIdentifierTypeObjectPair&& x);
-    RTPS_DllAPI TypeIdentifierTypeObjectPair& operator=(
+    RTPS_DllAPI TypeIdentifierTypeObjectPair& operator =(
             const TypeIdentifierTypeObjectPair& x);
-    RTPS_DllAPI TypeIdentifierTypeObjectPair& operator=(
+    RTPS_DllAPI TypeIdentifierTypeObjectPair& operator =(
             TypeIdentifierTypeObjectPair&& x);
 
     RTPS_DllAPI inline void type_identifier(
-            const TypeIdentifier& _type_identifier) { m_type_identifier = _type_identifier; }
+            const TypeIdentifier& _type_identifier)
+    {
+        m_type_identifier = _type_identifier;
+    }
+
     RTPS_DllAPI inline void type_identifier(
-            TypeIdentifier&& _type_identifier) { m_type_identifier = std::move(_type_identifier); }
-    RTPS_DllAPI inline const TypeIdentifier& type_identifier() const { return m_type_identifier; }
-    RTPS_DllAPI inline TypeIdentifier& type_identifier() { return m_type_identifier; }
+            TypeIdentifier&& _type_identifier)
+    {
+        m_type_identifier = std::move(_type_identifier);
+    }
+
+    RTPS_DllAPI inline const TypeIdentifier& type_identifier() const
+    {
+        return m_type_identifier;
+    }
+
+    RTPS_DllAPI inline TypeIdentifier& type_identifier()
+    {
+        return m_type_identifier;
+    }
 
     RTPS_DllAPI inline void type_object(
-            const TypeObject& _type_object) { m_type_object = _type_object; }
-    RTPS_DllAPI inline void type_object(
-            TypeObject&& _type_object) { m_type_object = std::move(_type_object); }
-    RTPS_DllAPI inline const TypeObject& type_object() const { return m_type_object; }
-    RTPS_DllAPI inline TypeObject& type_object() { return m_type_object; }
+            const TypeObject& _type_object)
+    {
+        m_type_object = _type_object;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const TypeIdentifierTypeObjectPair& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void type_object(
+            TypeObject&& _type_object)
+    {
+        m_type_object = std::move(_type_object);
+    }
+
+    RTPS_DllAPI inline const TypeObject& type_object() const
+    {
+        return m_type_object;
+    }
+
+    RTPS_DllAPI inline TypeObject& type_object()
+    {
+        return m_type_object;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
@@ -4655,28 +6828,55 @@ public:
             const TypeIdentifierPair& x);
     RTPS_DllAPI TypeIdentifierPair(
             TypeIdentifierPair&& x);
-    RTPS_DllAPI TypeIdentifierPair& operator=(
+    RTPS_DllAPI TypeIdentifierPair& operator =(
             const TypeIdentifierPair& x);
-    RTPS_DllAPI TypeIdentifierPair& operator=(
+    RTPS_DllAPI TypeIdentifierPair& operator =(
             TypeIdentifierPair&& x);
 
     RTPS_DllAPI inline void type_identifier1(
-            const TypeIdentifier& _type_identifier1) { m_type_identifier1 = _type_identifier1; }
+            const TypeIdentifier& _type_identifier1)
+    {
+        m_type_identifier1 = _type_identifier1;
+    }
+
     RTPS_DllAPI inline void type_identifier1(
-            TypeIdentifier&& _type_identifier1) { m_type_identifier1 = std::move(_type_identifier1); }
-    RTPS_DllAPI inline const TypeIdentifier& type_identifier1() const { return m_type_identifier1; }
-    RTPS_DllAPI inline TypeIdentifier& type_identifier1() { return m_type_identifier1; }
+            TypeIdentifier&& _type_identifier1)
+    {
+        m_type_identifier1 = std::move(_type_identifier1);
+    }
+
+    RTPS_DllAPI inline const TypeIdentifier& type_identifier1() const
+    {
+        return m_type_identifier1;
+    }
+
+    RTPS_DllAPI inline TypeIdentifier& type_identifier1()
+    {
+        return m_type_identifier1;
+    }
 
     RTPS_DllAPI inline void type_identifier2(
-            const TypeIdentifier& _type_identifier2) { m_type_identifier2 = _type_identifier2; }
-    RTPS_DllAPI inline void type_identifier2(
-            TypeIdentifier&& _type_identifier2) { m_type_identifier2 = std::move(_type_identifier2); }
-    RTPS_DllAPI inline const TypeIdentifier& type_identifier2() const { return m_type_identifier2; }
-    RTPS_DllAPI inline TypeIdentifier& type_identifier2() { return m_type_identifier2; }
+            const TypeIdentifier& _type_identifier2)
+    {
+        m_type_identifier2 = _type_identifier2;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const TypeIdentifierPair& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void type_identifier2(
+            TypeIdentifier&& _type_identifier2)
+    {
+        m_type_identifier2 = std::move(_type_identifier2);
+    }
+
+    RTPS_DllAPI inline const TypeIdentifier& type_identifier2() const
+    {
+        return m_type_identifier2;
+    }
+
+    RTPS_DllAPI inline TypeIdentifier& type_identifier2()
+    {
+        return m_type_identifier2;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
@@ -4703,30 +6903,55 @@ public:
             const TypeIdentifierWithSize& x);
     RTPS_DllAPI TypeIdentifierWithSize(
             TypeIdentifierWithSize&& x);
-    RTPS_DllAPI TypeIdentifierWithSize& operator=(
+    RTPS_DllAPI TypeIdentifierWithSize& operator =(
             const TypeIdentifierWithSize& x);
-    RTPS_DllAPI TypeIdentifierWithSize& operator=(
+    RTPS_DllAPI TypeIdentifierWithSize& operator =(
             TypeIdentifierWithSize&& x);
 
     RTPS_DllAPI inline void type_id(
-            const TypeIdentifier& _type_id) { m_type_id = _type_id; }
+            const TypeIdentifier& _type_id)
+    {
+        m_type_id = _type_id;
+    }
+
     RTPS_DllAPI inline void type_id(
-            TypeIdentifier&& _type_id) { m_type_id = std::move(_type_id); }
-    RTPS_DllAPI inline const TypeIdentifier& type_id() const { return m_type_id; }
-    RTPS_DllAPI inline TypeIdentifier& type_id() { return m_type_id; }
+            TypeIdentifier&& _type_id)
+    {
+        m_type_id = std::move(_type_id);
+    }
+
+    RTPS_DllAPI inline const TypeIdentifier& type_id() const
+    {
+        return m_type_id;
+    }
+
+    RTPS_DllAPI inline TypeIdentifier& type_id()
+    {
+        return m_type_id;
+    }
 
     RTPS_DllAPI inline void typeobject_serialized_size(
-            const uint32_t& _typeobject_serialized_size) { m_typeobject_serialized_size = _typeobject_serialized_size; }
+            const uint32_t& _typeobject_serialized_size)
+    {
+        m_typeobject_serialized_size = _typeobject_serialized_size;
+    }
+
     RTPS_DllAPI inline void typeobject_serialized_size(
-            uint32_t&& _typeobject_serialized_size) {
+            uint32_t&& _typeobject_serialized_size)
+    {
         m_typeobject_serialized_size = std::move(_typeobject_serialized_size);
     }
-    RTPS_DllAPI inline const uint32_t& typeobject_serialized_size() const { return m_typeobject_serialized_size; }
-    RTPS_DllAPI inline uint32_t& typeobject_serialized_size() { return m_typeobject_serialized_size; }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const TypeIdentifierWithSize& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline const uint32_t& typeobject_serialized_size() const
+    {
+        return m_typeobject_serialized_size;
+    }
+
+    RTPS_DllAPI inline uint32_t& typeobject_serialized_size()
+    {
+        return m_typeobject_serialized_size;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
@@ -4756,35 +6981,77 @@ public:
             const TypeIdentifierWithDependencies& x);
     RTPS_DllAPI TypeIdentifierWithDependencies(
             TypeIdentifierWithDependencies&& x);
-    RTPS_DllAPI TypeIdentifierWithDependencies& operator=(
+    RTPS_DllAPI TypeIdentifierWithDependencies& operator =(
             const TypeIdentifierWithDependencies& x);
-    RTPS_DllAPI TypeIdentifierWithDependencies& operator=(
+    RTPS_DllAPI TypeIdentifierWithDependencies& operator =(
             TypeIdentifierWithDependencies&& x);
 
     RTPS_DllAPI inline void typeid_with_size(
-            const TypeIdentifierWithSize& _typeid_with_size) { m_typeid_with_size = _typeid_with_size; }
+            const TypeIdentifierWithSize& _typeid_with_size)
+    {
+        m_typeid_with_size = _typeid_with_size;
+    }
+
     RTPS_DllAPI inline void typeid_with_size(
-            TypeIdentifierWithSize&& _typeid_with_size) { m_typeid_with_size = std::move(_typeid_with_size); }
-    RTPS_DllAPI inline const TypeIdentifierWithSize& typeid_with_size() const { return m_typeid_with_size; }
-    RTPS_DllAPI inline TypeIdentifierWithSize& typeid_with_size() { return m_typeid_with_size; }
+            TypeIdentifierWithSize&& _typeid_with_size)
+    {
+        m_typeid_with_size = std::move(_typeid_with_size);
+    }
+
+    RTPS_DllAPI inline const TypeIdentifierWithSize& typeid_with_size() const
+    {
+        return m_typeid_with_size;
+    }
+
+    RTPS_DllAPI inline TypeIdentifierWithSize& typeid_with_size()
+    {
+        return m_typeid_with_size;
+    }
 
     RTPS_DllAPI inline void dependent_typeid_count(
-            const int32_t& _dependent_typeid_count) { m_dependent_typeid_count = _dependent_typeid_count; }
+            const int32_t& _dependent_typeid_count)
+    {
+        m_dependent_typeid_count = _dependent_typeid_count;
+    }
+
     RTPS_DllAPI inline void dependent_typeid_count(
-            int32_t&& _dependent_typeid_count) { m_dependent_typeid_count = std::move(_dependent_typeid_count); }
-    RTPS_DllAPI inline const int32_t& dependent_typeid_count() const { return m_dependent_typeid_count; }
-    RTPS_DllAPI inline int32_t& dependent_typeid_count() { return m_dependent_typeid_count; }
+            int32_t&& _dependent_typeid_count)
+    {
+        m_dependent_typeid_count = std::move(_dependent_typeid_count);
+    }
+
+    RTPS_DllAPI inline const int32_t& dependent_typeid_count() const
+    {
+        return m_dependent_typeid_count;
+    }
+
+    RTPS_DllAPI inline int32_t& dependent_typeid_count()
+    {
+        return m_dependent_typeid_count;
+    }
 
     RTPS_DllAPI inline void dependent_typeids(
-            const TypeIdentifierWithSizeSeq& _dependent_typeids) { m_dependent_typeids = _dependent_typeids; }
-    RTPS_DllAPI inline void dependent_typeids(
-            TypeIdentifierWithSizeSeq&& _dependent_typeids) { m_dependent_typeids = std::move(_dependent_typeids); }
-    RTPS_DllAPI inline const TypeIdentifierWithSizeSeq& dependent_typeids() const { return m_dependent_typeids; }
-    RTPS_DllAPI inline TypeIdentifierWithSizeSeq& dependent_typeids() { return m_dependent_typeids; }
+            const TypeIdentifierWithSizeSeq& _dependent_typeids)
+    {
+        m_dependent_typeids = _dependent_typeids;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const TypeIdentifierWithDependencies& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void dependent_typeids(
+            TypeIdentifierWithSizeSeq&& _dependent_typeids)
+    {
+        m_dependent_typeids = std::move(_dependent_typeids);
+    }
+
+    RTPS_DllAPI inline const TypeIdentifierWithSizeSeq& dependent_typeids() const
+    {
+        return m_dependent_typeids;
+    }
+
+    RTPS_DllAPI inline TypeIdentifierWithSizeSeq& dependent_typeids()
+    {
+        return m_dependent_typeids;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
@@ -4817,28 +7084,55 @@ public:
             const TypeInformation& x);
     RTPS_DllAPI TypeInformation(
             TypeInformation&& x);
-    RTPS_DllAPI TypeInformation& operator=(
+    RTPS_DllAPI TypeInformation& operator =(
             const TypeInformation& x);
-    RTPS_DllAPI TypeInformation& operator=(
+    RTPS_DllAPI TypeInformation& operator =(
             TypeInformation&& x);
 
     RTPS_DllAPI inline void minimal(
-            const TypeIdentifierWithDependencies& _minimal) { m_minimal = _minimal; }
+            const TypeIdentifierWithDependencies& _minimal)
+    {
+        m_minimal = _minimal;
+    }
+
     RTPS_DllAPI inline void minimal(
-            TypeIdentifierWithDependencies&& _minimal) { m_minimal = std::move(_minimal); }
-    RTPS_DllAPI inline const TypeIdentifierWithDependencies& minimal() const { return m_minimal; }
-    RTPS_DllAPI inline TypeIdentifierWithDependencies& minimal() { return m_minimal; }
+            TypeIdentifierWithDependencies&& _minimal)
+    {
+        m_minimal = std::move(_minimal);
+    }
+
+    RTPS_DllAPI inline const TypeIdentifierWithDependencies& minimal() const
+    {
+        return m_minimal;
+    }
+
+    RTPS_DllAPI inline TypeIdentifierWithDependencies& minimal()
+    {
+        return m_minimal;
+    }
 
     RTPS_DllAPI inline void complete(
-            const TypeIdentifierWithDependencies& _complete) { m_complete = _complete; }
-    RTPS_DllAPI inline void complete(
-            TypeIdentifierWithDependencies&& _complete) { m_complete = std::move(_complete); }
-    RTPS_DllAPI inline const TypeIdentifierWithDependencies& complete() const { return m_complete; }
-    RTPS_DllAPI inline TypeIdentifierWithDependencies& complete() { return m_complete; }
+            const TypeIdentifierWithDependencies& _complete)
+    {
+        m_complete = _complete;
+    }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const TypeInformation& data,
-            size_t current_alignment = 0);
+    RTPS_DllAPI inline void complete(
+            TypeIdentifierWithDependencies&& _complete)
+    {
+        m_complete = std::move(_complete);
+    }
+
+    RTPS_DllAPI inline const TypeIdentifierWithDependencies& complete() const
+    {
+        return m_complete;
+    }
+
+    RTPS_DllAPI inline TypeIdentifierWithDependencies& complete()
+    {
+        return m_complete;
+    }
+
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(

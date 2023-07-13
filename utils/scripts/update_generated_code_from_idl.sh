@@ -6,6 +6,8 @@ files_to_exclude=(
 
 files_needing_typeobject=(
     './examples/cpp/dds/ContentFilteredTopicExample/HelloWorld.idl'
+    './test/blackbox/types/HelloWorld.idl'
+    './test/unittest/dds/topic/DDSSQLFilter/data_types/ContentFilterTestType.idl'
     './test/unittest/dynamic_types/idl/Basic.idl'
     './test/unittest/dynamic_types/idl/new_features_4_2.idl'
     './test/unittest/dynamic_types/idl/Test.idl'
@@ -19,7 +21,7 @@ files_needing_case_sensitive=(
     )
 
 files_needing_output_dir=(
-    './include/fastdds/statistics/types.idl|../../../src/cpp/statistics/types'
+    './include/fastdds/statistics/types.idl|../../../src/cpp/statistics/types|../../../test/blackbox/types/statistics'
     )
 
 
@@ -63,17 +65,23 @@ for idl_file in "${idl_files[@]}"; do
     # Detect if needs case sensitive.
     [[ ${files_needing_case_sensitive[*]} =~ $idl_file ]] && cs_arg='-cs' || cs_arg=''
 
-    # Detect if needs output directory.
-    od_arg=""
+    # Detect if needs output directories.
+    not_processed=true
     for od_entry in ${files_needing_output_dir[@]}; do
         if [[ $od_entry = $idl_file\|* ]]; then
+            not_processed=false;
             od_entry_split=(${od_entry//\|/ })
-            od_arg="-d ${od_entry_split[1]}"
+            for od_entry_split_element in ${od_entry_split[@]:1}; do
+                od_arg="-d ${od_entry_split_element}"
+                fastddsgen -replace $to_arg $cs_arg $od_arg "$file_from_gen"
+            done
             break
         fi
     done
 
-    fastddsgen -replace $to_arg $cs_arg $od_arg "$file_from_gen"
+    if $not_processed ; then
+        fastddsgen -replace $to_arg $cs_arg "$file_from_gen"
+    fi
 
     if [[ $? != 0 ]]; then
         ret_value=-1

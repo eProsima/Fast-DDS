@@ -27,6 +27,8 @@ char dummy;
 #endif  // _WIN32
 
 #include "ContentFilterTestType.h"
+#include "ContentFilterTestTypeTypeObject.h"
+
 #include <fastcdr/Cdr.h>
 
 
@@ -39,6 +41,8 @@ using namespace eprosima::fastcdr::exception;
 StructType::StructType()
 {
 
+    // Just to register all known types
+    registerContentFilterTestTypeTypes();
 }
 
 StructType::~StructType()
@@ -607,6 +611,8 @@ Material& StructType::enum2_field()
 ContentFilterTestType::ContentFilterTestType()
 {
 
+    // Just to register all known types
+    registerContentFilterTestTypeTypes();
 }
 
 ContentFilterTestType::~ContentFilterTestType()

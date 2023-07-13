@@ -22,6 +22,7 @@
 #include <fastrtps/types/AnnotationParameterValue.h>
 
 #include <fastcdr/Cdr.h>
+#include <fastcdr/CdrSizeCalculator.hpp>
 
 #include <fastcdr/exceptions/BadParamException.h>
 using namespace eprosima::fastcdr::exception;
@@ -30,12 +31,12 @@ using namespace eprosima::fastcdr::exception;
 
 
 
-namespace eprosima{
-namespace fastrtps{
+namespace eprosima {
+namespace fastrtps {
 
 using namespace rtps;
 
-namespace types{
+namespace types {
 
 
 
@@ -47,21 +48,25 @@ ExtendedAnnotationParameterValue::~ExtendedAnnotationParameterValue()
 {
 }
 
-ExtendedAnnotationParameterValue::ExtendedAnnotationParameterValue(const ExtendedAnnotationParameterValue &)
+ExtendedAnnotationParameterValue::ExtendedAnnotationParameterValue(
+        const ExtendedAnnotationParameterValue&)
 {
 }
 
-ExtendedAnnotationParameterValue::ExtendedAnnotationParameterValue(ExtendedAnnotationParameterValue &&)
+ExtendedAnnotationParameterValue::ExtendedAnnotationParameterValue(
+        ExtendedAnnotationParameterValue&&)
 {
 }
 
-ExtendedAnnotationParameterValue& ExtendedAnnotationParameterValue::operator=(const ExtendedAnnotationParameterValue &)
+ExtendedAnnotationParameterValue& ExtendedAnnotationParameterValue::operator =(
+        const ExtendedAnnotationParameterValue&)
 {
 
     return *this;
 }
 
-ExtendedAnnotationParameterValue& ExtendedAnnotationParameterValue::operator=(ExtendedAnnotationParameterValue &&)
+ExtendedAnnotationParameterValue& ExtendedAnnotationParameterValue::operator =(
+        ExtendedAnnotationParameterValue&&)
 {
 
     return *this;
@@ -75,25 +80,20 @@ ExtendedAnnotationParameterValue& ExtendedAnnotationParameterValue::operator=(Ex
 //     return current_alignment - initial_alignment;
 // }
 
-size_t ExtendedAnnotationParameterValue::getCdrSerializedSize(const ExtendedAnnotationParameterValue&, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-
-    return current_alignment - initial_alignment;
-}
-
-void ExtendedAnnotationParameterValue::serialize(eprosima::fastcdr::Cdr &) const
+void ExtendedAnnotationParameterValue::serialize(
+        eprosima::fastcdr::Cdr&) const
 {
 }
 
-void ExtendedAnnotationParameterValue::deserialize(eprosima::fastcdr::Cdr &)
+void ExtendedAnnotationParameterValue::deserialize(
+        eprosima::fastcdr::Cdr&)
 {
 }
 
-size_t ExtendedAnnotationParameterValue::getKeyMaxCdrSerializedSize(size_t current_alignment)
+size_t ExtendedAnnotationParameterValue::getKeyMaxCdrSerializedSize(
+        size_t current_alignment)
 {
-	size_t current_align = current_alignment;
+    size_t current_align = current_alignment;
 
 
     return current_align;
@@ -104,11 +104,13 @@ bool ExtendedAnnotationParameterValue::isKeyDefined()
     return false;
 }
 
-void ExtendedAnnotationParameterValue::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void ExtendedAnnotationParameterValue::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
 {
-	(void) scdr;
+    (void) scdr;
 
 }
+
 AnnotationParameterValue::AnnotationParameterValue()
 {
     m__d = TK_NONE;
@@ -133,251 +135,256 @@ AnnotationParameterValue::~AnnotationParameterValue()
 {
 }
 
-AnnotationParameterValue::AnnotationParameterValue(const AnnotationParameterValue &x)
+AnnotationParameterValue::AnnotationParameterValue(
+        const AnnotationParameterValue& x)
 {
     m__d = x.m__d;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_BOOLEAN:
-        m_boolean_value = x.m_boolean_value;
-        break;
+            m_boolean_value = x.m_boolean_value;
+            break;
         case TK_BYTE:
-        m_byte_value = x.m_byte_value;
-        break;
+            m_byte_value = x.m_byte_value;
+            break;
         case TK_INT16:
-        m_int16_value = x.m_int16_value;
-        break;
+            m_int16_value = x.m_int16_value;
+            break;
         case TK_UINT16:
-        m_uint_16_value = x.m_uint_16_value;
-        break;
+            m_uint_16_value = x.m_uint_16_value;
+            break;
         case TK_INT32:
-        m_int32_value = x.m_int32_value;
-        break;
+            m_int32_value = x.m_int32_value;
+            break;
         case TK_UINT32:
-        m_uint32_value = x.m_uint32_value;
-        break;
+            m_uint32_value = x.m_uint32_value;
+            break;
         case TK_INT64:
-        m_int64_value = x.m_int64_value;
-        break;
+            m_int64_value = x.m_int64_value;
+            break;
         case TK_UINT64:
-        m_uint64_value = x.m_uint64_value;
-        break;
+            m_uint64_value = x.m_uint64_value;
+            break;
         case TK_FLOAT32:
-        m_float32_value = x.m_float32_value;
-        break;
+            m_float32_value = x.m_float32_value;
+            break;
         case TK_FLOAT64:
-        m_float64_value = x.m_float64_value;
-        break;
+            m_float64_value = x.m_float64_value;
+            break;
         case TK_FLOAT128:
-        m_float128_value = x.m_float128_value;
-        break;
+            m_float128_value = x.m_float128_value;
+            break;
         case TK_CHAR8:
-        m_char_value = x.m_char_value;
-        break;
+            m_char_value = x.m_char_value;
+            break;
         case TK_CHAR16:
-        m_wchar_value = x.m_wchar_value;
-        break;
+            m_wchar_value = x.m_wchar_value;
+            break;
         case TK_ENUM:
-        m_enumerated_value = x.m_enumerated_value;
-        break;
+            m_enumerated_value = x.m_enumerated_value;
+            break;
         case TK_STRING8:
-        m_string8_value = x.m_string8_value;
-        break;
+            m_string8_value = x.m_string8_value;
+            break;
         case TK_STRING16:
-        m_string16_value = x.m_string16_value;
-        break;
+            m_string16_value = x.m_string16_value;
+            break;
         default:
-        m_extended_value = x.m_extended_value;
-        break;
+            m_extended_value = x.m_extended_value;
+            break;
     }
 }
 
-AnnotationParameterValue::AnnotationParameterValue(AnnotationParameterValue &&x)
+AnnotationParameterValue::AnnotationParameterValue(
+        AnnotationParameterValue&& x)
 {
     m__d = x.m__d;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_BOOLEAN:
-        m_boolean_value = x.m_boolean_value;
-        break;
+            m_boolean_value = x.m_boolean_value;
+            break;
         case TK_BYTE:
-        m_byte_value = x.m_byte_value;
-        break;
+            m_byte_value = x.m_byte_value;
+            break;
         case TK_INT16:
-        m_int16_value = x.m_int16_value;
-        break;
+            m_int16_value = x.m_int16_value;
+            break;
         case TK_UINT16:
-        m_uint_16_value = x.m_uint_16_value;
-        break;
+            m_uint_16_value = x.m_uint_16_value;
+            break;
         case TK_INT32:
-        m_int32_value = x.m_int32_value;
-        break;
+            m_int32_value = x.m_int32_value;
+            break;
         case TK_UINT32:
-        m_uint32_value = x.m_uint32_value;
-        break;
+            m_uint32_value = x.m_uint32_value;
+            break;
         case TK_INT64:
-        m_int64_value = x.m_int64_value;
-        break;
+            m_int64_value = x.m_int64_value;
+            break;
         case TK_UINT64:
-        m_uint64_value = x.m_uint64_value;
-        break;
+            m_uint64_value = x.m_uint64_value;
+            break;
         case TK_FLOAT32:
-        m_float32_value = x.m_float32_value;
-        break;
+            m_float32_value = x.m_float32_value;
+            break;
         case TK_FLOAT64:
-        m_float64_value = x.m_float64_value;
-        break;
+            m_float64_value = x.m_float64_value;
+            break;
         case TK_FLOAT128:
-        m_float128_value = x.m_float128_value;
-        break;
+            m_float128_value = x.m_float128_value;
+            break;
         case TK_CHAR8:
-        m_char_value = x.m_char_value;
-        break;
+            m_char_value = x.m_char_value;
+            break;
         case TK_CHAR16:
-        m_wchar_value = x.m_wchar_value;
-        break;
+            m_wchar_value = x.m_wchar_value;
+            break;
         case TK_ENUM:
-        m_enumerated_value = x.m_enumerated_value;
-        break;
+            m_enumerated_value = x.m_enumerated_value;
+            break;
         case TK_STRING8:
-        m_string8_value = std::move(x.m_string8_value);
-        break;
+            m_string8_value = std::move(x.m_string8_value);
+            break;
         case TK_STRING16:
-        m_string16_value = std::move(x.m_string16_value);
-        break;
+            m_string16_value = std::move(x.m_string16_value);
+            break;
         default:
-        m_extended_value = std::move(x.m_extended_value);
-        break;
+            m_extended_value = std::move(x.m_extended_value);
+            break;
     }
 }
 
-AnnotationParameterValue& AnnotationParameterValue::operator=(const AnnotationParameterValue &x)
+AnnotationParameterValue& AnnotationParameterValue::operator =(
+        const AnnotationParameterValue& x)
 {
     m__d = x.m__d;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_BOOLEAN:
-        m_boolean_value = x.m_boolean_value;
-        break;
+            m_boolean_value = x.m_boolean_value;
+            break;
         case TK_BYTE:
-        m_byte_value = x.m_byte_value;
-        break;
+            m_byte_value = x.m_byte_value;
+            break;
         case TK_INT16:
-        m_int16_value = x.m_int16_value;
-        break;
+            m_int16_value = x.m_int16_value;
+            break;
         case TK_UINT16:
-        m_uint_16_value = x.m_uint_16_value;
-        break;
+            m_uint_16_value = x.m_uint_16_value;
+            break;
         case TK_INT32:
-        m_int32_value = x.m_int32_value;
-        break;
+            m_int32_value = x.m_int32_value;
+            break;
         case TK_UINT32:
-        m_uint32_value = x.m_uint32_value;
-        break;
+            m_uint32_value = x.m_uint32_value;
+            break;
         case TK_INT64:
-        m_int64_value = x.m_int64_value;
-        break;
+            m_int64_value = x.m_int64_value;
+            break;
         case TK_UINT64:
-        m_uint64_value = x.m_uint64_value;
-        break;
+            m_uint64_value = x.m_uint64_value;
+            break;
         case TK_FLOAT32:
-        m_float32_value = x.m_float32_value;
-        break;
+            m_float32_value = x.m_float32_value;
+            break;
         case TK_FLOAT64:
-        m_float64_value = x.m_float64_value;
-        break;
+            m_float64_value = x.m_float64_value;
+            break;
         case TK_FLOAT128:
-        m_float128_value = x.m_float128_value;
-        break;
+            m_float128_value = x.m_float128_value;
+            break;
         case TK_CHAR8:
-        m_char_value = x.m_char_value;
-        break;
+            m_char_value = x.m_char_value;
+            break;
         case TK_CHAR16:
-        m_wchar_value = x.m_wchar_value;
-        break;
+            m_wchar_value = x.m_wchar_value;
+            break;
         case TK_ENUM:
-        m_enumerated_value = x.m_enumerated_value;
-        break;
+            m_enumerated_value = x.m_enumerated_value;
+            break;
         case TK_STRING8:
-        m_string8_value = x.m_string8_value;
-        break;
+            m_string8_value = x.m_string8_value;
+            break;
         case TK_STRING16:
-        m_string16_value = x.m_string16_value;
-        break;
+            m_string16_value = x.m_string16_value;
+            break;
         default:
-        m_extended_value = x.m_extended_value;
-        break;
-    }
-
-    return *this;
-}
-
-AnnotationParameterValue& AnnotationParameterValue::operator=(AnnotationParameterValue &&x)
-{
-    m__d = x.m__d;
-
-    switch(m__d)
-    {
-        case TK_BOOLEAN:
-        m_boolean_value = x.m_boolean_value;
-        break;
-        case TK_BYTE:
-        m_byte_value = x.m_byte_value;
-        break;
-        case TK_INT16:
-        m_int16_value = x.m_int16_value;
-        break;
-        case TK_UINT16:
-        m_uint_16_value = x.m_uint_16_value;
-        break;
-        case TK_INT32:
-        m_int32_value = x.m_int32_value;
-        break;
-        case TK_UINT32:
-        m_uint32_value = x.m_uint32_value;
-        break;
-        case TK_INT64:
-        m_int64_value = x.m_int64_value;
-        break;
-        case TK_UINT64:
-        m_uint64_value = x.m_uint64_value;
-        break;
-        case TK_FLOAT32:
-        m_float32_value = x.m_float32_value;
-        break;
-        case TK_FLOAT64:
-        m_float64_value = x.m_float64_value;
-        break;
-        case TK_FLOAT128:
-        m_float128_value = x.m_float128_value;
-        break;
-        case TK_CHAR8:
-        m_char_value = x.m_char_value;
-        break;
-        case TK_CHAR16:
-        m_wchar_value = x.m_wchar_value;
-        break;
-        case TK_ENUM:
-        m_enumerated_value = x.m_enumerated_value;
-        break;
-        case TK_STRING8:
-        m_string8_value = std::move(x.m_string8_value);
-        break;
-        case TK_STRING16:
-        m_string16_value = std::move(x.m_string16_value);
-        break;
-        default:
-        m_extended_value = std::move(x.m_extended_value);
-        break;
+            m_extended_value = x.m_extended_value;
+            break;
     }
 
     return *this;
 }
 
-void AnnotationParameterValue::_d(char __d) // Special case to ease, sets the current active member.
+AnnotationParameterValue& AnnotationParameterValue::operator =(
+        AnnotationParameterValue&& x)
+{
+    m__d = x.m__d;
+
+    switch (m__d)
+    {
+        case TK_BOOLEAN:
+            m_boolean_value = x.m_boolean_value;
+            break;
+        case TK_BYTE:
+            m_byte_value = x.m_byte_value;
+            break;
+        case TK_INT16:
+            m_int16_value = x.m_int16_value;
+            break;
+        case TK_UINT16:
+            m_uint_16_value = x.m_uint_16_value;
+            break;
+        case TK_INT32:
+            m_int32_value = x.m_int32_value;
+            break;
+        case TK_UINT32:
+            m_uint32_value = x.m_uint32_value;
+            break;
+        case TK_INT64:
+            m_int64_value = x.m_int64_value;
+            break;
+        case TK_UINT64:
+            m_uint64_value = x.m_uint64_value;
+            break;
+        case TK_FLOAT32:
+            m_float32_value = x.m_float32_value;
+            break;
+        case TK_FLOAT64:
+            m_float64_value = x.m_float64_value;
+            break;
+        case TK_FLOAT128:
+            m_float128_value = x.m_float128_value;
+            break;
+        case TK_CHAR8:
+            m_char_value = x.m_char_value;
+            break;
+        case TK_CHAR16:
+            m_wchar_value = x.m_wchar_value;
+            break;
+        case TK_ENUM:
+            m_enumerated_value = x.m_enumerated_value;
+            break;
+        case TK_STRING8:
+            m_string8_value = std::move(x.m_string8_value);
+            break;
+        case TK_STRING16:
+            m_string16_value = std::move(x.m_string16_value);
+            break;
+        default:
+            m_extended_value = std::move(x.m_extended_value);
+            break;
+    }
+
+    return *this;
+}
+
+void AnnotationParameterValue::_d(
+        char __d)                           // Special case to ease, sets the current active member.
 {
     m__d = __d;
 }
@@ -392,7 +399,8 @@ char& AnnotationParameterValue::_d()
     return m__d;
 }
 
-void AnnotationParameterValue::boolean_value(bool _boolean_value)
+void AnnotationParameterValue::boolean_value(
+        bool _boolean_value)
 {
     m_boolean_value = _boolean_value;
     m__d = TK_BOOLEAN;
@@ -402,13 +410,13 @@ bool AnnotationParameterValue::boolean_value() const
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_BOOLEAN:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -422,13 +430,13 @@ bool& AnnotationParameterValue::boolean_value()
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_BOOLEAN:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -437,7 +445,9 @@ bool& AnnotationParameterValue::boolean_value()
 
     return m_boolean_value;
 }
-void AnnotationParameterValue::byte_value(uint8_t _byte_value)
+
+void AnnotationParameterValue::byte_value(
+        uint8_t _byte_value)
 {
     m_byte_value = _byte_value;
     m__d = TK_BYTE;
@@ -447,13 +457,13 @@ uint8_t AnnotationParameterValue::byte_value() const
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_BYTE:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -467,13 +477,13 @@ uint8_t& AnnotationParameterValue::byte_value()
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_BYTE:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -482,7 +492,9 @@ uint8_t& AnnotationParameterValue::byte_value()
 
     return m_byte_value;
 }
-void AnnotationParameterValue::int16_value(int16_t _int16_value)
+
+void AnnotationParameterValue::int16_value(
+        int16_t _int16_value)
 {
     m_int16_value = _int16_value;
     m__d = TK_INT16;
@@ -492,13 +504,13 @@ int16_t AnnotationParameterValue::int16_value() const
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_INT16:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -512,13 +524,13 @@ int16_t& AnnotationParameterValue::int16_value()
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_INT16:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -527,7 +539,9 @@ int16_t& AnnotationParameterValue::int16_value()
 
     return m_int16_value;
 }
-void AnnotationParameterValue::uint_16_value(uint16_t _uint_16_value)
+
+void AnnotationParameterValue::uint_16_value(
+        uint16_t _uint_16_value)
 {
     m_uint_16_value = _uint_16_value;
     m__d = TK_UINT16;
@@ -537,13 +551,13 @@ uint16_t AnnotationParameterValue::uint_16_value() const
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_UINT16:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -557,13 +571,13 @@ uint16_t& AnnotationParameterValue::uint_16_value()
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_UINT16:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -572,7 +586,9 @@ uint16_t& AnnotationParameterValue::uint_16_value()
 
     return m_uint_16_value;
 }
-void AnnotationParameterValue::int32_value(int32_t _int32_value)
+
+void AnnotationParameterValue::int32_value(
+        int32_t _int32_value)
 {
     m_int32_value = _int32_value;
     m__d = TK_INT32;
@@ -582,13 +598,13 @@ int32_t AnnotationParameterValue::int32_value() const
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_INT32:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -602,13 +618,13 @@ int32_t& AnnotationParameterValue::int32_value()
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_INT32:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -617,7 +633,9 @@ int32_t& AnnotationParameterValue::int32_value()
 
     return m_int32_value;
 }
-void AnnotationParameterValue::uint32_value(uint32_t _uint32_value)
+
+void AnnotationParameterValue::uint32_value(
+        uint32_t _uint32_value)
 {
     m_uint32_value = _uint32_value;
     m__d = TK_UINT32;
@@ -627,13 +645,13 @@ uint32_t AnnotationParameterValue::uint32_value() const
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_UINT32:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -647,13 +665,13 @@ uint32_t& AnnotationParameterValue::uint32_value()
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_UINT32:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -662,7 +680,9 @@ uint32_t& AnnotationParameterValue::uint32_value()
 
     return m_uint32_value;
 }
-void AnnotationParameterValue::int64_value(int64_t _int64_value)
+
+void AnnotationParameterValue::int64_value(
+        int64_t _int64_value)
 {
     m_int64_value = _int64_value;
     m__d = TK_INT64;
@@ -672,13 +692,13 @@ int64_t AnnotationParameterValue::int64_value() const
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_INT64:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -692,13 +712,13 @@ int64_t& AnnotationParameterValue::int64_value()
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_INT64:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -707,7 +727,9 @@ int64_t& AnnotationParameterValue::int64_value()
 
     return m_int64_value;
 }
-void AnnotationParameterValue::uint64_value(uint64_t _uint64_value)
+
+void AnnotationParameterValue::uint64_value(
+        uint64_t _uint64_value)
 {
     m_uint64_value = _uint64_value;
     m__d = TK_UINT64;
@@ -717,13 +739,13 @@ uint64_t AnnotationParameterValue::uint64_value() const
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_UINT64:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -737,13 +759,13 @@ uint64_t& AnnotationParameterValue::uint64_value()
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_UINT64:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -752,7 +774,9 @@ uint64_t& AnnotationParameterValue::uint64_value()
 
     return m_uint64_value;
 }
-void AnnotationParameterValue::float32_value(float _float32_value)
+
+void AnnotationParameterValue::float32_value(
+        float _float32_value)
 {
     m_float32_value = _float32_value;
     m__d = TK_FLOAT32;
@@ -762,13 +786,13 @@ float AnnotationParameterValue::float32_value() const
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_FLOAT32:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -782,13 +806,13 @@ float& AnnotationParameterValue::float32_value()
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_FLOAT32:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -797,7 +821,9 @@ float& AnnotationParameterValue::float32_value()
 
     return m_float32_value;
 }
-void AnnotationParameterValue::float64_value(double _float64_value)
+
+void AnnotationParameterValue::float64_value(
+        double _float64_value)
 {
     m_float64_value = _float64_value;
     m__d = TK_FLOAT64;
@@ -807,13 +833,13 @@ double AnnotationParameterValue::float64_value() const
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_FLOAT64:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -827,13 +853,13 @@ double& AnnotationParameterValue::float64_value()
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_FLOAT64:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -842,7 +868,9 @@ double& AnnotationParameterValue::float64_value()
 
     return m_float64_value;
 }
-void AnnotationParameterValue::float128_value(long double _float128_value)
+
+void AnnotationParameterValue::float128_value(
+        long double _float128_value)
 {
     m_float128_value = _float128_value;
     m__d = TK_FLOAT128;
@@ -852,13 +880,13 @@ long double AnnotationParameterValue::float128_value() const
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_FLOAT128:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -872,13 +900,13 @@ long double& AnnotationParameterValue::float128_value()
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_FLOAT128:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -887,7 +915,9 @@ long double& AnnotationParameterValue::float128_value()
 
     return m_float128_value;
 }
-void AnnotationParameterValue::char_value(char _char_value)
+
+void AnnotationParameterValue::char_value(
+        char _char_value)
 {
     m_char_value = _char_value;
     m__d = TK_CHAR8;
@@ -897,13 +927,13 @@ char AnnotationParameterValue::char_value() const
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_CHAR8:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -917,13 +947,13 @@ char& AnnotationParameterValue::char_value()
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_CHAR8:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -932,7 +962,9 @@ char& AnnotationParameterValue::char_value()
 
     return m_char_value;
 }
-void AnnotationParameterValue::wchar_value(wchar_t _wchar_value)
+
+void AnnotationParameterValue::wchar_value(
+        wchar_t _wchar_value)
 {
     m_wchar_value = _wchar_value;
     m__d = TK_CHAR16;
@@ -942,13 +974,13 @@ wchar_t AnnotationParameterValue::wchar_value() const
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_CHAR16:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -962,13 +994,13 @@ wchar_t& AnnotationParameterValue::wchar_value()
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_CHAR16:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -977,7 +1009,9 @@ wchar_t& AnnotationParameterValue::wchar_value()
 
     return m_wchar_value;
 }
-void AnnotationParameterValue::enumerated_value(int32_t _enumerated_value)
+
+void AnnotationParameterValue::enumerated_value(
+        int32_t _enumerated_value)
 {
     m_enumerated_value = _enumerated_value;
     m__d = TK_ENUM;
@@ -987,13 +1021,13 @@ int32_t AnnotationParameterValue::enumerated_value() const
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_ENUM:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -1007,13 +1041,13 @@ int32_t& AnnotationParameterValue::enumerated_value()
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_ENUM:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -1022,13 +1056,16 @@ int32_t& AnnotationParameterValue::enumerated_value()
 
     return m_enumerated_value;
 }
-void AnnotationParameterValue::string8_value(const std::string &_string8_value)
+
+void AnnotationParameterValue::string8_value(
+        const std::string& _string8_value)
 {
     m_string8_value = _string8_value;
     m__d = TK_STRING8;
 }
 
-void AnnotationParameterValue::string8_value(std::string &&_string8_value)
+void AnnotationParameterValue::string8_value(
+        std::string&& _string8_value)
 {
     m_string8_value = std::move(_string8_value);
     m__d = TK_STRING8;
@@ -1038,13 +1075,13 @@ const std::string& AnnotationParameterValue::string8_value() const
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_STRING8:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -1058,13 +1095,13 @@ std::string& AnnotationParameterValue::string8_value()
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_STRING8:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -1073,13 +1110,16 @@ std::string& AnnotationParameterValue::string8_value()
 
     return m_string8_value;
 }
-void AnnotationParameterValue::string16_value(const std::wstring &_string16_value)
+
+void AnnotationParameterValue::string16_value(
+        const std::wstring& _string16_value)
 {
     m_string16_value = _string16_value;
     m__d = TK_STRING16;
 }
 
-void AnnotationParameterValue::string16_value(std::wstring &&_string16_value)
+void AnnotationParameterValue::string16_value(
+        std::wstring&& _string16_value)
 {
     m_string16_value = std::move(_string16_value);
     m__d = TK_STRING16;
@@ -1089,13 +1129,13 @@ const std::wstring& AnnotationParameterValue::string16_value() const
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_STRING16:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -1109,13 +1149,13 @@ std::wstring& AnnotationParameterValue::string16_value()
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_STRING16:
-        b = true;
-        break;
+            b = true;
+            break;
         default:
-        break;
+            break;
     }
     if (!b)
     {
@@ -1124,13 +1164,16 @@ std::wstring& AnnotationParameterValue::string16_value()
 
     return m_string16_value;
 }
-void AnnotationParameterValue::extended_value(const ExtendedAnnotationParameterValue &_extended_value)
+
+void AnnotationParameterValue::extended_value(
+        const ExtendedAnnotationParameterValue& _extended_value)
 {
     m_extended_value = _extended_value;
     m__d = TK_NONE;
 }
 
-void AnnotationParameterValue::extended_value(ExtendedAnnotationParameterValue &&_extended_value)
+void AnnotationParameterValue::extended_value(
+        ExtendedAnnotationParameterValue&& _extended_value)
 {
     m_extended_value = std::move(_extended_value);
     m__d = TK_NONE;
@@ -1140,7 +1183,7 @@ const ExtendedAnnotationParameterValue& AnnotationParameterValue::extended_value
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_BOOLEAN:
         case TK_BYTE:
@@ -1158,10 +1201,10 @@ const ExtendedAnnotationParameterValue& AnnotationParameterValue::extended_value
         case TK_ENUM:
         case TK_STRING16:
         case TK_STRING8:
-        break;
+            break;
         default:
-        b = true;
-        break;
+            b = true;
+            break;
     }
     if (!b)
     {
@@ -1175,7 +1218,7 @@ ExtendedAnnotationParameterValue& AnnotationParameterValue::extended_value()
 {
     bool b = false;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_BOOLEAN:
         case TK_BYTE:
@@ -1193,10 +1236,10 @@ ExtendedAnnotationParameterValue& AnnotationParameterValue::extended_value()
         case TK_ENUM:
         case TK_STRING16:
         case TK_STRING8:
-        break;
+            break;
         default:
-        b = true;
-        break;
+            b = true;
+            break;
     }
     if (!b)
     {
@@ -1369,268 +1412,191 @@ ExtendedAnnotationParameterValue& AnnotationParameterValue::extended_value()
 //     return union_max_size_serialized - initial_alignment;
 // }
 
-// TODO(Ricardo) Review
-size_t AnnotationParameterValue::getCdrSerializedSize(const AnnotationParameterValue& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-    switch(data.m__d)
-    {
-        case TK_BOOLEAN:
-        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-        break;
-        case TK_BYTE:
-        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-        break;
-        case TK_INT16:
-        current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-        break;
-        case TK_UINT16:
-        current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-        break;
-        case TK_INT32:
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-        break;
-        case TK_UINT32:
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-        break;
-        case TK_INT64:
-        current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-
-        break;
-        case TK_UINT64:
-        current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-
-        break;
-        case TK_FLOAT32:
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-        break;
-        case TK_FLOAT64:
-        current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-
-        break;
-        case TK_FLOAT128:
-        current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16);
-
-        break;
-        case TK_CHAR8:
-        current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-        break;
-        case TK_CHAR16:
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-        break;
-        case TK_ENUM:
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-        break;
-        case TK_STRING8:
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.string8_value().size() + 1;
-        break;
-        case TK_STRING16:
-        current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.string16_value().size() + 1;
-        break;
-        default:
-        current_alignment += ExtendedAnnotationParameterValue::getCdrSerializedSize(data.extended_value(), current_alignment);
-        break;
-    }
-
-    return current_alignment - initial_alignment;
-}
-
-void AnnotationParameterValue::serialize(eprosima::fastcdr::Cdr &scdr) const
+void AnnotationParameterValue::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m__d;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_BOOLEAN:
-        scdr << m_boolean_value;
-        break;
+            scdr << m_boolean_value;
+            break;
         case TK_BYTE:
-        scdr << m_byte_value;
-        break;
+            scdr << m_byte_value;
+            break;
         case TK_INT16:
-        scdr << m_int16_value;
-        break;
+            scdr << m_int16_value;
+            break;
         case TK_UINT16:
-        scdr << m_uint_16_value;
-        break;
+            scdr << m_uint_16_value;
+            break;
         case TK_INT32:
-        scdr << m_int32_value;
-        break;
+            scdr << m_int32_value;
+            break;
         case TK_UINT32:
-        scdr << m_uint32_value;
-        break;
+            scdr << m_uint32_value;
+            break;
         case TK_INT64:
-        scdr << m_int64_value;
-        break;
+            scdr << m_int64_value;
+            break;
         case TK_UINT64:
-        scdr << m_uint64_value;
-        break;
+            scdr << m_uint64_value;
+            break;
         case TK_FLOAT32:
-        scdr << m_float32_value;
-        break;
+            scdr << m_float32_value;
+            break;
         case TK_FLOAT64:
-        scdr << m_float64_value;
-        break;
+            scdr << m_float64_value;
+            break;
         case TK_FLOAT128:
-        scdr << m_float128_value;
-        break;
+            scdr << m_float128_value;
+            break;
         case TK_CHAR8:
-        scdr << m_char_value;
-        break;
+            scdr << m_char_value;
+            break;
         case TK_CHAR16:
-        scdr << m_wchar_value;
-        break;
+            scdr << m_wchar_value;
+            break;
         case TK_ENUM:
-        scdr << m_enumerated_value;
-        break;
+            scdr << m_enumerated_value;
+            break;
         case TK_STRING8:
-        scdr << m_string8_value;
-        break;
+            scdr << m_string8_value;
+            break;
         case TK_STRING16:
-        scdr << m_string16_value;
-        break;
+            scdr << m_string16_value;
+            break;
         default:
-        scdr << m_extended_value;
-        break;
+            scdr << m_extended_value;
+            break;
     }
 }
 
-void AnnotationParameterValue::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void AnnotationParameterValue::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m__d;
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_BOOLEAN:
-        dcdr >> m_boolean_value;
-        break;
+            dcdr >> m_boolean_value;
+            break;
         case TK_BYTE:
-        dcdr >> m_byte_value;
-        break;
+            dcdr >> m_byte_value;
+            break;
         case TK_INT16:
-        dcdr >> m_int16_value;
-        break;
+            dcdr >> m_int16_value;
+            break;
         case TK_UINT16:
-        dcdr >> m_uint_16_value;
-        break;
+            dcdr >> m_uint_16_value;
+            break;
         case TK_INT32:
-        dcdr >> m_int32_value;
-        break;
+            dcdr >> m_int32_value;
+            break;
         case TK_UINT32:
-        dcdr >> m_uint32_value;
-        break;
+            dcdr >> m_uint32_value;
+            break;
         case TK_INT64:
-        dcdr >> m_int64_value;
-        break;
+            dcdr >> m_int64_value;
+            break;
         case TK_UINT64:
-        dcdr >> m_uint64_value;
-        break;
+            dcdr >> m_uint64_value;
+            break;
         case TK_FLOAT32:
-        dcdr >> m_float32_value;
-        break;
+            dcdr >> m_float32_value;
+            break;
         case TK_FLOAT64:
-        dcdr >> m_float64_value;
-        break;
+            dcdr >> m_float64_value;
+            break;
         case TK_FLOAT128:
-        dcdr >> m_float128_value;
-        break;
+            dcdr >> m_float128_value;
+            break;
         case TK_CHAR8:
-        dcdr >> m_char_value;
-        break;
+            dcdr >> m_char_value;
+            break;
         case TK_CHAR16:
-        dcdr >> m_wchar_value;
-        break;
+            dcdr >> m_wchar_value;
+            break;
         case TK_ENUM:
-        dcdr >> m_enumerated_value;
-        break;
+            dcdr >> m_enumerated_value;
+            break;
         case TK_STRING8:
-        dcdr >> m_string8_value;
-        break;
+            dcdr >> m_string8_value;
+            break;
         case TK_STRING16:
-        dcdr >> m_string16_value;
-        break;
+            dcdr >> m_string16_value;
+            break;
         default:
-        dcdr >> m_extended_value;
-        break;
+            dcdr >> m_extended_value;
+            break;
     }
 }
 
-bool AnnotationParameterValue::operator==(const AnnotationParameterValue& other) const
+bool AnnotationParameterValue::operator ==(
+        const AnnotationParameterValue& other) const
 {
     if (m__d != other.m__d)
     {
         return false;
     }
 
-    switch(m__d)
+    switch (m__d)
     {
         case TK_BOOLEAN:
-        return m_boolean_value == other.m_boolean_value;
-        break;
+            return m_boolean_value == other.m_boolean_value;
+            break;
         case TK_BYTE:
-        return m_byte_value == other.m_byte_value;
-        break;
+            return m_byte_value == other.m_byte_value;
+            break;
         case TK_INT16:
-        return m_int16_value == other.m_int16_value;
-        break;
+            return m_int16_value == other.m_int16_value;
+            break;
         case TK_UINT16:
-        return m_uint_16_value == other.m_uint_16_value;
-        break;
+            return m_uint_16_value == other.m_uint_16_value;
+            break;
         case TK_INT32:
-        return m_int32_value == other.m_int32_value;
-        break;
+            return m_int32_value == other.m_int32_value;
+            break;
         case TK_UINT32:
-        return m_uint32_value == other.m_uint32_value;
-        break;
+            return m_uint32_value == other.m_uint32_value;
+            break;
         case TK_INT64:
-        return m_int64_value == other.m_int64_value;
-        break;
+            return m_int64_value == other.m_int64_value;
+            break;
         case TK_UINT64:
-        return m_uint64_value == other.m_uint64_value;
-        break;
+            return m_uint64_value == other.m_uint64_value;
+            break;
         case TK_FLOAT32:
-        return m_float32_value == other.m_float32_value;
-        break;
+            return m_float32_value == other.m_float32_value;
+            break;
         case TK_FLOAT64:
-        return m_float64_value == other.m_float64_value;
-        break;
+            return m_float64_value == other.m_float64_value;
+            break;
         case TK_FLOAT128:
-        return m_float128_value == other.m_float128_value;
-        break;
+            return m_float128_value == other.m_float128_value;
+            break;
         case TK_CHAR8:
-        return m_char_value == other.m_char_value;
-        break;
+            return m_char_value == other.m_char_value;
+            break;
         case TK_CHAR16:
-        return m_wchar_value == other.m_wchar_value;
-        break;
+            return m_wchar_value == other.m_wchar_value;
+            break;
         case TK_ENUM:
-        return m_enumerated_value == other.m_enumerated_value;
-        break;
+            return m_enumerated_value == other.m_enumerated_value;
+            break;
         case TK_STRING8:
-        return m_string8_value == other.m_string8_value;
-        break;
+            return m_string8_value == other.m_string8_value;
+            break;
         case TK_STRING16:
-        return m_string16_value == other.m_string16_value;
-        break;
+            return m_string16_value == other.m_string16_value;
+            break;
         default:
-        return m_extended_value == other.m_extended_value;
-        break;
+            return m_extended_value == other.m_extended_value;
+            break;
     }
 }
-
 
 AppliedAnnotationParameter::AppliedAnnotationParameter()
 {
@@ -1642,19 +1608,22 @@ AppliedAnnotationParameter::~AppliedAnnotationParameter()
 {
 }
 
-AppliedAnnotationParameter::AppliedAnnotationParameter(const AppliedAnnotationParameter &x)
+AppliedAnnotationParameter::AppliedAnnotationParameter(
+        const AppliedAnnotationParameter& x)
 {
     m_paramname_hash = x.m_paramname_hash;
     m_value = x.m_value;
 }
 
-AppliedAnnotationParameter::AppliedAnnotationParameter(AppliedAnnotationParameter &&x)
+AppliedAnnotationParameter::AppliedAnnotationParameter(
+        AppliedAnnotationParameter&& x)
 {
     m_paramname_hash = std::move(x.m_paramname_hash);
     m_value = std::move(x.m_value);
 }
 
-AppliedAnnotationParameter& AppliedAnnotationParameter::operator=(const AppliedAnnotationParameter &x)
+AppliedAnnotationParameter& AppliedAnnotationParameter::operator =(
+        const AppliedAnnotationParameter& x)
 {
     m_paramname_hash = x.m_paramname_hash;
     m_value = x.m_value;
@@ -1662,7 +1631,8 @@ AppliedAnnotationParameter& AppliedAnnotationParameter::operator=(const AppliedA
     return *this;
 }
 
-AppliedAnnotationParameter& AppliedAnnotationParameter::operator=(AppliedAnnotationParameter &&x)
+AppliedAnnotationParameter& AppliedAnnotationParameter::operator =(
+        AppliedAnnotationParameter&& x)
 {
     m_paramname_hash = std::move(x.m_paramname_hash);
     m_value = std::move(x.m_value);
@@ -1681,37 +1651,31 @@ AppliedAnnotationParameter& AppliedAnnotationParameter::operator=(AppliedAnnotat
 //     return current_alignment - initial_alignment;
 // }
 
-size_t AppliedAnnotationParameter::getCdrSerializedSize(const AppliedAnnotationParameter& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    current_alignment += AnnotationParameterValue::getCdrSerializedSize(data.value(), current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
-void AppliedAnnotationParameter::serialize(eprosima::fastcdr::Cdr &scdr) const
+void AppliedAnnotationParameter::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_paramname_hash;
     scdr << m_value;
 }
 
-void AppliedAnnotationParameter::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void AppliedAnnotationParameter::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_paramname_hash;
     dcdr >> m_value;
 }
 
-bool AppliedAnnotationParameter::operator==(const AppliedAnnotationParameter& other) const
+bool AppliedAnnotationParameter::operator ==(
+        const AppliedAnnotationParameter& other) const
 {
     return m_paramname_hash == other.m_paramname_hash &&
-            m_value == other.m_value;
+           m_value == other.m_value;
 }
 
-size_t AppliedAnnotationParameter::getKeyMaxCdrSerializedSize(size_t current_alignment)
+size_t AppliedAnnotationParameter::getKeyMaxCdrSerializedSize(
+        size_t current_alignment)
 {
-	size_t current_align = current_alignment;
+    size_t current_align = current_alignment;
 
 
 
@@ -1724,9 +1688,10 @@ bool AppliedAnnotationParameter::isKeyDefined()
     return false;
 }
 
-void AppliedAnnotationParameter::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void AppliedAnnotationParameter::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
 {
-	(void) scdr;
+    (void) scdr;
 
 
 }
@@ -1739,19 +1704,22 @@ AppliedAnnotation::~AppliedAnnotation()
 {
 }
 
-AppliedAnnotation::AppliedAnnotation(const AppliedAnnotation &x)
+AppliedAnnotation::AppliedAnnotation(
+        const AppliedAnnotation& x)
 {
     m_annotation_typeid = x.m_annotation_typeid;
     m_param_seq = x.m_param_seq;
 }
 
-AppliedAnnotation::AppliedAnnotation(AppliedAnnotation &&x)
+AppliedAnnotation::AppliedAnnotation(
+        AppliedAnnotation&& x)
 {
     m_annotation_typeid = std::move(x.m_annotation_typeid);
     m_param_seq = std::move(x.m_param_seq);
 }
 
-AppliedAnnotation& AppliedAnnotation::operator=(const AppliedAnnotation &x)
+AppliedAnnotation& AppliedAnnotation::operator =(
+        const AppliedAnnotation& x)
 {
     m_annotation_typeid = x.m_annotation_typeid;
     m_param_seq = x.m_param_seq;
@@ -1759,7 +1727,8 @@ AppliedAnnotation& AppliedAnnotation::operator=(const AppliedAnnotation &x)
     return *this;
 }
 
-AppliedAnnotation& AppliedAnnotation::operator=(AppliedAnnotation &&x)
+AppliedAnnotation& AppliedAnnotation::operator =(
+        AppliedAnnotation&& x)
 {
     m_annotation_typeid = std::move(x.m_annotation_typeid);
     m_param_seq = std::move(x.m_param_seq);
@@ -1777,50 +1746,39 @@ AppliedAnnotation& AppliedAnnotation::operator=(AppliedAnnotation &&x)
 //     for(size_t a = 0; a < 100; ++a)
 //     {
 //         current_alignment += AppliedAnnotationParameter::getMaxCdrSerializedSize(current_alignment);
-// 	}
+//  }
 
 //     return current_alignment - initial_alignment;
 // }
 
-size_t AppliedAnnotation::getCdrSerializedSize(const AppliedAnnotation& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += TypeIdentifier::getCdrSerializedSize(data.annotation_typeid(), current_alignment);
-    //current_alignment += AppliedAnnotationParameterSeq::getCdrSerializedSize(data.param_seq(), current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    for(size_t a = 0; a < data.param_seq().size(); ++a)
-    {
-        current_alignment += AppliedAnnotationParameter::getCdrSerializedSize(data.param_seq().at(a), current_alignment);
-	}
-
-    return current_alignment - initial_alignment;
-}
-
-void AppliedAnnotation::serialize(eprosima::fastcdr::Cdr &scdr) const
+void AppliedAnnotation::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_annotation_typeid;
     scdr << m_param_seq;
 }
 
-void AppliedAnnotation::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void AppliedAnnotation::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_annotation_typeid;
     dcdr >> m_param_seq;
 }
 
-bool AppliedAnnotation::operator==(const AppliedAnnotation& other) const
+bool AppliedAnnotation::operator ==(
+        const AppliedAnnotation& other) const
 {
-    if(m_annotation_typeid == other.m_annotation_typeid)
+    if (m_annotation_typeid == other.m_annotation_typeid)
     {
         return compareSequence(m_param_seq, other.m_param_seq);
     }
     return false;
 }
 
-size_t AppliedAnnotation::getKeyMaxCdrSerializedSize(size_t current_alignment)
+size_t AppliedAnnotation::getKeyMaxCdrSerializedSize(
+        size_t current_alignment)
 {
-	size_t current_align = current_alignment;
+    size_t current_align = current_alignment;
 
     return current_align;
 }
@@ -1830,9 +1788,10 @@ bool AppliedAnnotation::isKeyDefined()
     return false;
 }
 
-void AppliedAnnotation::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void AppliedAnnotation::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
 {
-	(void) scdr;
+    (void) scdr;
 }
 
 AppliedVerbatimAnnotation::AppliedVerbatimAnnotation()
@@ -1843,21 +1802,24 @@ AppliedVerbatimAnnotation::~AppliedVerbatimAnnotation()
 {
 }
 
-AppliedVerbatimAnnotation::AppliedVerbatimAnnotation(const AppliedVerbatimAnnotation &x)
+AppliedVerbatimAnnotation::AppliedVerbatimAnnotation(
+        const AppliedVerbatimAnnotation& x)
 {
     m_placement = x.m_placement;
     m_language = x.m_language;
     m_text = x.m_text;
 }
 
-AppliedVerbatimAnnotation::AppliedVerbatimAnnotation(AppliedVerbatimAnnotation &&x)
+AppliedVerbatimAnnotation::AppliedVerbatimAnnotation(
+        AppliedVerbatimAnnotation&& x)
 {
     m_placement = std::move(x.m_placement);
     m_language = std::move(x.m_language);
     m_text = std::move(x.m_text);
 }
 
-AppliedVerbatimAnnotation& AppliedVerbatimAnnotation::operator=(const AppliedVerbatimAnnotation &x)
+AppliedVerbatimAnnotation& AppliedVerbatimAnnotation::operator =(
+        const AppliedVerbatimAnnotation& x)
 {
     m_placement = x.m_placement;
     m_language = x.m_language;
@@ -1866,7 +1828,8 @@ AppliedVerbatimAnnotation& AppliedVerbatimAnnotation::operator=(const AppliedVer
     return *this;
 }
 
-AppliedVerbatimAnnotation& AppliedVerbatimAnnotation::operator=(AppliedVerbatimAnnotation &&x)
+AppliedVerbatimAnnotation& AppliedVerbatimAnnotation::operator =(
+        AppliedVerbatimAnnotation&& x)
 {
     m_placement = std::move(x.m_placement);
     m_language = std::move(x.m_language);
@@ -1886,41 +1849,34 @@ AppliedVerbatimAnnotation& AppliedVerbatimAnnotation::operator=(AppliedVerbatimA
 //     return current_alignment - initial_alignment;
 // }
 
-size_t AppliedVerbatimAnnotation::getCdrSerializedSize(const AppliedVerbatimAnnotation& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.placement().size() + 1;
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.language().size() + 1;
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.text().size() + 1;
-
-    return current_alignment - initial_alignment;
-}
-
-void AppliedVerbatimAnnotation::serialize(eprosima::fastcdr::Cdr &scdr) const
+void AppliedVerbatimAnnotation::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_placement;
     scdr << m_language;
     scdr << m_text;
 }
 
-void AppliedVerbatimAnnotation::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void AppliedVerbatimAnnotation::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_placement;
     dcdr >> m_language;
     dcdr >> m_text;
 }
 
-bool AppliedVerbatimAnnotation::operator==(const AppliedVerbatimAnnotation& other) const
+bool AppliedVerbatimAnnotation::operator ==(
+        const AppliedVerbatimAnnotation& other) const
 {
     return m_placement == other.m_placement &&
-            m_language == other.m_language &&
-            m_text == other.m_text;
+           m_language == other.m_language &&
+           m_text == other.m_text;
 }
 
-size_t AppliedVerbatimAnnotation::getKeyMaxCdrSerializedSize(size_t current_alignment)
+size_t AppliedVerbatimAnnotation::getKeyMaxCdrSerializedSize(
+        size_t current_alignment)
 {
-	size_t current_align = current_alignment;
+    size_t current_align = current_alignment;
 
     return current_align;
 }
@@ -1930,9 +1886,10 @@ bool AppliedVerbatimAnnotation::isKeyDefined()
     return false;
 }
 
-void AppliedVerbatimAnnotation::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void AppliedVerbatimAnnotation::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
 {
-	(void) scdr;
+    (void) scdr;
 }
 
 AppliedBuiltinMemberAnnotations::AppliedBuiltinMemberAnnotations()
@@ -1943,38 +1900,42 @@ AppliedBuiltinMemberAnnotations::~AppliedBuiltinMemberAnnotations()
 {
 }
 
-AppliedBuiltinMemberAnnotations::AppliedBuiltinMemberAnnotations(const AppliedBuiltinMemberAnnotations &x)
+AppliedBuiltinMemberAnnotations::AppliedBuiltinMemberAnnotations(
+        const AppliedBuiltinMemberAnnotations& x)
 {
     m_unit = x.m_unit;
     m_min = x.m_min;
     m_max = x.m_max;
-	m_hash_id = x.m_hash_id;
+    m_hash_id = x.m_hash_id;
 }
 
-AppliedBuiltinMemberAnnotations::AppliedBuiltinMemberAnnotations(AppliedBuiltinMemberAnnotations &&x)
+AppliedBuiltinMemberAnnotations::AppliedBuiltinMemberAnnotations(
+        AppliedBuiltinMemberAnnotations&& x)
 {
     m_unit = std::move(x.m_unit);
     m_min = std::move(x.m_min);
     m_max = std::move(x.m_max);
-	m_hash_id = std::move(x.m_hash_id);
+    m_hash_id = std::move(x.m_hash_id);
 }
 
-AppliedBuiltinMemberAnnotations& AppliedBuiltinMemberAnnotations::operator=(const AppliedBuiltinMemberAnnotations &x)
+AppliedBuiltinMemberAnnotations& AppliedBuiltinMemberAnnotations::operator =(
+        const AppliedBuiltinMemberAnnotations& x)
 {
     m_unit = x.m_unit;
     m_min = x.m_min;
     m_max = x.m_max;
-	m_hash_id = x.m_hash_id;
+    m_hash_id = x.m_hash_id;
 
     return *this;
 }
 
-AppliedBuiltinMemberAnnotations& AppliedBuiltinMemberAnnotations::operator=(AppliedBuiltinMemberAnnotations &&x)
+AppliedBuiltinMemberAnnotations& AppliedBuiltinMemberAnnotations::operator =(
+        AppliedBuiltinMemberAnnotations&& x)
 {
     m_unit = std::move(x.m_unit);
     m_min = std::move(x.m_min);
     m_max = std::move(x.m_max);
-	m_hash_id = std::move(x.m_hash_id);
+    m_hash_id = std::move(x.m_hash_id);
 
     return *this;
 }
@@ -1992,45 +1953,37 @@ AppliedBuiltinMemberAnnotations& AppliedBuiltinMemberAnnotations::operator=(Appl
 //     return current_alignment - initial_alignment;
 // }
 
-size_t AppliedBuiltinMemberAnnotations::getCdrSerializedSize(const AppliedBuiltinMemberAnnotations& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.unit().size() + 1;
-    current_alignment += AnnotationParameterValue::getCdrSerializedSize(data.min(), current_alignment);
-    current_alignment += AnnotationParameterValue::getCdrSerializedSize(data.max(), current_alignment);
-	current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.hash_id().size() + 1;
-
-    return current_alignment - initial_alignment;
-}
-
-void AppliedBuiltinMemberAnnotations::serialize(eprosima::fastcdr::Cdr &scdr) const
+void AppliedBuiltinMemberAnnotations::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_unit;
     scdr << m_min;
     scdr << m_max;
-	scdr << m_hash_id;
+    scdr << m_hash_id;
 }
 
-void AppliedBuiltinMemberAnnotations::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void AppliedBuiltinMemberAnnotations::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_unit;
     dcdr >> m_min;
     dcdr >> m_max;
-	dcdr >> m_hash_id;
+    dcdr >> m_hash_id;
 }
 
-bool AppliedBuiltinMemberAnnotations::operator==(const AppliedBuiltinMemberAnnotations& other) const
+bool AppliedBuiltinMemberAnnotations::operator ==(
+        const AppliedBuiltinMemberAnnotations& other) const
 {
     return m_unit == other.m_unit &&
-            m_min == other.m_min &&
-            m_max == other.m_max &&
-            m_hash_id == other.m_hash_id;
+           m_min == other.m_min &&
+           m_max == other.m_max &&
+           m_hash_id == other.m_hash_id;
 }
 
-size_t AppliedBuiltinMemberAnnotations::getKeyMaxCdrSerializedSize(size_t current_alignment)
+size_t AppliedBuiltinMemberAnnotations::getKeyMaxCdrSerializedSize(
+        size_t current_alignment)
 {
-	size_t current_align = current_alignment;
+    size_t current_align = current_alignment;
 
     return current_align;
 }
@@ -2040,11 +1993,221 @@ bool AppliedBuiltinMemberAnnotations::isKeyDefined()
     return false;
 }
 
-void AppliedBuiltinMemberAnnotations::serializeKey(eprosima::fastcdr::Cdr &scdr) const
+void AppliedBuiltinMemberAnnotations::serializeKey(
+        eprosima::fastcdr::Cdr& scdr) const
 {
-	(void) scdr;
+    (void) scdr;
 }
 
 } // namespace types
 } // namespace fastrtps
+} // namespace eprosima
+
+namespace eprosima {
+namespace fastcdr {
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator&,
+        const eprosima::fastrtps::types::ExtendedAnnotationParameterValue&,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::AnnotationParameterValue& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data._d(), current_alignment);
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::TK_BOOLEAN:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                1), data.boolean_value(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TK_BYTE:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                2), data.byte_value(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TK_INT16:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                3), data.int16_value(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TK_UINT16:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                4), data.uint_16_value(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TK_INT32:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                5), data.int32_value(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TK_UINT32:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                6), data.uint32_value(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TK_INT64:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                7), data.int64_value(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TK_UINT64:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                8), data.uint64_value(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TK_FLOAT32:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                9), data.float32_value(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TK_FLOAT64:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                10), data.float64_value(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TK_FLOAT128:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                11), data.float128_value(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TK_CHAR8:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                12), data.char_value(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TK_CHAR16:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                13), data.wchar_value(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TK_ENUM:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                14), data.enumerated_value(), current_alignment);
+
+            break;
+        case eprosima::fastrtps::types::TK_STRING8:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                15), data.string8_value(), current_alignment);
+            break;
+        case eprosima::fastrtps::types::TK_STRING16:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                16), data.string16_value(), current_alignment);
+            break;
+        default:
+            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                                17), data.extended_value(), current_alignment);
+            break;
+    }
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::AppliedAnnotationParameter& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.paramname_hash(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.value(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::AppliedAnnotation& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.annotation_typeid(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.param_seq(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::AppliedVerbatimAnnotation& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.placement(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.language(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.text(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::AppliedBuiltinMemberAnnotations& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.unit(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.min(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.max(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        3), data.hash_id(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+} // namespace fastcdr
 } // namespace eprosima

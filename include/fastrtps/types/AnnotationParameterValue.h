@@ -103,17 +103,6 @@ public:
             ExtendedAnnotationParameterValue&& x);
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const ExtendedAnnotationParameterValue& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -590,17 +579,6 @@ public:
     RTPS_DllAPI ExtendedAnnotationParameterValue& extended_value();
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const AnnotationParameterValue& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -934,17 +912,6 @@ public:
     }
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const AppliedAnnotationParameter& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -1098,9 +1065,6 @@ public:
         return m_param_seq;
     }
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const AppliedAnnotation& data,
-            size_t current_alignment = 0);
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
     RTPS_DllAPI void deserialize(
@@ -1214,10 +1178,6 @@ public:
     {
         return m_text;
     }
-
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const AppliedVerbatimAnnotation& data,
-            size_t current_alignment = 0);
 
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
@@ -1358,10 +1318,6 @@ public:
     {
         return m_hash_id;
     }
-
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const AppliedBuiltinMemberAnnotations& data,
-            size_t current_alignment = 0);
 
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;

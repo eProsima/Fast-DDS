@@ -27,6 +27,8 @@ char dummy;
 #endif  // _WIN32
 
 #include "HelloWorld.h"
+#include "HelloWorldTypeObject.h"
+
 #include <fastcdr/Cdr.h>
 
 
@@ -39,6 +41,8 @@ using namespace eprosima::fastcdr::exception;
 HelloWorld::HelloWorld()
 {
 
+    // Just to register all known types
+    registerHelloWorldTypes();
 }
 
 HelloWorld::~HelloWorld()

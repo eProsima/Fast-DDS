@@ -58,7 +58,7 @@ public:
         eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
         // Object that serializes the data.
         eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                eprosima::fastcdr::Cdr::DDS_CDR);
+                eprosima::fastcdr::CdrVersion::XCDRv1);
         payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
         // Serialize encapsulation
         ser.serialize_encapsulation();
@@ -77,7 +77,7 @@ public:
         eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length);
         // Object that serializes the data.
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                eprosima::fastcdr::Cdr::DDS_CDR);     // Object that deserializes the data.
+                eprosima::fastcdr::CdrVersion::XCDRv1);     // Object that deserializes the data.
         // Deserialize encapsulation.
         deser.read_encapsulation();
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;

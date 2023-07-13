@@ -22,26 +22,27 @@
 #ifndef _TYPEIDENTIFIERTYPES_H_
 #define _TYPEIDENTIFIERTYPES_H_
 
-#include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/TypeObjectHashId.h>
 #include <stdint.h>
 #include <array>
 #include <string>
 #include <vector>
 
+#include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/TypeObjectHashId.h>
+
 namespace eprosima {
 namespace fastcdr {
 class Cdr;
-}
-}
+} // namespace fastcdr
+} // namespace eprosima
 
 namespace eprosima {
 
 namespace fastdds {
 namespace dds {
 class TypeConsistencyEnforcementQosPolicy;
-}
-}
+} // namespace dds
+} // namespace fastdds
 
 namespace fastrtps {
 namespace types {
@@ -87,14 +88,14 @@ public:
      * @brief Copy assignment.
      * @param x Reference to the object StringSTypeDefn that will be copied.
      */
-    RTPS_DllAPI StringSTypeDefn& operator=(
+    RTPS_DllAPI StringSTypeDefn& operator =(
             const StringSTypeDefn& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object StringSTypeDefn that will be copied.
      */
-    RTPS_DllAPI StringSTypeDefn& operator=(
+    RTPS_DllAPI StringSTypeDefn& operator =(
             StringSTypeDefn&& x);
 
     /*!
@@ -124,17 +125,6 @@ public:
     {
         return m_bound;
     }
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const StringSTypeDefn& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -198,14 +188,14 @@ public:
      * @brief Copy assignment.
      * @param x Reference to the object StringLTypeDefn that will be copied.
      */
-    RTPS_DllAPI StringLTypeDefn& operator=(
+    RTPS_DllAPI StringLTypeDefn& operator =(
             const StringLTypeDefn& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object StringLTypeDefn that will be copied.
      */
-    RTPS_DllAPI StringLTypeDefn& operator=(
+    RTPS_DllAPI StringLTypeDefn& operator =(
             StringLTypeDefn&& x);
 
     /*!
@@ -235,17 +225,6 @@ public:
     {
         return m_bound;
     }
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const StringLTypeDefn& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -309,14 +288,14 @@ public:
      * @brief Copy assignment.
      * @param x Reference to the object PlainCollectionHeader that will be copied.
      */
-    RTPS_DllAPI PlainCollectionHeader& operator=(
+    RTPS_DllAPI PlainCollectionHeader& operator =(
             const PlainCollectionHeader& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object PlainCollectionHeader that will be copied.
      */
-    RTPS_DllAPI PlainCollectionHeader& operator=(
+    RTPS_DllAPI PlainCollectionHeader& operator =(
             PlainCollectionHeader&& x);
 
     /*!
@@ -346,6 +325,7 @@ public:
     {
         return m_equiv_kind;
     }
+
     /*!
      * @brief This function sets a value in member element_flags
      * @param _element_flags New value for member element_flags
@@ -373,17 +353,6 @@ public:
     {
         return m_element_flags;
     }
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const PlainCollectionHeader& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -444,14 +413,14 @@ public:
      * @brief Copy assignment.
      * @param x Reference to the object PlainSequenceSElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainSequenceSElemDefn& operator=(
+    RTPS_DllAPI PlainSequenceSElemDefn& operator =(
             const PlainSequenceSElemDefn& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object PlainSequenceSElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainSequenceSElemDefn& operator=(
+    RTPS_DllAPI PlainSequenceSElemDefn& operator =(
             PlainSequenceSElemDefn&& x);
 
     /*!
@@ -491,6 +460,7 @@ public:
     {
         return m_header;
     }
+
     /*!
      * @brief This function sets a value in member bound
      * @param _bound New value for member bound
@@ -518,6 +488,7 @@ public:
     {
         return m_bound;
     }
+
     /*!
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
@@ -542,17 +513,6 @@ public:
     {
         return m_element_identifier;
     }
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const PlainSequenceSElemDefn& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -614,14 +574,14 @@ public:
      * @brief Copy assignment.
      * @param x Reference to the object PlainSequenceLElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainSequenceLElemDefn& operator=(
+    RTPS_DllAPI PlainSequenceLElemDefn& operator =(
             const PlainSequenceLElemDefn& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object PlainSequenceLElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainSequenceLElemDefn& operator=(
+    RTPS_DllAPI PlainSequenceLElemDefn& operator =(
             PlainSequenceLElemDefn&& x);
 
     /*!
@@ -661,6 +621,7 @@ public:
     {
         return m_header;
     }
+
     /*!
      * @brief This function sets a value in member bound
      * @param _bound New value for member bound
@@ -688,6 +649,7 @@ public:
     {
         return m_bound;
     }
+
     /*!
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
@@ -712,17 +674,6 @@ public:
     {
         return m_element_identifier;
     }
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const PlainSequenceLElemDefn& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -784,14 +735,14 @@ public:
      * @brief Copy assignment.
      * @param x Reference to the object PlainArraySElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainArraySElemDefn& operator=(
+    RTPS_DllAPI PlainArraySElemDefn& operator =(
             const PlainArraySElemDefn& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object PlainArraySElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainArraySElemDefn& operator=(
+    RTPS_DllAPI PlainArraySElemDefn& operator =(
             PlainArraySElemDefn&& x);
 
     /*!
@@ -831,6 +782,7 @@ public:
     {
         return m_header;
     }
+
     /*!
      * @brief This function copies the value in member array_bound_seq
      * @param _array_bound_seq New value to be copied in member array_bound_seq
@@ -868,6 +820,7 @@ public:
     {
         return m_array_bound_seq;
     }
+
     /*!
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
@@ -892,17 +845,6 @@ public:
     {
         return m_element_identifier;
     }
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const PlainArraySElemDefn& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -964,14 +906,14 @@ public:
      * @brief Copy assignment.
      * @param x Reference to the object PlainArrayLElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainArrayLElemDefn& operator=(
+    RTPS_DllAPI PlainArrayLElemDefn& operator =(
             const PlainArrayLElemDefn& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object PlainArrayLElemDefn that will be copied.
      */
-    RTPS_DllAPI PlainArrayLElemDefn& operator=(
+    RTPS_DllAPI PlainArrayLElemDefn& operator =(
             PlainArrayLElemDefn&& x);
 
     /*!
@@ -1011,6 +953,7 @@ public:
     {
         return m_header;
     }
+
     /*!
      * @brief This function copies the value in member array_bound_seq
      * @param _array_bound_seq New value to be copied in member array_bound_seq
@@ -1048,6 +991,7 @@ public:
     {
         return m_array_bound_seq;
     }
+
     /*!
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
@@ -1072,17 +1016,6 @@ public:
     {
         return m_element_identifier;
     }
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const PlainArrayLElemDefn& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -1144,14 +1077,14 @@ public:
      * @brief Copy assignment.
      * @param x Reference to the object PlainMapSTypeDefn that will be copied.
      */
-    RTPS_DllAPI PlainMapSTypeDefn& operator=(
+    RTPS_DllAPI PlainMapSTypeDefn& operator =(
             const PlainMapSTypeDefn& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object PlainMapSTypeDefn that will be copied.
      */
-    RTPS_DllAPI PlainMapSTypeDefn& operator=(
+    RTPS_DllAPI PlainMapSTypeDefn& operator =(
             PlainMapSTypeDefn&& x);
 
     /*!
@@ -1191,6 +1124,7 @@ public:
     {
         return m_header;
     }
+
     /*!
      * @brief This function sets a value in member bound
      * @param _bound New value for member bound
@@ -1218,6 +1152,7 @@ public:
     {
         return m_bound;
     }
+
     /*!
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
@@ -1242,6 +1177,7 @@ public:
     {
         return m_element_identifier;
     }
+
     /*!
      * @brief This function sets a value in member key_flags
      * @param _key_flags New value for member key_flags
@@ -1269,6 +1205,7 @@ public:
     {
         return m_key_flags;
     }
+
     /*!
      * @brief This function sets a value in member key_identifier
      * @param _key_identifier New value for member key_identifier
@@ -1293,17 +1230,6 @@ public:
     {
         return m_key_identifier;
     }
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const PlainMapSTypeDefn& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -1367,14 +1293,14 @@ public:
      * @brief Copy assignment.
      * @param x Reference to the object PlainMapLTypeDefn that will be copied.
      */
-    RTPS_DllAPI PlainMapLTypeDefn& operator=(
+    RTPS_DllAPI PlainMapLTypeDefn& operator =(
             const PlainMapLTypeDefn& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object PlainMapLTypeDefn that will be copied.
      */
-    RTPS_DllAPI PlainMapLTypeDefn& operator=(
+    RTPS_DllAPI PlainMapLTypeDefn& operator =(
             PlainMapLTypeDefn&& x);
 
     /*!
@@ -1414,6 +1340,7 @@ public:
     {
         return m_header;
     }
+
     /*!
      * @brief This function sets a value in member bound
      * @param _bound New value for member bound
@@ -1441,6 +1368,7 @@ public:
     {
         return m_bound;
     }
+
     /*!
      * @brief This function sets a value in member element_identifier
      * @param _element_identifier New value for member element_identifier
@@ -1465,6 +1393,7 @@ public:
     {
         return m_element_identifier;
     }
+
     /*!
      * @brief This function sets a value in member key_flags
      * @param _key_flags New value for member key_flags
@@ -1492,6 +1421,7 @@ public:
     {
         return m_key_flags;
     }
+
     /*!
      * @brief This function sets a value in member key_identifier
      * @param _key_identifier New value for member key_identifier
@@ -1516,17 +1446,6 @@ public:
     {
         return m_key_identifier;
     }
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const PlainMapLTypeDefn& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -1590,14 +1509,14 @@ public:
      * @brief Copy assignment.
      * @param x Reference to the object StronglyConnectedComponentId that will be copied.
      */
-    RTPS_DllAPI StronglyConnectedComponentId& operator=(
+    RTPS_DllAPI StronglyConnectedComponentId& operator =(
             const StronglyConnectedComponentId& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object StronglyConnectedComponentId that will be copied.
      */
-    RTPS_DllAPI StronglyConnectedComponentId& operator=(
+    RTPS_DllAPI StronglyConnectedComponentId& operator =(
             StronglyConnectedComponentId&& x);
 
     /*!
@@ -1637,6 +1556,7 @@ public:
     {
         return m_sc_component_id;
     }
+
     /*!
      * @brief This function sets a value in member scc_length
      * @param _scc_length New value for member scc_length
@@ -1664,6 +1584,7 @@ public:
     {
         return m_scc_length;
     }
+
     /*!
      * @brief This function sets a value in member scc_index
      * @param _scc_index New value for member scc_index
@@ -1691,17 +1612,6 @@ public:
     {
         return m_scc_index;
     }
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const StronglyConnectedComponentId& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -1763,26 +1673,15 @@ public:
      * @brief Copy assignment.
      * @param x Reference to the object ExtendedTypeDefn that will be copied.
      */
-    RTPS_DllAPI virtual ExtendedTypeDefn& operator=(
+    RTPS_DllAPI virtual ExtendedTypeDefn& operator =(
             const ExtendedTypeDefn& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object ExtendedTypeDefn that will be copied.
      */
-    RTPS_DllAPI virtual ExtendedTypeDefn& operator=(
+    RTPS_DllAPI virtual ExtendedTypeDefn& operator =(
             ExtendedTypeDefn&& x);
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const ExtendedTypeDefn& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
