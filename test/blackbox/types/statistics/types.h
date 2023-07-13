@@ -23,6 +23,9 @@
 #define _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_STATISTICS_TYPES_H_
 
 
+#include <fastcdr/cdr/fixed_size_string.hpp>
+#include <fastcdr/xcdr/optional.hpp>
+
 #include <stdint.h>
 #include <array>
 #include <string>
@@ -42,22 +45,22 @@
 
 #if defined(_WIN32)
 #if defined(EPROSIMA_USER_DLL_EXPORT)
-#if defined(types_SOURCE)
-#define types_DllAPI __declspec( dllexport )
+#if defined(TYPES_SOURCE)
+#define TYPES_DllAPI __declspec( dllexport )
 #else
-#define types_DllAPI __declspec( dllimport )
-#endif // types_SOURCE
+#define TYPES_DllAPI __declspec( dllimport )
+#endif // TYPES_SOURCE
 #else
-#define types_DllAPI
+#define TYPES_DllAPI
 #endif  // EPROSIMA_USER_DLL_EXPORT
 #else
-#define types_DllAPI
+#define TYPES_DllAPI
 #endif // _WIN32
 
 namespace eprosima {
 namespace fastcdr {
 class Cdr;
-} // namespace fastcdr
+class CdrSizeCalculator;} // namespace fastcdr
 } // namespace eprosima
 
 
@@ -67,7 +70,7 @@ namespace eprosima {
             namespace detail {
                 /*!
                  * @brief This class represents the structure EntityId_s defined by the user in the IDL file.
-                 * @ingroup TYPES
+                 * @ingroup types
                  */
                 class EntityId_s
                 {
@@ -95,7 +98,7 @@ namespace eprosima {
                      * @param x Reference to the object eprosima::fastdds::statistics::detail::EntityId_s that will be copied.
                      */
                     eProsima_user_DllExport EntityId_s(
-                            EntityId_s&& x);
+                            EntityId_s&& x) noexcept;
 
                     /*!
                      * @brief Copy assignment.
@@ -109,7 +112,7 @@ namespace eprosima {
                      * @param x Reference to the object eprosima::fastdds::statistics::detail::EntityId_s that will be copied.
                      */
                     eProsima_user_DllExport EntityId_s& operator =(
-                            EntityId_s&& x);
+                            EntityId_s&& x) noexcept;
 
                     /*!
                      * @brief Comparison operator.
@@ -152,24 +155,13 @@ namespace eprosima {
                     eProsima_user_DllExport std::array<uint8_t, 4>& value();
 
                     /*!
-                     * @brief This function returns the maximum serialized size of an object
-                     * depending on the buffer alignment.
-                     * @param current_alignment Buffer alignment.
-                     * @return Maximum serialized size.
-                     */
+                    * @brief This function returns the maximum serialized size of an object
+                    * depending on the buffer alignment.
+                    * @param current_alignment Buffer alignment.
+                    * @return Maximum serialized size.
+                    */
                     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
                             size_t current_alignment = 0);
-
-                    /*!
-                     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-                     * @param data Data which is calculated its serialized size.
-                     * @param current_alignment Buffer alignment.
-                     * @return Serialized size.
-                     */
-                    eProsima_user_DllExport static size_t getCdrSerializedSize(
-                            const eprosima::fastdds::statistics::detail::EntityId_s& data,
-                            size_t current_alignment = 0);
-
 
                     /*!
                      * @brief This function serializes an object using CDR serialization.
@@ -210,11 +202,12 @@ namespace eprosima {
 
                 private:
 
-                    std::array<uint8_t, 4> m_value;
+                    std::array<uint8_t, 4> m_value{0};
+
                 };
                 /*!
                  * @brief This class represents the structure GuidPrefix_s defined by the user in the IDL file.
-                 * @ingroup TYPES
+                 * @ingroup types
                  */
                 class GuidPrefix_s
                 {
@@ -242,7 +235,7 @@ namespace eprosima {
                      * @param x Reference to the object eprosima::fastdds::statistics::detail::GuidPrefix_s that will be copied.
                      */
                     eProsima_user_DllExport GuidPrefix_s(
-                            GuidPrefix_s&& x);
+                            GuidPrefix_s&& x) noexcept;
 
                     /*!
                      * @brief Copy assignment.
@@ -256,7 +249,7 @@ namespace eprosima {
                      * @param x Reference to the object eprosima::fastdds::statistics::detail::GuidPrefix_s that will be copied.
                      */
                     eProsima_user_DllExport GuidPrefix_s& operator =(
-                            GuidPrefix_s&& x);
+                            GuidPrefix_s&& x) noexcept;
 
                     /*!
                      * @brief Comparison operator.
@@ -299,24 +292,13 @@ namespace eprosima {
                     eProsima_user_DllExport std::array<uint8_t, 12>& value();
 
                     /*!
-                     * @brief This function returns the maximum serialized size of an object
-                     * depending on the buffer alignment.
-                     * @param current_alignment Buffer alignment.
-                     * @return Maximum serialized size.
-                     */
+                    * @brief This function returns the maximum serialized size of an object
+                    * depending on the buffer alignment.
+                    * @param current_alignment Buffer alignment.
+                    * @return Maximum serialized size.
+                    */
                     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
                             size_t current_alignment = 0);
-
-                    /*!
-                     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-                     * @param data Data which is calculated its serialized size.
-                     * @param current_alignment Buffer alignment.
-                     * @return Serialized size.
-                     */
-                    eProsima_user_DllExport static size_t getCdrSerializedSize(
-                            const eprosima::fastdds::statistics::detail::GuidPrefix_s& data,
-                            size_t current_alignment = 0);
-
 
                     /*!
                      * @brief This function serializes an object using CDR serialization.
@@ -357,11 +339,12 @@ namespace eprosima {
 
                 private:
 
-                    std::array<uint8_t, 12> m_value;
+                    std::array<uint8_t, 12> m_value{0};
+
                 };
                 /*!
                  * @brief This class represents the structure GUID_s defined by the user in the IDL file.
-                 * @ingroup TYPES
+                 * @ingroup types
                  */
                 class GUID_s
                 {
@@ -389,7 +372,7 @@ namespace eprosima {
                      * @param x Reference to the object eprosima::fastdds::statistics::detail::GUID_s that will be copied.
                      */
                     eProsima_user_DllExport GUID_s(
-                            GUID_s&& x);
+                            GUID_s&& x) noexcept;
 
                     /*!
                      * @brief Copy assignment.
@@ -403,7 +386,7 @@ namespace eprosima {
                      * @param x Reference to the object eprosima::fastdds::statistics::detail::GUID_s that will be copied.
                      */
                     eProsima_user_DllExport GUID_s& operator =(
-                            GUID_s&& x);
+                            GUID_s&& x) noexcept;
 
                     /*!
                      * @brief Comparison operator.
@@ -471,24 +454,13 @@ namespace eprosima {
                     eProsima_user_DllExport eprosima::fastdds::statistics::detail::EntityId_s& entityId();
 
                     /*!
-                     * @brief This function returns the maximum serialized size of an object
-                     * depending on the buffer alignment.
-                     * @param current_alignment Buffer alignment.
-                     * @return Maximum serialized size.
-                     */
+                    * @brief This function returns the maximum serialized size of an object
+                    * depending on the buffer alignment.
+                    * @param current_alignment Buffer alignment.
+                    * @return Maximum serialized size.
+                    */
                     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
                             size_t current_alignment = 0);
-
-                    /*!
-                     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-                     * @param data Data which is calculated its serialized size.
-                     * @param current_alignment Buffer alignment.
-                     * @return Serialized size.
-                     */
-                    eProsima_user_DllExport static size_t getCdrSerializedSize(
-                            const eprosima::fastdds::statistics::detail::GUID_s& data,
-                            size_t current_alignment = 0);
-
 
                     /*!
                      * @brief This function serializes an object using CDR serialization.
@@ -531,10 +503,11 @@ namespace eprosima {
 
                     eprosima::fastdds::statistics::detail::GuidPrefix_s m_guidPrefix;
                     eprosima::fastdds::statistics::detail::EntityId_s m_entityId;
+
                 };
                 /*!
                  * @brief This class represents the structure SequenceNumber_s defined by the user in the IDL file.
-                 * @ingroup TYPES
+                 * @ingroup types
                  */
                 class SequenceNumber_s
                 {
@@ -562,7 +535,7 @@ namespace eprosima {
                      * @param x Reference to the object eprosima::fastdds::statistics::detail::SequenceNumber_s that will be copied.
                      */
                     eProsima_user_DllExport SequenceNumber_s(
-                            SequenceNumber_s&& x);
+                            SequenceNumber_s&& x) noexcept;
 
                     /*!
                      * @brief Copy assignment.
@@ -576,7 +549,7 @@ namespace eprosima {
                      * @param x Reference to the object eprosima::fastdds::statistics::detail::SequenceNumber_s that will be copied.
                      */
                     eProsima_user_DllExport SequenceNumber_s& operator =(
-                            SequenceNumber_s&& x);
+                            SequenceNumber_s&& x) noexcept;
 
                     /*!
                      * @brief Comparison operator.
@@ -632,24 +605,13 @@ namespace eprosima {
 
 
                     /*!
-                     * @brief This function returns the maximum serialized size of an object
-                     * depending on the buffer alignment.
-                     * @param current_alignment Buffer alignment.
-                     * @return Maximum serialized size.
-                     */
+                    * @brief This function returns the maximum serialized size of an object
+                    * depending on the buffer alignment.
+                    * @param current_alignment Buffer alignment.
+                    * @return Maximum serialized size.
+                    */
                     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
                             size_t current_alignment = 0);
-
-                    /*!
-                     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-                     * @param data Data which is calculated its serialized size.
-                     * @param current_alignment Buffer alignment.
-                     * @return Serialized size.
-                     */
-                    eProsima_user_DllExport static size_t getCdrSerializedSize(
-                            const eprosima::fastdds::statistics::detail::SequenceNumber_s& data,
-                            size_t current_alignment = 0);
-
 
                     /*!
                      * @brief This function serializes an object using CDR serialization.
@@ -690,12 +652,13 @@ namespace eprosima {
 
                 private:
 
-                    int32_t m_high;
-                    uint32_t m_low;
+                    int32_t m_high{0};
+                    uint32_t m_low{0};
+
                 };
                 /*!
                  * @brief This class represents the structure SampleIdentity_s defined by the user in the IDL file.
-                 * @ingroup TYPES
+                 * @ingroup types
                  */
                 class SampleIdentity_s
                 {
@@ -723,7 +686,7 @@ namespace eprosima {
                      * @param x Reference to the object eprosima::fastdds::statistics::detail::SampleIdentity_s that will be copied.
                      */
                     eProsima_user_DllExport SampleIdentity_s(
-                            SampleIdentity_s&& x);
+                            SampleIdentity_s&& x) noexcept;
 
                     /*!
                      * @brief Copy assignment.
@@ -737,7 +700,7 @@ namespace eprosima {
                      * @param x Reference to the object eprosima::fastdds::statistics::detail::SampleIdentity_s that will be copied.
                      */
                     eProsima_user_DllExport SampleIdentity_s& operator =(
-                            SampleIdentity_s&& x);
+                            SampleIdentity_s&& x) noexcept;
 
                     /*!
                      * @brief Comparison operator.
@@ -805,24 +768,13 @@ namespace eprosima {
                     eProsima_user_DllExport eprosima::fastdds::statistics::detail::SequenceNumber_s& sequence_number();
 
                     /*!
-                     * @brief This function returns the maximum serialized size of an object
-                     * depending on the buffer alignment.
-                     * @param current_alignment Buffer alignment.
-                     * @return Maximum serialized size.
-                     */
+                    * @brief This function returns the maximum serialized size of an object
+                    * depending on the buffer alignment.
+                    * @param current_alignment Buffer alignment.
+                    * @return Maximum serialized size.
+                    */
                     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
                             size_t current_alignment = 0);
-
-                    /*!
-                     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-                     * @param data Data which is calculated its serialized size.
-                     * @param current_alignment Buffer alignment.
-                     * @return Serialized size.
-                     */
-                    eProsima_user_DllExport static size_t getCdrSerializedSize(
-                            const eprosima::fastdds::statistics::detail::SampleIdentity_s& data,
-                            size_t current_alignment = 0);
-
 
                     /*!
                      * @brief This function serializes an object using CDR serialization.
@@ -865,10 +817,11 @@ namespace eprosima {
 
                     eprosima::fastdds::statistics::detail::GUID_s m_writer_guid;
                     eprosima::fastdds::statistics::detail::SequenceNumber_s m_sequence_number;
+
                 };
                 /*!
                  * @brief This class represents the structure Locator_s defined by the user in the IDL file.
-                 * @ingroup TYPES
+                 * @ingroup types
                  */
                 class Locator_s
                 {
@@ -896,7 +849,7 @@ namespace eprosima {
                      * @param x Reference to the object eprosima::fastdds::statistics::detail::Locator_s that will be copied.
                      */
                     eProsima_user_DllExport Locator_s(
-                            Locator_s&& x);
+                            Locator_s&& x) noexcept;
 
                     /*!
                      * @brief Copy assignment.
@@ -910,7 +863,7 @@ namespace eprosima {
                      * @param x Reference to the object eprosima::fastdds::statistics::detail::Locator_s that will be copied.
                      */
                     eProsima_user_DllExport Locator_s& operator =(
-                            Locator_s&& x);
+                            Locator_s&& x) noexcept;
 
                     /*!
                      * @brief Comparison operator.
@@ -991,24 +944,13 @@ namespace eprosima {
                     eProsima_user_DllExport std::array<uint8_t, 16>& address();
 
                     /*!
-                     * @brief This function returns the maximum serialized size of an object
-                     * depending on the buffer alignment.
-                     * @param current_alignment Buffer alignment.
-                     * @return Maximum serialized size.
-                     */
+                    * @brief This function returns the maximum serialized size of an object
+                    * depending on the buffer alignment.
+                    * @param current_alignment Buffer alignment.
+                    * @return Maximum serialized size.
+                    */
                     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
                             size_t current_alignment = 0);
-
-                    /*!
-                     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-                     * @param data Data which is calculated its serialized size.
-                     * @param current_alignment Buffer alignment.
-                     * @return Serialized size.
-                     */
-                    eProsima_user_DllExport static size_t getCdrSerializedSize(
-                            const eprosima::fastdds::statistics::detail::Locator_s& data,
-                            size_t current_alignment = 0);
-
 
                     /*!
                      * @brief This function serializes an object using CDR serialization.
@@ -1049,14 +991,15 @@ namespace eprosima {
 
                 private:
 
-                    int32_t m_kind;
-                    uint32_t m_port;
-                    std::array<uint8_t, 16> m_address;
+                    int32_t m_kind{0};
+                    uint32_t m_port{0};
+                    std::array<uint8_t, 16> m_address{0};
+
                 };
             } // namespace detail
             /*!
              * @brief This class represents the structure DiscoveryTime defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class DiscoveryTime
             {
@@ -1084,7 +1027,7 @@ namespace eprosima {
                  * @param x Reference to the object eprosima::fastdds::statistics::DiscoveryTime that will be copied.
                  */
                 eProsima_user_DllExport DiscoveryTime(
-                        DiscoveryTime&& x);
+                        DiscoveryTime&& x) noexcept;
 
                 /*!
                  * @brief Copy assignment.
@@ -1098,7 +1041,7 @@ namespace eprosima {
                  * @param x Reference to the object eprosima::fastdds::statistics::DiscoveryTime that will be copied.
                  */
                 eProsima_user_DllExport DiscoveryTime& operator =(
-                        DiscoveryTime&& x);
+                        DiscoveryTime&& x) noexcept;
 
                 /*!
                  * @brief Comparison operator.
@@ -1260,24 +1203,13 @@ namespace eprosima {
                 eProsima_user_DllExport std::string& process();
 
                 /*!
-                 * @brief This function returns the maximum serialized size of an object
-                 * depending on the buffer alignment.
-                 * @param current_alignment Buffer alignment.
-                 * @return Maximum serialized size.
-                 */
+                * @brief This function returns the maximum serialized size of an object
+                * depending on the buffer alignment.
+                * @param current_alignment Buffer alignment.
+                * @return Maximum serialized size.
+                */
                 eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
                         size_t current_alignment = 0);
-
-                /*!
-                 * @brief This function returns the serialized size of a data depending on the buffer alignment.
-                 * @param data Data which is calculated its serialized size.
-                 * @param current_alignment Buffer alignment.
-                 * @return Serialized size.
-                 */
-                eProsima_user_DllExport static size_t getCdrSerializedSize(
-                        const eprosima::fastdds::statistics::DiscoveryTime& data,
-                        size_t current_alignment = 0);
-
 
                 /*!
                  * @brief This function serializes an object using CDR serialization.
@@ -1320,14 +1252,15 @@ namespace eprosima {
 
                 eprosima::fastdds::statistics::detail::GUID_s m_local_participant_guid;
                 eprosima::fastdds::statistics::detail::GUID_s m_remote_entity_guid;
-                uint64_t m_time;
+                uint64_t m_time{0};
                 std::string m_host;
                 std::string m_user;
                 std::string m_process;
+
             };
             /*!
              * @brief This class represents the structure EntityCount defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class EntityCount
             {
@@ -1355,7 +1288,7 @@ namespace eprosima {
                  * @param x Reference to the object eprosima::fastdds::statistics::EntityCount that will be copied.
                  */
                 eProsima_user_DllExport EntityCount(
-                        EntityCount&& x);
+                        EntityCount&& x) noexcept;
 
                 /*!
                  * @brief Copy assignment.
@@ -1369,7 +1302,7 @@ namespace eprosima {
                  * @param x Reference to the object eprosima::fastdds::statistics::EntityCount that will be copied.
                  */
                 eProsima_user_DllExport EntityCount& operator =(
-                        EntityCount&& x);
+                        EntityCount&& x) noexcept;
 
                 /*!
                  * @brief Comparison operator.
@@ -1431,24 +1364,13 @@ namespace eprosima {
 
 
                 /*!
-                 * @brief This function returns the maximum serialized size of an object
-                 * depending on the buffer alignment.
-                 * @param current_alignment Buffer alignment.
-                 * @return Maximum serialized size.
-                 */
+                * @brief This function returns the maximum serialized size of an object
+                * depending on the buffer alignment.
+                * @param current_alignment Buffer alignment.
+                * @return Maximum serialized size.
+                */
                 eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
                         size_t current_alignment = 0);
-
-                /*!
-                 * @brief This function returns the serialized size of a data depending on the buffer alignment.
-                 * @param data Data which is calculated its serialized size.
-                 * @param current_alignment Buffer alignment.
-                 * @return Serialized size.
-                 */
-                eProsima_user_DllExport static size_t getCdrSerializedSize(
-                        const eprosima::fastdds::statistics::EntityCount& data,
-                        size_t current_alignment = 0);
-
 
                 /*!
                  * @brief This function serializes an object using CDR serialization.
@@ -1490,11 +1412,12 @@ namespace eprosima {
             private:
 
                 eprosima::fastdds::statistics::detail::GUID_s m_guid;
-                uint64_t m_count;
+                uint64_t m_count{0};
+
             };
             /*!
              * @brief This class represents the structure SampleIdentityCount defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class SampleIdentityCount
             {
@@ -1522,7 +1445,7 @@ namespace eprosima {
                  * @param x Reference to the object eprosima::fastdds::statistics::SampleIdentityCount that will be copied.
                  */
                 eProsima_user_DllExport SampleIdentityCount(
-                        SampleIdentityCount&& x);
+                        SampleIdentityCount&& x) noexcept;
 
                 /*!
                  * @brief Copy assignment.
@@ -1536,7 +1459,7 @@ namespace eprosima {
                  * @param x Reference to the object eprosima::fastdds::statistics::SampleIdentityCount that will be copied.
                  */
                 eProsima_user_DllExport SampleIdentityCount& operator =(
-                        SampleIdentityCount&& x);
+                        SampleIdentityCount&& x) noexcept;
 
                 /*!
                  * @brief Comparison operator.
@@ -1598,24 +1521,13 @@ namespace eprosima {
 
 
                 /*!
-                 * @brief This function returns the maximum serialized size of an object
-                 * depending on the buffer alignment.
-                 * @param current_alignment Buffer alignment.
-                 * @return Maximum serialized size.
-                 */
+                * @brief This function returns the maximum serialized size of an object
+                * depending on the buffer alignment.
+                * @param current_alignment Buffer alignment.
+                * @return Maximum serialized size.
+                */
                 eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
                         size_t current_alignment = 0);
-
-                /*!
-                 * @brief This function returns the serialized size of a data depending on the buffer alignment.
-                 * @param data Data which is calculated its serialized size.
-                 * @param current_alignment Buffer alignment.
-                 * @return Serialized size.
-                 */
-                eProsima_user_DllExport static size_t getCdrSerializedSize(
-                        const eprosima::fastdds::statistics::SampleIdentityCount& data,
-                        size_t current_alignment = 0);
-
 
                 /*!
                  * @brief This function serializes an object using CDR serialization.
@@ -1657,11 +1569,12 @@ namespace eprosima {
             private:
 
                 eprosima::fastdds::statistics::detail::SampleIdentity_s m_sample_id;
-                uint64_t m_count;
+                uint64_t m_count{0};
+
             };
             /*!
              * @brief This class represents the structure Entity2LocatorTraffic defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class Entity2LocatorTraffic
             {
@@ -1689,7 +1602,7 @@ namespace eprosima {
                  * @param x Reference to the object eprosima::fastdds::statistics::Entity2LocatorTraffic that will be copied.
                  */
                 eProsima_user_DllExport Entity2LocatorTraffic(
-                        Entity2LocatorTraffic&& x);
+                        Entity2LocatorTraffic&& x) noexcept;
 
                 /*!
                  * @brief Copy assignment.
@@ -1703,7 +1616,7 @@ namespace eprosima {
                  * @param x Reference to the object eprosima::fastdds::statistics::Entity2LocatorTraffic that will be copied.
                  */
                 eProsima_user_DllExport Entity2LocatorTraffic& operator =(
-                        Entity2LocatorTraffic&& x);
+                        Entity2LocatorTraffic&& x) noexcept;
 
                 /*!
                  * @brief Comparison operator.
@@ -1828,24 +1741,13 @@ namespace eprosima {
 
 
                 /*!
-                 * @brief This function returns the maximum serialized size of an object
-                 * depending on the buffer alignment.
-                 * @param current_alignment Buffer alignment.
-                 * @return Maximum serialized size.
-                 */
+                * @brief This function returns the maximum serialized size of an object
+                * depending on the buffer alignment.
+                * @param current_alignment Buffer alignment.
+                * @return Maximum serialized size.
+                */
                 eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
                         size_t current_alignment = 0);
-
-                /*!
-                 * @brief This function returns the serialized size of a data depending on the buffer alignment.
-                 * @param data Data which is calculated its serialized size.
-                 * @param current_alignment Buffer alignment.
-                 * @return Serialized size.
-                 */
-                eProsima_user_DllExport static size_t getCdrSerializedSize(
-                        const eprosima::fastdds::statistics::Entity2LocatorTraffic& data,
-                        size_t current_alignment = 0);
-
 
                 /*!
                  * @brief This function serializes an object using CDR serialization.
@@ -1888,13 +1790,14 @@ namespace eprosima {
 
                 eprosima::fastdds::statistics::detail::GUID_s m_src_guid;
                 eprosima::fastdds::statistics::detail::Locator_s m_dst_locator;
-                uint64_t m_packet_count;
-                uint64_t m_byte_count;
-                int16_t m_byte_magnitude_order;
+                uint64_t m_packet_count{0};
+                uint64_t m_byte_count{0};
+                int16_t m_byte_magnitude_order{0};
+
             };
             /*!
              * @brief This class represents the structure WriterReaderData defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class WriterReaderData
             {
@@ -1922,7 +1825,7 @@ namespace eprosima {
                  * @param x Reference to the object eprosima::fastdds::statistics::WriterReaderData that will be copied.
                  */
                 eProsima_user_DllExport WriterReaderData(
-                        WriterReaderData&& x);
+                        WriterReaderData&& x) noexcept;
 
                 /*!
                  * @brief Copy assignment.
@@ -1936,7 +1839,7 @@ namespace eprosima {
                  * @param x Reference to the object eprosima::fastdds::statistics::WriterReaderData that will be copied.
                  */
                 eProsima_user_DllExport WriterReaderData& operator =(
-                        WriterReaderData&& x);
+                        WriterReaderData&& x) noexcept;
 
                 /*!
                  * @brief Comparison operator.
@@ -2023,24 +1926,13 @@ namespace eprosima {
 
 
                 /*!
-                 * @brief This function returns the maximum serialized size of an object
-                 * depending on the buffer alignment.
-                 * @param current_alignment Buffer alignment.
-                 * @return Maximum serialized size.
-                 */
+                * @brief This function returns the maximum serialized size of an object
+                * depending on the buffer alignment.
+                * @param current_alignment Buffer alignment.
+                * @return Maximum serialized size.
+                */
                 eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
                         size_t current_alignment = 0);
-
-                /*!
-                 * @brief This function returns the serialized size of a data depending on the buffer alignment.
-                 * @param data Data which is calculated its serialized size.
-                 * @param current_alignment Buffer alignment.
-                 * @return Serialized size.
-                 */
-                eProsima_user_DllExport static size_t getCdrSerializedSize(
-                        const eprosima::fastdds::statistics::WriterReaderData& data,
-                        size_t current_alignment = 0);
-
 
                 /*!
                  * @brief This function serializes an object using CDR serialization.
@@ -2083,11 +1975,12 @@ namespace eprosima {
 
                 eprosima::fastdds::statistics::detail::GUID_s m_writer_guid;
                 eprosima::fastdds::statistics::detail::GUID_s m_reader_guid;
-                float m_data;
+                float m_data{0.0};
+
             };
             /*!
              * @brief This class represents the structure Locator2LocatorData defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class Locator2LocatorData
             {
@@ -2115,7 +2008,7 @@ namespace eprosima {
                  * @param x Reference to the object eprosima::fastdds::statistics::Locator2LocatorData that will be copied.
                  */
                 eProsima_user_DllExport Locator2LocatorData(
-                        Locator2LocatorData&& x);
+                        Locator2LocatorData&& x) noexcept;
 
                 /*!
                  * @brief Copy assignment.
@@ -2129,7 +2022,7 @@ namespace eprosima {
                  * @param x Reference to the object eprosima::fastdds::statistics::Locator2LocatorData that will be copied.
                  */
                 eProsima_user_DllExport Locator2LocatorData& operator =(
-                        Locator2LocatorData&& x);
+                        Locator2LocatorData&& x) noexcept;
 
                 /*!
                  * @brief Comparison operator.
@@ -2216,24 +2109,13 @@ namespace eprosima {
 
 
                 /*!
-                 * @brief This function returns the maximum serialized size of an object
-                 * depending on the buffer alignment.
-                 * @param current_alignment Buffer alignment.
-                 * @return Maximum serialized size.
-                 */
+                * @brief This function returns the maximum serialized size of an object
+                * depending on the buffer alignment.
+                * @param current_alignment Buffer alignment.
+                * @return Maximum serialized size.
+                */
                 eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
                         size_t current_alignment = 0);
-
-                /*!
-                 * @brief This function returns the serialized size of a data depending on the buffer alignment.
-                 * @param data Data which is calculated its serialized size.
-                 * @param current_alignment Buffer alignment.
-                 * @return Serialized size.
-                 */
-                eProsima_user_DllExport static size_t getCdrSerializedSize(
-                        const eprosima::fastdds::statistics::Locator2LocatorData& data,
-                        size_t current_alignment = 0);
-
 
                 /*!
                  * @brief This function serializes an object using CDR serialization.
@@ -2276,11 +2158,12 @@ namespace eprosima {
 
                 eprosima::fastdds::statistics::detail::Locator_s m_src_locator;
                 eprosima::fastdds::statistics::detail::Locator_s m_dst_locator;
-                float m_data;
+                float m_data{0.0};
+
             };
             /*!
              * @brief This class represents the structure EntityData defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class EntityData
             {
@@ -2308,7 +2191,7 @@ namespace eprosima {
                  * @param x Reference to the object eprosima::fastdds::statistics::EntityData that will be copied.
                  */
                 eProsima_user_DllExport EntityData(
-                        EntityData&& x);
+                        EntityData&& x) noexcept;
 
                 /*!
                  * @brief Copy assignment.
@@ -2322,7 +2205,7 @@ namespace eprosima {
                  * @param x Reference to the object eprosima::fastdds::statistics::EntityData that will be copied.
                  */
                 eProsima_user_DllExport EntityData& operator =(
-                        EntityData&& x);
+                        EntityData&& x) noexcept;
 
                 /*!
                  * @brief Comparison operator.
@@ -2384,24 +2267,13 @@ namespace eprosima {
 
 
                 /*!
-                 * @brief This function returns the maximum serialized size of an object
-                 * depending on the buffer alignment.
-                 * @param current_alignment Buffer alignment.
-                 * @return Maximum serialized size.
-                 */
+                * @brief This function returns the maximum serialized size of an object
+                * depending on the buffer alignment.
+                * @param current_alignment Buffer alignment.
+                * @return Maximum serialized size.
+                */
                 eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
                         size_t current_alignment = 0);
-
-                /*!
-                 * @brief This function returns the serialized size of a data depending on the buffer alignment.
-                 * @param data Data which is calculated its serialized size.
-                 * @param current_alignment Buffer alignment.
-                 * @return Serialized size.
-                 */
-                eProsima_user_DllExport static size_t getCdrSerializedSize(
-                        const eprosima::fastdds::statistics::EntityData& data,
-                        size_t current_alignment = 0);
-
 
                 /*!
                  * @brief This function serializes an object using CDR serialization.
@@ -2443,11 +2315,12 @@ namespace eprosima {
             private:
 
                 eprosima::fastdds::statistics::detail::GUID_s m_guid;
-                float m_data;
+                float m_data{0.0};
+
             };
             /*!
              * @brief This class represents the structure PhysicalData defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class PhysicalData
             {
@@ -2475,7 +2348,7 @@ namespace eprosima {
                  * @param x Reference to the object eprosima::fastdds::statistics::PhysicalData that will be copied.
                  */
                 eProsima_user_DllExport PhysicalData(
-                        PhysicalData&& x);
+                        PhysicalData&& x) noexcept;
 
                 /*!
                  * @brief Copy assignment.
@@ -2489,7 +2362,7 @@ namespace eprosima {
                  * @param x Reference to the object eprosima::fastdds::statistics::PhysicalData that will be copied.
                  */
                 eProsima_user_DllExport PhysicalData& operator =(
-                        PhysicalData&& x);
+                        PhysicalData&& x) noexcept;
 
                 /*!
                  * @brief Comparison operator.
@@ -2607,24 +2480,13 @@ namespace eprosima {
                 eProsima_user_DllExport std::string& process();
 
                 /*!
-                 * @brief This function returns the maximum serialized size of an object
-                 * depending on the buffer alignment.
-                 * @param current_alignment Buffer alignment.
-                 * @return Maximum serialized size.
-                 */
+                * @brief This function returns the maximum serialized size of an object
+                * depending on the buffer alignment.
+                * @param current_alignment Buffer alignment.
+                * @return Maximum serialized size.
+                */
                 eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
                         size_t current_alignment = 0);
-
-                /*!
-                 * @brief This function returns the serialized size of a data depending on the buffer alignment.
-                 * @param data Data which is calculated its serialized size.
-                 * @param current_alignment Buffer alignment.
-                 * @return Serialized size.
-                 */
-                eProsima_user_DllExport static size_t getCdrSerializedSize(
-                        const eprosima::fastdds::statistics::PhysicalData& data,
-                        size_t current_alignment = 0);
-
 
                 /*!
                  * @brief This function serializes an object using CDR serialization.
@@ -2669,34 +2531,35 @@ namespace eprosima {
                 std::string m_host;
                 std::string m_user;
                 std::string m_process;
+
             };
             /*!
              * @brief This class represents the bitmask EventKind defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             enum EventKind : uint32_t
             {
-                HISTORY2HISTORY_LATENCY = 0x01 << 0,
-                NETWORK_LATENCY = 0x01 << 1,
-                PUBLICATION_THROUGHPUT = 0x01 << 2,
-                SUBSCRIPTION_THROUGHPUT = 0x01 << 3,
-                RTPS_SENT = 0x01 << 4,
-                RTPS_LOST = 0x01 << 5,
-                RESENT_DATAS = 0x01 << 6,
-                HEARTBEAT_COUNT = 0x01 << 7,
-                ACKNACK_COUNT = 0x01 << 8,
-                NACKFRAG_COUNT = 0x01 << 9,
-                GAP_COUNT = 0x01 << 10,
-                DATA_COUNT = 0x01 << 11,
-                PDP_PACKETS = 0x01 << 12,
-                EDP_PACKETS = 0x01 << 13,
-                DISCOVERED_ENTITY = 0x01 << 14,
-                SAMPLE_DATAS = 0x01 << 15,
-                PHYSICAL_DATA = 0x01 << 16
+                HISTORY2HISTORY_LATENCY = 0x01ull << 0,
+                NETWORK_LATENCY = 0x01ull << 1,
+                PUBLICATION_THROUGHPUT = 0x01ull << 2,
+                SUBSCRIPTION_THROUGHPUT = 0x01ull << 3,
+                RTPS_SENT = 0x01ull << 4,
+                RTPS_LOST = 0x01ull << 5,
+                RESENT_DATAS = 0x01ull << 6,
+                HEARTBEAT_COUNT = 0x01ull << 7,
+                ACKNACK_COUNT = 0x01ull << 8,
+                NACKFRAG_COUNT = 0x01ull << 9,
+                GAP_COUNT = 0x01ull << 10,
+                DATA_COUNT = 0x01ull << 11,
+                PDP_PACKETS = 0x01ull << 12,
+                EDP_PACKETS = 0x01ull << 13,
+                DISCOVERED_ENTITY = 0x01ull << 14,
+                SAMPLE_DATAS = 0x01ull << 15,
+                PHYSICAL_DATA = 0x01ull << 16
             };
             /*!
              * @brief This class represents the union Data defined by the user in the IDL file.
-             * @ingroup TYPES
+             * @ingroup types
              */
             class Data
             {
@@ -2724,7 +2587,7 @@ namespace eprosima {
                  * @param x Reference to the object eprosima::fastdds::statistics::Data that will be copied.
                  */
                 eProsima_user_DllExport Data(
-                        Data&& x);
+                        Data&& x) noexcept;
 
                 /*!
                  * @brief Copy assignment.
@@ -2738,7 +2601,7 @@ namespace eprosima {
                  * @param x Reference to the object eprosima::fastdds::statistics::Data that will be copied.
                  */
                 eProsima_user_DllExport Data& operator =(
-                        Data&& x);
+                        Data&& x) noexcept;
 
                 /*!
                  * @brief Comparison operator.
@@ -2990,26 +2853,6 @@ namespace eprosima {
                  * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
                  */
                 eProsima_user_DllExport eprosima::fastdds::statistics::PhysicalData& physical_data();
-
-                /*!
-                 * @brief This function returns the maximum serialized size of an object
-                 * depending on the buffer alignment.
-                 * @param current_alignment Buffer alignment.
-                 * @return Maximum serialized size.
-                 */
-                eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
-                        size_t current_alignment = 0);
-
-                /*!
-                 * @brief This function returns the serialized size of a data depending on the buffer alignment.
-                 * @param data Data which is calculated its serialized size.
-                 * @param current_alignment Buffer alignment.
-                 * @return Serialized size.
-                 */
-                eProsima_user_DllExport static size_t getCdrSerializedSize(
-                        const eprosima::fastdds::statistics::Data& data,
-                        size_t current_alignment = 0);
-
 
                 /*!
                  * @brief This function serializes an object using CDR serialization.

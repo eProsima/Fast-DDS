@@ -23,6 +23,7 @@
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include "ParameterSerializer.hpp"
 #include <fastcdr/Cdr.h>
+#include <fastcdr/CdrSizeCalculator.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -881,7 +882,8 @@ template<>
 inline uint32_t QosPoliciesSerializer<TypeIdV1>::cdr_serialized_size(
         const TypeIdV1& qos_policy)
 {
-    size_t size = fastrtps::types::TypeIdentifier::getCdrSerializedSize(qos_policy.m_type_identifier) + 4;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    size_t size = calculator.calculate_serialized_size(qos_policy.m_type_identifier, 0) + 4;
     return 2 + 2 + static_cast<uint32_t>(size);
 }
 
@@ -890,13 +892,14 @@ inline bool QosPoliciesSerializer<TypeIdV1>::add_to_cdr_message(
         const TypeIdV1& qos_policy,
         fastrtps::rtps::CDRMessage_t* cdr_message)
 {
-    size_t size = fastrtps::types::TypeIdentifier::getCdrSerializedSize(qos_policy.m_type_identifier)
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    size_t size = calculator.calculate_serialized_size(qos_policy.m_type_identifier, 0)
             + eprosima::fastrtps::rtps::SerializedPayload_t::representation_header_size;
     fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
+            eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser.serialize_encapsulation();
@@ -929,7 +932,7 @@ inline bool QosPoliciesSerializer<TypeIdV1>::read_content_from_cdr_message(
     fastrtps::rtps::CDRMessage::readData(cdr_message, payload.data, parameter_length); // Object that manages the raw buffer.
 
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that deserializes the data.
+            eprosima::fastcdr::CdrVersion::XCDRv2); // Object that deserializes the data.
 
     try
     {
@@ -951,7 +954,8 @@ template<>
 inline uint32_t QosPoliciesSerializer<TypeObjectV1>::cdr_serialized_size(
         const TypeObjectV1& qos_policy)
 {
-    size_t size = fastrtps::types::TypeObject::getCdrSerializedSize(qos_policy.m_type_object) + 4;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    size_t size = calculator.calculate_serialized_size(qos_policy.m_type_object, 0) + 4;
     return 2 + 2 + static_cast<uint32_t>(size);
 }
 
@@ -960,13 +964,14 @@ inline bool QosPoliciesSerializer<TypeObjectV1>::add_to_cdr_message(
         const TypeObjectV1& qos_policy,
         fastrtps::rtps::CDRMessage_t* cdr_message)
 {
-    size_t size = fastrtps::types::TypeObject::getCdrSerializedSize(qos_policy.m_type_object)
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    size_t size = calculator.calculate_serialized_size(qos_policy.m_type_object, 0)
             + eprosima::fastrtps::rtps::SerializedPayload_t::representation_header_size;
     fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
+            eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser.serialize_encapsulation();
@@ -999,7 +1004,7 @@ inline bool QosPoliciesSerializer<TypeObjectV1>::read_content_from_cdr_message(
     fastrtps::rtps::CDRMessage::readData(cdr_message, payload.data, parameter_length); // Object that manages the raw buffer.
 
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that deserializes the data.
+            eprosima::fastcdr::CdrVersion::XCDRv2); // Object that deserializes the data.
 
     try
     {
@@ -1021,7 +1026,8 @@ template<>
 inline uint32_t QosPoliciesSerializer<xtypes::TypeInformation>::cdr_serialized_size(
         const xtypes::TypeInformation& qos_policy)
 {
-    size_t size = fastrtps::types::TypeInformation::getCdrSerializedSize(qos_policy.type_information) + 4;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    size_t size = calculator.calculate_serialized_size(qos_policy.type_information, 0) + 4;
     return 2 + 2 + static_cast<uint32_t>(size);
 }
 
@@ -1030,13 +1036,15 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformation>::add_to_cdr_message(
         const xtypes::TypeInformation& qos_policy,
         fastrtps::rtps::CDRMessage_t* cdr_message)
 {
-    size_t size = fastrtps::types::TypeInformation::getCdrSerializedSize(qos_policy.type_information)
-            + eprosima::fastrtps::rtps::SerializedPayload_t::representation_header_size;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    size_t size =
+            calculator.calculate_serialized_size(qos_policy.type_information,
+                    0) + eprosima::fastrtps::rtps::SerializedPayload_t::representation_header_size;
     fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that serializes the data.
+            eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser.serialize_encapsulation();
@@ -1069,7 +1077,7 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformation>::read_content_from_cd
     fastrtps::rtps::CDRMessage::readData(cdr_message, payload.data, parameter_length); // Object that manages the raw buffer.
 
     eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that deserializes the data.
+            eprosima::fastcdr::CdrVersion::XCDRv2); // Object that deserializes the data.
 
     try
     {

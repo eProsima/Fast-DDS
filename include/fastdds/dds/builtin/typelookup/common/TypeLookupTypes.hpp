@@ -20,14 +20,19 @@
 #ifndef TYPELOOKUPTYPES_HPP
 #define TYPELOOKUPTYPES_HPP
 
+#include <cstdint>
+#include <vector>
+
 #include <fastrtps/types/TypeObject.h>
 #include <fastdds/dds/builtin/common/RequestHeader.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
 
-#include <cstdint>
-#include <vector>
-
 namespace eprosima {
+
+namespace fastcdr {
+class Cdr;
+} // namespace fastcdr
+
 namespace fastdds {
 namespace dds {
 namespace builtin {
@@ -38,10 +43,6 @@ const int32_t TypeLookup_getDependencies_Hash = static_cast<int32_t>(0x31fbaa35)
 struct TypeLookup_getTypes_In
 {
     std::vector<fastrtps::types::TypeIdentifier> type_ids;
-
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const TypeLookup_getTypes_In& data,
-            size_t current_alignment = 0);
 
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
@@ -61,10 +62,6 @@ struct TypeLookup_getTypes_Out
     std::vector<fastrtps::types::TypeIdentifierTypeObjectPair> types;
 
     std::vector<fastrtps::types::TypeIdentifierPair> complete_to_minimal;
-
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const TypeLookup_getTypes_Out& data,
-            size_t current_alignment = 0);
 
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
@@ -116,10 +113,6 @@ public:
 
     RTPS_DllAPI TypeLookup_getTypes_Out& result();
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const TypeLookup_getTypes_Result& data,
-            size_t current_alignment = 0);
-
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
@@ -145,10 +138,6 @@ public:
 
     std::vector<uint8_t> continuation_point;
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const TypeLookup_getTypeDependencies_In& data,
-            size_t current_alignment = 0);
-
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
@@ -169,10 +158,6 @@ public:
     std::vector<fastrtps::types::TypeIdentifierWithSize> dependent_typeids;
 
     std::vector<uint8_t> continuation_point;
-
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const TypeLookup_getTypeDependencies_Out& data,
-            size_t current_alignment = 0);
 
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
@@ -223,10 +208,6 @@ public:
     RTPS_DllAPI const TypeLookup_getTypeDependencies_Out& result() const;
 
     RTPS_DllAPI TypeLookup_getTypeDependencies_Out& result();
-
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const TypeLookup_getTypeDependencies_Result& data,
-            size_t current_alignment = 0);
 
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
@@ -292,10 +273,6 @@ public:
 
     RTPS_DllAPI TypeLookup_getTypeDependencies_In& getTypeDependencies();
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const TypeLookup_Call& data,
-            size_t current_alignment = 0);
-
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
@@ -322,10 +299,6 @@ public:
     rpc::RequestHeader header;
 
     TypeLookup_Call data;
-
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const TypeLookup_Request& data,
-            size_t current_alignment = 0);
 
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
@@ -387,10 +360,6 @@ public:
 
     RTPS_DllAPI TypeLookup_getTypeDependencies_Result& getTypeDependencies();
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const TypeLookup_Return& data,
-            size_t current_alignment = 0);
-
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
@@ -418,10 +387,6 @@ public:
 
     TypeLookup_Return return_value;
 
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const TypeLookup_Reply& data,
-            size_t current_alignment = 0);
-
     RTPS_DllAPI void serialize(
             eprosima::fastcdr::Cdr& cdr) const;
 
@@ -446,13 +411,19 @@ public:
 
     bool serialize(
             void* data,
+            fastrtps::rtps::SerializedPayload_t* payload) override
+    {
+        return serialize(data, payload, fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+    }
+
+    bool serialize(
+            void* data,
             fastrtps::rtps::SerializedPayload_t* payload,
-            DataRepresentationId_t data_representation) override;
+            fastdds::dds::DataRepresentationId_t data_representation) override;
 
     bool deserialize(
             fastrtps::rtps::SerializedPayload_t* payload,
-            void* data,
-            DataRepresentationId_t data_representation) override;
+            void* data) override;
 
     /*
        bool getKey(
@@ -478,13 +449,19 @@ public:
 
     bool serialize(
             void* data,
+            fastrtps::rtps::SerializedPayload_t* payload) override
+    {
+        return serialize(data, payload, fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+    }
+
+    bool serialize(
+            void* data,
             fastrtps::rtps::SerializedPayload_t* payload,
-            DataRepresentationId_t data_representation) override;
+            fastdds::dds::DataRepresentationId_t data_representation) override;
 
     bool deserialize(
             fastrtps::rtps::SerializedPayload_t* payload,
-            void* data,
-            DataRepresentationId_t data_representation) override;
+            void* data) override;
 
     /*
        bool getKey(
@@ -506,18 +483,19 @@ public:
 
     RTPS_DllAPI bool serialize(
             void* data,
+            fastrtps::rtps::SerializedPayload_t* payload) override
+    {
+        return serialize(data, payload, fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+    }
+
+    RTPS_DllAPI bool serialize(
+            void* data,
             fastrtps::rtps::SerializedPayload_t* payload,
-            DataRepresentationId_t data_representation) override;
+            fastdds::dds::DataRepresentationId_t data_representation) override;
 
     RTPS_DllAPI bool deserialize(
             fastrtps::rtps::SerializedPayload_t* payload,
-            void* data,
-            DataRepresentationId_t data_representation) override;
-
-    static size_t getCdrSerializedSize(
-            const TypeLookup_Request& data,
-            DataRepresentationId_t data_representation,
-            size_t current_alignment = 0);
+            void* data) override;
 
     RTPS_DllAPI void* create_data() override;
 
@@ -531,18 +509,19 @@ public:
 
     RTPS_DllAPI bool serialize(
             void* data,
+            fastrtps::rtps::SerializedPayload_t* payload) override
+    {
+        return serialize(data, payload, fastdds::dds::DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+    }
+
+    RTPS_DllAPI bool serialize(
+            void* data,
             fastrtps::rtps::SerializedPayload_t* payload,
-            DataRepresentationId_t data_representation) override;
+            fastdds::dds::DataRepresentationId_t data_representation) override;
 
     RTPS_DllAPI bool deserialize(
             fastrtps::rtps::SerializedPayload_t* payload,
-            void* data,
-            DataRepresentationId_t data_representation) override;
-
-    static size_t getCdrSerializedSize(
-            const TypeLookup_Reply& data,
-            DataRepresentationId_t data_representation,
-            size_t current_alignment = 0);
+            void* data) override;
 
     RTPS_DllAPI void* create_data() override;
 

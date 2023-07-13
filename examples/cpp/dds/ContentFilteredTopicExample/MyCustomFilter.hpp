@@ -43,7 +43,7 @@ public:
         // Deserialize the `index` field from the serialized sample.
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload.data), payload.length);
         eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                eprosima::fastcdr::Cdr::DDS_CDR);
+                eprosima::fastcdr::CdrVersion::XCDRv1);
         // Deserialize encapsulation.
         deser.read_encapsulation();
         uint32_t index = 0;

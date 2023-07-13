@@ -25,6 +25,7 @@
 #include <fastcdr/CdrSizeCalculator.hpp>
 
 #include "TypesPubSubTypes.h"
+#include "TypesCdrAux.hpp"
 
 using SerializedPayload_t = eprosima::fastrtps::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
@@ -92,8 +93,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool MyEnumStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -104,8 +104,7 @@ bool MyEnumStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -130,7 +129,7 @@ std::function<uint32_t()> MyEnumStructPubSubType::getSerializedSizeProvider(
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<MyEnumStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -246,8 +245,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool MyBadEnumStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -258,8 +256,7 @@ bool MyBadEnumStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -284,7 +281,7 @@ std::function<uint32_t()> MyBadEnumStructPubSubType::getSerializedSizeProvider(
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<MyBadEnumStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -401,8 +398,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool MyAliasEnumStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -413,8 +409,7 @@ bool MyAliasEnumStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -439,7 +434,7 @@ std::function<uint32_t()> MyAliasEnumStructPubSubType::getSerializedSizeProvider
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<MyAliasEnumStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -555,8 +550,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool BasicStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -567,8 +561,7 @@ bool BasicStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -593,7 +586,7 @@ std::function<uint32_t()> BasicStructPubSubType::getSerializedSizeProvider(
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<BasicStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -709,8 +702,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool BasicNamesStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -721,8 +713,7 @@ bool BasicNamesStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -747,7 +738,7 @@ std::function<uint32_t()> BasicNamesStructPubSubType::getSerializedSizeProvider(
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<BasicNamesStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -863,8 +854,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool BasicBadStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -875,8 +865,7 @@ bool BasicBadStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -901,7 +890,7 @@ std::function<uint32_t()> BasicBadStructPubSubType::getSerializedSizeProvider(
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<BasicBadStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -1017,8 +1006,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool BasicWideStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -1029,8 +1017,7 @@ bool BasicWideStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -1055,7 +1042,7 @@ std::function<uint32_t()> BasicWideStructPubSubType::getSerializedSizeProvider(
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<BasicWideStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -1171,8 +1158,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool BadBasicWideStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -1183,8 +1169,7 @@ bool BadBasicWideStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -1209,7 +1194,7 @@ std::function<uint32_t()> BadBasicWideStructPubSubType::getSerializedSizeProvide
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<BadBasicWideStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -1325,8 +1310,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool StringStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -1337,8 +1321,7 @@ bool StringStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -1363,7 +1346,7 @@ std::function<uint32_t()> StringStructPubSubType::getSerializedSizeProvider(
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<StringStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -1479,8 +1462,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool LargeStringStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -1491,8 +1473,7 @@ bool LargeStringStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -1517,7 +1498,7 @@ std::function<uint32_t()> LargeStringStructPubSubType::getSerializedSizeProvider
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<LargeStringStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -1633,8 +1614,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool WStringStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -1645,8 +1625,7 @@ bool WStringStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -1671,7 +1650,7 @@ std::function<uint32_t()> WStringStructPubSubType::getSerializedSizeProvider(
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<WStringStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -1787,8 +1766,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool LargeWStringStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -1799,8 +1777,7 @@ bool LargeWStringStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -1825,7 +1802,7 @@ std::function<uint32_t()> LargeWStringStructPubSubType::getSerializedSizeProvide
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<LargeWStringStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -1941,8 +1918,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool ArrayStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -1953,8 +1929,7 @@ bool ArrayStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -1979,7 +1954,7 @@ std::function<uint32_t()> ArrayStructPubSubType::getSerializedSizeProvider(
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<ArrayStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -2095,8 +2070,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool ArrayStructEqualPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -2107,8 +2081,7 @@ bool ArrayStructEqualPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -2133,7 +2106,7 @@ std::function<uint32_t()> ArrayStructEqualPubSubType::getSerializedSizeProvider(
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<ArrayStructEqual*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -2249,8 +2222,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool ArrayBadStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -2261,8 +2233,7 @@ bool ArrayBadStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -2287,7 +2258,7 @@ std::function<uint32_t()> ArrayBadStructPubSubType::getSerializedSizeProvider(
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<ArrayBadStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -2403,8 +2374,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool ArrayDimensionsStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -2415,8 +2385,7 @@ bool ArrayDimensionsStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -2441,7 +2410,7 @@ std::function<uint32_t()> ArrayDimensionsStructPubSubType::getSerializedSizeProv
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<ArrayDimensionsStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -2557,8 +2526,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool ArraySizeStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -2569,8 +2537,7 @@ bool ArraySizeStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -2595,7 +2562,7 @@ std::function<uint32_t()> ArraySizeStructPubSubType::getSerializedSizeProvider(
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<ArraySizeStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -2711,8 +2678,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool SequenceStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -2723,8 +2689,7 @@ bool SequenceStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -2749,7 +2714,7 @@ std::function<uint32_t()> SequenceStructPubSubType::getSerializedSizeProvider(
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<SequenceStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -2865,8 +2830,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool SequenceStructEqualPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -2877,8 +2841,7 @@ bool SequenceStructEqualPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -2903,7 +2866,7 @@ std::function<uint32_t()> SequenceStructEqualPubSubType::getSerializedSizeProvid
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<SequenceStructEqual*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -3019,8 +2982,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool SequenceBadStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -3031,8 +2993,7 @@ bool SequenceBadStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -3057,7 +3018,7 @@ std::function<uint32_t()> SequenceBadStructPubSubType::getSerializedSizeProvider
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<SequenceBadStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -3173,8 +3134,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool SequenceBoundsStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -3185,8 +3145,7 @@ bool SequenceBoundsStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -3211,7 +3170,7 @@ std::function<uint32_t()> SequenceBoundsStructPubSubType::getSerializedSizeProvi
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<SequenceBoundsStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -3327,8 +3286,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool SequenceSequenceStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -3339,8 +3297,7 @@ bool SequenceSequenceStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -3365,7 +3322,7 @@ std::function<uint32_t()> SequenceSequenceStructPubSubType::getSerializedSizePro
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<SequenceSequenceStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -3481,8 +3438,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool SequenceSequenceBoundsStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -3493,8 +3449,7 @@ bool SequenceSequenceBoundsStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -3519,7 +3474,7 @@ std::function<uint32_t()> SequenceSequenceBoundsStructPubSubType::getSerializedS
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<SequenceSequenceBoundsStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -3635,8 +3590,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool MapStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -3647,8 +3601,7 @@ bool MapStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -3673,7 +3626,7 @@ std::function<uint32_t()> MapStructPubSubType::getSerializedSizeProvider(
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<MapStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -3789,8 +3742,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool MapStructEqualPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -3801,8 +3753,7 @@ bool MapStructEqualPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -3827,7 +3778,7 @@ std::function<uint32_t()> MapStructEqualPubSubType::getSerializedSizeProvider(
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<MapStructEqual*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -3943,8 +3894,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool MapBadKeyStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -3955,8 +3905,7 @@ bool MapBadKeyStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -3981,7 +3930,7 @@ std::function<uint32_t()> MapBadKeyStructPubSubType::getSerializedSizeProvider(
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<MapBadKeyStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -4097,8 +4046,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool MapBadElemStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -4109,8 +4057,7 @@ bool MapBadElemStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -4135,7 +4082,7 @@ std::function<uint32_t()> MapBadElemStructPubSubType::getSerializedSizeProvider(
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<MapBadElemStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -4251,8 +4198,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool MapBoundsStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -4263,8 +4209,7 @@ bool MapBoundsStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -4289,7 +4234,7 @@ std::function<uint32_t()> MapBoundsStructPubSubType::getSerializedSizeProvider(
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<MapBoundsStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -4405,8 +4350,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool MapMapStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -4417,8 +4361,7 @@ bool MapMapStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -4443,7 +4386,7 @@ std::function<uint32_t()> MapMapStructPubSubType::getSerializedSizeProvider(
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<MapMapStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -4559,8 +4502,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool MapMapBoundsStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -4571,8 +4513,7 @@ bool MapMapBoundsStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -4597,7 +4538,7 @@ std::function<uint32_t()> MapMapBoundsStructPubSubType::getSerializedSizeProvide
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<MapMapBoundsStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -4718,8 +4659,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool SimpleUnionStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -4730,8 +4670,7 @@ bool SimpleUnionStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -4756,7 +4695,7 @@ std::function<uint32_t()> SimpleUnionStructPubSubType::getSerializedSizeProvider
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<SimpleUnionStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -4872,8 +4811,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool SimpleUnionStructEqualPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -4884,8 +4822,7 @@ bool SimpleUnionStructEqualPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -4910,7 +4847,7 @@ std::function<uint32_t()> SimpleUnionStructEqualPubSubType::getSerializedSizePro
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<SimpleUnionStructEqual*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -5026,8 +4963,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool SimpleUnionNamesStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -5038,8 +4974,7 @@ bool SimpleUnionNamesStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -5064,7 +4999,7 @@ std::function<uint32_t()> SimpleUnionNamesStructPubSubType::getSerializedSizePro
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<SimpleUnionNamesStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -5180,8 +5115,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool SimpleTypeUnionStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -5192,8 +5126,7 @@ bool SimpleTypeUnionStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -5218,7 +5151,7 @@ std::function<uint32_t()> SimpleTypeUnionStructPubSubType::getSerializedSizeProv
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<SimpleTypeUnionStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -5334,8 +5267,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool SimpleBadUnionStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -5346,8 +5278,7 @@ bool SimpleBadUnionStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -5372,7 +5303,7 @@ std::function<uint32_t()> SimpleBadUnionStructPubSubType::getSerializedSizeProvi
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<SimpleBadUnionStruct*>(data))) +
                             4u /*encapsulation*/;
            };
@@ -5488,8 +5419,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 
 bool SimplBadDiscUnionStructPubSubType::deserialize(
         SerializedPayload_t* payload,
-        void* data,
-        DataRepresentationId_t data_representation)
+        void* data)
 {
     try
     {
@@ -5500,8 +5430,7 @@ bool SimplBadDiscUnionStructPubSubType::deserialize(
         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -5526,7 +5455,7 @@ std::function<uint32_t()> SimplBadDiscUnionStructPubSubType::getSerializedSizePr
            {
                eprosima::fastcdr::CdrSizeCalculator calculator(
                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
-               return static_cast<uint32_t>(type::calculate_serialized_size(calculator,
+               return static_cast<uint32_t>(calculator.calculate_serialized_size(
                            *static_cast<SimplBadDiscUnionStruct*>(data))) +
                             4u /*encapsulation*/;
            };

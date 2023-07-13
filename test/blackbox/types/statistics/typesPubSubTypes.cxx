@@ -22,11 +22,14 @@
 
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>
+#include <fastcdr/CdrSizeCalculator.hpp>
 
 #include "typesPubSubTypes.h"
+#include "typesCdrAux.hpp"
 
 using SerializedPayload_t = eprosima::fastrtps::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
+using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 
 namespace eprosima {
     namespace fastdds {
@@ -55,24 +58,32 @@ namespace eprosima {
 
                 bool EntityId_sPubSubType::serialize(
                         void* data,
-                        SerializedPayload_t* payload)
+                        SerializedPayload_t* payload,
+                        DataRepresentationId_t data_representation)
                 {
                     EntityId_s* p_type = static_cast<EntityId_s*>(data);
 
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
                     // Object that serializes the data.
-                    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
                     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-                    // Serialize encapsulation
-                    ser.serialize_encapsulation();
+                    ser.set_encoding_flag(
+                            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+                 :
+                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+                );
 
                     try
                     {
+                        // Serialize encapsulation
+                        ser.serialize_encapsulation();
                         // Serialize the object.
                         p_type->serialize(ser);
                     }
-                    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                     {
                         return false;
                     }
@@ -88,14 +99,14 @@ namespace eprosima {
                 {
                     try
                     {
-                        //Convert DATA to pointer of your type
+                        // Convert DATA to pointer of your type
                         EntityId_s* p_type = static_cast<EntityId_s*>(data);
 
                         // Object that manages the raw buffer.
                         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
                         // Object that deserializes the data.
-                        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
                         // Deserialize encapsulation.
                         deser.read_encapsulation();
@@ -104,7 +115,7 @@ namespace eprosima {
                         // Deserialize the object.
                         p_type->deserialize(deser);
                     }
-                    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                     {
                         return false;
                     }
@@ -113,12 +124,16 @@ namespace eprosima {
                 }
 
                 std::function<uint32_t()> EntityId_sPubSubType::getSerializedSizeProvider(
-                        void* data)
+                        void* data,
+                        DataRepresentationId_t data_representation)
                 {
-                    return [data]() -> uint32_t
+                    return [data, data_representation]() -> uint32_t
                            {
-                               return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<EntityId_s*>(data))) +
-                                      4u /*encapsulation*/;
+                               eprosima::fastcdr::CdrSizeCalculator calculator(
+                                       data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+                               return static_cast<uint32_t>(calculator.calculate_serialized_size(
+                                           *static_cast<EntityId_s*>(data))) +
+                                            4u /*encapsulation*/;
                            };
                 }
 
@@ -195,24 +210,32 @@ namespace eprosima {
 
                 bool GuidPrefix_sPubSubType::serialize(
                         void* data,
-                        SerializedPayload_t* payload)
+                        SerializedPayload_t* payload,
+                        DataRepresentationId_t data_representation)
                 {
                     GuidPrefix_s* p_type = static_cast<GuidPrefix_s*>(data);
 
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
                     // Object that serializes the data.
-                    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
                     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-                    // Serialize encapsulation
-                    ser.serialize_encapsulation();
+                    ser.set_encoding_flag(
+                            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+                 :
+                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+                );
 
                     try
                     {
+                        // Serialize encapsulation
+                        ser.serialize_encapsulation();
                         // Serialize the object.
                         p_type->serialize(ser);
                     }
-                    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                     {
                         return false;
                     }
@@ -228,14 +251,14 @@ namespace eprosima {
                 {
                     try
                     {
-                        //Convert DATA to pointer of your type
+                        // Convert DATA to pointer of your type
                         GuidPrefix_s* p_type = static_cast<GuidPrefix_s*>(data);
 
                         // Object that manages the raw buffer.
                         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
                         // Object that deserializes the data.
-                        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
                         // Deserialize encapsulation.
                         deser.read_encapsulation();
@@ -244,7 +267,7 @@ namespace eprosima {
                         // Deserialize the object.
                         p_type->deserialize(deser);
                     }
-                    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                     {
                         return false;
                     }
@@ -253,12 +276,16 @@ namespace eprosima {
                 }
 
                 std::function<uint32_t()> GuidPrefix_sPubSubType::getSerializedSizeProvider(
-                        void* data)
+                        void* data,
+                        DataRepresentationId_t data_representation)
                 {
-                    return [data]() -> uint32_t
+                    return [data, data_representation]() -> uint32_t
                            {
-                               return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<GuidPrefix_s*>(data))) +
-                                      4u /*encapsulation*/;
+                               eprosima::fastcdr::CdrSizeCalculator calculator(
+                                       data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+                               return static_cast<uint32_t>(calculator.calculate_serialized_size(
+                                           *static_cast<GuidPrefix_s*>(data))) +
+                                            4u /*encapsulation*/;
                            };
                 }
 
@@ -335,24 +362,32 @@ namespace eprosima {
 
                 bool GUID_sPubSubType::serialize(
                         void* data,
-                        SerializedPayload_t* payload)
+                        SerializedPayload_t* payload,
+                        DataRepresentationId_t data_representation)
                 {
                     GUID_s* p_type = static_cast<GUID_s*>(data);
 
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
                     // Object that serializes the data.
-                    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
                     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-                    // Serialize encapsulation
-                    ser.serialize_encapsulation();
+                    ser.set_encoding_flag(
+                            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+                 :
+                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+                );
 
                     try
                     {
+                        // Serialize encapsulation
+                        ser.serialize_encapsulation();
                         // Serialize the object.
                         p_type->serialize(ser);
                     }
-                    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                     {
                         return false;
                     }
@@ -368,14 +403,14 @@ namespace eprosima {
                 {
                     try
                     {
-                        //Convert DATA to pointer of your type
+                        // Convert DATA to pointer of your type
                         GUID_s* p_type = static_cast<GUID_s*>(data);
 
                         // Object that manages the raw buffer.
                         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
                         // Object that deserializes the data.
-                        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
                         // Deserialize encapsulation.
                         deser.read_encapsulation();
@@ -384,7 +419,7 @@ namespace eprosima {
                         // Deserialize the object.
                         p_type->deserialize(deser);
                     }
-                    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                     {
                         return false;
                     }
@@ -393,12 +428,16 @@ namespace eprosima {
                 }
 
                 std::function<uint32_t()> GUID_sPubSubType::getSerializedSizeProvider(
-                        void* data)
+                        void* data,
+                        DataRepresentationId_t data_representation)
                 {
-                    return [data]() -> uint32_t
+                    return [data, data_representation]() -> uint32_t
                            {
-                               return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<GUID_s*>(data))) +
-                                      4u /*encapsulation*/;
+                               eprosima::fastcdr::CdrSizeCalculator calculator(
+                                       data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+                               return static_cast<uint32_t>(calculator.calculate_serialized_size(
+                                           *static_cast<GUID_s*>(data))) +
+                                            4u /*encapsulation*/;
                            };
                 }
 
@@ -475,24 +514,32 @@ namespace eprosima {
 
                 bool SequenceNumber_sPubSubType::serialize(
                         void* data,
-                        SerializedPayload_t* payload)
+                        SerializedPayload_t* payload,
+                        DataRepresentationId_t data_representation)
                 {
                     SequenceNumber_s* p_type = static_cast<SequenceNumber_s*>(data);
 
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
                     // Object that serializes the data.
-                    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
                     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-                    // Serialize encapsulation
-                    ser.serialize_encapsulation();
+                    ser.set_encoding_flag(
+                            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+                 :
+                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+                );
 
                     try
                     {
+                        // Serialize encapsulation
+                        ser.serialize_encapsulation();
                         // Serialize the object.
                         p_type->serialize(ser);
                     }
-                    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                     {
                         return false;
                     }
@@ -508,14 +555,14 @@ namespace eprosima {
                 {
                     try
                     {
-                        //Convert DATA to pointer of your type
+                        // Convert DATA to pointer of your type
                         SequenceNumber_s* p_type = static_cast<SequenceNumber_s*>(data);
 
                         // Object that manages the raw buffer.
                         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
                         // Object that deserializes the data.
-                        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
                         // Deserialize encapsulation.
                         deser.read_encapsulation();
@@ -524,7 +571,7 @@ namespace eprosima {
                         // Deserialize the object.
                         p_type->deserialize(deser);
                     }
-                    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                     {
                         return false;
                     }
@@ -533,12 +580,16 @@ namespace eprosima {
                 }
 
                 std::function<uint32_t()> SequenceNumber_sPubSubType::getSerializedSizeProvider(
-                        void* data)
+                        void* data,
+                        DataRepresentationId_t data_representation)
                 {
-                    return [data]() -> uint32_t
+                    return [data, data_representation]() -> uint32_t
                            {
-                               return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<SequenceNumber_s*>(data))) +
-                                      4u /*encapsulation*/;
+                               eprosima::fastcdr::CdrSizeCalculator calculator(
+                                       data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+                               return static_cast<uint32_t>(calculator.calculate_serialized_size(
+                                           *static_cast<SequenceNumber_s*>(data))) +
+                                            4u /*encapsulation*/;
                            };
                 }
 
@@ -615,24 +666,32 @@ namespace eprosima {
 
                 bool SampleIdentity_sPubSubType::serialize(
                         void* data,
-                        SerializedPayload_t* payload)
+                        SerializedPayload_t* payload,
+                        DataRepresentationId_t data_representation)
                 {
                     SampleIdentity_s* p_type = static_cast<SampleIdentity_s*>(data);
 
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
                     // Object that serializes the data.
-                    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
                     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-                    // Serialize encapsulation
-                    ser.serialize_encapsulation();
+                    ser.set_encoding_flag(
+                            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+                 :
+                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+                );
 
                     try
                     {
+                        // Serialize encapsulation
+                        ser.serialize_encapsulation();
                         // Serialize the object.
                         p_type->serialize(ser);
                     }
-                    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                     {
                         return false;
                     }
@@ -648,14 +707,14 @@ namespace eprosima {
                 {
                     try
                     {
-                        //Convert DATA to pointer of your type
+                        // Convert DATA to pointer of your type
                         SampleIdentity_s* p_type = static_cast<SampleIdentity_s*>(data);
 
                         // Object that manages the raw buffer.
                         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
                         // Object that deserializes the data.
-                        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
                         // Deserialize encapsulation.
                         deser.read_encapsulation();
@@ -664,7 +723,7 @@ namespace eprosima {
                         // Deserialize the object.
                         p_type->deserialize(deser);
                     }
-                    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                     {
                         return false;
                     }
@@ -673,12 +732,16 @@ namespace eprosima {
                 }
 
                 std::function<uint32_t()> SampleIdentity_sPubSubType::getSerializedSizeProvider(
-                        void* data)
+                        void* data,
+                        DataRepresentationId_t data_representation)
                 {
-                    return [data]() -> uint32_t
+                    return [data, data_representation]() -> uint32_t
                            {
-                               return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<SampleIdentity_s*>(data))) +
-                                      4u /*encapsulation*/;
+                               eprosima::fastcdr::CdrSizeCalculator calculator(
+                                       data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+                               return static_cast<uint32_t>(calculator.calculate_serialized_size(
+                                           *static_cast<SampleIdentity_s*>(data))) +
+                                            4u /*encapsulation*/;
                            };
                 }
 
@@ -755,24 +818,32 @@ namespace eprosima {
 
                 bool Locator_sPubSubType::serialize(
                         void* data,
-                        SerializedPayload_t* payload)
+                        SerializedPayload_t* payload,
+                        DataRepresentationId_t data_representation)
                 {
                     Locator_s* p_type = static_cast<Locator_s*>(data);
 
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
                     // Object that serializes the data.
-                    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                    eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
                     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-                    // Serialize encapsulation
-                    ser.serialize_encapsulation();
+                    ser.set_encoding_flag(
+                            data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+                 :
+                eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+                );
 
                     try
                     {
+                        // Serialize encapsulation
+                        ser.serialize_encapsulation();
                         // Serialize the object.
                         p_type->serialize(ser);
                     }
-                    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                     {
                         return false;
                     }
@@ -788,14 +859,14 @@ namespace eprosima {
                 {
                     try
                     {
-                        //Convert DATA to pointer of your type
+                        // Convert DATA to pointer of your type
                         Locator_s* p_type = static_cast<Locator_s*>(data);
 
                         // Object that manages the raw buffer.
                         eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
                         // Object that deserializes the data.
-                        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
                         // Deserialize encapsulation.
                         deser.read_encapsulation();
@@ -804,7 +875,7 @@ namespace eprosima {
                         // Deserialize the object.
                         p_type->deserialize(deser);
                     }
-                    catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                    catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                     {
                         return false;
                     }
@@ -813,12 +884,16 @@ namespace eprosima {
                 }
 
                 std::function<uint32_t()> Locator_sPubSubType::getSerializedSizeProvider(
-                        void* data)
+                        void* data,
+                        DataRepresentationId_t data_representation)
                 {
-                    return [data]() -> uint32_t
+                    return [data, data_representation]() -> uint32_t
                            {
-                               return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<Locator_s*>(data))) +
-                                      4u /*encapsulation*/;
+                               eprosima::fastcdr::CdrSizeCalculator calculator(
+                                       data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+                               return static_cast<uint32_t>(calculator.calculate_serialized_size(
+                                           *static_cast<Locator_s*>(data))) +
+                                            4u /*encapsulation*/;
                            };
                 }
 
@@ -897,24 +972,32 @@ namespace eprosima {
 
             bool DiscoveryTimePubSubType::serialize(
                     void* data,
-                    SerializedPayload_t* payload)
+                    SerializedPayload_t* payload,
+                    DataRepresentationId_t data_representation)
             {
                 DiscoveryTime* p_type = static_cast<DiscoveryTime*>(data);
 
                 // Object that manages the raw buffer.
                 eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
                 // Object that serializes the data.
-                eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
                 payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-                // Serialize encapsulation
-                ser.serialize_encapsulation();
+                ser.set_encoding_flag(
+                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+             :
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+            );
 
                 try
                 {
+                    // Serialize encapsulation
+                    ser.serialize_encapsulation();
                     // Serialize the object.
                     p_type->serialize(ser);
                 }
-                catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
                     return false;
                 }
@@ -930,14 +1013,14 @@ namespace eprosima {
             {
                 try
                 {
-                    //Convert DATA to pointer of your type
+                    // Convert DATA to pointer of your type
                     DiscoveryTime* p_type = static_cast<DiscoveryTime*>(data);
 
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
                     // Object that deserializes the data.
-                    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
                     // Deserialize encapsulation.
                     deser.read_encapsulation();
@@ -946,7 +1029,7 @@ namespace eprosima {
                     // Deserialize the object.
                     p_type->deserialize(deser);
                 }
-                catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
                     return false;
                 }
@@ -955,12 +1038,16 @@ namespace eprosima {
             }
 
             std::function<uint32_t()> DiscoveryTimePubSubType::getSerializedSizeProvider(
-                    void* data)
+                    void* data,
+                    DataRepresentationId_t data_representation)
             {
-                return [data]() -> uint32_t
+                return [data, data_representation]() -> uint32_t
                        {
-                           return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<DiscoveryTime*>(data))) +
-                                  4u /*encapsulation*/;
+                           eprosima::fastcdr::CdrSizeCalculator calculator(
+                                   data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+                           return static_cast<uint32_t>(calculator.calculate_serialized_size(
+                                       *static_cast<DiscoveryTime*>(data))) +
+                                        4u /*encapsulation*/;
                        };
             }
 
@@ -1037,24 +1124,32 @@ namespace eprosima {
 
             bool EntityCountPubSubType::serialize(
                     void* data,
-                    SerializedPayload_t* payload)
+                    SerializedPayload_t* payload,
+                    DataRepresentationId_t data_representation)
             {
                 EntityCount* p_type = static_cast<EntityCount*>(data);
 
                 // Object that manages the raw buffer.
                 eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
                 // Object that serializes the data.
-                eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
                 payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-                // Serialize encapsulation
-                ser.serialize_encapsulation();
+                ser.set_encoding_flag(
+                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+             :
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+            );
 
                 try
                 {
+                    // Serialize encapsulation
+                    ser.serialize_encapsulation();
                     // Serialize the object.
                     p_type->serialize(ser);
                 }
-                catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
                     return false;
                 }
@@ -1070,14 +1165,14 @@ namespace eprosima {
             {
                 try
                 {
-                    //Convert DATA to pointer of your type
+                    // Convert DATA to pointer of your type
                     EntityCount* p_type = static_cast<EntityCount*>(data);
 
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
                     // Object that deserializes the data.
-                    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
                     // Deserialize encapsulation.
                     deser.read_encapsulation();
@@ -1086,7 +1181,7 @@ namespace eprosima {
                     // Deserialize the object.
                     p_type->deserialize(deser);
                 }
-                catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
                     return false;
                 }
@@ -1095,12 +1190,16 @@ namespace eprosima {
             }
 
             std::function<uint32_t()> EntityCountPubSubType::getSerializedSizeProvider(
-                    void* data)
+                    void* data,
+                    DataRepresentationId_t data_representation)
             {
-                return [data]() -> uint32_t
+                return [data, data_representation]() -> uint32_t
                        {
-                           return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<EntityCount*>(data))) +
-                                  4u /*encapsulation*/;
+                           eprosima::fastcdr::CdrSizeCalculator calculator(
+                                   data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+                           return static_cast<uint32_t>(calculator.calculate_serialized_size(
+                                       *static_cast<EntityCount*>(data))) +
+                                        4u /*encapsulation*/;
                        };
             }
 
@@ -1177,24 +1276,32 @@ namespace eprosima {
 
             bool SampleIdentityCountPubSubType::serialize(
                     void* data,
-                    SerializedPayload_t* payload)
+                    SerializedPayload_t* payload,
+                    DataRepresentationId_t data_representation)
             {
                 SampleIdentityCount* p_type = static_cast<SampleIdentityCount*>(data);
 
                 // Object that manages the raw buffer.
                 eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
                 // Object that serializes the data.
-                eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
                 payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-                // Serialize encapsulation
-                ser.serialize_encapsulation();
+                ser.set_encoding_flag(
+                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+             :
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+            );
 
                 try
                 {
+                    // Serialize encapsulation
+                    ser.serialize_encapsulation();
                     // Serialize the object.
                     p_type->serialize(ser);
                 }
-                catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
                     return false;
                 }
@@ -1210,14 +1317,14 @@ namespace eprosima {
             {
                 try
                 {
-                    //Convert DATA to pointer of your type
+                    // Convert DATA to pointer of your type
                     SampleIdentityCount* p_type = static_cast<SampleIdentityCount*>(data);
 
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
                     // Object that deserializes the data.
-                    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
                     // Deserialize encapsulation.
                     deser.read_encapsulation();
@@ -1226,7 +1333,7 @@ namespace eprosima {
                     // Deserialize the object.
                     p_type->deserialize(deser);
                 }
-                catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
                     return false;
                 }
@@ -1235,12 +1342,16 @@ namespace eprosima {
             }
 
             std::function<uint32_t()> SampleIdentityCountPubSubType::getSerializedSizeProvider(
-                    void* data)
+                    void* data,
+                    DataRepresentationId_t data_representation)
             {
-                return [data]() -> uint32_t
+                return [data, data_representation]() -> uint32_t
                        {
-                           return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<SampleIdentityCount*>(data))) +
-                                  4u /*encapsulation*/;
+                           eprosima::fastcdr::CdrSizeCalculator calculator(
+                                   data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+                           return static_cast<uint32_t>(calculator.calculate_serialized_size(
+                                       *static_cast<SampleIdentityCount*>(data))) +
+                                        4u /*encapsulation*/;
                        };
             }
 
@@ -1317,24 +1428,32 @@ namespace eprosima {
 
             bool Entity2LocatorTrafficPubSubType::serialize(
                     void* data,
-                    SerializedPayload_t* payload)
+                    SerializedPayload_t* payload,
+                    DataRepresentationId_t data_representation)
             {
                 Entity2LocatorTraffic* p_type = static_cast<Entity2LocatorTraffic*>(data);
 
                 // Object that manages the raw buffer.
                 eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
                 // Object that serializes the data.
-                eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
                 payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-                // Serialize encapsulation
-                ser.serialize_encapsulation();
+                ser.set_encoding_flag(
+                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+             :
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+            );
 
                 try
                 {
+                    // Serialize encapsulation
+                    ser.serialize_encapsulation();
                     // Serialize the object.
                     p_type->serialize(ser);
                 }
-                catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
                     return false;
                 }
@@ -1350,14 +1469,14 @@ namespace eprosima {
             {
                 try
                 {
-                    //Convert DATA to pointer of your type
+                    // Convert DATA to pointer of your type
                     Entity2LocatorTraffic* p_type = static_cast<Entity2LocatorTraffic*>(data);
 
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
                     // Object that deserializes the data.
-                    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
                     // Deserialize encapsulation.
                     deser.read_encapsulation();
@@ -1366,7 +1485,7 @@ namespace eprosima {
                     // Deserialize the object.
                     p_type->deserialize(deser);
                 }
-                catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
                     return false;
                 }
@@ -1375,12 +1494,16 @@ namespace eprosima {
             }
 
             std::function<uint32_t()> Entity2LocatorTrafficPubSubType::getSerializedSizeProvider(
-                    void* data)
+                    void* data,
+                    DataRepresentationId_t data_representation)
             {
-                return [data]() -> uint32_t
+                return [data, data_representation]() -> uint32_t
                        {
-                           return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<Entity2LocatorTraffic*>(data))) +
-                                  4u /*encapsulation*/;
+                           eprosima::fastcdr::CdrSizeCalculator calculator(
+                                   data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+                           return static_cast<uint32_t>(calculator.calculate_serialized_size(
+                                       *static_cast<Entity2LocatorTraffic*>(data))) +
+                                        4u /*encapsulation*/;
                        };
             }
 
@@ -1457,24 +1580,32 @@ namespace eprosima {
 
             bool WriterReaderDataPubSubType::serialize(
                     void* data,
-                    SerializedPayload_t* payload)
+                    SerializedPayload_t* payload,
+                    DataRepresentationId_t data_representation)
             {
                 WriterReaderData* p_type = static_cast<WriterReaderData*>(data);
 
                 // Object that manages the raw buffer.
                 eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
                 // Object that serializes the data.
-                eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
                 payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-                // Serialize encapsulation
-                ser.serialize_encapsulation();
+                ser.set_encoding_flag(
+                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+             :
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+            );
 
                 try
                 {
+                    // Serialize encapsulation
+                    ser.serialize_encapsulation();
                     // Serialize the object.
                     p_type->serialize(ser);
                 }
-                catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
                     return false;
                 }
@@ -1490,14 +1621,14 @@ namespace eprosima {
             {
                 try
                 {
-                    //Convert DATA to pointer of your type
+                    // Convert DATA to pointer of your type
                     WriterReaderData* p_type = static_cast<WriterReaderData*>(data);
 
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
                     // Object that deserializes the data.
-                    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
                     // Deserialize encapsulation.
                     deser.read_encapsulation();
@@ -1506,7 +1637,7 @@ namespace eprosima {
                     // Deserialize the object.
                     p_type->deserialize(deser);
                 }
-                catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
                     return false;
                 }
@@ -1515,12 +1646,16 @@ namespace eprosima {
             }
 
             std::function<uint32_t()> WriterReaderDataPubSubType::getSerializedSizeProvider(
-                    void* data)
+                    void* data,
+                    DataRepresentationId_t data_representation)
             {
-                return [data]() -> uint32_t
+                return [data, data_representation]() -> uint32_t
                        {
-                           return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<WriterReaderData*>(data))) +
-                                  4u /*encapsulation*/;
+                           eprosima::fastcdr::CdrSizeCalculator calculator(
+                                   data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+                           return static_cast<uint32_t>(calculator.calculate_serialized_size(
+                                       *static_cast<WriterReaderData*>(data))) +
+                                        4u /*encapsulation*/;
                        };
             }
 
@@ -1597,24 +1732,32 @@ namespace eprosima {
 
             bool Locator2LocatorDataPubSubType::serialize(
                     void* data,
-                    SerializedPayload_t* payload)
+                    SerializedPayload_t* payload,
+                    DataRepresentationId_t data_representation)
             {
                 Locator2LocatorData* p_type = static_cast<Locator2LocatorData*>(data);
 
                 // Object that manages the raw buffer.
                 eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
                 // Object that serializes the data.
-                eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
                 payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-                // Serialize encapsulation
-                ser.serialize_encapsulation();
+                ser.set_encoding_flag(
+                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+             :
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+            );
 
                 try
                 {
+                    // Serialize encapsulation
+                    ser.serialize_encapsulation();
                     // Serialize the object.
                     p_type->serialize(ser);
                 }
-                catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
                     return false;
                 }
@@ -1630,14 +1773,14 @@ namespace eprosima {
             {
                 try
                 {
-                    //Convert DATA to pointer of your type
+                    // Convert DATA to pointer of your type
                     Locator2LocatorData* p_type = static_cast<Locator2LocatorData*>(data);
 
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
                     // Object that deserializes the data.
-                    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
                     // Deserialize encapsulation.
                     deser.read_encapsulation();
@@ -1646,7 +1789,7 @@ namespace eprosima {
                     // Deserialize the object.
                     p_type->deserialize(deser);
                 }
-                catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
                     return false;
                 }
@@ -1655,12 +1798,16 @@ namespace eprosima {
             }
 
             std::function<uint32_t()> Locator2LocatorDataPubSubType::getSerializedSizeProvider(
-                    void* data)
+                    void* data,
+                    DataRepresentationId_t data_representation)
             {
-                return [data]() -> uint32_t
+                return [data, data_representation]() -> uint32_t
                        {
-                           return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<Locator2LocatorData*>(data))) +
-                                  4u /*encapsulation*/;
+                           eprosima::fastcdr::CdrSizeCalculator calculator(
+                                   data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+                           return static_cast<uint32_t>(calculator.calculate_serialized_size(
+                                       *static_cast<Locator2LocatorData*>(data))) +
+                                        4u /*encapsulation*/;
                        };
             }
 
@@ -1737,24 +1884,32 @@ namespace eprosima {
 
             bool EntityDataPubSubType::serialize(
                     void* data,
-                    SerializedPayload_t* payload)
+                    SerializedPayload_t* payload,
+                    DataRepresentationId_t data_representation)
             {
                 EntityData* p_type = static_cast<EntityData*>(data);
 
                 // Object that manages the raw buffer.
                 eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
                 // Object that serializes the data.
-                eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
                 payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-                // Serialize encapsulation
-                ser.serialize_encapsulation();
+                ser.set_encoding_flag(
+                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+             :
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+            );
 
                 try
                 {
+                    // Serialize encapsulation
+                    ser.serialize_encapsulation();
                     // Serialize the object.
                     p_type->serialize(ser);
                 }
-                catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
                     return false;
                 }
@@ -1770,14 +1925,14 @@ namespace eprosima {
             {
                 try
                 {
-                    //Convert DATA to pointer of your type
+                    // Convert DATA to pointer of your type
                     EntityData* p_type = static_cast<EntityData*>(data);
 
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
                     // Object that deserializes the data.
-                    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
                     // Deserialize encapsulation.
                     deser.read_encapsulation();
@@ -1786,7 +1941,7 @@ namespace eprosima {
                     // Deserialize the object.
                     p_type->deserialize(deser);
                 }
-                catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
                     return false;
                 }
@@ -1795,12 +1950,16 @@ namespace eprosima {
             }
 
             std::function<uint32_t()> EntityDataPubSubType::getSerializedSizeProvider(
-                    void* data)
+                    void* data,
+                    DataRepresentationId_t data_representation)
             {
-                return [data]() -> uint32_t
+                return [data, data_representation]() -> uint32_t
                        {
-                           return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<EntityData*>(data))) +
-                                  4u /*encapsulation*/;
+                           eprosima::fastcdr::CdrSizeCalculator calculator(
+                                   data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+                           return static_cast<uint32_t>(calculator.calculate_serialized_size(
+                                       *static_cast<EntityData*>(data))) +
+                                        4u /*encapsulation*/;
                        };
             }
 
@@ -1877,24 +2036,32 @@ namespace eprosima {
 
             bool PhysicalDataPubSubType::serialize(
                     void* data,
-                    SerializedPayload_t* payload)
+                    SerializedPayload_t* payload,
+                    DataRepresentationId_t data_representation)
             {
                 PhysicalData* p_type = static_cast<PhysicalData*>(data);
 
                 // Object that manages the raw buffer.
                 eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
                 // Object that serializes the data.
-                eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
                 payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
-                // Serialize encapsulation
-                ser.serialize_encapsulation();
+                ser.set_encoding_flag(
+                        data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ?
+            eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
+             :
+            eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
+            );
 
                 try
                 {
+                    // Serialize encapsulation
+                    ser.serialize_encapsulation();
                     // Serialize the object.
                     p_type->serialize(ser);
                 }
-                catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
                     return false;
                 }
@@ -1910,14 +2077,14 @@ namespace eprosima {
             {
                 try
                 {
-                    //Convert DATA to pointer of your type
+                    // Convert DATA to pointer of your type
                     PhysicalData* p_type = static_cast<PhysicalData*>(data);
 
                     // Object that manages the raw buffer.
                     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->length);
 
                     // Object that deserializes the data.
-                    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::Cdr::DDS_CDR);
+                    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
                     // Deserialize encapsulation.
                     deser.read_encapsulation();
@@ -1926,7 +2093,7 @@ namespace eprosima {
                     // Deserialize the object.
                     p_type->deserialize(deser);
                 }
-                catch (eprosima::fastcdr::exception::NotEnoughMemoryException& /*exception*/)
+                catch (eprosima::fastcdr::exception::Exception& /*exception*/)
                 {
                     return false;
                 }
@@ -1935,12 +2102,16 @@ namespace eprosima {
             }
 
             std::function<uint32_t()> PhysicalDataPubSubType::getSerializedSizeProvider(
-                    void* data)
+                    void* data,
+                    DataRepresentationId_t data_representation)
             {
-                return [data]() -> uint32_t
+                return [data, data_representation]() -> uint32_t
                        {
-                           return static_cast<uint32_t>(type::getCdrSerializedSize(*static_cast<PhysicalData*>(data))) +
-                                  4u /*encapsulation*/;
+                           eprosima::fastcdr::CdrSizeCalculator calculator(
+                                   data_representation == DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::XCDRv1 :eprosima::fastcdr::CdrVersion::XCDRv2);
+                           return static_cast<uint32_t>(calculator.calculate_serialized_size(
+                                       *static_cast<PhysicalData*>(data))) +
+                                        4u /*encapsulation*/;
                        };
             }
 

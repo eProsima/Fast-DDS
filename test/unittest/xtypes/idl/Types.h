@@ -23,7 +23,6 @@
 #define _FAST_DDS_GENERATED_TYPES_H_
 
 
-#include <fastcdr/CdrSizeCalculator.hpp>
 #include <fastcdr/cdr/fixed_size_string.hpp>
 #include <fastcdr/xcdr/optional.hpp>
 
@@ -61,7 +60,7 @@
 namespace eprosima {
 namespace fastcdr {
 class Cdr;
-} // namespace fastcdr
+class CdrSizeCalculator;} // namespace fastcdr
 } // namespace eprosima
 
 
@@ -172,18 +171,6 @@ public:
     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const MyEnumStruct& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -316,18 +303,6 @@ public:
             size_t current_alignment = 0);
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const MyBadEnumStruct& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -457,18 +432,6 @@ public:
     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const MyAliasEnumStruct& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -644,18 +607,6 @@ public:
     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const BasicStruct& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -835,18 +786,6 @@ public:
             size_t current_alignment = 0);
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const BasicNamesStruct& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -1022,18 +961,6 @@ public:
     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const BasicBadStruct& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -1255,18 +1182,6 @@ public:
     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const BasicWideStruct& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -1492,18 +1407,6 @@ public:
             size_t current_alignment = 0);
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const BadBasicWideStruct& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -1645,18 +1548,6 @@ public:
             size_t current_alignment = 0);
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const StringStruct& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -1792,18 +1683,6 @@ public:
     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const LargeStringStruct& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -1943,18 +1822,6 @@ public:
             size_t current_alignment = 0);
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const WStringStruct& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -2090,18 +1957,6 @@ public:
     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const LargeWStringStruct& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -2241,18 +2096,6 @@ public:
             size_t current_alignment = 0);
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const ArrayStruct& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -2388,18 +2231,6 @@ public:
     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const ArrayStructEqual& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -2539,18 +2370,6 @@ public:
             size_t current_alignment = 0);
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const ArrayBadStruct& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -2686,18 +2505,6 @@ public:
     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const ArrayDimensionsStruct& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -2837,18 +2644,6 @@ public:
             size_t current_alignment = 0);
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const ArraySizeStruct& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -2984,18 +2779,6 @@ public:
     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const SequenceStruct& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -3135,18 +2918,6 @@ public:
             size_t current_alignment = 0);
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const SequenceStructEqual& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -3282,18 +3053,6 @@ public:
     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const SequenceBadStruct& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -3433,18 +3192,6 @@ public:
             size_t current_alignment = 0);
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const SequenceBoundsStruct& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -3580,18 +3327,6 @@ public:
     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const SequenceSequenceStruct& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -3731,18 +3466,6 @@ public:
             size_t current_alignment = 0);
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const SequenceSequenceBoundsStruct& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -3878,18 +3601,6 @@ public:
     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const MapStruct& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -4029,18 +3740,6 @@ public:
             size_t current_alignment = 0);
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const MapStructEqual& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -4176,18 +3875,6 @@ public:
     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const MapBadKeyStruct& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -4327,18 +4014,6 @@ public:
             size_t current_alignment = 0);
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const MapBadElemStruct& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -4474,18 +4149,6 @@ public:
     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const MapBoundsStruct& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -4625,18 +4288,6 @@ public:
             size_t current_alignment = 0);
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const MapMapStruct& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -4772,18 +4423,6 @@ public:
     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const MapMapBoundsStruct& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -4951,18 +4590,6 @@ public:
 
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const SimpleUnion& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -5107,18 +4734,6 @@ public:
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
     eProsima_user_DllExport int64_t& second_case();
-
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const SimpleUnionNames& data,
-            size_t current_alignment = 0);
 
 
     /*!
@@ -5269,18 +4884,6 @@ public:
 
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const SimpleTypeUnion& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -5425,18 +5028,6 @@ public:
      * @exception eprosima::fastcdr::BadParamException This exception is thrown if the requested union member is not the current selection.
      */
     eProsima_user_DllExport int64_t& second();
-
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const SimpleBadUnion& data,
-            size_t current_alignment = 0);
 
 
     /*!
@@ -5587,18 +5178,6 @@ public:
 
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const SimpleBadDiscUnion& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -5716,18 +5295,6 @@ public:
     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const SimpleUnionStruct& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -5867,18 +5434,6 @@ public:
             size_t current_alignment = 0);
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const SimpleUnionStructEqual& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -6014,18 +5569,6 @@ public:
     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const SimpleUnionNamesStruct& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.
@@ -6165,18 +5708,6 @@ public:
             size_t current_alignment = 0);
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const SimpleTypeUnionStruct& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -6314,18 +5845,6 @@ public:
             size_t current_alignment = 0);
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const SimpleBadUnionStruct& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -6461,18 +5980,6 @@ public:
     */
     eProsima_user_DllExport static size_t getMaxCdrSerializedSize(
             size_t current_alignment = 0);
-
-    /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    eProsima_user_DllExport static size_t calculate_serialized_size(
-            eprosima::fastcdr::CdrSizeCalculator& calculator,
-            const SimplBadDiscUnionStruct& data,
-            size_t current_alignment = 0);
-
 
     /*!
      * @brief This function serializes an object using CDR serialization.

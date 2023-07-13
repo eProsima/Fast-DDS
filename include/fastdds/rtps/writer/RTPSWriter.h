@@ -25,6 +25,7 @@
 #include <mutex>
 #include <vector>
 
+#include <fastcdr/CdrSizeCalculator.hpp>
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
@@ -49,6 +50,8 @@ class FlowController;
 namespace dds {
 
 class DataWriterImpl;
+
+constexpr eprosima::fastcdr::CdrVersion DEFAULT_XCDR_VERSION {eprosima::fastcdr::CdrVersion::XCDRv1};
 
 } // namespace dds
 } // namespace fastdds
@@ -122,7 +125,9 @@ public:
     {
         return new_change([data]() -> uint32_t
                        {
-                           return (uint32_t)T::getCdrSerializedSize(data);
+                           eprosima::fastcdr::CdrSizeCalculator calculator(
+                               eprosima::fastdds::dds::DEFAULT_XCDR_VERSION);
+                           return (uint32_t)calculator.calculate_serialized_size(data, 0);
                        }, changeKind, handle);
     }
 

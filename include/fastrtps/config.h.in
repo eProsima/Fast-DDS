@@ -20,7 +20,7 @@
 #define FASTRTPS_VERSION_MICRO @PROJECT_VERSION_PATCH@
 #define FASTRTPS_VERSION_STR "@PROJECT_VERSION@"
 
-#define GEN_API_VER 1
+#define GEN_API_VER 2
 
 // C++20 support defines
 #ifndef HAVE_CXX20

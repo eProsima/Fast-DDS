@@ -26,6 +26,7 @@ namespace { char dummy; }
 
 #include "ContentFilterTestType.h"
 #include "ContentFilterTestTypeTypeObject.h"
+#include <mutex>
 #include <utility>
 #include <sstream>
 #include <fastrtps/rtps/common/SerializedPayload.h>
@@ -35,34 +36,39 @@ namespace { char dummy; }
 #include <fastrtps/types/AnnotationParameterValue.h>
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>
+#include <fastcdr/CdrSizeCalculator.hpp>
 
 using namespace eprosima::fastrtps::rtps;
 
 void registerContentFilterTestTypeTypes()
 {
-    TypeObjectFactory *factory = TypeObjectFactory::get_instance();
-    factory->add_type_object("Color", GetColorIdentifier(true),
-    GetColorObject(true));
-    factory->add_type_object("Color", GetColorIdentifier(false),
-    GetColorObject(false));
+    static std::once_flag once_flag;
+    std::call_once(once_flag, []()
+            {
+                TypeObjectFactory *factory = TypeObjectFactory::get_instance();
+                factory->add_type_object("Color", GetColorIdentifier(true),
+                GetColorObject(true));
+                factory->add_type_object("Color", GetColorIdentifier(false),
+                GetColorObject(false));
 
-    factory->add_type_object("Material", GetMaterialIdentifier(true),
-    GetMaterialObject(true));
-    factory->add_type_object("Material", GetMaterialIdentifier(false),
-    GetMaterialObject(false));
+                factory->add_type_object("Material", GetMaterialIdentifier(true),
+                GetMaterialObject(true));
+                factory->add_type_object("Material", GetMaterialIdentifier(false),
+                GetMaterialObject(false));
 
-    factory->add_type_object("StructType", GetStructTypeIdentifier(true),
-    GetStructTypeObject(true));
-    factory->add_type_object("StructType", GetStructTypeIdentifier(false),
-    GetStructTypeObject(false));
+                factory->add_type_object("StructType", GetStructTypeIdentifier(true),
+                GetStructTypeObject(true));
+                factory->add_type_object("StructType", GetStructTypeIdentifier(false),
+                GetStructTypeObject(false));
 
 
 
-    factory->add_type_object("ContentFilterTestType", GetContentFilterTestTypeIdentifier(true),
-    GetContentFilterTestTypeObject(true));
-    factory->add_type_object("ContentFilterTestType", GetContentFilterTestTypeIdentifier(false),
-    GetContentFilterTestTypeObject(false));
+                factory->add_type_object("ContentFilterTestType", GetContentFilterTestTypeIdentifier(true),
+                GetContentFilterTestTypeObject(true));
+                factory->add_type_object("ContentFilterTestType", GetContentFilterTestTypeIdentifier(false),
+                GetContentFilterTestTypeObject(false));
 
+            });
 }
 
 const TypeIdentifier* GetColorIdentifier(bool complete)
@@ -198,14 +204,15 @@ const TypeObject* GetMinimalColorObject()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalEnumeratedType::getCdrSerializedSize(type_object->minimal().enumerated_type()) + 4));
+        calculator.calculate_serialized_size(type_object->minimal().enumerated_type(), 0) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
+        fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+        eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     type_object->serialize(ser);
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
@@ -315,14 +322,15 @@ const TypeObject* GetCompleteColorObject()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteEnumeratedType::getCdrSerializedSize(type_object->complete().enumerated_type()) + 4));
+        calculator.calculate_serialized_size(type_object->complete().enumerated_type(), 0) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
+        fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+        eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     type_object->serialize(ser);
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
@@ -472,14 +480,15 @@ const TypeObject* GetMinimalMaterialObject()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalEnumeratedType::getCdrSerializedSize(type_object->minimal().enumerated_type()) + 4));
+        calculator.calculate_serialized_size(type_object->minimal().enumerated_type(), 0) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
+        fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+        eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     type_object->serialize(ser);
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
@@ -589,14 +598,15 @@ const TypeObject* GetCompleteMaterialObject()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteEnumeratedType::getCdrSerializedSize(type_object->complete().enumerated_type()) + 4));
+        calculator.calculate_serialized_size(type_object->complete().enumerated_type(), 0) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
+        fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+        eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     type_object->serialize(ser);
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
@@ -653,7 +663,7 @@ const TypeObject* GetMinimalStructTypeObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(true);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -903,7 +913,8 @@ const TypeObject* GetMinimalStructTypeObject()
     mst_enum_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_enum_field.common().member_flags().IS_KEY(false);
     mst_enum_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_enum_field.common().member_type_id(*GetColorIdentifier(false));
+    mst_enum_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("Color", false));
+
     MD5 enum_field_hash("enum_field");
     for(int i = 0; i < 4; ++i)
     {
@@ -920,7 +931,8 @@ const TypeObject* GetMinimalStructTypeObject()
     mst_enum2_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_enum2_field.common().member_flags().IS_KEY(false);
     mst_enum2_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_enum2_field.common().member_type_id(*GetMaterialIdentifier(false));
+    mst_enum2_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("Material", false));
+
     MD5 enum2_field_hash("enum2_field");
     for(int i = 0; i < 4; ++i)
     {
@@ -937,14 +949,15 @@ const TypeObject* GetMinimalStructTypeObject()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
+        calculator.calculate_serialized_size(type_object->minimal().struct_type(), 0) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
+        fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+        eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     type_object->serialize(ser);
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
@@ -974,7 +987,7 @@ const TypeObject* GetCompleteStructTypeObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(true);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -1185,7 +1198,8 @@ const TypeObject* GetCompleteStructTypeObject()
     cst_enum_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_enum_field.common().member_flags().IS_KEY(false);
     cst_enum_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_enum_field.common().member_type_id(*GetColorIdentifier(true));
+    cst_enum_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("Color", false));
+
     cst_enum_field.detail().name("enum_field");
 
     type_object->complete().struct_type().member_seq().emplace_back(cst_enum_field);
@@ -1199,7 +1213,8 @@ const TypeObject* GetCompleteStructTypeObject()
     cst_enum2_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_enum2_field.common().member_flags().IS_KEY(false);
     cst_enum2_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_enum2_field.common().member_type_id(*GetMaterialIdentifier(true));
+    cst_enum2_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("Material", false));
+
     cst_enum2_field.detail().name("enum2_field");
 
     type_object->complete().struct_type().member_seq().emplace_back(cst_enum2_field);
@@ -1234,14 +1249,15 @@ const TypeObject* GetCompleteStructTypeObject()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
+        calculator.calculate_serialized_size(type_object->complete().struct_type(), 0) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
+        fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+        eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     type_object->serialize(ser);
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
@@ -1300,7 +1316,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -1550,7 +1566,8 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_enum_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_enum_field.common().member_flags().IS_KEY(false);
     mst_enum_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_enum_field.common().member_type_id(*GetColorIdentifier(false));
+    mst_enum_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("Color", false));
+
     MD5 enum_field_hash("enum_field");
     for(int i = 0; i < 4; ++i)
     {
@@ -1567,7 +1584,8 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_enum2_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_enum2_field.common().member_flags().IS_KEY(false);
     mst_enum2_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_enum2_field.common().member_type_id(*GetMaterialIdentifier(false));
+    mst_enum2_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("Material", false));
+
     MD5 enum2_field_hash("enum2_field");
     for(int i = 0; i < 4; ++i)
     {
@@ -1601,7 +1619,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_array_char_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_array_char_field.common().member_flags().IS_KEY(false);
     mst_array_char_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_array_char_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("char", {max_array_size}, false));
+    mst_array_char_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("char", {3}, false));
 
 
     MD5 array_char_field_hash("array_char_field");
@@ -1620,7 +1638,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_array_uint8_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_array_uint8_field.common().member_flags().IS_KEY(false);
     mst_array_uint8_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_array_uint8_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("uint8_t", {max_array_size}, false));
+    mst_array_uint8_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("uint8_t", {3}, false));
 
 
     MD5 array_uint8_field_hash("array_uint8_field");
@@ -1639,7 +1657,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_array_int16_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_array_int16_field.common().member_flags().IS_KEY(false);
     mst_array_int16_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_array_int16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int16_t", {max_array_size}, false));
+    mst_array_int16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int16_t", {3}, false));
 
 
     MD5 array_int16_field_hash("array_int16_field");
@@ -1658,7 +1676,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_array_uint16_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_array_uint16_field.common().member_flags().IS_KEY(false);
     mst_array_uint16_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_array_uint16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("uint16_t", {max_array_size}, false));
+    mst_array_uint16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("uint16_t", {3}, false));
 
 
     MD5 array_uint16_field_hash("array_uint16_field");
@@ -1677,7 +1695,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_array_int32_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_array_int32_field.common().member_flags().IS_KEY(false);
     mst_array_int32_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_array_int32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int32_t", {max_array_size}, false));
+    mst_array_int32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int32_t", {3}, false));
 
 
     MD5 array_int32_field_hash("array_int32_field");
@@ -1696,7 +1714,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_array_uint32_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_array_uint32_field.common().member_flags().IS_KEY(false);
     mst_array_uint32_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_array_uint32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("uint32_t", {max_array_size}, false));
+    mst_array_uint32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("uint32_t", {3}, false));
 
 
     MD5 array_uint32_field_hash("array_uint32_field");
@@ -1715,7 +1733,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_array_int64_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_array_int64_field.common().member_flags().IS_KEY(false);
     mst_array_int64_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_array_int64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int64_t", {max_array_size}, false));
+    mst_array_int64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int64_t", {3}, false));
 
 
     MD5 array_int64_field_hash("array_int64_field");
@@ -1734,7 +1752,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_array_uint64_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_array_uint64_field.common().member_flags().IS_KEY(false);
     mst_array_uint64_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_array_uint64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("uint64_t", {max_array_size}, false));
+    mst_array_uint64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("uint64_t", {3}, false));
 
 
     MD5 array_uint64_field_hash("array_uint64_field");
@@ -1753,7 +1771,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_array_float_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_array_float_field.common().member_flags().IS_KEY(false);
     mst_array_float_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_array_float_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("float", {max_array_size}, false));
+    mst_array_float_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("float", {3}, false));
 
 
     MD5 array_float_field_hash("array_float_field");
@@ -1772,7 +1790,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_array_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_array_double_field.common().member_flags().IS_KEY(false);
     mst_array_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_array_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("double", {max_array_size}, false));
+    mst_array_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("double", {3}, false));
 
 
     MD5 array_double_field_hash("array_double_field");
@@ -1791,7 +1809,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_array_long_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_array_long_double_field.common().member_flags().IS_KEY(false);
     mst_array_long_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_array_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("longdouble", {max_array_size}, false));
+    mst_array_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("longdouble", {3}, false));
 
 
     MD5 array_long_double_field_hash("array_long_double_field");
@@ -1810,7 +1828,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_array_bool_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_array_bool_field.common().member_flags().IS_KEY(false);
     mst_array_bool_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_array_bool_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("bool", {max_array_size}, false));
+    mst_array_bool_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("bool", {3}, false));
 
 
     MD5 array_bool_field_hash("array_bool_field");
@@ -1829,7 +1847,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_array_string_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_array_string_field.common().member_flags().IS_KEY(false);
     mst_array_string_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_array_string_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier(TypeNamesGenerator::get_string_type_name(255, false), {max_array_size}, false));
+    mst_array_string_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier(TypeNamesGenerator::get_string_type_name(255, false), {3}, false));
 
 
     MD5 array_string_field_hash("array_string_field");
@@ -1848,7 +1866,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_array_enum_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_array_enum_field.common().member_flags().IS_KEY(false);
     mst_array_enum_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_array_enum_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("Color", {max_array_size}, false));
+    mst_array_enum_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("Color", {3}, false));
 
 
     MD5 array_enum_field_hash("array_enum_field");
@@ -1867,7 +1885,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_array_enum2_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_array_enum2_field.common().member_flags().IS_KEY(false);
     mst_array_enum2_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_array_enum2_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("Material", {max_array_size}, false));
+    mst_array_enum2_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("Material", {3}, false));
 
 
     MD5 array_enum2_field_hash("array_enum2_field");
@@ -1886,7 +1904,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_array_struct_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_array_struct_field.common().member_flags().IS_KEY(false);
     mst_array_struct_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_array_struct_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("StructType", {max_array_size}, false));
+    mst_array_struct_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("StructType", {3}, false));
 
 
     MD5 array_struct_field_hash("array_struct_field");
@@ -1905,7 +1923,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_bounded_sequence_char_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_bounded_sequence_char_field.common().member_flags().IS_KEY(false);
     mst_bounded_sequence_char_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_bounded_sequence_char_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("char", max_seq_size, false));
+    mst_bounded_sequence_char_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("char", 5, false));
 
 
     MD5 bounded_sequence_char_field_hash("bounded_sequence_char_field");
@@ -1924,7 +1942,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_bounded_sequence_uint8_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_bounded_sequence_uint8_field.common().member_flags().IS_KEY(false);
     mst_bounded_sequence_uint8_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_bounded_sequence_uint8_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint8_t", max_seq_size, false));
+    mst_bounded_sequence_uint8_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint8_t", 5, false));
 
 
     MD5 bounded_sequence_uint8_field_hash("bounded_sequence_uint8_field");
@@ -1943,7 +1961,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_bounded_sequence_int16_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_bounded_sequence_int16_field.common().member_flags().IS_KEY(false);
     mst_bounded_sequence_int16_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_bounded_sequence_int16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int16_t", max_seq_size, false));
+    mst_bounded_sequence_int16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int16_t", 5, false));
 
 
     MD5 bounded_sequence_int16_field_hash("bounded_sequence_int16_field");
@@ -1962,7 +1980,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_bounded_sequence_uint16_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_bounded_sequence_uint16_field.common().member_flags().IS_KEY(false);
     mst_bounded_sequence_uint16_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_bounded_sequence_uint16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint16_t", max_seq_size, false));
+    mst_bounded_sequence_uint16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint16_t", 5, false));
 
 
     MD5 bounded_sequence_uint16_field_hash("bounded_sequence_uint16_field");
@@ -1981,7 +1999,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_bounded_sequence_int32_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_bounded_sequence_int32_field.common().member_flags().IS_KEY(false);
     mst_bounded_sequence_int32_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_bounded_sequence_int32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int32_t", max_seq_size, false));
+    mst_bounded_sequence_int32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int32_t", 5, false));
 
 
     MD5 bounded_sequence_int32_field_hash("bounded_sequence_int32_field");
@@ -2000,7 +2018,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_bounded_sequence_uint32_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_bounded_sequence_uint32_field.common().member_flags().IS_KEY(false);
     mst_bounded_sequence_uint32_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_bounded_sequence_uint32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint32_t", max_seq_size, false));
+    mst_bounded_sequence_uint32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint32_t", 5, false));
 
 
     MD5 bounded_sequence_uint32_field_hash("bounded_sequence_uint32_field");
@@ -2019,7 +2037,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_bounded_sequence_int64_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_bounded_sequence_int64_field.common().member_flags().IS_KEY(false);
     mst_bounded_sequence_int64_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_bounded_sequence_int64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int64_t", max_seq_size, false));
+    mst_bounded_sequence_int64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int64_t", 5, false));
 
 
     MD5 bounded_sequence_int64_field_hash("bounded_sequence_int64_field");
@@ -2038,7 +2056,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_bounded_sequence_uint64_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_bounded_sequence_uint64_field.common().member_flags().IS_KEY(false);
     mst_bounded_sequence_uint64_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_bounded_sequence_uint64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint64_t", max_seq_size, false));
+    mst_bounded_sequence_uint64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint64_t", 5, false));
 
 
     MD5 bounded_sequence_uint64_field_hash("bounded_sequence_uint64_field");
@@ -2057,7 +2075,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_bounded_sequence_float_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_bounded_sequence_float_field.common().member_flags().IS_KEY(false);
     mst_bounded_sequence_float_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_bounded_sequence_float_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("float", max_seq_size, false));
+    mst_bounded_sequence_float_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("float", 5, false));
 
 
     MD5 bounded_sequence_float_field_hash("bounded_sequence_float_field");
@@ -2076,7 +2094,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_bounded_sequence_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_bounded_sequence_double_field.common().member_flags().IS_KEY(false);
     mst_bounded_sequence_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_bounded_sequence_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("double", max_seq_size, false));
+    mst_bounded_sequence_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("double", 5, false));
 
 
     MD5 bounded_sequence_double_field_hash("bounded_sequence_double_field");
@@ -2095,7 +2113,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_bounded_sequence_long_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_bounded_sequence_long_double_field.common().member_flags().IS_KEY(false);
     mst_bounded_sequence_long_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_bounded_sequence_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("longdouble", max_seq_size, false));
+    mst_bounded_sequence_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("longdouble", 5, false));
 
 
     MD5 bounded_sequence_long_double_field_hash("bounded_sequence_long_double_field");
@@ -2114,7 +2132,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_bounded_sequence_bool_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_bounded_sequence_bool_field.common().member_flags().IS_KEY(false);
     mst_bounded_sequence_bool_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_bounded_sequence_bool_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("bool", max_seq_size, false));
+    mst_bounded_sequence_bool_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("bool", 5, false));
 
 
     MD5 bounded_sequence_bool_field_hash("bounded_sequence_bool_field");
@@ -2133,7 +2151,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_bounded_sequence_string_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_bounded_sequence_string_field.common().member_flags().IS_KEY(false);
     mst_bounded_sequence_string_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_bounded_sequence_string_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier(TypeNamesGenerator::get_string_type_name(255, false), max_seq_size, false));
+    mst_bounded_sequence_string_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier(TypeNamesGenerator::get_string_type_name(255, false), 5, false));
 
 
     MD5 bounded_sequence_string_field_hash("bounded_sequence_string_field");
@@ -2152,7 +2170,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_bounded_sequence_enum_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_bounded_sequence_enum_field.common().member_flags().IS_KEY(false);
     mst_bounded_sequence_enum_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_bounded_sequence_enum_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("Color", max_seq_size, false));
+    mst_bounded_sequence_enum_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("Color", 5, false));
 
 
     MD5 bounded_sequence_enum_field_hash("bounded_sequence_enum_field");
@@ -2171,7 +2189,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_bounded_sequence_enum2_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_bounded_sequence_enum2_field.common().member_flags().IS_KEY(false);
     mst_bounded_sequence_enum2_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_bounded_sequence_enum2_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("Material", max_seq_size, false));
+    mst_bounded_sequence_enum2_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("Material", 5, false));
 
 
     MD5 bounded_sequence_enum2_field_hash("bounded_sequence_enum2_field");
@@ -2190,7 +2208,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_bounded_sequence_struct_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_bounded_sequence_struct_field.common().member_flags().IS_KEY(false);
     mst_bounded_sequence_struct_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_bounded_sequence_struct_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("StructType", max_seq_size, false));
+    mst_bounded_sequence_struct_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("StructType", 5, false));
 
 
     MD5 bounded_sequence_struct_field_hash("bounded_sequence_struct_field");
@@ -2209,7 +2227,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_unbounded_sequence_char_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_unbounded_sequence_char_field.common().member_flags().IS_KEY(false);
     mst_unbounded_sequence_char_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_unbounded_sequence_char_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("char", 0, false));
+    mst_unbounded_sequence_char_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("char", 100, false));
 
 
     MD5 unbounded_sequence_char_field_hash("unbounded_sequence_char_field");
@@ -2228,7 +2246,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_unbounded_sequence_uint8_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_unbounded_sequence_uint8_field.common().member_flags().IS_KEY(false);
     mst_unbounded_sequence_uint8_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_unbounded_sequence_uint8_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint8_t", 0, false));
+    mst_unbounded_sequence_uint8_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint8_t", 100, false));
 
 
     MD5 unbounded_sequence_uint8_field_hash("unbounded_sequence_uint8_field");
@@ -2247,7 +2265,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_unbounded_sequence_int16_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_unbounded_sequence_int16_field.common().member_flags().IS_KEY(false);
     mst_unbounded_sequence_int16_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_unbounded_sequence_int16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int16_t", 0, false));
+    mst_unbounded_sequence_int16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int16_t", 100, false));
 
 
     MD5 unbounded_sequence_int16_field_hash("unbounded_sequence_int16_field");
@@ -2266,7 +2284,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_unbounded_sequence_uint16_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_unbounded_sequence_uint16_field.common().member_flags().IS_KEY(false);
     mst_unbounded_sequence_uint16_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_unbounded_sequence_uint16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint16_t", 0, false));
+    mst_unbounded_sequence_uint16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint16_t", 100, false));
 
 
     MD5 unbounded_sequence_uint16_field_hash("unbounded_sequence_uint16_field");
@@ -2285,7 +2303,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_unbounded_sequence_int32_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_unbounded_sequence_int32_field.common().member_flags().IS_KEY(false);
     mst_unbounded_sequence_int32_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_unbounded_sequence_int32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int32_t", 0, false));
+    mst_unbounded_sequence_int32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int32_t", 100, false));
 
 
     MD5 unbounded_sequence_int32_field_hash("unbounded_sequence_int32_field");
@@ -2304,7 +2322,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_unbounded_sequence_uint32_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_unbounded_sequence_uint32_field.common().member_flags().IS_KEY(false);
     mst_unbounded_sequence_uint32_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_unbounded_sequence_uint32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint32_t", 0, false));
+    mst_unbounded_sequence_uint32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint32_t", 100, false));
 
 
     MD5 unbounded_sequence_uint32_field_hash("unbounded_sequence_uint32_field");
@@ -2323,7 +2341,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_unbounded_sequence_int64_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_unbounded_sequence_int64_field.common().member_flags().IS_KEY(false);
     mst_unbounded_sequence_int64_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_unbounded_sequence_int64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int64_t", 0, false));
+    mst_unbounded_sequence_int64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int64_t", 100, false));
 
 
     MD5 unbounded_sequence_int64_field_hash("unbounded_sequence_int64_field");
@@ -2342,7 +2360,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_unbounded_sequence_uint64_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_unbounded_sequence_uint64_field.common().member_flags().IS_KEY(false);
     mst_unbounded_sequence_uint64_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_unbounded_sequence_uint64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint64_t", 0, false));
+    mst_unbounded_sequence_uint64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint64_t", 100, false));
 
 
     MD5 unbounded_sequence_uint64_field_hash("unbounded_sequence_uint64_field");
@@ -2361,7 +2379,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_unbounded_sequence_float_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_unbounded_sequence_float_field.common().member_flags().IS_KEY(false);
     mst_unbounded_sequence_float_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_unbounded_sequence_float_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("float", 0, false));
+    mst_unbounded_sequence_float_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("float", 100, false));
 
 
     MD5 unbounded_sequence_float_field_hash("unbounded_sequence_float_field");
@@ -2380,7 +2398,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_unbounded_sequence_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_unbounded_sequence_double_field.common().member_flags().IS_KEY(false);
     mst_unbounded_sequence_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_unbounded_sequence_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("double", 0, false));
+    mst_unbounded_sequence_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("double", 100, false));
 
 
     MD5 unbounded_sequence_double_field_hash("unbounded_sequence_double_field");
@@ -2399,7 +2417,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_unbounded_sequence_long_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_unbounded_sequence_long_double_field.common().member_flags().IS_KEY(false);
     mst_unbounded_sequence_long_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_unbounded_sequence_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("longdouble", 0, false));
+    mst_unbounded_sequence_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("longdouble", 100, false));
 
 
     MD5 unbounded_sequence_long_double_field_hash("unbounded_sequence_long_double_field");
@@ -2418,7 +2436,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_unbounded_sequence_bool_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_unbounded_sequence_bool_field.common().member_flags().IS_KEY(false);
     mst_unbounded_sequence_bool_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_unbounded_sequence_bool_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("bool", 0, false));
+    mst_unbounded_sequence_bool_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("bool", 100, false));
 
 
     MD5 unbounded_sequence_bool_field_hash("unbounded_sequence_bool_field");
@@ -2437,7 +2455,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_unbounded_sequence_string_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_unbounded_sequence_string_field.common().member_flags().IS_KEY(false);
     mst_unbounded_sequence_string_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_unbounded_sequence_string_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier(TypeNamesGenerator::get_string_type_name(255, false), 0, false));
+    mst_unbounded_sequence_string_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier(TypeNamesGenerator::get_string_type_name(255, false), 100, false));
 
 
     MD5 unbounded_sequence_string_field_hash("unbounded_sequence_string_field");
@@ -2456,7 +2474,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_unbounded_sequence_enum_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_unbounded_sequence_enum_field.common().member_flags().IS_KEY(false);
     mst_unbounded_sequence_enum_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_unbounded_sequence_enum_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("Color", 0, false));
+    mst_unbounded_sequence_enum_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("Color", 100, false));
 
 
     MD5 unbounded_sequence_enum_field_hash("unbounded_sequence_enum_field");
@@ -2475,7 +2493,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_unbounded_sequence_enum2_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_unbounded_sequence_enum2_field.common().member_flags().IS_KEY(false);
     mst_unbounded_sequence_enum2_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_unbounded_sequence_enum2_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("Material", 0, false));
+    mst_unbounded_sequence_enum2_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("Material", 100, false));
 
 
     MD5 unbounded_sequence_enum2_field_hash("unbounded_sequence_enum2_field");
@@ -2494,7 +2512,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_unbounded_sequence_struct_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_unbounded_sequence_struct_field.common().member_flags().IS_KEY(false);
     mst_unbounded_sequence_struct_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_unbounded_sequence_struct_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("StructType", 0, false));
+    mst_unbounded_sequence_struct_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("StructType", 100, false));
 
 
     MD5 unbounded_sequence_struct_field_hash("unbounded_sequence_struct_field");
@@ -2513,14 +2531,15 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
+        calculator.calculate_serialized_size(type_object->minimal().struct_type(), 0) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
+        fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+        eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     type_object->serialize(ser);
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
@@ -2550,7 +2569,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -2761,7 +2780,8 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_enum_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_enum_field.common().member_flags().IS_KEY(false);
     cst_enum_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_enum_field.common().member_type_id(*GetColorIdentifier(true));
+    cst_enum_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("Color", false));
+
     cst_enum_field.detail().name("enum_field");
 
     type_object->complete().struct_type().member_seq().emplace_back(cst_enum_field);
@@ -2775,7 +2795,8 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_enum2_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_enum2_field.common().member_flags().IS_KEY(false);
     cst_enum2_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_enum2_field.common().member_type_id(*GetMaterialIdentifier(true));
+    cst_enum2_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("Material", false));
+
     cst_enum2_field.detail().name("enum2_field");
 
     type_object->complete().struct_type().member_seq().emplace_back(cst_enum2_field);
@@ -2803,7 +2824,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_array_char_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_array_char_field.common().member_flags().IS_KEY(false);
     cst_array_char_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_array_char_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("char", {max_array_size}, true));
+    cst_array_char_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("char", {3}, true));
 
 
     cst_array_char_field.detail().name("array_char_field");
@@ -2819,7 +2840,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_array_uint8_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_array_uint8_field.common().member_flags().IS_KEY(false);
     cst_array_uint8_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_array_uint8_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("uint8_t", {max_array_size}, true));
+    cst_array_uint8_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("uint8_t", {3}, true));
 
 
     cst_array_uint8_field.detail().name("array_uint8_field");
@@ -2835,7 +2856,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_array_int16_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_array_int16_field.common().member_flags().IS_KEY(false);
     cst_array_int16_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_array_int16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int16_t", {max_array_size}, true));
+    cst_array_int16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int16_t", {3}, true));
 
 
     cst_array_int16_field.detail().name("array_int16_field");
@@ -2851,7 +2872,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_array_uint16_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_array_uint16_field.common().member_flags().IS_KEY(false);
     cst_array_uint16_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_array_uint16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("uint16_t", {max_array_size}, true));
+    cst_array_uint16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("uint16_t", {3}, true));
 
 
     cst_array_uint16_field.detail().name("array_uint16_field");
@@ -2867,7 +2888,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_array_int32_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_array_int32_field.common().member_flags().IS_KEY(false);
     cst_array_int32_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_array_int32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int32_t", {max_array_size}, true));
+    cst_array_int32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int32_t", {3}, true));
 
 
     cst_array_int32_field.detail().name("array_int32_field");
@@ -2883,7 +2904,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_array_uint32_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_array_uint32_field.common().member_flags().IS_KEY(false);
     cst_array_uint32_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_array_uint32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("uint32_t", {max_array_size}, true));
+    cst_array_uint32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("uint32_t", {3}, true));
 
 
     cst_array_uint32_field.detail().name("array_uint32_field");
@@ -2899,7 +2920,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_array_int64_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_array_int64_field.common().member_flags().IS_KEY(false);
     cst_array_int64_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_array_int64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int64_t", {max_array_size}, true));
+    cst_array_int64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("int64_t", {3}, true));
 
 
     cst_array_int64_field.detail().name("array_int64_field");
@@ -2915,7 +2936,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_array_uint64_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_array_uint64_field.common().member_flags().IS_KEY(false);
     cst_array_uint64_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_array_uint64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("uint64_t", {max_array_size}, true));
+    cst_array_uint64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("uint64_t", {3}, true));
 
 
     cst_array_uint64_field.detail().name("array_uint64_field");
@@ -2931,7 +2952,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_array_float_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_array_float_field.common().member_flags().IS_KEY(false);
     cst_array_float_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_array_float_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("float", {max_array_size}, true));
+    cst_array_float_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("float", {3}, true));
 
 
     cst_array_float_field.detail().name("array_float_field");
@@ -2947,7 +2968,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_array_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_array_double_field.common().member_flags().IS_KEY(false);
     cst_array_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_array_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("double", {max_array_size}, true));
+    cst_array_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("double", {3}, true));
 
 
     cst_array_double_field.detail().name("array_double_field");
@@ -2963,7 +2984,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_array_long_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_array_long_double_field.common().member_flags().IS_KEY(false);
     cst_array_long_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_array_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("longdouble", {max_array_size}, true));
+    cst_array_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("longdouble", {3}, true));
 
 
     cst_array_long_double_field.detail().name("array_long_double_field");
@@ -2979,7 +3000,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_array_bool_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_array_bool_field.common().member_flags().IS_KEY(false);
     cst_array_bool_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_array_bool_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("bool", {max_array_size}, true));
+    cst_array_bool_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("bool", {3}, true));
 
 
     cst_array_bool_field.detail().name("array_bool_field");
@@ -2995,7 +3016,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_array_string_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_array_string_field.common().member_flags().IS_KEY(false);
     cst_array_string_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_array_string_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier(TypeNamesGenerator::get_string_type_name(255, false), {max_array_size}, true));
+    cst_array_string_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier(TypeNamesGenerator::get_string_type_name(255, false), {3}, true));
 
 
     cst_array_string_field.detail().name("array_string_field");
@@ -3011,7 +3032,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_array_enum_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_array_enum_field.common().member_flags().IS_KEY(false);
     cst_array_enum_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_array_enum_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("Color", {max_array_size}, true));
+    cst_array_enum_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("Color", {3}, true));
 
 
     cst_array_enum_field.detail().name("array_enum_field");
@@ -3027,7 +3048,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_array_enum2_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_array_enum2_field.common().member_flags().IS_KEY(false);
     cst_array_enum2_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_array_enum2_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("Material", {max_array_size}, true));
+    cst_array_enum2_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("Material", {3}, true));
 
 
     cst_array_enum2_field.detail().name("array_enum2_field");
@@ -3043,7 +3064,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_array_struct_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_array_struct_field.common().member_flags().IS_KEY(false);
     cst_array_struct_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_array_struct_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("StructType", {max_array_size}, true));
+    cst_array_struct_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_array_identifier("StructType", {3}, true));
 
 
     cst_array_struct_field.detail().name("array_struct_field");
@@ -3059,7 +3080,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_bounded_sequence_char_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_bounded_sequence_char_field.common().member_flags().IS_KEY(false);
     cst_bounded_sequence_char_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_bounded_sequence_char_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("char", max_seq_size, true));
+    cst_bounded_sequence_char_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("char", 5, true));
 
 
     cst_bounded_sequence_char_field.detail().name("bounded_sequence_char_field");
@@ -3075,7 +3096,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_bounded_sequence_uint8_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_bounded_sequence_uint8_field.common().member_flags().IS_KEY(false);
     cst_bounded_sequence_uint8_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_bounded_sequence_uint8_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint8_t", max_seq_size, true));
+    cst_bounded_sequence_uint8_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint8_t", 5, true));
 
 
     cst_bounded_sequence_uint8_field.detail().name("bounded_sequence_uint8_field");
@@ -3091,7 +3112,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_bounded_sequence_int16_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_bounded_sequence_int16_field.common().member_flags().IS_KEY(false);
     cst_bounded_sequence_int16_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_bounded_sequence_int16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int16_t", max_seq_size, true));
+    cst_bounded_sequence_int16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int16_t", 5, true));
 
 
     cst_bounded_sequence_int16_field.detail().name("bounded_sequence_int16_field");
@@ -3107,7 +3128,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_bounded_sequence_uint16_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_bounded_sequence_uint16_field.common().member_flags().IS_KEY(false);
     cst_bounded_sequence_uint16_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_bounded_sequence_uint16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint16_t", max_seq_size, true));
+    cst_bounded_sequence_uint16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint16_t", 5, true));
 
 
     cst_bounded_sequence_uint16_field.detail().name("bounded_sequence_uint16_field");
@@ -3123,7 +3144,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_bounded_sequence_int32_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_bounded_sequence_int32_field.common().member_flags().IS_KEY(false);
     cst_bounded_sequence_int32_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_bounded_sequence_int32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int32_t", max_seq_size, true));
+    cst_bounded_sequence_int32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int32_t", 5, true));
 
 
     cst_bounded_sequence_int32_field.detail().name("bounded_sequence_int32_field");
@@ -3139,7 +3160,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_bounded_sequence_uint32_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_bounded_sequence_uint32_field.common().member_flags().IS_KEY(false);
     cst_bounded_sequence_uint32_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_bounded_sequence_uint32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint32_t", max_seq_size, true));
+    cst_bounded_sequence_uint32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint32_t", 5, true));
 
 
     cst_bounded_sequence_uint32_field.detail().name("bounded_sequence_uint32_field");
@@ -3155,7 +3176,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_bounded_sequence_int64_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_bounded_sequence_int64_field.common().member_flags().IS_KEY(false);
     cst_bounded_sequence_int64_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_bounded_sequence_int64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int64_t", max_seq_size, true));
+    cst_bounded_sequence_int64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int64_t", 5, true));
 
 
     cst_bounded_sequence_int64_field.detail().name("bounded_sequence_int64_field");
@@ -3171,7 +3192,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_bounded_sequence_uint64_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_bounded_sequence_uint64_field.common().member_flags().IS_KEY(false);
     cst_bounded_sequence_uint64_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_bounded_sequence_uint64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint64_t", max_seq_size, true));
+    cst_bounded_sequence_uint64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint64_t", 5, true));
 
 
     cst_bounded_sequence_uint64_field.detail().name("bounded_sequence_uint64_field");
@@ -3187,7 +3208,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_bounded_sequence_float_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_bounded_sequence_float_field.common().member_flags().IS_KEY(false);
     cst_bounded_sequence_float_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_bounded_sequence_float_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("float", max_seq_size, true));
+    cst_bounded_sequence_float_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("float", 5, true));
 
 
     cst_bounded_sequence_float_field.detail().name("bounded_sequence_float_field");
@@ -3203,7 +3224,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_bounded_sequence_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_bounded_sequence_double_field.common().member_flags().IS_KEY(false);
     cst_bounded_sequence_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_bounded_sequence_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("double", max_seq_size, true));
+    cst_bounded_sequence_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("double", 5, true));
 
 
     cst_bounded_sequence_double_field.detail().name("bounded_sequence_double_field");
@@ -3219,7 +3240,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_bounded_sequence_long_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_bounded_sequence_long_double_field.common().member_flags().IS_KEY(false);
     cst_bounded_sequence_long_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_bounded_sequence_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("longdouble", max_seq_size, true));
+    cst_bounded_sequence_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("longdouble", 5, true));
 
 
     cst_bounded_sequence_long_double_field.detail().name("bounded_sequence_long_double_field");
@@ -3235,7 +3256,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_bounded_sequence_bool_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_bounded_sequence_bool_field.common().member_flags().IS_KEY(false);
     cst_bounded_sequence_bool_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_bounded_sequence_bool_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("bool", max_seq_size, true));
+    cst_bounded_sequence_bool_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("bool", 5, true));
 
 
     cst_bounded_sequence_bool_field.detail().name("bounded_sequence_bool_field");
@@ -3251,7 +3272,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_bounded_sequence_string_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_bounded_sequence_string_field.common().member_flags().IS_KEY(false);
     cst_bounded_sequence_string_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_bounded_sequence_string_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier(TypeNamesGenerator::get_string_type_name(255, false), max_seq_size, true));
+    cst_bounded_sequence_string_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier(TypeNamesGenerator::get_string_type_name(255, false), 5, true));
 
 
     cst_bounded_sequence_string_field.detail().name("bounded_sequence_string_field");
@@ -3267,7 +3288,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_bounded_sequence_enum_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_bounded_sequence_enum_field.common().member_flags().IS_KEY(false);
     cst_bounded_sequence_enum_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_bounded_sequence_enum_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("Color", max_seq_size, true));
+    cst_bounded_sequence_enum_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("Color", 5, true));
 
 
     cst_bounded_sequence_enum_field.detail().name("bounded_sequence_enum_field");
@@ -3283,7 +3304,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_bounded_sequence_enum2_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_bounded_sequence_enum2_field.common().member_flags().IS_KEY(false);
     cst_bounded_sequence_enum2_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_bounded_sequence_enum2_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("Material", max_seq_size, true));
+    cst_bounded_sequence_enum2_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("Material", 5, true));
 
 
     cst_bounded_sequence_enum2_field.detail().name("bounded_sequence_enum2_field");
@@ -3299,7 +3320,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_bounded_sequence_struct_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_bounded_sequence_struct_field.common().member_flags().IS_KEY(false);
     cst_bounded_sequence_struct_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_bounded_sequence_struct_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("StructType", max_seq_size, true));
+    cst_bounded_sequence_struct_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("StructType", 5, true));
 
 
     cst_bounded_sequence_struct_field.detail().name("bounded_sequence_struct_field");
@@ -3315,7 +3336,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_unbounded_sequence_char_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_unbounded_sequence_char_field.common().member_flags().IS_KEY(false);
     cst_unbounded_sequence_char_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_unbounded_sequence_char_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("char", 0, true));
+    cst_unbounded_sequence_char_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("char", 100, true));
 
 
     cst_unbounded_sequence_char_field.detail().name("unbounded_sequence_char_field");
@@ -3331,7 +3352,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_unbounded_sequence_uint8_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_unbounded_sequence_uint8_field.common().member_flags().IS_KEY(false);
     cst_unbounded_sequence_uint8_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_unbounded_sequence_uint8_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint8_t", 0, true));
+    cst_unbounded_sequence_uint8_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint8_t", 100, true));
 
 
     cst_unbounded_sequence_uint8_field.detail().name("unbounded_sequence_uint8_field");
@@ -3347,7 +3368,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_unbounded_sequence_int16_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_unbounded_sequence_int16_field.common().member_flags().IS_KEY(false);
     cst_unbounded_sequence_int16_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_unbounded_sequence_int16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int16_t", 0, true));
+    cst_unbounded_sequence_int16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int16_t", 100, true));
 
 
     cst_unbounded_sequence_int16_field.detail().name("unbounded_sequence_int16_field");
@@ -3363,7 +3384,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_unbounded_sequence_uint16_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_unbounded_sequence_uint16_field.common().member_flags().IS_KEY(false);
     cst_unbounded_sequence_uint16_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_unbounded_sequence_uint16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint16_t", 0, true));
+    cst_unbounded_sequence_uint16_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint16_t", 100, true));
 
 
     cst_unbounded_sequence_uint16_field.detail().name("unbounded_sequence_uint16_field");
@@ -3379,7 +3400,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_unbounded_sequence_int32_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_unbounded_sequence_int32_field.common().member_flags().IS_KEY(false);
     cst_unbounded_sequence_int32_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_unbounded_sequence_int32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int32_t", 0, true));
+    cst_unbounded_sequence_int32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int32_t", 100, true));
 
 
     cst_unbounded_sequence_int32_field.detail().name("unbounded_sequence_int32_field");
@@ -3395,7 +3416,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_unbounded_sequence_uint32_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_unbounded_sequence_uint32_field.common().member_flags().IS_KEY(false);
     cst_unbounded_sequence_uint32_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_unbounded_sequence_uint32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint32_t", 0, true));
+    cst_unbounded_sequence_uint32_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint32_t", 100, true));
 
 
     cst_unbounded_sequence_uint32_field.detail().name("unbounded_sequence_uint32_field");
@@ -3411,7 +3432,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_unbounded_sequence_int64_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_unbounded_sequence_int64_field.common().member_flags().IS_KEY(false);
     cst_unbounded_sequence_int64_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_unbounded_sequence_int64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int64_t", 0, true));
+    cst_unbounded_sequence_int64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("int64_t", 100, true));
 
 
     cst_unbounded_sequence_int64_field.detail().name("unbounded_sequence_int64_field");
@@ -3427,7 +3448,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_unbounded_sequence_uint64_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_unbounded_sequence_uint64_field.common().member_flags().IS_KEY(false);
     cst_unbounded_sequence_uint64_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_unbounded_sequence_uint64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint64_t", 0, true));
+    cst_unbounded_sequence_uint64_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("uint64_t", 100, true));
 
 
     cst_unbounded_sequence_uint64_field.detail().name("unbounded_sequence_uint64_field");
@@ -3443,7 +3464,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_unbounded_sequence_float_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_unbounded_sequence_float_field.common().member_flags().IS_KEY(false);
     cst_unbounded_sequence_float_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_unbounded_sequence_float_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("float", 0, true));
+    cst_unbounded_sequence_float_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("float", 100, true));
 
 
     cst_unbounded_sequence_float_field.detail().name("unbounded_sequence_float_field");
@@ -3459,7 +3480,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_unbounded_sequence_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_unbounded_sequence_double_field.common().member_flags().IS_KEY(false);
     cst_unbounded_sequence_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_unbounded_sequence_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("double", 0, true));
+    cst_unbounded_sequence_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("double", 100, true));
 
 
     cst_unbounded_sequence_double_field.detail().name("unbounded_sequence_double_field");
@@ -3475,7 +3496,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_unbounded_sequence_long_double_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_unbounded_sequence_long_double_field.common().member_flags().IS_KEY(false);
     cst_unbounded_sequence_long_double_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_unbounded_sequence_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("longdouble", 0, true));
+    cst_unbounded_sequence_long_double_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("longdouble", 100, true));
 
 
     cst_unbounded_sequence_long_double_field.detail().name("unbounded_sequence_long_double_field");
@@ -3491,7 +3512,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_unbounded_sequence_bool_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_unbounded_sequence_bool_field.common().member_flags().IS_KEY(false);
     cst_unbounded_sequence_bool_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_unbounded_sequence_bool_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("bool", 0, true));
+    cst_unbounded_sequence_bool_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("bool", 100, true));
 
 
     cst_unbounded_sequence_bool_field.detail().name("unbounded_sequence_bool_field");
@@ -3507,7 +3528,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_unbounded_sequence_string_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_unbounded_sequence_string_field.common().member_flags().IS_KEY(false);
     cst_unbounded_sequence_string_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_unbounded_sequence_string_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier(TypeNamesGenerator::get_string_type_name(255, false), 0, true));
+    cst_unbounded_sequence_string_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier(TypeNamesGenerator::get_string_type_name(255, false), 100, true));
 
 
     cst_unbounded_sequence_string_field.detail().name("unbounded_sequence_string_field");
@@ -3523,7 +3544,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_unbounded_sequence_enum_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_unbounded_sequence_enum_field.common().member_flags().IS_KEY(false);
     cst_unbounded_sequence_enum_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_unbounded_sequence_enum_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("Color", 0, true));
+    cst_unbounded_sequence_enum_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("Color", 100, true));
 
 
     cst_unbounded_sequence_enum_field.detail().name("unbounded_sequence_enum_field");
@@ -3539,7 +3560,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_unbounded_sequence_enum2_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_unbounded_sequence_enum2_field.common().member_flags().IS_KEY(false);
     cst_unbounded_sequence_enum2_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_unbounded_sequence_enum2_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("Material", 0, true));
+    cst_unbounded_sequence_enum2_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("Material", 100, true));
 
 
     cst_unbounded_sequence_enum2_field.detail().name("unbounded_sequence_enum2_field");
@@ -3555,7 +3576,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_unbounded_sequence_struct_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_unbounded_sequence_struct_field.common().member_flags().IS_KEY(false);
     cst_unbounded_sequence_struct_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_unbounded_sequence_struct_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("StructType", 0, true));
+    cst_unbounded_sequence_struct_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_sequence_identifier("StructType", 100, true));
 
 
     cst_unbounded_sequence_struct_field.detail().name("unbounded_sequence_struct_field");
@@ -3571,14 +3592,15 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
+        calculator.calculate_serialized_size(type_object->complete().struct_type(), 0) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
+        fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+        eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     type_object->serialize(ser);
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length

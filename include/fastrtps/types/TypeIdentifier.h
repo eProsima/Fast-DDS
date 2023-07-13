@@ -33,13 +33,13 @@ namespace eprosima {
 
 namespace fastcdr {
 class Cdr;
-}
+} // namespace fastcdr
 
 namespace fastdds {
 namespace dds {
 class TypeConsistencyEnforcementQosPolicy;
-}
-}
+} // namespace dds
+} // namespace fastdds
 
 namespace fastrtps {
 namespace types {
@@ -109,14 +109,14 @@ public:
      * @brief Copy assignment.
      * @param x Reference to the object TypeIdentifier that will be copied.
      */
-    RTPS_DllAPI TypeIdentifier& operator=(
+    RTPS_DllAPI TypeIdentifier& operator =(
             const TypeIdentifier& x);
 
     /*!
      * @brief Move assignment.
      * @param x Reference to the object TypeIdentifier that will be copied.
      */
-    RTPS_DllAPI TypeIdentifier& operator=(
+    RTPS_DllAPI TypeIdentifier& operator =(
             TypeIdentifier&& x);
 
     /*!
@@ -361,17 +361,6 @@ public:
     RTPS_DllAPI ExtendedTypeDefn& extended_defn();
 
     /*!
-     * @brief This function returns the serialized size of a data depending on the buffer alignment.
-     * @param data Data which is calculated its serialized size.
-     * @param current_alignment Buffer alignment.
-     * @return Serialized size.
-     */
-    RTPS_DllAPI static size_t getCdrSerializedSize(
-            const TypeIdentifier& data,
-            size_t current_alignment = 0);
-
-
-    /*!
      * @brief This function serializes an object using CDR serialization.
      * @param cdr CDR serialization object.
      */
@@ -388,7 +377,7 @@ public:
     /**
      * Equals
      * */
-    bool operator==(
+    bool operator ==(
             const TypeIdentifier& other) const;
 
     RTPS_DllAPI bool consistent(

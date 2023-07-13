@@ -15,7 +15,6 @@
 #ifndef TYPES_BASE_H
 #define TYPES_BASE_H
 
-#include <fastdds/rtps/common/Types.h>
 #include <bitset>
 #include <string>
 #include <map>
@@ -24,6 +23,8 @@
 #include <algorithm>
 #include <memory>
 #include <type_traits>
+
+#include <fastdds/rtps/common/Types.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -448,10 +449,6 @@ public:
     void deserialize(
             eprosima::fastcdr::Cdr& cdr);
 
-    static size_t getCdrSerializedSize(
-            const MemberFlag&,
-            size_t current_alignment = 0);
-
     bool operator ==(
             const MemberFlag& other) const
     {
@@ -576,10 +573,6 @@ public:
 
     void deserialize(
             eprosima::fastcdr::Cdr& cdr);
-
-    static size_t getCdrSerializedSize(
-            const TypeFlag&,
-            size_t current_alignment = 0);
 
     bool operator ==(
             const TypeFlag& other) const

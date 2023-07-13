@@ -20,25 +20,12 @@
 #include <fastdds/dds/builtin/common/ReplyHeader.hpp>
 #include <fastdds/dds/builtin/common/RequestHeader.hpp>
 #include <fastcdr/Cdr.h>
+#include <fastcdr/CdrSizeCalculator.hpp>
 
 using namespace eprosima::fastdds::dds::rpc;
 
-size_t ReplyHeader::getCdrSerializedSize(
-        const ReplyHeader& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16); // SampleIdentity.GUID_t
-    current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8); // SampleIdentity.SequenceNumber_t
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4); // RemoteException
-
-    return current_alignment - initial_alignment;
-}
-
 void ReplyHeader::serialize(
-        eprosima::fastcdr::Cdr &scdr) const
+        eprosima::fastcdr::Cdr& scdr) const
 {
     for (uint32_t i = 0; i < fastrtps::rtps::GuidPrefix_t::size; ++i)
     {
@@ -56,7 +43,7 @@ void ReplyHeader::serialize(
 }
 
 void ReplyHeader::deserialize(
-        eprosima::fastcdr::Cdr &dcdr)
+        eprosima::fastcdr::Cdr& dcdr)
 {
     for (uint32_t i = 0; i < fastrtps::rtps::GuidPrefix_t::size; ++i)
     {
@@ -74,22 +61,8 @@ void ReplyHeader::deserialize(
     remoteEx = static_cast<RemoteExceptionCode_t>(aux);
 }
 
-size_t RequestHeader::getCdrSerializedSize(
-        const RequestHeader& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16); // SampleIdentity.GUID_t
-    current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8); // SampleIdentity.SequenceNumber_t
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.instanceName.size() + 1;
-
-    return current_alignment - initial_alignment;
-}
-
 void RequestHeader::serialize(
-        eprosima::fastcdr::Cdr &scdr) const
+        eprosima::fastcdr::Cdr& scdr) const
 {
     for (uint32_t i = 0; i < fastrtps::rtps::GuidPrefix_t::size; ++i)
     {
@@ -106,7 +79,7 @@ void RequestHeader::serialize(
 }
 
 void RequestHeader::deserialize(
-        eprosima::fastcdr::Cdr &dcdr)
+        eprosima::fastcdr::Cdr& dcdr)
 {
     for (uint32_t i = 0; i < fastrtps::rtps::GuidPrefix_t::size; ++i)
     {
@@ -123,3 +96,51 @@ void RequestHeader::deserialize(
     dcdr >> aux;
     instanceName = aux;
 }
+
+namespace eprosima {
+namespace fastcdr {
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastdds::dds::rpc::ReplyHeader& data,
+        size_t current_alignment)
+{
+    (void)data;
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16); // SampleIdentity.GUID_t
+    current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8); // SampleIdentity.SequenceNumber_t
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4); // RemoteException
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastdds::dds::rpc::RequestHeader& data,
+        size_t current_alignment)
+{
+    (void)data;
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16); // SampleIdentity.GUID_t
+    current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8); // SampleIdentity.SequenceNumber_t
+    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.instanceName.size() + 1;
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+
+    return current_alignment - initial_alignment;
+}
+
+} // namespace fastcdr
+} // namespace eprosima

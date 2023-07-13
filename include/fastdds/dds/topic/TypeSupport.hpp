@@ -152,10 +152,18 @@ public:
      * @param payload Pointer to payload
      * @return true if it is serialized correctly, false if not
      */
+
+    RTPS_DllAPI virtual bool serialize(
+            void* data,
+            fastrtps::rtps::SerializedPayload_t* payload)
+    {
+        return serialize(data, payload, DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    }
+
     RTPS_DllAPI virtual bool serialize(
             void* data,
             fastrtps::rtps::SerializedPayload_t* payload,
-            DataRepresentationId_t data_representation = DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+            DataRepresentationId_t data_representation);
 
     /**
      * @brief Deserializes the data
@@ -166,8 +174,7 @@ public:
      */
     RTPS_DllAPI virtual bool deserialize(
             fastrtps::rtps::SerializedPayload_t* payload,
-            void* data,
-            DataRepresentationId_t data_representation = DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+            void* data);
 
     /**
      * @brief Getter for the SerializedSizeProvider
@@ -176,8 +183,14 @@ public:
      * @return function
      */
     RTPS_DllAPI virtual std::function<uint32_t()> get_serialized_size_provider(
+            void* data)
+    {
+        return get_serialized_size_provider(data, DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    }
+
+    RTPS_DllAPI virtual std::function<uint32_t()> get_serialized_size_provider(
             void* data,
-            DataRepresentationId_t data_representation = DataRepresentationId_t::XCDR_DATA_REPRESENTATION)
+            DataRepresentationId_t data_representation)
     {
         return get()->getSerializedSizeProvider(data, data_representation);
     }

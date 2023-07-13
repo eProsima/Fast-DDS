@@ -42,6 +42,27 @@ using namespace eprosima::fastrtps::rtps::security;
 
 constexpr int initialization_vector_suffix_length = 8;
 
+inline eprosima::fastcdr::Cdr::state get_cdr_state(
+        eprosima::fastcdr::Cdr& cdr)
+{
+#if FASTCDR_VERSION_MAYOR == 1
+    return cdr.getState();
+#else
+    return cdr.get_state();
+#endif // if FASTCDR_VERSION_MAYOR >= 2
+}
+
+inline void set_cdr_state(
+        eprosima::fastcdr::Cdr& cdr,
+        eprosima::fastcdr::Cdr::state& state)
+{
+#if FASTCDR_VERSION_MAYOR == 1
+    cdr.setState(state);
+#else
+    cdr.set_state(state);
+#endif // if FASTCDR_VERSION_MAYOR >= 2
+}
+
 static KeyMaterial_AES_GCM_GMAC* find_key(
         KeyMaterial_AES_GCM_GMAC_Seq& keys,
         const CryptoTransformIdentifier& id)
@@ -239,7 +260,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
     try
     {
         serializer << SEC_PREFIX << flags;
-        eprosima::fastcdr::Cdr::state length_state = serializer.getState();
+        eprosima::fastcdr::Cdr::state length_state = get_cdr_state(serializer);
         uint16_t length = 0;
         serializer << length;
 
@@ -248,12 +269,12 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
         serialize_SecureDataHeader(serializer, keyMat.transformation_kind,
                 keyMat.sender_key_id, session_id, initialization_vector_suffix);
 
-        eprosima::fastcdr::Cdr::state current_state = serializer.getState();
+        eprosima::fastcdr::Cdr::state current_state = get_cdr_state(serializer);
         //TODO(Ricardo) fastcdr functinality: length substracting two Cdr::state.
         length =  static_cast<uint16_t>(serializer.getCurrentPosition() - length_position);
-        serializer.setState(length_state);
+        set_cdr_state(serializer, length_state);
         serializer << length;
-        serializer.setState(current_state);
+        set_cdr_state(serializer, current_state);
     }
     catch (eprosima::fastcdr::exception::NotEnoughMemoryException& )
     {
@@ -283,7 +304,7 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
     try
     {
         serializer << SEC_POSTFIX << flags;
-        eprosima::fastcdr::Cdr::state length_state = serializer.getState();
+        eprosima::fastcdr::Cdr::state length_state = get_cdr_state(serializer);
         uint16_t length = 0;
         serializer << length;
 
@@ -295,12 +316,12 @@ bool AESGCMGMAC_Transform::encode_datawriter_submessage(
             return false;
         }
 
-        eprosima::fastcdr::Cdr::state current_state = serializer.getState();
+        eprosima::fastcdr::Cdr::state current_state = get_cdr_state(serializer);
         //TODO(Ricardo) fastcdr functinality: length substracting two Cdr::state.
         length =  static_cast<uint16_t>(serializer.getCurrentPosition() - length_position);
-        serializer.setState(length_state);
+        set_cdr_state(serializer, length_state);
         serializer << length;
-        serializer.setState(current_state);
+        set_cdr_state(serializer, current_state);
     }
     catch (eprosima::fastcdr::exception::Exception&)
     {
@@ -379,7 +400,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
     try
     {
         serializer << SEC_PREFIX << flags;
-        eprosima::fastcdr::Cdr::state length_state = serializer.getState();
+        eprosima::fastcdr::Cdr::state length_state = get_cdr_state(serializer);
         uint16_t length = 0;
         serializer << length;
 
@@ -388,12 +409,12 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
         serialize_SecureDataHeader(serializer, local_reader->EntityKeyMaterial.at(0).transformation_kind,
                 local_reader->EntityKeyMaterial.at(0).sender_key_id, session_id, initialization_vector_suffix);
 
-        eprosima::fastcdr::Cdr::state current_state = serializer.getState();
+        eprosima::fastcdr::Cdr::state current_state = get_cdr_state(serializer);
         //TODO(Ricardo) fastcdr functinality: length substracting two Cdr::state.
         length =  static_cast<uint16_t>(serializer.getCurrentPosition() - length_position);
-        serializer.setState(length_state);
+        set_cdr_state(serializer, length_state);
         serializer << length;
-        serializer.setState(current_state);
+        set_cdr_state(serializer, current_state);
     }
     catch (eprosima::fastcdr::exception::Exception&)
     {
@@ -424,7 +445,7 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
     try
     {
         serializer << SEC_POSTFIX << flags;
-        eprosima::fastcdr::Cdr::state length_state = serializer.getState();
+        eprosima::fastcdr::Cdr::state length_state = get_cdr_state(serializer);
         uint16_t length = 0;
         serializer << length;
 
@@ -437,12 +458,12 @@ bool AESGCMGMAC_Transform::encode_datareader_submessage(
             return false;
         }
 
-        eprosima::fastcdr::Cdr::state current_state = serializer.getState();
+        eprosima::fastcdr::Cdr::state current_state = get_cdr_state(serializer);
         //TODO(Ricardo) fastcdr functinality: length substracting two Cdr::state.
         length =  static_cast<uint16_t>(serializer.getCurrentPosition() - length_position);
-        serializer.setState(length_state);
+        set_cdr_state(serializer, length_state);
         serializer << length;
-        serializer.setState(current_state);
+        set_cdr_state(serializer, current_state);
     }
     catch (eprosima::fastcdr::exception::Exception&)
     {
@@ -520,7 +541,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     try
     {
         serializer << SRTPS_PREFIX << flags;
-        eprosima::fastcdr::Cdr::state length_state = serializer.getState();
+        eprosima::fastcdr::Cdr::state length_state = get_cdr_state(serializer);
         uint16_t length = 0;
         serializer << length;
 
@@ -529,12 +550,12 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
         serialize_SecureDataHeader(serializer, local_participant->ParticipantKeyMaterial.transformation_kind,
                 local_participant->ParticipantKeyMaterial.sender_key_id, session_id, initialization_vector_suffix);
 
-        eprosima::fastcdr::Cdr::state current_state = serializer.getState();
+        eprosima::fastcdr::Cdr::state current_state = get_cdr_state(serializer);
         //TODO(Ricardo) fastcdr functinality: length substracting two Cdr::state.
         length =  static_cast<uint16_t>(serializer.getCurrentPosition() - length_position);
-        serializer.setState(length_state);
+        set_cdr_state(serializer, length_state);
         serializer << length;
-        serializer.setState(current_state);
+        set_cdr_state(serializer, current_state);
     }
     catch (eprosima::fastcdr::exception::Exception&)
     {
@@ -565,7 +586,7 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
     try
     {
         serializer << SRTPS_POSTFIX << flags;
-        eprosima::fastcdr::Cdr::state length_state = serializer.getState();
+        eprosima::fastcdr::Cdr::state length_state = get_cdr_state(serializer);
         uint16_t length = 0;
         serializer << length;
 
@@ -577,12 +598,12 @@ bool AESGCMGMAC_Transform::encode_rtps_message(
             return false;
         }
 
-        eprosima::fastcdr::Cdr::state current_state = serializer.getState();
+        eprosima::fastcdr::Cdr::state current_state = get_cdr_state(serializer);
         //TODO(Ricardo) fastcdr functinality: length substracting two Cdr::state.
         length =  static_cast<uint16_t>(serializer.getCurrentPosition() - length_position);
-        serializer.setState(length_state);
+        set_cdr_state(serializer, length_state);
         serializer << length;
-        serializer.setState(current_state);
+        set_cdr_state(serializer, current_state);
     }
     catch (eprosima::fastcdr::exception::Exception&)
     {
@@ -694,7 +715,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
 
     // Body
     uint32_t body_length = 0, body_align = 0;
-    eprosima::fastcdr::Cdr::state protected_body_state = decoder.getState();
+    eprosima::fastcdr::Cdr::state protected_body_state = get_cdr_state(decoder);
     bool is_encrypted = false;
 
     try
@@ -707,7 +728,7 @@ bool AESGCMGMAC_Transform::decode_rtps_message(
         return false;
     }
 
-    eprosima::fastcdr::Cdr::state body_state = decoder.getState();
+    eprosima::fastcdr::Cdr::state body_state = get_cdr_state(decoder);
     decoder.jump(body_length + body_align);
 
     // Tag
@@ -1059,7 +1080,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
 
     // Body
     uint32_t body_length = 0, body_align = 0;
-    eprosima::fastcdr::Cdr::state protected_body_state = decoder.getState();
+    eprosima::fastcdr::Cdr::state protected_body_state = get_cdr_state(decoder);
     bool is_encrypted = false;
 
     try
@@ -1072,7 +1093,7 @@ bool AESGCMGMAC_Transform::decode_datawriter_submessage(
         return false;
     }
 
-    eprosima::fastcdr::Cdr::state body_state = decoder.getState();
+    eprosima::fastcdr::Cdr::state body_state = get_cdr_state(decoder);
     decoder.jump(body_length + body_align);
 
     // Tag
@@ -1239,7 +1260,7 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
 
     // Body
     uint32_t body_length = 0, body_align = 0;
-    eprosima::fastcdr::Cdr::state protected_body_state = decoder.getState();
+    eprosima::fastcdr::Cdr::state protected_body_state = get_cdr_state(decoder);
     bool is_encrypted = false;
 
     try
@@ -1252,7 +1273,7 @@ bool AESGCMGMAC_Transform::decode_datareader_submessage(
         return false;
     }
 
-    eprosima::fastcdr::Cdr::state body_state = decoder.getState();
+    eprosima::fastcdr::Cdr::state body_state = get_cdr_state(decoder);
     decoder.jump(body_length + body_align);
 
     // Tag
@@ -1395,7 +1416,7 @@ bool AESGCMGMAC_Transform::decode_serialized_payload(
 
     // Body
     uint32_t body_length = 0, body_align = 0;
-    eprosima::fastcdr::Cdr::state protected_body_state = decoder.getState();
+    eprosima::fastcdr::Cdr::state protected_body_state = get_cdr_state(decoder);
     bool is_encrypted = false;
 
     try
@@ -1616,7 +1637,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(
         }
 
         // Store current state to serialize sequence length at the end of the function
-        eprosima::fastcdr::Cdr::state sequence_length_state = serializer.getState();
+        eprosima::fastcdr::Cdr::state sequence_length_state = get_cdr_state(serializer);
 
         if (submessage)
         {
@@ -1663,11 +1684,11 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(
 
         serializer.jump(actual_size + final_size);
 
-        eprosima::fastcdr::Cdr::state current_state = serializer.getState();
+        eprosima::fastcdr::Cdr::state current_state = get_cdr_state(serializer);
 
         // Serialize body sequence length;
         cnt_length = static_cast<uint32_t>(actual_size + final_size);
-        serializer.setState(sequence_length_state);
+        set_cdr_state(serializer, sequence_length_state);
         if (submessage)
         {
             uint16_t length = static_cast<uint16_t>(actual_size + final_size + sizeof(uint32_t));
@@ -1677,7 +1698,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataBody(
 
         serializer.serialize(cnt_length, eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
 
-        serializer.setState(current_state);
+        set_cdr_state(serializer, current_state);
 
     }
 
@@ -1725,7 +1746,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(
         serializer << c;
     }
 
-    eprosima::fastcdr::Cdr::state length_state = serializer.getState();
+    eprosima::fastcdr::Cdr::state length_state = get_cdr_state(serializer);
     uint32_t length = 0;
     serializer << length;
 
@@ -1814,10 +1835,10 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(
         ++length;
     }
 
-    eprosima::fastcdr::Cdr::state current_state = serializer.getState();
-    serializer.setState(length_state);
+    eprosima::fastcdr::Cdr::state current_state = get_cdr_state(serializer);
+    set_cdr_state(serializer, length_state);
     serializer.serialize(length, eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
-    serializer.setState(current_state);
+    set_cdr_state(serializer, current_state);
     return true;
 }
 
@@ -1831,7 +1852,7 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(
 {
     serializer << tag.common_mac;
 
-    eprosima::fastcdr::Cdr::state length_state = serializer.getState();
+    eprosima::fastcdr::Cdr::state length_state = get_cdr_state(serializer);
     uint32_t length = 0;
     serializer << length;
 
@@ -1928,10 +1949,10 @@ bool AESGCMGMAC_Transform::serialize_SecureDataTag(
         ++length;
     }
 
-    eprosima::fastcdr::Cdr::state current_state = serializer.getState();
-    serializer.setState(length_state);
+    eprosima::fastcdr::Cdr::state current_state = get_cdr_state(serializer);
+    set_cdr_state(serializer, length_state);
     serializer.serialize(length, eprosima::fastcdr::Cdr::Endianness::BIG_ENDIANNESS);
-    serializer.setState(current_state);
+    set_cdr_state(serializer, current_state);
     return true;
 }
 
@@ -1957,8 +1978,8 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(
         octet* plain_buffer,
         uint32_t& plain_buffer_len)
 {
-    eprosima::fastcdr::Cdr::state current_state = decoder.getState();
-    decoder.setState(body_state);
+    eprosima::fastcdr::Cdr::state current_state = get_cdr_state(decoder);
+    set_cdr_state(decoder, body_state);
 
     bool do_encryption = (transformation_kind == c_transfrom_kind_aes128_gcm ||
             transformation_kind == c_transfrom_kind_aes256_gcm);
@@ -2044,7 +2065,7 @@ bool AESGCMGMAC_Transform::deserialize_SecureDataBody(
         memcpy(plain_buffer, input_buffer, plain_buffer_len);
     }
 
-    decoder.setState(current_state);
+    set_cdr_state(decoder, current_state);
 
     // Align submessage to 4.
     size_t alignment = decoder.alignment(decoder.getCurrentPosition() - decoder.getBufferPointer(), sizeof(int32_t));

@@ -17,6 +17,7 @@
 #include <fastrtps/types/DynamicTypeMember.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 #include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/TypeDescriptor.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/dds/log/Log.hpp>
@@ -103,12 +104,15 @@ void DynamicPubSubType::deleteData(
 
 bool DynamicPubSubType::deserialize(
         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
-        void* data,
-        fastdds::dds::DataRepresentationId_t data_representation)
+        void* data)
 {
+    if (dynamic_type_ == nullptr)
+    {
+        return false;
+    }
+
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
-    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::CdrVersion::DDS_CDR); // Object that deserializes the data.
+    eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN);
 
     try
     {
@@ -170,6 +174,7 @@ std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(
         void* data,
         fastdds::dds::DataRepresentationId_t data_representation)
 {
+    static_cast<void>(data_representation);
     return [data]() -> uint32_t
            {
                return (uint32_t)DynamicData::getCdrSerializedSize((DynamicData*)data) + 4 /*encapsulation*/;
@@ -181,13 +186,46 @@ bool DynamicPubSubType::serialize(
         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
         fastdds::dds::DataRepresentationId_t data_representation)
 {
+    if (dynamic_type_ == nullptr)
+    {
+        return false;
+    }
+
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->max_size);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-            eprosima::fastcdr::CdrVersion::DDS_CDR);
+            data_representation ==
+            fastdds::dds::DataRepresentationId_t::XCDR_DATA_REPRESENTATION ? eprosima::fastcdr::CdrVersion::
+                    XCDRv1 : eprosima::fastcdr::CdrVersion::XCDRv2);
     payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
+    if (data_representation == fastdds::dds::DataRepresentationId_t::XCDR_DATA_REPRESENTATION)
+    {
+        if (MUTABLE == extensibility_)
+        {
+            ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR);
+        }
+        else
+        {
+            ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR);
+        }
+    }
+    else
+    {
+        if (MUTABLE == extensibility_)
+        {
+            ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PL_CDR2);
+        }
+        else if (APPENDABLE == extensibility_)
+        {
+            ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2);
+        }
+        else
+        {
+            ser.set_encoding_flag(eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2);
+        }
+    }
 
     try
     {
@@ -219,6 +257,20 @@ void DynamicPubSubType::UpdateDynamicTypeInfo()
 
         m_typeSize = static_cast<uint32_t>(DynamicData::getMaxCdrSerializedSize(dynamic_type_) + 4);
         setName(dynamic_type_->get_name().c_str());
+
+        // Retrieve extensibility.
+        if (dynamic_type_->get_descriptor()->annotation_is_final())
+        {
+            extensibility_ = FINAL;
+        }
+        else if (dynamic_type_->get_descriptor()->annotation_is_mutable())
+        {
+            extensibility_ = MUTABLE;
+        }
+        else
+        {
+            extensibility_ = APPENDABLE;
+        }
     }
 }
 

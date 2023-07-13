@@ -16,8 +16,9 @@
  * @file TypesBase.cpp
  */
 
-#include <fastrtps/types/TypesBase.h>
 #include <fastcdr/Cdr.h>
+#include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -43,13 +44,6 @@ void MemberFlag::deserialize(
     m_MemberFlag = std::bitset<16>(bits);
 }
 
-size_t MemberFlag::getCdrSerializedSize(
-        const MemberFlag&,
-        size_t current_alignment)
-{
-    return 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-}
-
 void TypeFlag::serialize(
         eprosima::fastcdr::Cdr& cdr) const
 {
@@ -67,13 +61,27 @@ void TypeFlag::deserialize(
     m_TypeFlag = std::bitset<16>(bits);
 }
 
-size_t TypeFlag::getCdrSerializedSize(
-        const TypeFlag&,
+} // namespace types
+} // namespace fastrtps
+} // namespace eprosima
+
+namespace eprosima {
+namespace fastcdr {
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator&,
+        const eprosima::fastrtps::types::MemberFlag&,
         size_t current_alignment)
 {
     return 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 }
 
-} // namespace types
-} // namespace fastrtps
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator&,
+        const eprosima::fastrtps::types::TypeFlag&,
+        size_t current_alignment)
+{
+    return 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+}
+
+} // namespace fastcdr
 } // namespace eprosima

@@ -25,17 +25,16 @@
 #include <fastrtps/qos/QosPolicies.h>
 
 #include <fastcdr/Cdr.h>
-
+#include <fastcdr/CdrSizeCalculator.hpp>
 #include <fastcdr/exceptions/BadParamException.h>
 using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 #include <cstring>
 
-
-namespace eprosima{
-namespace fastrtps{
-namespace types{
+namespace eprosima {
+namespace fastrtps {
+namespace types {
 
 
 
@@ -48,24 +47,28 @@ StringSTypeDefn::~StringSTypeDefn()
 {
 }
 
-StringSTypeDefn::StringSTypeDefn(const StringSTypeDefn &x)
+StringSTypeDefn::StringSTypeDefn(
+        const StringSTypeDefn& x)
 {
     m_bound = x.m_bound;
 }
 
-StringSTypeDefn::StringSTypeDefn(StringSTypeDefn &&x)
+StringSTypeDefn::StringSTypeDefn(
+        StringSTypeDefn&& x)
 {
     m_bound = x.m_bound;
 }
 
-StringSTypeDefn& StringSTypeDefn::operator=(const StringSTypeDefn &x)
+StringSTypeDefn& StringSTypeDefn::operator =(
+        const StringSTypeDefn& x)
 {
     m_bound = x.m_bound;
 
     return *this;
 }
 
-StringSTypeDefn& StringSTypeDefn::operator=(StringSTypeDefn &&x)
+StringSTypeDefn& StringSTypeDefn::operator =(
+        StringSTypeDefn&& x)
 {
     m_bound = x.m_bound;
 
@@ -82,38 +85,32 @@ StringSTypeDefn& StringSTypeDefn::operator=(StringSTypeDefn &&x)
 //     return current_alignment - initial_alignment;
 // }
 
-size_t StringSTypeDefn::getCdrSerializedSize(const StringSTypeDefn&, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-    return current_alignment - initial_alignment;
-}
-
-void StringSTypeDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
+void StringSTypeDefn::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_bound;
 }
 
-void StringSTypeDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void StringSTypeDefn::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_bound;
 }
 
-bool StringSTypeDefn::consistent(const StringSTypeDefn &x,
+bool StringSTypeDefn::consistent(
+        const StringSTypeDefn& x,
         const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
     return (consistency.m_kind == ALLOW_TYPE_COERCION && consistency.m_ignore_string_bounds)
-        || m_bound >= x.m_bound;
+           || m_bound >= x.m_bound;
 }
 
-bool StringSTypeDefn::consistent(const StringLTypeDefn &x,
+bool StringSTypeDefn::consistent(
+        const StringLTypeDefn& x,
         const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
     return (consistency.m_kind == ALLOW_TYPE_COERCION && consistency.m_ignore_string_bounds)
-        || m_bound >= x.bound();
+           || m_bound >= x.bound();
 }
 
 StringLTypeDefn::StringLTypeDefn()
@@ -125,24 +122,28 @@ StringLTypeDefn::~StringLTypeDefn()
 {
 }
 
-StringLTypeDefn::StringLTypeDefn(const StringLTypeDefn &x)
+StringLTypeDefn::StringLTypeDefn(
+        const StringLTypeDefn& x)
 {
     m_bound = x.m_bound;
 }
 
-StringLTypeDefn::StringLTypeDefn(StringLTypeDefn &&x)
+StringLTypeDefn::StringLTypeDefn(
+        StringLTypeDefn&& x)
 {
     m_bound = x.m_bound;
 }
 
-StringLTypeDefn& StringLTypeDefn::operator=(const StringLTypeDefn &x)
+StringLTypeDefn& StringLTypeDefn::operator =(
+        const StringLTypeDefn& x)
 {
     m_bound = x.m_bound;
 
     return *this;
 }
 
-StringLTypeDefn& StringLTypeDefn::operator=(StringLTypeDefn &&x)
+StringLTypeDefn& StringLTypeDefn::operator =(
+        StringLTypeDefn&& x)
 {
     m_bound = x.m_bound;
 
@@ -159,38 +160,32 @@ StringLTypeDefn& StringLTypeDefn::operator=(StringLTypeDefn &&x)
 //     return current_alignment - initial_alignment;
 // }
 
-size_t StringLTypeDefn::getCdrSerializedSize(const StringLTypeDefn&, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    return current_alignment - initial_alignment;
-}
-
-void StringLTypeDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
+void StringLTypeDefn::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_bound;
 }
 
-void StringLTypeDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void StringLTypeDefn::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_bound;
 }
 
-bool StringLTypeDefn::consistent(const StringLTypeDefn &x,
+bool StringLTypeDefn::consistent(
+        const StringLTypeDefn& x,
         const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
     return (consistency.m_kind == ALLOW_TYPE_COERCION && consistency.m_ignore_string_bounds)
-        || m_bound >= x.m_bound;
+           || m_bound >= x.m_bound;
 }
 
-bool StringLTypeDefn::consistent(const StringSTypeDefn &x,
+bool StringLTypeDefn::consistent(
+        const StringSTypeDefn& x,
         const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
     return (consistency.m_kind == ALLOW_TYPE_COERCION && consistency.m_ignore_string_bounds)
-        || m_bound >= x.bound();
+           || m_bound >= x.bound();
 }
 
 PlainCollectionHeader::PlainCollectionHeader()
@@ -202,19 +197,22 @@ PlainCollectionHeader::~PlainCollectionHeader()
 {
 }
 
-PlainCollectionHeader::PlainCollectionHeader(const PlainCollectionHeader &x)
+PlainCollectionHeader::PlainCollectionHeader(
+        const PlainCollectionHeader& x)
 {
     m_equiv_kind = x.m_equiv_kind;
     m_element_flags = x.m_element_flags;
 }
 
-PlainCollectionHeader::PlainCollectionHeader(PlainCollectionHeader &&x)
+PlainCollectionHeader::PlainCollectionHeader(
+        PlainCollectionHeader&& x)
 {
     m_equiv_kind = x.m_equiv_kind;
     m_element_flags = x.m_element_flags;
 }
 
-PlainCollectionHeader& PlainCollectionHeader::operator=(const PlainCollectionHeader &x)
+PlainCollectionHeader& PlainCollectionHeader::operator =(
+        const PlainCollectionHeader& x)
 {
     m_equiv_kind = x.m_equiv_kind;
     m_element_flags = x.m_element_flags;
@@ -222,7 +220,8 @@ PlainCollectionHeader& PlainCollectionHeader::operator=(const PlainCollectionHea
     return *this;
 }
 
-PlainCollectionHeader& PlainCollectionHeader::operator=(PlainCollectionHeader &&x)
+PlainCollectionHeader& PlainCollectionHeader::operator =(
+        PlainCollectionHeader&& x)
 {
     m_equiv_kind = x.m_equiv_kind;
     m_element_flags = x.m_element_flags;
@@ -242,31 +241,22 @@ PlainCollectionHeader& PlainCollectionHeader::operator=(PlainCollectionHeader &&
 //     return current_alignment - initial_alignment;
 // }
 
-size_t PlainCollectionHeader::getCdrSerializedSize(const PlainCollectionHeader&, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    return current_alignment - initial_alignment;
-}
-
-void PlainCollectionHeader::serialize(eprosima::fastcdr::Cdr &scdr) const
+void PlainCollectionHeader::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_equiv_kind;
     scdr << m_element_flags;
 }
 
-void PlainCollectionHeader::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void PlainCollectionHeader::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_equiv_kind;
     dcdr >> m_element_flags;
 }
 
-bool PlainCollectionHeader::consistent(const PlainCollectionHeader &x,
+bool PlainCollectionHeader::consistent(
+        const PlainCollectionHeader& x,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     return m_equiv_kind == x.m_equiv_kind;
@@ -284,7 +274,8 @@ PlainSequenceSElemDefn::~PlainSequenceSElemDefn()
     delete m_element_identifier;
 }
 
-void PlainSequenceSElemDefn::element_identifier(const TypeIdentifier* _element_identifier)
+void PlainSequenceSElemDefn::element_identifier(
+        const TypeIdentifier* _element_identifier)
 {
     if (_element_identifier != nullptr)
     {
@@ -301,7 +292,8 @@ void PlainSequenceSElemDefn::element_identifier(const TypeIdentifier* _element_i
     }
 }
 
-PlainSequenceSElemDefn::PlainSequenceSElemDefn(const PlainSequenceSElemDefn &x)
+PlainSequenceSElemDefn::PlainSequenceSElemDefn(
+        const PlainSequenceSElemDefn& x)
 {
     m_header = x.m_header;
     m_bound = x.m_bound;
@@ -316,7 +308,8 @@ PlainSequenceSElemDefn::PlainSequenceSElemDefn(const PlainSequenceSElemDefn &x)
     }
 }
 
-PlainSequenceSElemDefn::PlainSequenceSElemDefn(PlainSequenceSElemDefn &&x)
+PlainSequenceSElemDefn::PlainSequenceSElemDefn(
+        PlainSequenceSElemDefn&& x)
 {
     m_header = std::move(x.m_header);
     m_bound = x.m_bound;
@@ -331,7 +324,8 @@ PlainSequenceSElemDefn::PlainSequenceSElemDefn(PlainSequenceSElemDefn &&x)
     }
 }
 
-PlainSequenceSElemDefn& PlainSequenceSElemDefn::operator=(const PlainSequenceSElemDefn &x)
+PlainSequenceSElemDefn& PlainSequenceSElemDefn::operator =(
+        const PlainSequenceSElemDefn& x)
 {
     m_header = x.m_header;
     m_bound = x.m_bound;
@@ -352,7 +346,8 @@ PlainSequenceSElemDefn& PlainSequenceSElemDefn::operator=(const PlainSequenceSEl
     return *this;
 }
 
-PlainSequenceSElemDefn& PlainSequenceSElemDefn::operator=(PlainSequenceSElemDefn &&x)
+PlainSequenceSElemDefn& PlainSequenceSElemDefn::operator =(
+        PlainSequenceSElemDefn&& x)
 {
     m_header = std::move(x.m_header);
     m_bound = x.m_bound;
@@ -388,30 +383,8 @@ PlainSequenceSElemDefn& PlainSequenceSElemDefn::operator=(PlainSequenceSElemDefn
 //     return current_alignment - initial_alignment;
 // }
 
-size_t PlainSequenceSElemDefn::getCdrSerializedSize(const PlainSequenceSElemDefn& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += PlainCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    if (data.element_identifier() != nullptr)
-    {
-        size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-    }
-    else
-    {
-        TypeIdentifier emptyId;
-        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-    }
-
-    return current_alignment - initial_alignment;
-}
-
-void PlainSequenceSElemDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
+void PlainSequenceSElemDefn::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_header;
     scdr << m_bound;
@@ -426,7 +399,8 @@ void PlainSequenceSElemDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
     }
 }
 
-void PlainSequenceSElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void PlainSequenceSElemDefn::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_bound;
@@ -437,7 +411,8 @@ void PlainSequenceSElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> *m_element_identifier;
 }
 
-bool PlainSequenceSElemDefn::consistent(const PlainSequenceSElemDefn &x,
+bool PlainSequenceSElemDefn::consistent(
+        const PlainSequenceSElemDefn& x,
         const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
     if (m_header.consistent(x.m_header, consistency))
@@ -446,7 +421,7 @@ bool PlainSequenceSElemDefn::consistent(const PlainSequenceSElemDefn &x,
                 || m_bound >= x.m_bound)
         {
             if (m_element_identifier == x.m_element_identifier
-                || (m_element_identifier != nullptr && x.m_element_identifier != nullptr))
+                    || (m_element_identifier != nullptr && x.m_element_identifier != nullptr))
             {
                 return m_element_identifier->consistent(*x.m_element_identifier, consistency);
             }
@@ -466,7 +441,8 @@ PlainSequenceLElemDefn::~PlainSequenceLElemDefn()
     delete m_element_identifier;
 }
 
-void PlainSequenceLElemDefn::element_identifier(const TypeIdentifier* _element_identifier)
+void PlainSequenceLElemDefn::element_identifier(
+        const TypeIdentifier* _element_identifier)
 {
     if (_element_identifier != nullptr)
     {
@@ -483,7 +459,8 @@ void PlainSequenceLElemDefn::element_identifier(const TypeIdentifier* _element_i
     }
 }
 
-PlainSequenceLElemDefn::PlainSequenceLElemDefn(const PlainSequenceLElemDefn &x)
+PlainSequenceLElemDefn::PlainSequenceLElemDefn(
+        const PlainSequenceLElemDefn& x)
 {
     m_header = x.m_header;
     m_bound = x.m_bound;
@@ -498,7 +475,8 @@ PlainSequenceLElemDefn::PlainSequenceLElemDefn(const PlainSequenceLElemDefn &x)
     }
 }
 
-PlainSequenceLElemDefn::PlainSequenceLElemDefn(PlainSequenceLElemDefn &&x)
+PlainSequenceLElemDefn::PlainSequenceLElemDefn(
+        PlainSequenceLElemDefn&& x)
 {
     m_header = std::move(x.m_header);
     m_bound = x.m_bound;
@@ -513,7 +491,8 @@ PlainSequenceLElemDefn::PlainSequenceLElemDefn(PlainSequenceLElemDefn &&x)
     }
 }
 
-PlainSequenceLElemDefn& PlainSequenceLElemDefn::operator=(const PlainSequenceLElemDefn &x)
+PlainSequenceLElemDefn& PlainSequenceLElemDefn::operator =(
+        const PlainSequenceLElemDefn& x)
 {
     m_header = x.m_header;
     m_bound = x.m_bound;
@@ -534,7 +513,8 @@ PlainSequenceLElemDefn& PlainSequenceLElemDefn::operator=(const PlainSequenceLEl
     return *this;
 }
 
-PlainSequenceLElemDefn& PlainSequenceLElemDefn::operator=(PlainSequenceLElemDefn &&x)
+PlainSequenceLElemDefn& PlainSequenceLElemDefn::operator =(
+        PlainSequenceLElemDefn&& x)
 {
     m_header = std::move(x.m_header);
     m_bound = x.m_bound;
@@ -570,31 +550,8 @@ PlainSequenceLElemDefn& PlainSequenceLElemDefn::operator=(PlainSequenceLElemDefn
 //     return current_alignment - initial_alignment;
 // }
 
-size_t PlainSequenceLElemDefn::getCdrSerializedSize(const PlainSequenceLElemDefn& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += PlainCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    if (data.element_identifier() != nullptr)
-    {
-        size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-    }
-    else
-    {
-        TypeIdentifier emptyId;
-        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-    }
-
-
-    return current_alignment - initial_alignment;
-}
-
-void PlainSequenceLElemDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
+void PlainSequenceLElemDefn::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_header;
     scdr << m_bound;
@@ -609,7 +566,8 @@ void PlainSequenceLElemDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
     }
 }
 
-void PlainSequenceLElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void PlainSequenceLElemDefn::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_bound;
@@ -620,7 +578,8 @@ void PlainSequenceLElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> *m_element_identifier;
 }
 
-bool PlainSequenceLElemDefn::consistent(const PlainSequenceLElemDefn &x,
+bool PlainSequenceLElemDefn::consistent(
+        const PlainSequenceLElemDefn& x,
         const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
     if (m_header.consistent(x.m_header, consistency))
@@ -629,7 +588,7 @@ bool PlainSequenceLElemDefn::consistent(const PlainSequenceLElemDefn &x,
                 || m_bound >= x.m_bound)
         {
             if (m_element_identifier == x.m_element_identifier
-                || (m_element_identifier != nullptr && x.m_element_identifier != nullptr))
+                    || (m_element_identifier != nullptr && x.m_element_identifier != nullptr))
             {
                 return m_element_identifier->consistent(*x.m_element_identifier, consistency);
             }
@@ -650,7 +609,8 @@ PlainArraySElemDefn::~PlainArraySElemDefn()
     delete m_element_identifier;
 }
 
-void PlainArraySElemDefn::element_identifier(const TypeIdentifier* _element_identifier)
+void PlainArraySElemDefn::element_identifier(
+        const TypeIdentifier* _element_identifier)
 {
     if (_element_identifier != nullptr)
     {
@@ -667,7 +627,8 @@ void PlainArraySElemDefn::element_identifier(const TypeIdentifier* _element_iden
     }
 }
 
-PlainArraySElemDefn::PlainArraySElemDefn(const PlainArraySElemDefn &x)
+PlainArraySElemDefn::PlainArraySElemDefn(
+        const PlainArraySElemDefn& x)
 {
     m_header = x.m_header;
     m_array_bound_seq = x.m_array_bound_seq;
@@ -682,7 +643,8 @@ PlainArraySElemDefn::PlainArraySElemDefn(const PlainArraySElemDefn &x)
     }
 }
 
-PlainArraySElemDefn::PlainArraySElemDefn(PlainArraySElemDefn &&x)
+PlainArraySElemDefn::PlainArraySElemDefn(
+        PlainArraySElemDefn&& x)
 {
     m_header = std::move(x.m_header);
     m_array_bound_seq = std::move(x.m_array_bound_seq);
@@ -698,7 +660,8 @@ PlainArraySElemDefn::PlainArraySElemDefn(PlainArraySElemDefn &&x)
     }
 }
 
-PlainArraySElemDefn& PlainArraySElemDefn::operator=(const PlainArraySElemDefn &x)
+PlainArraySElemDefn& PlainArraySElemDefn::operator =(
+        const PlainArraySElemDefn& x)
 {
     m_header = x.m_header;
     m_array_bound_seq = x.m_array_bound_seq;
@@ -719,7 +682,8 @@ PlainArraySElemDefn& PlainArraySElemDefn::operator=(const PlainArraySElemDefn &x
     return *this;
 }
 
-PlainArraySElemDefn& PlainArraySElemDefn::operator=(PlainArraySElemDefn &&x)
+PlainArraySElemDefn& PlainArraySElemDefn::operator =(
+        PlainArraySElemDefn&& x)
 {
     m_header = std::move(x.m_header);
     m_array_bound_seq = std::move(x.m_array_bound_seq);
@@ -756,33 +720,8 @@ PlainArraySElemDefn& PlainArraySElemDefn::operator=(PlainArraySElemDefn &&x)
 //     return current_alignment - initial_alignment;
 // }
 
-size_t PlainArraySElemDefn::getCdrSerializedSize(const PlainArraySElemDefn& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += PlainCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += (data.array_bound_seq().size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    if (data.element_identifier() != nullptr)
-    {
-        size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-    }
-    else
-    {
-        TypeIdentifier emptyId;
-        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-    }
-
-
-    return current_alignment - initial_alignment;
-}
-
-void PlainArraySElemDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
+void PlainArraySElemDefn::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_header;
     scdr << m_array_bound_seq;
@@ -798,7 +737,8 @@ void PlainArraySElemDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
     }
 }
 
-void PlainArraySElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void PlainArraySElemDefn::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_array_bound_seq;
@@ -809,7 +749,8 @@ void PlainArraySElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> *m_element_identifier;
 }
 
-bool PlainArraySElemDefn::consistent(const PlainArraySElemDefn &x,
+bool PlainArraySElemDefn::consistent(
+        const PlainArraySElemDefn& x,
         const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
     if (m_header.consistent(x.m_header, consistency))
@@ -830,7 +771,7 @@ bool PlainArraySElemDefn::consistent(const PlainArraySElemDefn &x,
             }
 
             if (m_element_identifier == x.m_element_identifier
-                || (m_element_identifier != nullptr && x.m_element_identifier != nullptr))
+                    || (m_element_identifier != nullptr && x.m_element_identifier != nullptr))
             {
                 return m_element_identifier->consistent(*x.m_element_identifier, consistency);
             }
@@ -851,7 +792,8 @@ PlainArrayLElemDefn::~PlainArrayLElemDefn()
     delete m_element_identifier;
 }
 
-void PlainArrayLElemDefn::element_identifier(const TypeIdentifier* _element_identifier)
+void PlainArrayLElemDefn::element_identifier(
+        const TypeIdentifier* _element_identifier)
 {
     if (_element_identifier != nullptr)
     {
@@ -868,7 +810,8 @@ void PlainArrayLElemDefn::element_identifier(const TypeIdentifier* _element_iden
     }
 }
 
-PlainArrayLElemDefn::PlainArrayLElemDefn(const PlainArrayLElemDefn &x)
+PlainArrayLElemDefn::PlainArrayLElemDefn(
+        const PlainArrayLElemDefn& x)
 {
     m_header = x.m_header;
     m_array_bound_seq = x.m_array_bound_seq;
@@ -883,7 +826,8 @@ PlainArrayLElemDefn::PlainArrayLElemDefn(const PlainArrayLElemDefn &x)
     }
 }
 
-PlainArrayLElemDefn::PlainArrayLElemDefn(PlainArrayLElemDefn &&x)
+PlainArrayLElemDefn::PlainArrayLElemDefn(
+        PlainArrayLElemDefn&& x)
 {
     m_header = std::move(x.m_header);
     m_array_bound_seq = std::move(x.m_array_bound_seq);
@@ -898,7 +842,8 @@ PlainArrayLElemDefn::PlainArrayLElemDefn(PlainArrayLElemDefn &&x)
     }
 }
 
-PlainArrayLElemDefn& PlainArrayLElemDefn::operator=(const PlainArrayLElemDefn &x)
+PlainArrayLElemDefn& PlainArrayLElemDefn::operator =(
+        const PlainArrayLElemDefn& x)
 {
     m_header = x.m_header;
     m_array_bound_seq = x.m_array_bound_seq;
@@ -919,7 +864,8 @@ PlainArrayLElemDefn& PlainArrayLElemDefn::operator=(const PlainArrayLElemDefn &x
     return *this;
 }
 
-PlainArrayLElemDefn& PlainArrayLElemDefn::operator=(PlainArrayLElemDefn &&x)
+PlainArrayLElemDefn& PlainArrayLElemDefn::operator =(
+        PlainArrayLElemDefn&& x)
 {
     m_header = std::move(x.m_header);
     m_array_bound_seq = std::move(x.m_array_bound_seq);
@@ -957,31 +903,8 @@ PlainArrayLElemDefn& PlainArrayLElemDefn::operator=(PlainArrayLElemDefn &&x)
 //     return current_alignment - initial_alignment;
 // }
 
-size_t PlainArrayLElemDefn::getCdrSerializedSize(const PlainArrayLElemDefn& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += PlainCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-    current_alignment += (data.array_bound_seq().size() * 4) + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    if (data.element_identifier() != nullptr)
-    {
-        size_t size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-    }
-    else
-    {
-        TypeIdentifier emptyId;
-        size_t size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-    }
-
-    return current_alignment - initial_alignment;
-}
-
-void PlainArrayLElemDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
+void PlainArrayLElemDefn::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_header;
     scdr << m_array_bound_seq;
@@ -996,7 +919,8 @@ void PlainArrayLElemDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
     }
 }
 
-void PlainArrayLElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void PlainArrayLElemDefn::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_array_bound_seq;
@@ -1007,7 +931,8 @@ void PlainArrayLElemDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> *m_element_identifier;
 }
 
-bool PlainArrayLElemDefn::consistent(const PlainArrayLElemDefn &x,
+bool PlainArrayLElemDefn::consistent(
+        const PlainArrayLElemDefn& x,
         const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
     if (m_header.consistent(x.m_header, consistency))
@@ -1028,7 +953,7 @@ bool PlainArrayLElemDefn::consistent(const PlainArrayLElemDefn &x,
             }
 
             if (m_element_identifier == x.m_element_identifier
-                || (m_element_identifier != nullptr && x.m_element_identifier != nullptr))
+                    || (m_element_identifier != nullptr && x.m_element_identifier != nullptr))
             {
                 return m_element_identifier->consistent(*x.m_element_identifier, consistency);
             }
@@ -1051,7 +976,8 @@ PlainMapSTypeDefn::~PlainMapSTypeDefn()
     delete m_key_identifier;
 }
 
-void PlainMapSTypeDefn::element_identifier(const TypeIdentifier* _element_identifier)
+void PlainMapSTypeDefn::element_identifier(
+        const TypeIdentifier* _element_identifier)
 {
     if (_element_identifier != nullptr)
     {
@@ -1068,7 +994,8 @@ void PlainMapSTypeDefn::element_identifier(const TypeIdentifier* _element_identi
     }
 }
 
-void PlainMapSTypeDefn::key_identifier(const TypeIdentifier* _key_identifier)
+void PlainMapSTypeDefn::key_identifier(
+        const TypeIdentifier* _key_identifier)
 {
     if (_key_identifier != nullptr)
     {
@@ -1085,7 +1012,8 @@ void PlainMapSTypeDefn::key_identifier(const TypeIdentifier* _key_identifier)
     }
 }
 
-PlainMapSTypeDefn::PlainMapSTypeDefn(const PlainMapSTypeDefn &x)
+PlainMapSTypeDefn::PlainMapSTypeDefn(
+        const PlainMapSTypeDefn& x)
 {
     m_header = x.m_header;
     m_bound = x.m_bound;
@@ -1110,7 +1038,8 @@ PlainMapSTypeDefn::PlainMapSTypeDefn(const PlainMapSTypeDefn &x)
     }
 }
 
-PlainMapSTypeDefn::PlainMapSTypeDefn(PlainMapSTypeDefn &&x)
+PlainMapSTypeDefn::PlainMapSTypeDefn(
+        PlainMapSTypeDefn&& x)
 {
     m_header = std::move(x.m_header);
     m_bound = x.m_bound;
@@ -1135,7 +1064,8 @@ PlainMapSTypeDefn::PlainMapSTypeDefn(PlainMapSTypeDefn &&x)
     }
 }
 
-PlainMapSTypeDefn& PlainMapSTypeDefn::operator=(const PlainMapSTypeDefn &x)
+PlainMapSTypeDefn& PlainMapSTypeDefn::operator =(
+        const PlainMapSTypeDefn& x)
 {
     m_header = x.m_header;
     m_bound = x.m_bound;
@@ -1170,7 +1100,8 @@ PlainMapSTypeDefn& PlainMapSTypeDefn::operator=(const PlainMapSTypeDefn &x)
     return *this;
 }
 
-PlainMapSTypeDefn& PlainMapSTypeDefn::operator=(PlainMapSTypeDefn &&x)
+PlainMapSTypeDefn& PlainMapSTypeDefn::operator =(
+        PlainMapSTypeDefn&& x)
 {
     m_header = std::move(x.m_header);
     m_bound = x.m_bound;
@@ -1226,47 +1157,8 @@ PlainMapSTypeDefn& PlainMapSTypeDefn::operator=(PlainMapSTypeDefn &&x)
 //     return current_alignment - initial_alignment;
 // }
 
-size_t PlainMapSTypeDefn::getCdrSerializedSize(const PlainMapSTypeDefn& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += PlainCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size_t size = 0;
-    if (data.element_identifier() != nullptr)
-    {
-        size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-    }
-    else
-    {
-        TypeIdentifier emptyId;
-        size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-    }
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    if (data.key_identifier() != nullptr)
-    {
-        size = TypeIdentifier::getCdrSerializedSize(*data.key_identifier(), current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-    }
-    else
-    {
-        TypeIdentifier emptyId;
-        size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-    }
-
-
-    return current_alignment - initial_alignment;
-}
-
-void PlainMapSTypeDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
+void PlainMapSTypeDefn::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_header;
     scdr << m_bound;
@@ -1291,7 +1183,8 @@ void PlainMapSTypeDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
     }
 }
 
-void PlainMapSTypeDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void PlainMapSTypeDefn::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_bound;
@@ -1308,7 +1201,8 @@ void PlainMapSTypeDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> *m_key_identifier;
 }
 
-bool PlainMapSTypeDefn::consistent(const PlainMapSTypeDefn &x,
+bool PlainMapSTypeDefn::consistent(
+        const PlainMapSTypeDefn& x,
         const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
     if (m_header.consistent(x.m_header, consistency))
@@ -1366,7 +1260,8 @@ PlainMapLTypeDefn::~PlainMapLTypeDefn()
     delete m_key_identifier;
 }
 
-void PlainMapLTypeDefn::element_identifier(const TypeIdentifier* _element_identifier)
+void PlainMapLTypeDefn::element_identifier(
+        const TypeIdentifier* _element_identifier)
 {
     if (_element_identifier != nullptr)
     {
@@ -1383,7 +1278,8 @@ void PlainMapLTypeDefn::element_identifier(const TypeIdentifier* _element_identi
     }
 }
 
-void PlainMapLTypeDefn::key_identifier(const TypeIdentifier* _key_identifier)
+void PlainMapLTypeDefn::key_identifier(
+        const TypeIdentifier* _key_identifier)
 {
     if (_key_identifier != nullptr)
     {
@@ -1400,7 +1296,8 @@ void PlainMapLTypeDefn::key_identifier(const TypeIdentifier* _key_identifier)
     }
 }
 
-PlainMapLTypeDefn::PlainMapLTypeDefn(const PlainMapLTypeDefn &x)
+PlainMapLTypeDefn::PlainMapLTypeDefn(
+        const PlainMapLTypeDefn& x)
 {
     m_header = x.m_header;
     m_bound = x.m_bound;
@@ -1425,7 +1322,8 @@ PlainMapLTypeDefn::PlainMapLTypeDefn(const PlainMapLTypeDefn &x)
     }
 }
 
-PlainMapLTypeDefn::PlainMapLTypeDefn(PlainMapLTypeDefn &&x)
+PlainMapLTypeDefn::PlainMapLTypeDefn(
+        PlainMapLTypeDefn&& x)
 {
     m_header = std::move(x.m_header);
     m_bound = x.m_bound;
@@ -1450,7 +1348,8 @@ PlainMapLTypeDefn::PlainMapLTypeDefn(PlainMapLTypeDefn &&x)
     }
 }
 
-PlainMapLTypeDefn& PlainMapLTypeDefn::operator=(const PlainMapLTypeDefn &x)
+PlainMapLTypeDefn& PlainMapLTypeDefn::operator =(
+        const PlainMapLTypeDefn& x)
 {
     m_header = x.m_header;
     m_bound = x.m_bound;
@@ -1485,7 +1384,8 @@ PlainMapLTypeDefn& PlainMapLTypeDefn::operator=(const PlainMapLTypeDefn &x)
     return *this;
 }
 
-PlainMapLTypeDefn& PlainMapLTypeDefn::operator=(PlainMapLTypeDefn &&x)
+PlainMapLTypeDefn& PlainMapLTypeDefn::operator =(
+        PlainMapLTypeDefn&& x)
 {
     m_header = std::move(x.m_header);
     m_bound = x.m_bound;
@@ -1541,47 +1441,8 @@ PlainMapLTypeDefn& PlainMapLTypeDefn::operator=(PlainMapLTypeDefn &&x)
 //     return current_alignment - initial_alignment;
 // }
 
-size_t PlainMapLTypeDefn::getCdrSerializedSize(const PlainMapLTypeDefn& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    current_alignment += PlainCollectionHeader::getCdrSerializedSize(data.header(), current_alignment);
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    size_t size = 0;
-    if (data.element_identifier() != nullptr)
-    {
-        size = TypeIdentifier::getCdrSerializedSize(*data.element_identifier(), current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-    }
-    else
-    {
-        TypeIdentifier emptyId;
-        size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-    }
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-    //current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8);
-    if (data.key_identifier() != nullptr)
-    {
-        size = TypeIdentifier::getCdrSerializedSize(*data.key_identifier(), current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-    }
-    else
-    {
-        TypeIdentifier emptyId;
-        size = TypeIdentifier::getCdrSerializedSize(emptyId, current_alignment);
-        current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-    }
-
-
-    return current_alignment - initial_alignment;
-}
-
-void PlainMapLTypeDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
+void PlainMapLTypeDefn::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_header;
     scdr << m_bound;
@@ -1606,7 +1467,8 @@ void PlainMapLTypeDefn::serialize(eprosima::fastcdr::Cdr &scdr) const
     }
 }
 
-void PlainMapLTypeDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void PlainMapLTypeDefn::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_header;
     dcdr >> m_bound;
@@ -1623,7 +1485,8 @@ void PlainMapLTypeDefn::deserialize(eprosima::fastcdr::Cdr &dcdr)
     dcdr >> *m_key_identifier;
 }
 
-bool PlainMapLTypeDefn::consistent(const PlainMapLTypeDefn &x,
+bool PlainMapLTypeDefn::consistent(
+        const PlainMapLTypeDefn& x,
         const TypeConsistencyEnforcementQosPolicy& consistency) const
 {
     if (m_header.consistent(x.m_header, consistency))
@@ -1679,21 +1542,24 @@ StronglyConnectedComponentId::~StronglyConnectedComponentId()
 {
 }
 
-StronglyConnectedComponentId::StronglyConnectedComponentId(const StronglyConnectedComponentId &x)
+StronglyConnectedComponentId::StronglyConnectedComponentId(
+        const StronglyConnectedComponentId& x)
 {
     m_sc_component_id = x.m_sc_component_id;
     m_scc_length = x.m_scc_length;
     m_scc_index = x.m_scc_index;
 }
 
-StronglyConnectedComponentId::StronglyConnectedComponentId(StronglyConnectedComponentId &&x)
+StronglyConnectedComponentId::StronglyConnectedComponentId(
+        StronglyConnectedComponentId&& x)
 {
     m_sc_component_id = std::move(x.m_sc_component_id);
     m_scc_length = x.m_scc_length;
     m_scc_index = x.m_scc_index;
 }
 
-StronglyConnectedComponentId& StronglyConnectedComponentId::operator=(const StronglyConnectedComponentId &x)
+StronglyConnectedComponentId& StronglyConnectedComponentId::operator =(
+        const StronglyConnectedComponentId& x)
 {
     m_sc_component_id = x.m_sc_component_id;
     m_scc_length = x.m_scc_length;
@@ -1702,7 +1568,8 @@ StronglyConnectedComponentId& StronglyConnectedComponentId::operator=(const Stro
     return *this;
 }
 
-StronglyConnectedComponentId& StronglyConnectedComponentId::operator=(StronglyConnectedComponentId &&x)
+StronglyConnectedComponentId& StronglyConnectedComponentId::operator =(
+        StronglyConnectedComponentId&& x)
 {
     m_sc_component_id = std::move(x.m_sc_component_id);
     m_scc_length = x.m_scc_length;
@@ -1711,43 +1578,30 @@ StronglyConnectedComponentId& StronglyConnectedComponentId::operator=(StronglyCo
     return *this;
 }
 
-size_t StronglyConnectedComponentId::getCdrSerializedSize(const StronglyConnectedComponentId& data, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    //current_alignment += ((14) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    size_t size = TypeObjectHashId::getCdrSerializedSize(data.sc_component_id(), current_alignment);
-    current_alignment += size + eprosima::fastcdr::Cdr::alignment(current_alignment, size);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    return current_alignment - initial_alignment;
-}
-
-void StronglyConnectedComponentId::serialize(eprosima::fastcdr::Cdr &scdr) const
+void StronglyConnectedComponentId::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
 {
     scdr << m_sc_component_id;
     scdr << m_scc_length;
     scdr << m_scc_index;
 }
 
-void StronglyConnectedComponentId::deserialize(eprosima::fastcdr::Cdr &dcdr)
+void StronglyConnectedComponentId::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
 {
     dcdr >> m_sc_component_id;
     dcdr >> m_scc_length;
     dcdr >> m_scc_index;
 }
 
-bool StronglyConnectedComponentId::consistent(const StronglyConnectedComponentId &x,
+bool StronglyConnectedComponentId::consistent(
+        const StronglyConnectedComponentId& x,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     // TODO It is neccessary apply some TypeConsistencyEnforcementQosPolicy?
     return std::memcmp(m_sc_component_id.hash(), x.m_sc_component_id.hash(), 14) == 0
-        && m_scc_index == x.m_scc_index
-        && m_scc_length == x.m_scc_length;
+           && m_scc_index == x.m_scc_index
+           && m_scc_length == x.m_scc_length;
 }
 
 ExtendedTypeDefn::ExtendedTypeDefn()
@@ -1758,20 +1612,24 @@ ExtendedTypeDefn::~ExtendedTypeDefn()
 {
 }
 
-ExtendedTypeDefn::ExtendedTypeDefn(const ExtendedTypeDefn &)
+ExtendedTypeDefn::ExtendedTypeDefn(
+        const ExtendedTypeDefn&)
 {
 }
 
-ExtendedTypeDefn::ExtendedTypeDefn(ExtendedTypeDefn &&)
+ExtendedTypeDefn::ExtendedTypeDefn(
+        ExtendedTypeDefn&&)
 {
 }
 
-ExtendedTypeDefn& ExtendedTypeDefn::operator=(const ExtendedTypeDefn &)
+ExtendedTypeDefn& ExtendedTypeDefn::operator =(
+        const ExtendedTypeDefn&)
 {
     return *this;
 }
 
-ExtendedTypeDefn& ExtendedTypeDefn::operator=(ExtendedTypeDefn &&)
+ExtendedTypeDefn& ExtendedTypeDefn::operator =(
+        ExtendedTypeDefn&&)
 {
     return *this;
 }
@@ -1783,22 +1641,18 @@ ExtendedTypeDefn& ExtendedTypeDefn::operator=(ExtendedTypeDefn &&)
 //     return current_alignment - initial_alignment;
 // }
 
-size_t ExtendedTypeDefn::getCdrSerializedSize(const ExtendedTypeDefn&, size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-    return current_alignment - initial_alignment;
-}
-
-void ExtendedTypeDefn::serialize(eprosima::fastcdr::Cdr &) const
+void ExtendedTypeDefn::serialize(
+        eprosima::fastcdr::Cdr&) const
 {
 }
 
-void ExtendedTypeDefn::deserialize(eprosima::fastcdr::Cdr &)
+void ExtendedTypeDefn::deserialize(
+        eprosima::fastcdr::Cdr&)
 {
 }
 
-bool ExtendedTypeDefn::consistent(const ExtendedTypeDefn&,
+bool ExtendedTypeDefn::consistent(
+        const ExtendedTypeDefn&,
         const TypeConsistencyEnforcementQosPolicy&) const
 {
     return true;
@@ -1806,4 +1660,323 @@ bool ExtendedTypeDefn::consistent(const ExtendedTypeDefn&,
 
 } // namespace types
 } // namespace fastrtps
+} // namespace eprosima
+
+namespace eprosima {
+namespace fastcdr {
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::StringSTypeDefn& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.bound(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::StringLTypeDefn& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.bound(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::PlainCollectionHeader& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.equiv_kind(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.element_flags(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::PlainSequenceSElemDefn& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.bound(), current_alignment);
+    if (data.element_identifier() != nullptr)
+    {
+        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                            2), *data.element_identifier(), current_alignment);
+    }
+    else
+    {
+        eprosima::fastrtps::types::TypeIdentifier emptyId;
+        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                            2), emptyId, current_alignment);
+    }
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::PlainSequenceLElemDefn& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.bound(), current_alignment);
+    if (data.element_identifier() != nullptr)
+    {
+        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                            2), *data.element_identifier(), current_alignment);
+    }
+    else
+    {
+        eprosima::fastrtps::types::TypeIdentifier emptyId;
+        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                            2), emptyId, current_alignment);
+    }
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::PlainArraySElemDefn& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.array_bound_seq(), current_alignment);
+    if (data.element_identifier() != nullptr)
+    {
+        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                            2), *data.element_identifier(), current_alignment);
+    }
+    else
+    {
+        eprosima::fastrtps::types::TypeIdentifier emptyId;
+        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                            2), emptyId, current_alignment);
+    }
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::PlainArrayLElemDefn& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.array_bound_seq(), current_alignment);
+    if (data.element_identifier() != nullptr)
+    {
+        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                            2), *data.element_identifier(), current_alignment);
+    }
+    else
+    {
+        eprosima::fastrtps::types::TypeIdentifier emptyId;
+        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                            2), emptyId, current_alignment);
+    }
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::PlainMapSTypeDefn& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.bound(), current_alignment);
+    if (data.element_identifier() != nullptr)
+    {
+        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                            2), *data.element_identifier(), current_alignment);
+    }
+    else
+    {
+        eprosima::fastrtps::types::TypeIdentifier emptyId;
+        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                            2), emptyId, current_alignment);
+    }
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        3), data.key_flags(), current_alignment);
+    if (data.key_identifier() != nullptr)
+    {
+        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                            4), *data.key_identifier(), current_alignment);
+    }
+    else
+    {
+        eprosima::fastrtps::types::TypeIdentifier emptyId;
+        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                            4), emptyId, current_alignment);
+    }
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::PlainMapLTypeDefn& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.header(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.bound(), current_alignment);
+    if (data.element_identifier() != nullptr)
+    {
+        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                            2), *data.element_identifier(), current_alignment);
+    }
+    else
+    {
+        eprosima::fastrtps::types::TypeIdentifier emptyId;
+        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                            2), emptyId, current_alignment);
+    }
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        3), data.key_flags(), current_alignment);
+    if (data.key_identifier() != nullptr)
+    {
+        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                            4), *data.key_identifier(), current_alignment);
+    }
+    else
+    {
+        eprosima::fastrtps::types::TypeIdentifier emptyId;
+        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                            4), emptyId, current_alignment);
+    }
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator& calculator,
+        const eprosima::fastrtps::types::StronglyConnectedComponentId& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    current_alignment += calculator.begin_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        0), data.sc_component_id(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        1), data.scc_length(), current_alignment);
+    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+                        2), data.scc_index(), current_alignment);
+
+    current_alignment += calculator.end_calculate_type_serialized_size(
+        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+
+    return current_alignment - initial_alignment;
+}
+
+size_t calculate_serialized_size(
+        eprosima::fastcdr::CdrSizeCalculator&,
+        const eprosima::fastrtps::types::ExtendedTypeDefn&,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+
+    return current_alignment - initial_alignment;
+}
+
+} // namespace fastcdr
 } // namespace eprosima

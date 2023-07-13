@@ -103,33 +103,6 @@ size_t HelloMsg::getMaxCdrSerializedSize(
     static_cast<void>(current_alignment);
     return HelloMsg_max_cdr_typesize;
 }
-
-size_t HelloMsg::calculate_serialized_size(
-        eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const HelloMsg& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            current_alignment);
-
-
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_deadlinekey, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1), data.m_payload, current_alignment);
-
-    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void HelloMsg::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -141,7 +114,9 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 );
 
-    scdr << eprosima::fastcdr::MemberId(0) << m_deadlinekey;scdr << eprosima::fastcdr::MemberId(1) << m_payload;
+    scdr             << eprosima::fastcdr::MemberId(0) << deadlinekey()
+                << eprosima::fastcdr::MemberId(1) << payload()
+    ;
 
     scdr.end_serialize_type(current_state);
 }
@@ -160,13 +135,13 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
                 switch (mid.id)
                 {
                                         case 0:
-                                            dcdr >> m_deadlinekey;
+                    dcdr >> deadlinekey();
                                             break;
                                         
-                    case 1:
-                        dcdr >> m_payload;
-ret_value = false;
-                        break;
+                                        case 1:
+                    dcdr >> payload();
+                                            break;
+                                        
                     default:
                         ret_value = false;
                         break;
@@ -258,6 +233,6 @@ void HelloMsg::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-   scdr << eprosima::fastcdr::MemberId(0) << m_deadlinekey;   
+   scdr << eprosima::fastcdr::MemberId(268435455) << deadlinekey();   
   
 }

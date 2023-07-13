@@ -26,6 +26,7 @@ namespace { char dummy; }
 
 #include "HelloWorld.h"
 #include "HelloWorldTypeObject.h"
+#include <mutex>
 #include <utility>
 #include <sstream>
 #include <fastrtps/rtps/common/SerializedPayload.h>
@@ -35,17 +36,22 @@ namespace { char dummy; }
 #include <fastrtps/types/AnnotationParameterValue.h>
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>
+#include <fastcdr/CdrSizeCalculator.hpp>
 
 using namespace eprosima::fastrtps::rtps;
 
 void registerHelloWorldTypes()
 {
-    TypeObjectFactory *factory = TypeObjectFactory::get_instance();
-    factory->add_type_object("HelloWorld", GetHelloWorldIdentifier(true),
-    GetHelloWorldObject(true));
-    factory->add_type_object("HelloWorld", GetHelloWorldIdentifier(false),
-    GetHelloWorldObject(false));
+    static std::once_flag once_flag;
+    std::call_once(once_flag, []()
+            {
+                TypeObjectFactory *factory = TypeObjectFactory::get_instance();
+                factory->add_type_object("HelloWorld", GetHelloWorldIdentifier(true),
+                GetHelloWorldObject(true));
+                factory->add_type_object("HelloWorld", GetHelloWorldIdentifier(false),
+                GetHelloWorldObject(false));
 
+            });
 }
 
 const TypeIdentifier* GetHelloWorldIdentifier(bool complete)
@@ -88,7 +94,7 @@ const TypeObject* GetMinimalHelloWorldObject()
     type_object->minimal()._d(TK_STRUCTURE);
 
     type_object->minimal().struct_type().struct_flags().IS_FINAL(false);
-    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->minimal().struct_type().struct_flags().IS_APPENDABLE(true);
     type_object->minimal().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->minimal().struct_type().struct_flags().IS_NESTED(false);
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -103,14 +109,7 @@ const TypeObject* GetMinimalHelloWorldObject()
     mst_index.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_index.common().member_flags().IS_KEY(false);
     mst_index.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        mst_index.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    mst_index.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
 
     MD5 index_hash("index");
     for(int i = 0; i < 4; ++i)
@@ -128,7 +127,7 @@ const TypeObject* GetMinimalHelloWorldObject()
     mst_message.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_message.common().member_flags().IS_KEY(false);
     mst_message.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_message.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    mst_message.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(128, false));
 
 
     MD5 message_hash("message");
@@ -147,14 +146,15 @@ const TypeObject* GetMinimalHelloWorldObject()
     TypeIdentifier identifier;
     identifier._d(EK_MINIMAL);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalStructType::getCdrSerializedSize(type_object->minimal().struct_type()) + 4));
+        calculator.calculate_serialized_size(type_object->minimal().struct_type(), 0) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
+        fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+        eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     type_object->serialize(ser);
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
@@ -184,7 +184,7 @@ const TypeObject* GetCompleteHelloWorldObject()
     type_object->complete()._d(TK_STRUCTURE);
 
     type_object->complete().struct_type().struct_flags().IS_FINAL(false);
-    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(false);
+    type_object->complete().struct_type().struct_flags().IS_APPENDABLE(true);
     type_object->complete().struct_type().struct_flags().IS_MUTABLE(false);
     type_object->complete().struct_type().struct_flags().IS_NESTED(false);
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
@@ -199,14 +199,7 @@ const TypeObject* GetCompleteHelloWorldObject()
     cst_index.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_index.common().member_flags().IS_KEY(false);
     cst_index.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    {
-        std::string cppType = "uint32_t";
-        if (cppType == "long double")
-        {
-            cppType = "longdouble";
-        }
-        cst_index.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier(cppType, false));
-    }
+    cst_index.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("uint16_t", false));
 
     cst_index.detail().name("index");
 
@@ -221,7 +214,7 @@ const TypeObject* GetCompleteHelloWorldObject()
     cst_message.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_message.common().member_flags().IS_KEY(false);
     cst_message.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_message.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, false));
+    cst_message.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(128, false));
 
 
     cst_message.detail().name("message");
@@ -237,14 +230,15 @@ const TypeObject* GetCompleteHelloWorldObject()
     TypeIdentifier identifier;
     identifier._d(EK_COMPLETE);
 
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
     SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteStructType::getCdrSerializedSize(type_object->complete().struct_type()) + 4));
+        calculator.calculate_serialized_size(type_object->complete().struct_type(), 0) + 4));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
     // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
     eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
+        fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
+        eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
+    payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     type_object->serialize(ser);
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length

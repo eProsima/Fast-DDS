@@ -247,7 +247,10 @@ target_include_directories(UDPv4Tests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
-target_link_libraries(UDPv4Tests GTest::gtest ${MOCKS})
+target_link_libraries(UDPv4Tests
+    fastcdr
+    GTest::gtest
+    ${MOCKS})
 if(QNX)
     target_link_libraries(UDPv4Tests socket)
 endif()
@@ -274,7 +277,10 @@ if(NOT DISABLE_UDPV6_TESTS)
         ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
         ${PROJECT_SOURCE_DIR}/src/cpp
         )
-    target_link_libraries(UDPv6Tests GTest::gtest ${MOCKS})
+    target_link_libraries(UDPv6Tests
+        fastcdr
+        GTest::gtest
+        ${MOCKS})
     if(QNX)
         target_link_libraries(UDPv6Tests socket)
     endif()
@@ -301,7 +307,10 @@ if(NOT DISABLE_UDPV6_TESTS)
         ${PROJECT_SOURCE_DIR}/src/cpp
         $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
         )
-    target_link_libraries(TCPv6Tests GTest::gtest ${MOCKS}
+    target_link_libraries(TCPv6Tests
+        fastcdr
+        GTest::gtest
+        ${MOCKS}
         $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
     if(QNX)
         target_link_libraries(TCPv6Tests socket)
@@ -332,7 +341,10 @@ target_include_directories(test_UDPv4Tests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
-target_link_libraries(test_UDPv4Tests GTest::gtest ${MOCKS})
+target_link_libraries(test_UDPv4Tests
+    fastcdr
+    GTest::gtest
+    ${MOCKS})
 if(QNX)
     target_link_libraries(test_UDPv4Tests socket)
 endif()
@@ -361,7 +373,10 @@ target_include_directories(TCPv4Tests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
-target_link_libraries(TCPv4Tests GTest::gtest ${MOCKS}
+target_link_libraries(TCPv4Tests
+    fastcdr
+    GTest::gtest
+    ${MOCKS}
     $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>)
 if(QNX)
     target_link_libraries(TCPv4Tests socket)
@@ -394,7 +409,10 @@ if(IS_THIRDPARTY_BOOST_OK)
         ${THIRDPARTY_BOOST_INCLUDE_DIR}
         $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
         )
-    target_link_libraries(SharedMemTests GTest::gtest ${MOCKS}
+    target_link_libraries(SharedMemTests
+        fastcdr
+        GTest::gtest
+        ${MOCKS}
         $<$<BOOL:${TLS_FOUND}>:OpenSSL::SSL$<SEMICOLON>OpenSSL::Crypto>
         ${THIRDPARTY_BOOST_LINK_LIBS}
         eProsima_atomic

@@ -125,32 +125,6 @@ size_t eprosima::fastdds::statistics::detail::EntityId_s::getMaxCdrSerializedSiz
     static_cast<void>(current_alignment);
     return eprosima_fastdds_statistics_detail_EntityId_s_max_cdr_typesize;
 }
-
-size_t eprosima::fastdds::statistics::detail::EntityId_s::calculate_serialized_size(
-        eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const eprosima::fastdds::statistics::detail::EntityId_s& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            current_alignment);
-
-
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_value, current_alignment);
-
-    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void eprosima::fastdds::statistics::detail::EntityId_s::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -162,7 +136,8 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 );
 
-    scdr << eprosima::fastcdr::MemberId(0) << m_value;
+    scdr             << eprosima::fastcdr::MemberId(0) << value()
+    ;
 
     scdr.end_serialize_type(current_state);
 }
@@ -180,10 +155,10 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
                 bool ret_value = true;
                 switch (mid.id)
                 {
-                    case 0:
-                        dcdr >> m_value;
-ret_value = false;
-                        break;
+                                        case 0:
+                    dcdr >> value();
+                                            break;
+                                        
                     default:
                         ret_value = false;
                         break;
@@ -307,32 +282,6 @@ size_t eprosima::fastdds::statistics::detail::GuidPrefix_s::getMaxCdrSerializedS
     static_cast<void>(current_alignment);
     return eprosima_fastdds_statistics_detail_GuidPrefix_s_max_cdr_typesize;
 }
-
-size_t eprosima::fastdds::statistics::detail::GuidPrefix_s::calculate_serialized_size(
-        eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const eprosima::fastdds::statistics::detail::GuidPrefix_s& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            current_alignment);
-
-
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_value, current_alignment);
-
-    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void eprosima::fastdds::statistics::detail::GuidPrefix_s::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -344,7 +293,8 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 );
 
-    scdr << eprosima::fastcdr::MemberId(0) << m_value;
+    scdr             << eprosima::fastcdr::MemberId(0) << value()
+    ;
 
     scdr.end_serialize_type(current_state);
 }
@@ -362,10 +312,10 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
                 bool ret_value = true;
                 switch (mid.id)
                 {
-                    case 0:
-                        dcdr >> m_value;
-ret_value = false;
-                        break;
+                                        case 0:
+                    dcdr >> value();
+                                            break;
+                                        
                     default:
                         ret_value = false;
                         break;
@@ -497,33 +447,6 @@ size_t eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(
     static_cast<void>(current_alignment);
     return eprosima_fastdds_statistics_detail_GUID_s_max_cdr_typesize;
 }
-
-size_t eprosima::fastdds::statistics::detail::GUID_s::calculate_serialized_size(
-        eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const eprosima::fastdds::statistics::detail::GUID_s& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            current_alignment);
-
-
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_guidPrefix, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1), data.m_entityId, current_alignment);
-
-    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void eprosima::fastdds::statistics::detail::GUID_s::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -535,7 +458,9 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 );
 
-    scdr << eprosima::fastcdr::MemberId(0) << m_guidPrefix;scdr << eprosima::fastcdr::MemberId(1) << m_entityId;
+    scdr             << eprosima::fastcdr::MemberId(0) << guidPrefix()
+                << eprosima::fastcdr::MemberId(1) << entityId()
+    ;
 
     scdr.end_serialize_type(current_state);
 }
@@ -554,13 +479,13 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
                 switch (mid.id)
                 {
                                         case 0:
-                                            dcdr >> m_guidPrefix;
+                    dcdr >> guidPrefix();
                                             break;
                                         
-                    case 1:
-                        dcdr >> m_entityId;
-ret_value = false;
-                        break;
+                                        case 1:
+                    dcdr >> entityId();
+                                            break;
+                                        
                     default:
                         ret_value = false;
                         break;
@@ -729,33 +654,6 @@ size_t eprosima::fastdds::statistics::detail::SequenceNumber_s::getMaxCdrSeriali
     static_cast<void>(current_alignment);
     return eprosima_fastdds_statistics_detail_SequenceNumber_s_max_cdr_typesize;
 }
-
-size_t eprosima::fastdds::statistics::detail::SequenceNumber_s::calculate_serialized_size(
-        eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const eprosima::fastdds::statistics::detail::SequenceNumber_s& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            current_alignment);
-
-
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_high, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1), data.m_low, current_alignment);
-
-    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void eprosima::fastdds::statistics::detail::SequenceNumber_s::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -767,7 +665,9 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 );
 
-    scdr << eprosima::fastcdr::MemberId(0) << m_high;scdr << eprosima::fastcdr::MemberId(1) << m_low;
+    scdr             << eprosima::fastcdr::MemberId(0) << high()
+                << eprosima::fastcdr::MemberId(1) << low()
+    ;
 
     scdr.end_serialize_type(current_state);
 }
@@ -786,13 +686,13 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
                 switch (mid.id)
                 {
                                         case 0:
-                                            dcdr >> m_high;
+                    dcdr >> high();
                                             break;
                                         
-                    case 1:
-                        dcdr >> m_low;
-ret_value = false;
-                        break;
+                                        case 1:
+                    dcdr >> low();
+                                            break;
+                                        
                     default:
                         ret_value = false;
                         break;
@@ -943,33 +843,6 @@ size_t eprosima::fastdds::statistics::detail::SampleIdentity_s::getMaxCdrSeriali
     static_cast<void>(current_alignment);
     return eprosima_fastdds_statistics_detail_SampleIdentity_s_max_cdr_typesize;
 }
-
-size_t eprosima::fastdds::statistics::detail::SampleIdentity_s::calculate_serialized_size(
-        eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const eprosima::fastdds::statistics::detail::SampleIdentity_s& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            current_alignment);
-
-
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_writer_guid, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1), data.m_sequence_number, current_alignment);
-
-    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void eprosima::fastdds::statistics::detail::SampleIdentity_s::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -981,7 +854,9 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 );
 
-    scdr << eprosima::fastcdr::MemberId(0) << m_writer_guid;scdr << eprosima::fastcdr::MemberId(1) << m_sequence_number;
+    scdr             << eprosima::fastcdr::MemberId(0) << writer_guid()
+                << eprosima::fastcdr::MemberId(1) << sequence_number()
+    ;
 
     scdr.end_serialize_type(current_state);
 }
@@ -1000,13 +875,13 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
                 switch (mid.id)
                 {
                                         case 0:
-                                            dcdr >> m_writer_guid;
+                    dcdr >> writer_guid();
                                             break;
                                         
-                    case 1:
-                        dcdr >> m_sequence_number;
-ret_value = false;
-                        break;
+                                        case 1:
+                    dcdr >> sequence_number();
+                                            break;
+                                        
                     default:
                         ret_value = false;
                         break;
@@ -1181,34 +1056,6 @@ size_t eprosima::fastdds::statistics::detail::Locator_s::getMaxCdrSerializedSize
     static_cast<void>(current_alignment);
     return eprosima_fastdds_statistics_detail_Locator_s_max_cdr_typesize;
 }
-
-size_t eprosima::fastdds::statistics::detail::Locator_s::calculate_serialized_size(
-        eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const eprosima::fastdds::statistics::detail::Locator_s& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            current_alignment);
-
-
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_kind, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1), data.m_port, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2), data.m_address, current_alignment);
-
-    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void eprosima::fastdds::statistics::detail::Locator_s::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -1220,7 +1067,10 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 );
 
-    scdr << eprosima::fastcdr::MemberId(0) << m_kind;scdr << eprosima::fastcdr::MemberId(1) << m_port;scdr << eprosima::fastcdr::MemberId(2) << m_address;
+    scdr             << eprosima::fastcdr::MemberId(0) << kind()
+                << eprosima::fastcdr::MemberId(1) << port()
+                << eprosima::fastcdr::MemberId(2) << address()
+    ;
 
     scdr.end_serialize_type(current_state);
 }
@@ -1239,17 +1089,17 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
                 switch (mid.id)
                 {
                                         case 0:
-                                            dcdr >> m_kind;
+                    dcdr >> kind();
                                             break;
                                         
                                         case 1:
-                                            dcdr >> m_port;
+                    dcdr >> port();
                                             break;
                                         
-                    case 2:
-                        dcdr >> m_address;
-ret_value = false;
-                        break;
+                                        case 2:
+                    dcdr >> address();
+                                            break;
+                                        
                     default:
                         ret_value = false;
                         break;
@@ -1462,37 +1312,6 @@ size_t eprosima::fastdds::statistics::DiscoveryTime::getMaxCdrSerializedSize(
     static_cast<void>(current_alignment);
     return eprosima_fastdds_statistics_DiscoveryTime_max_cdr_typesize;
 }
-
-size_t eprosima::fastdds::statistics::DiscoveryTime::calculate_serialized_size(
-        eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const eprosima::fastdds::statistics::DiscoveryTime& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            current_alignment);
-
-
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_local_participant_guid, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1), data.m_remote_entity_guid, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2), data.m_time, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3), data.m_host, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4), data.m_user, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5), data.m_process, current_alignment);
-
-    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void eprosima::fastdds::statistics::DiscoveryTime::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -1504,7 +1323,13 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 );
 
-    scdr << eprosima::fastcdr::MemberId(0) << m_local_participant_guid;scdr << eprosima::fastcdr::MemberId(1) << m_remote_entity_guid;scdr << eprosima::fastcdr::MemberId(2) << m_time;scdr << eprosima::fastcdr::MemberId(3) << m_host;scdr << eprosima::fastcdr::MemberId(4) << m_user;scdr << eprosima::fastcdr::MemberId(5) << m_process;
+    scdr             << eprosima::fastcdr::MemberId(0) << local_participant_guid()
+                << eprosima::fastcdr::MemberId(1) << remote_entity_guid()
+                << eprosima::fastcdr::MemberId(2) << time()
+                << eprosima::fastcdr::MemberId(3) << host()
+                << eprosima::fastcdr::MemberId(4) << user()
+                << eprosima::fastcdr::MemberId(5) << process()
+    ;
 
     scdr.end_serialize_type(current_state);
 }
@@ -1523,29 +1348,29 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
                 switch (mid.id)
                 {
                                         case 0:
-                                            dcdr >> m_local_participant_guid;
+                    dcdr >> local_participant_guid();
                                             break;
                                         
                                         case 1:
-                                            dcdr >> m_remote_entity_guid;
+                    dcdr >> remote_entity_guid();
                                             break;
                                         
                                         case 2:
-                                            dcdr >> m_time;
+                    dcdr >> time();
                                             break;
                                         
                                         case 3:
-                                            dcdr >> m_host;
+                    dcdr >> host();
                                             break;
                                         
                                         case 4:
-                                            dcdr >> m_user;
+                    dcdr >> user();
                                             break;
                                         
-                    case 5:
-                        dcdr >> m_process;
-ret_value = false;
-                        break;
+                                        case 5:
+                    dcdr >> process();
+                                            break;
+                                        
                     default:
                         ret_value = false;
                         break;
@@ -1859,33 +1684,6 @@ size_t eprosima::fastdds::statistics::EntityCount::getMaxCdrSerializedSize(
     static_cast<void>(current_alignment);
     return eprosima_fastdds_statistics_EntityCount_max_cdr_typesize;
 }
-
-size_t eprosima::fastdds::statistics::EntityCount::calculate_serialized_size(
-        eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const eprosima::fastdds::statistics::EntityCount& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            current_alignment);
-
-
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_guid, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1), data.m_count, current_alignment);
-
-    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void eprosima::fastdds::statistics::EntityCount::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -1897,7 +1695,9 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 );
 
-    scdr << eprosima::fastcdr::MemberId(0) << m_guid;scdr << eprosima::fastcdr::MemberId(1) << m_count;
+    scdr             << eprosima::fastcdr::MemberId(0) << guid()
+                << eprosima::fastcdr::MemberId(1) << count()
+    ;
 
     scdr.end_serialize_type(current_state);
 }
@@ -1916,13 +1716,13 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
                 switch (mid.id)
                 {
                                         case 0:
-                                            dcdr >> m_guid;
+                    dcdr >> guid();
                                             break;
                                         
-                    case 1:
-                        dcdr >> m_count;
-ret_value = false;
-                        break;
+                                        case 1:
+                    dcdr >> count();
+                                            break;
+                                        
                     default:
                         ret_value = false;
                         break;
@@ -2084,33 +1884,6 @@ size_t eprosima::fastdds::statistics::SampleIdentityCount::getMaxCdrSerializedSi
     static_cast<void>(current_alignment);
     return eprosima_fastdds_statistics_SampleIdentityCount_max_cdr_typesize;
 }
-
-size_t eprosima::fastdds::statistics::SampleIdentityCount::calculate_serialized_size(
-        eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const eprosima::fastdds::statistics::SampleIdentityCount& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            current_alignment);
-
-
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_sample_id, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1), data.m_count, current_alignment);
-
-    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void eprosima::fastdds::statistics::SampleIdentityCount::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -2122,7 +1895,9 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 );
 
-    scdr << eprosima::fastcdr::MemberId(0) << m_sample_id;scdr << eprosima::fastcdr::MemberId(1) << m_count;
+    scdr             << eprosima::fastcdr::MemberId(0) << sample_id()
+                << eprosima::fastcdr::MemberId(1) << count()
+    ;
 
     scdr.end_serialize_type(current_state);
 }
@@ -2141,13 +1916,13 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
                 switch (mid.id)
                 {
                                         case 0:
-                                            dcdr >> m_sample_id;
+                    dcdr >> sample_id();
                                             break;
                                         
-                    case 1:
-                        dcdr >> m_count;
-ret_value = false;
-                        break;
+                                        case 1:
+                    dcdr >> count();
+                                            break;
+                                        
                     default:
                         ret_value = false;
                         break;
@@ -2327,36 +2102,6 @@ size_t eprosima::fastdds::statistics::Entity2LocatorTraffic::getMaxCdrSerialized
     static_cast<void>(current_alignment);
     return eprosima_fastdds_statistics_Entity2LocatorTraffic_max_cdr_typesize;
 }
-
-size_t eprosima::fastdds::statistics::Entity2LocatorTraffic::calculate_serialized_size(
-        eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const eprosima::fastdds::statistics::Entity2LocatorTraffic& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            current_alignment);
-
-
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_src_guid, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1), data.m_dst_locator, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2), data.m_packet_count, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3), data.m_byte_count, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4), data.m_byte_magnitude_order, current_alignment);
-
-    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void eprosima::fastdds::statistics::Entity2LocatorTraffic::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -2368,7 +2113,12 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 );
 
-    scdr << eprosima::fastcdr::MemberId(0) << m_src_guid;scdr << eprosima::fastcdr::MemberId(1) << m_dst_locator;scdr << eprosima::fastcdr::MemberId(2) << m_packet_count;scdr << eprosima::fastcdr::MemberId(3) << m_byte_count;scdr << eprosima::fastcdr::MemberId(4) << m_byte_magnitude_order;
+    scdr             << eprosima::fastcdr::MemberId(0) << src_guid()
+                << eprosima::fastcdr::MemberId(1) << dst_locator()
+                << eprosima::fastcdr::MemberId(2) << packet_count()
+                << eprosima::fastcdr::MemberId(3) << byte_count()
+                << eprosima::fastcdr::MemberId(4) << byte_magnitude_order()
+    ;
 
     scdr.end_serialize_type(current_state);
 }
@@ -2387,25 +2137,25 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
                 switch (mid.id)
                 {
                                         case 0:
-                                            dcdr >> m_src_guid;
+                    dcdr >> src_guid();
                                             break;
                                         
                                         case 1:
-                                            dcdr >> m_dst_locator;
+                    dcdr >> dst_locator();
                                             break;
                                         
                                         case 2:
-                                            dcdr >> m_packet_count;
+                    dcdr >> packet_count();
                                             break;
                                         
                                         case 3:
-                                            dcdr >> m_byte_count;
+                    dcdr >> byte_count();
                                             break;
                                         
-                    case 4:
-                        dcdr >> m_byte_magnitude_order;
-ret_value = false;
-                        break;
+                                        case 4:
+                    dcdr >> byte_magnitude_order();
+                                            break;
+                                        
                     default:
                         ret_value = false;
                         break;
@@ -2669,34 +2419,6 @@ size_t eprosima::fastdds::statistics::WriterReaderData::getMaxCdrSerializedSize(
     static_cast<void>(current_alignment);
     return eprosima_fastdds_statistics_WriterReaderData_max_cdr_typesize;
 }
-
-size_t eprosima::fastdds::statistics::WriterReaderData::calculate_serialized_size(
-        eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const eprosima::fastdds::statistics::WriterReaderData& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            current_alignment);
-
-
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_writer_guid, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1), data.m_reader_guid, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2), data.m_data, current_alignment);
-
-    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void eprosima::fastdds::statistics::WriterReaderData::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -2708,7 +2430,10 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 );
 
-    scdr << eprosima::fastcdr::MemberId(0) << m_writer_guid;scdr << eprosima::fastcdr::MemberId(1) << m_reader_guid;scdr << eprosima::fastcdr::MemberId(2) << m_data;
+    scdr             << eprosima::fastcdr::MemberId(0) << writer_guid()
+                << eprosima::fastcdr::MemberId(1) << reader_guid()
+                << eprosima::fastcdr::MemberId(2) << data()
+    ;
 
     scdr.end_serialize_type(current_state);
 }
@@ -2727,17 +2452,17 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
                 switch (mid.id)
                 {
                                         case 0:
-                                            dcdr >> m_writer_guid;
+                    dcdr >> writer_guid();
                                             break;
                                         
                                         case 1:
-                                            dcdr >> m_reader_guid;
+                    dcdr >> reader_guid();
                                             break;
                                         
-                    case 2:
-                        dcdr >> m_data;
-ret_value = false;
-                        break;
+                                        case 2:
+                    dcdr >> data();
+                                            break;
+                                        
                     default:
                         ret_value = false;
                         break;
@@ -2943,34 +2668,6 @@ size_t eprosima::fastdds::statistics::Locator2LocatorData::getMaxCdrSerializedSi
     static_cast<void>(current_alignment);
     return eprosima_fastdds_statistics_Locator2LocatorData_max_cdr_typesize;
 }
-
-size_t eprosima::fastdds::statistics::Locator2LocatorData::calculate_serialized_size(
-        eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const eprosima::fastdds::statistics::Locator2LocatorData& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            current_alignment);
-
-
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_src_locator, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1), data.m_dst_locator, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2), data.m_data, current_alignment);
-
-    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void eprosima::fastdds::statistics::Locator2LocatorData::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -2982,7 +2679,10 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 );
 
-    scdr << eprosima::fastcdr::MemberId(0) << m_src_locator;scdr << eprosima::fastcdr::MemberId(1) << m_dst_locator;scdr << eprosima::fastcdr::MemberId(2) << m_data;
+    scdr             << eprosima::fastcdr::MemberId(0) << src_locator()
+                << eprosima::fastcdr::MemberId(1) << dst_locator()
+                << eprosima::fastcdr::MemberId(2) << data()
+    ;
 
     scdr.end_serialize_type(current_state);
 }
@@ -3001,17 +2701,17 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
                 switch (mid.id)
                 {
                                         case 0:
-                                            dcdr >> m_src_locator;
+                    dcdr >> src_locator();
                                             break;
                                         
                                         case 1:
-                                            dcdr >> m_dst_locator;
+                    dcdr >> dst_locator();
                                             break;
                                         
-                    case 2:
-                        dcdr >> m_data;
-ret_value = false;
-                        break;
+                                        case 2:
+                    dcdr >> data();
+                                            break;
+                                        
                     default:
                         ret_value = false;
                         break;
@@ -3211,33 +2911,6 @@ size_t eprosima::fastdds::statistics::EntityData::getMaxCdrSerializedSize(
     static_cast<void>(current_alignment);
     return eprosima_fastdds_statistics_EntityData_max_cdr_typesize;
 }
-
-size_t eprosima::fastdds::statistics::EntityData::calculate_serialized_size(
-        eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const eprosima::fastdds::statistics::EntityData& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            current_alignment);
-
-
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_guid, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1), data.m_data, current_alignment);
-
-    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void eprosima::fastdds::statistics::EntityData::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -3249,7 +2922,9 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 );
 
-    scdr << eprosima::fastcdr::MemberId(0) << m_guid;scdr << eprosima::fastcdr::MemberId(1) << m_data;
+    scdr             << eprosima::fastcdr::MemberId(0) << guid()
+                << eprosima::fastcdr::MemberId(1) << data()
+    ;
 
     scdr.end_serialize_type(current_state);
 }
@@ -3268,13 +2943,13 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
                 switch (mid.id)
                 {
                                         case 0:
-                                            dcdr >> m_guid;
+                    dcdr >> guid();
                                             break;
                                         
-                    case 1:
-                        dcdr >> m_data;
-ret_value = false;
-                        break;
+                                        case 1:
+                    dcdr >> data();
+                                            break;
+                                        
                     default:
                         ret_value = false;
                         break;
@@ -3448,35 +3123,6 @@ size_t eprosima::fastdds::statistics::PhysicalData::getMaxCdrSerializedSize(
     static_cast<void>(current_alignment);
     return eprosima_fastdds_statistics_PhysicalData_max_cdr_typesize;
 }
-
-size_t eprosima::fastdds::statistics::PhysicalData::calculate_serialized_size(
-        eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const eprosima::fastdds::statistics::PhysicalData& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            current_alignment);
-
-
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_participant_guid, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1), data.m_host, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2), data.m_user, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3), data.m_process, current_alignment);
-
-    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void eprosima::fastdds::statistics::PhysicalData::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -3488,7 +3134,11 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 );
 
-    scdr << eprosima::fastcdr::MemberId(0) << m_participant_guid;scdr << eprosima::fastcdr::MemberId(1) << m_host;scdr << eprosima::fastcdr::MemberId(2) << m_user;scdr << eprosima::fastcdr::MemberId(3) << m_process;
+    scdr             << eprosima::fastcdr::MemberId(0) << participant_guid()
+                << eprosima::fastcdr::MemberId(1) << host()
+                << eprosima::fastcdr::MemberId(2) << user()
+                << eprosima::fastcdr::MemberId(3) << process()
+    ;
 
     scdr.end_serialize_type(current_state);
 }
@@ -3507,21 +3157,21 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
                 switch (mid.id)
                 {
                                         case 0:
-                                            dcdr >> m_participant_guid;
+                    dcdr >> participant_guid();
                                             break;
                                         
                                         case 1:
-                                            dcdr >> m_host;
+                    dcdr >> host();
                                             break;
                                         
                                         case 2:
-                                            dcdr >> m_user;
+                    dcdr >> user();
                                             break;
                                         
-                    case 3:
-                        dcdr >> m_process;
-ret_value = false;
-                        break;
+                                        case 3:
+                    dcdr >> process();
+                                            break;
+                                        
                     default:
                         ret_value = false;
                         break;
@@ -4527,87 +4177,6 @@ eprosima::fastdds::statistics::PhysicalData& eprosima::fastdds::statistics::Data
     return m_physical_data;
 }
 
-size_t eprosima::fastdds::statistics::Data::calculate_serialized_size(
-        eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const eprosima::fastdds::statistics::Data& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            current_alignment);
-
-    // TODO Member id del discriminador
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m__d,
-            current_alignment);
-
-    switch(data.m__d)
-    {
-                        case HISTORY2HISTORY_LATENCY:
-                        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1),
-                                data.m_writer_reader_data, current_alignment);
-                        break;
-                
-                        case NETWORK_LATENCY:
-                        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(2),
-                                data.m_locator2locator_data, current_alignment);
-                        break;
-                
-                        case PUBLICATION_THROUGHPUT:
-                        case SUBSCRIPTION_THROUGHPUT:
-                        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(3),
-                                data.m_entity_data, current_alignment);
-                        break;
-                
-                        case RTPS_SENT:
-                        case RTPS_LOST:
-                        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(4),
-                                data.m_entity2locator_traffic, current_alignment);
-                        break;
-                
-                        case RESENT_DATAS:
-                        case HEARTBEAT_COUNT:
-                        case ACKNACK_COUNT:
-                        case NACKFRAG_COUNT:
-                        case GAP_COUNT:
-                        case DATA_COUNT:
-                        case PDP_PACKETS:
-                        case EDP_PACKETS:
-                        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(5),
-                                data.m_entity_count, current_alignment);
-                        break;
-                
-                        case DISCOVERED_ENTITY:
-                        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(6),
-                                data.m_discovery_time, current_alignment);
-                        break;
-                
-                        case SAMPLE_DATAS:
-                        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(7),
-                                data.m_sample_identity_count, current_alignment);
-                        break;
-                
-                        case PHYSICAL_DATA:
-                        current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(8),
-                                data.m_physical_data, current_alignment);
-                        break;
-                
-            default:
-                break;
-    }
-
-    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void eprosima::fastdds::statistics::Data::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -4619,45 +4188,51 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 );
 
-    scdr << eprosima::fastcdr::MemberId(0) << m__d;
+    scdr << eprosima::fastcdr::MemberId(0) << _d();
 
-    switch(m__d)
+    switch(_d())
     {
-        case HISTORY2HISTORY_LATENCY:
-        scdr << eprosima::fastcdr::MemberId(1) << m_writer_reader_data;
-        break;
-        case NETWORK_LATENCY:
-        scdr << eprosima::fastcdr::MemberId(2) << m_locator2locator_data;
-        break;
-        case PUBLICATION_THROUGHPUT:
-        case SUBSCRIPTION_THROUGHPUT:
-        scdr << eprosima::fastcdr::MemberId(3) << m_entity_data;
-        break;
-        case RTPS_SENT:
-        case RTPS_LOST:
-        scdr << eprosima::fastcdr::MemberId(4) << m_entity2locator_traffic;
-        break;
-        case RESENT_DATAS:
-        case HEARTBEAT_COUNT:
-        case ACKNACK_COUNT:
-        case NACKFRAG_COUNT:
-        case GAP_COUNT:
-        case DATA_COUNT:
-        case PDP_PACKETS:
-        case EDP_PACKETS:
-        scdr << eprosima::fastcdr::MemberId(5) << m_entity_count;
-        break;
-        case DISCOVERED_ENTITY:
-        scdr << eprosima::fastcdr::MemberId(6) << m_discovery_time;
-        break;
-        case SAMPLE_DATAS:
-        scdr << eprosima::fastcdr::MemberId(7) << m_sample_identity_count;
-        break;
-        case PHYSICAL_DATA:
-        scdr << eprosima::fastcdr::MemberId(8) << m_physical_data;
-        break;
-        default:
-        break;
+                        case HISTORY2HISTORY_LATENCY:
+                        scdr << eprosima::fastcdr::MemberId(1) << m_writer_reader_data;
+                        break;
+                
+                        case NETWORK_LATENCY:
+                        scdr << eprosima::fastcdr::MemberId(2) << m_locator2locator_data;
+                        break;
+                
+                        case PUBLICATION_THROUGHPUT:
+                        case SUBSCRIPTION_THROUGHPUT:
+                        scdr << eprosima::fastcdr::MemberId(3) << m_entity_data;
+                        break;
+                
+                        case RTPS_SENT:
+                        case RTPS_LOST:
+                        scdr << eprosima::fastcdr::MemberId(4) << m_entity2locator_traffic;
+                        break;
+                
+                        case RESENT_DATAS:
+                        case HEARTBEAT_COUNT:
+                        case ACKNACK_COUNT:
+                        case NACKFRAG_COUNT:
+                        case GAP_COUNT:
+                        case DATA_COUNT:
+                        case PDP_PACKETS:
+                        case EDP_PACKETS:
+                        scdr << eprosima::fastcdr::MemberId(5) << m_entity_count;
+                        break;
+                
+                        case DISCOVERED_ENTITY:
+                        scdr << eprosima::fastcdr::MemberId(6) << m_discovery_time;
+                        break;
+                
+                        case SAMPLE_DATAS:
+                        scdr << eprosima::fastcdr::MemberId(7) << m_sample_identity_count;
+                        break;
+                
+                        case PHYSICAL_DATA:
+                        scdr << eprosima::fastcdr::MemberId(8) << m_physical_data;
+                        break;
+                
     }
 
     scdr.end_serialize_type(current_state);
@@ -4677,50 +4252,62 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
                 switch (mid.id)
                 {
                     case 0:
-                        dcdr >> m__d;
+                        dcdr >> _d();
                         break;
-                                        case 1:
-                                            dcdr >> m_writer_reader_data;
-                                            ret_value = false;
-                                            break;
-                                        
-                                        case 2:
-                                            dcdr >> m_locator2locator_data;
-                                            ret_value = false;
-                                            break;
-                                        
-                                        case 3:
-                                            dcdr >> m_entity_data;
-                                            ret_value = false;
-                                            break;
-                                        
-                                        case 4:
-                                            dcdr >> m_entity2locator_traffic;
-                                            ret_value = false;
-                                            break;
-                                        
-                                        case 5:
-                                            dcdr >> m_entity_count;
-                                            ret_value = false;
-                                            break;
-                                        
-                                        case 6:
-                                            dcdr >> m_discovery_time;
-                                            ret_value = false;
-                                            break;
-                                        
-                                        case 7:
-                                            dcdr >> m_sample_identity_count;
-                                            ret_value = false;
-                                            break;
-                                        
-                                        case 8:
-                                            dcdr >> m_physical_data;
-                                            ret_value = false;
-                                            break;
-                                        
                     default:
-                        ret_value = false;
+                        switch (_d())
+                        {
+                                                                case HISTORY2HISTORY_LATENCY:
+                                                                // TODO Test on mutable the MemberId
+                                                                dcdr >> m_writer_reader_data;
+                                                                break;
+                                                        
+                                                                case NETWORK_LATENCY:
+                                                                // TODO Test on mutable the MemberId
+                                                                dcdr >> m_locator2locator_data;
+                                                                break;
+                                                        
+                                                                case PUBLICATION_THROUGHPUT:
+                                                                case SUBSCRIPTION_THROUGHPUT:
+                                                                // TODO Test on mutable the MemberId
+                                                                dcdr >> m_entity_data;
+                                                                break;
+                                                        
+                                                                case RTPS_SENT:
+                                                                case RTPS_LOST:
+                                                                // TODO Test on mutable the MemberId
+                                                                dcdr >> m_entity2locator_traffic;
+                                                                break;
+                                                        
+                                                                case RESENT_DATAS:
+                                                                case HEARTBEAT_COUNT:
+                                                                case ACKNACK_COUNT:
+                                                                case NACKFRAG_COUNT:
+                                                                case GAP_COUNT:
+                                                                case DATA_COUNT:
+                                                                case PDP_PACKETS:
+                                                                case EDP_PACKETS:
+                                                                // TODO Test on mutable the MemberId
+                                                                dcdr >> m_entity_count;
+                                                                break;
+                                                        
+                                                                case DISCOVERED_ENTITY:
+                                                                // TODO Test on mutable the MemberId
+                                                                dcdr >> m_discovery_time;
+                                                                break;
+                                                        
+                                                                case SAMPLE_DATAS:
+                                                                // TODO Test on mutable the MemberId
+                                                                dcdr >> m_sample_identity_count;
+                                                                break;
+                                                        
+                                                                case PHYSICAL_DATA:
+                                                                // TODO Test on mutable the MemberId
+                                                                dcdr >> m_physical_data;
+                                                                break;
+                                                        
+                        }
+ret_value = false;
                         break;
                 }
                 return ret_value;

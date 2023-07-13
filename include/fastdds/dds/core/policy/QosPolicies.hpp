@@ -2075,6 +2075,8 @@ typedef enum DataRepresentationId : int16_t
     XCDR2_DATA_REPRESENTATION = 2    //!< Extended CDR Encoding version 2
 } DataRepresentationId_t;
 
+constexpr DataRepresentationId_t DEFAULT_DATA_REPRESENTATION {DataRepresentationId_t::XCDR_DATA_REPRESENTATION};
+
 /**
  * With multiple standard data Representations available, and vendor-specific extensions possible, DataWriters and
  * DataReaders must be able to negotiate which data representation(s) to use. This negotiation shall occur based on

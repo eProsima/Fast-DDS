@@ -103,33 +103,6 @@ size_t HelloWorld::getMaxCdrSerializedSize(
     static_cast<void>(current_alignment);
     return HelloWorld_max_cdr_typesize;
 }
-
-size_t HelloWorld::calculate_serialized_size(
-        eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const HelloWorld& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-    eprosima::fastcdr::EncodingAlgorithmFlag previous_encoding = calculator.get_encoding();
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-            eprosima::fastcdr::CdrVersion::XCDRv2 == calculator.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            current_alignment);
-
-
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(0), data.m_index, current_alignment);
-                current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(1), data.m_message, current_alignment);
-
-    current_alignment += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
-
-    return current_alignment - initial_alignment;
-}
-
 void HelloWorld::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
@@ -141,7 +114,9 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 );
 
-    scdr << eprosima::fastcdr::MemberId(0) << m_index;scdr << eprosima::fastcdr::MemberId(1) << m_message;
+    scdr             << eprosima::fastcdr::MemberId(0) << index()
+                << eprosima::fastcdr::MemberId(1) << message()
+    ;
 
     scdr.end_serialize_type(current_state);
 }
@@ -160,13 +135,13 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
                 switch (mid.id)
                 {
                                         case 0:
-                                            dcdr >> m_index;
+                    dcdr >> index();
                                             break;
                                         
-                    case 1:
-                        dcdr >> m_message;
-ret_value = false;
-                        break;
+                                        case 1:
+                    dcdr >> message();
+                                            break;
+                                        
                     default:
                         ret_value = false;
                         break;

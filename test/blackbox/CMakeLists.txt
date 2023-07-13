@@ -244,6 +244,7 @@ file(GLOB RTPS_BLACKBOXTESTS_TEST_SOURCE "common/RTPSBlackboxTests*.cpp")
 set(RTPS_BLACKBOXTESTS_SOURCE ${RTPS_BLACKBOXTESTS_TEST_SOURCE}
     types/HelloWorld.cxx
     types/HelloWorldPubSubTypes.cxx
+    types/HelloWorldTypeObject.cxx
     types/KeyedHelloWorld.cxx
     types/KeyedHelloWorldPubSubTypes.cxx
     types/StringTest.cxx

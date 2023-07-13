@@ -19,6 +19,7 @@
 
 #include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
 
+#include <fastcdr/CdrSizeCalculator.hpp>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
@@ -544,7 +545,8 @@ bool TypeLookupManager::send_request(
     CacheChange_t* change = builtin_request_writer_->new_change(
         [&req]()
         {
-            return static_cast<uint32_t>(TypeLookup_Request::getCdrSerializedSize(req) + 4);
+            eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+            return static_cast<uint32_t>(calculator.calculate_serialized_size(req, 0) + 4);
         },
         ALIVE);
 
@@ -585,7 +587,8 @@ bool TypeLookupManager::send_reply(
     CacheChange_t* change = builtin_reply_writer_->new_change(
         [&rep]()
         {
-            return static_cast<uint32_t>(TypeLookup_Reply::getCdrSerializedSize(rep) + 4);
+            eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+            return static_cast<uint32_t>(calculator.calculate_serialized_size(rep, 0) + 4);
         },
         ALIVE);
 
@@ -644,7 +647,7 @@ bool TypeLookupManager::recv_request(
     payload.max_size = change.serializedPayload.max_size - 4;
     payload.length = change.serializedPayload.length - 4;
     payload.data = change.serializedPayload.data + 4;
-    bool result = request_type_.deserialize(&payload, &req, DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    bool result = request_type_.deserialize(&payload, &req);
     payload.data = nullptr;
     return result;
 }
@@ -676,7 +679,7 @@ bool TypeLookupManager::recv_reply(
     payload.max_size = change.serializedPayload.max_size - 4;
     payload.length = change.serializedPayload.length - 4;
     payload.data = change.serializedPayload.data + 4;
-    bool result = reply_type_.deserialize(&payload, &rep, DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    bool result = reply_type_.deserialize(&payload, &rep);
     payload.data = nullptr;
     return result;
 }

@@ -29,6 +29,8 @@
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastdds/dds/log/Log.hpp>
 
+#include <fastcdr/CdrSizeCalculator.hpp>
+
 #include "idl/Test.h"
 #include "idl/TestPubSubTypes.h"
 #include "idl/TestTypeObject.h"
@@ -2294,8 +2296,9 @@ TEST_F(DynamicComplexTypesTests, TypeInformation)
     ASSERT_FALSE(info->minimal().typeid_with_size().type_id() == info->complete().typeid_with_size().type_id());
     ASSERT_TRUE(info->complete().typeid_with_size().type_id()._d() == EK_COMPLETE);
     ASSERT_TRUE(info->complete().dependent_typeid_count() == 2);
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
     ASSERT_TRUE(info->complete().typeid_with_size().typeobject_serialized_size()
-            == TypeObject::getCdrSerializedSize(*compl_obj));
+            == calculator.calculate_serialized_size(*compl_obj, 0));
     const TypeInformation* enum_info = TypeObjectFactory::get_instance()->get_type_information("MyAliasEnum");
     ASSERT_TRUE(enum_info->minimal().typeid_with_size().type_id()._d() == EK_MINIMAL);
     const TypeInformation* bool_info = TypeObjectFactory::get_instance()->get_type_information("bool");

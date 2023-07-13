@@ -23,13 +23,14 @@
 #ifndef _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_STATISTICS_TYPES_PUBSUBTYPES_H_
 #define _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_STATISTICS_TYPES_PUBSUBTYPES_H_
 
+#include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/topic/TopicDataType.hpp>
 #include <fastrtps/utils/md5.h>
 
 #include "types.h"
 
 
-#if !defined(GEN_API_VER) || (GEN_API_VER != 1)
+#if !defined(GEN_API_VER) || (GEN_API_VER != 2)
 #error \
     Generated types is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
@@ -86,28 +87,41 @@ namespace eprosima
 
                     eProsima_user_DllExport virtual ~EntityId_sPubSubType() override;
 
-                    eProsima_user_DllExport virtual bool serialize(
+                    eProsima_user_DllExport bool serialize(
+                            void* data,
+                            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+                    {
+                        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                    }
+
+                    eProsima_user_DllExport bool serialize(
                             void* data,
                             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
                             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                    eProsima_user_DllExport virtual bool deserialize(
+                    eProsima_user_DllExport bool deserialize(
                             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+                            void* data) override;
+
+                    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
+                            void* data) override
+                    {
+                        return getSerializedSizeProvider(data,
+                                eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                    }
+
+                    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
                             void* data,
                             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-                            void* data,
-                            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
-
-                    eProsima_user_DllExport virtual bool getKey(
+                    eProsima_user_DllExport bool getKey(
                             void* data,
                             eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
                             bool force_md5 = false) override;
 
-                    eProsima_user_DllExport virtual void* createData() override;
+                    eProsima_user_DllExport void* createData() override;
 
-                    eProsima_user_DllExport virtual void deleteData(
+                    eProsima_user_DllExport void deleteData(
                             void* data) override;
 
                 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -190,28 +204,41 @@ namespace eprosima
 
                     eProsima_user_DllExport virtual ~GuidPrefix_sPubSubType() override;
 
-                    eProsima_user_DllExport virtual bool serialize(
+                    eProsima_user_DllExport bool serialize(
+                            void* data,
+                            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+                    {
+                        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                    }
+
+                    eProsima_user_DllExport bool serialize(
                             void* data,
                             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
                             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                    eProsima_user_DllExport virtual bool deserialize(
+                    eProsima_user_DllExport bool deserialize(
                             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+                            void* data) override;
+
+                    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
+                            void* data) override
+                    {
+                        return getSerializedSizeProvider(data,
+                                eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                    }
+
+                    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
                             void* data,
                             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-                            void* data,
-                            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
-
-                    eProsima_user_DllExport virtual bool getKey(
+                    eProsima_user_DllExport bool getKey(
                             void* data,
                             eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
                             bool force_md5 = false) override;
 
-                    eProsima_user_DllExport virtual void* createData() override;
+                    eProsima_user_DllExport void* createData() override;
 
-                    eProsima_user_DllExport virtual void deleteData(
+                    eProsima_user_DllExport void deleteData(
                             void* data) override;
 
                 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -294,28 +321,41 @@ namespace eprosima
 
                     eProsima_user_DllExport virtual ~GUID_sPubSubType() override;
 
-                    eProsima_user_DllExport virtual bool serialize(
+                    eProsima_user_DllExport bool serialize(
+                            void* data,
+                            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+                    {
+                        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                    }
+
+                    eProsima_user_DllExport bool serialize(
                             void* data,
                             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
                             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                    eProsima_user_DllExport virtual bool deserialize(
+                    eProsima_user_DllExport bool deserialize(
                             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+                            void* data) override;
+
+                    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
+                            void* data) override
+                    {
+                        return getSerializedSizeProvider(data,
+                                eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                    }
+
+                    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
                             void* data,
                             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-                            void* data,
-                            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
-
-                    eProsima_user_DllExport virtual bool getKey(
+                    eProsima_user_DllExport bool getKey(
                             void* data,
                             eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
                             bool force_md5 = false) override;
 
-                    eProsima_user_DllExport virtual void* createData() override;
+                    eProsima_user_DllExport void* createData() override;
 
-                    eProsima_user_DllExport virtual void deleteData(
+                    eProsima_user_DllExport void deleteData(
                             void* data) override;
 
                 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -398,28 +438,41 @@ namespace eprosima
 
                     eProsima_user_DllExport virtual ~SequenceNumber_sPubSubType() override;
 
-                    eProsima_user_DllExport virtual bool serialize(
+                    eProsima_user_DllExport bool serialize(
+                            void* data,
+                            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+                    {
+                        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                    }
+
+                    eProsima_user_DllExport bool serialize(
                             void* data,
                             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
                             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                    eProsima_user_DllExport virtual bool deserialize(
+                    eProsima_user_DllExport bool deserialize(
                             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+                            void* data) override;
+
+                    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
+                            void* data) override
+                    {
+                        return getSerializedSizeProvider(data,
+                                eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                    }
+
+                    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
                             void* data,
                             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-                            void* data,
-                            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
-
-                    eProsima_user_DllExport virtual bool getKey(
+                    eProsima_user_DllExport bool getKey(
                             void* data,
                             eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
                             bool force_md5 = false) override;
 
-                    eProsima_user_DllExport virtual void* createData() override;
+                    eProsima_user_DllExport void* createData() override;
 
-                    eProsima_user_DllExport virtual void deleteData(
+                    eProsima_user_DllExport void deleteData(
                             void* data) override;
 
                 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -502,28 +555,41 @@ namespace eprosima
 
                     eProsima_user_DllExport virtual ~SampleIdentity_sPubSubType() override;
 
-                    eProsima_user_DllExport virtual bool serialize(
+                    eProsima_user_DllExport bool serialize(
+                            void* data,
+                            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+                    {
+                        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                    }
+
+                    eProsima_user_DllExport bool serialize(
                             void* data,
                             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
                             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                    eProsima_user_DllExport virtual bool deserialize(
+                    eProsima_user_DllExport bool deserialize(
                             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+                            void* data) override;
+
+                    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
+                            void* data) override
+                    {
+                        return getSerializedSizeProvider(data,
+                                eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                    }
+
+                    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
                             void* data,
                             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-                            void* data,
-                            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
-
-                    eProsima_user_DllExport virtual bool getKey(
+                    eProsima_user_DllExport bool getKey(
                             void* data,
                             eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
                             bool force_md5 = false) override;
 
-                    eProsima_user_DllExport virtual void* createData() override;
+                    eProsima_user_DllExport void* createData() override;
 
-                    eProsima_user_DllExport virtual void deleteData(
+                    eProsima_user_DllExport void deleteData(
                             void* data) override;
 
                 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -606,28 +672,41 @@ namespace eprosima
 
                     eProsima_user_DllExport virtual ~Locator_sPubSubType() override;
 
-                    eProsima_user_DllExport virtual bool serialize(
+                    eProsima_user_DllExport bool serialize(
+                            void* data,
+                            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+                    {
+                        return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                    }
+
+                    eProsima_user_DllExport bool serialize(
                             void* data,
                             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
                             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                    eProsima_user_DllExport virtual bool deserialize(
+                    eProsima_user_DllExport bool deserialize(
                             eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+                            void* data) override;
+
+                    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
+                            void* data) override
+                    {
+                        return getSerializedSizeProvider(data,
+                                eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                    }
+
+                    eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
                             void* data,
                             eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-                            void* data,
-                            eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
-
-                    eProsima_user_DllExport virtual bool getKey(
+                    eProsima_user_DllExport bool getKey(
                             void* data,
                             eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
                             bool force_md5 = false) override;
 
-                    eProsima_user_DllExport virtual void* createData() override;
+                    eProsima_user_DllExport void* createData() override;
 
-                    eProsima_user_DllExport virtual void deleteData(
+                    eProsima_user_DllExport void deleteData(
                             void* data) override;
 
                 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -682,28 +761,41 @@ namespace eprosima
 
                 eProsima_user_DllExport virtual ~DiscoveryTimePubSubType() override;
 
-                eProsima_user_DllExport virtual bool serialize(
+                eProsima_user_DllExport bool serialize(
+                        void* data,
+                        eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+                {
+                    return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                }
+
+                eProsima_user_DllExport bool serialize(
                         void* data,
                         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
                         eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                eProsima_user_DllExport virtual bool deserialize(
+                eProsima_user_DllExport bool deserialize(
                         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+                        void* data) override;
+
+                eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
+                        void* data) override
+                {
+                    return getSerializedSizeProvider(data,
+                            eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                }
+
+                eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
                         void* data,
                         eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-                        void* data,
-                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
-
-                eProsima_user_DllExport virtual bool getKey(
+                eProsima_user_DllExport bool getKey(
                         void* data,
                         eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
                         bool force_md5 = false) override;
 
-                eProsima_user_DllExport virtual void* createData() override;
+                eProsima_user_DllExport void* createData() override;
 
-                eProsima_user_DllExport virtual void deleteData(
+                eProsima_user_DllExport void deleteData(
                         void* data) override;
 
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -780,28 +872,41 @@ namespace eprosima
 
                 eProsima_user_DllExport virtual ~EntityCountPubSubType() override;
 
-                eProsima_user_DllExport virtual bool serialize(
+                eProsima_user_DllExport bool serialize(
+                        void* data,
+                        eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+                {
+                    return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                }
+
+                eProsima_user_DllExport bool serialize(
                         void* data,
                         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
                         eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                eProsima_user_DllExport virtual bool deserialize(
+                eProsima_user_DllExport bool deserialize(
                         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+                        void* data) override;
+
+                eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
+                        void* data) override
+                {
+                    return getSerializedSizeProvider(data,
+                            eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                }
+
+                eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
                         void* data,
                         eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-                        void* data,
-                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
-
-                eProsima_user_DllExport virtual bool getKey(
+                eProsima_user_DllExport bool getKey(
                         void* data,
                         eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
                         bool force_md5 = false) override;
 
-                eProsima_user_DllExport virtual void* createData() override;
+                eProsima_user_DllExport void* createData() override;
 
-                eProsima_user_DllExport virtual void deleteData(
+                eProsima_user_DllExport void deleteData(
                         void* data) override;
 
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -884,28 +989,41 @@ namespace eprosima
 
                 eProsima_user_DllExport virtual ~SampleIdentityCountPubSubType() override;
 
-                eProsima_user_DllExport virtual bool serialize(
+                eProsima_user_DllExport bool serialize(
+                        void* data,
+                        eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+                {
+                    return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                }
+
+                eProsima_user_DllExport bool serialize(
                         void* data,
                         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
                         eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                eProsima_user_DllExport virtual bool deserialize(
+                eProsima_user_DllExport bool deserialize(
                         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+                        void* data) override;
+
+                eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
+                        void* data) override
+                {
+                    return getSerializedSizeProvider(data,
+                            eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                }
+
+                eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
                         void* data,
                         eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-                        void* data,
-                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
-
-                eProsima_user_DllExport virtual bool getKey(
+                eProsima_user_DllExport bool getKey(
                         void* data,
                         eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
                         bool force_md5 = false) override;
 
-                eProsima_user_DllExport virtual void* createData() override;
+                eProsima_user_DllExport void* createData() override;
 
-                eProsima_user_DllExport virtual void deleteData(
+                eProsima_user_DllExport void deleteData(
                         void* data) override;
 
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -988,28 +1106,41 @@ namespace eprosima
 
                 eProsima_user_DllExport virtual ~Entity2LocatorTrafficPubSubType() override;
 
-                eProsima_user_DllExport virtual bool serialize(
+                eProsima_user_DllExport bool serialize(
+                        void* data,
+                        eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+                {
+                    return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                }
+
+                eProsima_user_DllExport bool serialize(
                         void* data,
                         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
                         eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                eProsima_user_DllExport virtual bool deserialize(
+                eProsima_user_DllExport bool deserialize(
                         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+                        void* data) override;
+
+                eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
+                        void* data) override
+                {
+                    return getSerializedSizeProvider(data,
+                            eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                }
+
+                eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
                         void* data,
                         eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-                        void* data,
-                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
-
-                eProsima_user_DllExport virtual bool getKey(
+                eProsima_user_DllExport bool getKey(
                         void* data,
                         eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
                         bool force_md5 = false) override;
 
-                eProsima_user_DllExport virtual void* createData() override;
+                eProsima_user_DllExport void* createData() override;
 
-                eProsima_user_DllExport virtual void deleteData(
+                eProsima_user_DllExport void deleteData(
                         void* data) override;
 
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -1092,28 +1223,41 @@ namespace eprosima
 
                 eProsima_user_DllExport virtual ~WriterReaderDataPubSubType() override;
 
-                eProsima_user_DllExport virtual bool serialize(
+                eProsima_user_DllExport bool serialize(
+                        void* data,
+                        eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+                {
+                    return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                }
+
+                eProsima_user_DllExport bool serialize(
                         void* data,
                         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
                         eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                eProsima_user_DllExport virtual bool deserialize(
+                eProsima_user_DllExport bool deserialize(
                         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+                        void* data) override;
+
+                eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
+                        void* data) override
+                {
+                    return getSerializedSizeProvider(data,
+                            eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                }
+
+                eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
                         void* data,
                         eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-                        void* data,
-                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
-
-                eProsima_user_DllExport virtual bool getKey(
+                eProsima_user_DllExport bool getKey(
                         void* data,
                         eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
                         bool force_md5 = false) override;
 
-                eProsima_user_DllExport virtual void* createData() override;
+                eProsima_user_DllExport void* createData() override;
 
-                eProsima_user_DllExport virtual void deleteData(
+                eProsima_user_DllExport void deleteData(
                         void* data) override;
 
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -1196,28 +1340,41 @@ namespace eprosima
 
                 eProsima_user_DllExport virtual ~Locator2LocatorDataPubSubType() override;
 
-                eProsima_user_DllExport virtual bool serialize(
+                eProsima_user_DllExport bool serialize(
+                        void* data,
+                        eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+                {
+                    return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                }
+
+                eProsima_user_DllExport bool serialize(
                         void* data,
                         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
                         eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                eProsima_user_DllExport virtual bool deserialize(
+                eProsima_user_DllExport bool deserialize(
                         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+                        void* data) override;
+
+                eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
+                        void* data) override
+                {
+                    return getSerializedSizeProvider(data,
+                            eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                }
+
+                eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
                         void* data,
                         eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-                        void* data,
-                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
-
-                eProsima_user_DllExport virtual bool getKey(
+                eProsima_user_DllExport bool getKey(
                         void* data,
                         eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
                         bool force_md5 = false) override;
 
-                eProsima_user_DllExport virtual void* createData() override;
+                eProsima_user_DllExport void* createData() override;
 
-                eProsima_user_DllExport virtual void deleteData(
+                eProsima_user_DllExport void deleteData(
                         void* data) override;
 
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -1300,28 +1457,41 @@ namespace eprosima
 
                 eProsima_user_DllExport virtual ~EntityDataPubSubType() override;
 
-                eProsima_user_DllExport virtual bool serialize(
+                eProsima_user_DllExport bool serialize(
+                        void* data,
+                        eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+                {
+                    return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                }
+
+                eProsima_user_DllExport bool serialize(
                         void* data,
                         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
                         eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                eProsima_user_DllExport virtual bool deserialize(
+                eProsima_user_DllExport bool deserialize(
                         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+                        void* data) override;
+
+                eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
+                        void* data) override
+                {
+                    return getSerializedSizeProvider(data,
+                            eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                }
+
+                eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
                         void* data,
                         eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-                        void* data,
-                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
-
-                eProsima_user_DllExport virtual bool getKey(
+                eProsima_user_DllExport bool getKey(
                         void* data,
                         eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
                         bool force_md5 = false) override;
 
-                eProsima_user_DllExport virtual void* createData() override;
+                eProsima_user_DllExport void* createData() override;
 
-                eProsima_user_DllExport virtual void deleteData(
+                eProsima_user_DllExport void deleteData(
                         void* data) override;
 
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -1375,28 +1545,41 @@ namespace eprosima
 
                 eProsima_user_DllExport virtual ~PhysicalDataPubSubType() override;
 
-                eProsima_user_DllExport virtual bool serialize(
+                eProsima_user_DllExport bool serialize(
+                        void* data,
+                        eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
+                {
+                    return serialize(data, payload, eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                }
+
+                eProsima_user_DllExport bool serialize(
                         void* data,
                         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
                         eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                eProsima_user_DllExport virtual bool deserialize(
+                eProsima_user_DllExport bool deserialize(
                         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+                        void* data) override;
+
+                eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
+                        void* data) override
+                {
+                    return getSerializedSizeProvider(data,
+                            eprosima::fastdds::dds::DEFAULT_DATA_REPRESENTATION);
+                }
+
+                eProsima_user_DllExport std::function<uint32_t()> getSerializedSizeProvider(
                         void* data,
                         eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
 
-                eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-                        void* data,
-                        eprosima::fastdds::dds::DataRepresentationId_t data_representation) override;
-
-                eProsima_user_DllExport virtual bool getKey(
+                eProsima_user_DllExport bool getKey(
                         void* data,
                         eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
                         bool force_md5 = false) override;
 
-                eProsima_user_DllExport virtual void* createData() override;
+                eProsima_user_DllExport void* createData() override;
 
-                eProsima_user_DllExport virtual void deleteData(
+                eProsima_user_DllExport void deleteData(
                         void* data) override;
 
             #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED

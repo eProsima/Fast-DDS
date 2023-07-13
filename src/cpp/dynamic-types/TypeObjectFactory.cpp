@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <fastcdr/CdrSizeCalculator.hpp>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/MemberDescriptor.h>
@@ -312,8 +313,9 @@ void TypeObjectFactory::fill_minimal_information(
     }
     else
     {
+        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
         info->minimal().typeid_with_size().typeobject_serialized_size(
-            static_cast<uint32_t>(TypeObject::getCdrSerializedSize(*obj)));
+            static_cast<uint32_t>(calculator.calculate_serialized_size(*obj, 0)));
     }
 
     switch (ident->_d())
@@ -580,8 +582,9 @@ void TypeObjectFactory::fill_complete_information(
     }
     else
     {
+        eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
         info->complete().typeid_with_size().typeobject_serialized_size(
-            static_cast<uint32_t>(TypeObject::getCdrSerializedSize(*obj)));
+            static_cast<uint32_t>(calculator.calculate_serialized_size(*obj, 0)));
     }
 
     switch (ident->_d())
