@@ -91,7 +91,7 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
     eProsima_user_DllExport inline bool is_bounded() const override
     {
-        return false;
+        return true;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -103,7 +103,7 @@ public:
     }
 
     eProsima_user_DllExport inline bool is_plain(
-        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
     {
         static_cast<void>(data_representation);
         return false;
