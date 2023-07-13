@@ -142,8 +142,8 @@ TEST_F(MonitorServiceTests, enabling_monitor_service_routine)
 
     //! Verify expectations
     std::this_thread::sleep_for(std::chrono::seconds(3));
-    ::testing::Mock::VerifyAndClearExpectations(&mock_conns_q_);
-    ::testing::Mock::VerifyAndClearExpectations(&mock_proxy_q_);
+    ASSERT_TRUE(::testing::Mock::VerifyAndClearExpectations(&mock_conns_q_));
+    ASSERT_TRUE(::testing::Mock::VerifyAndClearExpectations(&mock_proxy_q_));
 
 }
 
@@ -172,7 +172,8 @@ TEST_F(MonitorServiceTests, multiple_proxy_and_connection_updates)
 
     //! Verify expectations
     std::this_thread::sleep_for(std::chrono::seconds(5));
-    ::testing::Mock::VerifyAndClearExpectations(&mock_status_q_);
+    ASSERT_TRUE(::testing::Mock::VerifyAndClearExpectations(&mock_proxy_q_));
+    ASSERT_TRUE(::testing::Mock::VerifyAndClearExpectations(&mock_conns_q_));
 }
 
 TEST_F(MonitorServiceTests, multiple_dds_status_updates)
@@ -206,7 +207,7 @@ TEST_F(MonitorServiceTests, multiple_dds_status_updates)
 
     //! Verify expectations
     std::this_thread::sleep_for(std::chrono::seconds(5));
-    ::testing::Mock::VerifyAndClearExpectations(&mock_status_q_);
+    ASSERT_TRUE(::testing::Mock::VerifyAndClearExpectations(&mock_status_q_));
 }
 
 TEST_F(MonitorServiceTests, entity_removal_correctly_performs)
@@ -252,7 +253,9 @@ TEST_F(MonitorServiceTests, entity_removal_correctly_performs)
 
     //! Verify expectations
     std::this_thread::sleep_for(std::chrono::seconds(3));
-    ::testing::Mock::VerifyAndClearExpectations(&mock_status_q_);
+    ASSERT_TRUE(::testing::Mock::VerifyAndClearExpectations(&mock_status_q_));
+    ASSERT_TRUE(::testing::Mock::VerifyAndClearExpectations(&mock_proxy_q_));
+    ASSERT_TRUE(::testing::Mock::VerifyAndClearExpectations(&mock_conns_q_));
 }
 
 } // namespace rtps
