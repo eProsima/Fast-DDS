@@ -33,9 +33,10 @@
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
+#include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyQueryable.hpp>
 #include <fastrtps/qos/QosPolicies.h>
-#include <fastrtps/utils/ProxyPool.hpp>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
+#include <fastrtps/utils/ProxyPool.hpp>
 
 namespace eprosima {
 
@@ -79,7 +80,7 @@ class ITopicPayloadPool;
  * It also keeps the Participant Discovery Data and provides interfaces to access it
  *@ingroup DISCOVERY_MODULE
  */
-class PDP
+class PDP : public fastdds::statistics::rtps::IProxyQueryable
 {
     friend class PDPListener;
     friend class PDPServerListener;
@@ -428,6 +429,16 @@ public:
     virtual bool pairing_remote_reader_with_local_writer_after_security(
             const GUID_t& local_writer,
             const ReaderProxyData& remote_reader_data);
+#endif // HAVE_SECURITY
+
+#ifdef FASTDDS_STATISTICS
+    bool get_all_local_proxies(std::vector<GUID_t> &guids) override;
+
+    bool get_serialized_proxy(const GUID_t &guid, CDRMessage_t* msg) override;
+#else
+    bool get_all_local_proxies(std::vector<GUID_t> &) override { return false;}
+
+    bool get_serialized_proxy(const GUID_t &, CDRMessage_t*) override { return false;}
 #endif // HAVE_SECURITY
 
 protected:

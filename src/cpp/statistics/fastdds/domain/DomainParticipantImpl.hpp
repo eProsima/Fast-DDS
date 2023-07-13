@@ -34,6 +34,7 @@
 #include <fastdds/dds/topic/Topic.hpp>
 #include <fastdds/dds/topic/TopicDescription.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
 #include <fastrtps/types/TypesBase.h>
 
 #include <fastdds/domain/DomainParticipantImpl.hpp>
@@ -56,7 +57,8 @@ namespace dds {
 
 class PublisherImpl;
 
-class DomainParticipantImpl : public efd::DomainParticipantImpl
+class DomainParticipantImpl : public efd::DomainParticipantImpl,
+                              public rtps::IStatusQueryable
 {
 public:
 
@@ -275,6 +277,30 @@ protected:
      */
     bool delete_topic_and_type(
             const std::string& topic_name) noexcept;
+
+    bool get_incompatible_qos_status(
+            const fastrtps::rtps::GUID_t&,
+            fastdds::dds::IncompatibleQosStatus&) override;
+
+    bool get_inconsistent_topic_status(
+            const fastrtps::rtps::GUID_t&,
+            fastdds::dds::InconsistentTopicStatus&) override;
+
+    bool get_liveliness_lost_status(
+            const fastrtps::rtps::GUID_t&,
+            fastdds::dds::LivelinessLostStatus&) override;
+
+    bool get_liveliness_changed_status(
+            const fastrtps::rtps::GUID_t&,
+            fastdds::dds::LivelinessChangedStatus&) override;
+
+    bool get_deadline_missed_status(
+            const fastrtps::rtps::GUID_t&,
+            fastdds::dds::DeadlineMissedStatus&) override;
+
+    bool get_sample_lost_status(
+            const fastrtps::rtps::GUID_t&,
+            fastdds::dds::SampleLostStatus&) override;
 
     efd::Publisher* builtin_publisher_ = nullptr;
     PublisherImpl* builtin_publisher_impl_ = nullptr;

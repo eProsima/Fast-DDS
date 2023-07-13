@@ -43,7 +43,7 @@ struct IStatusQueryable
      */
     virtual bool get_incompatible_qos_status(
             const fastrtps::rtps::GUID_t& guid,
-            dds::IncompatibleQosStatus& status) = 0;
+            eprosima::fastdds::dds::IncompatibleQosStatus& status) = 0;
 
     /**
      * @brief Interface for requesting the InconsistentTopicStatus
@@ -55,7 +55,7 @@ struct IStatusQueryable
      */
     virtual bool get_inconsistent_topic_status(
             const fastrtps::rtps::GUID_t& guid,
-            dds::InconsistentTopicStatus& status) = 0;
+            eprosima::fastdds::dds::InconsistentTopicStatus& status) = 0;
 
     /**
      * @brief Interface for requesting the LivelinessLostStatus
@@ -67,7 +67,7 @@ struct IStatusQueryable
      */
     virtual bool get_liveliness_lost_status(
             const fastrtps::rtps::GUID_t& guid,
-            dds::LivelinessLostStatus& status) = 0;
+            eprosima::fastdds::dds::LivelinessLostStatus& status) = 0;
 
     /**
      * @brief Interface for requesting the LivelinessChangedStatus
@@ -79,7 +79,7 @@ struct IStatusQueryable
      */
     virtual bool get_liveliness_changed_status(
             const fastrtps::rtps::GUID_t& guid,
-            dds::LivelinessChangedStatus& status) = 0;
+            eprosima::fastdds::dds::LivelinessChangedStatus& status) = 0;
 
     /**
      * @brief Interface for requesting the DeadlineMissedStatus
@@ -93,7 +93,7 @@ struct IStatusQueryable
      */
     virtual bool get_deadline_missed_status(
             const fastrtps::rtps::GUID_t& guid,
-            dds::DeadlineMissedStatus& status) = 0;
+            eprosima::fastdds::dds::DeadlineMissedStatus& status) = 0;
 
     /**
      * @brief Interface for requesting the SampleLostStatus
@@ -105,7 +105,7 @@ struct IStatusQueryable
      */
     virtual bool get_sample_lost_status(
             const fastrtps::rtps::GUID_t& guid,
-            dds::SampleLostStatus& status) = 0;
+            eprosima::fastdds::dds::SampleLostStatus& status) = 0;
 
 };
 

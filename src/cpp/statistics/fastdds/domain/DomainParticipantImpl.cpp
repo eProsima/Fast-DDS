@@ -335,6 +335,60 @@ ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
     return ret;
 }
 
+bool DomainParticipantImpl::get_incompatible_qos_status(
+        const fastrtps::rtps::GUID_t& entity_guid,
+        fastdds::dds::IncompatibleQosStatus& status)
+{
+    static_cast<void>(entity_guid);
+    static_cast<void>(status);
+    return false;
+}
+
+bool DomainParticipantImpl::get_inconsistent_topic_status(
+        const fastrtps::rtps::GUID_t& entity_guid,
+        fastdds::dds::InconsistentTopicStatus& status)
+{
+    static_cast<void>(entity_guid);
+    static_cast<void>(status);
+    return false;
+}
+
+bool DomainParticipantImpl::get_liveliness_lost_status(
+        const fastrtps::rtps::GUID_t& entity_guid,
+        fastdds::dds::LivelinessLostStatus& status)
+{
+    static_cast<void>(entity_guid);
+    static_cast<void>(status);
+    return false;
+}
+
+bool DomainParticipantImpl::get_liveliness_changed_status(
+        const fastrtps::rtps::GUID_t& entity_guid,
+        fastdds::dds::LivelinessChangedStatus& status)
+{
+    static_cast<void>(entity_guid);
+    static_cast<void>(status);
+    return false;
+}
+
+bool DomainParticipantImpl::get_deadline_missed_status(
+        const fastrtps::rtps::GUID_t& entity_guid,
+        fastdds::dds::DeadlineMissedStatus& status)
+{
+    static_cast<void>(entity_guid);
+    static_cast<void>(status);
+    return false;
+}
+
+bool DomainParticipantImpl::get_sample_lost_status(
+        const fastrtps::rtps::GUID_t& entity_guid,
+        fastdds::dds::SampleLostStatus& status)
+{
+    static_cast<void>(entity_guid);
+    static_cast<void>(status);
+    return false;
+}
+
 efd::PublisherImpl* DomainParticipantImpl::create_publisher_impl(
         const efd::PublisherQos& qos,
         efd::PublisherListener* listener)

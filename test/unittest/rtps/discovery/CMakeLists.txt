@@ -52,6 +52,8 @@ set(EDPTESTS_SOURCE EdpTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     )
 
+set(PDPTESTS_SOURCE EdpTests.cpp)
+
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
 endif()
@@ -97,6 +99,35 @@ endif()
 
 add_gtest(EdpTests SOURCES ${EDPTESTS_SOURCE})
 
+add_executable(PDPTests ${PDPTESTS_SOURCE})
+target_compile_definitions(PDPTests PRIVATE FASTRTPS_NO_LIB
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(PDPTests PRIVATE
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp
+    ${Asio_INCLUDE_DIR}
+    )
+
+target_link_libraries(PDPTests foonathan_memory
+    GTest::gmock
+    fastrtps
+    ${CMAKE_DL_LIBS})
+if(QNX)
+    target_link_libraries(PDPTests socket)
+endif()
+if(MSVC OR MSVC_IDE)
+    target_link_libraries(PDPTests ${PRIVACY} fastcdr iphlpapi Shlwapi ws2_32)
+else()
+    target_link_libraries(PDPTests ${PRIVACY} fastcdr)
+endif()
+
+add_gtest(PDPTests SOURCES ${PDPTESTS_SOURCE})
+
 if(ANDROID)
     set_property(TARGET EdpTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET PDPTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
 endif()

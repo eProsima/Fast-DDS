@@ -45,6 +45,7 @@
 #include <fastdds/rtps/messages/MessageReceiver.h>
 #include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/rtps/transport/SenderResource.h>
+#include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsQueryable.hpp>
 #include <fastrtps/utils/Semaphore.h>
 #include <fastrtps/utils/shared_mutex.hpp>
 
@@ -120,7 +121,9 @@ class WLP;
  * @ingroup RTPS_MODULE
  */
 class RTPSParticipantImpl
-    : public fastdds::statistics::StatisticsParticipantImpl
+    : public fastdds::statistics::StatisticsParticipantImpl,
+      public fastdds::statistics::rtps::IConnectionsQueryable
+
 {
     /*
        Receiver Control block is a struct we use to encapsulate the resources that take part in message reception.
@@ -1218,6 +1221,12 @@ public:
             fastrtps::rtps::ReaderProxyData& data,
             const fastdds::statistics::MonitorServiceStatusData& msg);
 
+    std::vector<fastdds::statistics::Connection> get_entity_connections(const GUID_t &) override;
+#else
+    std::vector<fastdds::statistics::Connection> get_entity_connections(const GUID_t &) override
+    {
+        return std::vector<fastdds::statistics::Connection>();
+    }
 #endif // FASTDDS_STATISTICS
 
     bool should_match_local_endpoints()
