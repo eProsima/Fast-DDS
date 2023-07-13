@@ -428,7 +428,9 @@ bool SharedMemTransport::send(
 {
     using namespace eprosima::fastdds::statistics::rtps;
 
+#if !defined(_WIN32)
     cleanup_output_ports();
+#endif // if !defined(_WIN32)
 
     fastrtps::rtps::LocatorsIterator& it = *destination_locators_begin;
 
