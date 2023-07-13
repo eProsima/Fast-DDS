@@ -1183,7 +1183,7 @@ public:
     bool disable_monitor_service() const;
 
     /**
-     * Fills the in ParticipantProxyData from a MonitorService Message
+     * fills in the ParticipantProxyData from a MonitorService Message
      *
      * @param [out] data Proxy to fill
      * @param [in] msg MonitorService Message to get the proxy information from.
@@ -1195,7 +1195,7 @@ public:
             const fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
-     * Fills the in WriterProxyData from a MonitorService Message
+     * fills in the WriterProxyData from a MonitorService Message
      *
      * @param [out] data Proxy to fill.
      * @param [in] msg MonitorService Message to get the proxy information from.
@@ -1207,7 +1207,7 @@ public:
             const fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
-     * Fills the in ReaderProxyData from a MonitorService Message
+     * fills in the ReaderProxyData from a MonitorService Message
      *
      * @param [out] data Proxy to fill.
      * @param [in] msg MonitorService Message to get the proxy information from.

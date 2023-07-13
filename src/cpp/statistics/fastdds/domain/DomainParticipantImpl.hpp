@@ -148,7 +148,7 @@ public:
     ReturnCode_t disable_monitor_service() const;
 
     /**
-     * Fills the in ParticipantProxyData from a MonitorService Message
+     * fills in the ParticipantProxyData from a MonitorService Message
      *
      * @param [out] data Proxy to fill
      * @param [in] msg MonitorService Message to get the proxy information from.
@@ -156,12 +156,12 @@ public:
      * @return RETCODE_OK if the operation succeeds.
      * @return RETCODE_ERROR if the  operation fails.
      */
-    RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
+    ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::ParticipantProxyData& data,
             const fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
-     * Fills the in WriterProxyData from a MonitorService Message
+     * fills in the WriterProxyData from a MonitorService Message
      *
      * @param [out] data Proxy to fill.
      * @param [in] msg MonitorService Message to get the proxy information from.
@@ -169,12 +169,12 @@ public:
      * @return RETCODE_OK if the operation succeeds.
      * @return RETCODE_ERROR if the  operation fails.
      */
-    RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
+    ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::WriterProxyData& data,
             const fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
-     * Fills the in ReaderProxyData from a MonitorService Message
+     * fills in the ReaderProxyData from a MonitorService Message
      *
      * @param [out] data Proxy to fill.
      * @param [in] msg MonitorService Message to get the proxy information from.
@@ -182,7 +182,7 @@ public:
      * @return RETCODE_OK if the operation succeeds.
      * @return RETCODE_ERROR if the  operation fails.
      */
-    RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
+    ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::ReaderProxyData& data,
             const fastdds::statistics::MonitorServiceStatusData& msg);
 
