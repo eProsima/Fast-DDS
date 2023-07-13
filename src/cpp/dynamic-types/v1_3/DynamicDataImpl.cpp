@@ -12,16 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/rtps/common/Types.h>
-#include <fastrtps/types/v1_3/DynamicData.hpp>
-#include <fastrtps/types/v1_3/DynamicDataFactory.hpp>
-#include <fastrtps/types/v1_3/DynamicDataPtr.hpp>
-#include <fastrtps/types/v1_3/DynamicPubSubType.hpp>
-#include <fastrtps/types/v1_3/DynamicType.hpp>
-#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
-#include <fastrtps/types/v1_3/DynamicTypeMember.hpp>
-#include <fastrtps/types/v1_3/MemberDescriptor.hpp>
-#include <fastrtps/types/v1_3/TypeDescriptor.hpp>
+#include <dynamic-types/v1_3/DynamicDataImpl.hpp>
 #include <fastdds/dds/log/Log.hpp>
 
 #include <locale>
@@ -47,8 +38,8 @@ bool map_compare(
 
 template <>
 bool map_compare(
-        const std::map<MemberId, DynamicData*>& left,
-        const std::map<MemberId, DynamicData*>& right)
+        const std::map<MemberId, DynamicDataImpl*>& left,
+        const std::map<MemberId, DynamicDataImpl*>& right)
 {
     auto pred = [](decltype(*left.begin()) a, decltype(a) b)
             {
@@ -58,103 +49,36 @@ bool map_compare(
     return left.size() == right.size() && std::equal(left.begin(), left.end(), right.begin(), pred);
 }
 
-DynamicData::DynamicData(
-        DynamicType_ptr pType)
-    : type_(pType)
+DynamicDataImpl::DynamicDataImpl(
+        const DynamicTypeImpl& type)
+    : type_(type.shared_from_this())
 {
     create_members(type_);
 }
 
-DynamicData::DynamicData(
-        const DynamicData* pData)
-    : type_(pData->get_type())
-#ifdef DYNAMIC_TYPES_CHECKING
-    , int32_value_(pData->int32_value_)
-    , uint32_value_(pData->uint32_value_)
-    , int16_value_(pData->int16_value_)
-    , uint16_value_(pData->uint16_value_)
-    , int64_value_(pData->int64_value_)
-    , uint64_value_(pData->uint64_value_)
-    , float32_value_(pData->float32_value_)
-    , float64_value_(pData->float64_value_)
-    , float128_value_(pData->float128_value_)
-    , char8_value_(pData->char8_value_)
-    , char16_value_(pData->char16_value_)
-    , byte_value_(pData->byte_value_)
-    , bool_value_(pData->bool_value_)
-    , string_value_(pData->string_value_)
-    , wstring_value_(pData->wstring_value_)
-#endif // ifdef DYNAMIC_TYPES_CHECKING
-    , key_element_(pData->key_element_)
-    , default_array_value_(pData->default_array_value_)
-    , union_id_(pData->union_id_)
+const DynamicType& DynamicDataImpl::get_type() const
 {
-    create_members(pData);
+    assert(type_);
+    return *type_;
 }
 
-DynamicData::~DynamicData()
+void DynamicDataImpl::create_members(
+        const DynamicType& type)
 {
-    clean();
-}
-
-DynamicType_ptr DynamicData::get_type() const
-{
-    return type_;
-}
-
-void DynamicData::create_members(
-        const DynamicData* pData)
-{
-    assert(type_ == pData->type_);
-
-#ifdef DYNAMIC_TYPES_CHECKING
-    for (auto it = pData->complex_values_.begin(); it != pData->complex_values_.end(); ++it)
-    {
-        complex_values_.insert(std::make_pair(it->first, DynamicDataFactory::get_instance()->create_copy(it->second)));
-    }
-#else
-    if (type_->is_complex_kind())
-    {
-        for (auto it = pData->values_.begin(); it != pData->values_.end(); ++it)
-        {
-            values_.insert(std::make_pair(it->first,
-                    DynamicDataFactory::get_instance()->create_copy((DynamicData*)it->second)));
-        }
-    }
-    else if (type_->get_member_count() > 0)
-    {
-        for (auto pm : type_->get_all_members())
-        {
-            assert(pm);
-            values_[pm->get_id()] = pData->clone_value(pm->get_id(), pm->get_kind());
-        }
-    }
-    else
-    {
-        values_.insert(std::make_pair(MEMBER_ID_INVALID, pData->clone_value(MEMBER_ID_INVALID, pData->get_kind())));
-    }
-#endif // ifdef DYNAMIC_TYPES_CHECKING
-}
-
-void DynamicData::create_members(
-        DynamicType_ptr pType)
-{
-    assert(pType);
-
-    if (pType->is_complex_kind())
+    if (type.is_complex_kind())
     {
         // Bitmasks and enums register their members but only manages one value.
-        if (pType->get_kind() == TypeKind::TK_BITMASK || pType->get_kind() == TypeKind::TK_ENUM)
+        if (type.get_kind() == TypeKind::TK_BITMASK || type.get_kind() == TypeKind::TK_ENUM)
         {
-            add_value(pType->get_kind(), MEMBER_ID_INVALID);
+            add_value(type.get_kind(), MEMBER_ID_INVALID);
         }
         else
         {
-            for (auto pm : pType->get_all_members())
+            for (auto pm : type.get_all_members())
             {
                 assert(pm);
 
-                DynamicData* data = DynamicDataFactory::get_instance()->create_data(pm->get_type());
+                DynamicDataImpl* data = DynamicDataFactory::get_instance()->create_data(pm->get_type());
                 if (pm->get_kind() != TypeKind::TK_BITSET &&
                         pm->get_kind() != TypeKind::TK_STRUCTURE &&
                         pm->get_kind() != TypeKind::TK_UNION &&
@@ -175,7 +99,7 @@ void DynamicData::create_members(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 
                 // Set the default value for unions.
-                if (pType->get_kind() == TypeKind::TK_UNION &&
+                if (type.get_kind() == TypeKind::TK_UNION &&
                         pm->is_default_union_value())
                 {
                     set_union_id(pm->get_id());
@@ -184,9 +108,9 @@ void DynamicData::create_members(
         }
 
         // If there isn't a default value... set the first element of the union
-        if (pType->get_kind() == TypeKind::TK_UNION &&
+        if (type.get_kind() == TypeKind::TK_UNION &&
                 get_union_id() == MEMBER_ID_INVALID &&
-                pType->get_member_count())
+                type.get_member_count())
         {
             set_union_id(get_member_id_at_index(0));
         }
@@ -194,17 +118,19 @@ void DynamicData::create_members(
     else
     {
         // Resolve alias type, avoid reference counting
-        const DynamicType* type = pType.get();
-        while ( type->get_kind() == TypeKind::TK_ALIAS )
+        DynamicTypeImpl* ptype = &type;
+        while ( ptype->get_kind() == TypeKind::TK_ALIAS )
         {
-            type = type->get_base_type().get();
+            ptype = ptype->get_base_type().get();
         }
 
-        add_value(type->get_kind(), MEMBER_ID_INVALID);
+        assert(ptype);
+
+        add_value(ptype->get_kind(), MEMBER_ID_INVALID);
     }
 }
 
-ReturnCode_t DynamicData::get_descriptor(
+ReturnCode_t DynamicDataImpl::get_descriptor(
         MemberDescriptor& value,
         MemberId id)
 {
@@ -212,8 +138,8 @@ ReturnCode_t DynamicData::get_descriptor(
     return type_->get_member(value, id);
 }
 
-bool DynamicData::equals(
-        const DynamicData* other) const
+bool DynamicDataImpl::equals(
+        const DynamicDataImpl* other) const
 {
     if (other != nullptr)
     {
@@ -239,7 +165,7 @@ bool DynamicData::equals(
                     auto it = values_.find(union_id_);
                     auto otherIt = other->values_.find(union_id_);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
-                    if (!((DynamicData*)it->second)->equals((DynamicData*)otherIt->second))
+                    if (!((DynamicDataImpl*)it->second)->equals((DynamicDataImpl*)otherIt->second))
                     {
                         return false;
                     }
@@ -316,12 +242,12 @@ bool DynamicData::equals(
                         other->values_.begin(),
                         [](const decltype(values_)::value_type& l, const decltype(values_)::value_type& r)
                         {
-                            DynamicData* left = (DynamicData*)l.second;
-                            DynamicData* right = (DynamicData*)r.second;
+                            DynamicDataImpl* left = (DynamicDataImpl*)l.second;
+                            DynamicDataImpl* right = (DynamicDataImpl*)r.second;
                             bool res = left->equals(right);
                             return res;
                             // TODO: undo once finished debugging
-                            // return ((DynamicData*)l.second)->equals((DynamicData*)r.second);
+                            // return ((DynamicDataImpl*)l.second)->equals((DynamicDataImpl*)r.second);
                         });
                 }
                 else
@@ -340,27 +266,27 @@ bool DynamicData::equals(
     return false;
 }
 
-MemberId DynamicData::get_member_id_by_name(
+MemberId DynamicDataImpl::get_member_id_by_name(
         const std::string& name) const
 {
     assert(type_);
     return type_->get_member_id_by_name(name);
 }
 
-MemberId DynamicData::get_member_id_at_index(
+MemberId DynamicDataImpl::get_member_id_at_index(
         uint32_t index) const
 {
     assert(type_);
     return type_->get_member_id_at_index(index);
 }
 
-TypeKind DynamicData::get_kind() const
+TypeKind DynamicDataImpl::get_kind() const
 {
     assert(type_);
     return type_->get_kind();
 }
 
-uint32_t DynamicData::get_item_count() const
+uint32_t DynamicDataImpl::get_item_count() const
 {
     if (get_kind() == TypeKind::TK_MAP)
     {
@@ -384,12 +310,12 @@ uint32_t DynamicData::get_item_count() const
     }
 }
 
-std::string DynamicData::get_name()
+std::string DynamicDataImpl::get_name()
 {
     return type_->get_name();
 }
 
-void DynamicData::add_value(
+void DynamicDataImpl::add_value(
         TypeKind kind,
         MemberId id)
 {
@@ -519,7 +445,7 @@ void DynamicData::add_value(
     set_default_value(id);
 }
 
-void DynamicData::clean()
+void DynamicDataImpl::clean()
 {
     if (default_array_value_ != nullptr)
     {
@@ -532,7 +458,7 @@ void DynamicData::clean()
     type_.reset();
 }
 
-ReturnCode_t DynamicData::clear_all_values()
+ReturnCode_t DynamicDataImpl::clear_all_values()
 {
     if (type_->is_complex_kind())
     {
@@ -550,7 +476,7 @@ ReturnCode_t DynamicData::clear_all_values()
 #else
             for (auto& e : values_)
             {
-                ((DynamicData*)e.second)->clear_all_values();
+                ((DynamicDataImpl*)e.second)->clear_all_values();
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
         }
@@ -562,181 +488,16 @@ ReturnCode_t DynamicData::clear_all_values()
     return ReturnCode_t::RETCODE_OK;
 }
 
-void DynamicData::clean_members()
+void DynamicDataImpl::clean_members()
 {
 #ifdef DYNAMIC_TYPES_CHECKING
-    for (auto it = complex_values_.begin(); it != complex_values_.end(); ++it)
-    {
-        DynamicDataFactory::get_instance()->delete_data(it->second);
-    }
     complex_values_.clear();
 #else
-    if (has_children())
-    {
-        for (auto it = values_.begin(); it != values_.end(); ++it)
-        {
-            DynamicDataFactory::get_instance()->delete_data((DynamicData*)it->second);
-        }
-    }
-    else
-    {
-        switch (get_kind())
-        {
-            default:
-                break;
-            case TypeKind::TK_INT32:
-            {
-#ifndef DYNAMIC_TYPES_CHECKING
-                auto it = values_.begin();
-                delete ((int32_t*)it->second);
-#endif // ifndef DYNAMIC_TYPES_CHECKING
-                break;
-            }
-            case TypeKind::TK_UINT32:
-            {
-#ifndef DYNAMIC_TYPES_CHECKING
-                auto it = values_.begin();
-                delete ((uint32_t*)it->second);
-#endif // ifndef DYNAMIC_TYPES_CHECKING
-                break;
-            }
-            case TypeKind::TK_INT16:
-            {
-#ifndef DYNAMIC_TYPES_CHECKING
-                auto it = values_.begin();
-                delete ((int16_t*)it->second);
-#endif // ifndef DYNAMIC_TYPES_CHECKING
-                break;
-            }
-            case TypeKind::TK_UINT16:
-            {
-#ifndef DYNAMIC_TYPES_CHECKING
-                auto it = values_.begin();
-                delete ((uint16_t*)it->second);
-#endif // ifndef DYNAMIC_TYPES_CHECKING
-                break;
-            }
-            case TypeKind::TK_INT64:
-            {
-#ifndef DYNAMIC_TYPES_CHECKING
-                auto it = values_.begin();
-                delete ((int64_t*)it->second);
-#endif // ifndef DYNAMIC_TYPES_CHECKING
-                break;
-            }
-            case TypeKind::TK_UINT64:
-            {
-#ifndef DYNAMIC_TYPES_CHECKING
-                auto it = values_.begin();
-                delete ((uint64_t*)it->second);
-#endif // ifndef DYNAMIC_TYPES_CHECKING
-                break;
-            }
-            case TypeKind::TK_FLOAT32:
-            {
-#ifndef DYNAMIC_TYPES_CHECKING
-                auto it = values_.begin();
-                delete ((float*)it->second);
-#endif // ifndef DYNAMIC_TYPES_CHECKING
-                break;
-            }
-            case TypeKind::TK_FLOAT64:
-            {
-#ifndef DYNAMIC_TYPES_CHECKING
-                auto it = values_.begin();
-                delete ((double*)it->second);
-#endif // ifndef DYNAMIC_TYPES_CHECKING
-                break;
-            }
-            case TypeKind::TK_FLOAT128:
-            {
-#ifndef DYNAMIC_TYPES_CHECKING
-                auto it = values_.begin();
-                delete ((long double*)it->second);
-#endif // ifndef DYNAMIC_TYPES_CHECKING
-                break;
-            }
-            case TypeKind::TK_CHAR8:
-            {
-#ifndef DYNAMIC_TYPES_CHECKING
-                auto it = values_.begin();
-                delete ((char*)it->second);
-#endif // ifndef DYNAMIC_TYPES_CHECKING
-                break;
-            }
-            case TypeKind::TK_CHAR16:
-            {
-#ifndef DYNAMIC_TYPES_CHECKING
-                auto it = values_.begin();
-                delete ((wchar_t*)it->second);
-#endif // ifndef DYNAMIC_TYPES_CHECKING
-                break;
-            }
-            case TypeKind::TK_BOOLEAN:
-            {
-#ifndef DYNAMIC_TYPES_CHECKING
-                auto it = values_.begin();
-                delete ((bool*)it->second);
-#endif // ifndef DYNAMIC_TYPES_CHECKING
-                break;
-            }
-            case TypeKind::TK_BYTE:
-            {
-#ifndef DYNAMIC_TYPES_CHECKING
-                auto it = values_.begin();
-                delete ((octet*)it->second);
-#endif // ifndef DYNAMIC_TYPES_CHECKING
-                break;
-            }
-            case TypeKind::TK_STRING8:
-            {
-#ifndef DYNAMIC_TYPES_CHECKING
-                auto it = values_.begin();
-                delete ((std::string*)it->second);
-#endif // ifndef DYNAMIC_TYPES_CHECKING
-                break;
-            }
-            case TypeKind::TK_STRING16:
-            {
-#ifndef DYNAMIC_TYPES_CHECKING
-                auto it = values_.begin();
-                delete ((std::wstring*)it->second);
-#endif // ifndef DYNAMIC_TYPES_CHECKING
-                break;
-            }
-            case TypeKind::TK_ENUM:
-            {
-#ifndef DYNAMIC_TYPES_CHECKING
-                auto it = values_.begin();
-                delete ((uint32_t*)it->second);
-#endif // ifndef DYNAMIC_TYPES_CHECKING
-                break;
-            }
-            case TypeKind::TK_BITMASK:
-            {
-#ifndef DYNAMIC_TYPES_CHECKING
-                auto it = values_.begin();
-                delete ((uint64_t*)it->second);
-#endif // ifndef DYNAMIC_TYPES_CHECKING
-                break;
-            }
-            case TypeKind::TK_UNION:
-            case TypeKind::TK_STRUCTURE:
-            case TypeKind::TK_ARRAY:
-            case TypeKind::TK_SEQUENCE:
-            case TypeKind::TK_MAP:
-            case TypeKind::TK_ALIAS:
-            case TypeKind::TK_BITSET:
-            {
-                break;
-            }
-        }
-    }
     values_.clear();
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::clear_nonkey_values()
+ReturnCode_t DynamicDataImpl::clear_nonkey_values()
 {
     if (type_->is_complex_kind())
     {
@@ -748,7 +509,7 @@ ReturnCode_t DynamicData::clear_nonkey_values()
 #else
         for (auto& e : values_)
         {
-            ((DynamicData*)e.second)->clear_nonkey_values();
+            ((DynamicDataImpl*)e.second)->clear_nonkey_values();
         }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
     }
@@ -762,7 +523,7 @@ ReturnCode_t DynamicData::clear_nonkey_values()
     return ReturnCode_t::RETCODE_OK;
 }
 
-ReturnCode_t DynamicData::clear_value(
+ReturnCode_t DynamicDataImpl::clear_value(
         MemberId id)
 {
 #ifdef DYNAMIC_TYPES_CHECKING
@@ -775,7 +536,7 @@ ReturnCode_t DynamicData::clear_value(
     auto itValue = values_.find(id);
     if (itValue != values_.end())
     {
-        ((DynamicData*)itValue->second)->clear_all_values();
+        ((DynamicDataImpl*)itValue->second)->clear_all_values();
     }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
     else
@@ -785,7 +546,7 @@ ReturnCode_t DynamicData::clear_value(
     return ReturnCode_t::RETCODE_OK;
 }
 
-void* DynamicData::clone_value(
+std::shared_ptr<void> DynamicDataImpl::clone_value(
         MemberId id,
         TypeKind kind) const
 {
@@ -912,10 +673,10 @@ void* DynamicData::clone_value(
             return newBitset;
         }
     }
-    return nullptr;
+    return {};
 }
 
-bool DynamicData::compare_values(
+bool DynamicDataImpl::compare_values(
         TypeKind kind,
         void* left,
         void* right) const
@@ -976,8 +737,7 @@ bool DynamicData::compare_values(
     return false;
 }
 
-void DynamicData::get_value(
-        std::string& sOutValue,
+std::string DynamicDataImpl::get_value(
         MemberId id /*= MEMBER_ID_INVALID*/) const
 {
     switch (type_->get_kind())
@@ -988,70 +748,70 @@ void DynamicData::get_value(
         {
             int32_t value(0);
             get_int32_value(value, id);
-            sOutValue = std::to_string(value);
+            return std::to_string(value);
         }
         break;
         case TypeKind::TK_UINT32:
         {
             uint32_t value(0);
             get_uint32_value(value, id);
-            sOutValue = std::to_string(value);
+            return std::to_string(value);
         }
         break;
         case TypeKind::TK_INT16:
         {
             int16_t value(0);
             get_int16_value(value, id);
-            sOutValue = std::to_string(value);
+            return std::to_string(value);
         }
         break;
         case TypeKind::TK_UINT16:
         {
             uint16_t value(0);
             get_uint16_value(value, id);
-            sOutValue = std::to_string(value);
+            return std::to_string(value);
         }
         break;
         case TypeKind::TK_INT64:
         {
             int64_t value(0);
             get_int64_value(value, id);
-            sOutValue = std::to_string(value);
+            return std::to_string(value);
         }
         break;
         case TypeKind::TK_UINT64:
         {
             uint64_t value(0);
             get_uint64_value(value, id);
-            sOutValue = std::to_string(value);
+            return std::to_string(value);
         }
         break;
         case TypeKind::TK_FLOAT32:
         {
             float value(0.0f);
             get_float32_value(value, id);
-            sOutValue = std::to_string(value);
+            return std::to_string(value);
         }
         break;
         case TypeKind::TK_FLOAT64:
         {
             double value(0.0f);
             get_float64_value(value, id);
-            sOutValue = std::to_string(value);
+            return std::to_string(value);
         }
         break;
         case TypeKind::TK_FLOAT128:
         {
             long double value(0.0f);
             get_float128_value(value, id);
-            sOutValue = std::to_string(value);
+            return std::to_string(value);
         }
         break;
         case TypeKind::TK_CHAR8:
         {
             char value = 0;
             get_char8_value(value, id);
-            sOutValue = value;
+            return value;
         }
         break;
         case TypeKind::TK_CHAR16:
@@ -1060,47 +820,47 @@ void DynamicData::get_value(
             get_char16_value(value, id);
             std::wstring temp = L"";
             temp += value;
-            sOutValue = wstring_to_bytes(temp);
+            return wstring_to_bytes(temp);
         }
         break;
         case TypeKind::TK_BOOLEAN:
         {
             bool value(false);
             get_bool_value(value, id);
-            sOutValue = std::to_string(value ? 1 : 0);
+            return std::to_string(value ? 1 : 0);
         }
         break;
         case TypeKind::TK_BYTE:
         {
             uint8_t value(0);
             get_byte_value(value, id);
-            sOutValue = std::to_string(value);
+            return std::to_string(value);
         }
         break;
         case TypeKind::TK_STRING8:
         {
-            sOutValue = get_string_value(id);
+            return get_string_value(id);
         }
         break;
         case TypeKind::TK_STRING16:
         {
             std::wstring value;
             get_wstring_value(value, id);
-            sOutValue = wstring_to_bytes(value);
+            return wstring_to_bytes(value);
         }
         break;
         case TypeKind::TK_ENUM:
         {
             uint32_t value;
             get_enum_value(value, id);
-            sOutValue = std::to_string(value);
+            return std::to_string(value);
         }
         break;
         case TypeKind::TK_BITMASK:
         {
             uint64_t value(0);
             get_uint64_value(value, id);
-            sOutValue = std::to_string(value);
+            return std::to_string(value);
         }
         break;
         case TypeKind::TK_ARRAY:
@@ -1112,9 +872,11 @@ void DynamicData::get_value(
         }
         break;
     }
+
+    return {};
 }
 
-void DynamicData::set_value(
+void DynamicDataImpl::set_value(
         const std::string& sValue,
         MemberId id /*= MEMBER_ID_INVALID*/)
 {
@@ -1338,7 +1100,7 @@ void DynamicData::set_value(
     }
 }
 
-void DynamicData::set_default_value(
+void DynamicDataImpl::set_default_value(
         MemberId id)
 {
     assert(type_);
@@ -1583,9 +1345,9 @@ void DynamicData::set_default_value(
             auto itValue = values_.find(id);
             if (itValue != values_.end())
             {
-                if (!((DynamicData*)itValue->second)->key_element_)
+                if (!((DynamicDataImpl*)itValue->second)->key_element_)
                 {
-                    ((DynamicData*)itValue->second)->set_default_value(MEMBER_ID_INVALID);
+                    ((DynamicDataImpl*)itValue->second)->set_default_value(MEMBER_ID_INVALID);
                 }
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
@@ -1594,7 +1356,7 @@ void DynamicData::set_default_value(
     }
 }
 
-DynamicData* DynamicData::loan_value(
+DynamicDataImpl* DynamicDataImpl::loan_value(
         MemberId id)
 {
     if (id != MEMBER_ID_INVALID)
@@ -1632,7 +1394,7 @@ DynamicData* DynamicData::loan_value(
             auto it = values_.find(id);
             if (it != values_.end())
             {
-                if (get_kind() == TypeKind::TK_MAP && ((DynamicData*)it->second)->key_element_)
+                if (get_kind() == TypeKind::TK_MAP && ((DynamicDataImpl*)it->second)->key_element_)
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. Key values can't be loaned.");
                     return nullptr;
@@ -1644,7 +1406,7 @@ DynamicData* DynamicData::loan_value(
                         set_union_id(id);
                     }
                     loaned_values_.push_back(id);
-                    return (DynamicData*)it->second;
+                    return (DynamicDataImpl*)it->second;
                 }
             }
             else if (get_kind() == TypeKind::TK_ARRAY)
@@ -1652,7 +1414,7 @@ DynamicData* DynamicData::loan_value(
                 if (insert_array_data(id) == ReturnCode_t::RETCODE_OK)
                 {
                     loaned_values_.push_back(id);
-                    return (DynamicData*)values_.at(id);
+                    return (DynamicDataImpl*)values_.at(id);
                 }
             }
 
@@ -1674,8 +1436,8 @@ DynamicData* DynamicData::loan_value(
     return nullptr;
 }
 
-ReturnCode_t DynamicData::return_loaned_value(
-        const DynamicData* value)
+ReturnCode_t DynamicDataImpl::return_loaned_value(
+        const DynamicDataImpl* value)
 {
     for (auto loanIt = loaned_values_.begin(); loanIt != loaned_values_.end(); ++loanIt)
     {
@@ -1700,7 +1462,7 @@ ReturnCode_t DynamicData::return_loaned_value(
     return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
 
-ReturnCode_t DynamicData::get_int32_value(
+ReturnCode_t DynamicDataImpl::get_int32_value(
         int32_t& value,
         MemberId id) const
 {
@@ -1739,7 +1501,7 @@ ReturnCode_t DynamicData::get_int32_value(
         {
             if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
-                return ((DynamicData*)it->second)->get_int32_value(value, MEMBER_ID_INVALID);
+                return ((DynamicDataImpl*)it->second)->get_int32_value(value, MEMBER_ID_INVALID);
             }
         }
     }
@@ -1751,7 +1513,7 @@ ReturnCode_t DynamicData::get_int32_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::set_int32_value(
+ReturnCode_t DynamicDataImpl::set_int32_value(
         int32_t value,
         MemberId id)
 {
@@ -1766,7 +1528,7 @@ ReturnCode_t DynamicData::set_int32_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            DynamicData* data = it->second;
+            DynamicDataImpl* data = it->second;
             if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_get_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
@@ -1838,7 +1600,7 @@ ReturnCode_t DynamicData::set_int32_value(
                 value &= mask;
             }
 
-            ReturnCode_t result = ((DynamicData*)it->second)->set_int32_value(value, MEMBER_ID_INVALID);
+            ReturnCode_t result = ((DynamicDataImpl*)it->second)->set_int32_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
@@ -1870,7 +1632,7 @@ ReturnCode_t DynamicData::set_int32_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::get_uint32_value(
+ReturnCode_t DynamicDataImpl::get_uint32_value(
         uint32_t& value,
         MemberId id) const
 {
@@ -1909,7 +1671,7 @@ ReturnCode_t DynamicData::get_uint32_value(
         {
             if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
-                return ((DynamicData*)it->second)->get_uint32_value(value, MEMBER_ID_INVALID);
+                return ((DynamicDataImpl*)it->second)->get_uint32_value(value, MEMBER_ID_INVALID);
             }
         }
     }
@@ -1921,7 +1683,7 @@ ReturnCode_t DynamicData::get_uint32_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::set_uint32_value(
+ReturnCode_t DynamicDataImpl::set_uint32_value(
         uint32_t value,
         MemberId id)
 {
@@ -1936,7 +1698,7 @@ ReturnCode_t DynamicData::set_uint32_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            DynamicData* data = it->second;
+            DynamicDataImpl* data = it->second;
             if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
@@ -2007,7 +1769,7 @@ ReturnCode_t DynamicData::set_uint32_value(
                 }
                 value &= mask;
             }
-            ReturnCode_t result = ((DynamicData*)it->second)->set_uint32_value(value, MEMBER_ID_INVALID);
+            ReturnCode_t result = ((DynamicDataImpl*)it->second)->set_uint32_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
@@ -2039,7 +1801,7 @@ ReturnCode_t DynamicData::set_uint32_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::get_int16_value(
+ReturnCode_t DynamicDataImpl::get_int16_value(
         int16_t& value,
         MemberId id) const
 {
@@ -2078,7 +1840,7 @@ ReturnCode_t DynamicData::get_int16_value(
         {
             if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
-                return ((DynamicData*)it->second)->get_int16_value(value, MEMBER_ID_INVALID);
+                return ((DynamicDataImpl*)it->second)->get_int16_value(value, MEMBER_ID_INVALID);
             }
         }
     }
@@ -2090,7 +1852,7 @@ ReturnCode_t DynamicData::get_int16_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::set_int16_value(
+ReturnCode_t DynamicDataImpl::set_int16_value(
         int16_t value,
         MemberId id)
 {
@@ -2105,7 +1867,7 @@ ReturnCode_t DynamicData::set_int16_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            DynamicData* data = it->second;
+            DynamicDataImpl* data = it->second;
             if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
@@ -2176,7 +1938,7 @@ ReturnCode_t DynamicData::set_int16_value(
                 }
                 value &= mask;
             }
-            ReturnCode_t result = ((DynamicData*)it->second)->set_int16_value(value, MEMBER_ID_INVALID);
+            ReturnCode_t result = ((DynamicDataImpl*)it->second)->set_int16_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
@@ -2208,7 +1970,7 @@ ReturnCode_t DynamicData::set_int16_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::get_uint16_value(
+ReturnCode_t DynamicDataImpl::get_uint16_value(
         uint16_t& value,
         MemberId id) const
 {
@@ -2247,7 +2009,7 @@ ReturnCode_t DynamicData::get_uint16_value(
         {
             if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
-                return ((DynamicData*)it->second)->get_uint16_value(value, MEMBER_ID_INVALID);
+                return ((DynamicDataImpl*)it->second)->get_uint16_value(value, MEMBER_ID_INVALID);
             }
         }
     }
@@ -2259,7 +2021,7 @@ ReturnCode_t DynamicData::get_uint16_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::set_uint16_value(
+ReturnCode_t DynamicDataImpl::set_uint16_value(
         uint16_t value,
         MemberId id)
 {
@@ -2274,7 +2036,7 @@ ReturnCode_t DynamicData::set_uint16_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            DynamicData* data = it->second;
+            DynamicDataImpl* data = it->second;
             if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
@@ -2345,7 +2107,7 @@ ReturnCode_t DynamicData::set_uint16_value(
                 }
                 value &= mask;
             }
-            ReturnCode_t result = ((DynamicData*)it->second)->set_uint16_value(value, MEMBER_ID_INVALID);
+            ReturnCode_t result = ((DynamicDataImpl*)it->second)->set_uint16_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
@@ -2376,7 +2138,7 @@ ReturnCode_t DynamicData::set_uint16_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::get_int64_value(
+ReturnCode_t DynamicDataImpl::get_int64_value(
         int64_t& value,
         MemberId id) const
 {
@@ -2415,7 +2177,7 @@ ReturnCode_t DynamicData::get_int64_value(
         {
             if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
-                return ((DynamicData*)it->second)->get_int64_value(value, MEMBER_ID_INVALID);
+                return ((DynamicDataImpl*)it->second)->get_int64_value(value, MEMBER_ID_INVALID);
             }
         }
     }
@@ -2427,7 +2189,7 @@ ReturnCode_t DynamicData::get_int64_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::set_int64_value(
+ReturnCode_t DynamicDataImpl::set_int64_value(
         int64_t value,
         MemberId id)
 {
@@ -2442,7 +2204,7 @@ ReturnCode_t DynamicData::set_int64_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            DynamicData* data = it->second;
+            DynamicDataImpl* data = it->second;
             if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
@@ -2513,7 +2275,7 @@ ReturnCode_t DynamicData::set_int64_value(
                 }
                 value &= mask;
             }
-            ReturnCode_t result = ((DynamicData*)it->second)->set_int64_value(value, MEMBER_ID_INVALID);
+            ReturnCode_t result = ((DynamicDataImpl*)it->second)->set_int64_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
@@ -2545,7 +2307,7 @@ ReturnCode_t DynamicData::set_int64_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::get_uint64_value(
+ReturnCode_t DynamicDataImpl::get_uint64_value(
         uint64_t& value,
         MemberId id) const
 {
@@ -2584,7 +2346,7 @@ ReturnCode_t DynamicData::get_uint64_value(
         {
             if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
-                return ((DynamicData*)it->second)->get_uint64_value(value, MEMBER_ID_INVALID);
+                return ((DynamicDataImpl*)it->second)->get_uint64_value(value, MEMBER_ID_INVALID);
             }
         }
     }
@@ -2596,7 +2358,7 @@ ReturnCode_t DynamicData::get_uint64_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::set_uint64_value(
+ReturnCode_t DynamicDataImpl::set_uint64_value(
         uint64_t value,
         MemberId id)
 {
@@ -2611,7 +2373,7 @@ ReturnCode_t DynamicData::set_uint64_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            DynamicData* data = it->second;
+            DynamicDataImpl* data = it->second;
             if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
@@ -2682,7 +2444,7 @@ ReturnCode_t DynamicData::set_uint64_value(
                 }
                 value &= mask;
             }
-            ReturnCode_t result = ((DynamicData*)it->second)->set_uint64_value(value, MEMBER_ID_INVALID);
+            ReturnCode_t result = ((DynamicDataImpl*)it->second)->set_uint64_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
@@ -2714,7 +2476,7 @@ ReturnCode_t DynamicData::set_uint64_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::get_float32_value(
+ReturnCode_t DynamicDataImpl::get_float32_value(
         float& value,
         MemberId id) const
 {
@@ -2753,7 +2515,7 @@ ReturnCode_t DynamicData::get_float32_value(
         {
             if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
-                return ((DynamicData*)it->second)->get_float32_value(value, MEMBER_ID_INVALID);
+                return ((DynamicDataImpl*)it->second)->get_float32_value(value, MEMBER_ID_INVALID);
             }
         }
     }
@@ -2765,7 +2527,7 @@ ReturnCode_t DynamicData::get_float32_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::set_float32_value(
+ReturnCode_t DynamicDataImpl::set_float32_value(
         float value,
         MemberId id)
 {
@@ -2820,7 +2582,7 @@ ReturnCode_t DynamicData::set_float32_value(
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ReturnCode_t result = ((DynamicData*)it->second)->set_float32_value(value, MEMBER_ID_INVALID);
+            ReturnCode_t result = ((DynamicDataImpl*)it->second)->set_float32_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
@@ -2852,7 +2614,7 @@ ReturnCode_t DynamicData::set_float32_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::get_float64_value(
+ReturnCode_t DynamicDataImpl::get_float64_value(
         double& value,
         MemberId id) const
 {
@@ -2891,7 +2653,7 @@ ReturnCode_t DynamicData::get_float64_value(
         {
             if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
-                return ((DynamicData*)it->second)->get_float64_value(value, MEMBER_ID_INVALID);
+                return ((DynamicDataImpl*)it->second)->get_float64_value(value, MEMBER_ID_INVALID);
             }
         }
     }
@@ -2903,7 +2665,7 @@ ReturnCode_t DynamicData::get_float64_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::set_float64_value(
+ReturnCode_t DynamicDataImpl::set_float64_value(
         double value,
         MemberId id)
 {
@@ -2957,7 +2719,7 @@ ReturnCode_t DynamicData::set_float64_value(
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ReturnCode_t result = ((DynamicData*)it->second)->set_float64_value(value, MEMBER_ID_INVALID);
+            ReturnCode_t result = ((DynamicDataImpl*)it->second)->set_float64_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
@@ -2989,7 +2751,7 @@ ReturnCode_t DynamicData::set_float64_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::get_float128_value(
+ReturnCode_t DynamicDataImpl::get_float128_value(
         long double& value,
         MemberId id) const
 {
@@ -3028,7 +2790,7 @@ ReturnCode_t DynamicData::get_float128_value(
         {
             if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
-                return ((DynamicData*)it->second)->get_float128_value(value, MEMBER_ID_INVALID);
+                return ((DynamicDataImpl*)it->second)->get_float128_value(value, MEMBER_ID_INVALID);
             }
         }
     }
@@ -3040,7 +2802,7 @@ ReturnCode_t DynamicData::get_float128_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::set_float128_value(
+ReturnCode_t DynamicDataImpl::set_float128_value(
         long double value,
         MemberId id)
 {
@@ -3094,7 +2856,7 @@ ReturnCode_t DynamicData::set_float128_value(
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ReturnCode_t result = ((DynamicData*)it->second)->set_float128_value(value, MEMBER_ID_INVALID);
+            ReturnCode_t result = ((DynamicDataImpl*)it->second)->set_float128_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
@@ -3126,7 +2888,7 @@ ReturnCode_t DynamicData::set_float128_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::get_char8_value(
+ReturnCode_t DynamicDataImpl::get_char8_value(
         char& value,
         MemberId id) const
 {
@@ -3165,7 +2927,7 @@ ReturnCode_t DynamicData::get_char8_value(
         {
             if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
-                return ((DynamicData*)it->second)->get_char8_value(value, MEMBER_ID_INVALID);
+                return ((DynamicDataImpl*)it->second)->get_char8_value(value, MEMBER_ID_INVALID);
             }
         }
     }
@@ -3177,7 +2939,7 @@ ReturnCode_t DynamicData::get_char8_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::set_char8_value(
+ReturnCode_t DynamicDataImpl::set_char8_value(
         char value,
         MemberId id)
 {
@@ -3231,7 +2993,7 @@ ReturnCode_t DynamicData::set_char8_value(
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ReturnCode_t result = ((DynamicData*)it->second)->set_char8_value(value, MEMBER_ID_INVALID);
+            ReturnCode_t result = ((DynamicDataImpl*)it->second)->set_char8_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
@@ -3263,7 +3025,7 @@ ReturnCode_t DynamicData::set_char8_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::get_char16_value(
+ReturnCode_t DynamicDataImpl::get_char16_value(
         wchar_t& value,
         MemberId id) const
 {
@@ -3302,7 +3064,7 @@ ReturnCode_t DynamicData::get_char16_value(
         {
             if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
-                return ((DynamicData*)it->second)->get_char16_value(value, MEMBER_ID_INVALID);
+                return ((DynamicDataImpl*)it->second)->get_char16_value(value, MEMBER_ID_INVALID);
             }
         }
     }
@@ -3314,7 +3076,7 @@ ReturnCode_t DynamicData::get_char16_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::set_char16_value(
+ReturnCode_t DynamicDataImpl::set_char16_value(
         wchar_t value,
         MemberId id)
 {
@@ -3369,7 +3131,7 @@ ReturnCode_t DynamicData::set_char16_value(
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ReturnCode_t result = ((DynamicData*)it->second)->set_char16_value(value, MEMBER_ID_INVALID);
+            ReturnCode_t result = ((DynamicDataImpl*)it->second)->set_char16_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
@@ -3401,7 +3163,7 @@ ReturnCode_t DynamicData::set_char16_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::get_byte_value(
+ReturnCode_t DynamicDataImpl::get_byte_value(
         octet& value,
         MemberId id) const
 {
@@ -3440,7 +3202,7 @@ ReturnCode_t DynamicData::get_byte_value(
         {
             if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
-                return ((DynamicData*)it->second)->get_byte_value(value, MEMBER_ID_INVALID);
+                return ((DynamicDataImpl*)it->second)->get_byte_value(value, MEMBER_ID_INVALID);
             }
         }
     }
@@ -3452,7 +3214,7 @@ ReturnCode_t DynamicData::get_byte_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::set_byte_value(
+ReturnCode_t DynamicDataImpl::set_byte_value(
         octet value,
         MemberId id)
 {
@@ -3467,7 +3229,7 @@ ReturnCode_t DynamicData::set_byte_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            DynamicData* data = it->second;
+            DynamicDataImpl* data = it->second;
             if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
             {
                 uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
@@ -3538,7 +3300,7 @@ ReturnCode_t DynamicData::set_byte_value(
                 }
                 value &= mask;
             }
-            ReturnCode_t result = ((DynamicData*)it->second)->set_byte_value(value, MEMBER_ID_INVALID);
+            ReturnCode_t result = ((DynamicDataImpl*)it->second)->set_byte_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
@@ -3570,7 +3332,7 @@ ReturnCode_t DynamicData::set_byte_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::get_bool_value(
+ReturnCode_t DynamicDataImpl::get_bool_value(
         bool& value,
         MemberId id) const
 {
@@ -3628,7 +3390,7 @@ ReturnCode_t DynamicData::get_bool_value(
         {
             if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
-                return ((DynamicData*)it->second)->get_bool_value(value, MEMBER_ID_INVALID);
+                return ((DynamicDataImpl*)it->second)->get_bool_value(value, MEMBER_ID_INVALID);
             }
         }
     }
@@ -3640,7 +3402,7 @@ ReturnCode_t DynamicData::get_bool_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::set_bool_value(
+ReturnCode_t DynamicDataImpl::set_bool_value(
         bool value,
         MemberId id)
 {
@@ -3767,7 +3529,7 @@ ReturnCode_t DynamicData::set_bool_value(
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ReturnCode_t result = ((DynamicData*)it->second)->set_bool_value(value, MEMBER_ID_INVALID);
+            ReturnCode_t result = ((DynamicDataImpl*)it->second)->set_bool_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
@@ -3799,7 +3561,7 @@ ReturnCode_t DynamicData::set_bool_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::get_string_value(
+ReturnCode_t DynamicDataImpl::get_string_value(
         std::string& value,
         MemberId id) const
 {
@@ -3838,7 +3600,7 @@ ReturnCode_t DynamicData::get_string_value(
         {
             if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
-                return ((DynamicData*)it->second)->get_string_value(value, MEMBER_ID_INVALID);
+                return ((DynamicDataImpl*)it->second)->get_string_value(value, MEMBER_ID_INVALID);
             }
         }
     }
@@ -3850,7 +3612,7 @@ ReturnCode_t DynamicData::get_string_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::set_string_value(
+ReturnCode_t DynamicDataImpl::set_string_value(
         const std::string& value,
         MemberId id)
 {
@@ -3922,7 +3684,7 @@ ReturnCode_t DynamicData::set_string_value(
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ReturnCode_t result = ((DynamicData*)it->second)->set_string_value(value, MEMBER_ID_INVALID);
+            ReturnCode_t result = ((DynamicDataImpl*)it->second)->set_string_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
@@ -3954,12 +3716,12 @@ ReturnCode_t DynamicData::set_string_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-MemberId DynamicData::get_union_id() const
+MemberId DynamicDataImpl::get_union_id() const
 {
     return union_id_;
 }
 
-ReturnCode_t DynamicData::set_union_id(
+ReturnCode_t DynamicDataImpl::set_union_id(
         MemberId id)
 {
     if (get_kind() == TypeKind::TK_UNION)
@@ -3981,7 +3743,7 @@ ReturnCode_t DynamicData::set_union_id(
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-ReturnCode_t DynamicData::get_wstring_value(
+ReturnCode_t DynamicDataImpl::get_wstring_value(
         std::wstring& value,
         MemberId id) const
 {
@@ -4020,7 +3782,7 @@ ReturnCode_t DynamicData::get_wstring_value(
         {
             if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
-                return ((DynamicData*)it->second)->get_wstring_value(value, MEMBER_ID_INVALID);
+                return ((DynamicDataImpl*)it->second)->get_wstring_value(value, MEMBER_ID_INVALID);
             }
         }
     }
@@ -4032,7 +3794,7 @@ ReturnCode_t DynamicData::get_wstring_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::set_wstring_value(
+ReturnCode_t DynamicDataImpl::set_wstring_value(
         const std::wstring& value,
         MemberId id)
 {
@@ -4104,7 +3866,7 @@ ReturnCode_t DynamicData::set_wstring_value(
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ReturnCode_t result = ((DynamicData*)it->second)->set_wstring_value(value, MEMBER_ID_INVALID);
+            ReturnCode_t result = ((DynamicDataImpl*)it->second)->set_wstring_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
@@ -4136,7 +3898,7 @@ ReturnCode_t DynamicData::set_wstring_value(
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 }
 
-ReturnCode_t DynamicData::get_enum_value(
+ReturnCode_t DynamicDataImpl::get_enum_value(
         uint32_t& value,
         MemberId id) const
 {
@@ -4186,7 +3948,7 @@ ReturnCode_t DynamicData::get_enum_value(
         {
             if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
-                return ((DynamicData*)itValue->second)->get_enum_value(value, MEMBER_ID_INVALID);
+                return ((DynamicDataImpl*)itValue->second)->get_enum_value(value, MEMBER_ID_INVALID);
             }
         }
     }
@@ -4198,7 +3960,7 @@ ReturnCode_t DynamicData::get_enum_value(
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-ReturnCode_t DynamicData::set_enum_value(
+ReturnCode_t DynamicDataImpl::set_enum_value(
         const uint32_t& value,
         MemberId id /*= MEMBER_ID_INVALID*/)
 {
@@ -4262,7 +4024,7 @@ ReturnCode_t DynamicData::set_enum_value(
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ReturnCode_t result = ((DynamicData*)itValue->second)->set_enum_value(value, MEMBER_ID_INVALID);
+            ReturnCode_t result = ((DynamicDataImpl*)itValue->second)->set_enum_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
@@ -4294,7 +4056,7 @@ ReturnCode_t DynamicData::set_enum_value(
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-ReturnCode_t DynamicData::get_enum_value(
+ReturnCode_t DynamicDataImpl::get_enum_value(
         std::string& value,
         MemberId id) const
 {
@@ -4358,7 +4120,7 @@ ReturnCode_t DynamicData::get_enum_value(
         {
             if (get_kind() != TypeKind::TK_UNION || id == union_id_)
             {
-                return ((DynamicData*)itValue->second)->get_enum_value(value, MEMBER_ID_INVALID);
+                return ((DynamicDataImpl*)itValue->second)->get_enum_value(value, MEMBER_ID_INVALID);
             }
         }
     }
@@ -4370,7 +4132,7 @@ ReturnCode_t DynamicData::get_enum_value(
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-ReturnCode_t DynamicData::set_enum_value(
+ReturnCode_t DynamicDataImpl::set_enum_value(
         const std::string& value,
         MemberId id)
 {
@@ -4425,7 +4187,7 @@ ReturnCode_t DynamicData::set_enum_value(
         }
         else if (id != MEMBER_ID_INVALID)
         {
-            ReturnCode_t result = ((DynamicData*)itValue->second)->set_enum_value(value, MEMBER_ID_INVALID);
+            ReturnCode_t result = ((DynamicDataImpl*)itValue->second)->set_enum_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
             {
                 set_union_id(id);
@@ -4446,7 +4208,7 @@ ReturnCode_t DynamicData::set_enum_value(
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-ReturnCode_t DynamicData::set_bitmask_value(
+ReturnCode_t DynamicDataImpl::set_bitmask_value(
         uint64_t value)
 {
     if (type_->get_kind() == TypeKind::TK_BITMASK)
@@ -4456,7 +4218,7 @@ ReturnCode_t DynamicData::set_bitmask_value(
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-ReturnCode_t DynamicData::get_bitmask_value(
+ReturnCode_t DynamicDataImpl::get_bitmask_value(
         uint64_t& value) const
 {
     if (type_->get_kind() == TypeKind::TK_BITMASK)
@@ -4466,7 +4228,7 @@ ReturnCode_t DynamicData::get_bitmask_value(
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-MemberId DynamicData::get_array_index(
+MemberId DynamicDataImpl::get_array_index(
         const std::vector<uint32_t>& position)
 {
     if (get_kind() == TypeKind::TK_ARRAY)
@@ -4494,7 +4256,7 @@ MemberId DynamicData::get_array_index(
     return MEMBER_ID_INVALID;
 }
 
-ReturnCode_t DynamicData::insert_array_data(
+ReturnCode_t DynamicDataImpl::insert_array_data(
         MemberId indexId)
 {
     if (get_kind() == TypeKind::TK_ARRAY)
@@ -4502,27 +4264,15 @@ ReturnCode_t DynamicData::insert_array_data(
 #ifdef DYNAMIC_TYPES_CHECKING
         if (indexId < type_->get_total_bounds())
         {
-            auto it = complex_values_.find(indexId);
-            if (it != complex_values_.end())
-            {
-                DynamicDataFactory::get_instance()->delete_data(it->second);
-                complex_values_.erase(it);
-            }
-            DynamicData* value = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
-            complex_values_.insert(std::make_pair(indexId, value));
+            DynamicDataImpl* value = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
+            complex_values_.emplace(indexId, value);
             return ReturnCode_t::RETCODE_OK;
         }
 #else
         if (indexId < type_->get_total_bounds())
         {
-            auto it = values_.find(indexId);
-            if (it != values_.end())
-            {
-                DynamicDataFactory::get_instance()->delete_data((DynamicData*)it->second);
-                values_.erase(it);
-            }
-            DynamicData* value = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
-            values_.insert(std::make_pair(indexId, value));
+            DynamicDataImpl* value = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
+            values_.emplace(indexId, value);
             return ReturnCode_t::RETCODE_OK;
         }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
@@ -4539,7 +4289,7 @@ ReturnCode_t DynamicData::insert_array_data(
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-ReturnCode_t DynamicData::clear_array_data(
+ReturnCode_t DynamicDataImpl::clear_array_data(
         MemberId indexId)
 {
     if (get_kind() == TypeKind::TK_ARRAY)
@@ -4561,7 +4311,7 @@ ReturnCode_t DynamicData::clear_array_data(
             auto it = values_.find(indexId);
             if (it != values_.end())
             {
-                DynamicDataFactory::get_instance()->delete_data((DynamicData*)it->second);
+                DynamicDataFactory::get_instance()->delete_data((DynamicDataImpl*)it->second);
                 values_.erase(it);
             }
             return ReturnCode_t::RETCODE_OK;
@@ -4579,7 +4329,7 @@ ReturnCode_t DynamicData::clear_array_data(
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-ReturnCode_t DynamicData::insert_int32_value(
+ReturnCode_t DynamicDataImpl::insert_int32_value(
         int32_t value,
         MemberId& outId)
 {
@@ -4599,7 +4349,7 @@ ReturnCode_t DynamicData::insert_int32_value(
     }
 }
 
-ReturnCode_t DynamicData::insert_uint32_value(
+ReturnCode_t DynamicDataImpl::insert_uint32_value(
         uint32_t value,
         MemberId& outId)
 {
@@ -4619,7 +4369,7 @@ ReturnCode_t DynamicData::insert_uint32_value(
     }
 }
 
-ReturnCode_t DynamicData::insert_int16_value(
+ReturnCode_t DynamicDataImpl::insert_int16_value(
         int16_t value,
         MemberId& outId)
 {
@@ -4639,7 +4389,7 @@ ReturnCode_t DynamicData::insert_int16_value(
     }
 }
 
-ReturnCode_t DynamicData::insert_uint16_value(
+ReturnCode_t DynamicDataImpl::insert_uint16_value(
         uint16_t value,
         MemberId& outId)
 {
@@ -4659,7 +4409,7 @@ ReturnCode_t DynamicData::insert_uint16_value(
     }
 }
 
-ReturnCode_t DynamicData::insert_int64_value(
+ReturnCode_t DynamicDataImpl::insert_int64_value(
         int64_t value,
         MemberId& outId)
 {
@@ -4679,7 +4429,7 @@ ReturnCode_t DynamicData::insert_int64_value(
     }
 }
 
-ReturnCode_t DynamicData::insert_uint64_value(
+ReturnCode_t DynamicDataImpl::insert_uint64_value(
         uint64_t value,
         MemberId& outId)
 {
@@ -4699,7 +4449,7 @@ ReturnCode_t DynamicData::insert_uint64_value(
     }
 }
 
-ReturnCode_t DynamicData::insert_float32_value(
+ReturnCode_t DynamicDataImpl::insert_float32_value(
         float value,
         MemberId& outId)
 {
@@ -4719,7 +4469,7 @@ ReturnCode_t DynamicData::insert_float32_value(
     }
 }
 
-ReturnCode_t DynamicData::insert_float64_value(
+ReturnCode_t DynamicDataImpl::insert_float64_value(
         double value,
         MemberId& outId)
 {
@@ -4739,7 +4489,7 @@ ReturnCode_t DynamicData::insert_float64_value(
     }
 }
 
-ReturnCode_t DynamicData::insert_float128_value(
+ReturnCode_t DynamicDataImpl::insert_float128_value(
         long double value,
         MemberId& outId)
 {
@@ -4759,7 +4509,7 @@ ReturnCode_t DynamicData::insert_float128_value(
     }
 }
 
-ReturnCode_t DynamicData::insert_char8_value(
+ReturnCode_t DynamicDataImpl::insert_char8_value(
         char value,
         MemberId& outId)
 {
@@ -4779,7 +4529,7 @@ ReturnCode_t DynamicData::insert_char8_value(
     }
 }
 
-ReturnCode_t DynamicData::insert_char16_value(
+ReturnCode_t DynamicDataImpl::insert_char16_value(
         wchar_t value,
         MemberId& outId)
 {
@@ -4799,7 +4549,7 @@ ReturnCode_t DynamicData::insert_char16_value(
     }
 }
 
-ReturnCode_t DynamicData::insert_byte_value(
+ReturnCode_t DynamicDataImpl::insert_byte_value(
         octet value,
         MemberId& outId)
 {
@@ -4819,7 +4569,7 @@ ReturnCode_t DynamicData::insert_byte_value(
     }
 }
 
-ReturnCode_t DynamicData::insert_bool_value(
+ReturnCode_t DynamicDataImpl::insert_bool_value(
         bool value,
         MemberId& outId)
 {
@@ -4839,7 +4589,7 @@ ReturnCode_t DynamicData::insert_bool_value(
     }
 }
 
-ReturnCode_t DynamicData::insert_string_value(
+ReturnCode_t DynamicDataImpl::insert_string_value(
         const std::string& value,
         MemberId& outId)
 {
@@ -4859,7 +4609,7 @@ ReturnCode_t DynamicData::insert_string_value(
     }
 }
 
-ReturnCode_t DynamicData::insert_wstring_value(
+ReturnCode_t DynamicDataImpl::insert_wstring_value(
         const std::wstring& value,
         MemberId& outId)
 {
@@ -4879,7 +4629,7 @@ ReturnCode_t DynamicData::insert_wstring_value(
     }
 }
 
-ReturnCode_t DynamicData::insert_enum_value(
+ReturnCode_t DynamicDataImpl::insert_enum_value(
         const std::string& value,
         MemberId& outId)
 {
@@ -4899,8 +4649,8 @@ ReturnCode_t DynamicData::insert_enum_value(
     }
 }
 
-ReturnCode_t DynamicData::insert_complex_value(
-        const DynamicData* value,
+ReturnCode_t DynamicDataImpl::insert_complex_value(
+        const DynamicDataImpl* value,
         MemberId& outId)
 {
     if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->equals(*value->type_.get()))
@@ -4930,7 +4680,7 @@ ReturnCode_t DynamicData::insert_complex_value(
     }
 }
 
-ReturnCode_t DynamicData::insert_complex_value(
+ReturnCode_t DynamicDataImpl::insert_complex_value(
         DynamicData_ptr value,
         MemberId& outId)
 {
@@ -4961,8 +4711,8 @@ ReturnCode_t DynamicData::insert_complex_value(
     }
 }
 
-ReturnCode_t DynamicData::insert_complex_value(
-        DynamicData* value,
+ReturnCode_t DynamicDataImpl::insert_complex_value(
+        DynamicDataImpl* value,
         MemberId& outId)
 {
     if (get_kind() == TypeKind::TK_SEQUENCE && type_->get_element_type()->equals(*value->type_.get()))
@@ -4992,7 +4742,7 @@ ReturnCode_t DynamicData::insert_complex_value(
     }
 }
 
-ReturnCode_t DynamicData::insert_sequence_data(
+ReturnCode_t DynamicDataImpl::insert_sequence_data(
         MemberId& outId)
 {
     outId = MEMBER_ID_INVALID;
@@ -5001,12 +4751,12 @@ ReturnCode_t DynamicData::insert_sequence_data(
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
-            DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
+            DynamicDataImpl* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
             outId = complex_values_.size();
             complex_values_.insert(std::make_pair(outId, new_element));
             return ReturnCode_t::RETCODE_OK;
 #else
-            DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
+            DynamicDataImpl* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
             outId = values_.size();
             values_.insert(std::make_pair(outId, new_element));
             return ReturnCode_t::RETCODE_OK;
@@ -5026,7 +4776,7 @@ ReturnCode_t DynamicData::insert_sequence_data(
     }
 }
 
-ReturnCode_t DynamicData::remove_sequence_data(
+ReturnCode_t DynamicDataImpl::remove_sequence_data(
         MemberId id)
 {
     if (get_kind() == TypeKind::TK_SEQUENCE || get_kind() == TypeKind::TK_ARRAY)
@@ -5043,7 +4793,7 @@ ReturnCode_t DynamicData::remove_sequence_data(
         auto it = values_.find(id);
         if (it != values_.end())
         {
-            DynamicDataFactory::get_instance()->delete_data((DynamicData*)it->second);
+            DynamicDataFactory::get_instance()->delete_data((DynamicDataImpl*)it->second);
             values_.erase(it);
             return ReturnCode_t::RETCODE_OK;
         }
@@ -5058,8 +4808,8 @@ ReturnCode_t DynamicData::remove_sequence_data(
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-ReturnCode_t DynamicData::insert_map_data(
-        const DynamicData* key,
+ReturnCode_t DynamicDataImpl::insert_map_data(
+        const DynamicDataImpl* key,
         MemberId& outKeyId,
         MemberId& outValueId)
 {
@@ -5083,18 +4833,18 @@ ReturnCode_t DynamicData::insert_map_data(
                 // get largest key available
                 outKeyId = complex_values_.rbegin()->first + 1u;
             }
-            DynamicData* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
+            DynamicDataImpl* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
             keyCopy->key_element_ = true;
             complex_values_.insert(std::make_pair(outKeyId, keyCopy));
 
-            DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
+            DynamicDataImpl* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
             outValueId = outKeyId + 1u;
             complex_values_.insert(std::make_pair(outValueId, new_element));
             return ReturnCode_t::RETCODE_OK;
 #else
             for (auto it = values_.begin(); it != values_.end(); ++it)
             {
-                if (((DynamicData*)it->second)->key_element_ && ((DynamicData*)it->second)->equals(key))
+                if (((DynamicDataImpl*)it->second)->key_element_ && ((DynamicDataImpl*)it->second)->equals(key))
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The key already exists.");
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
@@ -5107,11 +4857,11 @@ ReturnCode_t DynamicData::insert_map_data(
                 // get largest key available
                 outKeyId = values_.rbegin()->first + 1u;
             }
-            DynamicData* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
+            DynamicDataImpl* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
             keyCopy->key_element_ = true;
             values_.insert(std::make_pair(outKeyId, keyCopy));
 
-            DynamicData* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
+            DynamicDataImpl* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
             outValueId = outKeyId + 1u;
             values_.insert(std::make_pair(outValueId, new_element));
             return ReturnCode_t::RETCODE_OK;
@@ -5131,9 +4881,9 @@ ReturnCode_t DynamicData::insert_map_data(
     }
 }
 
-ReturnCode_t DynamicData::insert_map_data(
-        const DynamicData* key,
-        DynamicData* value,
+ReturnCode_t DynamicDataImpl::insert_map_data(
+        const DynamicDataImpl* key,
+        DynamicDataImpl* value,
         MemberId& outKey,
         MemberId& outValue)
 {
@@ -5158,7 +4908,7 @@ ReturnCode_t DynamicData::insert_map_data(
                 // get largest key available
                 outKeyId = complex_values_.rbegin()->first + 1u;
             }
-            DynamicData* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
+            DynamicDataImpl* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
             keyCopy->key_element_ = true;
             complex_values_.insert(std::make_pair(outKey, keyCopy));
 
@@ -5181,7 +4931,7 @@ ReturnCode_t DynamicData::insert_map_data(
                 // get largest key available
                 outKey = values_.rbegin()->first + 1u;
             }
-            DynamicData* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
+            DynamicDataImpl* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
             keyCopy->key_element_ = true;
             values_.insert(std::make_pair(outKey, keyCopy));
 
@@ -5204,9 +4954,9 @@ ReturnCode_t DynamicData::insert_map_data(
     }
 }
 
-ReturnCode_t DynamicData::insert_map_data(
-        const DynamicData* key,
-        const DynamicData* value,
+ReturnCode_t DynamicDataImpl::insert_map_data(
+        const DynamicDataImpl* key,
+        const DynamicDataImpl* value,
         MemberId& outKey,
         MemberId& outValue)
 {
@@ -5231,12 +4981,12 @@ ReturnCode_t DynamicData::insert_map_data(
                 // get largest key available
                 outKeyId = complex_values_.rbegin()->first + 1u;
             }
-            DynamicData* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
+            DynamicDataImpl* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
             keyCopy->key_element_ = true;
             complex_values_.insert(std::make_pair(outKey, keyCopy));
 
             outValueId = outKeyId + 1u;
-            DynamicData* valueCopy = DynamicDataFactory::get_instance()->create_copy(value);
+            DynamicDataImpl* valueCopy = DynamicDataFactory::get_instance()->create_copy(value);
             complex_values_.insert(std::make_pair(outValue, valueCopy));
             return ReturnCode_t::RETCODE_OK;
 #else
@@ -5255,12 +5005,12 @@ ReturnCode_t DynamicData::insert_map_data(
                 // get largest key available
                 outKey = values_.rbegin()->first + 1u;
             }
-            DynamicData* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
+            DynamicDataImpl* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
             keyCopy->key_element_ = true;
             values_.insert(std::make_pair(outKey, keyCopy));
 
             outValue = outKey + 1u;
-            DynamicData* valueCopy = DynamicDataFactory::get_instance()->create_copy(value);
+            DynamicDataImpl* valueCopy = DynamicDataFactory::get_instance()->create_copy(value);
             values_.insert(std::make_pair(outValue, valueCopy));
             return ReturnCode_t::RETCODE_OK;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
@@ -5279,16 +5029,16 @@ ReturnCode_t DynamicData::insert_map_data(
     }
 }
 
-ReturnCode_t DynamicData::insert_map_data(
-        const DynamicData* key,
+ReturnCode_t DynamicDataImpl::insert_map_data(
+        const DynamicDataImpl* key,
         DynamicData_ptr value,
         MemberId& outKey,
         MemberId& outValue)
 {
-    return insert_map_data(key, reinterpret_cast<const DynamicData*>(value.get()), outKey, outValue);
+    return insert_map_data(key, reinterpret_cast<const DynamicDataImpl*>(value.get()), outKey, outValue);
 }
 
-ReturnCode_t DynamicData::remove_map_data(
+ReturnCode_t DynamicDataImpl::remove_map_data(
         MemberId keyId)
 {
     if (get_kind() == TypeKind::TK_MAP)
@@ -5307,10 +5057,10 @@ ReturnCode_t DynamicData::remove_map_data(
 #else
         auto itKey = values_.find(keyId);
         auto itValue = values_.find(keyId + 1);
-        if (itKey != values_.end() && itValue != values_.end() && ((DynamicData*)itKey->second)->key_element_)
+        if (itKey != values_.end() && itValue != values_.end() && ((DynamicDataImpl*)itKey->second)->key_element_)
         {
-            DynamicDataFactory::get_instance()->delete_data(((DynamicData*)itKey->second));
-            DynamicDataFactory::get_instance()->delete_data(((DynamicData*)itValue->second));
+            DynamicDataFactory::get_instance()->delete_data(((DynamicDataImpl*)itKey->second));
+            DynamicDataFactory::get_instance()->delete_data(((DynamicDataImpl*)itValue->second));
             values_.erase(itKey);
             values_.erase(itValue);
             return ReturnCode_t::RETCODE_OK;
@@ -5330,7 +5080,7 @@ ReturnCode_t DynamicData::remove_map_data(
     }
 }
 
-ReturnCode_t DynamicData::clear_data()
+ReturnCode_t DynamicDataImpl::clear_data()
 {
     if (get_kind() == TypeKind::TK_SEQUENCE || get_kind() == TypeKind::TK_MAP || get_kind() == TypeKind::TK_ARRAY)
     {
@@ -5343,7 +5093,7 @@ ReturnCode_t DynamicData::clear_data()
 #else
         for (auto it = values_.begin(); it != values_.end(); ++it)
         {
-            DynamicDataFactory::get_instance()->delete_data((DynamicData*)it->second);
+            DynamicDataFactory::get_instance()->delete_data((DynamicDataImpl*)it->second);
         }
         values_.clear();
 #endif // ifdef DYNAMIC_TYPES_CHECKING
@@ -5356,8 +5106,8 @@ ReturnCode_t DynamicData::clear_data()
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-ReturnCode_t DynamicData::get_complex_value(
-        DynamicData** value,
+ReturnCode_t DynamicDataImpl::get_complex_value(
+        DynamicDataImpl** value,
         MemberId id) const
 {
     // Check that the type is complex and in case of dynamic containers, check that the index is valid
@@ -5377,7 +5127,7 @@ ReturnCode_t DynamicData::get_complex_value(
         auto it = values_.find(id);
         if (it != values_.end())
         {
-            *value = DynamicDataFactory::get_instance()->create_copy((DynamicData*)it->second);
+            *value = DynamicDataFactory::get_instance()->create_copy((DynamicDataImpl*)it->second);
             return ReturnCode_t::RETCODE_OK;
         }
         return ReturnCode_t::RETCODE_BAD_PARAMETER;
@@ -5390,8 +5140,8 @@ ReturnCode_t DynamicData::get_complex_value(
     }
 }
 
-ReturnCode_t DynamicData::set_complex_value(
-        DynamicData* value,
+ReturnCode_t DynamicDataImpl::set_complex_value(
+        DynamicDataImpl* value,
         MemberId id)
 {
     // Check that the type is complex and in case of dynamic containers, check that the index is valid
@@ -5438,7 +5188,7 @@ ReturnCode_t DynamicData::set_complex_value(
             auto it = values_.find(id);
             if (it != values_.end())
             {
-                if (get_kind() == TypeKind::TK_MAP && ((DynamicData*)it->second)->key_element_)
+                if (get_kind() == TypeKind::TK_MAP && ((DynamicDataImpl*)it->second)->key_element_)
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error setting complex Value. They given id is a Key value.");
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
@@ -5447,7 +5197,7 @@ ReturnCode_t DynamicData::set_complex_value(
                 {
                     if (it->second != nullptr)
                     {
-                        DynamicDataFactory::get_instance()->delete_data((DynamicData*)it->second);
+                        DynamicDataFactory::get_instance()->delete_data((DynamicDataImpl*)it->second);
                     }
                     values_.erase(it);
                     values_.insert(std::make_pair(id, value));
@@ -5478,7 +5228,7 @@ ReturnCode_t DynamicData::set_complex_value(
     }
 }
 
-ReturnCode_t DynamicData::get_union_label(
+ReturnCode_t DynamicDataImpl::get_union_label(
         uint64_t& value) const
 {
     try
@@ -5494,7 +5244,7 @@ ReturnCode_t DynamicData::get_union_label(
     return ReturnCode_t::RETCODE_OK;
 }
 
-uint64_t DynamicData::get_union_label() const
+uint64_t DynamicDataImpl::get_union_label() const
 {
     assert(type_);
     if (type_->get_kind() != TypeKind::TK_UNION)
@@ -5524,7 +5274,7 @@ uint64_t DynamicData::get_union_label() const
               "Error retrieving union label, no label associated.");
 }
 
-MemberId DynamicData::get_discriminator_value() const
+MemberId DynamicDataImpl::get_discriminator_value() const
 {
     if (type_->get_kind() != TypeKind::TK_UNION)
     {
@@ -5536,7 +5286,7 @@ MemberId DynamicData::get_discriminator_value() const
     return union_id_;
 }
 
-ReturnCode_t DynamicData::get_discriminator_value(
+ReturnCode_t DynamicDataImpl::get_discriminator_value(
         MemberId& id) const noexcept
 {
     try
@@ -5552,7 +5302,7 @@ ReturnCode_t DynamicData::get_discriminator_value(
     return ReturnCode_t::RETCODE_OK;
 }
 
-ReturnCode_t DynamicData::set_discriminator_value(
+ReturnCode_t DynamicDataImpl::set_discriminator_value(
         MemberId value) noexcept
 {
     if (type_->get_kind() != TypeKind::TK_UNION)
@@ -5564,15 +5314,15 @@ ReturnCode_t DynamicData::set_discriminator_value(
     return ReturnCode_t::RETCODE_OK;
 }
 
-bool DynamicData::deserialize(
+bool DynamicDataImpl::deserialize(
         eprosima::fastcdr::Cdr& cdr)
 {
     assert(type_);
     return type_->deserialize(*this, cdr);
 }
 
-size_t DynamicData::getCdrSerializedSize(
-        const DynamicData* data,
+size_t DynamicDataImpl::getCdrSerializedSize(
+        const DynamicDataImpl* data,
         size_t current_alignment /*= 0*/)
 {
     assert(data);
@@ -5580,7 +5330,7 @@ size_t DynamicData::getCdrSerializedSize(
     return data->get_type()->getCdrSerializedSize(*data, current_alignment);
 }
 
-size_t DynamicData::getKeyMaxCdrSerializedSize(
+size_t DynamicDataImpl::getKeyMaxCdrSerializedSize(
         const DynamicType_ptr type,
         size_t current_alignment /*= 0*/)
 {
@@ -5588,7 +5338,7 @@ size_t DynamicData::getKeyMaxCdrSerializedSize(
     return type->getKeyMaxCdrSerializedSize(current_alignment);
 }
 
-size_t DynamicData::getMaxCdrSerializedSize(
+size_t DynamicDataImpl::getMaxCdrSerializedSize(
         const DynamicType_ptr type,
         size_t current_alignment /*= 0*/)
 {
@@ -5596,28 +5346,28 @@ size_t DynamicData::getMaxCdrSerializedSize(
     return type->getMaxCdrSerializedSize(current_alignment);
 }
 
-void DynamicData::serialize(
+void DynamicDataImpl::serialize(
         eprosima::fastcdr::Cdr& cdr) const
 {
     assert(type_);
     type_->serialize(*this, cdr);
 }
 
-void DynamicData::serializeKey(
+void DynamicDataImpl::serializeKey(
         eprosima::fastcdr::Cdr& cdr) const
 {
     assert(type_);
     type_->serializeKey(*this, cdr);
 }
 
-size_t DynamicData::getEmptyCdrSerializedSize(
-        const DynamicType* type,
+size_t DynamicDataImpl::getEmptyCdrSerializedSize(
+        const DynamicTypeImpl* type,
         size_t current_alignment /*= 0*/)
 {
     return type->getEmptyCdrSerializedSize(current_alignment);
 }
 
-bool DynamicData::has_children() const
+bool DynamicDataImpl::has_children() const
 {
     switch (get_kind())
     {
@@ -5631,5 +5381,128 @@ bool DynamicData::has_children() const
             return true;
         default:
             return false;
+    }
+}
+
+bool DynamicDataImpl::operator ==(
+        const DynamicTypeImpl& other) const
+{
+    if (&other == this)
+    {
+        return true;
+    }
+    else if (type_ == other->type_ || *type_ == *other->type_)
+    {
+        // Optimization for unions, only check the selected element.
+        if (get_kind() == TypeKind::TK_UNION)
+        {
+            if (union_id_ != other->union_id_)
+            {
+                return false;
+            }
+            else if (union_id_ != MEMBER_ID_INVALID)
+            {
+#ifdef DYNAMIC_TYPES_CHECKING
+                auto it = complex_values_.find(union_id_);
+                auto otherIt = other->complex_values_.find(union_id_);
+#else
+                auto it = values_.find(union_id_);
+                auto otherIt = other->values_.find(union_id_);
+#endif // ifdef DYNAMIC_TYPES_CHECKING
+
+                return *static_pointer_cast<DynamicDataImpl>(it->second) ==
+                        *static_pointer_cast<DynamicDataImpl>(otherIt->second);
+            }
+        }
+        else
+        {
+#ifdef DYNAMIC_TYPES_CHECKING
+            bool bFail = false;
+            bFail = int32_value_ != other->int32_value_;
+            bFail = bFail || uint32_value_ != other->uint32_value_;
+            bFail = bFail || int16_value_ != other->int16_value_;
+            bFail = bFail || uint16_value_ != other->uint16_value_;
+            bFail = bFail || int64_value_ != other->int64_value_;
+            bFail = bFail || uint64_value_ != other->uint64_value_;
+            bFail = bFail || float32_value_ != other->float32_value_;
+            bFail = bFail || float64_value_ != other->float64_value_;
+            bFail = bFail || float128_value_ != other->float128_value_;
+            bFail = bFail || char8_value_ != other->char8_value_;
+            bFail = bFail || char16_value_ != other->char16_value_;
+            bFail = bFail || byte_value_ != other->byte_value_;
+            bFail = bFail || bool_value_ != other->bool_value_;
+            bFail = bFail || string_value_ != other->string_value_;
+            bFail = bFail || wstring_value_ != other->wstring_value_;
+            bFail = bFail || !map_compare(complex_values_, other->complex_values_);
+            /*if (int32_value_ != other->int32_value_ || uint32_value_ != other->uint32_value_ ||
+              int16_value_ != other->int16_value_ || uint16_value_ != other->uint16_value_ ||
+              int64_value_ != other->int64_value_ || uint64_value_ != other->uint64_value_ ||
+              float32_value_ != other->float32_value_ || float64_value_ != other->float64_value_ ||
+              float128_value_ != other->float128_value_ || char8_value_ != other->char8_value_ ||
+              char16_value_ != other->char16_value_ || byte_value_ != other->byte_value_ ||
+              bool_value_ != other->bool_value_ || string_value_ != other->string_value_ ||
+              wstring_value_ != other->wstring_value_ ||
+              !map_compare(complex_values_, other->complex_values_))
+             */
+            if (bFail)
+            {
+                return false;
+            }
+#else
+            if (get_kind() == TypeKind::TK_ENUM)
+            {
+                if (!compare_values(TypeKind::TK_UINT32, values_.begin()->second, other->values_.begin()->second))
+                {
+                    return false;
+                }
+            }
+            else if (get_kind() == TypeKind::TK_BITMASK)
+            {
+                TypeKind bitmask_kind = TypeKind::TK_BYTE;
+                size_t type_size = type_->get_size();
+                switch (type_size)
+                {
+                    case 1: bitmask_kind = TypeKind::TK_BYTE; break;
+                    case 2: bitmask_kind = TypeKind::TK_UINT16; break;
+                    case 4: bitmask_kind = TypeKind::TK_UINT32; break;
+                    case 8: bitmask_kind = TypeKind::TK_UINT64; break;
+                }
+
+                assert(values_.size() && other->values_.size());
+
+                if (!compare_values(bitmask_kind, values_.begin()->second, other->values_.begin()->second))
+                {
+                    return false;
+                }
+            }
+            else if (type_->is_complex_kind())
+            {
+                // array, map, sequence, structure, bitset, anotation
+                return values_.size() == other->values_.size() &&
+                    std::equal(
+                            values_.begin(),
+                            values_.end(),
+                            other->values_.begin(),
+                            [](const decltype(values_)::value_type& l, const decltype(values_)::value_type& r)
+                            {
+                            DynamicDataImpl* left = (DynamicDataImpl*)l.second;
+                            DynamicDataImpl* right = (DynamicDataImpl*)r.second;
+                            bool res = left->equals(right);
+                            return res;
+                            // TODO: undo once finished debugging
+                            // return ((DynamicDataImpl*)l.second)->equals((DynamicDataImpl*)r.second);
+                            });
+            }
+            else
+            {
+                // primitives
+                if (!compare_values(get_kind(), values_.begin()->second, other->values_.begin()->second))
+                {
+                    return false;
+                }
+            }
+#endif // ifdef DYNAMIC_TYPES_CHECKING
+        }
+        return true;
     }
 }
