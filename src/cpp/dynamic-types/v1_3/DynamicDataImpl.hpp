@@ -102,6 +102,11 @@ protected:
             void* left,
             void* right) const;
 
+    bool compare_values(
+            TypeKind kind,
+            std::shared_ptr<void> left,
+            std::shared_ptr<void> right) const;
+
     ReturnCode_t insert_array_data(
             MemberId indexId);
 
@@ -234,7 +239,7 @@ public:
      * @param [in] value @ref DynamicDataImpl previously loaned
      */
     ReturnCode_t return_loaned_value(
-            const DynamicDataImpl& value);
+            std::shared_ptr<DynamicDataImpl> value);
 
     MemberId get_array_index(
             const std::vector<uint32_t>& position);

@@ -23,27 +23,13 @@ using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types::v1_3;
 
-template <typename Map>
 bool map_compare(
-        Map const& left,
-        Map const& right)
+        const std::map<MemberId, std::shared_ptr<DynamicDataImpl>>& left,
+        const std::map<MemberId, std::shared_ptr<DynamicDataImpl>>& right)
 {
     auto pred = [](decltype(*left.begin()) a, decltype(a) b)
             {
-                return a.first == b.first && a.second == b.second;
-            };
-
-    return left.size() == right.size() && std::equal(left.begin(), left.end(), right.begin(), pred);
-}
-
-template <>
-bool map_compare(
-        const std::map<MemberId, DynamicDataImpl*>& left,
-        const std::map<MemberId, DynamicDataImpl*>& right)
-{
-    auto pred = [](decltype(*left.begin()) a, decltype(a) b)
-            {
-                return a.first == b.first && a.second->equals(b.second);
+                return a.first == b.first && (a.second == b.second || *a.second == *b.second);
             };
 
     return left.size() == right.size() && std::equal(left.begin(), left.end(), right.begin(), pred);
@@ -134,136 +120,22 @@ ReturnCode_t DynamicDataImpl::get_descriptor(
         MemberDescriptor& value,
         MemberId id)
 {
-    assert(type_);
-    return type_->get_member(value, id);
+    ReturnCode_t rc;
+    const DynamicTypeMember* member = type_->get_interface().get_member(id, &rc);
+
+    if(!rc)
+    {
+        return rc;
+    }
+
+    MemberDescriptor md;
+    return member->get_descriptor(md);
 }
 
 bool DynamicDataImpl::equals(
-        const DynamicDataImpl* other) const
+        const DynamicDataImpl& other) const
 {
-    if (other != nullptr)
-    {
-        if (other == this)
-        {
-            return true;
-        }
-        else if (type_ == other->type_ || type_->equals(*other->type_.get()))
-        {
-            // Optimization for unions, only check the selected element.
-            if (get_kind() == TypeKind::TK_UNION)
-            {
-                if (union_id_ != other->union_id_)
-                {
-                    return false;
-                }
-                else if (union_id_ != MEMBER_ID_INVALID)
-                {
-#ifdef DYNAMIC_TYPES_CHECKING
-                    auto it = complex_values_.find(union_id_);
-                    auto otherIt = other->complex_values_.find(union_id_);
-#else
-                    auto it = values_.find(union_id_);
-                    auto otherIt = other->values_.find(union_id_);
-#endif // ifdef DYNAMIC_TYPES_CHECKING
-                    if (!((DynamicDataImpl*)it->second)->equals((DynamicDataImpl*)otherIt->second))
-                    {
-                        return false;
-                    }
-                }
-            }
-            else
-            {
-#ifdef DYNAMIC_TYPES_CHECKING
-                bool bFail = false;
-                bFail = int32_value_ != other->int32_value_;
-                bFail = bFail || uint32_value_ != other->uint32_value_;
-                bFail = bFail || int16_value_ != other->int16_value_;
-                bFail = bFail || uint16_value_ != other->uint16_value_;
-                bFail = bFail || int64_value_ != other->int64_value_;
-                bFail = bFail || uint64_value_ != other->uint64_value_;
-                bFail = bFail || float32_value_ != other->float32_value_;
-                bFail = bFail || float64_value_ != other->float64_value_;
-                bFail = bFail || float128_value_ != other->float128_value_;
-                bFail = bFail || char8_value_ != other->char8_value_;
-                bFail = bFail || char16_value_ != other->char16_value_;
-                bFail = bFail || byte_value_ != other->byte_value_;
-                bFail = bFail || bool_value_ != other->bool_value_;
-                bFail = bFail || string_value_ != other->string_value_;
-                bFail = bFail || wstring_value_ != other->wstring_value_;
-                bFail = bFail || !map_compare(complex_values_, other->complex_values_);
-                /*if (int32_value_ != other->int32_value_ || uint32_value_ != other->uint32_value_ ||
-                    int16_value_ != other->int16_value_ || uint16_value_ != other->uint16_value_ ||
-                    int64_value_ != other->int64_value_ || uint64_value_ != other->uint64_value_ ||
-                    float32_value_ != other->float32_value_ || float64_value_ != other->float64_value_ ||
-                    float128_value_ != other->float128_value_ || char8_value_ != other->char8_value_ ||
-                    char16_value_ != other->char16_value_ || byte_value_ != other->byte_value_ ||
-                    bool_value_ != other->bool_value_ || string_value_ != other->string_value_ ||
-                    wstring_value_ != other->wstring_value_ ||
-                    !map_compare(complex_values_, other->complex_values_))
-                 */
-                if (bFail)
-                {
-                    return false;
-                }
-#else
-                if (get_kind() == TypeKind::TK_ENUM)
-                {
-                    if (!compare_values(TypeKind::TK_UINT32, values_.begin()->second, other->values_.begin()->second))
-                    {
-                        return false;
-                    }
-                }
-                else if (get_kind() == TypeKind::TK_BITMASK)
-                {
-                    TypeKind bitmask_kind = TypeKind::TK_BYTE;
-                    size_t type_size = type_->get_size();
-                    switch (type_size)
-                    {
-                        case 1: bitmask_kind = TypeKind::TK_BYTE; break;
-                        case 2: bitmask_kind = TypeKind::TK_UINT16; break;
-                        case 4: bitmask_kind = TypeKind::TK_UINT32; break;
-                        case 8: bitmask_kind = TypeKind::TK_UINT64; break;
-                    }
-
-                    assert(values_.size() && other->values_.size());
-
-                    if (!compare_values(bitmask_kind, values_.begin()->second, other->values_.begin()->second))
-                    {
-                        return false;
-                    }
-                }
-                else if (type_->is_complex_kind())
-                {
-                    // array, map, sequence, structure, bitset, anotation
-                    return values_.size() == other->values_.size() &&
-                           std::equal(
-                        values_.begin(),
-                        values_.end(),
-                        other->values_.begin(),
-                        [](const decltype(values_)::value_type& l, const decltype(values_)::value_type& r)
-                        {
-                            DynamicDataImpl* left = (DynamicDataImpl*)l.second;
-                            DynamicDataImpl* right = (DynamicDataImpl*)r.second;
-                            bool res = left->equals(right);
-                            return res;
-                            // TODO: undo once finished debugging
-                            // return ((DynamicDataImpl*)l.second)->equals((DynamicDataImpl*)r.second);
-                        });
-                }
-                else
-                {
-                    // primitives
-                    if (!compare_values(get_kind(), values_.begin()->second, other->values_.begin()->second))
-                    {
-                        return false;
-                    }
-                }
-#endif // ifdef DYNAMIC_TYPES_CHECKING
-            }
-            return true;
-        }
-    }
-    return false;
+    return *this == other;
 }
 
 MemberId DynamicDataImpl::get_member_id_by_name(
@@ -674,6 +546,14 @@ std::shared_ptr<void> DynamicDataImpl::clone_value(
         }
     }
     return {};
+}
+
+bool DynamicDataImpl::compare_values(
+        TypeKind kind,
+        std::shared_ptr<void> left,
+        std::shared_ptr<void> right) const
+{
+    return compare_values(left.get(), right.get());
 }
 
 bool DynamicDataImpl::compare_values(
@@ -1356,7 +1236,7 @@ void DynamicDataImpl::set_default_value(
     }
 }
 
-DynamicDataImpl* DynamicDataImpl::loan_value(
+std::shared_ptr<DynamicDataImpl> DynamicDataImpl::loan_value(
         MemberId id)
 {
     if (id != MEMBER_ID_INVALID)
@@ -1394,7 +1274,7 @@ DynamicDataImpl* DynamicDataImpl::loan_value(
             auto it = values_.find(id);
             if (it != values_.end())
             {
-                if (get_kind() == TypeKind::TK_MAP && ((DynamicDataImpl*)it->second)->key_element_)
+                if (get_kind() == TypeKind::TK_MAP && static_pointer_cast<DynamicDataImpl>(it->second)->key_element_)
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. Key values can't be loaned.");
                     return nullptr;
@@ -1406,7 +1286,7 @@ DynamicDataImpl* DynamicDataImpl::loan_value(
                         set_union_id(id);
                     }
                     loaned_values_.push_back(id);
-                    return (DynamicDataImpl*)it->second;
+                    return static_pointer_cast<DynamicDataImpl>(it->second);
                 }
             }
             else if (get_kind() == TypeKind::TK_ARRAY)
@@ -1414,7 +1294,7 @@ DynamicDataImpl* DynamicDataImpl::loan_value(
                 if (insert_array_data(id) == ReturnCode_t::RETCODE_OK)
                 {
                     loaned_values_.push_back(id);
-                    return (DynamicDataImpl*)values_.at(id);
+                    return static_pointer_cast<DynamicDataImpl>(values_.at(id));
                 }
             }
 
@@ -1437,7 +1317,7 @@ DynamicDataImpl* DynamicDataImpl::loan_value(
 }
 
 ReturnCode_t DynamicDataImpl::return_loaned_value(
-        const DynamicDataImpl* value)
+        std::shared_ptr<DynamicDataImpl> value);
 {
     for (auto loanIt = loaned_values_.begin(); loanIt != loaned_values_.end(); ++loanIt)
     {
@@ -1445,13 +1325,17 @@ ReturnCode_t DynamicDataImpl::return_loaned_value(
         auto it = complex_values_.find(*loanIt);
         if (it != complex_values_.end() && it->second == value)
         {
+            // TODO: replace with copy (disengage reference)
+            *it = make_shared<DynamicDataImpl>(std::move(*value));
             loaned_values_.erase(loanIt);
             return ReturnCode_t::RETCODE_OK;
         }
 #else
         auto it = values_.find(*loanIt);
-        if (it != values_.end() && it->second == value)
+        if (it != values_.end() && static_pointer_cast<DynamicDataImpl>(it->second) == value)
         {
+            // TODO: replace with copy (disengage reference)
+            *it = make_shared<DynamicDataImpl>(std::move(*value));
             loaned_values_.erase(loanIt);
             return ReturnCode_t::RETCODE_OK;
         }
@@ -4300,7 +4184,6 @@ ReturnCode_t DynamicDataImpl::clear_array_data(
             auto it = complex_values_.find(indexId);
             if (it != complex_values_.end())
             {
-                DynamicDataFactory::get_instance()->delete_data(it->second);
                 complex_values_.erase(it);
             }
             return ReturnCode_t::RETCODE_OK;
@@ -4311,7 +4194,6 @@ ReturnCode_t DynamicDataImpl::clear_array_data(
             auto it = values_.find(indexId);
             if (it != values_.end())
             {
-                DynamicDataFactory::get_instance()->delete_data((DynamicDataImpl*)it->second);
                 values_.erase(it);
             }
             return ReturnCode_t::RETCODE_OK;
@@ -4750,17 +4632,15 @@ ReturnCode_t DynamicDataImpl::insert_sequence_data(
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
+            std::shared_ptr<DynamicDataImpl> new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
 #ifdef DYNAMIC_TYPES_CHECKING
-            DynamicDataImpl* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
             outId = complex_values_.size();
-            complex_values_.insert(std::make_pair(outId, new_element));
-            return ReturnCode_t::RETCODE_OK;
+            complex_values_.emplace(outId, new_element);
 #else
-            DynamicDataImpl* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
             outId = values_.size();
-            values_.insert(std::make_pair(outId, new_element));
-            return ReturnCode_t::RETCODE_OK;
+            values_.emplace(outId, new_element);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
+            return ReturnCode_t::RETCODE_OK;
         }
         else
         {
@@ -4785,7 +4665,6 @@ ReturnCode_t DynamicDataImpl::remove_sequence_data(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            DynamicDataFactory::get_instance()->delete_data(it->second);
             complex_values_.erase(it);
             return ReturnCode_t::RETCODE_OK;
         }
@@ -4793,7 +4672,6 @@ ReturnCode_t DynamicDataImpl::remove_sequence_data(
         auto it = values_.find(id);
         if (it != values_.end())
         {
-            DynamicDataFactory::get_instance()->delete_data((DynamicDataImpl*)it->second);
             values_.erase(it);
             return ReturnCode_t::RETCODE_OK;
         }
@@ -4809,18 +4687,18 @@ ReturnCode_t DynamicDataImpl::remove_sequence_data(
 }
 
 ReturnCode_t DynamicDataImpl::insert_map_data(
-        const DynamicDataImpl* key,
+        const DynamicDataImpl& key,
         MemberId& outKeyId,
         MemberId& outValueId)
 {
-    if (get_kind() == TypeKind::TK_MAP && type_->get_key_element_type()->equals(*key->type_.get()))
+    if (get_kind() == TypeKind::TK_MAP && *(type_->get_key_element_type()) == *(key.get_type()))
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             for (auto it = complex_values_.begin(); it != complex_values_.end(); ++it)
             {
-                if (it->second->key_element_ && it->second->equals(key))
+                if (it->second->key_element_ && *(it->second) == key)
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The key already exists.");
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
@@ -4833,18 +4711,19 @@ ReturnCode_t DynamicDataImpl::insert_map_data(
                 // get largest key available
                 outKeyId = complex_values_.rbegin()->first + 1u;
             }
-            DynamicDataImpl* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
+            std::shared_ptr<DynamicDataImpl> keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
             keyCopy->key_element_ = true;
-            complex_values_.insert(std::make_pair(outKeyId, keyCopy));
+            complex_values_.emplace(outKeyId, keyCopy);
 
-            DynamicDataImpl* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
+            std::shared_ptr<DynamicDataImpl> new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
             outValueId = outKeyId + 1u;
-            complex_values_.insert(std::make_pair(outValueId, new_element));
+            complex_values_.emplace(outValueId, new_element);
             return ReturnCode_t::RETCODE_OK;
 #else
             for (auto it = values_.begin(); it != values_.end(); ++it)
             {
-                if (((DynamicDataImpl*)it->second)->key_element_ && ((DynamicDataImpl*)it->second)->equals(key))
+                auto value = static_pointer_cast<DynamicDataImpl>(it->second);
+                if ( value->key_element_ && ( value == key || *value == *key))
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The key already exists.");
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
@@ -4857,13 +4736,13 @@ ReturnCode_t DynamicDataImpl::insert_map_data(
                 // get largest key available
                 outKeyId = values_.rbegin()->first + 1u;
             }
-            DynamicDataImpl* keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
+            std::shared_ptr<DynamicDataImpl> keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
             keyCopy->key_element_ = true;
-            values_.insert(std::make_pair(outKeyId, keyCopy));
+            values_.emplace(outKeyId, keyCopy);
 
-            DynamicDataImpl* new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
+            std:.shared_ptr<DynamicDataImpl> new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
             outValueId = outKeyId + 1u;
-            values_.insert(std::make_pair(outValueId, new_element));
+            values_.emplace(outValueId, new_element);
             return ReturnCode_t::RETCODE_OK;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
         }
@@ -5410,8 +5289,9 @@ bool DynamicDataImpl::operator ==(
                 auto otherIt = other->values_.find(union_id_);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 
-                return *static_pointer_cast<DynamicDataImpl>(it->second) ==
-                        *static_pointer_cast<DynamicDataImpl>(otherIt->second);
+                return it->second == otherIt->second ||
+                       *static_pointer_cast<DynamicDataImpl>(it->second) ==
+                       *static_pointer_cast<DynamicDataImpl>(otherIt->second);
             }
         }
         else
@@ -5434,16 +5314,7 @@ bool DynamicDataImpl::operator ==(
             bFail = bFail || string_value_ != other->string_value_;
             bFail = bFail || wstring_value_ != other->wstring_value_;
             bFail = bFail || !map_compare(complex_values_, other->complex_values_);
-            /*if (int32_value_ != other->int32_value_ || uint32_value_ != other->uint32_value_ ||
-              int16_value_ != other->int16_value_ || uint16_value_ != other->uint16_value_ ||
-              int64_value_ != other->int64_value_ || uint64_value_ != other->uint64_value_ ||
-              float32_value_ != other->float32_value_ || float64_value_ != other->float64_value_ ||
-              float128_value_ != other->float128_value_ || char8_value_ != other->char8_value_ ||
-              char16_value_ != other->char16_value_ || byte_value_ != other->byte_value_ ||
-              bool_value_ != other->bool_value_ || string_value_ != other->string_value_ ||
-              wstring_value_ != other->wstring_value_ ||
-              !map_compare(complex_values_, other->complex_values_))
-             */
+
             if (bFail)
             {
                 return false;
@@ -5485,12 +5356,9 @@ bool DynamicDataImpl::operator ==(
                             other->values_.begin(),
                             [](const decltype(values_)::value_type& l, const decltype(values_)::value_type& r)
                             {
-                            DynamicDataImpl* left = (DynamicDataImpl*)l.second;
-                            DynamicDataImpl* right = (DynamicDataImpl*)r.second;
-                            bool res = left->equals(right);
-                            return res;
-                            // TODO: undo once finished debugging
-                            // return ((DynamicDataImpl*)l.second)->equals((DynamicDataImpl*)r.second);
+                                return l.second == r.second ||
+                                       *static_pointer_cast<DynamicDataImpl>(l.second) ==
+                                       *static_pointer_cast<DynamicDataImpl>(r.second);
                             });
             }
             else
