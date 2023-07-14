@@ -1046,6 +1046,7 @@ bool PDP::remove_remote_participant(
         // Return reader proxy objects to pool
         for (auto pit : *pdata->m_readers)
         {
+            pit.second->clear();
             reader_proxies_pool_.push_back(pit.second);
         }
         pdata->m_readers->clear();
@@ -1053,6 +1054,7 @@ bool PDP::remove_remote_participant(
         // Return writer proxy objects to pool
         for (auto pit : *pdata->m_writers)
         {
+            pit.second->clear();
             writer_proxies_pool_.push_back(pit.second);
         }
         pdata->m_writers->clear();
