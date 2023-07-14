@@ -772,10 +772,9 @@ public:
 
         void regenerate_port()
         {
-            auto new_port = shared_mem_manager_->regenerate_port(global_port_, global_port_->open_mode());
-
-            auto new_listener = new_port->create_listener();
-
+            auto new_port = global_port_;
+            shared_mem_manager_->regenerate_port(new_port, new_port->open_mode());
+            auto new_listener = std::make_shared<Listener>(shared_mem_manager_, new_port);
             *this = std::move(*new_listener);
         }
 
@@ -830,13 +829,21 @@ public:
             return *this;
         }
 
+        bool is_ok() const
+        {
+            return global_port_->is_port_ok();
+        }
+
         /**
          * Try to enqueue a buffer in the port.
          * @returns false If the port's queue is full so buffer couldn't be enqueued.
          */
         bool try_push(
-                const std::shared_ptr<Buffer>& buffer)
+                const std::shared_ptr<Buffer>& buffer,
+                bool& is_port_ok)
         {
+            is_port_ok = true;
+
             assert(std::dynamic_pointer_cast<SharedMemBuffer>(buffer));
 
             SharedMemBuffer* shared_mem_buffer = std::static_pointer_cast<SharedMemBuffer>(buffer).get();
@@ -870,6 +877,7 @@ public:
                                                                          << e.what());
 
                     regenerate_port();
+                    is_port_ok = false;
                     ret = false;
                 }
                 else
@@ -919,9 +927,7 @@ public:
         void regenerate_port()
         {
             recover_blocked_processing();
-            auto new_port = shared_mem_manager_->regenerate_port(global_port_, open_mode_);
-
-            *this = std::move(*new_port);
+            shared_mem_manager_->regenerate_port(global_port_, open_mode_);
         }
 
         SharedMemManager* shared_mem_manager_;
@@ -1005,11 +1011,11 @@ public:
 
 private:
 
-    std::shared_ptr<Port> regenerate_port(
-            std::shared_ptr<SharedMemGlobal::Port> port,
+    void regenerate_port(
+            std::shared_ptr<SharedMemGlobal::Port>& port,
             SharedMemGlobal::Port::OpenMode open_mode)
     {
-        return std::make_shared<Port>(this, global_segment_.regenerate_port(port, open_mode), open_mode);
+        port = global_segment_.regenerate_port(port, open_mode);
     }
 
     /**
