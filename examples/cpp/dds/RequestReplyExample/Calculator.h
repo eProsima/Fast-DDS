@@ -70,7 +70,7 @@ class Cdr;
 enum OperationType : uint32_t
 {
     ADDITION,
-    SUBSTRACTION,
+    SUBTRACTION,
     MULTIPLICATION,
     DIVISION
 };
