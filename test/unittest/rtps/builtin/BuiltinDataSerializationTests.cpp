@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "fastdds/rtps/messages/CDRMessage.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -1297,6 +1298,25 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_max_parameter_check)
         msg_fault.pos = 0;
         // Deserialization of messages with more than 100 parameters should fail
         ASSERT_FALSE(out.readFromCDRMessage(&msg_fault, network, true));
+    }
+}
+
+TEST(BuiltinDataSerializationTests, null_checks)
+{
+    {
+        // Test deserialization sanity checks
+        uint32_t msg_size = 100;
+        CDRMessage_t msg(msg_size);
+
+        ASSERT_FALSE(CDRMessage::addData(nullptr, (octet*) &msg, msg_size));
+        ASSERT_FALSE(CDRMessage::addData(&msg, nullptr, msg_size));
+        ASSERT_TRUE(CDRMessage::addData(&msg, nullptr, 0));
+
+        // Test deserialization sanity checks
+
+        ASSERT_FALSE(CDRMessage::readData(nullptr, (octet*) &msg, msg_size));
+        ASSERT_FALSE(CDRMessage::readData(&msg, nullptr, msg_size));
+        ASSERT_TRUE(CDRMessage::readData(&msg, nullptr, 0));
     }
 }
 
