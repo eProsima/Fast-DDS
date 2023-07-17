@@ -1923,7 +1923,7 @@ TEST(DataWriterTests, CustomPoolCreation)
 
     DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
 
-    DataWriter* data_writer = publisher->create_datawriter(topic, writer_qos, payload_pool);
+    DataWriter* data_writer = publisher->create_datawriter(topic, writer_qos, nullptr, StatusMask::all(), payload_pool);
 
     ASSERT_NE(data_writer, nullptr);
     ASSERT_NE(data_reader, nullptr);
