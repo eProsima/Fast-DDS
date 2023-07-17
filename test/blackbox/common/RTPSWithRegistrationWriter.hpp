@@ -228,8 +228,9 @@ public:
 
             eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
             eprosima::fastcdr::Cdr cdr(buffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                    eprosima::fastcdr::CdrVersion::XCDRv1);
+                    eprosima::fastdds::dds::DEFAULT_XCDR_VERSION);
 
+            cdr.serialize_encapsulation();
             cdr << *it;
 
             ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());
@@ -250,8 +251,9 @@ public:
 
         eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
         eprosima::fastcdr::Cdr cdr(buffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                eprosima::fastcdr::CdrVersion::XCDRv1);
+                eprosima::fastdds::dds::DEFAULT_XCDR_VERSION);
 
+        cdr.serialize_encapsulation();
         cdr << msg;
 
         ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());

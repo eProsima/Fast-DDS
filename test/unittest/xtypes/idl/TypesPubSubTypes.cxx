@@ -25,7 +25,7 @@
 #include <fastcdr/CdrSizeCalculator.hpp>
 
 #include "TypesPubSubTypes.h"
-#include "TypesCdrAux.hpp"
+#include "TypesCdrAux.ipp"
 
 using SerializedPayload_t = eprosima::fastrtps::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
@@ -36,12 +36,11 @@ using DataRepresentationId_t = eprosima::fastdds::dds::DataRepresentationId_t;
 MyEnumStructPubSubType::MyEnumStructPubSubType()
 {
     setName("MyEnumStruct");
-    auto type_size = MyEnumStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = MyEnumStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = MyEnumStruct::isKeyDefined();
-    size_t keyLength = MyEnumStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            MyEnumStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = MyEnumStruct_max_key_cdr_typesize > 16 ? MyEnumStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -79,7 +78,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -111,7 +110,7 @@ bool MyEnumStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -160,12 +159,12 @@ bool MyEnumStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            MyEnumStruct::getKeyMaxCdrSerializedSize());
+            MyEnumStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || MyEnumStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || MyEnumStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -188,12 +187,11 @@ bool MyEnumStructPubSubType::getKey(
 MyBadEnumStructPubSubType::MyBadEnumStructPubSubType()
 {
     setName("MyBadEnumStruct");
-    auto type_size = MyBadEnumStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = MyBadEnumStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = MyBadEnumStruct::isKeyDefined();
-    size_t keyLength = MyBadEnumStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            MyBadEnumStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = MyBadEnumStruct_max_key_cdr_typesize > 16 ? MyBadEnumStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -231,7 +229,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -263,7 +261,7 @@ bool MyBadEnumStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -312,12 +310,12 @@ bool MyBadEnumStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            MyBadEnumStruct::getKeyMaxCdrSerializedSize());
+            MyBadEnumStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || MyBadEnumStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || MyBadEnumStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -341,12 +339,11 @@ bool MyBadEnumStructPubSubType::getKey(
 MyAliasEnumStructPubSubType::MyAliasEnumStructPubSubType()
 {
     setName("MyAliasEnumStruct");
-    auto type_size = MyAliasEnumStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = MyAliasEnumStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = MyAliasEnumStruct::isKeyDefined();
-    size_t keyLength = MyAliasEnumStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            MyAliasEnumStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = MyAliasEnumStruct_max_key_cdr_typesize > 16 ? MyAliasEnumStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -384,7 +381,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -416,7 +413,7 @@ bool MyAliasEnumStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -465,12 +462,12 @@ bool MyAliasEnumStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            MyAliasEnumStruct::getKeyMaxCdrSerializedSize());
+            MyAliasEnumStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || MyAliasEnumStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || MyAliasEnumStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -493,12 +490,11 @@ bool MyAliasEnumStructPubSubType::getKey(
 BasicStructPubSubType::BasicStructPubSubType()
 {
     setName("BasicStruct");
-    auto type_size = BasicStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = BasicStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = BasicStruct::isKeyDefined();
-    size_t keyLength = BasicStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            BasicStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = BasicStruct_max_key_cdr_typesize > 16 ? BasicStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -536,7 +532,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -568,7 +564,7 @@ bool BasicStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -617,12 +613,12 @@ bool BasicStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            BasicStruct::getKeyMaxCdrSerializedSize());
+            BasicStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || BasicStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || BasicStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -645,12 +641,11 @@ bool BasicStructPubSubType::getKey(
 BasicNamesStructPubSubType::BasicNamesStructPubSubType()
 {
     setName("BasicNamesStruct");
-    auto type_size = BasicNamesStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = BasicNamesStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = BasicNamesStruct::isKeyDefined();
-    size_t keyLength = BasicNamesStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            BasicNamesStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = BasicNamesStruct_max_key_cdr_typesize > 16 ? BasicNamesStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -688,7 +683,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -720,7 +715,7 @@ bool BasicNamesStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -769,12 +764,12 @@ bool BasicNamesStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            BasicNamesStruct::getKeyMaxCdrSerializedSize());
+            BasicNamesStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || BasicNamesStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || BasicNamesStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -797,12 +792,11 @@ bool BasicNamesStructPubSubType::getKey(
 BasicBadStructPubSubType::BasicBadStructPubSubType()
 {
     setName("BasicBadStruct");
-    auto type_size = BasicBadStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = BasicBadStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = BasicBadStruct::isKeyDefined();
-    size_t keyLength = BasicBadStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            BasicBadStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = BasicBadStruct_max_key_cdr_typesize > 16 ? BasicBadStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -840,7 +834,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -872,7 +866,7 @@ bool BasicBadStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -921,12 +915,12 @@ bool BasicBadStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            BasicBadStruct::getKeyMaxCdrSerializedSize());
+            BasicBadStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || BasicBadStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || BasicBadStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -949,12 +943,11 @@ bool BasicBadStructPubSubType::getKey(
 BasicWideStructPubSubType::BasicWideStructPubSubType()
 {
     setName("BasicWideStruct");
-    auto type_size = BasicWideStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = BasicWideStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = BasicWideStruct::isKeyDefined();
-    size_t keyLength = BasicWideStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            BasicWideStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = BasicWideStruct_max_key_cdr_typesize > 16 ? BasicWideStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -992,7 +985,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1024,7 +1017,7 @@ bool BasicWideStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1073,12 +1066,12 @@ bool BasicWideStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            BasicWideStruct::getKeyMaxCdrSerializedSize());
+            BasicWideStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || BasicWideStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || BasicWideStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -1101,12 +1094,11 @@ bool BasicWideStructPubSubType::getKey(
 BadBasicWideStructPubSubType::BadBasicWideStructPubSubType()
 {
     setName("BadBasicWideStruct");
-    auto type_size = BadBasicWideStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = BadBasicWideStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = BadBasicWideStruct::isKeyDefined();
-    size_t keyLength = BadBasicWideStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            BadBasicWideStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = BadBasicWideStruct_max_key_cdr_typesize > 16 ? BadBasicWideStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -1144,7 +1136,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1176,7 +1168,7 @@ bool BadBasicWideStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1225,12 +1217,12 @@ bool BadBasicWideStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            BadBasicWideStruct::getKeyMaxCdrSerializedSize());
+            BadBasicWideStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || BadBasicWideStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || BadBasicWideStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -1253,12 +1245,11 @@ bool BadBasicWideStructPubSubType::getKey(
 StringStructPubSubType::StringStructPubSubType()
 {
     setName("StringStruct");
-    auto type_size = StringStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = StringStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = StringStruct::isKeyDefined();
-    size_t keyLength = StringStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            StringStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = StringStruct_max_key_cdr_typesize > 16 ? StringStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -1296,7 +1287,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1328,7 +1319,7 @@ bool StringStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1377,12 +1368,12 @@ bool StringStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            StringStruct::getKeyMaxCdrSerializedSize());
+            StringStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || StringStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || StringStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -1405,12 +1396,11 @@ bool StringStructPubSubType::getKey(
 LargeStringStructPubSubType::LargeStringStructPubSubType()
 {
     setName("LargeStringStruct");
-    auto type_size = LargeStringStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = LargeStringStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = LargeStringStruct::isKeyDefined();
-    size_t keyLength = LargeStringStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            LargeStringStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = LargeStringStruct_max_key_cdr_typesize > 16 ? LargeStringStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -1448,7 +1438,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1480,7 +1470,7 @@ bool LargeStringStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1529,12 +1519,12 @@ bool LargeStringStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            LargeStringStruct::getKeyMaxCdrSerializedSize());
+            LargeStringStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || LargeStringStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || LargeStringStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -1557,12 +1547,11 @@ bool LargeStringStructPubSubType::getKey(
 WStringStructPubSubType::WStringStructPubSubType()
 {
     setName("WStringStruct");
-    auto type_size = WStringStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = WStringStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = WStringStruct::isKeyDefined();
-    size_t keyLength = WStringStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            WStringStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = WStringStruct_max_key_cdr_typesize > 16 ? WStringStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -1600,7 +1589,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1632,7 +1621,7 @@ bool WStringStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1681,12 +1670,12 @@ bool WStringStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            WStringStruct::getKeyMaxCdrSerializedSize());
+            WStringStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || WStringStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || WStringStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -1709,12 +1698,11 @@ bool WStringStructPubSubType::getKey(
 LargeWStringStructPubSubType::LargeWStringStructPubSubType()
 {
     setName("LargeWStringStruct");
-    auto type_size = LargeWStringStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = LargeWStringStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = LargeWStringStruct::isKeyDefined();
-    size_t keyLength = LargeWStringStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            LargeWStringStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = LargeWStringStruct_max_key_cdr_typesize > 16 ? LargeWStringStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -1752,7 +1740,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1784,7 +1772,7 @@ bool LargeWStringStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1833,12 +1821,12 @@ bool LargeWStringStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            LargeWStringStruct::getKeyMaxCdrSerializedSize());
+            LargeWStringStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || LargeWStringStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || LargeWStringStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -1861,12 +1849,11 @@ bool LargeWStringStructPubSubType::getKey(
 ArrayStructPubSubType::ArrayStructPubSubType()
 {
     setName("ArrayStruct");
-    auto type_size = ArrayStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = ArrayStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = ArrayStruct::isKeyDefined();
-    size_t keyLength = ArrayStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            ArrayStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = ArrayStruct_max_key_cdr_typesize > 16 ? ArrayStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -1904,7 +1891,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1936,7 +1923,7 @@ bool ArrayStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1985,12 +1972,12 @@ bool ArrayStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            ArrayStruct::getKeyMaxCdrSerializedSize());
+            ArrayStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || ArrayStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || ArrayStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -2013,12 +2000,11 @@ bool ArrayStructPubSubType::getKey(
 ArrayStructEqualPubSubType::ArrayStructEqualPubSubType()
 {
     setName("ArrayStructEqual");
-    auto type_size = ArrayStructEqual::getMaxCdrSerializedSize();
+    uint32_t type_size = ArrayStructEqual_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = ArrayStructEqual::isKeyDefined();
-    size_t keyLength = ArrayStructEqual::getKeyMaxCdrSerializedSize() > 16 ?
-            ArrayStructEqual::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = ArrayStructEqual_max_key_cdr_typesize > 16 ? ArrayStructEqual_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -2056,7 +2042,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2088,7 +2074,7 @@ bool ArrayStructEqualPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2137,12 +2123,12 @@ bool ArrayStructEqualPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            ArrayStructEqual::getKeyMaxCdrSerializedSize());
+            ArrayStructEqual_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || ArrayStructEqual::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || ArrayStructEqual_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -2165,12 +2151,11 @@ bool ArrayStructEqualPubSubType::getKey(
 ArrayBadStructPubSubType::ArrayBadStructPubSubType()
 {
     setName("ArrayBadStruct");
-    auto type_size = ArrayBadStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = ArrayBadStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = ArrayBadStruct::isKeyDefined();
-    size_t keyLength = ArrayBadStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            ArrayBadStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = ArrayBadStruct_max_key_cdr_typesize > 16 ? ArrayBadStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -2208,7 +2193,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2240,7 +2225,7 @@ bool ArrayBadStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2289,12 +2274,12 @@ bool ArrayBadStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            ArrayBadStruct::getKeyMaxCdrSerializedSize());
+            ArrayBadStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || ArrayBadStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || ArrayBadStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -2317,12 +2302,11 @@ bool ArrayBadStructPubSubType::getKey(
 ArrayDimensionsStructPubSubType::ArrayDimensionsStructPubSubType()
 {
     setName("ArrayDimensionsStruct");
-    auto type_size = ArrayDimensionsStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = ArrayDimensionsStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = ArrayDimensionsStruct::isKeyDefined();
-    size_t keyLength = ArrayDimensionsStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            ArrayDimensionsStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = ArrayDimensionsStruct_max_key_cdr_typesize > 16 ? ArrayDimensionsStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -2360,7 +2344,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2392,7 +2376,7 @@ bool ArrayDimensionsStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2441,12 +2425,12 @@ bool ArrayDimensionsStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            ArrayDimensionsStruct::getKeyMaxCdrSerializedSize());
+            ArrayDimensionsStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || ArrayDimensionsStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || ArrayDimensionsStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -2469,12 +2453,11 @@ bool ArrayDimensionsStructPubSubType::getKey(
 ArraySizeStructPubSubType::ArraySizeStructPubSubType()
 {
     setName("ArraySizeStruct");
-    auto type_size = ArraySizeStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = ArraySizeStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = ArraySizeStruct::isKeyDefined();
-    size_t keyLength = ArraySizeStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            ArraySizeStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = ArraySizeStruct_max_key_cdr_typesize > 16 ? ArraySizeStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -2512,7 +2495,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2544,7 +2527,7 @@ bool ArraySizeStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2593,12 +2576,12 @@ bool ArraySizeStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            ArraySizeStruct::getKeyMaxCdrSerializedSize());
+            ArraySizeStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || ArraySizeStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || ArraySizeStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -2621,12 +2604,11 @@ bool ArraySizeStructPubSubType::getKey(
 SequenceStructPubSubType::SequenceStructPubSubType()
 {
     setName("SequenceStruct");
-    auto type_size = SequenceStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = SequenceStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = SequenceStruct::isKeyDefined();
-    size_t keyLength = SequenceStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            SequenceStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = SequenceStruct_max_key_cdr_typesize > 16 ? SequenceStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -2664,7 +2646,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2696,7 +2678,7 @@ bool SequenceStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2745,12 +2727,12 @@ bool SequenceStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            SequenceStruct::getKeyMaxCdrSerializedSize());
+            SequenceStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || SequenceStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || SequenceStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -2773,12 +2755,11 @@ bool SequenceStructPubSubType::getKey(
 SequenceStructEqualPubSubType::SequenceStructEqualPubSubType()
 {
     setName("SequenceStructEqual");
-    auto type_size = SequenceStructEqual::getMaxCdrSerializedSize();
+    uint32_t type_size = SequenceStructEqual_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = SequenceStructEqual::isKeyDefined();
-    size_t keyLength = SequenceStructEqual::getKeyMaxCdrSerializedSize() > 16 ?
-            SequenceStructEqual::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = SequenceStructEqual_max_key_cdr_typesize > 16 ? SequenceStructEqual_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -2816,7 +2797,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2848,7 +2829,7 @@ bool SequenceStructEqualPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -2897,12 +2878,12 @@ bool SequenceStructEqualPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            SequenceStructEqual::getKeyMaxCdrSerializedSize());
+            SequenceStructEqual_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || SequenceStructEqual::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || SequenceStructEqual_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -2925,12 +2906,11 @@ bool SequenceStructEqualPubSubType::getKey(
 SequenceBadStructPubSubType::SequenceBadStructPubSubType()
 {
     setName("SequenceBadStruct");
-    auto type_size = SequenceBadStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = SequenceBadStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = SequenceBadStruct::isKeyDefined();
-    size_t keyLength = SequenceBadStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            SequenceBadStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = SequenceBadStruct_max_key_cdr_typesize > 16 ? SequenceBadStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -2968,7 +2948,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3000,7 +2980,7 @@ bool SequenceBadStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3049,12 +3029,12 @@ bool SequenceBadStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            SequenceBadStruct::getKeyMaxCdrSerializedSize());
+            SequenceBadStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || SequenceBadStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || SequenceBadStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -3077,12 +3057,11 @@ bool SequenceBadStructPubSubType::getKey(
 SequenceBoundsStructPubSubType::SequenceBoundsStructPubSubType()
 {
     setName("SequenceBoundsStruct");
-    auto type_size = SequenceBoundsStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = SequenceBoundsStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = SequenceBoundsStruct::isKeyDefined();
-    size_t keyLength = SequenceBoundsStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            SequenceBoundsStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = SequenceBoundsStruct_max_key_cdr_typesize > 16 ? SequenceBoundsStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -3120,7 +3099,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3152,7 +3131,7 @@ bool SequenceBoundsStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3201,12 +3180,12 @@ bool SequenceBoundsStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            SequenceBoundsStruct::getKeyMaxCdrSerializedSize());
+            SequenceBoundsStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || SequenceBoundsStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || SequenceBoundsStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -3229,12 +3208,11 @@ bool SequenceBoundsStructPubSubType::getKey(
 SequenceSequenceStructPubSubType::SequenceSequenceStructPubSubType()
 {
     setName("SequenceSequenceStruct");
-    auto type_size = SequenceSequenceStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = SequenceSequenceStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = SequenceSequenceStruct::isKeyDefined();
-    size_t keyLength = SequenceSequenceStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            SequenceSequenceStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = SequenceSequenceStruct_max_key_cdr_typesize > 16 ? SequenceSequenceStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -3272,7 +3250,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3304,7 +3282,7 @@ bool SequenceSequenceStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3353,12 +3331,12 @@ bool SequenceSequenceStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            SequenceSequenceStruct::getKeyMaxCdrSerializedSize());
+            SequenceSequenceStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || SequenceSequenceStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || SequenceSequenceStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -3381,12 +3359,11 @@ bool SequenceSequenceStructPubSubType::getKey(
 SequenceSequenceBoundsStructPubSubType::SequenceSequenceBoundsStructPubSubType()
 {
     setName("SequenceSequenceBoundsStruct");
-    auto type_size = SequenceSequenceBoundsStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = SequenceSequenceBoundsStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = SequenceSequenceBoundsStruct::isKeyDefined();
-    size_t keyLength = SequenceSequenceBoundsStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            SequenceSequenceBoundsStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = SequenceSequenceBoundsStruct_max_key_cdr_typesize > 16 ? SequenceSequenceBoundsStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -3424,7 +3401,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3456,7 +3433,7 @@ bool SequenceSequenceBoundsStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3505,12 +3482,12 @@ bool SequenceSequenceBoundsStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            SequenceSequenceBoundsStruct::getKeyMaxCdrSerializedSize());
+            SequenceSequenceBoundsStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || SequenceSequenceBoundsStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || SequenceSequenceBoundsStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -3533,12 +3510,11 @@ bool SequenceSequenceBoundsStructPubSubType::getKey(
 MapStructPubSubType::MapStructPubSubType()
 {
     setName("MapStruct");
-    auto type_size = MapStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = MapStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = MapStruct::isKeyDefined();
-    size_t keyLength = MapStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            MapStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = MapStruct_max_key_cdr_typesize > 16 ? MapStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -3576,7 +3552,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3608,7 +3584,7 @@ bool MapStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3657,12 +3633,12 @@ bool MapStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            MapStruct::getKeyMaxCdrSerializedSize());
+            MapStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || MapStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || MapStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -3685,12 +3661,11 @@ bool MapStructPubSubType::getKey(
 MapStructEqualPubSubType::MapStructEqualPubSubType()
 {
     setName("MapStructEqual");
-    auto type_size = MapStructEqual::getMaxCdrSerializedSize();
+    uint32_t type_size = MapStructEqual_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = MapStructEqual::isKeyDefined();
-    size_t keyLength = MapStructEqual::getKeyMaxCdrSerializedSize() > 16 ?
-            MapStructEqual::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = MapStructEqual_max_key_cdr_typesize > 16 ? MapStructEqual_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -3728,7 +3703,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3760,7 +3735,7 @@ bool MapStructEqualPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3809,12 +3784,12 @@ bool MapStructEqualPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            MapStructEqual::getKeyMaxCdrSerializedSize());
+            MapStructEqual_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || MapStructEqual::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || MapStructEqual_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -3837,12 +3812,11 @@ bool MapStructEqualPubSubType::getKey(
 MapBadKeyStructPubSubType::MapBadKeyStructPubSubType()
 {
     setName("MapBadKeyStruct");
-    auto type_size = MapBadKeyStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = MapBadKeyStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = MapBadKeyStruct::isKeyDefined();
-    size_t keyLength = MapBadKeyStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            MapBadKeyStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = MapBadKeyStruct_max_key_cdr_typesize > 16 ? MapBadKeyStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -3880,7 +3854,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3912,7 +3886,7 @@ bool MapBadKeyStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -3961,12 +3935,12 @@ bool MapBadKeyStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            MapBadKeyStruct::getKeyMaxCdrSerializedSize());
+            MapBadKeyStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || MapBadKeyStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || MapBadKeyStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -3989,12 +3963,11 @@ bool MapBadKeyStructPubSubType::getKey(
 MapBadElemStructPubSubType::MapBadElemStructPubSubType()
 {
     setName("MapBadElemStruct");
-    auto type_size = MapBadElemStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = MapBadElemStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = MapBadElemStruct::isKeyDefined();
-    size_t keyLength = MapBadElemStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            MapBadElemStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = MapBadElemStruct_max_key_cdr_typesize > 16 ? MapBadElemStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -4032,7 +4005,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4064,7 +4037,7 @@ bool MapBadElemStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4113,12 +4086,12 @@ bool MapBadElemStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            MapBadElemStruct::getKeyMaxCdrSerializedSize());
+            MapBadElemStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || MapBadElemStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || MapBadElemStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -4141,12 +4114,11 @@ bool MapBadElemStructPubSubType::getKey(
 MapBoundsStructPubSubType::MapBoundsStructPubSubType()
 {
     setName("MapBoundsStruct");
-    auto type_size = MapBoundsStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = MapBoundsStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = MapBoundsStruct::isKeyDefined();
-    size_t keyLength = MapBoundsStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            MapBoundsStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = MapBoundsStruct_max_key_cdr_typesize > 16 ? MapBoundsStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -4184,7 +4156,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4216,7 +4188,7 @@ bool MapBoundsStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4265,12 +4237,12 @@ bool MapBoundsStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            MapBoundsStruct::getKeyMaxCdrSerializedSize());
+            MapBoundsStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || MapBoundsStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || MapBoundsStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -4293,12 +4265,11 @@ bool MapBoundsStructPubSubType::getKey(
 MapMapStructPubSubType::MapMapStructPubSubType()
 {
     setName("MapMapStruct");
-    auto type_size = MapMapStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = MapMapStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = MapMapStruct::isKeyDefined();
-    size_t keyLength = MapMapStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            MapMapStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = MapMapStruct_max_key_cdr_typesize > 16 ? MapMapStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -4336,7 +4307,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4368,7 +4339,7 @@ bool MapMapStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4417,12 +4388,12 @@ bool MapMapStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            MapMapStruct::getKeyMaxCdrSerializedSize());
+            MapMapStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || MapMapStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || MapMapStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -4445,12 +4416,11 @@ bool MapMapStructPubSubType::getKey(
 MapMapBoundsStructPubSubType::MapMapBoundsStructPubSubType()
 {
     setName("MapMapBoundsStruct");
-    auto type_size = MapMapBoundsStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = MapMapBoundsStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = MapMapBoundsStruct::isKeyDefined();
-    size_t keyLength = MapMapBoundsStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            MapMapBoundsStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = MapMapBoundsStruct_max_key_cdr_typesize > 16 ? MapMapBoundsStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -4488,7 +4458,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4520,7 +4490,7 @@ bool MapMapBoundsStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4569,12 +4539,12 @@ bool MapMapBoundsStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            MapMapBoundsStruct::getKeyMaxCdrSerializedSize());
+            MapMapBoundsStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || MapMapBoundsStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || MapMapBoundsStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -4602,12 +4572,11 @@ bool MapMapBoundsStructPubSubType::getKey(
 SimpleUnionStructPubSubType::SimpleUnionStructPubSubType()
 {
     setName("SimpleUnionStruct");
-    auto type_size = SimpleUnionStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = SimpleUnionStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = SimpleUnionStruct::isKeyDefined();
-    size_t keyLength = SimpleUnionStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            SimpleUnionStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = SimpleUnionStruct_max_key_cdr_typesize > 16 ? SimpleUnionStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -4645,7 +4614,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4677,7 +4646,7 @@ bool SimpleUnionStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4726,12 +4695,12 @@ bool SimpleUnionStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            SimpleUnionStruct::getKeyMaxCdrSerializedSize());
+            SimpleUnionStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || SimpleUnionStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || SimpleUnionStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -4754,12 +4723,11 @@ bool SimpleUnionStructPubSubType::getKey(
 SimpleUnionStructEqualPubSubType::SimpleUnionStructEqualPubSubType()
 {
     setName("SimpleUnionStructEqual");
-    auto type_size = SimpleUnionStructEqual::getMaxCdrSerializedSize();
+    uint32_t type_size = SimpleUnionStructEqual_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = SimpleUnionStructEqual::isKeyDefined();
-    size_t keyLength = SimpleUnionStructEqual::getKeyMaxCdrSerializedSize() > 16 ?
-            SimpleUnionStructEqual::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = SimpleUnionStructEqual_max_key_cdr_typesize > 16 ? SimpleUnionStructEqual_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -4797,7 +4765,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4829,7 +4797,7 @@ bool SimpleUnionStructEqualPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4878,12 +4846,12 @@ bool SimpleUnionStructEqualPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            SimpleUnionStructEqual::getKeyMaxCdrSerializedSize());
+            SimpleUnionStructEqual_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || SimpleUnionStructEqual::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || SimpleUnionStructEqual_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -4906,12 +4874,11 @@ bool SimpleUnionStructEqualPubSubType::getKey(
 SimpleUnionNamesStructPubSubType::SimpleUnionNamesStructPubSubType()
 {
     setName("SimpleUnionNamesStruct");
-    auto type_size = SimpleUnionNamesStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = SimpleUnionNamesStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = SimpleUnionNamesStruct::isKeyDefined();
-    size_t keyLength = SimpleUnionNamesStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            SimpleUnionNamesStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = SimpleUnionNamesStruct_max_key_cdr_typesize > 16 ? SimpleUnionNamesStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -4949,7 +4916,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -4981,7 +4948,7 @@ bool SimpleUnionNamesStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5030,12 +4997,12 @@ bool SimpleUnionNamesStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            SimpleUnionNamesStruct::getKeyMaxCdrSerializedSize());
+            SimpleUnionNamesStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || SimpleUnionNamesStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || SimpleUnionNamesStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -5058,12 +5025,11 @@ bool SimpleUnionNamesStructPubSubType::getKey(
 SimpleTypeUnionStructPubSubType::SimpleTypeUnionStructPubSubType()
 {
     setName("SimpleTypeUnionStruct");
-    auto type_size = SimpleTypeUnionStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = SimpleTypeUnionStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = SimpleTypeUnionStruct::isKeyDefined();
-    size_t keyLength = SimpleTypeUnionStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            SimpleTypeUnionStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = SimpleTypeUnionStruct_max_key_cdr_typesize > 16 ? SimpleTypeUnionStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -5101,7 +5067,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5133,7 +5099,7 @@ bool SimpleTypeUnionStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5182,12 +5148,12 @@ bool SimpleTypeUnionStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            SimpleTypeUnionStruct::getKeyMaxCdrSerializedSize());
+            SimpleTypeUnionStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || SimpleTypeUnionStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || SimpleTypeUnionStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -5210,12 +5176,11 @@ bool SimpleTypeUnionStructPubSubType::getKey(
 SimpleBadUnionStructPubSubType::SimpleBadUnionStructPubSubType()
 {
     setName("SimpleBadUnionStruct");
-    auto type_size = SimpleBadUnionStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = SimpleBadUnionStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = SimpleBadUnionStruct::isKeyDefined();
-    size_t keyLength = SimpleBadUnionStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            SimpleBadUnionStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = SimpleBadUnionStruct_max_key_cdr_typesize > 16 ? SimpleBadUnionStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -5253,7 +5218,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5285,7 +5250,7 @@ bool SimpleBadUnionStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5334,12 +5299,12 @@ bool SimpleBadUnionStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            SimpleBadUnionStruct::getKeyMaxCdrSerializedSize());
+            SimpleBadUnionStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || SimpleBadUnionStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || SimpleBadUnionStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
@@ -5362,12 +5327,11 @@ bool SimpleBadUnionStructPubSubType::getKey(
 SimplBadDiscUnionStructPubSubType::SimplBadDiscUnionStructPubSubType()
 {
     setName("SimplBadDiscUnionStruct");
-    auto type_size = SimplBadDiscUnionStruct::getMaxCdrSerializedSize();
+    uint32_t type_size = SimplBadDiscUnionStruct_max_cdr_typesize;
     type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
-    m_typeSize = static_cast<uint32_t>(type_size) + 4; /*encapsulation*/
-    m_isGetKeyDefined = SimplBadDiscUnionStruct::isKeyDefined();
-    size_t keyLength = SimplBadDiscUnionStruct::getKeyMaxCdrSerializedSize() > 16 ?
-            SimplBadDiscUnionStruct::getKeyMaxCdrSerializedSize() : 16;
+    m_typeSize = type_size + 4; /*encapsulation*/
+    m_isGetKeyDefined = false;
+    uint32_t keyLength = SimplBadDiscUnionStruct_max_key_cdr_typesize > 16 ? SimplBadDiscUnionStruct_max_key_cdr_typesize : 16;
     m_keyBuffer = reinterpret_cast<unsigned char*>(malloc(keyLength));
     memset(m_keyBuffer, 0, keyLength);
 }
@@ -5405,7 +5369,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object.
-        p_type->serialize(ser);
+        ser << *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5437,7 +5401,7 @@ bool SimplBadDiscUnionStructPubSubType::deserialize(
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         // Deserialize the object.
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -5486,12 +5450,12 @@ bool SimplBadDiscUnionStructPubSubType::getKey(
 
     // Object that manages the raw buffer.
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(m_keyBuffer),
-            SimplBadDiscUnionStruct::getKeyMaxCdrSerializedSize());
+            SimplBadDiscUnionStruct_max_key_cdr_typesize);
 
     // Object that serializes the data.
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS);
-    p_type->serializeKey(ser);
-    if (force_md5 || SimplBadDiscUnionStruct::getKeyMaxCdrSerializedSize() > 16)
+    eprosima::fastcdr::serialize_key(ser, *p_type);
+    if (force_md5 || SimplBadDiscUnionStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
         m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));

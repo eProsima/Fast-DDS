@@ -21,51 +21,6 @@
 #include <fastrtps/types/TypesBase.h>
 
 namespace eprosima {
-namespace fastrtps {
-
-using namespace rtps;
-
-namespace types {
-
-void MemberFlag::serialize(
-        eprosima::fastcdr::Cdr& cdr) const
-{
-    //cdr << m_MemberFlag;
-    uint16_t bits = static_cast<uint16_t>(m_MemberFlag.to_ulong());
-    cdr << bits;
-}
-
-void MemberFlag::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    //cdr >> (uint16_t)m_MemberFlag;
-    uint16_t bits;
-    cdr >> bits;
-    m_MemberFlag = std::bitset<16>(bits);
-}
-
-void TypeFlag::serialize(
-        eprosima::fastcdr::Cdr& cdr) const
-{
-    //cdr << m_TypeFlag;
-    uint16_t bits = static_cast<uint16_t>(m_TypeFlag.to_ulong());
-    cdr << bits;
-}
-
-void TypeFlag::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    //cdr >> (uint16_t)m_TypeFlag;
-    uint16_t bits;
-    cdr >> bits;
-    m_TypeFlag = std::bitset<16>(bits);
-}
-
-} // namespace types
-} // namespace fastrtps
-} // namespace eprosima
-
-namespace eprosima {
 namespace fastcdr {
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
@@ -75,12 +30,42 @@ size_t calculate_serialized_size(
     return 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& cdr,
+        const eprosima::fastrtps::types::MemberFlag& data)
+{
+    //cdr << m_MemberFlag;
+    cdr << data.bitset();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& cdr,
+        eprosima::fastrtps::types::MemberFlag& data)
+{
+    //cdr >> (uint16_t)m_MemberFlag;
+    cdr >> data.bitset();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::TypeFlag&,
         size_t current_alignment)
 {
     return 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& cdr,
+        const eprosima::fastrtps::types::TypeFlag& data)
+{
+    cdr << data.bitset();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& cdr,
+        eprosima::fastrtps::types::TypeFlag& data)
+{
+    cdr >> data.bitset();
 }
 
 } // namespace fastcdr

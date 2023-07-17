@@ -34,8 +34,6 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define ExampleMessage_max_cdr_typesize 272ULL;
-#define ExampleMessage_max_key_cdr_typesize 0ULL;
 
 ExampleMessage::ExampleMessage()
 {
@@ -101,64 +99,6 @@ bool ExampleMessage::operator !=(
         const ExampleMessage& x) const
 {
     return !(*this == x);
-}
-
-size_t ExampleMessage::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return ExampleMessage_max_cdr_typesize;
-}
-void ExampleMessage::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << index()
-                << eprosima::fastcdr::MemberId(1) << ownershipStrength()
-                << eprosima::fastcdr::MemberId(2) << message()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void ExampleMessage::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> index();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> ownershipStrength();
-                                            break;
-                                        
-                                        case 2:
-                    dcdr >> message();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -255,21 +195,3 @@ std::string& ExampleMessage::message()
     return m_message;
 }
 
-
-size_t ExampleMessage::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return ExampleMessage_max_key_cdr_typesize;
-}
-
-bool ExampleMessage::isKeyDefined()
-{
-    return false;
-}
-
-void ExampleMessage::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-}

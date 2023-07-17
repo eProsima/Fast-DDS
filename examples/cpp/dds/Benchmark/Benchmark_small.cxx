@@ -34,8 +34,6 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define BenchMarkSmall_max_cdr_typesize 16392ULL;
-#define BenchMarkSmall_max_key_cdr_typesize 0ULL;
 
 BenchMarkSmall::BenchMarkSmall()
 {
@@ -95,59 +93,6 @@ bool BenchMarkSmall::operator !=(
         const BenchMarkSmall& x) const
 {
     return !(*this == x);
-}
-
-size_t BenchMarkSmall::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return BenchMarkSmall_max_cdr_typesize;
-}
-void BenchMarkSmall::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << array()
-                << eprosima::fastcdr::MemberId(1) << index()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void BenchMarkSmall::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> array();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> index();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -216,21 +161,3 @@ uint32_t& BenchMarkSmall::index()
 }
 
 
-
-size_t BenchMarkSmall::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return BenchMarkSmall_max_key_cdr_typesize;
-}
-
-bool BenchMarkSmall::isKeyDefined()
-{
-    return false;
-}
-
-void BenchMarkSmall::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-}

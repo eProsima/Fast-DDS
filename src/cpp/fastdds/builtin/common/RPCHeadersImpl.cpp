@@ -24,79 +24,6 @@
 
 using namespace eprosima::fastdds::dds::rpc;
 
-void ReplyHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    for (uint32_t i = 0; i < fastrtps::rtps::GuidPrefix_t::size; ++i)
-    {
-        scdr << relatedRequestId.writer_guid().guidPrefix.value[i];
-    }
-    for (uint32_t i = 0; i < fastrtps::rtps::EntityId_t::size; ++i)
-    {
-        scdr << relatedRequestId.writer_guid().entityId.value[i];
-    }
-
-    scdr << relatedRequestId.sequence_number().high;
-    scdr << relatedRequestId.sequence_number().low;
-
-    scdr << static_cast<uint32_t>(remoteEx);
-}
-
-void ReplyHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    for (uint32_t i = 0; i < fastrtps::rtps::GuidPrefix_t::size; ++i)
-    {
-        dcdr >> relatedRequestId.writer_guid().guidPrefix.value[i];
-    }
-    for (uint32_t i = 0; i < fastrtps::rtps::EntityId_t::size; ++i)
-    {
-        dcdr >> relatedRequestId.writer_guid().entityId.value[i];
-    }
-    dcdr >> relatedRequestId.sequence_number().high;
-    dcdr >> relatedRequestId.sequence_number().low;
-
-    uint32_t aux;
-    dcdr >> aux;
-    remoteEx = static_cast<RemoteExceptionCode_t>(aux);
-}
-
-void RequestHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    for (uint32_t i = 0; i < fastrtps::rtps::GuidPrefix_t::size; ++i)
-    {
-        scdr << requestId.writer_guid().guidPrefix.value[i];
-    }
-    for (uint32_t i = 0; i < fastrtps::rtps::EntityId_t::size; ++i)
-    {
-        scdr << requestId.writer_guid().entityId.value[i];
-    }
-    scdr << requestId.sequence_number().high;
-    scdr << requestId.sequence_number().low;
-
-    scdr << instanceName.to_string();
-}
-
-void RequestHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    for (uint32_t i = 0; i < fastrtps::rtps::GuidPrefix_t::size; ++i)
-    {
-        dcdr >> requestId.writer_guid().guidPrefix.value[i];
-    }
-    for (uint32_t i = 0; i < fastrtps::rtps::EntityId_t::size; ++i)
-    {
-        dcdr >> requestId.writer_guid().entityId.value[i];
-    }
-    dcdr >> requestId.sequence_number().high;
-    dcdr >> requestId.sequence_number().low;
-
-    std::string aux;
-    dcdr >> aux;
-    instanceName = aux;
-}
-
 namespace eprosima {
 namespace fastcdr {
 size_t calculate_serialized_size(
@@ -120,6 +47,43 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const ReplyHeader& data)
+{
+    for (uint32_t i = 0; i < fastrtps::rtps::GuidPrefix_t::size; ++i)
+    {
+        scdr << data.relatedRequestId.writer_guid().guidPrefix.value[i];
+    }
+    for (uint32_t i = 0; i < fastrtps::rtps::EntityId_t::size; ++i)
+    {
+        scdr << data.relatedRequestId.writer_guid().entityId.value[i];
+    }
+
+    scdr << data.relatedRequestId.sequence_number().high;
+    scdr << data.relatedRequestId.sequence_number().low;
+
+    scdr << static_cast<uint32_t>(data.remoteEx);
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        ReplyHeader& data)
+{
+    for (uint32_t i = 0; i < fastrtps::rtps::GuidPrefix_t::size; ++i)
+    {
+        dcdr >> data.relatedRequestId.writer_guid().guidPrefix.value[i];
+    }
+    for (uint32_t i = 0; i < fastrtps::rtps::EntityId_t::size; ++i)
+    {
+        dcdr >> data.relatedRequestId.writer_guid().entityId.value[i];
+    }
+    dcdr >> data.relatedRequestId.sequence_number().high;
+    dcdr >> data.relatedRequestId.sequence_number().low;
+
+    dcdr >> data.remoteEx;
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::dds::rpc::RequestHeader& data,
@@ -140,6 +104,42 @@ size_t calculate_serialized_size(
 
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const RequestHeader& data)
+{
+    for (uint32_t i = 0; i < fastrtps::rtps::GuidPrefix_t::size; ++i)
+    {
+        scdr << data.requestId.writer_guid().guidPrefix.value[i];
+    }
+    for (uint32_t i = 0; i < fastrtps::rtps::EntityId_t::size; ++i)
+    {
+        scdr << data.requestId.writer_guid().entityId.value[i];
+    }
+    scdr << data.requestId.sequence_number().high;
+    scdr << data.requestId.sequence_number().low;
+
+    scdr << data.instanceName.to_string();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        RequestHeader& data)
+{
+    for (uint32_t i = 0; i < fastrtps::rtps::GuidPrefix_t::size; ++i)
+    {
+        dcdr >> data.requestId.writer_guid().guidPrefix.value[i];
+    }
+    for (uint32_t i = 0; i < fastrtps::rtps::EntityId_t::size; ++i)
+    {
+        dcdr >> data.requestId.writer_guid().entityId.value[i];
+    }
+    dcdr >> data.requestId.sequence_number().high;
+    dcdr >> data.requestId.sequence_number().low;
+
+    dcdr >> data.instanceName;
 }
 
 } // namespace fastcdr

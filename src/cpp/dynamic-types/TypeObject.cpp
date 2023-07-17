@@ -73,22 +73,6 @@ CommonStructMember& CommonStructMember::operator =(
     return *this;
 }
 
-void CommonStructMember::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_member_id;
-    scdr << m_member_flags;
-    scdr << m_member_type_id;
-}
-
-void CommonStructMember::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_member_id;
-    dcdr >> m_member_flags;
-    dcdr >> m_member_type_id;
-}
-
 bool CommonStructMember::operator ==(
         const CommonStructMember& other) const
 {
@@ -149,22 +133,6 @@ CompleteMemberDetail& CompleteMemberDetail::operator =(
     return *this;
 }
 
-void CompleteMemberDetail::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_name;
-    scdr << m_ann_builtin;
-    scdr << m_ann_custom;
-}
-
-void CompleteMemberDetail::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_name;
-    dcdr >> m_ann_builtin;
-    dcdr >> m_ann_custom;
-}
-
 bool CompleteMemberDetail::operator ==(
         const CompleteMemberDetail& other) const
 {
@@ -221,18 +189,6 @@ MinimalMemberDetail& MinimalMemberDetail::operator =(
     return *this;
 }
 
-void MinimalMemberDetail::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_name_hash;
-}
-
-void MinimalMemberDetail::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_name_hash;
-}
-
 bool MinimalMemberDetail::operator ==(
         const MinimalMemberDetail& other) const
 {
@@ -286,20 +242,6 @@ CompleteStructMember& CompleteStructMember::operator =(
     m_detail = std::move(x.m_detail);
 
     return *this;
-}
-
-void CompleteStructMember::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-    scdr << m_detail;
-}
-
-void CompleteStructMember::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-    dcdr >> m_detail;
 }
 
 bool CompleteStructMember::operator ==(
@@ -358,20 +300,6 @@ MinimalStructMember& MinimalStructMember::operator =(
     return *this;
 }
 
-void MinimalStructMember::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-    scdr << m_detail;
-}
-
-void MinimalStructMember::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-    dcdr >> m_detail;
-}
-
 bool MinimalStructMember::operator ==(
         const MinimalStructMember& other) const
 {
@@ -424,18 +352,6 @@ AppliedBuiltinTypeAnnotations& AppliedBuiltinTypeAnnotations::operator =(
     return *this;
 }
 
-void AppliedBuiltinTypeAnnotations::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_verbatim;
-}
-
-void AppliedBuiltinTypeAnnotations::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_verbatim;
-}
-
 bool AppliedBuiltinTypeAnnotations::operator ==(
         const AppliedBuiltinTypeAnnotations& other) const
 {
@@ -479,16 +395,6 @@ MinimalTypeDetail& MinimalTypeDetail::operator =(
         MinimalTypeDetail&&)
 {
     return *this;
-}
-
-void MinimalTypeDetail::serialize(
-        eprosima::fastcdr::Cdr&) const
-{
-}
-
-void MinimalTypeDetail::deserialize(
-        eprosima::fastcdr::Cdr&)
-{
 }
 
 bool MinimalTypeDetail::consistent(
@@ -540,22 +446,6 @@ CompleteTypeDetail& CompleteTypeDetail::operator =(
     m_type_name = std::move(x.m_type_name);
 
     return *this;
-}
-
-void CompleteTypeDetail::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_ann_builtin;
-    scdr << m_ann_custom;
-    scdr << m_type_name;
-}
-
-void CompleteTypeDetail::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_ann_builtin;
-    dcdr >> m_ann_custom;
-    dcdr >> m_type_name;
 }
 
 bool CompleteTypeDetail::operator ==(
@@ -621,20 +511,6 @@ CompleteStructHeader& CompleteStructHeader::operator =(
     return *this;
 }
 
-void CompleteStructHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_base_type;
-    scdr << m_detail;
-}
-
-void CompleteStructHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_base_type;
-    dcdr >> m_detail;
-}
-
 bool CompleteStructHeader::operator ==(
         const CompleteStructHeader& other) const
 {
@@ -689,20 +565,6 @@ MinimalStructHeader& MinimalStructHeader::operator =(
     m_detail = std::move(x.m_detail);
 
     return *this;
-}
-
-void MinimalStructHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_base_type;
-    scdr << m_detail;
-}
-
-void MinimalStructHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_base_type;
-    dcdr >> m_detail;
 }
 
 bool MinimalStructHeader::operator ==(
@@ -763,22 +625,6 @@ CompleteStructType& CompleteStructType::operator =(
     m_member_seq = std::move(x.m_member_seq);
 
     return *this;
-}
-
-void CompleteStructType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_struct_flags;
-    scdr << m_header;
-    scdr << m_member_seq;
-}
-
-void CompleteStructType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_struct_flags;
-    dcdr >> m_header;
-    dcdr >> m_member_seq;
 }
 
 bool CompleteStructType::operator ==(
@@ -902,22 +748,6 @@ MinimalStructType& MinimalStructType::operator =(
     m_member_seq = std::move(x.m_member_seq);
 
     return *this;
-}
-
-void MinimalStructType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_struct_flags;
-    scdr << m_header;
-    scdr << m_member_seq;
-}
-
-void MinimalStructType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_struct_flags;
-    dcdr >> m_header;
-    dcdr >> m_member_seq;
 }
 
 bool MinimalStructType::operator ==(
@@ -1047,24 +877,6 @@ CommonUnionMember& CommonUnionMember::operator =(
     return *this;
 }
 
-void CommonUnionMember::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_member_id;
-    scdr << m_member_flags;
-    scdr << m_type_id;
-    scdr << m_label_seq;
-}
-
-void CommonUnionMember::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_member_id;
-    dcdr >> m_member_flags;
-    dcdr >> m_type_id;
-    dcdr >> m_label_seq;
-}
-
 bool CommonUnionMember::operator ==(
         const CommonUnionMember& other) const
 {
@@ -1147,20 +959,6 @@ CompleteUnionMember& CompleteUnionMember::operator =(
     return *this;
 }
 
-void CompleteUnionMember::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-    scdr << m_detail;
-}
-
-void CompleteUnionMember::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-    dcdr >> m_detail;
-}
-
 bool CompleteUnionMember::operator ==(
         const CompleteUnionMember& other) const
 {
@@ -1217,20 +1015,6 @@ MinimalUnionMember& MinimalUnionMember::operator =(
     return *this;
 }
 
-void MinimalUnionMember::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-    scdr << m_detail;
-}
-
-void MinimalUnionMember::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-    dcdr >> m_detail;
-}
-
 bool MinimalUnionMember::operator ==(
         const MinimalUnionMember& other) const
 {
@@ -1285,20 +1069,6 @@ CommonDiscriminatorMember& CommonDiscriminatorMember::operator =(
     m_type_id = std::move(x.m_type_id);
 
     return *this;
-}
-
-void CommonDiscriminatorMember::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_member_flags;
-    scdr << m_type_id;
-}
-
-void CommonDiscriminatorMember::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_member_flags;
-    dcdr >> m_type_id;
 }
 
 bool CommonDiscriminatorMember::operator ==(
@@ -1360,22 +1130,6 @@ CompleteDiscriminatorMember& CompleteDiscriminatorMember::operator =(
     return *this;
 }
 
-void CompleteDiscriminatorMember::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-    scdr << m_ann_builtin;
-    scdr << m_ann_custom;
-}
-
-void CompleteDiscriminatorMember::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-    dcdr >> m_ann_builtin;
-    dcdr >> m_ann_custom;
-}
-
 bool CompleteDiscriminatorMember::operator ==(
         const CompleteDiscriminatorMember& other) const
 {
@@ -1432,18 +1186,6 @@ MinimalDiscriminatorMember& MinimalDiscriminatorMember::operator =(
     return *this;
 }
 
-void MinimalDiscriminatorMember::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-}
-
-void MinimalDiscriminatorMember::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-}
-
 bool MinimalDiscriminatorMember::operator ==(
         const MinimalDiscriminatorMember& other) const
 {
@@ -1494,18 +1236,6 @@ CompleteUnionHeader& CompleteUnionHeader::operator =(
     return *this;
 }
 
-void CompleteUnionHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_detail;
-}
-
-void CompleteUnionHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_detail;
-}
-
 bool CompleteUnionHeader::operator ==(
         const CompleteUnionHeader& other) const
 {
@@ -1554,18 +1284,6 @@ MinimalUnionHeader& MinimalUnionHeader::operator =(
     m_detail = std::move(x.m_detail);
 
     return *this;
-}
-
-void MinimalUnionHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_detail;
-}
-
-void MinimalUnionHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_detail;
 }
 
 bool MinimalUnionHeader::operator ==(
@@ -1628,24 +1346,6 @@ CompleteUnionType& CompleteUnionType::operator =(
     m_member_seq = std::move(x.m_member_seq);
 
     return *this;
-}
-
-void CompleteUnionType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_union_flags;
-    scdr << m_header;
-    scdr << m_discriminator;
-    scdr << m_member_seq;
-}
-
-void CompleteUnionType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_union_flags;
-    dcdr >> m_header;
-    dcdr >> m_discriminator;
-    dcdr >> m_member_seq;
 }
 
 bool CompleteUnionType::operator ==(
@@ -1777,24 +1477,6 @@ MinimalUnionType& MinimalUnionType::operator =(
     return *this;
 }
 
-void MinimalUnionType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_union_flags;
-    scdr << m_header;
-    scdr << m_discriminator;
-    scdr << m_member_seq;
-}
-
-void MinimalUnionType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_union_flags;
-    dcdr >> m_header;
-    dcdr >> m_discriminator;
-    dcdr >> m_member_seq;
-}
-
 bool MinimalUnionType::operator ==(
         const MinimalUnionType& other) const
 {
@@ -1916,20 +1598,6 @@ CommonAnnotationParameter& CommonAnnotationParameter::operator =(
     return *this;
 }
 
-void CommonAnnotationParameter::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_member_flags;
-    scdr << m_member_type_id;
-}
-
-void CommonAnnotationParameter::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_member_flags;
-    dcdr >> m_member_type_id;
-}
-
 bool CommonAnnotationParameter::operator ==(
         const CommonAnnotationParameter& other) const
 {
@@ -1988,22 +1656,6 @@ CompleteAnnotationParameter& CompleteAnnotationParameter::operator =(
     m_default_value = std::move(x.m_default_value);
 
     return *this;
-}
-
-void CompleteAnnotationParameter::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-    scdr << m_name;
-    scdr << m_default_value;
-}
-
-void CompleteAnnotationParameter::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-    dcdr >> m_name;
-    dcdr >> m_default_value;
 }
 
 bool CompleteAnnotationParameter::operator ==(
@@ -2067,22 +1719,6 @@ MinimalAnnotationParameter& MinimalAnnotationParameter::operator =(
     return *this;
 }
 
-void MinimalAnnotationParameter::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-    scdr << m_name;
-    scdr << m_default_value;
-}
-
-void MinimalAnnotationParameter::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-    dcdr >> m_name;
-    dcdr >> m_default_value;
-}
-
 bool MinimalAnnotationParameter::operator ==(
         const MinimalAnnotationParameter& other) const
 {
@@ -2136,18 +1772,6 @@ CompleteAnnotationHeader& CompleteAnnotationHeader::operator =(
     return *this;
 }
 
-void CompleteAnnotationHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_annotation_name;
-}
-
-void CompleteAnnotationHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_annotation_name;
-}
-
 bool CompleteAnnotationHeader::operator ==(
         const CompleteAnnotationHeader& other) const
 {
@@ -2191,16 +1815,6 @@ MinimalAnnotationHeader& MinimalAnnotationHeader::operator =(
         MinimalAnnotationHeader&&)
 {
     return *this;
-}
-
-void MinimalAnnotationHeader::serialize(
-        eprosima::fastcdr::Cdr&) const
-{
-}
-
-void MinimalAnnotationHeader::deserialize(
-        eprosima::fastcdr::Cdr&)
-{
 }
 
 bool MinimalAnnotationHeader::consistent(
@@ -2253,22 +1867,6 @@ CompleteAnnotationType& CompleteAnnotationType::operator =(
     m_member_seq = std::move(x.m_member_seq);
 
     return *this;
-}
-
-void CompleteAnnotationType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_annotation_flag;
-    scdr << m_header;
-    scdr << m_member_seq;
-}
-
-void CompleteAnnotationType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_annotation_flag;
-    dcdr >> m_header;
-    dcdr >> m_member_seq;
 }
 
 bool CompleteAnnotationType::operator ==(
@@ -2335,22 +1933,6 @@ MinimalAnnotationType& MinimalAnnotationType::operator =(
     return *this;
 }
 
-void MinimalAnnotationType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_annotation_flag;
-    scdr << m_header;
-    scdr << m_member_seq;
-}
-
-void MinimalAnnotationType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_annotation_flag;
-    dcdr >> m_header;
-    dcdr >> m_member_seq;
-}
-
 bool MinimalAnnotationType::operator ==(
         const MinimalAnnotationType& other) const
 {
@@ -2411,20 +1993,6 @@ CommonAliasBody& CommonAliasBody::operator =(
     return *this;
 }
 
-void CommonAliasBody::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_related_flags;
-    scdr << m_related_type;
-}
-
-void CommonAliasBody::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_related_flags;
-    dcdr >> m_related_type;
-}
-
 bool CommonAliasBody::operator ==(
         const CommonAliasBody& other) const
 {
@@ -2482,22 +2050,6 @@ CompleteAliasBody& CompleteAliasBody::operator =(
     return *this;
 }
 
-void CompleteAliasBody::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-    scdr << m_ann_builtin;
-    scdr << m_ann_custom;
-}
-
-void CompleteAliasBody::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-    dcdr >> m_ann_builtin;
-    dcdr >> m_ann_custom;
-}
-
 bool CompleteAliasBody::operator ==(
         const CompleteAliasBody& other) const
 {
@@ -2552,18 +2104,6 @@ MinimalAliasBody& MinimalAliasBody::operator =(
     return *this;
 }
 
-void MinimalAliasBody::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-}
-
-void MinimalAliasBody::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-}
-
 bool MinimalAliasBody::operator ==(
         const MinimalAliasBody& other) const
 {
@@ -2612,18 +2152,6 @@ CompleteAliasHeader& CompleteAliasHeader::operator =(
     return *this;
 }
 
-void CompleteAliasHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_detail;
-}
-
-void CompleteAliasHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_detail;
-}
-
 bool CompleteAliasHeader::operator ==(
         const CompleteAliasHeader& other) const
 {
@@ -2664,16 +2192,6 @@ MinimalAliasHeader& MinimalAliasHeader::operator =(
         MinimalAliasHeader&&)
 {
     return *this;
-}
-
-void MinimalAliasHeader::serialize(
-        eprosima::fastcdr::Cdr&) const
-{
-}
-
-void MinimalAliasHeader::deserialize(
-        eprosima::fastcdr::Cdr&)
-{
 }
 
 //bool MinimalAliasHeader::consistent(const MinimalAliasHeader&,
@@ -2724,22 +2242,6 @@ CompleteAliasType& CompleteAliasType::operator =(
     m_body = std::move(x.m_body);
 
     return *this;
-}
-
-void CompleteAliasType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_alias_flags;
-    scdr << m_header;
-    scdr << m_body;
-}
-
-void CompleteAliasType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_alias_flags;
-    dcdr >> m_header;
-    dcdr >> m_body;
 }
 
 bool CompleteAliasType::operator ==(
@@ -2801,22 +2303,6 @@ MinimalAliasType& MinimalAliasType::operator =(
     return *this;
 }
 
-void MinimalAliasType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_alias_flags;
-    scdr << m_header;
-    scdr << m_body;
-}
-
-void MinimalAliasType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_alias_flags;
-    dcdr >> m_header;
-    dcdr >> m_body;
-}
-
 bool MinimalAliasType::operator ==(
         const MinimalAliasType& other) const
 {
@@ -2870,20 +2356,6 @@ CompleteElementDetail& CompleteElementDetail::operator =(
     m_ann_custom = std::move(x.m_ann_custom);
 
     return *this;
-}
-
-void CompleteElementDetail::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_ann_builtin;
-    scdr << m_ann_custom;
-}
-
-void CompleteElementDetail::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_ann_builtin;
-    dcdr >> m_ann_custom;
 }
 
 bool CompleteElementDetail::operator ==(
@@ -2945,20 +2417,6 @@ CommonCollectionElement& CommonCollectionElement::operator =(
     return *this;
 }
 
-void CommonCollectionElement::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_element_flags;
-    scdr << m_type;
-}
-
-void CommonCollectionElement::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_element_flags;
-    dcdr >> m_type;
-}
-
 bool CommonCollectionElement::operator ==(
         const CommonCollectionElement& other) const
 {
@@ -3014,20 +2472,6 @@ CompleteCollectionElement& CompleteCollectionElement::operator =(
     return *this;
 }
 
-void CompleteCollectionElement::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-    scdr << m_detail;
-}
-
-void CompleteCollectionElement::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-    dcdr >> m_detail;
-}
-
 bool CompleteCollectionElement::operator ==(
         const CompleteCollectionElement& other) const
 {
@@ -3080,18 +2524,6 @@ MinimalCollectionElement& MinimalCollectionElement::operator =(
     return *this;
 }
 
-void MinimalCollectionElement::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-}
-
-void MinimalCollectionElement::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-}
-
 bool MinimalCollectionElement::operator ==(
         const MinimalCollectionElement& other) const
 {
@@ -3140,18 +2572,6 @@ CommonCollectionHeader& CommonCollectionHeader::operator =(
     m_bound = std::move(x.m_bound);
 
     return *this;
-}
-
-void CommonCollectionHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_bound;
-}
-
-void CommonCollectionHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_bound;
 }
 
 bool CommonCollectionHeader::operator ==(
@@ -3209,20 +2629,6 @@ CompleteCollectionHeader& CompleteCollectionHeader::operator =(
     return *this;
 }
 
-void CompleteCollectionHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-    scdr << m_detail;
-}
-
-void CompleteCollectionHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-    dcdr >> m_detail;
-}
-
 bool CompleteCollectionHeader::operator ==(
         const CompleteCollectionHeader& other) const
 {
@@ -3273,18 +2679,6 @@ MinimalCollectionHeader& MinimalCollectionHeader::operator =(
     m_common = std::move(x.m_common);
 
     return *this;
-}
-
-void MinimalCollectionHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-}
-
-void MinimalCollectionHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
 }
 
 bool MinimalCollectionHeader::operator ==(
@@ -3343,22 +2737,6 @@ CompleteSequenceType& CompleteSequenceType::operator =(
     m_element = std::move(x.m_element);
 
     return *this;
-}
-
-void CompleteSequenceType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_collection_flag;
-    scdr << m_header;
-    scdr << m_element;
-}
-
-void CompleteSequenceType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_collection_flag;
-    dcdr >> m_header;
-    dcdr >> m_element;
 }
 
 bool CompleteSequenceType::operator ==(
@@ -3422,22 +2800,6 @@ MinimalSequenceType& MinimalSequenceType::operator =(
     return *this;
 }
 
-void MinimalSequenceType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_collection_flag;
-    scdr << m_header;
-    scdr << m_element;
-}
-
-void MinimalSequenceType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_collection_flag;
-    dcdr >> m_header;
-    dcdr >> m_element;
-}
-
 bool MinimalSequenceType::operator ==(
         const MinimalSequenceType& other) const
 {
@@ -3489,18 +2851,6 @@ CommonArrayHeader& CommonArrayHeader::operator =(
     m_bound_seq = std::move(x.m_bound_seq);
 
     return *this;
-}
-
-void CommonArrayHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_bound_seq;
-}
-
-void CommonArrayHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_bound_seq;
 }
 
 bool CommonArrayHeader::operator ==(
@@ -3574,20 +2924,6 @@ CompleteArrayHeader& CompleteArrayHeader::operator =(
     return *this;
 }
 
-void CompleteArrayHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-    scdr << m_detail;
-}
-
-void CompleteArrayHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-    dcdr >> m_detail;
-}
-
 bool CompleteArrayHeader::operator ==(
         const CompleteArrayHeader& other) const
 {
@@ -3638,18 +2974,6 @@ MinimalArrayHeader& MinimalArrayHeader::operator =(
     m_common = std::move(x.m_common);
 
     return *this;
-}
-
-void MinimalArrayHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-}
-
-void MinimalArrayHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
 }
 
 bool MinimalArrayHeader::operator ==(
@@ -3708,22 +3032,6 @@ CompleteArrayType& CompleteArrayType::operator =(
     m_element = std::move(x.m_element);
 
     return *this;
-}
-
-void CompleteArrayType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_collection_flag;
-    scdr << m_header;
-    scdr << m_element;
-}
-
-void CompleteArrayType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_collection_flag;
-    dcdr >> m_header;
-    dcdr >> m_element;
 }
 
 bool CompleteArrayType::operator ==(
@@ -3785,22 +3093,6 @@ MinimalArrayType& MinimalArrayType::operator =(
     m_element = std::move(x.m_element);
 
     return *this;
-}
-
-void MinimalArrayType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_collection_flag;
-    scdr << m_header;
-    scdr << m_element;
-}
-
-void MinimalArrayType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_collection_flag;
-    dcdr >> m_header;
-    dcdr >> m_element;
 }
 
 bool MinimalArrayType::operator ==(
@@ -3866,24 +3158,6 @@ CompleteMapType& CompleteMapType::operator =(
     m_element = std::move(x.m_element);
 
     return *this;
-}
-
-void CompleteMapType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_collection_flag;
-    scdr << m_header;
-    scdr << m_key;
-    scdr << m_element;
-}
-
-void CompleteMapType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_collection_flag;
-    dcdr >> m_header;
-    dcdr >> m_key;
-    dcdr >> m_element;
 }
 
 bool CompleteMapType::operator ==(
@@ -3953,24 +3227,6 @@ MinimalMapType& MinimalMapType::operator =(
     return *this;
 }
 
-void MinimalMapType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_collection_flag;
-    scdr << m_header;
-    scdr << m_key;
-    scdr << m_element;
-}
-
-void MinimalMapType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_collection_flag;
-    dcdr >> m_header;
-    dcdr >> m_key;
-    dcdr >> m_element;
-}
-
 bool MinimalMapType::operator ==(
         const MinimalMapType& other) const
 {
@@ -4030,20 +3286,6 @@ CommonEnumeratedLiteral& CommonEnumeratedLiteral::operator =(
     return *this;
 }
 
-void CommonEnumeratedLiteral::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_value;
-    scdr << m_flags;
-}
-
-void CommonEnumeratedLiteral::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_value;
-    dcdr >> m_flags;
-}
-
 bool CommonEnumeratedLiteral::operator ==(
         const CommonEnumeratedLiteral& other) const
 {
@@ -4097,20 +3339,6 @@ CompleteEnumeratedLiteral& CompleteEnumeratedLiteral::operator =(
     m_detail = std::move(x.m_detail);
 
     return *this;
-}
-
-void CompleteEnumeratedLiteral::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-    scdr << m_detail;
-}
-
-void CompleteEnumeratedLiteral::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-    dcdr >> m_detail;
 }
 
 bool CompleteEnumeratedLiteral::operator ==(
@@ -4169,20 +3397,6 @@ MinimalEnumeratedLiteral& MinimalEnumeratedLiteral::operator =(
     return *this;
 }
 
-void MinimalEnumeratedLiteral::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-    scdr << m_detail;
-}
-
-void MinimalEnumeratedLiteral::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-    dcdr >> m_detail;
-}
-
 bool MinimalEnumeratedLiteral::operator ==(
         const MinimalEnumeratedLiteral& other) const
 {
@@ -4233,18 +3447,6 @@ CommonEnumeratedHeader& CommonEnumeratedHeader::operator =(
     m_bit_bound = std::move(x.m_bit_bound);
 
     return *this;
-}
-
-void CommonEnumeratedHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_bit_bound;
-}
-
-void CommonEnumeratedHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_bit_bound;
 }
 
 bool CommonEnumeratedHeader::operator ==(
@@ -4303,20 +3505,6 @@ CompleteEnumeratedHeader& CompleteEnumeratedHeader::operator =(
     return *this;
 }
 
-void CompleteEnumeratedHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-    scdr << m_detail;
-}
-
-void CompleteEnumeratedHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-    dcdr >> m_detail;
-}
-
 bool CompleteEnumeratedHeader::operator ==(
         const CompleteEnumeratedHeader& other) const
 {
@@ -4367,18 +3555,6 @@ MinimalEnumeratedHeader& MinimalEnumeratedHeader::operator =(
     m_common = std::move(x.m_common);
 
     return *this;
-}
-
-void MinimalEnumeratedHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-}
-
-void MinimalEnumeratedHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
 }
 
 bool MinimalEnumeratedHeader::operator ==(
@@ -4437,22 +3613,6 @@ CompleteEnumeratedType& CompleteEnumeratedType::operator =(
     m_literal_seq = std::move(x.m_literal_seq);
 
     return *this;
-}
-
-void CompleteEnumeratedType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_enum_flags;
-    scdr << m_header;
-    scdr << m_literal_seq;
-}
-
-void CompleteEnumeratedType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_enum_flags;
-    dcdr >> m_header;
-    dcdr >> m_literal_seq;
 }
 
 bool CompleteEnumeratedType::operator ==(
@@ -4578,22 +3738,6 @@ MinimalEnumeratedType& MinimalEnumeratedType::operator =(
     return *this;
 }
 
-void MinimalEnumeratedType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_enum_flags;
-    scdr << m_header;
-    scdr << m_literal_seq;
-}
-
-void MinimalEnumeratedType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_enum_flags;
-    dcdr >> m_header;
-    dcdr >> m_literal_seq;
-}
-
 bool MinimalEnumeratedType::operator ==(
         const MinimalEnumeratedType& other) const
 {
@@ -4713,20 +3857,6 @@ CommonBitflag& CommonBitflag::operator =(
     return *this;
 }
 
-void CommonBitflag::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_position;
-    scdr << m_flags;
-}
-
-void CommonBitflag::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_position;
-    dcdr >> m_flags;
-}
-
 bool CommonBitflag::operator ==(
         const CommonBitflag& other) const
 {
@@ -4780,20 +3910,6 @@ CompleteBitflag& CompleteBitflag::operator =(
     m_detail = std::move(x.m_detail);
 
     return *this;
-}
-
-void CompleteBitflag::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-    scdr << m_detail;
-}
-
-void CompleteBitflag::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-    dcdr >> m_detail;
 }
 
 bool CompleteBitflag::operator ==(
@@ -4852,20 +3968,6 @@ MinimalBitflag& MinimalBitflag::operator =(
     return *this;
 }
 
-void MinimalBitflag::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-    scdr << m_detail;
-}
-
-void MinimalBitflag::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-    dcdr >> m_detail;
-}
-
 bool MinimalBitflag::operator ==(
         const MinimalBitflag& other) const
 {
@@ -4916,18 +4018,6 @@ CommonBitmaskHeader& CommonBitmaskHeader::operator =(
     m_bit_bound = std::move(x.m_bit_bound);
 
     return *this;
-}
-
-void CommonBitmaskHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_bit_bound;
-}
-
-void CommonBitmaskHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_bit_bound;
 }
 
 bool CommonBitmaskHeader::operator ==(
@@ -4988,22 +4078,6 @@ CompleteBitmaskType& CompleteBitmaskType::operator =(
     m_flag_seq = std::move(x.m_flag_seq);
 
     return *this;
-}
-
-void CompleteBitmaskType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_bitmask_flags;
-    scdr << m_header;
-    scdr << m_flag_seq;
-}
-
-void CompleteBitmaskType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_bitmask_flags;
-    dcdr >> m_header;
-    dcdr >> m_flag_seq;
 }
 
 bool CompleteBitmaskType::operator ==(
@@ -5127,22 +4201,6 @@ MinimalBitmaskType& MinimalBitmaskType::operator =(
     m_flag_seq = std::move(x.m_flag_seq);
 
     return *this;
-}
-
-void MinimalBitmaskType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_bitmask_flags;
-    scdr << m_header;
-    scdr << m_flag_seq;
-}
-
-void MinimalBitmaskType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_bitmask_flags;
-    dcdr >> m_header;
-    dcdr >> m_flag_seq;
 }
 
 bool MinimalBitmaskType::operator ==(
@@ -5272,24 +4330,6 @@ CommonBitfield& CommonBitfield::operator =(
     return *this;
 }
 
-void CommonBitfield::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_position;
-    scdr << m_flags;
-    scdr << m_bitcount;
-    scdr << m_holder_type;
-}
-
-void CommonBitfield::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_position;
-    dcdr >> m_flags;
-    dcdr >> m_bitcount;
-    dcdr >> m_holder_type;
-}
-
 bool CommonBitfield::operator ==(
         const CommonBitfield& other) const
 {
@@ -5350,20 +4390,6 @@ CompleteBitfield& CompleteBitfield::operator =(
     return *this;
 }
 
-void CompleteBitfield::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-    scdr << m_detail;
-}
-
-void CompleteBitfield::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-    dcdr >> m_detail;
-}
-
 bool CompleteBitfield::operator ==(
         const CompleteBitfield& other) const
 {
@@ -5418,20 +4444,6 @@ MinimalBitfield& MinimalBitfield::operator =(
     m_common = std::move(x.m_common);
 
     return *this;
-}
-
-void MinimalBitfield::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_common;
-    scdr << m_name_hash;
-}
-
-void MinimalBitfield::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_common;
-    dcdr >> m_name_hash;
 }
 
 bool MinimalBitfield::operator ==(
@@ -5494,20 +4506,6 @@ CompleteBitsetHeader& CompleteBitsetHeader::operator =(
     return *this;
 }
 
-void CompleteBitsetHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_base_type;
-    scdr << m_detail;
-}
-
-void CompleteBitsetHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_base_type;
-    dcdr >> m_detail;
-}
-
 bool CompleteBitsetHeader::operator ==(
         const CompleteBitsetHeader& other) const
 {
@@ -5555,18 +4553,6 @@ MinimalBitsetHeader& MinimalBitsetHeader::operator =(
 {
     m_base_type = std::move(x.m_base_type);
     return *this;
-}
-
-void MinimalBitsetHeader::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_base_type;
-}
-
-void MinimalBitsetHeader::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_base_type;
 }
 
 bool MinimalBitsetHeader::operator ==(
@@ -5624,22 +4610,6 @@ CompleteBitsetType& CompleteBitsetType::operator =(
     m_field_seq = std::move(x.m_field_seq);
 
     return *this;
-}
-
-void CompleteBitsetType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_bitset_flags;
-    scdr << m_header;
-    scdr << m_field_seq;
-}
-
-void CompleteBitsetType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_bitset_flags;
-    dcdr >> m_header;
-    dcdr >> m_field_seq;
 }
 
 bool CompleteBitsetType::operator ==(
@@ -5765,22 +4735,6 @@ MinimalBitsetType& MinimalBitsetType::operator =(
     return *this;
 }
 
-void MinimalBitsetType::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_bitset_flags;
-    scdr << m_header;
-    scdr << m_field_seq;
-}
-
-void MinimalBitsetType::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_bitset_flags;
-    dcdr >> m_header;
-    dcdr >> m_field_seq;
-}
-
 bool MinimalBitsetType::operator ==(
         const MinimalBitsetType& other) const
 {
@@ -5890,16 +4844,6 @@ CompleteExtendedType& CompleteExtendedType::operator =(
     return *this;
 }
 
-void CompleteExtendedType::serialize(
-        eprosima::fastcdr::Cdr&) const
-{
-}
-
-void CompleteExtendedType::deserialize(
-        eprosima::fastcdr::Cdr&)
-{
-}
-
 bool CompleteExtendedType::consistent(
         const CompleteExtendedType&,
         const TypeConsistencyEnforcementQosPolicy&) const
@@ -5935,16 +4879,6 @@ MinimalExtendedType& MinimalExtendedType::operator =(
         MinimalExtendedType&&)
 {
     return *this;
-}
-
-void MinimalExtendedType::serialize(
-        eprosima::fastcdr::Cdr&) const
-{
-}
-
-void MinimalExtendedType::deserialize(
-        eprosima::fastcdr::Cdr&)
-{
 }
 
 bool MinimalExtendedType::consistent(
@@ -5994,20 +4928,6 @@ TypeIdentifierTypeObjectPair& TypeIdentifierTypeObjectPair::operator =(
     return *this;
 }
 
-void TypeIdentifierTypeObjectPair::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_type_identifier;
-    scdr << m_type_object;
-}
-
-void TypeIdentifierTypeObjectPair::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_type_identifier;
-    dcdr >> m_type_object;
-}
-
 TypeIdentifierPair::TypeIdentifierPair()
 {
 }
@@ -6046,20 +4966,6 @@ TypeIdentifierPair& TypeIdentifierPair::operator =(
     m_type_identifier2 = std::move(x.m_type_identifier2);
 
     return *this;
-}
-
-void TypeIdentifierPair::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_type_identifier1;
-    scdr << m_type_identifier2;
-}
-
-void TypeIdentifierPair::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_type_identifier1;
-    dcdr >> m_type_identifier2;
 }
 
 TypeIdentifierWithSize::TypeIdentifierWithSize()
@@ -6101,20 +5007,6 @@ TypeIdentifierWithSize& TypeIdentifierWithSize::operator =(
     m_typeobject_serialized_size = std::move(x.m_typeobject_serialized_size);
 
     return *this;
-}
-
-void TypeIdentifierWithSize::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_type_id;
-    scdr << m_typeobject_serialized_size;
-}
-
-void TypeIdentifierWithSize::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_type_id;
-    dcdr >> m_typeobject_serialized_size;
 }
 
 TypeIdentifierWithDependencies::TypeIdentifierWithDependencies()
@@ -6162,22 +5054,6 @@ TypeIdentifierWithDependencies& TypeIdentifierWithDependencies::operator =(
     return *this;
 }
 
-void TypeIdentifierWithDependencies::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_typeid_with_size;
-    scdr << m_dependent_typeid_count;
-    scdr << m_dependent_typeids;
-}
-
-void TypeIdentifierWithDependencies::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_typeid_with_size;
-    dcdr >> m_dependent_typeid_count;
-    dcdr >> m_dependent_typeids;
-}
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 CompleteTypeObject::CompleteTypeObject()
@@ -6196,34 +5072,34 @@ CompleteTypeObject::CompleteTypeObject(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -6239,34 +5115,34 @@ CompleteTypeObject::CompleteTypeObject(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -6282,34 +5158,34 @@ CompleteTypeObject& CompleteTypeObject::operator =(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -6326,34 +5202,34 @@ CompleteTypeObject& CompleteTypeObject::operator =(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -6396,7 +5272,7 @@ const CompleteAliasType& CompleteTypeObject::alias_type() const
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             b = true;
             break;
         default:
@@ -6416,7 +5292,7 @@ CompleteAliasType& CompleteTypeObject::alias_type()
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             b = true;
             break;
         default:
@@ -6444,7 +5320,7 @@ const CompleteAnnotationType& CompleteTypeObject::annotation_type() const
 
     switch (m__d)
     {
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             b = true;
             break;
         default:
@@ -6465,7 +5341,7 @@ CompleteAnnotationType& CompleteTypeObject::annotation_type()
 
     switch (m__d)
     {
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             b = true;
             break;
         default:
@@ -6493,7 +5369,7 @@ const CompleteStructType& CompleteTypeObject::struct_type() const
 
     switch (m__d)
     {
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             b = true;
             break;
         default:
@@ -6514,7 +5390,7 @@ CompleteStructType& CompleteTypeObject::struct_type()
 
     switch (m__d)
     {
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             b = true;
             break;
         default:
@@ -6542,7 +5418,7 @@ const CompleteUnionType& CompleteTypeObject::union_type() const
 
     switch (m__d)
     {
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             b = true;
             break;
         default:
@@ -6563,7 +5439,7 @@ CompleteUnionType& CompleteTypeObject::union_type()
 
     switch (m__d)
     {
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             b = true;
             break;
         default:
@@ -6591,7 +5467,7 @@ const CompleteBitsetType& CompleteTypeObject::bitset_type() const
 
     switch (m__d)
     {
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             b = true;
             break;
         default:
@@ -6612,7 +5488,7 @@ CompleteBitsetType& CompleteTypeObject::bitset_type()
 
     switch (m__d)
     {
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             b = true;
             break;
         default:
@@ -6640,7 +5516,7 @@ const CompleteSequenceType& CompleteTypeObject::sequence_type() const
 
     switch (m__d)
     {
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             b = true;
             break;
         default:
@@ -6661,7 +5537,7 @@ CompleteSequenceType& CompleteTypeObject::sequence_type()
 
     switch (m__d)
     {
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             b = true;
             break;
         default:
@@ -6689,7 +5565,7 @@ const CompleteArrayType& CompleteTypeObject::array_type() const
 
     switch (m__d)
     {
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             b = true;
             break;
         default:
@@ -6710,7 +5586,7 @@ CompleteArrayType& CompleteTypeObject::array_type()
 
     switch (m__d)
     {
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             b = true;
             break;
         default:
@@ -6738,7 +5614,7 @@ const CompleteMapType& CompleteTypeObject::map_type() const
 
     switch (m__d)
     {
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             b = true;
             break;
         default:
@@ -6759,7 +5635,7 @@ CompleteMapType& CompleteTypeObject::map_type()
 
     switch (m__d)
     {
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             b = true;
             break;
         default:
@@ -6787,7 +5663,7 @@ const CompleteEnumeratedType& CompleteTypeObject::enumerated_type() const
 
     switch (m__d)
     {
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             b = true;
             break;
         default:
@@ -6808,7 +5684,7 @@ CompleteEnumeratedType& CompleteTypeObject::enumerated_type()
 
     switch (m__d)
     {
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             b = true;
             break;
         default:
@@ -6836,7 +5712,7 @@ const CompleteBitmaskType& CompleteTypeObject::bitmask_type() const
 
     switch (m__d)
     {
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             b = true;
             break;
         default:
@@ -6857,7 +5733,7 @@ CompleteBitmaskType& CompleteTypeObject::bitmask_type()
 
     switch (m__d)
     {
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             b = true;
             break;
         default:
@@ -6885,16 +5761,16 @@ const CompleteExtendedType& CompleteTypeObject::extended_type() const
 
     switch (m__d)
     {
-        case TK_ALIAS:
-        case TK_ANNOTATION:
-        case TK_STRUCTURE:
-        case TK_UNION:
-        case TK_BITSET:
-        case TK_SEQUENCE:
-        case TK_ARRAY:
-        case TK_MAP:
-        case TK_ENUM:
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_UNION:
+        case eprosima::fastrtps::types::TK_BITSET:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_ARRAY:
+        case eprosima::fastrtps::types::TK_MAP:
+        case eprosima::fastrtps::types::TK_ENUM:
+        case eprosima::fastrtps::types::TK_BITMASK:
             break;
         default:
             b = true;
@@ -6915,16 +5791,16 @@ CompleteExtendedType& CompleteTypeObject::extended_type()
 
     switch (m__d)
     {
-        case TK_ALIAS:
-        case TK_ANNOTATION:
-        case TK_STRUCTURE:
-        case TK_UNION:
-        case TK_BITSET:
-        case TK_SEQUENCE:
-        case TK_ARRAY:
-        case TK_MAP:
-        case TK_ENUM:
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_UNION:
+        case eprosima::fastrtps::types::TK_BITSET:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_ARRAY:
+        case eprosima::fastrtps::types::TK_MAP:
+        case eprosima::fastrtps::types::TK_ENUM:
+        case eprosima::fastrtps::types::TK_BITMASK:
             break;
         default:
             b = true;
@@ -6939,92 +5815,6 @@ CompleteExtendedType& CompleteTypeObject::extended_type()
     return m_extended_type;
 }
 
-void CompleteTypeObject::serialize(
-        eprosima::fastcdr::Cdr& cdr) const
-{
-    cdr << m__d;
-
-    switch (m__d)
-    {
-        case TK_ALIAS:
-            cdr << m_alias_type;
-            break;
-        case TK_ANNOTATION:
-            cdr << m_annotation_type;
-            break;
-        case TK_STRUCTURE:
-            cdr << m_struct_type;
-            break;
-        case TK_UNION:
-            cdr << m_union_type;
-            break;
-        case TK_BITSET:
-            cdr << m_bitset_type;
-            break;
-        case TK_SEQUENCE:
-            cdr << m_sequence_type;
-            break;
-        case TK_ARRAY:
-            cdr << m_array_type;
-            break;
-        case TK_MAP:
-            cdr << m_map_type;
-            break;
-        case TK_ENUM:
-            cdr << m_enumerated_type;
-            break;
-        case TK_BITMASK:
-            cdr << m_bitmask_type;
-            break;
-        default:
-            cdr << m_extended_type;
-            break;
-    }
-}
-
-void CompleteTypeObject::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr >> m__d;
-
-    switch (m__d)
-    {
-        case TK_ALIAS:
-            cdr >> m_alias_type;
-            break;
-        case TK_ANNOTATION:
-            cdr >> m_annotation_type;
-            break;
-        case TK_STRUCTURE:
-            cdr >> m_struct_type;
-            break;
-        case TK_UNION:
-            cdr >> m_union_type;
-            break;
-        case TK_BITSET:
-            cdr >> m_bitset_type;
-            break;
-        case TK_SEQUENCE:
-            cdr >> m_sequence_type;
-            break;
-        case TK_ARRAY:
-            cdr >> m_array_type;
-            break;
-        case TK_MAP:
-            cdr >> m_map_type;
-            break;
-        case TK_ENUM:
-            cdr >> m_enumerated_type;
-            break;
-        case TK_BITMASK:
-            cdr >> m_bitmask_type;
-            break;
-        default:
-            cdr >> m_extended_type;
-            break;
-    }
-}
-
 bool CompleteTypeObject::operator ==(
         const CompleteTypeObject& other) const
 {
@@ -7032,25 +5822,25 @@ bool CompleteTypeObject::operator ==(
     {
         switch (m__d)
         {
-            case TK_ALIAS:
+            case eprosima::fastrtps::types::TK_ALIAS:
                 return m_alias_type == other.m_alias_type;
-            case TK_ANNOTATION:
+            case eprosima::fastrtps::types::TK_ANNOTATION:
                 return m_annotation_type == other.m_annotation_type;
-            case TK_STRUCTURE:
+            case eprosima::fastrtps::types::TK_STRUCTURE:
                 return m_struct_type == other.m_struct_type;
-            case TK_UNION:
+            case eprosima::fastrtps::types::TK_UNION:
                 return m_union_type == other.m_union_type;
-            case TK_BITSET:
+            case eprosima::fastrtps::types::TK_BITSET:
                 return m_bitset_type == other.m_bitset_type;
-            case TK_SEQUENCE:
+            case eprosima::fastrtps::types::TK_SEQUENCE:
                 return m_sequence_type == other.m_sequence_type;
-            case TK_ARRAY:
+            case eprosima::fastrtps::types::TK_ARRAY:
                 return m_array_type == other.m_array_type;
-            case TK_MAP:
+            case eprosima::fastrtps::types::TK_MAP:
                 return m_map_type == other.m_map_type;
-            case TK_ENUM:
+            case eprosima::fastrtps::types::TK_ENUM:
                 return m_enumerated_type == other.m_enumerated_type;
-            case TK_BITMASK:
+            case eprosima::fastrtps::types::TK_BITMASK:
                 return m_bitmask_type == other.m_bitmask_type;
             default:
                 return m_extended_type == other.m_extended_type;
@@ -7095,25 +5885,25 @@ bool CompleteTypeObject::consistent(
 
     switch (m__d)
     {
-        //case TK_ALIAS:
+        //case eprosima::fastrtps::types::TK_ALIAS:
         //    return m_alias_type.consistent(x.m_alias_type, consistency);
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             return m_annotation_type.consistent(x.m_annotation_type, consistency);
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             return m_struct_type.consistent(x.m_struct_type, consistency);
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             return m_union_type.consistent(x.m_union_type, consistency);
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             return m_bitset_type.consistent(x.m_bitset_type, consistency);
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             return m_sequence_type.consistent(x.m_sequence_type, consistency);
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             return m_array_type.consistent(x.m_array_type, consistency);
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             return m_map_type.consistent(x.m_map_type, consistency);
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             return m_enumerated_type.consistent(x.m_enumerated_type, consistency);
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             return m_bitmask_type.consistent(x.m_bitmask_type, consistency);
         default:
             return m_extended_type.consistent(x.m_extended_type, consistency);
@@ -7139,34 +5929,34 @@ MinimalTypeObject::MinimalTypeObject(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -7182,34 +5972,34 @@ MinimalTypeObject::MinimalTypeObject(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -7225,34 +6015,34 @@ MinimalTypeObject& MinimalTypeObject::operator =(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -7269,34 +6059,34 @@ MinimalTypeObject& MinimalTypeObject::operator =(
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             m_alias_type = x.m_alias_type;
             break;
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             m_annotation_type = x.m_annotation_type;
             break;
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             m_struct_type = x.m_struct_type;
             break;
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             m_union_type = x.m_union_type;
             break;
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             m_bitset_type = x.m_bitset_type;
             break;
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             m_sequence_type = x.m_sequence_type;
             break;
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             m_array_type = x.m_array_type;
             break;
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             m_map_type = x.m_map_type;
             break;
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             m_enumerated_type = x.m_enumerated_type;
             break;
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             m_bitmask_type = x.m_bitmask_type;
             break;
         default:
@@ -7339,7 +6129,7 @@ const MinimalAliasType& MinimalTypeObject::alias_type() const
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             b = true;
             break;
         default:
@@ -7360,7 +6150,7 @@ MinimalAliasType& MinimalTypeObject::alias_type()
 
     switch (m__d)
     {
-        case TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ALIAS:
             b = true;
             break;
         default:
@@ -7388,7 +6178,7 @@ const MinimalAnnotationType& MinimalTypeObject::annotation_type() const
 
     switch (m__d)
     {
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             b = true;
             break;
         default:
@@ -7409,7 +6199,7 @@ MinimalAnnotationType& MinimalTypeObject::annotation_type()
 
     switch (m__d)
     {
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             b = true;
             break;
         default:
@@ -7437,7 +6227,7 @@ const MinimalStructType& MinimalTypeObject::struct_type() const
 
     switch (m__d)
     {
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             b = true;
             break;
         default:
@@ -7458,7 +6248,7 @@ MinimalStructType& MinimalTypeObject::struct_type()
 
     switch (m__d)
     {
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             b = true;
             break;
         default:
@@ -7486,7 +6276,7 @@ const MinimalUnionType& MinimalTypeObject::union_type() const
 
     switch (m__d)
     {
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             b = true;
             break;
         default:
@@ -7507,7 +6297,7 @@ MinimalUnionType& MinimalTypeObject::union_type()
 
     switch (m__d)
     {
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             b = true;
             break;
         default:
@@ -7535,7 +6325,7 @@ const MinimalBitsetType& MinimalTypeObject::bitset_type() const
 
     switch (m__d)
     {
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             b = true;
             break;
         default:
@@ -7556,7 +6346,7 @@ MinimalBitsetType& MinimalTypeObject::bitset_type()
 
     switch (m__d)
     {
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             b = true;
             break;
         default:
@@ -7584,7 +6374,7 @@ const MinimalSequenceType& MinimalTypeObject::sequence_type() const
 
     switch (m__d)
     {
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             b = true;
             break;
         default:
@@ -7605,7 +6395,7 @@ MinimalSequenceType& MinimalTypeObject::sequence_type()
 
     switch (m__d)
     {
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             b = true;
             break;
         default:
@@ -7633,7 +6423,7 @@ const MinimalArrayType& MinimalTypeObject::array_type() const
 
     switch (m__d)
     {
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             b = true;
             break;
         default:
@@ -7654,7 +6444,7 @@ MinimalArrayType& MinimalTypeObject::array_type()
 
     switch (m__d)
     {
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             b = true;
             break;
         default:
@@ -7682,7 +6472,7 @@ const MinimalMapType& MinimalTypeObject::map_type() const
 
     switch (m__d)
     {
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             b = true;
             break;
         default:
@@ -7703,7 +6493,7 @@ MinimalMapType& MinimalTypeObject::map_type()
 
     switch (m__d)
     {
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             b = true;
             break;
         default:
@@ -7731,7 +6521,7 @@ const MinimalEnumeratedType& MinimalTypeObject::enumerated_type() const
 
     switch (m__d)
     {
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             b = true;
             break;
         default:
@@ -7752,7 +6542,7 @@ MinimalEnumeratedType& MinimalTypeObject::enumerated_type()
 
     switch (m__d)
     {
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             b = true;
             break;
         default:
@@ -7780,7 +6570,7 @@ const MinimalBitmaskType& MinimalTypeObject::bitmask_type() const
 
     switch (m__d)
     {
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             b = true;
             break;
         default:
@@ -7801,7 +6591,7 @@ MinimalBitmaskType& MinimalTypeObject::bitmask_type()
 
     switch (m__d)
     {
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             b = true;
             break;
         default:
@@ -7829,16 +6619,16 @@ const MinimalExtendedType& MinimalTypeObject::extended_type() const
 
     switch (m__d)
     {
-        case TK_ALIAS:
-        case TK_ANNOTATION:
-        case TK_STRUCTURE:
-        case TK_UNION:
-        case TK_BITSET:
-        case TK_SEQUENCE:
-        case TK_ARRAY:
-        case TK_MAP:
-        case TK_ENUM:
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_UNION:
+        case eprosima::fastrtps::types::TK_BITSET:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_ARRAY:
+        case eprosima::fastrtps::types::TK_MAP:
+        case eprosima::fastrtps::types::TK_ENUM:
+        case eprosima::fastrtps::types::TK_BITMASK:
             break;
         default:
             b = true;
@@ -7859,16 +6649,16 @@ MinimalExtendedType& MinimalTypeObject::extended_type()
 
     switch (m__d)
     {
-        case TK_ALIAS:
-        case TK_ANNOTATION:
-        case TK_STRUCTURE:
-        case TK_UNION:
-        case TK_BITSET:
-        case TK_SEQUENCE:
-        case TK_ARRAY:
-        case TK_MAP:
-        case TK_ENUM:
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_ALIAS:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_UNION:
+        case eprosima::fastrtps::types::TK_BITSET:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_ARRAY:
+        case eprosima::fastrtps::types::TK_MAP:
+        case eprosima::fastrtps::types::TK_ENUM:
+        case eprosima::fastrtps::types::TK_BITMASK:
             break;
         default:
             b = true;
@@ -7883,92 +6673,6 @@ MinimalExtendedType& MinimalTypeObject::extended_type()
     return m_extended_type;
 }
 
-void MinimalTypeObject::serialize(
-        eprosima::fastcdr::Cdr& cdr) const
-{
-    cdr << m__d;
-
-    switch (m__d)
-    {
-        case TK_ALIAS:
-            cdr << m_alias_type;
-            break;
-        case TK_ANNOTATION:
-            cdr << m_annotation_type;
-            break;
-        case TK_STRUCTURE:
-            cdr << m_struct_type;
-            break;
-        case TK_UNION:
-            cdr << m_union_type;
-            break;
-        case TK_BITSET:
-            cdr << m_bitset_type;
-            break;
-        case TK_SEQUENCE:
-            cdr << m_sequence_type;
-            break;
-        case TK_ARRAY:
-            cdr << m_array_type;
-            break;
-        case TK_MAP:
-            cdr << m_map_type;
-            break;
-        case TK_ENUM:
-            cdr << m_enumerated_type;
-            break;
-        case TK_BITMASK:
-            cdr << m_bitmask_type;
-            break;
-        default:
-            cdr << m_extended_type;
-            break;
-    }
-}
-
-void MinimalTypeObject::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr >> m__d;
-
-    switch (m__d)
-    {
-        case TK_ALIAS:
-            cdr >> m_alias_type;
-            break;
-        case TK_ANNOTATION:
-            cdr >> m_annotation_type;
-            break;
-        case TK_STRUCTURE:
-            cdr >> m_struct_type;
-            break;
-        case TK_UNION:
-            cdr >> m_union_type;
-            break;
-        case TK_BITSET:
-            cdr >> m_bitset_type;
-            break;
-        case TK_SEQUENCE:
-            cdr >> m_sequence_type;
-            break;
-        case TK_ARRAY:
-            cdr >> m_array_type;
-            break;
-        case TK_MAP:
-            cdr >> m_map_type;
-            break;
-        case TK_ENUM:
-            cdr >> m_enumerated_type;
-            break;
-        case TK_BITMASK:
-            cdr >> m_bitmask_type;
-            break;
-        default:
-            cdr >> m_extended_type;
-            break;
-    }
-}
-
 bool MinimalTypeObject::operator ==(
         const MinimalTypeObject& other) const
 {
@@ -7976,25 +6680,25 @@ bool MinimalTypeObject::operator ==(
     {
         switch (m__d)
         {
-            case TK_ALIAS:
+            case eprosima::fastrtps::types::TK_ALIAS:
                 return m_alias_type == other.m_alias_type;
-            case TK_ANNOTATION:
+            case eprosima::fastrtps::types::TK_ANNOTATION:
                 return m_annotation_type == other.m_annotation_type;
-            case TK_STRUCTURE:
+            case eprosima::fastrtps::types::TK_STRUCTURE:
                 return m_struct_type == other.m_struct_type;
-            case TK_UNION:
+            case eprosima::fastrtps::types::TK_UNION:
                 return m_union_type == other.m_union_type;
-            case TK_BITSET:
+            case eprosima::fastrtps::types::TK_BITSET:
                 return m_bitset_type == other.m_bitset_type;
-            case TK_SEQUENCE:
+            case eprosima::fastrtps::types::TK_SEQUENCE:
                 return m_sequence_type == other.m_sequence_type;
-            case TK_ARRAY:
+            case eprosima::fastrtps::types::TK_ARRAY:
                 return m_array_type == other.m_array_type;
-            case TK_MAP:
+            case eprosima::fastrtps::types::TK_MAP:
                 return m_map_type == other.m_map_type;
-            case TK_ENUM:
+            case eprosima::fastrtps::types::TK_ENUM:
                 return m_enumerated_type == other.m_enumerated_type;
-            case TK_BITMASK:
+            case eprosima::fastrtps::types::TK_BITMASK:
                 return m_bitmask_type == other.m_bitmask_type;
             default:
                 return m_extended_type == other.m_extended_type;
@@ -8039,25 +6743,25 @@ bool MinimalTypeObject::consistent(
 
     switch (m__d)
     {
-        //case TK_ALIAS:
+        //case eprosima::fastrtps::types::TK_ALIAS:
         //    return m_alias_type.consistent(x.m_alias_type, consistency);
-        case TK_ANNOTATION:
+        case eprosima::fastrtps::types::TK_ANNOTATION:
             return m_annotation_type.consistent(x.m_annotation_type, consistency);
-        case TK_STRUCTURE:
+        case eprosima::fastrtps::types::TK_STRUCTURE:
             return m_struct_type.consistent(x.m_struct_type, consistency);
-        case TK_UNION:
+        case eprosima::fastrtps::types::TK_UNION:
             return m_union_type.consistent(x.m_union_type, consistency);
-        case TK_BITSET:
+        case eprosima::fastrtps::types::TK_BITSET:
             return m_bitset_type.consistent(x.m_bitset_type, consistency);
-        case TK_SEQUENCE:
+        case eprosima::fastrtps::types::TK_SEQUENCE:
             return m_sequence_type.consistent(x.m_sequence_type, consistency);
-        case TK_ARRAY:
+        case eprosima::fastrtps::types::TK_ARRAY:
             return m_array_type.consistent(x.m_array_type, consistency);
-        case TK_MAP:
+        case eprosima::fastrtps::types::TK_MAP:
             return m_map_type.consistent(x.m_map_type, consistency);
-        case TK_ENUM:
+        case eprosima::fastrtps::types::TK_ENUM:
             return m_enumerated_type.consistent(x.m_enumerated_type, consistency);
-        case TK_BITMASK:
+        case eprosima::fastrtps::types::TK_BITMASK:
             return m_bitmask_type.consistent(x.m_bitmask_type, consistency);
         default:
             return m_extended_type.consistent(x.m_extended_type, consistency);
@@ -8081,10 +6785,10 @@ TypeObject::TypeObject(
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_COMPLETE:
             m_complete = x.m_complete;
             break;
-        case EK_MINIMAL:
+        case eprosima::fastrtps::types::EK_MINIMAL:
             m_minimal = x.m_minimal;
             break;
         default:
@@ -8099,10 +6803,10 @@ TypeObject::TypeObject(
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_COMPLETE:
             m_complete = std::move(x.m_complete);
             break;
-        case EK_MINIMAL:
+        case eprosima::fastrtps::types::EK_MINIMAL:
             m_minimal = std::move(x.m_minimal);
             break;
         default:
@@ -8117,10 +6821,10 @@ TypeObject& TypeObject::operator =(
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_COMPLETE:
             m_complete = x.m_complete;
             break;
-        case EK_MINIMAL:
+        case eprosima::fastrtps::types::EK_MINIMAL:
             m_minimal = x.m_minimal;
             break;
         default:
@@ -8137,10 +6841,10 @@ TypeObject& TypeObject::operator =(
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_COMPLETE:
             m_complete = std::move(x.m_complete);
             break;
-        case EK_MINIMAL:
+        case eprosima::fastrtps::types::EK_MINIMAL:
             m_minimal = std::move(x.m_minimal);
             break;
         default:
@@ -8158,20 +6862,20 @@ void TypeObject::_d(
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_COMPLETE:
             switch (__d)
             {
-                case EK_COMPLETE:
+                case eprosima::fastrtps::types::EK_COMPLETE:
                     b = true;
                     break;
                 default:
                     break;
             }
             break;
-        case EK_MINIMAL:
+        case eprosima::fastrtps::types::EK_MINIMAL:
             switch (__d)
             {
-                case EK_MINIMAL:
+                case eprosima::fastrtps::types::EK_MINIMAL:
                     b = true;
                     break;
                 default:
@@ -8218,7 +6922,7 @@ const CompleteTypeObject& TypeObject::complete() const
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_COMPLETE:
             b = true;
             break;
         default:
@@ -8239,7 +6943,7 @@ CompleteTypeObject& TypeObject::complete()
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_COMPLETE:
             b = true;
             break;
         default:
@@ -8279,9 +6983,9 @@ bool TypeObject::consistent(
 
     switch (m__d)
     {
-        case EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_COMPLETE:
             return m_complete.consistent(x.m_complete, consistency);
-        case EK_MINIMAL:
+        case eprosima::fastrtps::types::EK_MINIMAL:
             return m_minimal.consistent(x.m_minimal, consistency);
         default:
             return false;
@@ -8304,7 +7008,7 @@ const MinimalTypeObject& TypeObject::minimal() const
 
     switch (m__d)
     {
-        case EK_MINIMAL:
+        case eprosima::fastrtps::types::EK_MINIMAL:
             b = true;
             break;
         default:
@@ -8325,7 +7029,7 @@ MinimalTypeObject& TypeObject::minimal()
 
     switch (m__d)
     {
-        case EK_MINIMAL:
+        case eprosima::fastrtps::types::EK_MINIMAL:
             b = true;
             break;
         default:
@@ -8340,42 +7044,6 @@ MinimalTypeObject& TypeObject::minimal()
     return m_minimal;
 }
 
-void TypeObject::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m__d;
-
-    switch (m__d)
-    {
-        case EK_COMPLETE:
-            scdr << m_complete;
-            break;
-        case EK_MINIMAL:
-            scdr << m_minimal;
-            break;
-        default:
-            break;
-    }
-}
-
-void TypeObject::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m__d;
-
-    switch (m__d)
-    {
-        case EK_COMPLETE:
-            dcdr >> m_complete;
-            break;
-        case EK_MINIMAL:
-            dcdr >> m_minimal;
-            break;
-        default:
-            break;
-    }
-}
-
 bool TypeObject::operator ==(
         const TypeObject& other) const
 {
@@ -8383,9 +7051,9 @@ bool TypeObject::operator ==(
     {
         switch (m__d)
         {
-            case EK_COMPLETE:
+            case eprosima::fastrtps::types::EK_COMPLETE:
                 return m_complete == other.m_complete;
-            case EK_MINIMAL:
+            case eprosima::fastrtps::types::EK_MINIMAL:
                 return m_minimal == other.m_minimal;
             default:
                 break;
@@ -8432,20 +7100,6 @@ TypeInformation& TypeInformation::operator =(
     m_complete = std::move(x.m_complete);
 
     return *this;
-}
-
-void TypeInformation::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_minimal;
-    scdr << m_complete;
-}
-
-void TypeInformation::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_minimal;
-    dcdr >> m_complete;
 }
 
 OctetSeq& operator ++(
@@ -8568,6 +7222,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CommonStructMember& data)
+{
+    scdr << data.member_id();
+    scdr << data.member_flags();
+    scdr << data.member_type_id();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CommonStructMember& data)
+{
+    dcdr >> data.member_id();
+    dcdr >> data.member_flags();
+    dcdr >> data.member_type_id();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteMemberDetail& data,
@@ -8591,6 +7263,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteMemberDetail& data)
+{
+    scdr << data.name();
+    scdr << data.ann_builtin();
+    scdr << data.ann_custom();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteMemberDetail& data)
+{
+    dcdr >> data.name();
+    dcdr >> data.ann_builtin();
+    dcdr >> data.ann_custom();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalMemberDetail& data,
@@ -8608,6 +7298,20 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalMemberDetail& data)
+{
+    scdr << data.name_hash();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalMemberDetail& data)
+{
+    dcdr >> data.name_hash();
 }
 
 size_t calculate_serialized_size(
@@ -8631,6 +7335,22 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteStructMember& data)
+{
+    scdr << data.common();
+    scdr << data.detail();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteStructMember& data)
+{
+    dcdr >> data.common();
+    dcdr >> data.detail();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalStructMember& data,
@@ -8652,6 +7372,22 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalStructMember& data)
+{
+    scdr << data.common();
+    scdr << data.detail();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalStructMember& data)
+{
+    dcdr >> data.common();
+    dcdr >> data.detail();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::AppliedBuiltinTypeAnnotations& data,
@@ -8671,6 +7407,20 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::AppliedBuiltinTypeAnnotations& data)
+{
+    scdr << data.verbatim();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::AppliedBuiltinTypeAnnotations& data)
+{
+    dcdr >> data.verbatim();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::MinimalTypeDetail&,
@@ -8678,6 +7428,18 @@ size_t calculate_serialized_size(
 {
     size_t initial_alignment = current_alignment;
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr&,
+        const eprosima::fastrtps::types::MinimalTypeDetail&)
+{
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr&,
+        eprosima::fastrtps::types::MinimalTypeDetail&)
+{
 }
 
 size_t calculate_serialized_size(
@@ -8703,6 +7465,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteTypeDetail& data)
+{
+    scdr << data.ann_builtin();
+    scdr << data.ann_custom();
+    scdr << data.type_name();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteTypeDetail& data)
+{
+    dcdr >> data.ann_builtin();
+    dcdr >> data.ann_custom();
+    dcdr >> data.type_name();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteStructHeader& data,
@@ -8724,6 +7504,22 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteStructHeader& data)
+{
+    scdr << data.base_type();
+    scdr << data.detail();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteStructHeader& data)
+{
+    dcdr >> data.base_type();
+    dcdr >> data.detail();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalStructHeader& data,
@@ -8743,6 +7539,22 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalStructHeader& data)
+{
+    scdr << data.base_type();
+    scdr << data.detail();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalStructHeader& data)
+{
+    dcdr >> data.base_type();
+    dcdr >> data.detail();
 }
 
 size_t calculate_serialized_size(
@@ -8768,6 +7580,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteStructType& data)
+{
+    scdr << data.struct_flags();
+    scdr << data.header();
+    scdr << data.member_seq();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteStructType& data)
+{
+    dcdr >> data.struct_flags();
+    dcdr >> data.header();
+    dcdr >> data.member_seq();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalStructType& data,
@@ -8789,6 +7619,24 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalStructType& data)
+{
+    scdr << data.struct_flags();
+    scdr << data.header();
+    scdr << data.member_seq();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalStructType& data)
+{
+    dcdr >> data.struct_flags();
+    dcdr >> data.header();
+    dcdr >> data.member_seq();
 }
 
 size_t calculate_serialized_size(
@@ -8816,6 +7664,26 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CommonUnionMember& data)
+{
+    scdr << data.member_id();
+    scdr << data.member_flags();
+    scdr << data.type_id();
+    scdr << data.label_seq();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CommonUnionMember& data)
+{
+    dcdr >> data.member_id();
+    dcdr >> data.member_flags();
+    dcdr >> data.type_id();
+    dcdr >> data.label_seq();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteUnionMember& data,
@@ -8835,6 +7703,22 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteUnionMember& data)
+{
+    scdr << data.common();
+    scdr << data.detail();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteUnionMember& data)
+{
+    dcdr >> data.common();
+    dcdr >> data.detail();
 }
 
 size_t calculate_serialized_size(
@@ -8858,6 +7742,22 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalUnionMember& data)
+{
+    scdr << data.common();
+    scdr << data.detail();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalUnionMember& data)
+{
+    dcdr >> data.common();
+    dcdr >> data.detail();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonDiscriminatorMember& data,
@@ -8877,6 +7777,22 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CommonDiscriminatorMember& data)
+{
+    scdr << data.member_flags();
+    scdr << data.type_id();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CommonDiscriminatorMember& data)
+{
+    dcdr >> data.member_flags();
+    dcdr >> data.type_id();
 }
 
 size_t calculate_serialized_size(
@@ -8902,6 +7818,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteDiscriminatorMember& data)
+{
+    scdr << data.common();
+    scdr << data.ann_builtin();
+    scdr << data.ann_custom();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteDiscriminatorMember& data)
+{
+    dcdr >> data.common();
+    dcdr >> data.ann_builtin();
+    dcdr >> data.ann_custom();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalDiscriminatorMember& data,
@@ -8919,6 +7853,20 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalDiscriminatorMember& data)
+{
+    scdr << data.common();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalDiscriminatorMember& data)
+{
+    dcdr >> data.common();
 }
 
 size_t calculate_serialized_size(
@@ -8940,6 +7888,20 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteUnionHeader& data)
+{
+    scdr << data.detail();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteUnionHeader& data)
+{
+    dcdr >> data.detail();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalUnionHeader& data,
@@ -8957,6 +7919,20 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalUnionHeader& data)
+{
+    scdr << data.detail();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalUnionHeader& data)
+{
+    dcdr >> data.detail();
 }
 
 size_t calculate_serialized_size(
@@ -8984,6 +7960,26 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteUnionType& data)
+{
+    scdr << data.union_flags();
+    scdr << data.header();
+    scdr << data.discriminator();
+    scdr << data.member_seq();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteUnionType& data)
+{
+    dcdr >> data.union_flags();
+    dcdr >> data.header();
+    dcdr >> data.discriminator();
+    dcdr >> data.member_seq();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalUnionType& data,
@@ -9009,6 +8005,26 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalUnionType& data)
+{
+    scdr << data.union_flags();
+    scdr << data.header();
+    scdr << data.discriminator();
+    scdr << data.member_seq();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalUnionType& data)
+{
+    dcdr >> data.union_flags();
+    dcdr >> data.header();
+    dcdr >> data.discriminator();
+    dcdr >> data.member_seq();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonAnnotationParameter& data,
@@ -9028,6 +8044,22 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CommonAnnotationParameter& data)
+{
+    scdr << data.member_flags();
+    scdr << data.member_type_id();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CommonAnnotationParameter& data)
+{
+    dcdr >> data.member_flags();
+    dcdr >> data.member_type_id();
 }
 
 size_t calculate_serialized_size(
@@ -9053,6 +8085,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteAnnotationParameter& data)
+{
+    scdr << data.common();
+    scdr << data.name();
+    scdr << data.default_value();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteAnnotationParameter& data)
+{
+    dcdr >> data.common();
+    dcdr >> data.name();
+    dcdr >> data.default_value();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalAnnotationParameter& data,
@@ -9076,6 +8126,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalAnnotationParameter& data)
+{
+    scdr << data.common();
+    scdr << data.name();
+    scdr << data.default_value();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalAnnotationParameter& data)
+{
+    dcdr >> data.common();
+    dcdr >> data.name();
+    dcdr >> data.default_value();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteAnnotationHeader& data,
@@ -9095,6 +8163,20 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteAnnotationHeader& data)
+{
+    scdr << data.annotation_name();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteAnnotationHeader& data)
+{
+    dcdr >> data.annotation_name();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::MinimalAnnotationHeader&,
@@ -9103,6 +8185,18 @@ size_t calculate_serialized_size(
     size_t initial_alignment = current_alignment;
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr&,
+        const eprosima::fastrtps::types::MinimalAnnotationHeader&)
+{
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr&,
+        eprosima::fastrtps::types::MinimalAnnotationHeader&)
+{
 }
 
 size_t calculate_serialized_size(
@@ -9128,6 +8222,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteAnnotationType& data)
+{
+    scdr << data.annotation_flag();
+    scdr << data.header();
+    scdr << data.member_seq();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteAnnotationType& data)
+{
+    dcdr >> data.annotation_flag();
+    dcdr >> data.header();
+    dcdr >> data.member_seq();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalAnnotationType& data,
@@ -9151,6 +8263,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalAnnotationType& data)
+{
+    scdr << data.annotation_flag();
+    scdr << data.header();
+    scdr << data.member_seq();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalAnnotationType& data)
+{
+    dcdr >> data.annotation_flag();
+    dcdr >> data.header();
+    dcdr >> data.member_seq();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonAliasBody& data,
@@ -9170,6 +8300,22 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CommonAliasBody& data)
+{
+    scdr << data.related_flags();
+    scdr << data.related_type();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CommonAliasBody& data)
+{
+    dcdr >> data.related_flags();
+    dcdr >> data.related_type();
 }
 
 size_t calculate_serialized_size(
@@ -9195,6 +8341,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteAliasBody& data)
+{
+    scdr << data.common();
+    scdr << data.ann_builtin();
+    scdr << data.ann_custom();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteAliasBody& data)
+{
+    dcdr >> data.common();
+    dcdr >> data.ann_builtin();
+    dcdr >> data.ann_custom();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalAliasBody& data,
@@ -9212,6 +8376,20 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalAliasBody& data)
+{
+    scdr << data.common();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalAliasBody& data)
+{
+    dcdr >> data.common();
 }
 
 size_t calculate_serialized_size(
@@ -9233,6 +8411,20 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteAliasHeader& data)
+{
+    scdr << data.detail();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteAliasHeader& data)
+{
+    dcdr >> data.detail();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::MinimalAliasHeader&,
@@ -9241,6 +8433,18 @@ size_t calculate_serialized_size(
     size_t initial_alignment = current_alignment;
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr&,
+        const eprosima::fastrtps::types::MinimalAliasHeader&)
+{
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr&,
+        eprosima::fastrtps::types::MinimalAliasHeader&)
+{
 }
 
 size_t calculate_serialized_size(
@@ -9266,6 +8470,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteAliasType& data)
+{
+    scdr << data.alias_flags();
+    scdr << data.header();
+    scdr << data.body();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteAliasType& data)
+{
+    dcdr >> data.alias_flags();
+    dcdr >> data.header();
+    dcdr >> data.body();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalAliasType& data,
@@ -9289,6 +8511,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalAliasType& data)
+{
+    scdr << data.alias_flags();
+    scdr << data.header();
+    scdr << data.body();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalAliasType& data)
+{
+    dcdr >> data.alias_flags();
+    dcdr >> data.header();
+    dcdr >> data.body();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteElementDetail& data,
@@ -9308,6 +8548,22 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteElementDetail& data)
+{
+    scdr << data.ann_builtin();
+    scdr << data.ann_custom();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteElementDetail& data)
+{
+    dcdr >> data.ann_builtin();
+    dcdr >> data.ann_custom();
 }
 
 size_t calculate_serialized_size(
@@ -9331,6 +8587,22 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CommonCollectionElement& data)
+{
+    scdr << data.element_flags();
+    scdr << data.type();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CommonCollectionElement& data)
+{
+    dcdr >> data.element_flags();
+    dcdr >> data.type();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteCollectionElement& data,
@@ -9352,6 +8624,22 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteCollectionElement& data)
+{
+    scdr << data.common();
+    scdr << data.detail();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteCollectionElement& data)
+{
+    dcdr >> data.common();
+    dcdr >> data.detail();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalCollectionElement& data,
@@ -9371,6 +8659,20 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalCollectionElement& data)
+{
+    scdr << data.common();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalCollectionElement& data)
+{
+    dcdr >> data.common();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonCollectionHeader& data,
@@ -9388,6 +8690,20 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CommonCollectionHeader& data)
+{
+    scdr << data.bound();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CommonCollectionHeader& data)
+{
+    dcdr >> data.bound();
 }
 
 size_t calculate_serialized_size(
@@ -9411,6 +8727,22 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteCollectionHeader& data)
+{
+    scdr << data.common();
+    scdr << data.detail();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteCollectionHeader& data)
+{
+    dcdr >> data.common();
+    dcdr >> data.detail();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalCollectionHeader& data,
@@ -9428,6 +8760,20 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalCollectionHeader& data)
+{
+    scdr << data.common();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalCollectionHeader& data)
+{
+    dcdr >> data.common();
 }
 
 size_t calculate_serialized_size(
@@ -9453,6 +8799,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteSequenceType& data)
+{
+    scdr << data.collection_flag();
+    scdr << data.header();
+    scdr << data.element();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteSequenceType& data)
+{
+    dcdr >> data.collection_flag();
+    dcdr >> data.header();
+    dcdr >> data.element();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteSequenceType& data,
@@ -9476,6 +8840,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalSequenceType& data)
+{
+    scdr << data.collection_flag();
+    scdr << data.header();
+    scdr << data.element();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalSequenceType& data)
+{
+    dcdr >> data.collection_flag();
+    dcdr >> data.header();
+    dcdr >> data.element();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonArrayHeader& data,
@@ -9493,6 +8875,20 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CommonArrayHeader& data)
+{
+    scdr << data.bound_seq();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CommonArrayHeader& data)
+{
+    dcdr >> data.bound_seq();
 }
 
 size_t calculate_serialized_size(
@@ -9516,6 +8912,22 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteArrayHeader& data)
+{
+    scdr << data.common();
+    scdr << data.detail();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteArrayHeader& data)
+{
+    dcdr >> data.common();
+    dcdr >> data.detail();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalArrayHeader& data,
@@ -9533,6 +8945,20 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalArrayHeader& data)
+{
+    scdr << data.common();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalArrayHeader& data)
+{
+    dcdr >> data.common();
 }
 
 size_t calculate_serialized_size(
@@ -9558,6 +8984,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteArrayType& data)
+{
+    scdr << data.collection_flag();
+    scdr << data.header();
+    scdr << data.element();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteArrayType& data)
+{
+    dcdr >> data.collection_flag();
+    dcdr >> data.header();
+    dcdr >> data.element();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalArrayType& data,
@@ -9579,6 +9023,24 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalArrayType& data)
+{
+    scdr << data.collection_flag();
+    scdr << data.header();
+    scdr << data.element();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalArrayType& data)
+{
+    dcdr >> data.collection_flag();
+    dcdr >> data.header();
+    dcdr >> data.element();
 }
 
 size_t calculate_serialized_size(
@@ -9606,6 +9068,26 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteMapType& data)
+{
+    scdr << data.collection_flag();
+    scdr << data.header();
+    scdr << data.key();
+    scdr << data.element();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteMapType& data)
+{
+    dcdr >> data.collection_flag();
+    dcdr >> data.header();
+    dcdr >> data.key();
+    dcdr >> data.element();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalMapType& data,
@@ -9631,6 +9113,26 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalMapType& data)
+{
+    scdr << data.collection_flag();
+    scdr << data.header();
+    scdr << data.key();
+    scdr << data.element();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalMapType& data)
+{
+    dcdr >> data.collection_flag();
+    dcdr >> data.header();
+    dcdr >> data.key();
+    dcdr >> data.element();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonEnumeratedLiteral& data,
@@ -9650,6 +9152,22 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CommonEnumeratedLiteral& data)
+{
+    scdr << data.value();
+    scdr << data.flags();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CommonEnumeratedLiteral& data)
+{
+    dcdr >> data.value();
+    dcdr >> data.flags();
 }
 
 size_t calculate_serialized_size(
@@ -9673,6 +9191,22 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteEnumeratedLiteral& data)
+{
+    scdr << data.common();
+    scdr << data.detail();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteEnumeratedLiteral& data)
+{
+    dcdr >> data.common();
+    dcdr >> data.detail();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalEnumeratedLiteral& data,
@@ -9694,6 +9228,22 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalEnumeratedLiteral& data)
+{
+    scdr << data.common();
+    scdr << data.detail();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalEnumeratedLiteral& data)
+{
+    dcdr >> data.common();
+    dcdr >> data.detail();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonEnumeratedHeader& data,
@@ -9711,6 +9261,20 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CommonEnumeratedHeader& data)
+{
+    scdr << data.bit_bound();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CommonEnumeratedHeader& data)
+{
+    dcdr >> data.bit_bound();
 }
 
 size_t calculate_serialized_size(
@@ -9734,6 +9298,22 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteEnumeratedHeader& data)
+{
+    scdr << data.common();
+    scdr << data.detail();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteEnumeratedHeader& data)
+{
+    dcdr >> data.common();
+    dcdr >> data.detail();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalEnumeratedHeader& data,
@@ -9751,6 +9331,20 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalEnumeratedHeader& data)
+{
+    scdr << data.common();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalEnumeratedHeader& data)
+{
+    dcdr >> data.common();
 }
 
 size_t calculate_serialized_size(
@@ -9776,6 +9370,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteEnumeratedType& data)
+{
+    scdr << data.enum_flags();
+    scdr << data.header();
+    scdr << data.literal_seq();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteEnumeratedType& data)
+{
+    dcdr >> data.enum_flags();
+    dcdr >> data.header();
+    dcdr >> data.literal_seq();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalEnumeratedType& data,
@@ -9799,6 +9411,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalEnumeratedType& data)
+{
+    scdr << data.enum_flags();
+    scdr << data.header();
+    scdr << data.literal_seq();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalEnumeratedType& data)
+{
+    dcdr >> data.enum_flags();
+    dcdr >> data.header();
+    dcdr >> data.literal_seq();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonBitflag& data,
@@ -9818,6 +9448,22 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CommonBitflag& data)
+{
+    scdr << data.position();
+    scdr << data.flags();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CommonBitflag& data)
+{
+    dcdr >> data.position();
+    dcdr >> data.flags();
 }
 
 size_t calculate_serialized_size(
@@ -9841,6 +9487,22 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteBitflag& data)
+{
+    scdr << data.common();
+    scdr << data.detail();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteBitflag& data)
+{
+    dcdr >> data.common();
+    dcdr >> data.detail();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalBitflag& data,
@@ -9862,6 +9524,22 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalBitflag& data)
+{
+    scdr << data.common();
+    scdr << data.detail();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalBitflag& data)
+{
+    dcdr >> data.common();
+    dcdr >> data.detail();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonBitmaskHeader& data,
@@ -9879,6 +9557,20 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CommonBitmaskHeader& data)
+{
+    scdr << data.bit_bound();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CommonBitmaskHeader& data)
+{
+    dcdr >> data.bit_bound();
 }
 
 size_t calculate_serialized_size(
@@ -9904,6 +9596,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteBitmaskType& data)
+{
+    scdr << data.bitmask_flags();
+    scdr << data.header();
+    scdr << data.flag_seq();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteBitmaskType& data)
+{
+    dcdr >> data.bitmask_flags();
+    dcdr >> data.header();
+    dcdr >> data.flag_seq();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalBitmaskType& data,
@@ -9925,6 +9635,24 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalBitmaskType& data)
+{
+    scdr << data.bitmask_flags();
+    scdr << data.header();
+    scdr << data.flag_seq();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalBitmaskType& data)
+{
+    dcdr >> data.bitmask_flags();
+    dcdr >> data.header();
+    dcdr >> data.flag_seq();
 }
 
 size_t calculate_serialized_size(
@@ -9952,6 +9680,26 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CommonBitfield& data)
+{
+    scdr << data.position();
+    scdr << data.flags();
+    scdr << data.bitcount();
+    scdr << data.holder_type();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CommonBitfield& data)
+{
+    dcdr >> data.position();
+    dcdr >> data.flags();
+    dcdr >> data.bitcount();
+    dcdr >> data.holder_type();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteBitfield& data,
@@ -9971,6 +9719,22 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteBitfield& data)
+{
+    scdr << data.common();
+    scdr << data.detail();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteBitfield& data)
+{
+    dcdr >> data.common();
+    dcdr >> data.detail();
 }
 
 size_t calculate_serialized_size(
@@ -9994,6 +9758,22 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalBitfield& data)
+{
+    scdr << data.common();
+    scdr << data.name_hash();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalBitfield& data)
+{
+    dcdr >> data.common();
+    dcdr >> data.name_hash();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteBitsetHeader& data,
@@ -10015,6 +9795,22 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteBitsetHeader& data)
+{
+    scdr << data.base_type();
+    scdr << data.detail();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteBitsetHeader& data)
+{
+    dcdr >> data.base_type();
+    dcdr >> data.detail();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalBitsetHeader& data,
@@ -10032,6 +9828,20 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalBitsetHeader& data)
+{
+    scdr << data.base_type();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalBitsetHeader& data)
+{
+    dcdr >> data.base_type();
 }
 
 size_t calculate_serialized_size(
@@ -10057,6 +9867,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteBitsetType& data)
+{
+    scdr << data.bitset_flags();
+    scdr << data.header();
+    scdr << data.field_seq();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteBitsetType& data)
+{
+    dcdr >> data.bitset_flags();
+    dcdr >> data.header();
+    dcdr >> data.field_seq();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalBitsetType& data,
@@ -10080,6 +9908,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalBitsetType& data)
+{
+    scdr << data.bitset_flags();
+    scdr << data.header();
+    scdr << data.field_seq();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalBitsetType& data)
+{
+    dcdr >> data.bitset_flags();
+    dcdr >> data.header();
+    dcdr >> data.field_seq();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::CompleteExtendedType&,
@@ -10090,6 +9936,18 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr&,
+        const eprosima::fastrtps::types::CompleteExtendedType&)
+{
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr&,
+        eprosima::fastrtps::types::CompleteExtendedType&)
+{
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::MinimalExtendedType&,
@@ -10098,6 +9956,18 @@ size_t calculate_serialized_size(
     size_t initial_alignment = current_alignment;
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr&,
+        const eprosima::fastrtps::types::MinimalExtendedType&)
+{
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr&,
+        eprosima::fastrtps::types::MinimalExtendedType&)
+{
 }
 
 size_t calculate_serialized_size(
@@ -10121,6 +9991,22 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::TypeIdentifierTypeObjectPair& data)
+{
+    scdr << data.type_identifier();
+    scdr << data.type_object();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::TypeIdentifierTypeObjectPair& data)
+{
+    dcdr >> data.type_identifier();
+    dcdr >> data.type_object();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::TypeIdentifierPair& data,
@@ -10140,6 +10026,22 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::TypeIdentifierPair& data)
+{
+    scdr << data.type_identifier1();
+    scdr << data.type_identifier2();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::TypeIdentifierPair& data)
+{
+    dcdr >> data.type_identifier1();
+    dcdr >> data.type_identifier2();
 }
 
 size_t calculate_serialized_size(
@@ -10163,6 +10065,22 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::TypeIdentifierWithSize& data)
+{
+    scdr << data.type_id();
+    scdr << data.typeobject_serialized_size();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::TypeIdentifierWithSize& data)
+{
+    dcdr >> data.type_id();
+    dcdr >> data.typeobject_serialized_size();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::TypeIdentifierWithDependencies& data,
@@ -10184,6 +10102,24 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::TypeIdentifierWithDependencies& data)
+{
+    scdr << data.typeid_with_size();
+    scdr << data.dependent_typeid_count();
+    scdr << data.dependent_typeids();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::TypeIdentifierWithDependencies& data)
+{
+    dcdr >> data.typeid_with_size();
+    dcdr >> data.dependent_typeid_count();
+    dcdr >> data.dependent_typeids();
 }
 
 size_t calculate_serialized_size(
@@ -10253,6 +10189,94 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::CompleteTypeObject& data)
+{
+    scdr << data._d();
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::TK_ALIAS:
+            scdr << data.alias_type();
+            break;
+        case eprosima::fastrtps::types::TK_ANNOTATION:
+            scdr << data.annotation_type();
+            break;
+        case eprosima::fastrtps::types::TK_STRUCTURE:
+            scdr << data.struct_type();
+            break;
+        case eprosima::fastrtps::types::TK_UNION:
+            scdr << data.union_type();
+            break;
+        case eprosima::fastrtps::types::TK_BITSET:
+            scdr << data.bitset_type();
+            break;
+        case eprosima::fastrtps::types::TK_SEQUENCE:
+            scdr << data.sequence_type();
+            break;
+        case eprosima::fastrtps::types::TK_ARRAY:
+            scdr << data.array_type();
+            break;
+        case eprosima::fastrtps::types::TK_MAP:
+            scdr << data.map_type();
+            break;
+        case eprosima::fastrtps::types::TK_ENUM:
+            scdr << data.enumerated_type();
+            break;
+        case eprosima::fastrtps::types::TK_BITMASK:
+            scdr << data.bitmask_type();
+            break;
+        default:
+            scdr << data.extended_type();
+            break;
+    }
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::CompleteTypeObject& data)
+{
+    dcdr >> data._d();
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::TK_ALIAS:
+            dcdr >> data.alias_type();
+            break;
+        case eprosima::fastrtps::types::TK_ANNOTATION:
+            dcdr >> data.annotation_type();
+            break;
+        case eprosima::fastrtps::types::TK_STRUCTURE:
+            dcdr >> data.struct_type();
+            break;
+        case eprosima::fastrtps::types::TK_UNION:
+            dcdr >> data.union_type();
+            break;
+        case eprosima::fastrtps::types::TK_BITSET:
+            dcdr >> data.bitset_type();
+            break;
+        case eprosima::fastrtps::types::TK_SEQUENCE:
+            dcdr >> data.sequence_type();
+            break;
+        case eprosima::fastrtps::types::TK_ARRAY:
+            dcdr >> data.array_type();
+            break;
+        case eprosima::fastrtps::types::TK_MAP:
+            dcdr >> data.map_type();
+            break;
+        case eprosima::fastrtps::types::TK_ENUM:
+            dcdr >> data.enumerated_type();
+            break;
+        case eprosima::fastrtps::types::TK_BITMASK:
+            dcdr >> data.bitmask_type();
+            break;
+        default:
+            dcdr >> data.extended_type();
+            break;
+    }
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalTypeObject& data,
@@ -10320,6 +10344,94 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::MinimalTypeObject& data)
+{
+    scdr << data._d();
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::TK_ALIAS:
+            scdr << data.alias_type();
+            break;
+        case eprosima::fastrtps::types::TK_ANNOTATION:
+            scdr << data.annotation_type();
+            break;
+        case eprosima::fastrtps::types::TK_STRUCTURE:
+            scdr << data.struct_type();
+            break;
+        case eprosima::fastrtps::types::TK_UNION:
+            scdr << data.union_type();
+            break;
+        case eprosima::fastrtps::types::TK_BITSET:
+            scdr << data.bitset_type();
+            break;
+        case eprosima::fastrtps::types::TK_SEQUENCE:
+            scdr << data.sequence_type();
+            break;
+        case eprosima::fastrtps::types::TK_ARRAY:
+            scdr << data.array_type();
+            break;
+        case eprosima::fastrtps::types::TK_MAP:
+            scdr << data.map_type();
+            break;
+        case eprosima::fastrtps::types::TK_ENUM:
+            scdr << data.enumerated_type();
+            break;
+        case eprosima::fastrtps::types::TK_BITMASK:
+            scdr << data.bitmask_type();
+            break;
+        default:
+            scdr << data.extended_type();
+            break;
+    }
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::MinimalTypeObject& data)
+{
+    dcdr >> data._d();
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::TK_ALIAS:
+            dcdr >> data.alias_type();
+            break;
+        case eprosima::fastrtps::types::TK_ANNOTATION:
+            dcdr >> data.annotation_type();
+            break;
+        case eprosima::fastrtps::types::TK_STRUCTURE:
+            dcdr >> data.struct_type();
+            break;
+        case eprosima::fastrtps::types::TK_UNION:
+            dcdr >> data.union_type();
+            break;
+        case eprosima::fastrtps::types::TK_BITSET:
+            dcdr >> data.bitset_type();
+            break;
+        case eprosima::fastrtps::types::TK_SEQUENCE:
+            dcdr >> data.sequence_type();
+            break;
+        case eprosima::fastrtps::types::TK_ARRAY:
+            dcdr >> data.array_type();
+            break;
+        case eprosima::fastrtps::types::TK_MAP:
+            dcdr >> data.map_type();
+            break;
+        case eprosima::fastrtps::types::TK_ENUM:
+            dcdr >> data.enumerated_type();
+            break;
+        case eprosima::fastrtps::types::TK_BITMASK:
+            dcdr >> data.bitmask_type();
+            break;
+        default:
+            dcdr >> data.extended_type();
+            break;
+    }
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::TypeObject& data,
@@ -10353,6 +10465,44 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::TypeObject& data)
+{
+    scdr << data._d();
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::EK_COMPLETE:
+            scdr << data.complete();
+            break;
+        case eprosima::fastrtps::types::EK_MINIMAL:
+            scdr << data.minimal();
+            break;
+        default:
+            break;
+    }
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::TypeObject& data)
+{
+    dcdr >> data._d();
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::EK_COMPLETE:
+            dcdr >> data.complete();
+            break;
+        case eprosima::fastrtps::types::EK_MINIMAL:
+            dcdr >> data.minimal();
+            break;
+        default:
+            break;
+    }
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::TypeInformation& data,
@@ -10372,6 +10522,22 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::TypeInformation& data)
+{
+    scdr << data.minimal();
+    scdr << data.complete();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::TypeInformation& data)
+{
+    dcdr >> data.minimal();
+    dcdr >> data.complete();
 }
 
 } // namespace fastcdr

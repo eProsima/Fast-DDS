@@ -126,20 +126,6 @@ public:
         return m_bound;
     }
 
-    /*!
-     * @brief This function serializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    /*!
-     * @brief This function deserializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-
     RTPS_DllAPI bool consistent(
             const StringSTypeDefn& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
@@ -225,20 +211,6 @@ public:
     {
         return m_bound;
     }
-
-    /*!
-     * @brief This function serializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    /*!
-     * @brief This function deserializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
 
     RTPS_DllAPI bool consistent(
             const StringLTypeDefn& x,
@@ -353,20 +325,6 @@ public:
     {
         return m_element_flags;
     }
-
-    /*!
-     * @brief This function serializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    /*!
-     * @brief This function deserializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
 
     RTPS_DllAPI bool consistent(
             const PlainCollectionHeader& x,
@@ -514,20 +472,6 @@ public:
         return m_element_identifier;
     }
 
-    /*!
-     * @brief This function serializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    /*!
-     * @brief This function deserializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-
     RTPS_DllAPI bool consistent(
             const PlainSequenceSElemDefn& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
@@ -674,20 +618,6 @@ public:
     {
         return m_element_identifier;
     }
-
-    /*!
-     * @brief This function serializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    /*!
-     * @brief This function deserializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
 
     RTPS_DllAPI bool consistent(
             const PlainSequenceLElemDefn& x,
@@ -846,20 +776,6 @@ public:
         return m_element_identifier;
     }
 
-    /*!
-     * @brief This function serializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    /*!
-     * @brief This function deserializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-
     RTPS_DllAPI bool consistent(
             const PlainArraySElemDefn& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
@@ -1016,20 +932,6 @@ public:
     {
         return m_element_identifier;
     }
-
-    /*!
-     * @brief This function serializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    /*!
-     * @brief This function deserializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
 
     RTPS_DllAPI bool consistent(
             const PlainArrayLElemDefn& x,
@@ -1230,20 +1132,6 @@ public:
     {
         return m_key_identifier;
     }
-
-    /*!
-     * @brief This function serializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    /*!
-     * @brief This function deserializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
 
     RTPS_DllAPI bool consistent(
             const PlainMapSTypeDefn& x,
@@ -1447,20 +1335,6 @@ public:
         return m_key_identifier;
     }
 
-    /*!
-     * @brief This function serializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    /*!
-     * @brief This function deserializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-
     RTPS_DllAPI bool consistent(
             const PlainMapLTypeDefn& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
@@ -1613,20 +1487,6 @@ public:
         return m_scc_index;
     }
 
-    /*!
-     * @brief This function serializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    /*!
-     * @brief This function deserializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-
     RTPS_DllAPI bool consistent(
             const StronglyConnectedComponentId& x,
             const fastdds::dds::TypeConsistencyEnforcementQosPolicy& consistency) const;
@@ -1682,20 +1542,6 @@ public:
      */
     RTPS_DllAPI virtual ExtendedTypeDefn& operator =(
             ExtendedTypeDefn&& x);
-
-    /*!
-     * @brief This function serializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI virtual void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    /*!
-     * @brief This function deserializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI virtual void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
 
     RTPS_DllAPI bool consistent(
             const ExtendedTypeDefn& x,

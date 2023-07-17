@@ -144,7 +144,7 @@ public:
 
             eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
             eprosima::fastcdr::Cdr cdr(buffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                    eprosima::fastcdr::CdrVersion::XCDRv1);
+                    eprosima::fastcdr::CdrVersion::DDS_CDR);
 
             cdr << magicword_;
             cdr << *it;

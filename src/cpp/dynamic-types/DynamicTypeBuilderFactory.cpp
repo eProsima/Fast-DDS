@@ -1489,7 +1489,7 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
             eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
-        object.serialize(ser);
+        ser << object;
         payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);
@@ -1544,7 +1544,7 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
             eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
-        object.serialize(ser);
+        ser << object;
         payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);
@@ -1606,7 +1606,7 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
             eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
-        object.serialize(ser);
+        ser << object;
         payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);
@@ -1651,7 +1651,7 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
             eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
-        object.serialize(ser);
+        ser << object;
         payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);
@@ -1961,7 +1961,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
                 eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
-        object.serialize(ser);
+        ser << object;
         payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);
@@ -2062,7 +2062,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
                 eprosima::fastcdr::CdrVersion::XCDRv2); // Object that serializes the data.
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
-        object.serialize(ser);
+        ser << object;
         payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);

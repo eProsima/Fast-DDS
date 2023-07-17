@@ -34,8 +34,6 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define Topic_max_cdr_typesize 268ULL;
-#define Topic_max_key_cdr_typesize 0ULL;
 
 Topic::Topic()
 {
@@ -95,59 +93,6 @@ bool Topic::operator !=(
         const Topic& x) const
 {
     return !(*this == x);
-}
-
-size_t Topic::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return Topic_max_cdr_typesize;
-}
-void Topic::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << index()
-                << eprosima::fastcdr::MemberId(1) << message()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void Topic::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> index();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> message();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -216,21 +161,3 @@ std::string& Topic::message()
     return m_message;
 }
 
-
-size_t Topic::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return Topic_max_key_cdr_typesize;
-}
-
-bool Topic::isKeyDefined()
-{
-    return false;
-}
-
-void Topic::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-}

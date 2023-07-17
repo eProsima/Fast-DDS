@@ -34,8 +34,6 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define sample_max_cdr_typesize 6ULL;
-#define sample_max_key_cdr_typesize 1ULL;
 
 sample::sample()
 {
@@ -97,59 +95,6 @@ bool sample::operator !=(
     return !(*this == x);
 }
 
-size_t sample::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return sample_max_cdr_typesize;
-}
-void sample::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << index()
-                << eprosima::fastcdr::MemberId(1) << key_value()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void sample::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> index();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> key_value();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
-}
-
 /*!
  * @brief This function sets a value in member index
  * @param _index New value for member index
@@ -207,23 +152,3 @@ uint8_t& sample::key_value()
 }
 
 
-
-size_t sample::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return sample_max_key_cdr_typesize;
-}
-
-bool sample::isKeyDefined()
-{
-    return true;
-}
-
-void sample::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-  
-  scdr << eprosima::fastcdr::MemberId(268435455) << key_value();    
-}

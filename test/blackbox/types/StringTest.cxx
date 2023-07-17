@@ -34,8 +34,6 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define StringTest_max_cdr_typesize 10009ULL;
-#define StringTest_max_key_cdr_typesize 0ULL;
 
 StringTest::StringTest()
 {
@@ -89,54 +87,6 @@ bool StringTest::operator !=(
     return !(*this == x);
 }
 
-size_t StringTest::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return StringTest_max_cdr_typesize;
-}
-void StringTest::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << message()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void StringTest::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> message();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
-}
-
 /*!
  * @brief This function copies the value in member message
  * @param _message New value to be copied in member message
@@ -175,21 +125,3 @@ eprosima::fastcdr::fixed_string<10000>& StringTest::message()
     return m_message;
 }
 
-
-size_t StringTest::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return StringTest_max_key_cdr_typesize;
-}
-
-bool StringTest::isKeyDefined()
-{
-    return false;
-}
-
-void StringTest::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-}

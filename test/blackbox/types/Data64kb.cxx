@@ -34,8 +34,6 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define Data64kb_max_cdr_typesize 64004ULL;
-#define Data64kb_max_key_cdr_typesize 0ULL;
 
 Data64kb::Data64kb()
 {
@@ -89,54 +87,6 @@ bool Data64kb::operator !=(
     return !(*this == x);
 }
 
-size_t Data64kb::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return Data64kb_max_cdr_typesize;
-}
-void Data64kb::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << data()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void Data64kb::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> data();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
-}
-
 /*!
  * @brief This function copies the value in member data
  * @param _data New value to be copied in member data
@@ -175,21 +125,3 @@ std::vector<uint8_t>& Data64kb::data()
     return m_data;
 }
 
-
-size_t Data64kb::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return Data64kb_max_key_cdr_typesize;
-}
-
-bool Data64kb::isKeyDefined()
-{
-    return false;
-}
-
-void Data64kb::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-}

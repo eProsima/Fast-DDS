@@ -34,8 +34,6 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define FilteringExample_max_cdr_typesize 8ULL;
-#define FilteringExample_max_key_cdr_typesize 0ULL;
 
 FilteringExample::FilteringExample()
 {
@@ -89,54 +87,6 @@ bool FilteringExample::operator !=(
     return !(*this == x);
 }
 
-size_t FilteringExample::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return FilteringExample_max_cdr_typesize;
-}
-void FilteringExample::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << sampleNumber()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void FilteringExample::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> sampleNumber();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
-}
-
 /*!
  * @brief This function sets a value in member sampleNumber
  * @param _sampleNumber New value for member sampleNumber
@@ -165,21 +115,3 @@ int32_t& FilteringExample::sampleNumber()
     return m_sampleNumber;
 }
 
-
-size_t FilteringExample::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return FilteringExample_max_key_cdr_typesize;
-}
-
-bool FilteringExample::isKeyDefined()
-{
-    return false;
-}
-
-void FilteringExample::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-}

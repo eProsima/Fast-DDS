@@ -34,8 +34,6 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define HelloMsg_max_cdr_typesize 269ULL;
-#define HelloMsg_max_key_cdr_typesize 2ULL;
 
 HelloMsg::HelloMsg()
 {
@@ -95,59 +93,6 @@ bool HelloMsg::operator !=(
         const HelloMsg& x) const
 {
     return !(*this == x);
-}
-
-size_t HelloMsg::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return HelloMsg_max_cdr_typesize;
-}
-void HelloMsg::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << deadlinekey()
-                << eprosima::fastcdr::MemberId(1) << payload()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void HelloMsg::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> deadlinekey();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> payload();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -216,23 +161,3 @@ eprosima::fastcdr::fixed_string<256>& HelloMsg::payload()
     return m_payload;
 }
 
-
-size_t HelloMsg::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return HelloMsg_max_key_cdr_typesize;
-}
-
-bool HelloMsg::isKeyDefined()
-{
-    return true;
-}
-
-void HelloMsg::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-   scdr << eprosima::fastcdr::MemberId(268435455) << deadlinekey();   
-  
-}

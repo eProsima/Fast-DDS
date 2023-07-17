@@ -35,14 +35,6 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define MyEnumWideStruct_max_cdr_typesize 8ULL;
-
-#define SimpleWideUnionStruct_max_cdr_typesize 16ULL;
-
-#define MyEnumWideStruct_max_key_cdr_typesize 0ULL;
-
-#define SimpleWideUnionStruct_max_key_cdr_typesize 0ULL;
-
 
 
 MyEnumWideStruct::MyEnumWideStruct()
@@ -99,54 +91,6 @@ bool MyEnumWideStruct::operator !=(
     return !(*this == x);
 }
 
-size_t MyEnumWideStruct::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return MyEnumWideStruct_max_cdr_typesize;
-}
-void MyEnumWideStruct::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << my_enum_wide()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void MyEnumWideStruct::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> my_enum_wide();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
-}
-
 /*!
  * @brief This function sets a value in member my_enum_wide
  * @param _my_enum_wide New value for member my_enum_wide
@@ -175,24 +119,6 @@ MyEnumWide& MyEnumWideStruct::my_enum_wide()
     return m_my_enum_wide;
 }
 
-
-size_t MyEnumWideStruct::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return MyEnumWideStruct_max_key_cdr_typesize;
-}
-
-bool MyEnumWideStruct::isKeyDefined()
-{
-    return false;
-}
-
-void MyEnumWideStruct::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-}
 
 SimpleWideUnion::SimpleWideUnion()
 {
@@ -521,80 +447,6 @@ uint8_t& SimpleWideUnion::third()
     return m_third;
 }
 
-void SimpleWideUnion::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr << eprosima::fastcdr::MemberId(0) << _d();
-
-    switch(_d())
-    {
-                        case A:
-                        scdr << eprosima::fastcdr::MemberId(1) << m_first;
-                        break;
-                
-                        case B:
-                        scdr << eprosima::fastcdr::MemberId(2) << m_second;
-                        break;
-                
-                        case D:
-                        scdr << eprosima::fastcdr::MemberId(3) << m_third;
-                        break;
-                
-    }
-
-    scdr.end_serialize_type(current_state);
-}
-
-void SimpleWideUnion::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                    case 0:
-                        dcdr >> _d();
-                        break;
-                    default:
-                        switch (_d())
-                        {
-                                                                case A:
-                                                                // TODO Test on mutable the MemberId
-                                                                dcdr >> m_first;
-                                                                break;
-                                                        
-                                                                case B:
-                                                                // TODO Test on mutable the MemberId
-                                                                dcdr >> m_second;
-                                                                break;
-                                                        
-                                                                case D:
-                                                                // TODO Test on mutable the MemberId
-                                                                dcdr >> m_third;
-                                                                break;
-                                                        
-                        }
-ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
-}
-
 
 SimpleWideUnionStruct::SimpleWideUnionStruct()
 {
@@ -650,54 +502,6 @@ bool SimpleWideUnionStruct::operator !=(
     return !(*this == x);
 }
 
-size_t SimpleWideUnionStruct::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return SimpleWideUnionStruct_max_cdr_typesize;
-}
-void SimpleWideUnionStruct::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << my_union()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void SimpleWideUnionStruct::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> my_union();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
-}
-
 /*!
  * @brief This function copies the value in member my_union
  * @param _my_union New value to be copied in member my_union
@@ -736,21 +540,3 @@ SimpleWideUnion& SimpleWideUnionStruct::my_union()
     return m_my_union;
 }
 
-
-size_t SimpleWideUnionStruct::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return SimpleWideUnionStruct_max_key_cdr_typesize;
-}
-
-bool SimpleWideUnionStruct::isKeyDefined()
-{
-    return false;
-}
-
-void SimpleWideUnionStruct::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-}

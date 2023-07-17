@@ -34,8 +34,6 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define FlowControlExample_max_cdr_typesize 600005ULL;
-#define FlowControlExample_max_key_cdr_typesize 0ULL;
 
 FlowControlExample::FlowControlExample()
 {
@@ -95,59 +93,6 @@ bool FlowControlExample::operator !=(
         const FlowControlExample& x) const
 {
     return !(*this == x);
-}
-
-size_t FlowControlExample::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return FlowControlExample_max_cdr_typesize;
-}
-void FlowControlExample::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << message()
-                << eprosima::fastcdr::MemberId(1) << wasFast()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void FlowControlExample::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> message();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> wasFast();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -216,21 +161,3 @@ char& FlowControlExample::wasFast()
 }
 
 
-
-size_t FlowControlExample::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return FlowControlExample_max_key_cdr_typesize;
-}
-
-bool FlowControlExample::isKeyDefined()
-{
-    return false;
-}
-
-void FlowControlExample::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-}

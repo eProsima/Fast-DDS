@@ -176,98 +176,6 @@ TypeLookup_getTypes_Out& TypeLookup_getTypes_Result::result()
     return m_result;
 }
 
-void TypeLookup_getTypes_Result::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m__d;
-
-    switch (m__d)
-    {
-        case 0:
-            scdr << m_result;
-            break;
-        default:
-            break;
-    }
-}
-
-void TypeLookup_getTypes_Result::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m__d;
-
-    switch (m__d)
-    {
-        case 0:
-            dcdr >> m_result;
-            break;
-        default:
-            break;
-    }
-}
-
-void TypeLookup_getTypes_In::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-
-    scdr << type_ids;
-}
-
-void TypeLookup_getTypes_In::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-
-    dcdr >> type_ids;
-}
-
-void TypeLookup_getTypes_Out::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-
-    scdr << types;
-    scdr << complete_to_minimal;
-}
-
-void TypeLookup_getTypes_Out::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-
-    dcdr >> types;
-    dcdr >> complete_to_minimal;
-}
-
-void TypeLookup_getTypeDependencies_In::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-
-    scdr << type_ids;
-    scdr << continuation_point;
-}
-
-void TypeLookup_getTypeDependencies_In::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-
-    dcdr >> type_ids;
-    dcdr >> continuation_point;
-}
-
-void TypeLookup_getTypeDependencies_Out::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-
-    scdr << dependent_typeids;
-    scdr << continuation_point;
-}
-
-void TypeLookup_getTypeDependencies_Out::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-
-    dcdr >> dependent_typeids;
-    dcdr >> continuation_point;
-}
-
 TypeLookup_getTypeDependencies_Result::TypeLookup_getTypeDependencies_Result()
 {
     m__d = 0 /* TODO DDS_RETCODE_OK */;
@@ -430,36 +338,6 @@ TypeLookup_getTypeDependencies_Out& TypeLookup_getTypeDependencies_Result::resul
     }
 
     return m_result;
-}
-
-void TypeLookup_getTypeDependencies_Result::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m__d;
-
-    switch (m__d)
-    {
-        case 0 /* TODO DDS_RETCODE_OK */:
-            scdr << m_result;
-            break;
-        default:
-            break;
-    }
-}
-
-void TypeLookup_getTypeDependencies_Result::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m__d;
-
-    switch (m__d)
-    {
-        case 0 /* TODO DDS_RETCODE_OK */:
-            dcdr >> m_result;
-            break;
-        default:
-            break;
-    }
 }
 
 TypeLookup_Call::TypeLookup_Call()
@@ -706,58 +584,6 @@ TypeLookup_getTypeDependencies_In& TypeLookup_Call::getTypeDependencies()
     return m_getTypeDependencies;
 }
 
-void TypeLookup_Call::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m__d;
-
-    switch (m__d)
-    {
-        case TypeLookup_getTypes_Hash:
-            scdr << m_getTypes;
-            break;
-        case TypeLookup_getDependencies_Hash:
-            scdr << m_getTypeDependencies;
-            break;
-        default:
-            break;
-    }
-}
-
-void TypeLookup_Call::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m__d;
-
-    switch (m__d)
-    {
-        case TypeLookup_getTypes_Hash:
-            dcdr >> m_getTypes;
-            break;
-        case TypeLookup_getDependencies_Hash:
-            dcdr >> m_getTypeDependencies;
-            break;
-        default:
-            break;
-    }
-}
-
-void TypeLookup_Request::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-
-    scdr << header;
-    scdr << data;
-}
-
-void TypeLookup_Request::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-
-    dcdr >> header;
-    dcdr >> data;
-}
-
 TypeLookup_Return::TypeLookup_Return()
 {
     m__d = TypeLookup_getTypes_Hash;
@@ -1002,58 +828,6 @@ TypeLookup_getTypeDependencies_Result& TypeLookup_Return::getTypeDependencies()
     return m_getTypeDependencies;
 }
 
-void TypeLookup_Return::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m__d;
-
-    switch (m__d)
-    {
-        case TypeLookup_getTypes_Hash:
-            scdr << m_getType;
-            break;
-        case TypeLookup_getDependencies_Hash:
-            scdr << m_getTypeDependencies;
-            break;
-        default:
-            break;
-    }
-}
-
-void TypeLookup_Return::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m__d;
-
-    switch (m__d)
-    {
-        case TypeLookup_getTypes_Hash:
-            dcdr >> m_getType;
-            break;
-        case TypeLookup_getDependencies_Hash:
-            dcdr >> m_getTypeDependencies;
-            break;
-        default:
-            break;
-    }
-}
-
-void TypeLookup_Reply::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-
-    scdr << header;
-    scdr << return_value;
-}
-
-void TypeLookup_Reply::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-
-    dcdr >> header;
-    dcdr >> return_value;
-}
-
 // TypeSupports
 bool TypeLookup_RequestTypeSupport::serialize(
         void* data,
@@ -1074,7 +848,7 @@ bool TypeLookup_RequestTypeSupport::serialize(
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object
-        type->serialize(ser);
+        ser << *type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1100,7 +874,7 @@ bool TypeLookup_RequestTypeSupport::deserialize(
         deser.read_encapsulation();
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
         // Deserialize the object
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1169,7 +943,7 @@ bool TypeLookup_ReplyTypeSupport::serialize(
         // Serialize encapsulation
         ser.serialize_encapsulation();
         // Serialize the object
-        type->serialize(ser);
+        ser << *type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1194,7 +968,7 @@ bool TypeLookup_ReplyTypeSupport::deserialize(
         deser.read_encapsulation();
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
         // Deserialize the object
-        p_type->deserialize(deser);
+        deser >> *p_type;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1247,6 +1021,38 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result& data)
+{
+    scdr << data._d();
+
+    switch (data._d())
+    {
+        case 0:
+            scdr << data.result();
+            break;
+        default:
+            break;
+    }
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Result& data)
+{
+    dcdr >> data._d();
+
+    switch (data._d())
+    {
+        case 0:
+            dcdr >> data.result();
+            break;
+        default:
+            break;
+    }
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In& data,
@@ -1265,6 +1071,22 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In& data)
+{
+
+    scdr << data.type_ids;
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastdds::dds::builtin::TypeLookup_getTypes_In& data)
+{
+
+    dcdr >> data.type_ids;
 }
 
 size_t calculate_serialized_size(
@@ -1290,6 +1112,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out& data)
+{
+
+    scdr << data.types;
+    scdr << data.complete_to_minimal;
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastdds::dds::builtin::TypeLookup_getTypes_Out& data)
+{
+
+    dcdr >> data.types;
+    dcdr >> data.complete_to_minimal;
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In& data,
@@ -1312,6 +1152,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In& data)
+{
+
+    scdr << data.type_ids;
+    scdr << data.continuation_point;
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_In& data)
+{
+
+    dcdr >> data.type_ids;
+    dcdr >> data.continuation_point;
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out& data,
@@ -1332,6 +1190,24 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out& data)
+{
+
+    scdr << data.dependent_typeids;
+    scdr << data.continuation_point;
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Out& data)
+{
+
+    dcdr >> data.dependent_typeids;
+    dcdr >> data.continuation_point;
 }
 
 size_t calculate_serialized_size(
@@ -1363,6 +1239,38 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result& data)
+{
+    scdr << data._d();
+
+    switch (data._d())
+    {
+        case 0 /* TODO DDS_RETCODE_OK */:
+            scdr << data.result();
+            break;
+        default:
+            break;
+    }
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastdds::dds::builtin::TypeLookup_getTypeDependencies_Result& data)
+{
+    dcdr >> data._d();
+
+    switch (data._d())
+    {
+        case 0 /* TODO DDS_RETCODE_OK */:
+            dcdr >> data.result();
+            break;
+        default:
+            break;
+    }
 }
 
 size_t calculate_serialized_size(
@@ -1399,6 +1307,44 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const TypeLookup_Call& data)
+{
+    scdr << data._d();
+
+    switch (data._d())
+    {
+        case TypeLookup_getTypes_Hash:
+            scdr << data.getTypes();
+            break;
+        case TypeLookup_getDependencies_Hash:
+            scdr << data.getTypeDependencies();
+            break;
+        default:
+            break;
+    }
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        TypeLookup_Call& data)
+{
+    dcdr >> data._d();
+
+    switch (data._d())
+    {
+        case TypeLookup_getTypes_Hash:
+            dcdr >> data.getTypes();
+            break;
+        case TypeLookup_getDependencies_Hash:
+            dcdr >> data.getTypeDependencies();
+            break;
+        default:
+            break;
+    }
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::dds::builtin::TypeLookup_Request& data,
@@ -1419,6 +1365,24 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const TypeLookup_Request& data)
+{
+
+    scdr << data.header;
+    scdr << data.data;
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        TypeLookup_Request& data)
+{
+
+    dcdr >> data.header;
+    dcdr >> data.data;
 }
 
 size_t calculate_serialized_size(
@@ -1455,6 +1419,44 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastdds::dds::builtin::TypeLookup_Return& data)
+{
+    scdr << data._d();
+
+    switch (data._d())
+    {
+        case TypeLookup_getTypes_Hash:
+            scdr << data.getType();
+            break;
+        case TypeLookup_getDependencies_Hash:
+            scdr << data.getTypeDependencies();
+            break;
+        default:
+            break;
+    }
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastdds::dds::builtin::TypeLookup_Return& data)
+{
+    dcdr >> data._d();
+
+    switch (data._d())
+    {
+        case TypeLookup_getTypes_Hash:
+            dcdr >> data.getType();
+            break;
+        case TypeLookup_getDependencies_Hash:
+            dcdr >> data.getTypeDependencies();
+            break;
+        default:
+            break;
+    }
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::dds::builtin::TypeLookup_Reply& data,
@@ -1475,6 +1477,24 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastdds::dds::builtin::TypeLookup_Reply& data)
+{
+
+    scdr << data.header;
+    scdr << data.return_value;
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastdds::dds::builtin::TypeLookup_Reply& data)
+{
+
+    dcdr >> data.header;
+    dcdr >> data.return_value;
 }
 
 } // namespace fastcdr

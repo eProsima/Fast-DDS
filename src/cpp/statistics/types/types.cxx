@@ -34,38 +34,6 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define eprosima_fastdds_statistics_DiscoveryTime_max_cdr_typesize 852ULL;
-#define eprosima_fastdds_statistics_PhysicalData_max_cdr_typesize 812ULL;
-
-#define eprosima_fastdds_statistics_detail_Locator_s_max_cdr_typesize 28ULL;
-
-#define eprosima_fastdds_statistics_detail_GuidPrefix_s_max_cdr_typesize 16ULL;
-#define eprosima_fastdds_statistics_detail_SampleIdentity_s_max_cdr_typesize 44ULL;
-#define eprosima_fastdds_statistics_EntityData_max_cdr_typesize 36ULL;
-#define eprosima_fastdds_statistics_Entity2LocatorTraffic_max_cdr_typesize 82ULL;
-#define eprosima_fastdds_statistics_detail_EntityId_s_max_cdr_typesize 8ULL;
-#define eprosima_fastdds_statistics_EntityCount_max_cdr_typesize 40ULL;
-#define eprosima_fastdds_statistics_WriterReaderData_max_cdr_typesize 64ULL;
-#define eprosima_fastdds_statistics_SampleIdentityCount_max_cdr_typesize 56ULL;
-#define eprosima_fastdds_statistics_Locator2LocatorData_max_cdr_typesize 64ULL;
-#define eprosima_fastdds_statistics_detail_GUID_s_max_cdr_typesize 28ULL;
-#define eprosima_fastdds_statistics_detail_SequenceNumber_s_max_cdr_typesize 12ULL;
-#define eprosima_fastdds_statistics_DiscoveryTime_max_key_cdr_typesize 56ULL;
-#define eprosima_fastdds_statistics_PhysicalData_max_key_cdr_typesize 28ULL;
-
-#define eprosima_fastdds_statistics_detail_Locator_s_max_key_cdr_typesize 0ULL;
-
-#define eprosima_fastdds_statistics_detail_GuidPrefix_s_max_key_cdr_typesize 0ULL;
-#define eprosima_fastdds_statistics_detail_SampleIdentity_s_max_key_cdr_typesize 0ULL;
-#define eprosima_fastdds_statistics_EntityData_max_key_cdr_typesize 28ULL;
-#define eprosima_fastdds_statistics_Entity2LocatorTraffic_max_key_cdr_typesize 56ULL;
-#define eprosima_fastdds_statistics_detail_EntityId_s_max_key_cdr_typesize 0ULL;
-#define eprosima_fastdds_statistics_EntityCount_max_key_cdr_typesize 28ULL;
-#define eprosima_fastdds_statistics_WriterReaderData_max_key_cdr_typesize 56ULL;
-#define eprosima_fastdds_statistics_SampleIdentityCount_max_key_cdr_typesize 44ULL;
-#define eprosima_fastdds_statistics_Locator2LocatorData_max_key_cdr_typesize 56ULL;
-#define eprosima_fastdds_statistics_detail_GUID_s_max_key_cdr_typesize 0ULL;
-#define eprosima_fastdds_statistics_detail_SequenceNumber_s_max_key_cdr_typesize 0ULL;
 
 eprosima::fastdds::statistics::detail::EntityId_s::EntityId_s()
 {
@@ -119,54 +87,6 @@ bool eprosima::fastdds::statistics::detail::EntityId_s::operator !=(
     return !(*this == x);
 }
 
-size_t eprosima::fastdds::statistics::detail::EntityId_s::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_detail_EntityId_s_max_cdr_typesize;
-}
-void eprosima::fastdds::statistics::detail::EntityId_s::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << value()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void eprosima::fastdds::statistics::detail::EntityId_s::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> value();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
-}
-
 /*!
  * @brief This function copies the value in member value
  * @param _value New value to be copied in member value
@@ -205,24 +125,6 @@ std::array<uint8_t, 4>& eprosima::fastdds::statistics::detail::EntityId_s::value
     return m_value;
 }
 
-
-size_t eprosima::fastdds::statistics::detail::EntityId_s::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_detail_EntityId_s_max_key_cdr_typesize;
-}
-
-bool eprosima::fastdds::statistics::detail::EntityId_s::isKeyDefined()
-{
-    return false;
-}
-
-void eprosima::fastdds::statistics::detail::EntityId_s::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-}
 
 eprosima::fastdds::statistics::detail::GuidPrefix_s::GuidPrefix_s()
 {
@@ -276,54 +178,6 @@ bool eprosima::fastdds::statistics::detail::GuidPrefix_s::operator !=(
     return !(*this == x);
 }
 
-size_t eprosima::fastdds::statistics::detail::GuidPrefix_s::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_detail_GuidPrefix_s_max_cdr_typesize;
-}
-void eprosima::fastdds::statistics::detail::GuidPrefix_s::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << value()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void eprosima::fastdds::statistics::detail::GuidPrefix_s::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> value();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
-}
-
 /*!
  * @brief This function copies the value in member value
  * @param _value New value to be copied in member value
@@ -362,24 +216,6 @@ std::array<uint8_t, 12>& eprosima::fastdds::statistics::detail::GuidPrefix_s::va
     return m_value;
 }
 
-
-size_t eprosima::fastdds::statistics::detail::GuidPrefix_s::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_detail_GuidPrefix_s_max_key_cdr_typesize;
-}
-
-bool eprosima::fastdds::statistics::detail::GuidPrefix_s::isKeyDefined()
-{
-    return false;
-}
-
-void eprosima::fastdds::statistics::detail::GuidPrefix_s::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-}
 
 eprosima::fastdds::statistics::detail::GUID_s::GUID_s()
 {
@@ -439,59 +275,6 @@ bool eprosima::fastdds::statistics::detail::GUID_s::operator !=(
         const GUID_s& x) const
 {
     return !(*this == x);
-}
-
-size_t eprosima::fastdds::statistics::detail::GUID_s::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_detail_GUID_s_max_cdr_typesize;
-}
-void eprosima::fastdds::statistics::detail::GUID_s::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << guidPrefix()
-                << eprosima::fastcdr::MemberId(1) << entityId()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void eprosima::fastdds::statistics::detail::GUID_s::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> guidPrefix();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> entityId();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -570,24 +353,6 @@ eprosima::fastdds::statistics::detail::EntityId_s& eprosima::fastdds::statistics
 }
 
 
-size_t eprosima::fastdds::statistics::detail::GUID_s::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_detail_GUID_s_max_key_cdr_typesize;
-}
-
-bool eprosima::fastdds::statistics::detail::GUID_s::isKeyDefined()
-{
-    return false;
-}
-
-void eprosima::fastdds::statistics::detail::GUID_s::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-}
-
 eprosima::fastdds::statistics::detail::SequenceNumber_s::SequenceNumber_s()
 {
 
@@ -648,59 +413,6 @@ bool eprosima::fastdds::statistics::detail::SequenceNumber_s::operator !=(
     return !(*this == x);
 }
 
-size_t eprosima::fastdds::statistics::detail::SequenceNumber_s::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_detail_SequenceNumber_s_max_cdr_typesize;
-}
-void eprosima::fastdds::statistics::detail::SequenceNumber_s::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << high()
-                << eprosima::fastcdr::MemberId(1) << low()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void eprosima::fastdds::statistics::detail::SequenceNumber_s::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> high();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> low();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
-}
-
 /*!
  * @brief This function sets a value in member high
  * @param _high New value for member high
@@ -758,24 +470,6 @@ uint32_t& eprosima::fastdds::statistics::detail::SequenceNumber_s::low()
 }
 
 
-
-size_t eprosima::fastdds::statistics::detail::SequenceNumber_s::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_detail_SequenceNumber_s_max_key_cdr_typesize;
-}
-
-bool eprosima::fastdds::statistics::detail::SequenceNumber_s::isKeyDefined()
-{
-    return false;
-}
-
-void eprosima::fastdds::statistics::detail::SequenceNumber_s::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-}
 
 eprosima::fastdds::statistics::detail::SampleIdentity_s::SampleIdentity_s()
 {
@@ -835,59 +529,6 @@ bool eprosima::fastdds::statistics::detail::SampleIdentity_s::operator !=(
         const SampleIdentity_s& x) const
 {
     return !(*this == x);
-}
-
-size_t eprosima::fastdds::statistics::detail::SampleIdentity_s::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_detail_SampleIdentity_s_max_cdr_typesize;
-}
-void eprosima::fastdds::statistics::detail::SampleIdentity_s::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << writer_guid()
-                << eprosima::fastcdr::MemberId(1) << sequence_number()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void eprosima::fastdds::statistics::detail::SampleIdentity_s::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> writer_guid();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> sequence_number();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -966,24 +607,6 @@ eprosima::fastdds::statistics::detail::SequenceNumber_s& eprosima::fastdds::stat
 }
 
 
-size_t eprosima::fastdds::statistics::detail::SampleIdentity_s::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_detail_SampleIdentity_s_max_key_cdr_typesize;
-}
-
-bool eprosima::fastdds::statistics::detail::SampleIdentity_s::isKeyDefined()
-{
-    return false;
-}
-
-void eprosima::fastdds::statistics::detail::SampleIdentity_s::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-}
-
 eprosima::fastdds::statistics::detail::Locator_s::Locator_s()
 {
 
@@ -1048,64 +671,6 @@ bool eprosima::fastdds::statistics::detail::Locator_s::operator !=(
         const Locator_s& x) const
 {
     return !(*this == x);
-}
-
-size_t eprosima::fastdds::statistics::detail::Locator_s::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_detail_Locator_s_max_cdr_typesize;
-}
-void eprosima::fastdds::statistics::detail::Locator_s::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << kind()
-                << eprosima::fastcdr::MemberId(1) << port()
-                << eprosima::fastcdr::MemberId(2) << address()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void eprosima::fastdds::statistics::detail::Locator_s::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> kind();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> port();
-                                            break;
-                                        
-                                        case 2:
-                    dcdr >> address();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -1203,24 +768,6 @@ std::array<uint8_t, 16>& eprosima::fastdds::statistics::detail::Locator_s::addre
 }
 
 
-size_t eprosima::fastdds::statistics::detail::Locator_s::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_detail_Locator_s_max_key_cdr_typesize;
-}
-
-bool eprosima::fastdds::statistics::detail::Locator_s::isKeyDefined()
-{
-    return false;
-}
-
-void eprosima::fastdds::statistics::detail::Locator_s::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-}
-
 
 eprosima::fastdds::statistics::DiscoveryTime::DiscoveryTime()
 {
@@ -1304,79 +851,6 @@ bool eprosima::fastdds::statistics::DiscoveryTime::operator !=(
         const DiscoveryTime& x) const
 {
     return !(*this == x);
-}
-
-size_t eprosima::fastdds::statistics::DiscoveryTime::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_DiscoveryTime_max_cdr_typesize;
-}
-void eprosima::fastdds::statistics::DiscoveryTime::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << local_participant_guid()
-                << eprosima::fastcdr::MemberId(1) << remote_entity_guid()
-                << eprosima::fastcdr::MemberId(2) << time()
-                << eprosima::fastcdr::MemberId(3) << host()
-                << eprosima::fastcdr::MemberId(4) << user()
-                << eprosima::fastcdr::MemberId(5) << process()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void eprosima::fastdds::statistics::DiscoveryTime::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> local_participant_guid();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> remote_entity_guid();
-                                            break;
-                                        
-                                        case 2:
-                    dcdr >> time();
-                                            break;
-                                        
-                                        case 3:
-                    dcdr >> host();
-                                            break;
-                                        
-                                        case 4:
-                    dcdr >> user();
-                                            break;
-                                        
-                                        case 5:
-                    dcdr >> process();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -1594,30 +1068,6 @@ std::string& eprosima::fastdds::statistics::DiscoveryTime::process()
 }
 
 
-size_t eprosima::fastdds::statistics::DiscoveryTime::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_DiscoveryTime_max_key_cdr_typesize;
-}
-
-bool eprosima::fastdds::statistics::DiscoveryTime::isKeyDefined()
-{
-    return true;
-}
-
-void eprosima::fastdds::statistics::DiscoveryTime::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-    m_local_participant_guid.serialize(scdr);    
-   m_remote_entity_guid.serialize(scdr);    
- 
- 
- 
-  
-}
-
 eprosima::fastdds::statistics::EntityCount::EntityCount()
 {
 
@@ -1676,59 +1126,6 @@ bool eprosima::fastdds::statistics::EntityCount::operator !=(
         const EntityCount& x) const
 {
     return !(*this == x);
-}
-
-size_t eprosima::fastdds::statistics::EntityCount::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_EntityCount_max_cdr_typesize;
-}
-void eprosima::fastdds::statistics::EntityCount::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << guid()
-                << eprosima::fastcdr::MemberId(1) << count()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void eprosima::fastdds::statistics::EntityCount::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> guid();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> count();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -1798,26 +1195,6 @@ uint64_t& eprosima::fastdds::statistics::EntityCount::count()
 
 
 
-size_t eprosima::fastdds::statistics::EntityCount::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_EntityCount_max_key_cdr_typesize;
-}
-
-bool eprosima::fastdds::statistics::EntityCount::isKeyDefined()
-{
-    return true;
-}
-
-void eprosima::fastdds::statistics::EntityCount::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-    m_guid.serialize(scdr);    
-  
-}
-
 eprosima::fastdds::statistics::SampleIdentityCount::SampleIdentityCount()
 {
 
@@ -1876,59 +1253,6 @@ bool eprosima::fastdds::statistics::SampleIdentityCount::operator !=(
         const SampleIdentityCount& x) const
 {
     return !(*this == x);
-}
-
-size_t eprosima::fastdds::statistics::SampleIdentityCount::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_SampleIdentityCount_max_cdr_typesize;
-}
-void eprosima::fastdds::statistics::SampleIdentityCount::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << sample_id()
-                << eprosima::fastcdr::MemberId(1) << count()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void eprosima::fastdds::statistics::SampleIdentityCount::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> sample_id();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> count();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -1997,26 +1321,6 @@ uint64_t& eprosima::fastdds::statistics::SampleIdentityCount::count()
 }
 
 
-
-size_t eprosima::fastdds::statistics::SampleIdentityCount::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_SampleIdentityCount_max_key_cdr_typesize;
-}
-
-bool eprosima::fastdds::statistics::SampleIdentityCount::isKeyDefined()
-{
-    return true;
-}
-
-void eprosima::fastdds::statistics::SampleIdentityCount::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-    m_sample_id.serialize(scdr);    
-  
-}
 
 eprosima::fastdds::statistics::Entity2LocatorTraffic::Entity2LocatorTraffic()
 {
@@ -2094,74 +1398,6 @@ bool eprosima::fastdds::statistics::Entity2LocatorTraffic::operator !=(
         const Entity2LocatorTraffic& x) const
 {
     return !(*this == x);
-}
-
-size_t eprosima::fastdds::statistics::Entity2LocatorTraffic::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_Entity2LocatorTraffic_max_cdr_typesize;
-}
-void eprosima::fastdds::statistics::Entity2LocatorTraffic::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << src_guid()
-                << eprosima::fastcdr::MemberId(1) << dst_locator()
-                << eprosima::fastcdr::MemberId(2) << packet_count()
-                << eprosima::fastcdr::MemberId(3) << byte_count()
-                << eprosima::fastcdr::MemberId(4) << byte_magnitude_order()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void eprosima::fastdds::statistics::Entity2LocatorTraffic::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> src_guid();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> dst_locator();
-                                            break;
-                                        
-                                        case 2:
-                    dcdr >> packet_count();
-                                            break;
-                                        
-                                        case 3:
-                    dcdr >> byte_count();
-                                            break;
-                                        
-                                        case 4:
-                    dcdr >> byte_magnitude_order();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -2324,29 +1560,6 @@ int16_t& eprosima::fastdds::statistics::Entity2LocatorTraffic::byte_magnitude_or
 
 
 
-size_t eprosima::fastdds::statistics::Entity2LocatorTraffic::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_Entity2LocatorTraffic_max_key_cdr_typesize;
-}
-
-bool eprosima::fastdds::statistics::Entity2LocatorTraffic::isKeyDefined()
-{
-    return true;
-}
-
-void eprosima::fastdds::statistics::Entity2LocatorTraffic::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-    m_src_guid.serialize(scdr);    
-   m_dst_locator.serialize(scdr);    
- 
- 
-  
-}
-
 eprosima::fastdds::statistics::WriterReaderData::WriterReaderData()
 {
 
@@ -2411,64 +1624,6 @@ bool eprosima::fastdds::statistics::WriterReaderData::operator !=(
         const WriterReaderData& x) const
 {
     return !(*this == x);
-}
-
-size_t eprosima::fastdds::statistics::WriterReaderData::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_WriterReaderData_max_cdr_typesize;
-}
-void eprosima::fastdds::statistics::WriterReaderData::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << writer_guid()
-                << eprosima::fastcdr::MemberId(1) << reader_guid()
-                << eprosima::fastcdr::MemberId(2) << data()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void eprosima::fastdds::statistics::WriterReaderData::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> writer_guid();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> reader_guid();
-                                            break;
-                                        
-                                        case 2:
-                    dcdr >> data();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -2575,27 +1730,6 @@ float& eprosima::fastdds::statistics::WriterReaderData::data()
 
 
 
-size_t eprosima::fastdds::statistics::WriterReaderData::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_WriterReaderData_max_key_cdr_typesize;
-}
-
-bool eprosima::fastdds::statistics::WriterReaderData::isKeyDefined()
-{
-    return true;
-}
-
-void eprosima::fastdds::statistics::WriterReaderData::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-    m_writer_guid.serialize(scdr);    
-   m_reader_guid.serialize(scdr);    
-  
-}
-
 eprosima::fastdds::statistics::Locator2LocatorData::Locator2LocatorData()
 {
 
@@ -2660,64 +1794,6 @@ bool eprosima::fastdds::statistics::Locator2LocatorData::operator !=(
         const Locator2LocatorData& x) const
 {
     return !(*this == x);
-}
-
-size_t eprosima::fastdds::statistics::Locator2LocatorData::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_Locator2LocatorData_max_cdr_typesize;
-}
-void eprosima::fastdds::statistics::Locator2LocatorData::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << src_locator()
-                << eprosima::fastcdr::MemberId(1) << dst_locator()
-                << eprosima::fastcdr::MemberId(2) << data()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void eprosima::fastdds::statistics::Locator2LocatorData::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> src_locator();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> dst_locator();
-                                            break;
-                                        
-                                        case 2:
-                    dcdr >> data();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -2824,27 +1900,6 @@ float& eprosima::fastdds::statistics::Locator2LocatorData::data()
 
 
 
-size_t eprosima::fastdds::statistics::Locator2LocatorData::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_Locator2LocatorData_max_key_cdr_typesize;
-}
-
-bool eprosima::fastdds::statistics::Locator2LocatorData::isKeyDefined()
-{
-    return true;
-}
-
-void eprosima::fastdds::statistics::Locator2LocatorData::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-    m_src_locator.serialize(scdr);    
-   m_dst_locator.serialize(scdr);    
-  
-}
-
 eprosima::fastdds::statistics::EntityData::EntityData()
 {
 
@@ -2903,59 +1958,6 @@ bool eprosima::fastdds::statistics::EntityData::operator !=(
         const EntityData& x) const
 {
     return !(*this == x);
-}
-
-size_t eprosima::fastdds::statistics::EntityData::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_EntityData_max_cdr_typesize;
-}
-void eprosima::fastdds::statistics::EntityData::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << guid()
-                << eprosima::fastcdr::MemberId(1) << data()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void eprosima::fastdds::statistics::EntityData::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> guid();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> data();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -3024,26 +2026,6 @@ float& eprosima::fastdds::statistics::EntityData::data()
 }
 
 
-
-size_t eprosima::fastdds::statistics::EntityData::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_EntityData_max_key_cdr_typesize;
-}
-
-bool eprosima::fastdds::statistics::EntityData::isKeyDefined()
-{
-    return true;
-}
-
-void eprosima::fastdds::statistics::EntityData::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-    m_guid.serialize(scdr);    
-  
-}
 
 eprosima::fastdds::statistics::PhysicalData::PhysicalData()
 {
@@ -3115,69 +2097,6 @@ bool eprosima::fastdds::statistics::PhysicalData::operator !=(
         const PhysicalData& x) const
 {
     return !(*this == x);
-}
-
-size_t eprosima::fastdds::statistics::PhysicalData::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_PhysicalData_max_cdr_typesize;
-}
-void eprosima::fastdds::statistics::PhysicalData::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << participant_guid()
-                << eprosima::fastcdr::MemberId(1) << host()
-                << eprosima::fastcdr::MemberId(2) << user()
-                << eprosima::fastcdr::MemberId(3) << process()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void eprosima::fastdds::statistics::PhysicalData::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> participant_guid();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> host();
-                                            break;
-                                        
-                                        case 2:
-                    dcdr >> user();
-                                            break;
-                                        
-                                        case 3:
-                    dcdr >> process();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -3329,28 +2248,6 @@ std::string& eprosima::fastdds::statistics::PhysicalData::process()
     return m_process;
 }
 
-
-size_t eprosima::fastdds::statistics::PhysicalData::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return eprosima_fastdds_statistics_PhysicalData_max_key_cdr_typesize;
-}
-
-bool eprosima::fastdds::statistics::PhysicalData::isKeyDefined()
-{
-    return true;
-}
-
-void eprosima::fastdds::statistics::PhysicalData::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-    m_participant_guid.serialize(scdr);    
- 
- 
-  
-}
 
 
 eprosima::fastdds::statistics::Data::Data()
@@ -4175,143 +3072,6 @@ eprosima::fastdds::statistics::PhysicalData& eprosima::fastdds::statistics::Data
     }
 
     return m_physical_data;
-}
-
-void eprosima::fastdds::statistics::Data::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr << eprosima::fastcdr::MemberId(0) << _d();
-
-    switch(_d())
-    {
-                        case HISTORY2HISTORY_LATENCY:
-                        scdr << eprosima::fastcdr::MemberId(1) << m_writer_reader_data;
-                        break;
-                
-                        case NETWORK_LATENCY:
-                        scdr << eprosima::fastcdr::MemberId(2) << m_locator2locator_data;
-                        break;
-                
-                        case PUBLICATION_THROUGHPUT:
-                        case SUBSCRIPTION_THROUGHPUT:
-                        scdr << eprosima::fastcdr::MemberId(3) << m_entity_data;
-                        break;
-                
-                        case RTPS_SENT:
-                        case RTPS_LOST:
-                        scdr << eprosima::fastcdr::MemberId(4) << m_entity2locator_traffic;
-                        break;
-                
-                        case RESENT_DATAS:
-                        case HEARTBEAT_COUNT:
-                        case ACKNACK_COUNT:
-                        case NACKFRAG_COUNT:
-                        case GAP_COUNT:
-                        case DATA_COUNT:
-                        case PDP_PACKETS:
-                        case EDP_PACKETS:
-                        scdr << eprosima::fastcdr::MemberId(5) << m_entity_count;
-                        break;
-                
-                        case DISCOVERED_ENTITY:
-                        scdr << eprosima::fastcdr::MemberId(6) << m_discovery_time;
-                        break;
-                
-                        case SAMPLE_DATAS:
-                        scdr << eprosima::fastcdr::MemberId(7) << m_sample_identity_count;
-                        break;
-                
-                        case PHYSICAL_DATA:
-                        scdr << eprosima::fastcdr::MemberId(8) << m_physical_data;
-                        break;
-                
-    }
-
-    scdr.end_serialize_type(current_state);
-}
-
-void eprosima::fastdds::statistics::Data::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                    case 0:
-                        dcdr >> _d();
-                        break;
-                    default:
-                        switch (_d())
-                        {
-                                                                case HISTORY2HISTORY_LATENCY:
-                                                                // TODO Test on mutable the MemberId
-                                                                dcdr >> m_writer_reader_data;
-                                                                break;
-                                                        
-                                                                case NETWORK_LATENCY:
-                                                                // TODO Test on mutable the MemberId
-                                                                dcdr >> m_locator2locator_data;
-                                                                break;
-                                                        
-                                                                case PUBLICATION_THROUGHPUT:
-                                                                case SUBSCRIPTION_THROUGHPUT:
-                                                                // TODO Test on mutable the MemberId
-                                                                dcdr >> m_entity_data;
-                                                                break;
-                                                        
-                                                                case RTPS_SENT:
-                                                                case RTPS_LOST:
-                                                                // TODO Test on mutable the MemberId
-                                                                dcdr >> m_entity2locator_traffic;
-                                                                break;
-                                                        
-                                                                case RESENT_DATAS:
-                                                                case HEARTBEAT_COUNT:
-                                                                case ACKNACK_COUNT:
-                                                                case NACKFRAG_COUNT:
-                                                                case GAP_COUNT:
-                                                                case DATA_COUNT:
-                                                                case PDP_PACKETS:
-                                                                case EDP_PACKETS:
-                                                                // TODO Test on mutable the MemberId
-                                                                dcdr >> m_entity_count;
-                                                                break;
-                                                        
-                                                                case DISCOVERED_ENTITY:
-                                                                // TODO Test on mutable the MemberId
-                                                                dcdr >> m_discovery_time;
-                                                                break;
-                                                        
-                                                                case SAMPLE_DATAS:
-                                                                // TODO Test on mutable the MemberId
-                                                                dcdr >> m_sample_identity_count;
-                                                                break;
-                                                        
-                                                                case PHYSICAL_DATA:
-                                                                // TODO Test on mutable the MemberId
-                                                                dcdr >> m_physical_data;
-                                                                break;
-                                                        
-                        }
-ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 

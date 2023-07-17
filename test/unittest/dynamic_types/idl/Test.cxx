@@ -35,36 +35,6 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define KeyedStruct_max_cdr_typesize 1372ULL;
-
-
-
-#define BasicStruct_max_cdr_typesize 1364ULL;
-
-#define ComplexStruct_max_cdr_typesize 69480468ULL;
-
-
-#define CompleteStruct_max_cdr_typesize 69480740ULL;
-
-
-
-
-
-#define KeyedStruct_max_key_cdr_typesize 1ULL;
-
-
-
-#define BasicStruct_max_key_cdr_typesize 0ULL;
-
-#define ComplexStruct_max_key_cdr_typesize 0ULL;
-
-
-#define CompleteStruct_max_key_cdr_typesize 0ULL;
-
-
-
-
-
 
 
 
@@ -208,124 +178,6 @@ bool BasicStruct::operator !=(
         const BasicStruct& x) const
 {
     return !(*this == x);
-}
-
-size_t BasicStruct::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return BasicStruct_max_cdr_typesize;
-}
-void BasicStruct::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << my_bool()
-                << eprosima::fastcdr::MemberId(1) << my_octet()
-                << eprosima::fastcdr::MemberId(2) << my_int16()
-                << eprosima::fastcdr::MemberId(3) << my_int32()
-                << eprosima::fastcdr::MemberId(4) << my_int64()
-                << eprosima::fastcdr::MemberId(5) << my_uint16()
-                << eprosima::fastcdr::MemberId(6) << my_uint32()
-                << eprosima::fastcdr::MemberId(7) << my_uint64()
-                << eprosima::fastcdr::MemberId(8) << my_float32()
-                << eprosima::fastcdr::MemberId(9) << my_float64()
-                << eprosima::fastcdr::MemberId(10) << my_float128()
-                << eprosima::fastcdr::MemberId(11) << my_char()
-                << eprosima::fastcdr::MemberId(12) << my_wchar()
-                << eprosima::fastcdr::MemberId(13) << my_string()
-                << eprosima::fastcdr::MemberId(14) << my_wstring()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void BasicStruct::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> my_bool();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> my_octet();
-                                            break;
-                                        
-                                        case 2:
-                    dcdr >> my_int16();
-                                            break;
-                                        
-                                        case 3:
-                    dcdr >> my_int32();
-                                            break;
-                                        
-                                        case 4:
-                    dcdr >> my_int64();
-                                            break;
-                                        
-                                        case 5:
-                    dcdr >> my_uint16();
-                                            break;
-                                        
-                                        case 6:
-                    dcdr >> my_uint32();
-                                            break;
-                                        
-                                        case 7:
-                    dcdr >> my_uint64();
-                                            break;
-                                        
-                                        case 8:
-                    dcdr >> my_float32();
-                                            break;
-                                        
-                                        case 9:
-                    dcdr >> my_float64();
-                                            break;
-                                        
-                                        case 10:
-                    dcdr >> my_float128();
-                                            break;
-                                        
-                                        case 11:
-                    dcdr >> my_char();
-                                            break;
-                                        
-                                        case 12:
-                    dcdr >> my_wchar();
-                                            break;
-                                        
-                                        case 13:
-                    dcdr >> my_string();
-                                            break;
-                                        
-                                        case 14:
-                    dcdr >> my_wstring();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -768,24 +620,6 @@ std::wstring& BasicStruct::my_wstring()
 }
 
 
-size_t BasicStruct::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return BasicStruct_max_key_cdr_typesize;
-}
-
-bool BasicStruct::isKeyDefined()
-{
-    return false;
-}
-
-void BasicStruct::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-}
-
 
 
 
@@ -971,159 +805,6 @@ bool ComplexStruct::operator !=(
         const ComplexStruct& x) const
 {
     return !(*this == x);
-}
-
-size_t ComplexStruct::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return ComplexStruct_max_cdr_typesize;
-}
-void ComplexStruct::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << my_octet()
-                << eprosima::fastcdr::MemberId(1) << my_basic_struct()
-                << eprosima::fastcdr::MemberId(2) << my_alias_enum()
-                << eprosima::fastcdr::MemberId(3) << my_enum()
-                << eprosima::fastcdr::MemberId(4) << my_sequence_octet()
-                << eprosima::fastcdr::MemberId(5) << my_sequence_struct()
-                << eprosima::fastcdr::MemberId(6) << my_array_octet()
-                << eprosima::fastcdr::MemberId(7) << my_octet_array_500()
-                << eprosima::fastcdr::MemberId(8) << my_array_struct()
-                << eprosima::fastcdr::MemberId(9) << my_map_octet_short()
-                << eprosima::fastcdr::MemberId(10) << my_map_long_struct()
-                << eprosima::fastcdr::MemberId(11) << my_map_long_seq_octet()
-                << eprosima::fastcdr::MemberId(12) << my_map_long_octet_array_500()
-                << eprosima::fastcdr::MemberId(13) << my_map_long_lol_type()
-                << eprosima::fastcdr::MemberId(14) << my_small_string_8()
-                << eprosima::fastcdr::MemberId(15) << my_small_string_16()
-                << eprosima::fastcdr::MemberId(16) << my_large_string_8()
-                << eprosima::fastcdr::MemberId(17) << my_large_string_16()
-                << eprosima::fastcdr::MemberId(18) << my_array_string()
-                << eprosima::fastcdr::MemberId(19) << multi_alias_array_42()
-                << eprosima::fastcdr::MemberId(20) << my_array_arrays()
-                << eprosima::fastcdr::MemberId(21) << my_sequences_array()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void ComplexStruct::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> my_octet();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> my_basic_struct();
-                                            break;
-                                        
-                                        case 2:
-                    dcdr >> my_alias_enum();
-                                            break;
-                                        
-                                        case 3:
-                    dcdr >> my_enum();
-                                            break;
-                                        
-                                        case 4:
-                    dcdr >> my_sequence_octet();
-                                            break;
-                                        
-                                        case 5:
-                    dcdr >> my_sequence_struct();
-                                            break;
-                                        
-                                        case 6:
-                    dcdr >> my_array_octet();
-                                            break;
-                                        
-                                        case 7:
-                    dcdr >> my_octet_array_500();
-                                            break;
-                                        
-                                        case 8:
-                    dcdr >> my_array_struct();
-                                            break;
-                                        
-                                        case 9:
-                    dcdr >> my_map_octet_short();
-                                            break;
-                                        
-                                        case 10:
-                    dcdr >> my_map_long_struct();
-                                            break;
-                                        
-                                        case 11:
-                    dcdr >> my_map_long_seq_octet();
-                                            break;
-                                        
-                                        case 12:
-                    dcdr >> my_map_long_octet_array_500();
-                                            break;
-                                        
-                                        case 13:
-                    dcdr >> my_map_long_lol_type();
-                                            break;
-                                        
-                                        case 14:
-                    dcdr >> my_small_string_8();
-                                            break;
-                                        
-                                        case 15:
-                    dcdr >> my_small_string_16();
-                                            break;
-                                        
-                                        case 16:
-                    dcdr >> my_large_string_8();
-                                            break;
-                                        
-                                        case 17:
-                    dcdr >> my_large_string_16();
-                                            break;
-                                        
-                                        case 18:
-                    dcdr >> my_array_string();
-                                            break;
-                                        
-                                        case 19:
-                    dcdr >> multi_alias_array_42();
-                                            break;
-                                        
-                                        case 20:
-                    dcdr >> my_array_arrays();
-                                            break;
-                                        
-                                        case 21:
-                    dcdr >> my_sequences_array();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -1915,24 +1596,6 @@ std::array<MySequenceLong, 23>& ComplexStruct::my_sequences_array()
 }
 
 
-size_t ComplexStruct::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return ComplexStruct_max_key_cdr_typesize;
-}
-
-bool ComplexStruct::isKeyDefined()
-{
-    return false;
-}
-
-void ComplexStruct::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-}
-
 MyUnion::MyUnion()
 {
     m__d = ::A;
@@ -2209,73 +1872,6 @@ ComplexStruct& MyUnion::complex()
     }
 
     return m_complex;
-}
-
-void MyUnion::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr << eprosima::fastcdr::MemberId(0) << _d();
-
-    switch(_d())
-    {
-                        case ::A:
-                        scdr << eprosima::fastcdr::MemberId(1) << m_basic;
-                        break;
-                
-                        case ::B:
-                        case ::C:
-                        scdr << eprosima::fastcdr::MemberId(2) << m_complex;
-                        break;
-                
-    }
-
-    scdr.end_serialize_type(current_state);
-}
-
-void MyUnion::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                    case 0:
-                        dcdr >> _d();
-                        break;
-                    default:
-                        switch (_d())
-                        {
-                                                                case ::A:
-                                                                // TODO Test on mutable the MemberId
-                                                                dcdr >> m_basic;
-                                                                break;
-                                                        
-                                                                case ::B:
-                                                                case ::C:
-                                                                // TODO Test on mutable the MemberId
-                                                                dcdr >> m_complex;
-                                                                break;
-                                                        
-                        }
-ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 
@@ -2613,80 +2209,6 @@ int32_t& MyUnion2::tres()
     return m_tres;
 }
 
-void MyUnion2::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr << eprosima::fastcdr::MemberId(0) << _d();
-
-    switch(_d())
-    {
-                        case A:
-                        scdr << eprosima::fastcdr::MemberId(1) << m_uno;
-                        break;
-                
-                        case B:
-                        scdr << eprosima::fastcdr::MemberId(2) << m_imString;
-                        break;
-                
-                        case C:
-                        scdr << eprosima::fastcdr::MemberId(3) << m_tres;
-                        break;
-                
-    }
-
-    scdr.end_serialize_type(current_state);
-}
-
-void MyUnion2::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                    case 0:
-                        dcdr >> _d();
-                        break;
-                    default:
-                        switch (_d())
-                        {
-                                                                case A:
-                                                                // TODO Test on mutable the MemberId
-                                                                dcdr >> m_uno;
-                                                                break;
-                                                        
-                                                                case B:
-                                                                // TODO Test on mutable the MemberId
-                                                                dcdr >> m_imString;
-                                                                break;
-                                                        
-                                                                case C:
-                                                                // TODO Test on mutable the MemberId
-                                                                dcdr >> m_tres;
-                                                                break;
-                                                        
-                        }
-ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
-}
-
 
 CompleteStruct::CompleteStruct()
 {
@@ -2748,59 +2270,6 @@ bool CompleteStruct::operator !=(
         const CompleteStruct& x) const
 {
     return !(*this == x);
-}
-
-size_t CompleteStruct::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return CompleteStruct_max_cdr_typesize;
-}
-void CompleteStruct::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << my_union()
-                << eprosima::fastcdr::MemberId(1) << my_union_2()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void CompleteStruct::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> my_union();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> my_union_2();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -2879,24 +2348,6 @@ MyUnion2& CompleteStruct::my_union_2()
 }
 
 
-size_t CompleteStruct::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return CompleteStruct_max_key_cdr_typesize;
-}
-
-bool CompleteStruct::isKeyDefined()
-{
-    return false;
-}
-
-void CompleteStruct::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-}
-
 KeyedStruct::KeyedStruct()
 {
 
@@ -2957,59 +2408,6 @@ bool KeyedStruct::operator !=(
         const KeyedStruct& x) const
 {
     return !(*this == x);
-}
-
-size_t KeyedStruct::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return KeyedStruct_max_cdr_typesize;
-}
-void KeyedStruct::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << key()
-                << eprosima::fastcdr::MemberId(1) << basic()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void KeyedStruct::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> key();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> basic();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -3078,23 +2476,3 @@ BasicStruct& KeyedStruct::basic()
     return m_basic;
 }
 
-
-size_t KeyedStruct::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return KeyedStruct_max_key_cdr_typesize;
-}
-
-bool KeyedStruct::isKeyDefined()
-{
-    return true;
-}
-
-void KeyedStruct::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-   scdr << eprosima::fastcdr::MemberId(268435455) << key();   
-  
-}

@@ -360,20 +360,6 @@ public:
      */
     RTPS_DllAPI ExtendedTypeDefn& extended_defn();
 
-    /*!
-     * @brief This function serializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    /*!
-     * @brief This function deserializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-
     /**
      * Equals
      * */

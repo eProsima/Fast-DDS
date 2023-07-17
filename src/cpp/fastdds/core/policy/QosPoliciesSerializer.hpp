@@ -868,7 +868,7 @@ inline bool QosPoliciesSerializer<DataSharingQosPolicy>::read_content_from_cdr_m
 
     for (size_t i = 0; i < num_domains; ++i)
     {
-        uint64_t domain;
+        uint64_t domain {0};
         valid &= fastrtps::rtps::CDRMessage::readUInt64(cdr_message, &domain);
         qos_policy.add_domain_id(domain);
     }
@@ -904,7 +904,7 @@ inline bool QosPoliciesSerializer<TypeIdV1>::add_to_cdr_message(
 
     ser.serialize_encapsulation();
 
-    qos_policy.m_type_identifier.serialize(ser);
+    ser << qos_policy.m_type_identifier;
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
     size = (ser.getSerializedDataLength() + 3) & ~3;
 
@@ -940,7 +940,7 @@ inline bool QosPoliciesSerializer<TypeIdV1>::read_content_from_cdr_message(
         deser.read_encapsulation();
         payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
-        qos_policy.m_type_identifier.deserialize(deser);
+        deser >> qos_policy.m_type_identifier;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -976,7 +976,7 @@ inline bool QosPoliciesSerializer<TypeObjectV1>::add_to_cdr_message(
 
     ser.serialize_encapsulation();
 
-    qos_policy.m_type_object.serialize(ser);
+    ser << qos_policy.m_type_object;
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
     size = (ser.getSerializedDataLength() + 3) & ~3;
 
@@ -1012,7 +1012,7 @@ inline bool QosPoliciesSerializer<TypeObjectV1>::read_content_from_cdr_message(
         deser.read_encapsulation();
         payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
-        qos_policy.m_type_object.deserialize(deser);
+        deser >> qos_policy.m_type_object;
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)
     {
@@ -1049,7 +1049,7 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformation>::add_to_cdr_message(
 
     ser.serialize_encapsulation();
 
-    qos_policy.type_information.serialize(ser);
+    ser << qos_policy.type_information;
     payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
     size = (ser.getSerializedDataLength() + 3) & ~3;
 
@@ -1085,7 +1085,7 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformation>::read_content_from_cd
         deser.read_encapsulation();
         payload.encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
-        qos_policy.type_information.deserialize(deser);
+        deser >> qos_policy.type_information;
         qos_policy.assigned(true);
     }
     catch (eprosima::fastcdr::exception::Exception& /*exception*/)

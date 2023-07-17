@@ -34,8 +34,6 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-#define KeyedData1mb_max_cdr_typesize 1024008ULL;
-#define KeyedData1mb_max_key_cdr_typesize 2ULL;
 
 KeyedData1mb::KeyedData1mb()
 {
@@ -95,59 +93,6 @@ bool KeyedData1mb::operator !=(
         const KeyedData1mb& x) const
 {
     return !(*this == x);
-}
-
-size_t KeyedData1mb::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return KeyedData1mb_max_cdr_typesize;
-}
-void KeyedData1mb::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    eprosima::fastcdr::Cdr::state current_state(scdr);
-    scdr.begin_serialize_type(current_state,
-            eprosima::fastcdr::CdrVersion::XCDRv2 == scdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-);
-
-    scdr             << eprosima::fastcdr::MemberId(0) << key()
-                << eprosima::fastcdr::MemberId(1) << data()
-    ;
-
-    scdr.end_serialize_type(current_state);
-}
-
-void KeyedData1mb::deserialize(
-        eprosima::fastcdr::Cdr& cdr)
-{
-    cdr.deserialize_type(eprosima::fastcdr::CdrVersion::XCDRv2 == cdr.get_cdr_version() ?
-eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
- :
-eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
-,
-            [this](eprosima::fastcdr::Cdr& dcdr, const eprosima::fastcdr::MemberId& mid) -> bool
-            {
-                bool ret_value = true;
-                switch (mid.id)
-                {
-                                        case 0:
-                    dcdr >> key();
-                                            break;
-                                        
-                                        case 1:
-                    dcdr >> data();
-                                            break;
-                                        
-                    default:
-                        ret_value = false;
-                        break;
-                }
-                return ret_value;
-            });
 }
 
 /*!
@@ -216,23 +161,3 @@ std::vector<uint8_t>& KeyedData1mb::data()
     return m_data;
 }
 
-
-size_t KeyedData1mb::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    static_cast<void>(current_alignment);
-    return KeyedData1mb_max_key_cdr_typesize;
-}
-
-bool KeyedData1mb::isKeyDefined()
-{
-    return true;
-}
-
-void KeyedData1mb::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-   scdr << eprosima::fastcdr::MemberId(268435455) << key();   
-  
-}
