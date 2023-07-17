@@ -112,6 +112,39 @@ ReturnCode_t DomainParticipant::disable_monitor_service() const
 #endif // FASTDDS_STATISTICS
 }
 
+ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
+        fastrtps::rtps::ParticipantProxyData& data,
+        const fastdds::statistics::MonitorServiceStatusData& msg)
+{
+#ifdef FASTDDS_STATISTICS
+    return static_cast<DomainParticipantImpl*>(impl_)->fill_discovery_data_from_cdr_message(data, msg);
+#else
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+#endif // FASTDDS_STATISTICS
+}
+
+ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
+        fastrtps::rtps::WriterProxyData& data,
+        const fastdds::statistics::MonitorServiceStatusData& msg)
+{
+#ifdef FASTDDS_STATISTICS
+    return static_cast<DomainParticipantImpl*>(impl_)->fill_discovery_data_from_cdr_message(data, msg);
+#else
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+#endif // FASTDDS_STATISTICS
+}
+
+ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
+        fastrtps::rtps::ReaderProxyData& data,
+        const fastdds::statistics::MonitorServiceStatusData& msg)
+{
+#ifdef FASTDDS_STATISTICS
+    return static_cast<DomainParticipantImpl*>(impl_)->fill_discovery_data_from_cdr_message(data, msg);
+#else
+    return ReturnCode_t::RETCODE_UNSUPPORTED;
+#endif // FASTDDS_STATISTICS
+}
+
 } // dds
 } // statistics
 } // fastdds
