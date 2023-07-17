@@ -24,6 +24,10 @@
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/qos/SubscriberQos.hpp>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/rtps/writer/StatefulWriter.h>
 
@@ -35,6 +39,8 @@
 #include "../../logging/mock/MockConsumer.h"
 
 #include <fastdds/publisher/DataWriterImpl.hpp>
+
+#include "../../common/CustomPayloadPool.hpp"
 
 #include <mutex>
 #include <condition_variable>
@@ -1883,6 +1889,54 @@ TEST(DataWriterTests, InstancePolicyAllocationConsistencyKeyed)
     qos2.resource_limits().max_samples_per_instance = 500;
 
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_writer1->set_qos(qos2));
+}
+
+
+/*
+ * This test checks the proper behavior of the custom payload pool DataReader overload.
+ */
+TEST(DataWriterTests, CustomPoolCreation)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    TypeSupport type(new TopicDataTypeMock());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    // Next QoS config checks the default qos configuration,
+    // create_datareader() should not return nullptr.
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+
+    std::shared_ptr<CustomPayloadPool> payload_pool = std::make_shared<CustomPayloadPool>();
+
+    DataReader* data_reader = subscriber->create_datareader(topic, reader_qos);
+
+    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
+
+    DataWriter* data_writer = publisher->create_datawriter(topic, writer_qos, payload_pool);
+
+    ASSERT_NE(data_writer, nullptr);
+    ASSERT_NE(data_reader, nullptr);
+
+    FooType data;
+
+    data_writer->write(&data, HANDLE_NIL);
+
+    ASSERT_EQ(payload_pool->requested_payload_count, 1u);
+
+    participant->delete_contained_entities();
+
+    DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 
 } // namespace dds
