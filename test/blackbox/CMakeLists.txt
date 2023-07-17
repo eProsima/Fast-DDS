@@ -228,6 +228,8 @@ if(FASTDDS_PIM_API_TESTS)
             ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
             ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesv1.cxx
             ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/typesPubSubTypes.cxx
+            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_typesPubSubTypes.cxx
+            ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_types.cxx
             )
 
         list(APPEND BLACKBOXTESTS_FASTDDS_PIM_SOURCE ${statistics_sources})
