@@ -516,22 +516,18 @@ bool SharedMemTransport::push_discard(
         const size_t num_retries = 2;
         for (size_t i = 0; i < num_retries && !is_port_ok; ++i)
         {
-<<<<<<< HEAD
-            logInfo(RTPS_MSG_OUT, "Port " << remote_locator.port << " full. Buffer dropped");
-=======
             if (!find_port(remote_locator.port)->try_push(buffer, is_port_ok))
             {
                 if (is_port_ok)
                 {
-                    EPROSIMA_LOG_INFO(RTPS_MSG_OUT, "Port " << remote_locator.port << " full. Buffer dropped");
+                    logInfo(RTPS_MSG_OUT, "Port " << remote_locator.port << " full. Buffer dropped");
                 }
                 else
                 {
-                    EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "Port " << remote_locator.port << " inconsistent. Port dropped");
+                    logWarning(RTPS_MSG_OUT, "Port " << remote_locator.port << " inconsistent. Port dropped");
                     opened_ports_.erase(remote_locator.port);
                 }
             }
->>>>>>> 2f80b06b5 (SHM sending improvements (#3642))
         }
     }
     catch (const std::exception& error)
