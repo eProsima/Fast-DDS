@@ -152,7 +152,8 @@ public:
             CDRMessage_t* msg,
             bool use_encapsulation,
             const NetworkFactory& network,
-            bool is_shm_transport_available);
+            bool is_shm_transport_available,
+            bool should_filter_locators);
 
     //! Clear the data (restore to default state).
     void clear();
