@@ -618,9 +618,10 @@ bool ReaderProxyData::writeToCDRMessage(
 bool ReaderProxyData::readFromCDRMessage(
         CDRMessage_t* msg,
         const NetworkFactory& network,
-        bool is_shm_transport_available)
+        bool is_shm_transport_available,
+        bool should_filter_locators)
 {
-    auto param_process = [this, &network, &is_shm_transport_available](
+    auto param_process = [this, &network, &is_shm_transport_available, &should_filter_locators](
         CDRMessage_t* msg, const ParameterId_t& pid, uint16_t plength)
             {
                 switch (pid)
@@ -830,14 +831,21 @@ bool ReaderProxyData::readFromCDRMessage(
                             return false;
                         }
 
-                        Locator_t temp_locator;
-                        if (network.transform_remote_locator(p.locator, temp_locator))
+                        if (!should_filter_locators)
                         {
-                            ProxyDataFilters::filter_locators(
-                                is_shm_transport_available,
-                                remote_locators_,
-                                temp_locator,
-                                true);
+                            remote_locators_.add_unicast_locator(p.locator);
+                        }
+                        else
+                        {
+                            Locator_t temp_locator;
+                            if (network.transform_remote_locator(p.locator, temp_locator))
+                            {
+                                ProxyDataFilters::filter_locators(
+                                    is_shm_transport_available,
+                                    remote_locators_,
+                                    temp_locator,
+                                    true);
+                            }
                         }
                         break;
                     }
@@ -850,14 +858,21 @@ bool ReaderProxyData::readFromCDRMessage(
                             return false;
                         }
 
-                        Locator_t temp_locator;
-                        if (network.transform_remote_locator(p.locator, temp_locator))
+                        if (!should_filter_locators)
                         {
-                            ProxyDataFilters::filter_locators(
-                                is_shm_transport_available,
-                                remote_locators_,
-                                temp_locator,
-                                false);
+                            remote_locators_.add_multicast_locator(p.locator);
+                        }
+                        else
+                        {
+                            Locator_t temp_locator;
+                            if (network.transform_remote_locator(p.locator, temp_locator))
+                            {
+                                ProxyDataFilters::filter_locators(
+                                    is_shm_transport_available,
+                                    remote_locators_,
+                                    temp_locator,
+                                    false);
+                            }
                         }
                         break;
                     }

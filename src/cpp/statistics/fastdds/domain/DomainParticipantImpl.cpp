@@ -293,6 +293,48 @@ ReturnCode_t DomainParticipantImpl::disable_monitor_service() const
     return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
 }
 
+ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
+        fastrtps::rtps::ParticipantProxyData& data,
+        const fastdds::statistics::MonitorServiceStatusData& msg)
+{
+    ReturnCode_t ret{ReturnCode_t::RETCODE_OK};
+
+    if (!get_rtps_participant()->fill_discovery_data_from_cdr_message(data, msg))
+    {
+        ret = ReturnCode_t::RETCODE_ERROR;
+    }
+
+    return ret;
+}
+
+ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
+        fastrtps::rtps::WriterProxyData& data,
+        const fastdds::statistics::MonitorServiceStatusData& msg)
+{
+    ReturnCode_t ret{ReturnCode_t::RETCODE_OK};
+
+    if (!get_rtps_participant()->fill_discovery_data_from_cdr_message(data, msg))
+    {
+        ret = ReturnCode_t::RETCODE_ERROR;
+    }
+
+    return ret;
+}
+
+ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
+        fastrtps::rtps::ReaderProxyData& data,
+        const fastdds::statistics::MonitorServiceStatusData& msg)
+{
+    ReturnCode_t ret{ReturnCode_t::RETCODE_OK};
+
+    if (!get_rtps_participant()->fill_discovery_data_from_cdr_message(data, msg))
+    {
+        ret = ReturnCode_t::RETCODE_ERROR;
+    }
+
+    return ret;
+}
+
 efd::PublisherImpl* DomainParticipantImpl::create_publisher_impl(
         const efd::PublisherQos& qos,
         efd::PublisherListener* listener)
