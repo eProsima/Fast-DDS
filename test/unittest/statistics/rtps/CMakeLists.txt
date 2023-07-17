@@ -40,6 +40,36 @@ target_include_directories(RTPSStatisticsTests PRIVATE
 
 target_link_libraries(RTPSStatisticsTests fastrtps fastcdr GTest::gtest GTest::gmock)
 gtest_discover_tests(RTPSStatisticsTests)
+
+set(STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE
+    MonitorServiceTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/monitor-service/MonitorService.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/monitor-service/MonitorServiceListener.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_types.cxx
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
+    )
+
+add_executable(MonitorServiceTests ${STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE})
+
+target_compile_definitions(MonitorServiceTests PRIVATE FASTRTPS_NO_LIB
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
+    )
+
+target_include_directories(MonitorServiceTests PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp
+    ${Asio_INCLUDE_DIR}
+    )
+
+target_link_libraries(MonitorServiceTests fastrtps fastcdr GTest::gtest GTest::gmock)
+gtest_discover_tests(MonitorServiceTests)
+
 if(QNX)
     target_link_libraries(RTPSStatisticsTests socket)
+    target_link_libraries(MonitorServiceTests socket)
 endif()
+
