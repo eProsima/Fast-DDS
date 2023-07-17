@@ -40,9 +40,39 @@ target_include_directories(RTPSStatisticsTests PRIVATE
 
 target_link_libraries(RTPSStatisticsTests fastrtps fastcdr GTest::gtest GTest::gmock)
 add_gtest(RTPSStatisticsTests SOURCES ${STATISTICS_RTPS_TESTS_SOURCE})
+
+set(STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE
+    MonitorServiceTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/monitor-service/MonitorService.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/rtps/monitor-service/MonitorServiceListener.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_types.cxx
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
+    )
+
+add_executable(MonitorServiceTests ${STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE})
+
+target_compile_definitions(MonitorServiceTests PRIVATE FASTRTPS_NO_LIB
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
+    )
+
+target_include_directories(MonitorServiceTests PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp
+    ${Asio_INCLUDE_DIR}
+    )
+
+target_link_libraries(MonitorServiceTests fastrtps fastcdr GTest::gtest GTest::gmock)
+add_gtest(MonitorServiceTests SOURCES ${STATISTICS_RTPS_MONITORSERVICETESTS_SOURCE})
+
 if(QNX)
     target_link_libraries(RTPSStatisticsTests socket)
+    target_link_libraries(MonitorServiceTests socket)
 endif()
 if(ANDROID)
     set_property(TARGET RTPSStatisticsTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET MonitorServiceTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
 endif()
