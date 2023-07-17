@@ -708,7 +708,11 @@ if(LINK_SSL)
             find_package(OpenSSL REQUIRED)\n\
         endfunction()"
         )
-        set(FASTRTPS_INSTALLER_OPT_DEPS "find_fastdds_deployed_openssl()")
+        set(FASTRTPS_INSTALLER_OPT_DEPS "\
+        if (\${type} STREQUAL \"static\")\n\
+            find_fastdds_deployed_openssl()\n\
+        endif()")
+
     elseif(WIN32)
         # windows from sources only requires OpenSSL on static libraries
         set(FASTRTPS_PACKAGE_WIN32_OPT_DEPS "find_package(OpenSSL REQUIRED)")
