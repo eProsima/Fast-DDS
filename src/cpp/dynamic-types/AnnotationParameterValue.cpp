@@ -72,24 +72,6 @@ ExtendedAnnotationParameterValue& ExtendedAnnotationParameterValue::operator =(
     return *this;
 }
 
-// size_t ExtendedAnnotationParameterValue::getMaxCdrSerializedSize(size_t current_alignment)
-// {
-//     size_t initial_alignment = current_alignment;
-
-
-//     return current_alignment - initial_alignment;
-// }
-
-void ExtendedAnnotationParameterValue::serialize(
-        eprosima::fastcdr::Cdr&) const
-{
-}
-
-void ExtendedAnnotationParameterValue::deserialize(
-        eprosima::fastcdr::Cdr&)
-{
-}
-
 size_t ExtendedAnnotationParameterValue::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
@@ -1249,291 +1231,6 @@ ExtendedAnnotationParameterValue& AnnotationParameterValue::extended_value()
     return m_extended_value;
 }
 
-// size_t AnnotationParameterValue::getMaxCdrSerializedSize(size_t current_alignment)
-// {
-//     size_t initial_alignment = current_alignment;
-//     size_t reset_alignment = 0;
-//     size_t union_max_size_serialized = 0;
-
-//     current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-//         reset_alignment = current_alignment;
-
-//         reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
-
-
-//         if(union_max_size_serialized < reset_alignment)
-//             union_max_size_serialized = reset_alignment;
-
-
-//         reset_alignment = current_alignment;
-
-//         reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
-
-
-//         if(union_max_size_serialized < reset_alignment)
-//             union_max_size_serialized = reset_alignment;
-
-
-//         reset_alignment = current_alignment;
-
-//         reset_alignment += 2 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 2);
-
-
-//         if(union_max_size_serialized < reset_alignment)
-//             union_max_size_serialized = reset_alignment;
-
-
-//         reset_alignment = current_alignment;
-
-//         reset_alignment += 2 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 2);
-
-
-//         if(union_max_size_serialized < reset_alignment)
-//             union_max_size_serialized = reset_alignment;
-
-
-//         reset_alignment = current_alignment;
-
-//         reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
-
-
-//         if(union_max_size_serialized < reset_alignment)
-//             union_max_size_serialized = reset_alignment;
-
-
-//         reset_alignment = current_alignment;
-
-//         reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
-
-
-//         if(union_max_size_serialized < reset_alignment)
-//             union_max_size_serialized = reset_alignment;
-
-
-//         reset_alignment = current_alignment;
-
-//         reset_alignment += 8 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 8);
-
-
-//         if(union_max_size_serialized < reset_alignment)
-//             union_max_size_serialized = reset_alignment;
-
-
-//         reset_alignment = current_alignment;
-
-//         reset_alignment += 8 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 8);
-
-
-//         if(union_max_size_serialized < reset_alignment)
-//             union_max_size_serialized = reset_alignment;
-
-
-//         reset_alignment = current_alignment;
-
-//         reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
-
-
-//         if(union_max_size_serialized < reset_alignment)
-//             union_max_size_serialized = reset_alignment;
-
-
-//         reset_alignment = current_alignment;
-
-//         reset_alignment += 8 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 8);
-
-
-//         if(union_max_size_serialized < reset_alignment)
-//             union_max_size_serialized = reset_alignment;
-
-
-//         reset_alignment = current_alignment;
-
-//         reset_alignment += 16 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 16);
-
-
-//         if(union_max_size_serialized < reset_alignment)
-//             union_max_size_serialized = reset_alignment;
-
-
-//         reset_alignment = current_alignment;
-
-//         reset_alignment += 1 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 1);
-
-
-//         if(union_max_size_serialized < reset_alignment)
-//             union_max_size_serialized = reset_alignment;
-
-
-//         reset_alignment = current_alignment;
-
-//         reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
-
-
-//         if(union_max_size_serialized < reset_alignment)
-//             union_max_size_serialized = reset_alignment;
-
-
-//         reset_alignment = current_alignment;
-
-//         reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4);
-
-
-//         if(union_max_size_serialized < reset_alignment)
-//             union_max_size_serialized = reset_alignment;
-
-
-//         reset_alignment = current_alignment;
-
-//         reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4) + ANNOTATION_STR_VALUE_MAX_LEN + 1;
-
-//         if(union_max_size_serialized < reset_alignment)
-//             union_max_size_serialized = reset_alignment;
-
-
-//         reset_alignment = current_alignment;
-
-//         reset_alignment += 4 + eprosima::fastcdr::Cdr::alignment(reset_alignment, 4) + ANNOTATION_STR_VALUE_MAX_LEN + 1;
-
-//         if(union_max_size_serialized < reset_alignment)
-//             union_max_size_serialized = reset_alignment;
-
-
-//         reset_alignment = current_alignment;
-
-//         reset_alignment += ExtendedAnnotationParameterValue::getMaxCdrSerializedSize(reset_alignment);
-
-//         if(union_max_size_serialized < reset_alignment)
-//             union_max_size_serialized = reset_alignment;
-
-
-
-//     return union_max_size_serialized - initial_alignment;
-// }
-
-void AnnotationParameterValue::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m__d;
-
-    switch (m__d)
-    {
-        case TK_BOOLEAN:
-            scdr << m_boolean_value;
-            break;
-        case TK_BYTE:
-            scdr << m_byte_value;
-            break;
-        case TK_INT16:
-            scdr << m_int16_value;
-            break;
-        case TK_UINT16:
-            scdr << m_uint_16_value;
-            break;
-        case TK_INT32:
-            scdr << m_int32_value;
-            break;
-        case TK_UINT32:
-            scdr << m_uint32_value;
-            break;
-        case TK_INT64:
-            scdr << m_int64_value;
-            break;
-        case TK_UINT64:
-            scdr << m_uint64_value;
-            break;
-        case TK_FLOAT32:
-            scdr << m_float32_value;
-            break;
-        case TK_FLOAT64:
-            scdr << m_float64_value;
-            break;
-        case TK_FLOAT128:
-            scdr << m_float128_value;
-            break;
-        case TK_CHAR8:
-            scdr << m_char_value;
-            break;
-        case TK_CHAR16:
-            scdr << m_wchar_value;
-            break;
-        case TK_ENUM:
-            scdr << m_enumerated_value;
-            break;
-        case TK_STRING8:
-            scdr << m_string8_value;
-            break;
-        case TK_STRING16:
-            scdr << m_string16_value;
-            break;
-        default:
-            scdr << m_extended_value;
-            break;
-    }
-}
-
-void AnnotationParameterValue::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m__d;
-
-    switch (m__d)
-    {
-        case TK_BOOLEAN:
-            dcdr >> m_boolean_value;
-            break;
-        case TK_BYTE:
-            dcdr >> m_byte_value;
-            break;
-        case TK_INT16:
-            dcdr >> m_int16_value;
-            break;
-        case TK_UINT16:
-            dcdr >> m_uint_16_value;
-            break;
-        case TK_INT32:
-            dcdr >> m_int32_value;
-            break;
-        case TK_UINT32:
-            dcdr >> m_uint32_value;
-            break;
-        case TK_INT64:
-            dcdr >> m_int64_value;
-            break;
-        case TK_UINT64:
-            dcdr >> m_uint64_value;
-            break;
-        case TK_FLOAT32:
-            dcdr >> m_float32_value;
-            break;
-        case TK_FLOAT64:
-            dcdr >> m_float64_value;
-            break;
-        case TK_FLOAT128:
-            dcdr >> m_float128_value;
-            break;
-        case TK_CHAR8:
-            dcdr >> m_char_value;
-            break;
-        case TK_CHAR16:
-            dcdr >> m_wchar_value;
-            break;
-        case TK_ENUM:
-            dcdr >> m_enumerated_value;
-            break;
-        case TK_STRING8:
-            dcdr >> m_string8_value;
-            break;
-        case TK_STRING16:
-            dcdr >> m_string16_value;
-            break;
-        default:
-            dcdr >> m_extended_value;
-            break;
-    }
-}
-
 bool AnnotationParameterValue::operator ==(
         const AnnotationParameterValue& other) const
 {
@@ -1640,31 +1337,6 @@ AppliedAnnotationParameter& AppliedAnnotationParameter::operator =(
     return *this;
 }
 
-// size_t AppliedAnnotationParameter::getMaxCdrSerializedSize(size_t current_alignment)
-// {
-//     size_t initial_alignment = current_alignment;
-
-//     current_alignment += ((4) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-//     current_alignment += AnnotationParameterValue::getMaxCdrSerializedSize(current_alignment);
-
-//     return current_alignment - initial_alignment;
-// }
-
-void AppliedAnnotationParameter::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_paramname_hash;
-    scdr << m_value;
-}
-
-void AppliedAnnotationParameter::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_paramname_hash;
-    dcdr >> m_value;
-}
-
 bool AppliedAnnotationParameter::operator ==(
         const AppliedAnnotationParameter& other) const
 {
@@ -1734,35 +1406,6 @@ AppliedAnnotation& AppliedAnnotation::operator =(
     m_param_seq = std::move(x.m_param_seq);
 
     return *this;
-}
-
-// size_t AppliedAnnotation::getMaxCdrSerializedSize(size_t current_alignment)
-// {
-//     size_t initial_alignment = current_alignment;
-
-//     current_alignment += TypeIdentifier::getMaxCdrSerializedSize(current_alignment);
-//     //current_alignment += AppliedAnnotationParameterSeq::getMaxCdrSerializedSize(current_alignment);
-//     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-//     for(size_t a = 0; a < 100; ++a)
-//     {
-//         current_alignment += AppliedAnnotationParameter::getMaxCdrSerializedSize(current_alignment);
-//  }
-
-//     return current_alignment - initial_alignment;
-// }
-
-void AppliedAnnotation::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_annotation_typeid;
-    scdr << m_param_seq;
-}
-
-void AppliedAnnotation::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_annotation_typeid;
-    dcdr >> m_param_seq;
 }
 
 bool AppliedAnnotation::operator ==(
@@ -1836,33 +1479,6 @@ AppliedVerbatimAnnotation& AppliedVerbatimAnnotation::operator =(
     m_text = std::move(x.m_text);
 
     return *this;
-}
-
-// size_t AppliedVerbatimAnnotation::getMaxCdrSerializedSize(size_t current_alignment)
-// {
-//     size_t initial_alignment = current_alignment;
-
-//     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 32 + 1; // Max 32
-//     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 32 + 1; // Max 32
-//     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
-
-//     return current_alignment - initial_alignment;
-// }
-
-void AppliedVerbatimAnnotation::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_placement;
-    scdr << m_language;
-    scdr << m_text;
-}
-
-void AppliedVerbatimAnnotation::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_placement;
-    dcdr >> m_language;
-    dcdr >> m_text;
 }
 
 bool AppliedVerbatimAnnotation::operator ==(
@@ -1940,37 +1556,6 @@ AppliedBuiltinMemberAnnotations& AppliedBuiltinMemberAnnotations::operator =(
     return *this;
 }
 
-// size_t AppliedBuiltinMemberAnnotations::getMaxCdrSerializedSize(size_t current_alignment)
-// {
-//     size_t initial_alignment = current_alignment;
-
-
-//     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
-//     current_alignment += AnnotationParameterValue::getMaxCdrSerializedSize(current_alignment);
-//     current_alignment += AnnotationParameterValue::getMaxCdrSerializedSize(current_alignment);
-//     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
-
-//     return current_alignment - initial_alignment;
-// }
-
-void AppliedBuiltinMemberAnnotations::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m_unit;
-    scdr << m_min;
-    scdr << m_max;
-    scdr << m_hash_id;
-}
-
-void AppliedBuiltinMemberAnnotations::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m_unit;
-    dcdr >> m_min;
-    dcdr >> m_max;
-    dcdr >> m_hash_id;
-}
-
 bool AppliedBuiltinMemberAnnotations::operator ==(
         const AppliedBuiltinMemberAnnotations& other) const
 {
@@ -2012,6 +1597,18 @@ size_t calculate_serialized_size(
 {
     size_t initial_alignment = current_alignment;
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr&,
+        const eprosima::fastrtps::types::ExtendedAnnotationParameterValue&)
+{
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr&,
+        eprosima::fastrtps::types::ExtendedAnnotationParameterValue&)
+{
 }
 
 size_t calculate_serialized_size(
@@ -2119,6 +1716,130 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::AnnotationParameterValue& data)
+{
+    scdr << data._d();
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::TK_BOOLEAN:
+            scdr << data.boolean_value();
+            break;
+        case eprosima::fastrtps::types::TK_BYTE:
+            scdr << data.byte_value();
+            break;
+        case eprosima::fastrtps::types::TK_INT16:
+            scdr << data.int16_value();
+            break;
+        case eprosima::fastrtps::types::TK_UINT16:
+            scdr << data.uint_16_value();
+            break;
+        case eprosima::fastrtps::types::TK_INT32:
+            scdr << data.int32_value();
+            break;
+        case eprosima::fastrtps::types::TK_UINT32:
+            scdr << data.uint32_value();
+            break;
+        case eprosima::fastrtps::types::TK_INT64:
+            scdr << data.int64_value();
+            break;
+        case eprosima::fastrtps::types::TK_UINT64:
+            scdr << data.uint64_value();
+            break;
+        case eprosima::fastrtps::types::TK_FLOAT32:
+            scdr << data.float32_value();
+            break;
+        case eprosima::fastrtps::types::TK_FLOAT64:
+            scdr << data.float64_value();
+            break;
+        case eprosima::fastrtps::types::TK_FLOAT128:
+            scdr << data.float128_value();
+            break;
+        case eprosima::fastrtps::types::TK_CHAR8:
+            scdr << data.char_value();
+            break;
+        case eprosima::fastrtps::types::TK_CHAR16:
+            scdr << data.wchar_value();
+            break;
+        case eprosima::fastrtps::types::TK_ENUM:
+            scdr << data.enumerated_value();
+            break;
+        case eprosima::fastrtps::types::TK_STRING8:
+            scdr << data.string8_value();
+            break;
+        case eprosima::fastrtps::types::TK_STRING16:
+            scdr << data.string16_value();
+            break;
+        default:
+            scdr << data.extended_value();
+            break;
+    }
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::AnnotationParameterValue& data)
+{
+    dcdr >> data._d();
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::TK_BOOLEAN:
+            dcdr >> data.boolean_value();
+            break;
+        case eprosima::fastrtps::types::TK_BYTE:
+            dcdr >> data.byte_value();
+            break;
+        case eprosima::fastrtps::types::TK_INT16:
+            dcdr >> data.int16_value();
+            break;
+        case eprosima::fastrtps::types::TK_UINT16:
+            dcdr >> data.uint_16_value();
+            break;
+        case eprosima::fastrtps::types::TK_INT32:
+            dcdr >> data.int32_value();
+            break;
+        case eprosima::fastrtps::types::TK_UINT32:
+            dcdr >> data.uint32_value();
+            break;
+        case eprosima::fastrtps::types::TK_INT64:
+            dcdr >> data.int64_value();
+            break;
+        case eprosima::fastrtps::types::TK_UINT64:
+            dcdr >> data.uint64_value();
+            break;
+        case eprosima::fastrtps::types::TK_FLOAT32:
+            dcdr >> data.float32_value();
+            break;
+        case eprosima::fastrtps::types::TK_FLOAT64:
+            dcdr >> data.float64_value();
+            break;
+        case eprosima::fastrtps::types::TK_FLOAT128:
+            dcdr >> data.float128_value();
+            break;
+        case eprosima::fastrtps::types::TK_CHAR8:
+            dcdr >> data.char_value();
+            break;
+        case eprosima::fastrtps::types::TK_CHAR16:
+            dcdr >> data.wchar_value();
+            break;
+        case eprosima::fastrtps::types::TK_ENUM:
+            dcdr >> data.enumerated_value();
+            break;
+        case eprosima::fastrtps::types::TK_STRING8:
+            dcdr >> data.string8_value();
+            break;
+        case eprosima::fastrtps::types::TK_STRING16:
+            dcdr >> data.string16_value();
+            break;
+        default:
+            dcdr >> data.extended_value();
+            break;
+    }
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::AppliedAnnotationParameter& data,
@@ -2140,6 +1861,22 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::AppliedAnnotationParameter& data)
+{
+    scdr << data.paramname_hash();
+    scdr << data.value();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::AppliedAnnotationParameter& data)
+{
+    dcdr >> data.paramname_hash();
+    dcdr >> data.value();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::AppliedAnnotation& data,
@@ -2159,6 +1896,22 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::AppliedAnnotation& data)
+{
+    scdr << data.annotation_typeid();
+    scdr << data.param_seq();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::AppliedAnnotation& data)
+{
+    dcdr >> data.annotation_typeid();
+    dcdr >> data.param_seq();
 }
 
 size_t calculate_serialized_size(
@@ -2184,6 +1937,24 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::AppliedVerbatimAnnotation& data)
+{
+    scdr << data.placement();
+    scdr << data.language();
+    scdr << data.text();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::AppliedVerbatimAnnotation& data)
+{
+    dcdr >> data.placement();
+    dcdr >> data.language();
+    dcdr >> data.text();
+}
+
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::AppliedBuiltinMemberAnnotations& data,
@@ -2207,6 +1978,26 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::AppliedBuiltinMemberAnnotations& data)
+{
+    scdr << data.unit();
+    scdr << data.min();
+    scdr << data.max();
+    scdr << data.hash_id();
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::AppliedBuiltinMemberAnnotations& data)
+{
+    dcdr >> data.unit();
+    dcdr >> data.min();
+    dcdr >> data.max();
+    dcdr >> data.hash_id();
 }
 
 } // namespace fastcdr

@@ -44,12 +44,6 @@ struct TypeLookup_getTypes_In
 {
     std::vector<fastrtps::types::TypeIdentifier> type_ids;
 
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-
     RTPS_DllAPI static bool isKeyDefined()
     {
         return false;
@@ -62,12 +56,6 @@ struct TypeLookup_getTypes_Out
     std::vector<fastrtps::types::TypeIdentifierTypeObjectPair> types;
 
     std::vector<fastrtps::types::TypeIdentifierPair> complete_to_minimal;
-
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
 
     RTPS_DllAPI static bool isKeyDefined()
     {
@@ -113,12 +101,6 @@ public:
 
     RTPS_DllAPI TypeLookup_getTypes_Out& result();
 
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-
     RTPS_DllAPI static bool isKeyDefined()
     {
         return false;
@@ -138,12 +120,6 @@ public:
 
     std::vector<uint8_t> continuation_point;
 
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-
     RTPS_DllAPI static bool isKeyDefined()
     {
         return false;
@@ -158,12 +134,6 @@ public:
     std::vector<fastrtps::types::TypeIdentifierWithSize> dependent_typeids;
 
     std::vector<uint8_t> continuation_point;
-
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
 
     RTPS_DllAPI static bool isKeyDefined()
     {
@@ -208,12 +178,6 @@ public:
     RTPS_DllAPI const TypeLookup_getTypeDependencies_Out& result() const;
 
     RTPS_DllAPI TypeLookup_getTypeDependencies_Out& result();
-
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
 
     RTPS_DllAPI static bool isKeyDefined()
     {
@@ -273,12 +237,6 @@ public:
 
     RTPS_DllAPI TypeLookup_getTypeDependencies_In& getTypeDependencies();
 
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-
     RTPS_DllAPI static bool isKeyDefined()
     {
         return false;
@@ -299,12 +257,6 @@ public:
     rpc::RequestHeader header;
 
     TypeLookup_Call data;
-
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
 
     RTPS_DllAPI static bool isKeyDefined()
     {
@@ -360,12 +312,6 @@ public:
 
     RTPS_DllAPI TypeLookup_getTypeDependencies_Result& getTypeDependencies();
 
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-
     RTPS_DllAPI static bool isKeyDefined()
     {
         return false;
@@ -386,12 +332,6 @@ public:
     rpc::RequestHeader header;
 
     TypeLookup_Return return_value;
-
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
 
     RTPS_DllAPI static bool isKeyDefined()
     {

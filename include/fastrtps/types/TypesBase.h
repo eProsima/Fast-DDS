@@ -443,16 +443,20 @@ public:
         b ? m_MemberFlag.set(6) : m_MemberFlag.reset(6);
     }
 
-    void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-
     bool operator ==(
             const MemberFlag& other) const
     {
         return m_MemberFlag == other.m_MemberFlag;
+    }
+
+    const std::bitset<16>& bitset() const
+    {
+        return m_MemberFlag;
+    }
+
+    std::bitset<16>& bitset()
+    {
+        return m_MemberFlag;
     }
 
 };
@@ -568,16 +572,20 @@ public:
         b ? m_TypeFlag.set(4) : m_TypeFlag.reset(4);
     }
 
-    void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-
     bool operator ==(
             const TypeFlag& other) const
     {
         return m_TypeFlag == other.m_TypeFlag;
+    }
+
+    const std::bitset<16>& bitset() const
+    {
+        return m_TypeFlag;
+    }
+
+    std::bitset<16>& bitset()
+    {
+        return m_TypeFlag;
     }
 
 };

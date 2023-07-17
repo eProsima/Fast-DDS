@@ -211,44 +211,6 @@ EquivalenceHash& TypeObjectHashId::hash()
     return m_hash;
 }
 
-void TypeObjectHashId::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m__d;
-
-    switch (m__d)
-    {
-        case EK_COMPLETE:
-        case EK_MINIMAL:
-            for (int i = 0; i < 14; ++i)
-            {
-                scdr << m_hash[i];
-            }
-            break;
-        default:
-            break;
-    }
-}
-
-void TypeObjectHashId::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m__d;
-
-    switch (m__d)
-    {
-        case EK_COMPLETE:
-        case EK_MINIMAL:
-            for (int i = 0; i < 14; ++i)
-            {
-                dcdr >> m_hash[i];
-            }
-            break;
-        default:
-            break;
-    }
-}
-
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
@@ -281,6 +243,46 @@ size_t calculate_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
     return current_alignment - initial_alignment;
+}
+
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::TypeObjectHashId& data)
+{
+    scdr << data._d();
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_MINIMAL:
+            for (int i = 0; i < 14; ++i)
+            {
+                scdr << data.hash()[i];
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::TypeObjectHashId& data)
+{
+    dcdr >> data._d();
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_MINIMAL:
+            for (int i = 0; i < 14; ++i)
+            {
+                dcdr >> data.hash()[i];
+            }
+            break;
+        default:
+            break;
+    }
 }
 
 } // namespace fastcdr

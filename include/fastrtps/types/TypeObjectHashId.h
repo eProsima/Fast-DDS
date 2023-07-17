@@ -139,22 +139,6 @@ public:
     EquivalenceHash& hash();
 
     /*!
-     * @brief This function serializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    /*!
-     * @brief This function deserializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-
-
-
-    /*!
      * @brief This function returns the maximum serialized size of the Key of an object
      * depending on the buffer alignment.
      * @param current_alignment Buffer alignment.

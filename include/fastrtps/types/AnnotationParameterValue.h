@@ -102,21 +102,6 @@ public:
     RTPS_DllAPI ExtendedAnnotationParameterValue& operator =(
             ExtendedAnnotationParameterValue&& x);
 
-    /*!
-     * @brief This function serializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    /*!
-     * @brief This function deserializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-
-
 
     /*!
      * @brief This function returns the maximum serialized size of the Key of an object
@@ -579,22 +564,6 @@ public:
     RTPS_DllAPI ExtendedAnnotationParameterValue& extended_value();
 
     /*!
-     * @brief This function serializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    /*!
-     * @brief This function deserializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-
-
-
-    /*!
      * @brief This function returns the maximum serialized size of the Key of an object
      * depending on the buffer alignment.
      * @param current_alignment Buffer alignment.
@@ -912,22 +881,6 @@ public:
     }
 
     /*!
-     * @brief This function serializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    /*!
-     * @brief This function deserializes an object using CDR serialization.
-     * @param cdr CDR serialization object.
-     */
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
-
-
-
-    /*!
      * @brief This function returns the maximum serialized size of the Key of an object
      * depending on the buffer alignment.
      * @param current_alignment Buffer alignment.
@@ -1065,10 +1018,6 @@ public:
         return m_param_seq;
     }
 
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
     RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(
             size_t current_alignment = 0);
     RTPS_DllAPI static bool isKeyDefined();
@@ -1178,12 +1127,6 @@ public:
     {
         return m_text;
     }
-
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
 
     RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(
             size_t current_alignment = 0);
@@ -1318,12 +1261,6 @@ public:
     {
         return m_hash_id;
     }
-
-    RTPS_DllAPI void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
-
-    RTPS_DllAPI void deserialize(
-            eprosima::fastcdr::Cdr& cdr);
 
     RTPS_DllAPI static size_t getKeyMaxCdrSerializedSize(
             size_t current_alignment = 0);

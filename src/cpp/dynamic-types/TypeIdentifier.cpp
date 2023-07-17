@@ -1087,108 +1087,6 @@ ExtendedTypeDefn& TypeIdentifier::extended_defn()
 //     return union_max_size_serialized - initial_alignment;
 // }
 
-void TypeIdentifier::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    scdr << m__d;
-
-    switch (m__d)
-    {
-        case TK_NONE:
-            break;
-        case TI_STRING8_SMALL:
-        case TI_STRING16_SMALL:
-            scdr << m_string_sdefn;
-            break;
-        case TI_STRING8_LARGE:
-        case TI_STRING16_LARGE:
-            scdr << m_string_ldefn;
-            break;
-        case TI_PLAIN_SEQUENCE_SMALL:
-            scdr << m_seq_sdefn;
-            break;
-        case TI_PLAIN_SEQUENCE_LARGE:
-            scdr << m_seq_ldefn;
-            break;
-        case TI_PLAIN_ARRAY_SMALL:
-            scdr << m_array_sdefn;
-            break;
-        case TI_PLAIN_ARRAY_LARGE:
-            scdr << m_array_ldefn;
-            break;
-        case TI_PLAIN_MAP_SMALL:
-            scdr << m_map_sdefn;
-            break;
-        case TI_PLAIN_MAP_LARGE:
-            scdr << m_map_ldefn;
-            break;
-        case TI_STRONGLY_CONNECTED_COMPONENT:
-            scdr << m_sc_component_id;
-            break;
-        case EK_COMPLETE:
-        case EK_MINIMAL:
-            for (int i = 0; i < 14; ++i)
-            {
-                scdr << m_equivalence_hash[i];
-            }
-            break;
-        default:
-            scdr << m_extended_defn;
-            break;
-    }
-}
-
-void TypeIdentifier::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-    dcdr >> m__d;
-
-    switch (m__d)
-    {
-        case TK_NONE:
-            break;
-        case TI_STRING8_SMALL:
-        case TI_STRING16_SMALL:
-            dcdr >> m_string_sdefn;
-            break;
-        case TI_STRING8_LARGE:
-        case TI_STRING16_LARGE:
-            dcdr >> m_string_ldefn;
-            break;
-        case TI_PLAIN_SEQUENCE_SMALL:
-            dcdr >> m_seq_sdefn;
-            break;
-        case TI_PLAIN_SEQUENCE_LARGE:
-            dcdr >> m_seq_ldefn;
-            break;
-        case TI_PLAIN_ARRAY_SMALL:
-            dcdr >> m_array_sdefn;
-            break;
-        case TI_PLAIN_ARRAY_LARGE:
-            dcdr >> m_array_ldefn;
-            break;
-        case TI_PLAIN_MAP_SMALL:
-            dcdr >> m_map_sdefn;
-            break;
-        case TI_PLAIN_MAP_LARGE:
-            dcdr >> m_map_ldefn;
-            break;
-        case TI_STRONGLY_CONNECTED_COMPONENT:
-            dcdr >> m_sc_component_id;
-            break;
-        case EK_COMPLETE:
-        case EK_MINIMAL:
-            for (int i = 0; i < 14; ++i)
-            {
-                dcdr >> m_equivalence_hash[i];
-            }
-            break;
-        default:
-            dcdr >> m_extended_defn;
-            break;
-    }
-}
-
 bool TypeIdentifier::operator ==(
         const TypeIdentifier& other) const
 {
@@ -1495,6 +1393,115 @@ size_t calculate_serialized_size(
     }
 
     return current_alignment - initial_alignment;
+}
+
+} // namespace fastcdr
+} // namespace eprosima
+
+namespace eprosima {
+namespace fastcdr {
+void serialize(
+        eprosima::fastcdr::Cdr& scdr,
+        const eprosima::fastrtps::types::TypeIdentifier& data)
+{
+    scdr << data._d();
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::TK_NONE:
+            break;
+        case eprosima::fastrtps::types::TI_STRING8_SMALL:
+        case eprosima::fastrtps::types::TI_STRING16_SMALL:
+            scdr << data.string_sdefn();
+            break;
+        case eprosima::fastrtps::types::TI_STRING8_LARGE:
+        case eprosima::fastrtps::types::TI_STRING16_LARGE:
+            scdr << data.string_ldefn();
+            break;
+        case eprosima::fastrtps::types::TI_PLAIN_SEQUENCE_SMALL:
+            scdr << data.seq_sdefn();
+            break;
+        case eprosima::fastrtps::types::TI_PLAIN_SEQUENCE_LARGE:
+            scdr << data.seq_ldefn();
+            break;
+        case eprosima::fastrtps::types::TI_PLAIN_ARRAY_SMALL:
+            scdr << data.array_sdefn();
+            break;
+        case eprosima::fastrtps::types::TI_PLAIN_ARRAY_LARGE:
+            scdr << data.array_ldefn();
+            break;
+        case eprosima::fastrtps::types::TI_PLAIN_MAP_SMALL:
+            scdr << data.map_sdefn();
+            break;
+        case eprosima::fastrtps::types::TI_PLAIN_MAP_LARGE:
+            scdr << data.map_ldefn();
+            break;
+        case eprosima::fastrtps::types::TI_STRONGLY_CONNECTED_COMPONENT:
+            scdr << data.sc_component_id();
+            break;
+        case eprosima::fastrtps::types::EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_MINIMAL:
+            for (int i = 0; i < 14; ++i)
+            {
+                scdr << data.equivalence_hash()[i];
+            }
+            break;
+        default:
+            scdr << data.extended_defn();
+            break;
+    }
+}
+
+void deserialize(
+        eprosima::fastcdr::Cdr& dcdr,
+        eprosima::fastrtps::types::TypeIdentifier& data)
+{
+    dcdr >> data._d();
+
+    switch (data._d())
+    {
+        case eprosima::fastrtps::types::TK_NONE:
+            break;
+        case eprosima::fastrtps::types::TI_STRING8_SMALL:
+        case eprosima::fastrtps::types::TI_STRING16_SMALL:
+            dcdr >> data.string_sdefn();
+            break;
+        case eprosima::fastrtps::types::TI_STRING8_LARGE:
+        case eprosima::fastrtps::types::TI_STRING16_LARGE:
+            dcdr >> data.string_ldefn();
+            break;
+        case eprosima::fastrtps::types::TI_PLAIN_SEQUENCE_SMALL:
+            dcdr >> data.seq_sdefn();
+            break;
+        case eprosima::fastrtps::types::TI_PLAIN_SEQUENCE_LARGE:
+            dcdr >> data.seq_ldefn();
+            break;
+        case eprosima::fastrtps::types::TI_PLAIN_ARRAY_SMALL:
+            dcdr >> data.array_sdefn();
+            break;
+        case eprosima::fastrtps::types::TI_PLAIN_ARRAY_LARGE:
+            dcdr >> data.array_ldefn();
+            break;
+        case eprosima::fastrtps::types::TI_PLAIN_MAP_SMALL:
+            dcdr >> data.map_sdefn();
+            break;
+        case eprosima::fastrtps::types::TI_PLAIN_MAP_LARGE:
+            dcdr >> data.map_ldefn();
+            break;
+        case eprosima::fastrtps::types::TI_STRONGLY_CONNECTED_COMPONENT:
+            dcdr >> data.sc_component_id();
+            break;
+        case eprosima::fastrtps::types::EK_COMPLETE:
+        case eprosima::fastrtps::types::EK_MINIMAL:
+            for (int i = 0; i < 14; ++i)
+            {
+                dcdr >> data.equivalence_hash()[i];
+            }
+            break;
+        default:
+            dcdr >> data.extended_defn();
+            break;
+    }
 }
 
 } // namespace fastcdr
