@@ -405,7 +405,7 @@ jobs:
 
           # create source dir and download the sources
           "::group::Import repositories from fastrtps.repos"
-          vcs import src --debug --repos --input fastrtps.repos --skip-existing
+          vcs import src --debug --repos --input $depends_repos_path --skip-existing
           "::endgroup::"
 
       - name: Build
