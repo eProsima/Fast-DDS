@@ -176,6 +176,45 @@ public:
             fastrtps::rtps::ReaderProxyData& data,
             statistics::MonitorServiceStatusData& msg);
 
+    /**
+     * fills in the ParticipantProxyData from a MonitorService Message
+     *
+     * @param [out] data Proxy to fill
+     * @param [in] msg MonitorService Message to get the proxy information from.
+     *
+     * @return RETCODE_OK if the operation succeeds.
+     * @return RETCODE_ERROR if the  operation fails.
+     */
+    RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
+            fastrtps::rtps::ParticipantProxyData& data,
+            const statistics::MonitorServiceStatusData& msg);
+
+    /**
+     * fills in the WriterProxyData from a MonitorService Message
+     *
+     * @param [out] data Proxy to fill.
+     * @param [in] msg MonitorService Message to get the proxy information from.
+     *
+     * @return RETCODE_OK if the operation succeeds.
+     * @return RETCODE_ERROR if the  operation fails.
+     */
+    RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
+            fastrtps::rtps::WriterProxyData& data,
+            const statistics::MonitorServiceStatusData& msg);
+
+    /**
+     * fills in the ReaderProxyData from a MonitorService Message
+     *
+     * @param [out] data Proxy to fill.
+     * @param [in] msg MonitorService Message to get the proxy information from.
+     *
+     * @return RETCODE_OK if the operation succeeds.
+     * @return RETCODE_ERROR if the  operation fails.
+     */
+    RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
+            fastrtps::rtps::ReaderProxyData& data,
+            const statistics::MonitorServiceStatusData& msg);
+
 };
 
 } // namespace dds
