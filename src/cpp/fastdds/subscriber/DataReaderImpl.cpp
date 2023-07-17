@@ -102,7 +102,8 @@ DataReaderImpl::DataReaderImpl(
         const TypeSupport& type,
         TopicDescription* topic,
         const DataReaderQos& qos,
-        DataReaderListener* listener)
+        DataReaderListener* listener,
+        std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool)
     : subscriber_(s)
     , type_(type)
     , topic_(topic)
@@ -124,6 +125,9 @@ DataReaderImpl::DataReaderImpl(
     RTPSParticipantImpl::preprocess_endpoint_attributes<READER, 0x04, 0x07>(
         EntityId_t::unknown(), subscriber_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
     guid_.guidPrefix = subscriber_->get_participant_impl()->guid().guidPrefix;
+
+    // TODO implementation goes here
+    static_cast<void>(payload_pool);
 }
 
 ReturnCode_t DataReaderImpl::enable()
