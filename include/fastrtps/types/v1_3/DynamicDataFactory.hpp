@@ -12,64 +12,44 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_1_3_DYNAMIC_DATA_FACTORY_H
-#define TYPES_1_3_DYNAMIC_DATA_FACTORY_H
+#ifndef TYPES_1_3_DYNAMIC_DATA_FACTORY_HPP
+#define TYPES_1_3_DYNAMIC_DATA_FACTORY_HPP
 
 #include <fastrtps/types/TypesBase.h>
-#include <fastrtps/types/v1_3/DynamicTypeBuilder.hpp>
-#include <fastrtps/types/v1_3/DynamicType.hpp>
-#include <fastrtps/types/v1_3/DynamicData.hpp>
-#include <mutex>
-
-//#define DISABLE_DYNAMIC_MEMORY_CHECK
 
 namespace eprosima {
 namespace fastrtps {
 namespace types {
 namespace v1_3 {
 
-class DynamicDataFactory
+class DynamicType;
+class DynamicData;
+
+class RTPS_DllAPI DynamicDataFactory final
 {
-protected:
-
-    DynamicDataFactory();
-
-    ReturnCode_t create_members(
-            DynamicData* pData,
-            std::shared_ptr<const DynamicTypeImpl> pType);
-
-#ifndef DISABLE_DYNAMIC_MEMORY_CHECK
-    std::vector<DynamicData*> dynamic_datas_;
-    mutable std::recursive_mutex mutex_;
-#endif // ifndef DISABLE_DYNAMIC_MEMORY_CHECK
+    DynamicDataFactory() = default;
 
 public:
 
-    ~DynamicDataFactory();
+    ~DynamicDataFactory() = default;
 
-    RTPS_DllAPI static DynamicDataFactory* get_instance();
+    static DynamicDataFactory& get_instance();
 
-    RTPS_DllAPI static ReturnCode_t delete_instance();
+    static ReturnCode_t delete_instance();
 
-    RTPS_DllAPI DynamicData* create_data(
-            DynamicTypeBuilder* pBuilder);
+    DynamicData* create_data(
+            const DynamicType& type);
 
-    RTPS_DllAPI DynamicData* create_data(
-            std::shared_ptr<const DynamicTypeImpl> pType);
+    DynamicData* create_copy(
+            const DynamicData& data);
 
-    RTPS_DllAPI DynamicData* create_copy(
-            const DynamicData* pData);
-
-    RTPS_DllAPI ReturnCode_t delete_data(
+    ReturnCode_t delete_data(
             DynamicData* pData);
-
-    RTPS_DllAPI bool is_empty() const;
 };
-
 
 } // namespace v1_3
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_1_3_DYNAMIC_DATA_FACTORY_H
+#endif // TYPES_1_3_DYNAMIC_DATA_FACTORY_HPP

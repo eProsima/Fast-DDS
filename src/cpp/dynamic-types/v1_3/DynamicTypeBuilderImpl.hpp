@@ -98,13 +98,14 @@ public:
 
     static const DynamicTypeBuilderImpl& get_implementation(const DynamicTypeBuilder& t)
     {
-        return get_implementation(const_cast<DynamicTypeBuilder&>(t));
+        return *(DynamicTypeBuilderImpl*)((const char*)&t -
+                (::size_t)&reinterpret_cast<char const volatile&>((((DynamicTypeBuilderImpl*)0)->interface_)));
     }
 
     static DynamicTypeBuilderImpl& get_implementation(DynamicTypeBuilder& t)
     {
-        return *(DynamicTypeBuilderImpl*)((const char*)&t -
-                (::size_t)&reinterpret_cast<char const volatile&>((((DynamicTypeBuilderImpl*)0)->interface_)));
+        const DynamicTypeBuilder& ct = t;
+        return const_cast<DynamicTypeBuilderImpl&>(get_implementation(ct));
     }
 
     DynamicTypeBuilder& get_interface()

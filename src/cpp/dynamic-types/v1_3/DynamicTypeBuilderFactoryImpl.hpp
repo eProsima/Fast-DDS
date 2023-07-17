@@ -12,18 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_1_3_DYNAMIC_TYPE_BUILDER_FACTORY_IMPL_H
-#define TYPES_1_3_DYNAMIC_TYPE_BUILDER_FACTORY_IMPL_H
+#ifndef TYPES_1_3_DYNAMIC_TYPE_BUILDER_FACTORY_IMPL_HPP
+#define TYPES_1_3_DYNAMIC_TYPE_BUILDER_FACTORY_IMPL_HPP
 
-#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
 #include <fastrtps/types/AnnotationParameterValue.h>
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/utils/custom_allocators.hpp>
 
 #include <cassert>
 #include <memory>
-#include <mutex>
-#include <set>
 
 namespace eprosima {
 namespace fastrtps {
@@ -35,93 +32,10 @@ class AnnotationParameterValue;
 
 namespace v1_3 {
 
-class DynamicTypeBuilderFactoryImpl;
-class DynamicTypeBuilderImpl;
-class DynamicTypeImpl;
-
-enum class type_tracking
-{
-    none = 0,
-    partial,
-    complete
-};
-
-namespace detail {
-
-template<type_tracking mode>
-struct dynamic_tracker_data;
-
-template<>
-struct dynamic_tracker_data<type_tracking::none> {};
-
-template<>
-struct dynamic_tracker_data<type_tracking::partial>
-{
-    std::set<const DynamicTypeBuilderImpl*> builders_list_; /*!< Collection of active DynamicTypeBuilderImpl instances */
-    std::set<const DynamicTypeImpl*> types_list_; /*!< Collection of active DynamicTypeImpl instances */
-    std::mutex mutex_; /*!< atomic access to the collections */
-};
-
-template<>
-struct dynamic_tracker_data<type_tracking::complete>
-    : public dynamic_tracker_data<type_tracking::partial>
-{
-    std::set<const DynamicTypeBuilderImpl*> primitive_builders_list_; /*!< Collection of static builder instances */
-    std::set<const DynamicTypeImpl*> primitive_types_list_; /*!< Collection of static type instances */
-};
-
-} // namespace detail
-
-/**
- * Interface use to track dynamic objects lifetime
- */
-template<type_tracking mode>
-class dynamic_tracker
-    : protected detail::dynamic_tracker_data<mode>
-{
-    friend class DynamicTypeBuilderImpl;
-    friend class DynamicTypeBuilderFactoryImpl;
-
-    //! clear collection contents
-    void reset() noexcept;
-    //! check if there are leakages
-    bool is_empty() noexcept;
-    //! add primitive builder
-    void add_primitive(
-            const DynamicTypeBuilderImpl*) noexcept;
-    //! add primitive types
-    void add_primitive(
-            const DynamicTypeImpl*) noexcept;
-    //! add new builder
-    bool add(
-            const DynamicTypeBuilderImpl*) noexcept;
-    //! remove builder
-    bool remove(
-            const DynamicTypeBuilderImpl*) noexcept;
-    //! add new type
-    bool add(
-            const DynamicTypeImpl*) noexcept;
-    //! remove type
-    bool remove(
-            const DynamicTypeImpl*) noexcept;
-
-    // singleton creation
-    static dynamic_tracker<mode>& get_dynamic_tracker()
-    {
-        static dynamic_tracker<mode> dynamic_tracker;
-        return dynamic_tracker;
-    }
-
-};
-
-#if NDEBUG
-constexpr type_tracking selected_mode = type_tracking::none;
-#else
-constexpr type_tracking selected_mode = type_tracking::complete;
-#endif // NDEBUG
-
 class TypeState;
 class MemberDescriptorImpl;
+class DynamicTypeImpl;
+class DynamicTypeBuilderImpl;
 
 /**
  * This class is conceived as a singleton charged of creation of @ref DynamicTypeBuilderImpl objects.
@@ -241,8 +155,6 @@ public:
     /**
      * Resets the state of the factory
      * @remark This method is thread-safe.
-     * @remark On \b DEBUG builds or if explicitly specified using preprocessor macro \b ENABLE_DYNAMIC_MEMORY_CHECK
-     *         the factory will track object allocation/deallocation. This method will reset this tracking.
      * @return standard @ref ReturnCode_t
      */
     static ReturnCode_t delete_instance() noexcept;
@@ -595,4 +507,4 @@ public:
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_1_3_DYNAMIC_TYPE_BUILDER_FACTORY_IMPL_H
+#endif // TYPES_1_3_DYNAMIC_TYPE_BUILDER_FACTORY_IMPL_HPP

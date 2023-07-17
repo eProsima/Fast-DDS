@@ -206,10 +206,10 @@ namespace detail {
 
 template<class T>
 class external_reference_counting
-    : public std::enable_shared_from_this<const T>
+    : public std::enable_shared_from_this<T>
 {
     //! Keeps the object alive is external references are held
-    mutable std::shared_ptr<const T> external_lock_;
+    mutable std::shared_ptr<T> external_lock_;
     //! External references tracker
     mutable std::atomic_long counter_ = {0l};
 
@@ -248,8 +248,8 @@ protected:
             }
 
             // sync with other threads release() operations
-            std::shared_ptr<const T> empty;
-            std::shared_ptr<const T> inner = this->shared_from_this();
+            std::shared_ptr<T> empty;
+            std::shared_ptr<T> inner = const_cast<external_reference_counting*>(this)->shared_from_this();
 
             while (!std::atomic_compare_exchange_strong(
                         &external_lock_,
@@ -301,13 +301,13 @@ protected:
             }
 
             // sync with other threads add_ref() operations
-            std::shared_ptr<const T> inner = this->shared_from_this(),
+            std::shared_ptr<T> inner = const_cast<external_reference_counting*>(this)->shared_from_this(),
                     cmp = inner;
 
             while (!std::atomic_compare_exchange_strong(
                         &external_lock_,
                         &cmp,
-                        std::shared_ptr<const T>{}))
+                        std::shared_ptr<T>{}))
             {
                 if (!cmp)
                 {

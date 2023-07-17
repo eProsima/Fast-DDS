@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <dynamic-types/v1_3/DynamicTracker.hpp>
 #include <dynamic-types/v1_3/DynamicTypeBuilderFactoryImpl.hpp>
 #include <dynamic-types/v1_3/DynamicTypeBuilderImpl.hpp>
 #include <dynamic-types/v1_3/DynamicTypeImpl.hpp>

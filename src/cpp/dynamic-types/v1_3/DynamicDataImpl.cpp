@@ -42,7 +42,7 @@ DynamicDataImpl::DynamicDataImpl(
     create_members(type_);
 }
 
-const DynamicType& DynamicDataImpl::get_type() const
+const DynamicType& DynamicDataImpl::get_type() const noexcept
 {
     assert(type_);
     return *type_;
@@ -118,7 +118,7 @@ void DynamicDataImpl::create_members(
 
 ReturnCode_t DynamicDataImpl::get_descriptor(
         MemberDescriptor& value,
-        MemberId id)
+        MemberId id) const noexcept
 {
     ReturnCode_t rc;
     const DynamicTypeMember* member = type_->get_interface().get_member(id, &rc);
@@ -130,12 +130,6 @@ ReturnCode_t DynamicDataImpl::get_descriptor(
 
     MemberDescriptor md;
     return member->get_descriptor(md);
-}
-
-bool DynamicDataImpl::equals(
-        const DynamicDataImpl& other) const
-{
-    return *this == other;
 }
 
 MemberId DynamicDataImpl::get_member_id_by_name(
@@ -1313,7 +1307,7 @@ std::shared_ptr<DynamicDataImpl> DynamicDataImpl::loan_value(
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error loaning Value. Invalid MemberId.");
     }
-    return nullptr;
+    return {};
 }
 
 ReturnCode_t DynamicDataImpl::return_loaned_value(
@@ -1325,8 +1319,7 @@ ReturnCode_t DynamicDataImpl::return_loaned_value(
         auto it = complex_values_.find(*loanIt);
         if (it != complex_values_.end() && it->second == value)
         {
-            // TODO: replace with copy (disengage reference)
-            *it = make_shared<DynamicDataImpl>(std::move(*value));
+            *it = DynamicDataFactoryImpl::create_data(std::move(*value));
             loaned_values_.erase(loanIt);
             return ReturnCode_t::RETCODE_OK;
         }
@@ -1334,8 +1327,7 @@ ReturnCode_t DynamicDataImpl::return_loaned_value(
         auto it = values_.find(*loanIt);
         if (it != values_.end() && static_pointer_cast<DynamicDataImpl>(it->second) == value)
         {
-            // TODO: replace with copy (disengage reference)
-            *it = make_shared<DynamicDataImpl>(std::move(*value));
+            *it = DynamicDataFactoryImpl::create_data(std::move(*value));
             loaned_values_.erase(loanIt);
             return ReturnCode_t::RETCODE_OK;
         }
@@ -3449,10 +3441,25 @@ ReturnCode_t DynamicDataImpl::get_string_value(
         std::string& value,
         MemberId id) const
 {
+    const char * val = nullptr;
+    auto res = get_string_value(val, id);
+
+    if (!!res)
+    {
+        value = val;
+    }
+
+    return res;
+}
+
+ReturnCode_t DynamicDataImpl::get_string_value(
+        const char*& value,
+        MemberId id) const
+{
 #ifdef DYNAMIC_TYPES_CHECKING
     if (get_kind() == TypeKind::TK_STRING8 && id == MEMBER_ID_INVALID)
     {
-        value = string_value_;
+        value = string_value_.c_str();
         return ReturnCode_t::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
@@ -3470,14 +3477,13 @@ ReturnCode_t DynamicDataImpl::get_string_value(
             return default_array_value_->get_string_value(value, MEMBER_ID_INVALID);
         }
     }
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 #else
     auto it = values_.find(id);
     if (it != values_.end())
     {
         if (get_kind() == TypeKind::TK_STRING8 && id == MEMBER_ID_INVALID)
         {
-            value = *((std::string*)it->second);
+            value = static_cast<std::string*>(it->second)->c_str();
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
@@ -3492,8 +3498,9 @@ ReturnCode_t DynamicDataImpl::get_string_value(
     {
         return default_array_value_->get_string_value(value, MEMBER_ID_INVALID);
     }
-    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
+
+    return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
 ReturnCode_t DynamicDataImpl::set_string_value(
@@ -4713,7 +4720,7 @@ ReturnCode_t DynamicDataImpl::insert_map_data(
             }
             std::shared_ptr<DynamicDataImpl> keyCopy = DynamicDataFactory::get_instance()->create_copy(key);
             keyCopy->key_element_ = true;
-            complex_values_.emplace(outKeyId, keyCopy);
+            complex_values_.emplace(outKeyId, keyCopy.shared_from_this());
 
             std::shared_ptr<DynamicDataImpl> new_element = DynamicDataFactory::get_instance()->create_data(type_->get_element_type());
             outValueId = outKeyId + 1u;
@@ -4834,20 +4841,20 @@ ReturnCode_t DynamicDataImpl::insert_map_data(
 }
 
 ReturnCode_t DynamicDataImpl::insert_map_data(
-        const DynamicDataImpl* key,
-        const DynamicDataImpl* value,
+        const DynamicDataImpl& key,
+        const DynamicDataImpl& value,
         MemberId& outKey,
         MemberId& outValue)
 {
-    if (get_kind() == TypeKind::TK_MAP && type_->get_key_element_type()->equals(*key->type_.get()) &&
-            type_->get_element_type()->equals(*value->type_.get()))
+    if (get_kind() == TypeKind::TK_MAP && *type_->get_key_element_type() == *key.type_ &&
+            *type_->get_element_type() == *value.type_)
     {
         if (type_->get_bounds() == BOUND_UNLIMITED || get_item_count() < type_->get_bounds())
         {
 #ifdef DYNAMIC_TYPES_CHECKING
             for (auto it = complex_values_.begin(); it != complex_values_.end(); ++it)
             {
-                if (it->second->key_element_ && it->second->equals(key))
+                if (it->second->key_element_ && *it->second == key)
                 {
                     EPROSIMA_LOG_ERROR(DYN_TYPES, "Error inserting to map. The key already exists.");
                     return ReturnCode_t::RETCODE_BAD_PARAMETER;
@@ -5264,7 +5271,7 @@ bool DynamicDataImpl::has_children() const
 }
 
 bool DynamicDataImpl::operator ==(
-        const DynamicTypeImpl& other) const
+        const DynamicDataImpl& other) const
 {
     if (&other == this)
     {
@@ -5373,4 +5380,10 @@ bool DynamicDataImpl::operator ==(
         }
         return true;
     }
+}
+
+bool DynamicDataImpl::operator !=(
+        const DynamicDataImpl& data) const
+{
+    return !(*this == data);
 }

@@ -28,7 +28,6 @@ namespace v1_3 {
 
 class DynamicType final
 {
-
     DynamicType() noexcept = default;
 
     friend class DynamicTypeImpl;
@@ -69,7 +68,7 @@ public:
      * @param[out] ec @ref ReturnCode_t
      * @return @ref DynamicTypeMember
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
-     * @attention There is no ownership transference. Livecycle is linked to the referenced member.
+     * @attention There is no ownership transference. Lifecycle is linked to the referenced member.
      */
     const DynamicTypeMember* get_member_by_name(const char* name, ReturnCode_t* ec = nullptr) const noexcept;
 
@@ -78,7 +77,7 @@ public:
      * @param[out] ec @ref ReturnCode_t
      * @return @ref DynamicTypeMembersByName
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
-     * @attention There is no ownership transference. Livecycle is linked to the referenced members.
+     * @attention There is no ownership transference. Lifecycle is linked to the referenced members.
      */
     DynamicTypeMembersByName get_all_members_by_name(ReturnCode_t* ec = nullptr) const noexcept;
 
@@ -88,7 +87,7 @@ public:
      * @param[out] ec @ref ReturnCode_t
      * @return @ref DynamicTypeMember
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
-     * @attention There is no ownership transference. Livecycle is linked to the referenced member.
+     * @attention There is no ownership transference. Lifecycle is linked to the referenced member.
      */
     const DynamicTypeMember* get_member(MemberId id, ReturnCode_t* ec = nullptr) const noexcept;
 
@@ -97,7 +96,7 @@ public:
      * @param[out] ec @ref ReturnCode_t
      * @return @ref DynamicTypeMembersById
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
-     * @attention There is no ownership transference. Livecycle is linked to the referenced members.
+     * @attention There is no ownership transference. Lifecycle is linked to the referenced members.
      */
     DynamicTypeMembersById get_all_members(ReturnCode_t* ec = nullptr) const noexcept;
 
@@ -114,7 +113,7 @@ public:
      * @param[out] ec @ref ReturnCode_t
      * @return @ref DynamicTypeMember
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
-     * @attention There is no ownership transference. Livecycle is linked to the referenced members.
+     * @attention There is no ownership transference. Lifecycle is linked to the referenced members.
      */
     const DynamicTypeMember* get_member_by_index(uint32_t index, ReturnCode_t* ec = nullptr) const noexcept;
 
@@ -131,7 +130,7 @@ public:
      * @param[in] index uin32_t
      * @return @ref ReturnCode_t
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
-     * @attention There is no ownership transference. Livecycle is linked to the referenced members.
+     * @attention There is no ownership transference. Lifecycle is linked to the referenced members.
      */
     ReturnCode_t get_annotation(AnnotationDescriptor& annotation, uint32_t index) const noexcept;
 
@@ -140,7 +139,7 @@ public:
      * @param[out] ec @ref ReturnCode_t
      * @return @ref Annotations
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
-     * @attention There is no ownership transference. Livecycle is linked to the referenced members.
+     * @attention There is no ownership transference. Lifecycle is linked to the referenced members.
      */
     const Annotations* get_all_annotations(ReturnCode_t* ec = nullptr) const noexcept;
 

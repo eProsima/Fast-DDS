@@ -231,6 +231,11 @@ bool TypeState::operator ==(
     const TypeState* a = this;
     const TypeState* b = &state;
 
+    if ( a == b )
+    {
+        return true;
+    }
+
     while ( a->kind_ == TypeKind::TK_ALIAS )
     {
         assert(a->base_type_);

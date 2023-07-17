@@ -12,223 +12,69 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef TYPES_1_3_DYNAMIC_DATA_IMPL_HPP
-#define TYPES_1_3_DYNAMIC_DATA_IMPL_HPP
+#ifndef TYPES_1_3_DYNAMIC_DATA_HPP
+#define TYPES_1_3_DYNAMIC_DATA_HPP
 
-#include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/v1_3/MemberId.hpp>
-#include <fastrtps/types/v1_3/DynamicData.hpp>
-#include <fastrtps/utils/custom_allocators.hpp>
 
-//#define DYNAMIC_TYPES_CHECKING
-
-namespace eprosima {
-namespace fastdds {
-namespace dds {
-namespace DDSSQLFilter {
-
-class DDSFilterExpression;
-
-}  // namespace DDSSQLFilter
-}  // namespace dds
-}  // namespace fastdds
-}  // namespace eprosima
+#include <cstdint>
 
 namespace eprosima {
 namespace fastrtps {
 namespace types {
-
-class DynamicDataHelper;
-
 namespace v1_3 {
 
-class DynamicTypeImpl;
-class DynamicDataImpl;
-class MemberDescriptorImpl;
-class DynamicPubSubType;
+class MemberDescriptor;
 
-struct DataState
+class DynamicData final
 {
-#ifdef DYNAMIC_TYPES_CHECKING
-    int32_t int32_value_ = 0;
-    uint32_t uint32_value_ = 0;
-    int16_t int16_value_ = 0;
-    uint16_t uint16_value_ = 0;
-    int64_t int64_value_ = 0;
-    uint64_t uint64_value_ = 0;
-    float float32_value_ = 0.0f;
-    double float64_value_ = 0.0;
-    long double float128_value_ = 0.0;
-    char char8_value_ = 0;
-    wchar_t char16_value_ = 0;
-    octet byte_value_ = 0;
-    bool bool_value_ = false;
-    std::string string_value_;
-    std::wstring wstring_value_;
-    std::map<MemberId, std::shared_ptr<DynamicDataImpl>> complex_values_;
-#else
-    std::map<MemberId, std::shared_ptr<void>> values_;
-#endif // ifdef DYNAMIC_TYPES_CHECKING
-    std::vector<MemberId> loaned_values_;
-    bool key_element_ = false;
-    std::shared_ptr<DynamicDataImpl> default_array_value_;
-    MemberId union_id_ = MEMBER_ID_INVALID;
-};
 
-class DynamicDataImpl
-    : protected DataState
-    , public eprosima::detail::external_reference_counting<DynamicDataImpl>
-{
-    // Only create objects from the associated factory
-    struct use_the_create_method
-    {
-        explicit use_the_create_method() = default;
-    };
+    DynamicData() noexcept = default;
 
-    DynamicData interface_;
-
-public:
-
-    DynamicDataImpl(
-            use_the_create_method) noexcept;
-
-    DynamicDataImpl(
-            use_the_create_method,
-            const DynamicTypeImpl& type) noexcept;
-
-    DynamicDataImpl(
-            use_the_create_method,
-            const DynamicDataImpl& type) noexcept;
-
-    DynamicDataImpl(
-            use_the_create_method,
-            DynamicDataImpl&& data) noexcept;
-
-    ~DynamicDataImpl() noexcept;
-
-    static const DynamicDataImpl& get_implementation(const DynamicData& t)
-    {
-        return *(DynamicDataImpl*)((const char*)&t -
-                (::size_t)&reinterpret_cast<char const volatile&>((((DynamicDataImpl*)0)->interface_)));
-    }
-
-    static DynamicDataImpl& get_implementation(DynamicData& t)
-    {
-        const DynamicData& ct = t;
-        return const_cast<DynamicDataImpl&>(get_implementation(ct));
-    }
-
-    DynamicData& get_interface() noexcept
-    {
-       return interface_;
-    }
-
-    const DynamicData& get_interface() const noexcept
-    {
-       return interface_;
-    }
-
-    static ReturnCode_t delete_data(
-            const DynamicDataImpl& data) noexcept
-    {
-        data.release();
-        return ReturnCode_t::RETCODE_OK;
-    }
-
-protected:
-
-    void add_value(
-            TypeKind kind,
-            MemberId id);
-
-    void create_members(
-            const DynamicTypeImpl& type);
-
-    void clean();
-
-    void clean_members();
-
-    std::shared_ptr<void> clone_value(
-            MemberId id,
-            TypeKind kind) const;
-
-    bool compare_values(
-            TypeKind kind,
-            void* left,
-            void* right) const;
-
-    bool compare_values(
-            TypeKind kind,
-            std::shared_ptr<void> left,
-            std::shared_ptr<void> right) const;
-
-    ReturnCode_t insert_array_data(
-            MemberId indexId);
-
-    void set_default_value(
-            MemberId id);
-
-    std::string get_value(
-            MemberId id = MEMBER_ID_INVALID) const;
-
-    void set_value(
-            const std::string& sValue,
-            MemberId id = MEMBER_ID_INVALID);
-
-    MemberId get_union_id() const;
-
-    ReturnCode_t set_union_id(
-            MemberId id);
-
-    bool has_children() const;
-
-    std::shared_ptr<const DynamicTypeImpl> type_;
-
-    friend class DynamicTypeImpl;
-    friend class DynamicDataFactoryImpl;
-    friend class DynamicPubSubType;
-    friend class types::DynamicDataHelper;
-    friend class eprosima::fastdds::dds::DDSSQLFilter::DDSFilterExpression;
+    friend class DynamicDataImpl;
 
 public:
 
     bool operator ==(
-            const DynamicDataImpl& data) const noexcept;
+            const DynamicData& other) const noexcept;
 
     bool operator !=(
-            const DynamicDataImpl& data) const noexcept;
+            const DynamicData& other) const noexcept;
 
     /**
-     * Retrieve the @ref MemberDescriptor associated to a member
+     * Retrieve the @ref MemberDescriptor associated to a member according with (see [standard] 7.5.2.11.2)
      * @param [out] value @ref MemberDescriptor object to populate
      * @param [in] id identifier of the member to retrieve
      * @return standard DDS @ref ReturnCode_t
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
     ReturnCode_t get_descriptor(
             MemberDescriptor& value,
             MemberId id) const noexcept;
 
     /**
-     * Clear all memory associated to the object
-     * @return standard DDS @ref ReturnCode_t
+     * Retrieve the @ref DynamicType associated to a member according with (see [standard] 7.5.2.11.8)
+     * @return @ref MemberDescriptor object to populate.
+     * @attention There is no ownership transference.
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    ReturnCode_t clear_all_values();
+    const DynamicType& get_type() const noexcept;
 
     /**
-     * Clear all memory not associated to the key
-     * @return standard DDS @ref ReturnCode_t
+     * Queries members by name
+     * @param[in] name string
+     * @return MemberId or MEMBER_ID_INVALID on failure
      */
-    ReturnCode_t clear_nonkey_values();
+    MemberId get_member_id_by_name(
+            const char* name) const noexcept;
 
     /**
-     * Clear all memory associated to a specific member
-     * @param [in] id identifier of the member to purge
-     * @return standard DDS @ref ReturnCode_t
+     * Queries members by index
+     * @param[in] index uint32_t
+     * @return MemberId or MEMBER_ID_INVALID on failure
      */
-    ReturnCode_t clear_value(
-            MemberId id);
-
-    TypeKind get_kind() const;
+    MemberId get_member_id_at_index(
+            uint32_t index) const noexcept;
 
     /**
      * Provides the @b item @b count of the data and depends on the type of object:
@@ -245,139 +91,71 @@ public:
      * @li if the object is of an alias type, return the value appropriate for the alias base type.
      * @return count as defined above
      */
-    uint32_t get_item_count() const;
-
-    std::string get_name();
+    uint32_t get_item_count() const noexcept;
 
     /**
-     * Queries members by name
-     * @param[in] name string
-     * @return MemberId or MEMBER_ID_INVALID on failure
+     * Compares two @ref DynamicData, equality requires:
+     *     - Their respective type definitions are equal
+     *     - All contained values are equal and occur in the same order
+     *     - If the samples' type is an aggregated type, previous rule shall be amended as follows:
+     *          -# Members shall be compared without regard to their order.
+     *          -# One of the samples may omit a non-optional member that is present in the other if that
+     *             member takes its default value in the latter sample.
+     * @param [in] other @ref DynamicDataImpl object to compare to
+     * @attention There is no ownership transference.
+     * @return `true` on equality
      */
-    MemberId get_member_id_by_name(
-            const std::string& name) const;
+    bool equals(
+            const DynamicData& other) const noexcept;
 
     /**
-     * Queries members by index
-     * @param[in] index uint32_t
-     * @return MemberId or MEMBER_ID_INVALID on failure
+     * Clear all memory associated to the object
+     * @return standard DDS @ref ReturnCode_t
      */
-    MemberId get_member_id_at_index(
-            uint32_t index) const;
+    ReturnCode_t clear_all_values() noexcept;
+
+    /**
+     * Clear all memory not associated to the key
+     * @return standard DDS @ref ReturnCode_t
+     */
+    ReturnCode_t clear_nonkey_values() noexcept;
+
+    /**
+     * Clear all memory associated to a specific member
+     * @param [in] id identifier of the member to purge
+     * @return standard DDS @ref ReturnCode_t
+     */
+    ReturnCode_t clear_value(
+            MemberId id) noexcept;
 
     /**
      * \b Loans a @ref DynamicDataImpl object within the sample
      * @remarks This operation allows applications to visit values without allocating additional
      *         @ref DynamicDataImpl objects or copying values.
-     * @remarks This loan shall be returned by the @ref DynamicDataImpl::return_loaned_value operation
+     * @remarks This loan shall be returned by the @ref DynamicData::return_loaned_value operation
      * @param [in] id identifier of the object to retrieve
      * @return @ref DynamicDataImpl object loaned or \b nil on outstanding loaned data
+     * @attention There is ownership transference. The returned object should not be deleted but freed using
+     *            returned_loaned_value
      */
-    std::shared_ptr<DynamicDataImpl> loan_value(
-            MemberId id);
+    DynamicData* loan_value(
+            MemberId id) noexcept;
 
     /**
      * Returns a loaned retrieved using @ref DynamicDataImpl::return_loaned_value
      * @param [in] value @ref DynamicDataImpl previously loaned
+     * @attention There is ownership transference. It is not necessary to delete the returned object.
      */
     ReturnCode_t return_loaned_value(
-            std::shared_ptr<DynamicDataImpl> value);
+            DynamicData* value) noexcept;
 
-    MemberId get_array_index(
-            const std::vector<uint32_t>& position);
-
-    ReturnCode_t insert_sequence_data(
-            MemberId& outId);
-
-    ReturnCode_t insert_int32_value(
-            int32_t value,
-            MemberId& outId);
-
-    ReturnCode_t insert_uint32_value(
-            uint32_t value,
-            MemberId& outId);
-
-    ReturnCode_t insert_int16_value(
-            int16_t value,
-            MemberId& outId);
-
-    ReturnCode_t insert_uint16_value(
-            uint16_t value,
-            MemberId& outId);
-
-    ReturnCode_t insert_int64_value(
-            int64_t value,
-            MemberId& outId);
-
-    ReturnCode_t insert_uint64_value(
-            uint64_t value,
-            MemberId& outId);
-
-    ReturnCode_t insert_float32_value(
-            float value,
-            MemberId& outId);
-
-    ReturnCode_t insert_float64_value(
-            double value,
-            MemberId& outId);
-
-    ReturnCode_t insert_float128_value(
-            long double value,
-            MemberId& outId);
-
-    ReturnCode_t insert_char8_value(
-            char value,
-            MemberId& outId);
-
-    ReturnCode_t insert_char16_value(
-            wchar_t value,
-            MemberId& outId);
-
-    ReturnCode_t insert_byte_value(
-            octet value,
-            MemberId& outId);
-
-    ReturnCode_t insert_bool_value(
-            bool value,
-            MemberId& outId);
-
-    ReturnCode_t insert_string_value(
-            const std::string& value,
-            MemberId& outId);
-
-    ReturnCode_t insert_wstring_value(
-            const std::wstring& value,
-            MemberId& outId);
-
-    ReturnCode_t insert_enum_value(
-            const std::string& value,
-            MemberId& outId);
-
-    ReturnCode_t insert_complex_value(
-            const DynamicDataImpl& value,
-            MemberId& outId);
-
-    ReturnCode_t remove_sequence_data(
-            MemberId id);
-
-    ReturnCode_t clear_data();
-
-    ReturnCode_t clear_array_data(
-            MemberId indexId);
-
-    ReturnCode_t insert_map_data(
-            const DynamicDataImpl& key,
-            MemberId& outKeyId,
-            MemberId& outValueId);
-
-    ReturnCode_t insert_map_data(
-            const DynamicDataImpl& key,
-            const DynamicDataImpl& value,
-            MemberId& outKey,
-            MemberId& outValue);
-
-    ReturnCode_t remove_map_data(
-            MemberId keyId);
+    /**
+     * Create and return a new data sample with the same contents as this one.
+     * A comparisson of this object and the clone using equals immediately following this call will return `true`.
+     * @return @ref DynamicData
+     * @attention There is ownership transference.
+     */
+    DynamicData* clone() const noexcept;
 
     /*
      * Retrieve an \b int32 value associated to an identifier
@@ -387,7 +165,7 @@ public:
      */
     ReturnCode_t get_int32_value(
             int32_t& value,
-            MemberId id = MEMBER_ID_INVALID) const;
+            MemberId id = MEMBER_ID_INVALID) const noexcept;
 
     /*
      * Set an \b int32 value associated to an identifier
@@ -397,7 +175,7 @@ public:
      */
     ReturnCode_t set_int32_value(
             int32_t value,
-            MemberId id = MEMBER_ID_INVALID);
+            MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
      * Retrieve an \b uint32 value associated to an identifier
@@ -407,7 +185,7 @@ public:
      */
     ReturnCode_t get_uint32_value(
             uint32_t& value,
-            MemberId id = MEMBER_ID_INVALID) const;
+            MemberId id = MEMBER_ID_INVALID) const noexcept;
 
     /*
      * Set an \b uint32 value associated to an identifier
@@ -417,7 +195,7 @@ public:
      */
     ReturnCode_t set_uint32_value(
             uint32_t value,
-            MemberId id = MEMBER_ID_INVALID);
+            MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
      * Retrieve an \b int16 value associated to an identifier
@@ -427,7 +205,7 @@ public:
      */
     ReturnCode_t get_int16_value(
             int16_t& value,
-            MemberId id = MEMBER_ID_INVALID) const;
+            MemberId id = MEMBER_ID_INVALID) const noexcept;
 
     /*
      * Set an \b int16 value associated to an identifier
@@ -437,7 +215,7 @@ public:
      */
     ReturnCode_t set_int16_value(
             int16_t value,
-            MemberId id = MEMBER_ID_INVALID);
+            MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
      * Retrieve an \b uint16 value associated to an identifier
@@ -447,7 +225,7 @@ public:
      */
     ReturnCode_t get_uint16_value(
             uint16_t& value,
-            MemberId id = MEMBER_ID_INVALID) const;
+            MemberId id = MEMBER_ID_INVALID) const noexcept;
 
     /*
      * Set an \b uint16 value associated to an identifier
@@ -457,7 +235,7 @@ public:
      */
     ReturnCode_t set_uint16_value(
             uint16_t value,
-            MemberId id = MEMBER_ID_INVALID);
+            MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
      * Retrieve an \b int64 value associated to an identifier
@@ -467,7 +245,7 @@ public:
      */
     ReturnCode_t get_int64_value(
             int64_t& value,
-            MemberId id = MEMBER_ID_INVALID) const;
+            MemberId id = MEMBER_ID_INVALID) const noexcept;
 
     /*
      * Set an \b int64 value associated to an identifier
@@ -477,7 +255,7 @@ public:
      */
     ReturnCode_t set_int64_value(
             int64_t value,
-            MemberId id = MEMBER_ID_INVALID);
+            MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
      * Retrieve an \b uint64 value associated to an identifier
@@ -487,7 +265,7 @@ public:
      */
     ReturnCode_t get_uint64_value(
             uint64_t& value,
-            MemberId id = MEMBER_ID_INVALID) const;
+            MemberId id = MEMBER_ID_INVALID) const noexcept;
 
     /*
      * Set an \b uint64 value associated to an identifier
@@ -497,7 +275,7 @@ public:
      */
     ReturnCode_t set_uint64_value(
             uint64_t value,
-            MemberId id = MEMBER_ID_INVALID);
+            MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
      * Retrieve an \b float32 value associated to an identifier
@@ -507,7 +285,7 @@ public:
      */
     ReturnCode_t get_float32_value(
             float& value,
-            MemberId id = MEMBER_ID_INVALID) const;
+            MemberId id = MEMBER_ID_INVALID) const noexcept;
 
     /*
      * Set an \b float32 value associated to an identifier
@@ -517,7 +295,7 @@ public:
      */
     ReturnCode_t set_float32_value(
             float value,
-            MemberId id = MEMBER_ID_INVALID);
+            MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
      * Retrieve an \b float64 value associated to an identifier
@@ -527,7 +305,7 @@ public:
      */
     ReturnCode_t get_float64_value(
             double& value,
-            MemberId id = MEMBER_ID_INVALID) const;
+            MemberId id = MEMBER_ID_INVALID) const noexcept;
 
     /*
      * Set an \b float64 value associated to an identifier
@@ -537,7 +315,7 @@ public:
      */
     ReturnCode_t set_float64_value(
             double value,
-            MemberId id = MEMBER_ID_INVALID);
+            MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
      * Retrieve an \b float128 value associated to an identifier
@@ -548,7 +326,7 @@ public:
      */
     ReturnCode_t get_float128_value(
             long double& value,
-            MemberId id = MEMBER_ID_INVALID) const;
+            MemberId id = MEMBER_ID_INVALID) const noexcept;
 
     /*
      * Set an \b float128 value associated to an identifier
@@ -558,7 +336,7 @@ public:
      */
     ReturnCode_t set_float128_value(
             long double value,
-            MemberId id = MEMBER_ID_INVALID);
+            MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
      * Retrieve an \b char8 value associated to an identifier
@@ -568,7 +346,7 @@ public:
      */
     ReturnCode_t get_char8_value(
             char& value,
-            MemberId id = MEMBER_ID_INVALID) const;
+            MemberId id = MEMBER_ID_INVALID) const noexcept;
 
     /*
      * Set an \b char8 value associated to an identifier
@@ -578,7 +356,7 @@ public:
      */
     ReturnCode_t set_char8_value(
             char value,
-            MemberId id = MEMBER_ID_INVALID);
+            MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
      * Retrieve an \b char16 value associated to an identifier
@@ -588,7 +366,7 @@ public:
      */
     ReturnCode_t get_char16_value(
             wchar_t& value,
-            MemberId id = MEMBER_ID_INVALID) const;
+            MemberId id = MEMBER_ID_INVALID) const noexcept;
 
     /*
      * Set an \b char16 value associated to an identifier
@@ -598,7 +376,7 @@ public:
      */
     ReturnCode_t set_char16_value(
             wchar_t value,
-            MemberId id = MEMBER_ID_INVALID);
+            MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
      * Retrieve an \b byte value associated to an identifier
@@ -608,7 +386,7 @@ public:
      */
     ReturnCode_t get_byte_value(
             octet& value,
-            MemberId id = MEMBER_ID_INVALID) const;
+            MemberId id = MEMBER_ID_INVALID) const noexcept;
 
     /*
      * Set an \b byte value associated to an identifier
@@ -618,7 +396,7 @@ public:
      */
     ReturnCode_t set_byte_value(
             octet value,
-            MemberId id = MEMBER_ID_INVALID);
+            MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
      * Retrieve an \b int8 value associated to an identifier
@@ -628,13 +406,7 @@ public:
      */
     ReturnCode_t get_int8_value(
             int8_t& value,
-            MemberId id = MEMBER_ID_INVALID) const
-    {
-        octet aux;
-        ReturnCode_t result = get_byte_value(aux, id);
-        value = static_cast<int8_t>(aux);
-        return result;
-    }
+            MemberId id = MEMBER_ID_INVALID) const noexcept;
 
     /*
      * Set an \b int8 value associated to an identifier
@@ -644,10 +416,7 @@ public:
      */
     ReturnCode_t set_int8_value(
             int8_t value,
-            MemberId id = MEMBER_ID_INVALID)
-    {
-        return set_byte_value(static_cast<octet>(value), id);
-    }
+            MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
      * Retrieve an \b uint8 value associated to an identifier
@@ -657,13 +426,7 @@ public:
      */
     ReturnCode_t get_uint8_value(
             uint8_t& value,
-            MemberId id = MEMBER_ID_INVALID) const
-    {
-        octet aux;
-        ReturnCode_t result = get_byte_value(aux, id);
-        value = static_cast<uint8_t>(aux);
-        return result;
-    }
+            MemberId id = MEMBER_ID_INVALID) const noexcept;
 
     /*
      * Set an \b uint8 value associated to an identifier
@@ -673,10 +436,7 @@ public:
      */
     ReturnCode_t set_uint8_value(
             uint8_t value,
-            MemberId id = MEMBER_ID_INVALID)
-    {
-        return set_byte_value(static_cast<octet>(value), id);
-    }
+            MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
      * Retrieve an \b bool value associated to an identifier
@@ -686,7 +446,7 @@ public:
      */
     ReturnCode_t get_bool_value(
             bool& value,
-            MemberId id = MEMBER_ID_INVALID) const;
+            MemberId id = MEMBER_ID_INVALID) const noexcept;
 
     /*
      * Set an \b bool value associated to an identifier
@@ -696,7 +456,7 @@ public:
      */
     ReturnCode_t set_bool_value(
             bool value,
-            MemberId id = MEMBER_ID_INVALID);
+            MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
      * Set an \b bool value associated to an identifier
@@ -706,15 +466,7 @@ public:
      */
     ReturnCode_t set_bool_value(
             bool value,
-            const std::string& name)
-    {
-        MemberId id = get_member_id_by_name(name);
-        if (id != MEMBER_ID_INVALID)
-        {
-            return set_bool_value(value, id);
-        }
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
-    }
+            const char* name);
 
     /*
      * Retrieve an \b string value associated to an identifier
@@ -723,12 +475,8 @@ public:
      * @return standard DDS @ref ReturnCode_t
      */
     ReturnCode_t get_string_value(
-            std::string& value,
-            MemberId id = MEMBER_ID_INVALID) const;
-
-    ReturnCode_t get_string_value(
             const char*& value,
-            MemberId id = MEMBER_ID_INVALID) const;
+            MemberId id = MEMBER_ID_INVALID) const noexcept;
 
     /*
      * Set an \b string value associated to an identifier
@@ -737,8 +485,8 @@ public:
      * @return standard DDS @ref ReturnCode_t
      */
     ReturnCode_t set_string_value(
-            const std::string& value,
-            MemberId id = MEMBER_ID_INVALID);
+            const char* value,
+            MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
      * Retrieve an \b wstring value associated to an identifier
@@ -747,8 +495,8 @@ public:
      * @return standard DDS @ref ReturnCode_t
      */
     ReturnCode_t get_wstring_value(
-            std::wstring& value,
-            MemberId id = MEMBER_ID_INVALID) const;
+            const wchar_t*& value,
+            MemberId id = MEMBER_ID_INVALID) const noexcept;
 
     /*
      * Set an \b wstring value associated to an identifier
@@ -757,8 +505,8 @@ public:
      * @return standard DDS @ref ReturnCode_t
      */
     ReturnCode_t set_wstring_value(
-            const std::wstring& value,
-            MemberId id = MEMBER_ID_INVALID);
+            const wchar_t* value,
+            MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
      * Retrieve an \b enum value associated to an identifier
@@ -767,8 +515,8 @@ public:
      * @return standard DDS @ref ReturnCode_t
      */
     ReturnCode_t get_enum_value(
-            std::string& value,
-            MemberId id = MEMBER_ID_INVALID) const;
+            const char*& value,
+            MemberId id = MEMBER_ID_INVALID) const noexcept;
     /*
      * Set an \b enum value associated to an identifier
      * @param [in] value string because enumerations can be addressed by name
@@ -776,8 +524,8 @@ public:
      * @return standard DDS @ref ReturnCode_t
      */
     ReturnCode_t set_enum_value(
-            const std::string& value,
-            MemberId id = MEMBER_ID_INVALID);
+            const char* value,
+            MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
      * Retrieve an \b enum value associated to an identifier
@@ -787,7 +535,7 @@ public:
      */
     ReturnCode_t get_enum_value(
             uint32_t& value,
-            MemberId id = MEMBER_ID_INVALID) const;
+            MemberId id = MEMBER_ID_INVALID) const noexcept;
     /*
      * Set an \b enum value associated to an identifier
      * @param [in] value \b enum to set
@@ -796,7 +544,7 @@ public:
      */
     ReturnCode_t set_enum_value(
             const uint32_t& value,
-            MemberId id = MEMBER_ID_INVALID);
+            MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
      * Retrieve a bitmask object \b mask
@@ -811,15 +559,7 @@ public:
      * @throws \@ref ReturnCode_t on failure
      * @return uint64 representing bitmask mask
      */
-    uint64_t get_bitmask_value() const
-    {
-        uint64_t value;
-        if (get_bitmask_value(value) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+    uint64_t get_bitmask_value() const;
 
     /*
      * Set a \b mask value on a bitmask
@@ -832,22 +572,24 @@ public:
     /*
      * Retrieve a \b complex value associated to an identifier
      * @param [out] value @ref DynamicDataImpl reference to populate
+     * @attention There is ownership transference. The returned value must be released.
      * @param [in] id identifier of the member to query. \b MEMBER_ID_INVALID for primitives.
      * @return standard DDS @ref ReturnCode_t
      */
     ReturnCode_t get_complex_value(
-            DynamicDataImpl& value,
-            MemberId id = MEMBER_ID_INVALID) const;
+            const DynamicData*& value,
+            MemberId id = MEMBER_ID_INVALID) const noexcept;
 
     /*
      * Set a \b complex value associated to an identifier
      * @param [in] value @ref DynamicDataImpl to set
+     * @attention There is no ownership transference.
      * @param [in] id identifier of the member to set. \b MEMBER_ID_INVALID for primitives.
      * @return standard DDS @ref ReturnCode_t
      */
     ReturnCode_t set_complex_value(
-            const DynamicDataImpl& value,
-            MemberId id = MEMBER_ID_INVALID);
+            DynamicDataImpl& value,
+            MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
      * Convenient override to retrieve an \b int32 associated to an identifier
@@ -856,15 +598,7 @@ public:
      * @return \b int32 queried
      */
     int32_t get_int32_value(
-            MemberId id = MEMBER_ID_INVALID) const
-    {
-        int32_t value;
-        if (get_int32_value(value, id) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+            MemberId id = MEMBER_ID_INVALID) const;
 
     /*
      * Convenient override to retrieve an \b uint32 associated to an identifier
@@ -873,15 +607,7 @@ public:
      * @return \b uint32 queried
      */
     uint32_t get_uint32_value(
-            MemberId id = MEMBER_ID_INVALID) const
-    {
-        uint32_t value;
-        if (get_uint32_value(value, id) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+            MemberId id = MEMBER_ID_INVALID) const;
 
     /*
      * Convenient override to retrieve an \b int16 associated to an identifier
@@ -890,15 +616,7 @@ public:
      * @return \b int16 queried
      */
     int16_t get_int16_value(
-            MemberId id = MEMBER_ID_INVALID) const
-    {
-        int16_t value;
-        if (get_int16_value(value, id) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+            MemberId id = MEMBER_ID_INVALID) const;
 
     /*
      * Convenient override to retrieve an \b uint16 associated to an identifier
@@ -907,15 +625,7 @@ public:
      * @return \b uint16 queried
      */
     uint16_t get_uint16_value(
-            MemberId id = MEMBER_ID_INVALID) const
-    {
-        uint16_t value;
-        if (get_uint16_value(value, id) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+            MemberId id = MEMBER_ID_INVALID) const;
 
     /*
      * Convenient override to retrieve an \b int64 associated to an identifier
@@ -924,15 +634,7 @@ public:
      * @return \b int64 queried
      */
     int64_t get_int64_value(
-            MemberId id = MEMBER_ID_INVALID) const
-    {
-        int64_t value;
-        if (get_int64_value(value, id) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+            MemberId id = MEMBER_ID_INVALID) const;
 
     /*
      * Convenient override to retrieve an \b uint64 associated to an identifier
@@ -941,15 +643,7 @@ public:
      * @return \b uint64 queried
      */
     uint64_t get_uint64_value(
-            MemberId id = MEMBER_ID_INVALID) const
-    {
-        uint64_t value;
-        if (get_uint64_value(value, id) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+            MemberId id = MEMBER_ID_INVALID) const;
 
     /*
      * Convenient override to retrieve an \b float32 associated to an identifier
@@ -958,15 +652,7 @@ public:
      * @return \b float32 queried
      */
     float get_float32_value(
-            MemberId id = MEMBER_ID_INVALID) const
-    {
-        float value;
-        if (get_float32_value(value, id) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+            MemberId id = MEMBER_ID_INVALID) const;
 
     /*
      * Convenient override to retrieve an \b float64 associated to an identifier
@@ -975,15 +661,7 @@ public:
      * @return \b float64 queried
      */
     double get_float64_value(
-            MemberId id = MEMBER_ID_INVALID) const
-    {
-        double value;
-        if (get_float64_value(value, id) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+            MemberId id = MEMBER_ID_INVALID) const;
 
     /*
      * Convenient override to retrieve an \b float128 associated to an identifier
@@ -992,15 +670,7 @@ public:
      * @return \b float128 queried
      */
     long double get_float128_value(
-            MemberId id = MEMBER_ID_INVALID) const
-    {
-        long double value;
-        if (get_float128_value(value, id) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+            MemberId id = MEMBER_ID_INVALID) const;
 
     /*
      * Convenient override to retrieve an \b char8 associated to an identifier
@@ -1009,15 +679,7 @@ public:
      * @return \b char8 queried
      */
     char get_char8_value(
-            MemberId id = MEMBER_ID_INVALID) const
-    {
-        char value;
-        if (get_char8_value(value, id) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+            MemberId id = MEMBER_ID_INVALID) const;
 
     /*
      * Convenient override to retrieve an \b char16 associated to an identifier
@@ -1026,15 +688,7 @@ public:
      * @return \b char16 queried
      */
     wchar_t get_char16_value(
-            MemberId id = MEMBER_ID_INVALID) const
-    {
-        wchar_t value;
-        if (get_char16_value(value, id) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+            MemberId id = MEMBER_ID_INVALID) const;
 
     /*
      * Convenient override to retrieve an \b byte associated to an identifier
@@ -1043,15 +697,7 @@ public:
      * @return \b byte queried
      */
     octet get_byte_value(
-            MemberId id = MEMBER_ID_INVALID) const
-    {
-        octet value;
-        if (get_byte_value(value, id) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+            MemberId id = MEMBER_ID_INVALID) const;
 
     /*
      * Convenient override to retrieve an \b int8 associated to an identifier
@@ -1060,15 +706,7 @@ public:
      * @return \b int8 queried
      */
     int8_t get_int8_value(
-            MemberId id = MEMBER_ID_INVALID) const
-    {
-        int8_t value;
-        if (get_int8_value(value, id) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+            MemberId id = MEMBER_ID_INVALID) const;
 
     /*
      * Convenient override to retrieve an \b uint8 associated to an identifier
@@ -1077,15 +715,7 @@ public:
      * @return \b uint8 queried
      */
     uint8_t get_uint8_value(
-            MemberId id = MEMBER_ID_INVALID) const
-    {
-        uint8_t value;
-        if (get_uint8_value(value, id) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+            MemberId id = MEMBER_ID_INVALID) const;
 
     /*
      * Convenient override to retrieve an \b bool associated to an identifier
@@ -1094,15 +724,7 @@ public:
      * @return \b bool queried
      */
     bool get_bool_value(
-            MemberId id = MEMBER_ID_INVALID) const
-    {
-        bool value;
-        if (get_bool_value(value, id) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+            MemberId id = MEMBER_ID_INVALID) const;
 
     /*
      * Convenient override to retrieve an \b bool associated to an identifier
@@ -1111,16 +733,7 @@ public:
      * @return \b bool queried
      */
     bool get_bool_value(
-            const std::string& name) const
-    {
-        MemberId id = get_member_id_by_name(name);
-        bool value;
-        if (get_bool_value(value, id) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+            const std::string& name) const;
 
     /*
      * Convenient override to retrieve an \b string associated to an identifier
@@ -1129,15 +742,7 @@ public:
      * @return \b string queried
      */
     std::string get_string_value(
-            MemberId id = MEMBER_ID_INVALID) const
-    {
-        std::string value;
-        if (get_string_value(value, id) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+            MemberId id = MEMBER_ID_INVALID) const;
 
     /*
      * Convenient override to retrieve an \b wstring associated to an identifier
@@ -1146,15 +751,7 @@ public:
      * @return \b wstring queried
      */
     std::wstring get_wstring_value(
-            MemberId id = MEMBER_ID_INVALID) const
-    {
-        std::wstring value;
-        if (get_wstring_value(value, id) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+            MemberId id = MEMBER_ID_INVALID) const;
 
     /*
      * Convenient override to retrieve an \b enum associated to an identifier
@@ -1163,15 +760,7 @@ public:
      * @return \b enum queried
      */
     std::string get_enum_value(
-            MemberId id = MEMBER_ID_INVALID) const
-    {
-        std::string value;
-        if (get_enum_value(value, id) != ReturnCode_t::RETCODE_OK)
-        {
-            throw ReturnCode_t::RETCODE_BAD_PARAMETER;
-        }
-        return value;
-    }
+            MemberId id = MEMBER_ID_INVALID) const;
 
     ReturnCode_t get_union_label(
             uint64_t& value) const;
@@ -1186,39 +775,28 @@ public:
     ReturnCode_t set_discriminator_value(
             MemberId value) noexcept;
 
-    // Serializes and deserializes the Dynamic Data.
-    void serialize(
-            eprosima::fastcdr::Cdr& cdr) const;
+    //! Insert a new key in a map
+    ReturnCode_t insert_map_data(
+            const DynamicData& key,
+            MemberId& outKeyId,
+            MemberId& outValueId);
 
-    bool deserialize(
-            eprosima::fastcdr::Cdr& cdr);
+    //! Insert a new key-value pair in a map
+    ReturnCode_t insert_map_data(
+            const DynamicData& key,
+            const DynamicData& value,
+            MemberId& outKey,
+            MemberId& outValue);
 
-    static size_t getCdrSerializedSize(
-            const DynamicDataImpl& data,
-            size_t current_alignment = 0);
+    //! Remove a key from a map
+    ReturnCode_t remove_map_data(
+            MemberId keyId);
 
-    static size_t getEmptyCdrSerializedSize(
-            const DynamicTypeImpl& type,
-            size_t current_alignment = 0);
-
-    static size_t getKeyMaxCdrSerializedSize(
-            const DynamicTypeImpl& type,
-            size_t current_alignment = 0);
-
-    static size_t getMaxCdrSerializedSize(
-            const DynamicTypeImpl& type,
-            size_t current_alignment = 0);
-
-    const DynamicTypeImpl& get_type() const noexcept;
-
-    void serializeKey(
-            eprosima::fastcdr::Cdr& cdr) const;
 };
-
 
 } // namespace v1_3
 } // namespace types
 } // namespace fastrtps
 } // namespace eprosima
 
-#endif // TYPES_1_3_DYNAMIC_DATA_IMPL_HPP
+#endif // TYPES_1_3_DYNAMIC_DATA_HPP
