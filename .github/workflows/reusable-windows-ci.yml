@@ -393,6 +393,8 @@ jobs:
 
           "::group::merged vcstool repos file"
           $repos | ConvertTo-Yaml | Tee-Object -FilePath fastrtps.repos
+          $repos_content = Get-Content fastrtps.repos
+          Write-Output "Converted repos files: $repos_content"
           "::endgroup::"
 
           # Generate the meta file
@@ -402,7 +404,7 @@ jobs:
           "::endgroup::"
 
           # create source dir and download the sources
-          vcs import src --input fastrtps.repos --skip-existing
+          vcs import --skip-existing src < fastrtps.repos
 
       - name: Build
         id: build
