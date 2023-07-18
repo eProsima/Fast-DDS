@@ -56,6 +56,7 @@ public:
     using AnnotationManager::annotation_get_position;
     using AnnotationManager::annotation_set_position;
     using AnnotationManager::annotation_get_bit_bound;
+    using AnnotationManager::annotation_get_default;
 
 public:
 

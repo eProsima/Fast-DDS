@@ -69,10 +69,13 @@ struct DataState
 #else
     std::map<MemberId, std::shared_ptr<void>> values_;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
+    std::shared_ptr<const DynamicTypeImpl> type_;
     std::vector<MemberId> loaned_values_;
     bool key_element_ = false;
     std::shared_ptr<DynamicDataImpl> default_array_value_;
     MemberId union_id_ = MEMBER_ID_INVALID;
+
+    DataState(const DynamicTypeImpl& type);
 };
 
 class DynamicDataImpl
@@ -90,15 +93,12 @@ class DynamicDataImpl
 public:
 
     DynamicDataImpl(
-            use_the_create_method) noexcept;
-
-    DynamicDataImpl(
             use_the_create_method,
             const DynamicTypeImpl& type) noexcept;
 
     DynamicDataImpl(
             use_the_create_method,
-            const DynamicDataImpl& type) noexcept;
+            const DynamicDataImpl& data) noexcept;
 
     DynamicDataImpl(
             use_the_create_method,
@@ -141,16 +141,9 @@ protected:
             TypeKind kind,
             MemberId id);
 
-    void create_members(
-            const DynamicTypeImpl& type);
-
     void clean();
 
     void clean_members();
-
-    std::shared_ptr<void> clone_value(
-            MemberId id,
-            TypeKind kind) const;
 
     bool compare_values(
             TypeKind kind,
@@ -181,8 +174,6 @@ protected:
             MemberId id);
 
     bool has_children() const;
-
-    std::shared_ptr<const DynamicTypeImpl> type_;
 
     friend class DynamicTypeImpl;
     friend class DynamicDataFactoryImpl;
@@ -281,7 +272,7 @@ public:
      * @param [in] value @ref DynamicDataImpl previously loaned
      */
     ReturnCode_t return_loaned_value(
-            std::shared_ptr<DynamicDataImpl> value);
+            std::shared_ptr<const DynamicDataImpl> value);
 
     MemberId get_array_index(
             const std::vector<uint32_t>& position);

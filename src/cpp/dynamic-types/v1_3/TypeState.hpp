@@ -383,6 +383,7 @@ public:
      * This operation returns the member that corresponds to the specified member ID
      * @param[in] id MemberId identifier to query
      * @return standard MemberDescriptorImpl
+     * @throw std::system_error
      */
     const DynamicTypeMemberImpl& get_member(MemberId id) const;
 

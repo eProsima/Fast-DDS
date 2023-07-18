@@ -32,7 +32,7 @@ namespace types {
 namespace v1_3 {
 
 class AnnotationDescriptorImpl;
-class DynamicData;
+class DynamicDataImpl;
 class DynamicTypeMemberImpl;
 class DynamicTypeBuilderImpl;
 class DynamicTypeBuilderFactoryImpl;
@@ -92,31 +92,31 @@ protected:
             eprosima::fastcdr::Cdr& cdr) const;
 
     bool deserialize_discriminator(
-            DynamicData& data,
+            DynamicDataImpl& data,
             eprosima::fastcdr::Cdr& cdr) const;
 
     void serialize_discriminator(
-            const DynamicData& data,
+            const DynamicDataImpl& data,
             eprosima::fastcdr::Cdr& cdr) const;
 
 public:
 
     //! TODO:BARRO move to protected on serialization refactor
     void serializeKey(
-            const DynamicData& data,
+            const DynamicDataImpl& data,
             eprosima::fastcdr::Cdr& cdr) const;
 
     // Serializes and deserializes the Dynamic Data.
     void serialize(
-            const DynamicData& data,
+            const DynamicDataImpl& data,
             eprosima::fastcdr::Cdr& cdr) const;
 
     bool deserialize(
-            DynamicData& data,
+            DynamicDataImpl& data,
             eprosima::fastcdr::Cdr& cdr) const;
 
     size_t getCdrSerializedSize(
-            const DynamicData& data,
+            const DynamicDataImpl& data,
             size_t current_alignment = 0) const;
 
     size_t getEmptyCdrSerializedSize(
