@@ -1167,7 +1167,7 @@ void ReaderProxyData::set_announced_unicast_locators(
 
 void ReaderProxyData::set_remote_unicast_locators(
         const LocatorList_t& locators,
-        const NetworkFactory& network)
+        const NetworkFactory&)
 {
     Locator_t local_locator;
     remote_locators_.unicast.clear();
@@ -1189,7 +1189,7 @@ void ReaderProxyData::add_multicast_locator(
 
 void ReaderProxyData::set_multicast_locators(
         const LocatorList_t& locators,
-        const NetworkFactory& network)
+        const NetworkFactory&)
 {
     Locator_t local_locator;
     remote_locators_.multicast.clear();
@@ -1211,7 +1211,7 @@ void ReaderProxyData::set_locators(
 
 void ReaderProxyData::set_remote_locators(
         const RemoteLocatorList& locators,
-        const NetworkFactory& network,
+        const NetworkFactory&,
         bool use_multicast_locators)
 {
     Locator_t local_locator;
