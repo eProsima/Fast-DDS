@@ -686,6 +686,8 @@ struct ConnectionListSampleValidator : public SampleValidator
                                     bool expected_locators_found = true;
                                     for (auto& incoming_connection : data.value().connection_list())
                                     {
+                                        //! Find the first Connection that matches with the incoming, with same
+                                        //  mode and same locators
                                         auto conn_it = std::find_if(elem.value().connection_list().begin(),
                                         elem.value().connection_list().end(),
                                         [&](const statistics::Connection&  connection)
@@ -723,7 +725,8 @@ struct ConnectionListSampleValidator : public SampleValidator
                                             }
                                         });
 
-                                        if (conn_it != elem.value().connection_list().end())
+                                        //! Check return connection is the last (valid connection NOT found)
+                                        if (conn_it == elem.value().connection_list().end())
                                         {
                                             expected_locators_found = false;
                                             break;
