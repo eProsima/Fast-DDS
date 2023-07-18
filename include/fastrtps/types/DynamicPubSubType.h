@@ -42,21 +42,23 @@ public:
     RTPS_DllAPI DynamicPubSubType(
             v1_1::DynamicType_ptr pDynamicType);
 
+    //! transferred ownership
     RTPS_DllAPI DynamicPubSubType(
-            v1_3::DynamicType_ptr pDynamicType);
+            const v1_3::DynamicType* type);
 
+    //! not transferred ownership
     RTPS_DllAPI DynamicPubSubType(
-            const v1_3::DynamicType& type)
-        : v1_3::DynamicPubSubType(type)
-    {}
+            const v1_3::DynamicType& type);
 
     FASTRTPS_DEPRECATED("Dynamic types version 1.1 will be disposed. Upgrade to version 1.3.")
     RTPS_DllAPI ReturnCode_t SetDynamicType(
             v1_1::DynamicType_ptr pType);
 
+    //! transferred ownership
     RTPS_DllAPI ReturnCode_t SetDynamicType(
-            v1_3::DynamicType_ptr pType);
+            const v1_3::DynamicType* type);
 
+    //! not transferred ownership
     RTPS_DllAPI ReturnCode_t SetDynamicType(
             const v1_3::DynamicType& type);
 
@@ -67,8 +69,9 @@ public:
         return active_;
     }
 
+    //! transferred ownership
     RTPS_DllAPI ReturnCode_t GetDynamicType(
-            v1_3::DynamicType_ptr& p) const;
+            const v1_3::DynamicType*& p) const;
 
     RTPS_DllAPI ReturnCode_t GetDynamicType(
             v1_1::DynamicType_ptr& p) const;

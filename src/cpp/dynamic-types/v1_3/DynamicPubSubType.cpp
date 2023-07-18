@@ -39,24 +39,32 @@ DynamicPubSubType::~DynamicPubSubType()
     {
         free(m_keyBuffer);
     }
+
+    CleanDynamicType();
 }
 
 void DynamicPubSubType::CleanDynamicType()
 {
-    dynamic_type_.reset();
+    if (dynamic_type_ != nullptr)
+    {
+        DynamicTypeBuilderFactory::get_instance().delete_type(dynamic_type_);
+    }
+
+    dynamic_type_ = nullptr;
 }
 
 DynamicType_ptr DynamicPubSubType::GetDynamicType() const
 {
-    return dynamic_type_;
+    return nullptr == dynamic_type_ ? nullptr :
+            DynamicTypeBuilderFactory::get_instance().create_copy(dynamic_type_);
 }
 
 ReturnCode_t DynamicPubSubType::SetDynamicType(
         const DynamicData& data)
 {
-    if (!dynamic_type_)
+    if (nullptr == dynamic_type_)
     {
-        dynamic_type_ = data.type_;
+        dynamic_type_ = DynamicTypeBuilderFactory::get_instance().create_copy(data.get_type());
         UpdateDynamicTypeInfo();
         return ReturnCode_t::RETCODE_OK;
     }
@@ -70,9 +78,9 @@ ReturnCode_t DynamicPubSubType::SetDynamicType(
 ReturnCode_t DynamicPubSubType::SetDynamicType(
         const DynamicType& type)
 {
-    if (!dynamic_type_)
+    if (nullptr == dynamic_type_)
     {
-        dynamic_type_.reset(DynamicTypeBuilderFactory::get_instance().create_copy(type));
+        dynamic_type_ = DynamicTypeBuilderFactory::get_instance().create_copy(type);
         UpdateDynamicTypeInfo();
         return ReturnCode_t::RETCODE_OK;
     }
@@ -85,13 +93,21 @@ ReturnCode_t DynamicPubSubType::SetDynamicType(
 
 void* DynamicPubSubType::createData()
 {
-    return DynamicDataFactory::get_instance()->create_data(dynamic_type_);
+    if (nullptr == dynamic_type_)
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "DynamicPubSubType cannot create data. Unspecified type.");
+        return nullptr;
+    }
+    else
+    {
+        return DynamicDataFactory::get_instance()->create_data(*dynamic_type_);
+    }
 }
 
 void DynamicPubSubType::deleteData(
         void* data)
 {
-    DynamicDataFactory::get_instance()->delete_data((DynamicData*)data);
+    DynamicDataFactory::get_instance()->delete_data(static_cast<DynamicData*>(data));
 }
 
 bool DynamicPubSubType::deserialize(
@@ -121,12 +137,12 @@ bool DynamicPubSubType::getKey(
         eprosima::fastrtps::rtps::InstanceHandle_t* handle,
         bool force_md5)
 {
-    if (!dynamic_type_ || !m_isGetKeyDefined)
+    if (dynamic_type_ != nullptr || !m_isGetKeyDefined)
     {
         return false;
     }
     DynamicData* pDynamicData = (DynamicData*)data;
-    size_t keyBufferSize = static_cast<uint32_t>(DynamicData::getKeyMaxCdrSerializedSize(dynamic_type_));
+    size_t keyBufferSize = static_cast<uint32_t>(DynamicData::getKeyMaxCdrSerializedSize(*dynamic_type_));
 
     if (m_keyBuffer == nullptr)
     {
@@ -197,7 +213,7 @@ void DynamicPubSubType::UpdateDynamicTypeInfo()
 {
     m_isGetKeyDefined = false;
 
-    if (!dynamic_type_)
+    if (nullptr == dynamic_type_)
     {
         return;
     }
@@ -210,14 +226,5 @@ void DynamicPubSubType::UpdateDynamicTypeInfo()
     if (m_isGetKeyDefined)
     {
         return;
-    }
-
-    for (const DynamicTypeMember* pm : dynamic_type_->get_all_members())
-    {
-        assert(pm);
-        if (pm->key_annotation())
-        {
-            return;
-        }
     }
 }
