@@ -1173,10 +1173,11 @@ void ReaderProxyData::set_remote_unicast_locators(
     remote_locators_.unicast.clear();
     for (const Locator_t& locator : locators)
     {
-        if (network.transform_remote_locator(locator, local_locator))
-        {
-            remote_locators_.add_unicast_locator(local_locator);
-        }
+        // if (network.transform_remote_locator(locator, local_locator))
+        // {
+        //     remote_locators_.add_unicast_locator(local_locator);
+        // }
+        remote_locators_.add_unicast_locator(locator);
     }
 }
 
@@ -1194,10 +1195,11 @@ void ReaderProxyData::set_multicast_locators(
     remote_locators_.multicast.clear();
     for (const Locator_t& locator : locators)
     {
-        if (network.transform_remote_locator(locator, local_locator))
-        {
-            remote_locators_.add_multicast_locator(locator);
-        }
+        // if (network.transform_remote_locator(locator, local_locator))
+        // {
+        //     remote_locators_.add_multicast_locator(locator);
+        // }
+        remote_locators_.add_multicast_locator(locator);
     }
 }
 
@@ -1218,20 +1220,22 @@ void ReaderProxyData::set_remote_locators(
 
     for (const Locator_t& locator : locators.unicast)
     {
-        if (network.transform_remote_locator(locator, local_locator))
-        {
-            remote_locators_.add_unicast_locator(local_locator);
-        }
+        // if (network.transform_remote_locator(locator, local_locator))
+        // {
+        //     remote_locators_.add_unicast_locator(local_locator);
+        // }
+        remote_locators_.add_unicast_locator(locator);
     }
 
     if (use_multicast_locators)
     {
         for (const Locator_t& locator : locators.multicast)
         {
-            if (network.transform_remote_locator(locator, local_locator))
-            {
-                remote_locators_.add_multicast_locator(locator);
-            }
+            // if (network.transform_remote_locator(locator, local_locator))
+            // {
+            //     remote_locators_.add_multicast_locator(locator);
+            // }
+            remote_locators_.add_multicast_locator(locator);
         }
     }
 }
