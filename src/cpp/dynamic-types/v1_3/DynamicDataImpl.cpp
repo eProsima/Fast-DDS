@@ -3638,10 +3638,23 @@ ReturnCode_t DynamicDataImpl::get_wstring_value(
         std::wstring& value,
         MemberId id) const
 {
+    const wchar_t * val = nullptr;
+    auto ret = get_wstring_value(val, id);
+    if(!!ret)
+    {
+        value = val;
+    }
+    return ret;
+}
+
+ReturnCode_t DynamicDataImpl::get_wstring_value(
+        const wchar_t*& value,
+        MemberId id) const
+{
 #ifdef DYNAMIC_TYPES_CHECKING
     if (get_kind() == TypeKind::TK_STRING16 && id == MEMBER_ID_INVALID)
     {
-        value = wstring_value_;
+        value = wstring_value_.c_str();
         return ReturnCode_t::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
@@ -3666,7 +3679,7 @@ ReturnCode_t DynamicDataImpl::get_wstring_value(
     {
         if (get_kind() == TypeKind::TK_STRING16 && id == MEMBER_ID_INVALID)
         {
-            value = *((std::wstring*)it->second);
+            value = static_cast<std::wstring*>(it->second)->c_str();
             return ReturnCode_t::RETCODE_OK;
         }
         else if (id != MEMBER_ID_INVALID)
@@ -3951,6 +3964,21 @@ ReturnCode_t DynamicDataImpl::get_enum_value(
         std::string& value,
         MemberId id) const
 {
+    const char * val = nullptr;
+    auto res = get_enum_value(val, id);
+
+    if (!!res)
+    {
+        value = val;
+    }
+
+    return res;
+}
+
+ReturnCode_t DynamicDataImpl::get_enum_value(
+        const char*& value,
+        MemberId id) const
+{
 #ifdef DYNAMIC_TYPES_CHECKING
     if (get_kind() == TypeKind::TK_ENUM && id == MEMBER_ID_INVALID)
     {
@@ -3964,7 +3992,7 @@ ReturnCode_t DynamicDataImpl::get_enum_value(
 
         if (!!res)
         {
-            value = md.get_name();
+            value = md.get_name().c_str();
         }
 
         return res;
@@ -4002,7 +4030,7 @@ ReturnCode_t DynamicDataImpl::get_enum_value(
 
             if (!!res)
             {
-                value = md.get_name();
+                value = md.get_name().c_str();
             }
 
             return res;
@@ -4992,9 +5020,8 @@ ReturnCode_t DynamicDataImpl::clear_data()
     return ReturnCode_t::RETCODE_BAD_PARAMETER;
 }
 
-ReturnCode_t DynamicDataImpl::get_complex_value(
-        DynamicDataImpl** value,
-        MemberId id) const
+std::shared_ptr<const DynamicDataImpl> DynamicDataImpl::get_complex_value(
+        MemberId id = MEMBER_ID_INVALID) const
 {
     // Check that the type is complex and in case of dynamic containers, check that the index is valid
     if (id != MEMBER_ID_INVALID && (get_kind() == TypeKind::TK_STRUCTURE || get_kind() == TypeKind::TK_UNION ||
@@ -5005,24 +5032,22 @@ ReturnCode_t DynamicDataImpl::get_complex_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            *value = DynamicDataFactory::get_instance()->create_copy(it->second);
-            return ReturnCode_t::RETCODE_OK;
+            return DynamicDataFactoryImpl::get_instance()->create_copy(*it->second);
         }
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        throw ReturnCode_t::RETCODE_BAD_PARAMETER;
 #else
         auto it = values_.find(id);
         if (it != values_.end())
         {
-            *value = DynamicDataFactory::get_instance()->create_copy((DynamicDataImpl*)it->second);
-            return ReturnCode_t::RETCODE_OK;
+            return DynamicDataFactoryImpl::get_instance()->create_copy(*static_cast<const DynamicDataImpl*>(it->second));
         }
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        throw ReturnCode_t::RETCODE_BAD_PARAMETER;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
     }
     else
     {
         EPROSIMA_LOG_ERROR(DYN_TYPES, "Error settings complex value. The kind " << get_kind() << "doesn't support it");
-        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+        throw ReturnCode_t::RETCODE_BAD_PARAMETER;
     }
 }
 

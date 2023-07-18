@@ -20,6 +20,7 @@
 
 using namespace eprosima::fastrtps::types::v1_3;
 using eprosima::fastrtps::types::ReturnCode_t;
+using eprosima::fastrtps::types::octet;
 
 bool DynamicData::operator ==(
         const DynamicData& other) const noexcept
@@ -381,7 +382,7 @@ ReturnCode_t DynamicData::get_enum_value(
 }
 
 ReturnCode_t DynamicData::set_enum_value(
-        const const char* value,
+        const char* value,
         MemberId id /*= MEMBER_ID_INVALID*/) noexcept
 
 {
@@ -404,6 +405,230 @@ ReturnCode_t DynamicData::set_enum_value(
     return DynamicDataImpl::get_implementation(*this).set_enum_value(value, id);
 }
 
+ReturnCode_t DynamicData::get_bitmask_value(
+        uint64_t& value) const
+{
+    return DynamicDataImpl::get_implementation(*this).get_bitmask_value(value);
+}
+
+uint64_t DynamicData::get_bitmask_value() const
+{
+    return DynamicDataImpl::get_implementation(*this).get_bitmask_value();
+}
+
+ReturnCode_t DynamicData::set_bitmask_value(
+        uint64_t value)
+{
+    return DynamicDataImpl::get_implementation(*this).set_bitmask_value(value);
+}
+
+ReturnCode_t DynamicData::get_complex_value(
+        const DynamicData*& value,
+        MemberId id /*= MEMBER_ID_INVALID*/) const noexcept
+{
+    try
+    {
+        auto sp = DynamicDataImpl::get_implementation(*this).get_complex_value(id);
+        value = sp ? &sp->get_interface() : nullptr;
+    }
+    catch(ReturnCode_t ec)
+    {
+        return ec;
+    }
+
+    return {};
+}
+
+ReturnCode_t DynamicData::set_complex_value(
+        const DynamicData& value,
+        MemberId id /*= MEMBER_ID_INVALID*/) noexcept
+{
+    return DynamicDataImpl::get_implementation(*this).set_complex_value(DynamicDataImpl::get_implementation(value), id);
+}
+
+int32_t DynamicData::get_int32_value(
+        MemberId id /*= MEMBER_ID_INVALID*/) const
+{
+    return DynamicDataImpl::get_implementation(*this).get_int32_value(id);
+}
 
 
+uint32_t DynamicData::get_uint32_value(
+        MemberId id /*= MEMBER_ID_INVALID*/) const
+{
+    return DynamicDataImpl::get_implementation(*this).get_uint32_value(id);
+}
 
+int16_t DynamicData::get_int16_value(
+        MemberId id /*= MEMBER_ID_INVALID*/) const
+{
+    return DynamicDataImpl::get_implementation(*this).get_int16_value(id);
+}
+
+uint16_t DynamicData::get_uint16_value(
+        MemberId id /*= MEMBER_ID_INVALID*/) const
+{
+    return DynamicDataImpl::get_implementation(*this).get_uint16_value(id);
+}
+
+int64_t DynamicData::get_int64_value(
+        MemberId id /*= MEMBER_ID_INVALID*/) const
+{
+    return DynamicDataImpl::get_implementation(*this).get_int64_value(id);
+}
+
+uint64_t DynamicData::get_uint64_value(
+        MemberId id /*= MEMBER_ID_INVALID*/) const
+{
+    return DynamicDataImpl::get_implementation(*this).get_uint64_value(id);
+}
+
+float DynamicData::get_float32_value(
+        MemberId id /*= MEMBER_ID_INVALID*/) const
+{
+    return DynamicDataImpl::get_implementation(*this).get_float32_value(id);
+}
+
+double DynamicData::get_float64_value(
+        MemberId id /*= MEMBER_ID_INVALID*/) const
+{
+    return DynamicDataImpl::get_implementation(*this).get_float64_value(id);
+}
+
+long double DynamicData::get_float128_value(
+        MemberId id /*= MEMBER_ID_INVALID*/) const
+{
+    return DynamicDataImpl::get_implementation(*this).get_float128_value(id);
+}
+
+char DynamicData::get_char8_value(
+        MemberId id /*= MEMBER_ID_INVALID*/) const
+{
+    return DynamicDataImpl::get_implementation(*this).get_char8_value(id);
+}
+
+wchar_t DynamicData::get_char16_value(
+        MemberId id /*= MEMBER_ID_INVALID*/) const
+{
+    return DynamicDataImpl::get_implementation(*this).get_char16_value(id);
+}
+
+octet DynamicData::get_byte_value(
+        MemberId id /*= MEMBER_ID_INVALID*/) const
+{
+    return DynamicDataImpl::get_implementation(*this).get_byte_value(id);
+}
+
+int8_t DynamicData::get_int8_value(
+        MemberId id /*= MEMBER_ID_INVALID*/) const
+{
+    return DynamicDataImpl::get_implementation(*this).get_int8_value(id);
+}
+
+uint8_t DynamicData::get_uint8_value(
+        MemberId id /*= MEMBER_ID_INVALID*/) const
+{
+    return DynamicDataImpl::get_implementation(*this).get_uint8_value(id);
+}
+
+bool DynamicData::get_bool_value(
+        MemberId id /*= MEMBER_ID_INVALID*/) const
+{
+    return DynamicDataImpl::get_implementation(*this).get_bool_value(id);
+}
+
+bool DynamicData::get_bool_value(
+        const char* name) const
+{
+    return DynamicDataImpl::get_implementation(*this).get_bool_value(name);
+}
+
+const char* DynamicData::get_string_value(
+        MemberId id /*= MEMBER_ID_INVALID*/) const
+{
+    const char * str = nullptr;
+    auto ret = DynamicDataImpl::get_implementation(*this).get_string_value(str, id);
+    if (!ret)
+    {
+        throw ret;
+    }
+    return str;
+}
+
+const wchar_t* DynamicData::get_wstring_value(
+        MemberId id /*= MEMBER_ID_INVALID*/) const
+{
+    const wchar_t* str = nullptr;
+    auto ret = DynamicDataImpl::get_implementation(*this).get_wstring_value(str, id);
+    if (!ret)
+    {
+        throw ret;
+    }
+    return str;
+}
+
+const char* DynamicData::get_enum_value(
+        MemberId id /*= MEMBER_ID_INVALID*/) const
+{
+    const char * str = nullptr;
+    auto ret = DynamicDataImpl::get_implementation(*this).get_enum_value(str, id);
+    if (!ret)
+    {
+        throw ret;
+    }
+    return str;
+}
+
+ReturnCode_t DynamicData::get_union_label(
+        uint64_t& value) const
+{
+    return DynamicDataImpl::get_implementation(*this).get_union_label(value);
+}
+
+uint64_t DynamicData::get_union_label() const
+{
+    return DynamicDataImpl::get_implementation(*this).get_union_label();
+}
+
+MemberId DynamicData::get_discriminator_value() const
+{
+    return DynamicDataImpl::get_implementation(*this).get_discriminator_value();
+}
+
+ReturnCode_t DynamicData::get_discriminator_value(
+        MemberId& id) const noexcept
+{
+    return DynamicDataImpl::get_implementation(*this).get_discriminator_value(id);
+}
+
+ReturnCode_t DynamicData::set_discriminator_value(
+        MemberId value) noexcept
+{
+    return DynamicDataImpl::get_implementation(*this).set_discriminator_value(value);
+}
+
+ReturnCode_t DynamicData::insert_map_data(
+        const DynamicData& key,
+        MemberId& outKeyId,
+        MemberId& outValueId)
+{
+    const DynamicDataImpl& keyimpl = DynamicDataImpl::get_implementation(key);
+    return DynamicDataImpl::get_implementation(*this).insert_map_data(keyimpl, outKeyId, outValueId);
+}
+
+ReturnCode_t DynamicData::insert_map_data(
+        const DynamicData& key,
+        const DynamicData& value,
+        MemberId& outKey,
+        MemberId& outValue)
+{
+    const DynamicDataImpl& keyimpl = DynamicDataImpl::get_implementation(key),
+                           valueimpl = DynamicDataImpl::get_implementation(value);
+    return DynamicDataImpl::get_implementation(*this).insert_map_data(keyimpl, valueimpl, outKey, outValue);
+}
+
+ReturnCode_t DynamicData::remove_map_data(
+        MemberId keyId)
+{
+    return DynamicDataImpl::get_implementation(*this).remove_map_data(keyId);
+}

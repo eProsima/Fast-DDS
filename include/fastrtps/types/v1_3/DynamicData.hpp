@@ -15,6 +15,7 @@
 #ifndef TYPES_1_3_DYNAMIC_DATA_HPP
 #define TYPES_1_3_DYNAMIC_DATA_HPP
 
+#include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/v1_3/MemberId.hpp>
 
 #include <cstdint>
@@ -588,7 +589,7 @@ public:
      * @return standard DDS @ref ReturnCode_t
      */
     ReturnCode_t set_complex_value(
-            DynamicDataImpl& value,
+            const DynamicData& value,
             MemberId id = MEMBER_ID_INVALID) noexcept;
 
     /*
@@ -733,7 +734,7 @@ public:
      * @return \b bool queried
      */
     bool get_bool_value(
-            const std::string& name) const;
+            const char* name) const;
 
     /*
      * Convenient override to retrieve an \b string associated to an identifier
@@ -741,7 +742,7 @@ public:
      * @throws \@ref ReturnCode_t on failure
      * @return \b string queried
      */
-    std::string get_string_value(
+    const char* get_string_value(
             MemberId id = MEMBER_ID_INVALID) const;
 
     /*
@@ -750,7 +751,7 @@ public:
      * @throws \@ref ReturnCode_t on failure
      * @return \b wstring queried
      */
-    std::wstring get_wstring_value(
+    const wchar_t* get_wstring_value(
             MemberId id = MEMBER_ID_INVALID) const;
 
     /*
@@ -759,7 +760,7 @@ public:
      * @throws \@ref ReturnCode_t on failure
      * @return \b enum queried
      */
-    std::string get_enum_value(
+    const char* get_enum_value(
             MemberId id = MEMBER_ID_INVALID) const;
 
     ReturnCode_t get_union_label(

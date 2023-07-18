@@ -750,6 +750,11 @@ public:
             std::wstring& value,
             MemberId id = MEMBER_ID_INVALID) const;
 
+    ReturnCode_t get_wstring_value(
+            const wchar_t*& value,
+            MemberId id = MEMBER_ID_INVALID) const;
+
+
     /*
      * Set an \b wstring value associated to an identifier
      * @param [in] value \b wstring to set
@@ -769,6 +774,11 @@ public:
     ReturnCode_t get_enum_value(
             std::string& value,
             MemberId id = MEMBER_ID_INVALID) const;
+
+    ReturnCode_t get_enum_value(
+            const char*& value,
+            MemberId id = MEMBER_ID_INVALID) const;
+
     /*
      * Set an \b enum value associated to an identifier
      * @param [in] value string because enumerations can be addressed by name
@@ -831,12 +841,11 @@ public:
 
     /*
      * Retrieve a \b complex value associated to an identifier
-     * @param [out] value @ref DynamicDataImpl reference to populate
      * @param [in] id identifier of the member to query. \b MEMBER_ID_INVALID for primitives.
-     * @return standard DDS @ref ReturnCode_t
+     * @return value @ref DynamicDataImpl reference to populate
+     * @throws standard DDS @ref ReturnCode_t
      */
-    ReturnCode_t get_complex_value(
-            DynamicDataImpl& value,
+    std::shared_ptr<const DynamicDataImpl> get_complex_value(
             MemberId id = MEMBER_ID_INVALID) const;
 
     /*
