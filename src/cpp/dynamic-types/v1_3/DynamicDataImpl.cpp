@@ -209,119 +209,119 @@ void DynamicDataImpl::add_value(
         case TypeKind::TK_INT32:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
-            values_.insert(std::make_pair(id, new int32_t()));
+            values_.emplace(id, std::make_shared<int32_t>());
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TypeKind::TK_UINT32:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
-            values_.insert(std::make_pair(id, new uint32_t()));
+            values_.emplace(id, std::make_shared<uint32_t>());
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TypeKind::TK_INT16:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
-            values_.insert(std::make_pair(id, new int16_t()));
+            values_.emplace(id, std::make_shared<int16_t>());
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TypeKind::TK_UINT16:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
-            values_.insert(std::make_pair(id, new uint16_t()));
+            values_.emplace(id, std::make_shared<uint16_t>());
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TypeKind::TK_INT64:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
-            values_.insert(std::make_pair(id, new int64_t()));
+            values_.emplace(id, std::make_shared<int64_t>());
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TypeKind::TK_UINT64:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
-            values_.insert(std::make_pair(id, new uint64_t()));
+            values_.emplace(id, std::make_shared<uint64_t>());
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TypeKind::TK_FLOAT32:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
-            values_.insert(std::make_pair(id, new float()));
+            values_.emplace(id, std::make_shared<float>());
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TypeKind::TK_FLOAT64:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
-            values_.insert(std::make_pair(id, new double()));
+            values_.emplace(id, std::make_shared<double>());
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TypeKind::TK_FLOAT128:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
-            values_.insert(std::make_pair(id, new long double()));
+            values_.emplace(id, std::make_shared<long double>());
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TypeKind::TK_CHAR8:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
-            values_.insert(std::make_pair(id, new char()));
+            values_.emplace(id, std::make_shared<char>());
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TypeKind::TK_CHAR16:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
-            values_.insert(std::make_pair(id, new wchar_t()));
+            values_.emplace(id, std::make_shared<wchar_t>());
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TypeKind::TK_BOOLEAN:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
-            values_.insert(std::make_pair(id, new bool()));
+            values_.emplace(id, std::make_shared<bool>());
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TypeKind::TK_BYTE:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
-            values_.insert(std::make_pair(id, new octet()));
+            values_.emplace(id, std::make_shared<octet>());
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TypeKind::TK_STRING8:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
-            values_.insert(std::make_pair(id, new std::string()));
+            values_.emplace(id, std::make_shared<std::string>());
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TypeKind::TK_STRING16:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
-            values_.insert(std::make_pair(id, new std::wstring()));
+            values_.emplace(id, std::make_shared<std::wstring>());
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TypeKind::TK_ENUM:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
-            values_.insert(std::make_pair(id, new uint32_t()));
+            values_.emplace(id, std::make_shared<uint32_t>());
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
         break;
         case TypeKind::TK_BITMASK:
         {
 #ifndef DYNAMIC_TYPES_CHECKING
-            values_.insert(std::make_pair(id, new uint64_t()));
+            values_.emplace(id, std::make_shared<uint64_t>());
 #endif // ifndef DYNAMIC_TYPES_CHECKING
         }
     }
@@ -1286,17 +1286,24 @@ ReturnCode_t DynamicDataImpl::set_int32_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            DynamicDataImpl* data = it->second;
-            if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_get_bit_bound())
+            auto data = it->second;
+            if (get_kind() == TypeKind::TK_BITSET)
             {
-                uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
-                int32_t mask = 0x00;
-                for (uint16_t i = 0; i < bit_bound; ++i)
+                try
                 {
-                    mask = mask << 1;
-                    mask += 1;
+                    uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
+                    int32_t mask = 0x00;
+                    for (uint16_t i = 0; i < bit_bound; ++i)
+                    {
+                        mask = mask << 1;
+                        mask += 1;
+                    }
+                    value &= mask;
                 }
-                value &= mask;
+                catch(const std::system_error& e)
+                {
+                    return e.code().value();
+                }
             }
             ReturnCode_t result = it->second->set_int32_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
@@ -1341,8 +1348,7 @@ ReturnCode_t DynamicDataImpl::set_int32_value(
             {
                 try
                 {
-                    const DynamicTypeMemberImpl& m = type_->get_member(id);
-                    uint16_t bit_bound = m.annotation_get_bit_bound();
+                    uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
                     int32_t mask = 0x00;
                     for (uint16_t i = 0; i < bit_bound; ++i)
                     {
@@ -1455,17 +1461,23 @@ ReturnCode_t DynamicDataImpl::set_uint32_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            DynamicDataImpl* data = it->second;
-            if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
+            if (get_kind() == TypeKind::TK_BITSET )
             {
-                uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
-                uint32_t mask = 0x00;
-                for (uint16_t i = 0; i < bit_bound; ++i)
+                try
                 {
-                    mask = mask << 1;
-                    mask += 1;
+                    uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
+                    uint32_t mask = 0x00;
+                    for (uint16_t i = 0; i < bit_bound; ++i)
+                    {
+                        mask = mask << 1;
+                        mask += 1;
+                    }
+                    value &= mask;
                 }
-                value &= mask;
+                catch(const std::system_error& e)
+                {
+                    return e.code().value();
+                }
             }
             ReturnCode_t result = it->second->set_uint32_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
@@ -1622,17 +1634,23 @@ ReturnCode_t DynamicDataImpl::set_int16_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            DynamicDataImpl* data = it->second;
-            if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
+            if (get_kind() == TypeKind::TK_BITSET)
             {
-                uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
-                int16_t mask = 0x00;
-                for (uint16_t i = 0; i < bit_bound; ++i)
+                try
                 {
-                    mask = mask << 1;
-                    mask += 1;
+                    uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
+                    int16_t mask = 0x00;
+                    for (uint16_t i = 0; i < bit_bound; ++i)
+                    {
+                        mask = mask << 1;
+                        mask += 1;
+                    }
+                    value &= mask;
                 }
-                value &= mask;
+                catch(const std::system_error& e)
+                {
+                    return e.code().value();
+                }
             }
             ReturnCode_t result = it->second->set_int16_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
@@ -1790,17 +1808,23 @@ ReturnCode_t DynamicDataImpl::set_uint16_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            DynamicDataImpl* data = it->second;
-            if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
+            if (get_kind() == TypeKind::TK_BITSET)
             {
-                uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
-                uint16_t mask = 0x00;
-                for (uint16_t i = 0; i < bit_bound; ++i)
+                try
                 {
-                    mask = mask << 1;
-                    mask += 1;
+                    uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
+                    uint16_t mask = 0x00;
+                    for (uint16_t i = 0; i < bit_bound; ++i)
+                    {
+                        mask = mask << 1;
+                        mask += 1;
+                    }
+                    value &= mask;
                 }
-                value &= mask;
+                catch(const std::system_error& e)
+                {
+                    return e.code().value();
+                }
             }
             ReturnCode_t result = it->second->set_uint16_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
@@ -1956,17 +1980,23 @@ ReturnCode_t DynamicDataImpl::set_int64_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            DynamicDataImpl* data = it->second;
-            if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
+            if (get_kind() == TypeKind::TK_BITSET)
             {
-                uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
-                int64_t mask = 0x00;
-                for (uint16_t i = 0; i < bit_bound; ++i)
+                try
                 {
-                    mask = mask << 1;
-                    mask += 1;
+                    uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
+                    int64_t mask = 0x00;
+                    for (uint16_t i = 0; i < bit_bound; ++i)
+                    {
+                        mask = mask << 1;
+                        mask += 1;
+                    }
+                    value &= mask;
                 }
-                value &= mask;
+                catch(const std::system_error& e)
+                {
+                    return e.code().value();
+                }
             }
             ReturnCode_t result = it->second->set_int64_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
@@ -2124,17 +2154,23 @@ ReturnCode_t DynamicDataImpl::set_uint64_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            DynamicDataImpl* data = it->second;
-            if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
+            if (get_kind() == TypeKind::TK_BITSET)
             {
-                uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
-                uint64_t mask = 0x00;
-                for (uint16_t i = 0; i < bit_bound; ++i)
+                try
                 {
-                    mask = mask << 1;
-                    mask += 1;
+                    uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
+                    uint64_t mask = 0x00;
+                    for (uint16_t i = 0; i < bit_bound; ++i)
+                    {
+                        mask = mask << 1;
+                        mask += 1;
+                    }
+                    value &= mask;
                 }
-                value &= mask;
+                catch(const std::system_error& e)
+                {
+                    return e.code().value();
+                }
             }
             ReturnCode_t result = it->second->set_uint64_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
@@ -2978,17 +3014,23 @@ ReturnCode_t DynamicDataImpl::set_byte_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            DynamicDataImpl* data = it->second;
-            if (get_kind() == TypeKind::TK_BITSET && data->type_->get_descriptor().annotation_is_bit_bound())
+            if (get_kind() == TypeKind::TK_BITSET)
             {
-                uint16_t bit_bound = data->type_->get_descriptor().annotation_get_bit_bound();
-                octet mask = 0x00;
-                for (uint16_t i = 0; i < bit_bound; ++i)
+                try
                 {
-                    mask = mask << 1;
-                    mask += 1;
+                    uint16_t bit_bound = type_->get_member(id).annotation_get_bit_bound();
+                    octet mask = 0x00;
+                    for (uint16_t i = 0; i < bit_bound; ++i)
+                    {
+                        mask = mask << 1;
+                        mask += 1;
+                    }
+                    value &= mask;
                 }
-                value &= mask;
+                catch(const std::system_error& e)
+                {
+                    return e.code().value();
+                }
             }
             ReturnCode_t result = it->second->set_byte_value(value, MEMBER_ID_INVALID);
             if (result == ReturnCode_t::RETCODE_OK && get_kind() == TypeKind::TK_UNION)
@@ -3091,7 +3133,7 @@ ReturnCode_t DynamicDataImpl::get_bool_value(
     }
     else if (get_kind() == TypeKind::TK_BITMASK && id < type_->get_bounds())
     {
-        value = (uint64_value_ & ((uint64_t)1 << id)) != 0;
+        value = (uint64_value_ & ((uint64_t)1 << *id)) != 0;
         return ReturnCode_t::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
@@ -3176,11 +3218,11 @@ ReturnCode_t DynamicDataImpl::set_bool_value(
         {
             if (value)
             {
-                uint64_value_ |= ((uint64_t)1 << id);
+                uint64_value_ |= ((uint64_t)1 << *id);
             }
             else
             {
-                uint64_value_ &= ~((uint64_t)1 << id);
+                uint64_value_ &= ~((uint64_t)1 << *id);
             }
             return ReturnCode_t::RETCODE_OK;
         }
@@ -3858,15 +3900,14 @@ ReturnCode_t DynamicDataImpl::get_enum_value(
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
 
-        MemberDescriptor md;
-        ReturnCode_t res = get_member(md, uint32_value_);
-
-        if (!!res)
+        try
         {
-            value = md.get_name().c_str();
+            value = type_->get_member(MemberId{uint32_value_}).get_name().c_str();
         }
-
-        return res;
+        catch(const std::system_error& e)
+        {
+            return e.code().value();
+        }
     }
     else if (id != MEMBER_ID_INVALID)
     {
@@ -3935,7 +3976,7 @@ ReturnCode_t DynamicDataImpl::set_enum_value(
             return ReturnCode_t::RETCODE_BAD_PARAMETER;
         }
 
-        uint32_value_ = mid;
+        uint32_value_ = *mid;
         return ReturnCode_t::RETCODE_OK;
     }
     else if (id != MEMBER_ID_INVALID)
@@ -4613,18 +4654,18 @@ ReturnCode_t DynamicDataImpl::insert_map_data(
                 }
             }
 
-            outKeyId = 0u;
+            outKey = 0u;
             if (complex_values_.size())
             {
                 // get largest key available
-                outKeyId = complex_values_.rbegin()->first + 1u;
+                outKey = complex_values_.rbegin()->first + 1u;
             }
 
             auto keyCopy = DynamicDataFactoryImpl::get_instance().create_copy(key);
             keyCopy->key_element_ = true;
             complex_values_.emplace(outKey, keyCopy);
 
-            outValueId = outKeyId + 1u;
+            outValue = outKey + 1u;
             auto valueCopy = DynamicDataFactoryImpl::get_instance().create_copy(value);
             complex_values_.emplace(outValue, valueCopy);
 #else
@@ -4748,7 +4789,7 @@ std::shared_ptr<const DynamicDataImpl> DynamicDataImpl::get_complex_value(
         auto it = complex_values_.find(id);
         if (it != complex_values_.end())
         {
-            return DynamicDataFactoryImpl::get_instance()->create_copy(*it->second);
+            return DynamicDataFactoryImpl::get_instance().create_copy(*it->second);
         }
         throw ReturnCode_t::RETCODE_BAD_PARAMETER;
 #else
@@ -4792,9 +4833,9 @@ ReturnCode_t DynamicDataImpl::set_complex_value(
                 }
                 else
                 {
-                    if (it->second != nullptr)
+                    if (it->second)
                     {
-                        DynamicDataFactoryImpl::get_instance().delete_data(it->second);
+                        DynamicDataFactoryImpl::get_instance().delete_data(*it->second);
                     }
                     complex_values_.erase(it);
 

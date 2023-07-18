@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/types/v1_3/DynamicData.hpp>
 #include <fastrtps/types/v1_3/DynamicDataFactory.hpp>
 #include <dynamic-types/v1_3/AnnotationDescriptorImpl.hpp>
-#include <dynamic-types/v1_3/DynamicTypeImpl.hpp>
-// #include <dynamic-types/v1_3/DynamicTypeBuilderImpl.hpp>
+#include <dynamic-types/v1_3/DynamicDataImpl.hpp>
 #include <dynamic-types/v1_3/DynamicTypeBuilderFactoryImpl.hpp>
+#include <dynamic-types/v1_3/DynamicDataFactoryImpl.hpp>
+#include <dynamic-types/v1_3/DynamicTypeImpl.hpp>
 #include <dynamic-types/v1_3/DynamicTypeMemberImpl.hpp>
 #include <dynamic-types/v1_3/TypeState.hpp>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <fastcdr/Cdr.h>
 
@@ -149,7 +150,7 @@ size_t DynamicTypeImpl::get_size() const
 }
 
 bool DynamicTypeImpl::deserialize_discriminator(
-        DynamicData& data,
+        DynamicDataImpl& data,
         eprosima::fastcdr::Cdr& cdr) const
 {
     assert(discriminator_type_);
@@ -323,7 +324,7 @@ bool DynamicTypeImpl::deserialize_discriminator(
 }
 
 bool DynamicTypeImpl::deserialize(
-        DynamicData& data,
+        DynamicDataImpl& data,
         eprosima::fastcdr::Cdr& cdr) const
 {
     bool res = true;
@@ -349,7 +350,7 @@ bool DynamicTypeImpl::deserialize(
 
 #else
             auto it = data.values_.begin();
-            cdr >> *(int32_t*)it->second;
+            cdr >> *std::static_pointer_cast<int32_t>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -360,7 +361,7 @@ bool DynamicTypeImpl::deserialize(
 
 #else
             auto it = data.values_.begin();
-            cdr >> *((uint32_t*)it->second);
+            cdr >> *std::static_pointer_cast<uint32_t>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -371,7 +372,7 @@ bool DynamicTypeImpl::deserialize(
 
 #else
             auto it = data.values_.begin();
-            cdr >> *((int16_t*)it->second);
+            cdr >> *std::static_pointer_cast<int16_t>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -382,7 +383,7 @@ bool DynamicTypeImpl::deserialize(
 
 #else
             auto it = data.values_.begin();
-            cdr >> *((uint16_t*)it->second);
+            cdr >> *std::static_pointer_cast<uint16_t>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -393,7 +394,7 @@ bool DynamicTypeImpl::deserialize(
 
 #else
             auto it = data.values_.begin();
-            cdr >> *((int64_t*)it->second);
+            cdr >> *std::static_pointer_cast<int64_t>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -404,7 +405,7 @@ bool DynamicTypeImpl::deserialize(
 
 #else
             auto it = data.values_.begin();
-            cdr >> *((uint64_t*)it->second);
+            cdr >> *std::static_pointer_cast<uint64_t>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -414,40 +415,40 @@ bool DynamicTypeImpl::deserialize(
             cdr >> data.float32_value_;
 #else
             auto it = data.values_.begin();
-            cdr >> *((float*)it->second);
+            cdr >> *std::static_pointer_cast<float>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TypeKind::TK_FLOAT64:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
-            cdr >> fdata.loat64_value_;
+            cdr >> data.float64_value_;
 
 #else
             auto it = data.values_.begin();
-            cdr >> *((double*)it->second);
+            cdr >> *std::static_pointer_cast<double>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TypeKind::TK_FLOAT128:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
-            cdr >> fdata.loat128_value_;
+            cdr >> data.float128_value_;
 
 #else
             auto it = data.values_.begin();
-            cdr >> *((long double*)it->second);
+            cdr >> *std::static_pointer_cast<long double>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
         case TypeKind::TK_CHAR8:
         {
 #ifdef DYNAMIC_TYPES_CHECKING
-            cdr >> cdata.har8_value_;
+            cdr >> data.char8_value_;
 
 #else
             auto it = data.values_.begin();
-            cdr >> *((char*)it->second);
+            cdr >> *std::static_pointer_cast<char>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -458,7 +459,7 @@ bool DynamicTypeImpl::deserialize(
 
 #else
             auto it = data.values_.begin();
-            cdr >> *((wchar_t*)it->second);
+            cdr >> *std::static_pointer_cast<wchar_t>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -469,7 +470,7 @@ bool DynamicTypeImpl::deserialize(
 
 #else
             auto it = data.values_.begin();
-            cdr >> *((bool*)it->second);
+            cdr >> *std::static_pointer_cast<bool>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -480,7 +481,7 @@ bool DynamicTypeImpl::deserialize(
 
 #else
             auto it = data.values_.begin();
-            cdr >> *((octet*)it->second);
+            cdr >> *std::static_pointer_cast<octet>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -491,7 +492,7 @@ bool DynamicTypeImpl::deserialize(
 
 #else
             auto it = data.values_.begin();
-            cdr >> *((std::string*)it->second);
+            cdr >> *std::static_pointer_cast<std::string>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -502,7 +503,7 @@ bool DynamicTypeImpl::deserialize(
 
 #else
             auto it = data.values_.begin();
-            cdr >> *((std::wstring*)it->second);
+            cdr >> *std::static_pointer_cast<std::wstring>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -513,7 +514,7 @@ bool DynamicTypeImpl::deserialize(
 
 #else
             auto it = data.values_.begin();
-            cdr >> *((uint32_t*)it->second);
+            cdr >> *std::static_pointer_cast<uint32_t>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -551,10 +552,10 @@ bool DynamicTypeImpl::deserialize(
             auto it = data.values_.begin();
             switch (type_size)
             {
-                case 1: cdr >> *((uint8_t*)it->second); break;
-                case 2: cdr >> *((uint16_t*)it->second); break;
-                case 3: cdr >> *((uint32_t*)it->second); break;
-                case 4: cdr >> *((uint64_t*)it->second); break;
+                case 1: cdr >> *std::static_pointer_cast<uint8_t>(it->second); break;
+                case 2: cdr >> *std::static_pointer_cast<uint16_t>(it->second); break;
+                case 3: cdr >> *std::static_pointer_cast<uint32_t>(it->second); break;
+                case 4: cdr >> *std::static_pointer_cast<uint64_t>(it->second); break;
                 default: EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot deserialize bitmask of size " << type_size);
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
@@ -579,7 +580,7 @@ bool DynamicTypeImpl::deserialize(
                 auto it = data.values_.find(data.union_id_);
                 if (it != data.values_.end())
                 {
-                    ((DynamicData*)it->second)->deserialize(cdr);
+                    std::static_pointer_cast<DynamicDataImpl>(it->second)->deserialize(cdr);
                 }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             }
@@ -604,20 +605,20 @@ bool DynamicTypeImpl::deserialize(
             {
                 if (!m.annotation_is_non_serialized())
                 {
-                    DynamicData* member_data = nullptr;
+                    std::shared_ptr<DynamicDataImpl> member_data;
                     auto it = value_col.find(m.get_id());
 
                     if (it != value_col.end())
                     {
-                        member_data = static_cast<DynamicData*>(it->second);
+                        member_data = std::static_pointer_cast<DynamicDataImpl>(it->second);
                     }
                     else
                     {
-                        member_data = DynamicDataFactory::get_instance()->create_data(m.get_type());
-                        value_col.insert(std::make_pair(it->first, member_data));
+                        member_data = DynamicDataFactoryImpl::get_instance().create_data(*m.get_type());
+                        value_col.emplace(it->first, member_data);
                     }
 
-                    res &= member_data != nullptr ? m.get_type()->deserialize(*member_data, cdr) : false;
+                    res &= member_data ? m.get_type()->deserialize(*member_data, cdr) : false;
                 }
             }
         }
@@ -627,54 +628,52 @@ bool DynamicTypeImpl::deserialize(
             uint32_t size(get_total_bounds());
             if (size > 0)
             {
-                DynamicData* inputData(nullptr);
+                std::shared_ptr<DynamicDataImpl> inputData;
                 for (uint32_t i = 0; i < size; ++i)
                 {
 #ifdef DYNAMIC_TYPES_CHECKING
-                    auto it = data.complex_values_.find(i);
+                    auto it = data.complex_values_.find(MemberId{i});
                     if (it != data.complex_values_.end())
                     {
                         it->second->deserialize(cdr);
                     }
                     else
                     {
-                        if (inputData == nullptr)
+                        if (!inputData)
                         {
-                            inputData = DynamicDataFactory::get_instance()->create_data(get_element_type());
+                            inputData = DynamicDataFactoryImpl::get_instance().create_data(*get_element_type());
                         }
 
                         inputData->deserialize(cdr);
-                        if (!inputData->equals(data.default_array_value_))
+                        if (*inputData != *data.default_array_value_)
                         {
-                            data.complex_values_.insert(std::make_pair(i, inputData));
-                            inputData = nullptr;
+                            data.complex_values_.emplace(i, inputData);
                         }
                     }
 #else
                     auto it = data.values_.find(MemberId(i));
                     if (it != data.values_.end())
                     {
-                        ((DynamicData*)it->second)->deserialize(cdr);
+                        std::static_pointer_cast<DynamicDataImpl>(it->second)->deserialize(cdr);
                     }
                     else
                     {
-                        if (inputData == nullptr)
+                        if (!inputData)
                         {
-                            inputData = DynamicDataFactory::get_instance()->create_data(get_element_type());
+                            inputData = DynamicDataFactoryImpl::get_instance().create_data(*get_element_type());
                         }
 
                         inputData->deserialize(cdr);
-                        if (!inputData->equals(data.default_array_value_))
+                        if (inputData != data.default_array_value_)
                         {
-                            data.values_.insert(std::make_pair(i, inputData));
-                            inputData = nullptr;
+                            data.values_.emplace(i, inputData);
                         }
                     }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
                 }
-                if (inputData != nullptr)
+                if (inputData)
                 {
-                    DynamicDataFactory::get_instance()->delete_data(inputData);
+                    DynamicDataFactoryImpl::get_instance().delete_data(*inputData);
                 }
             }
             break;
@@ -699,22 +698,22 @@ bool DynamicTypeImpl::deserialize(
                 }
 
 #ifdef DYNAMIC_TYPES_CHECKING
-                auto it = data.complex_values_.find(i);
+                auto it = data.complex_values_.find(MemberId{i});
                 if (it != data.complex_values_.end())
                 {
                     it->second->deserialize(cdr);
-                    it->second->data.key_element_ = bKeyElement;
+                    it->second->key_element_ = bKeyElement;
                 }
                 else
                 {
-                    DynamicData* pData = nullptr;
+                    std::shared_ptr<DynamicDataImpl> pData;
                     if (bKeyElement)
                     {
-                        pData = DynamicDataFactory::get_instance()->create_data(get_key_element_type());
+                        pData = DynamicDataFactoryImpl::get_instance().create_data(*get_key_element_type());
                     }
                     else
                     {
-                        pData = DynamicDataFactory::get_instance()->create_data(get_element_type());
+                        pData = DynamicDataFactoryImpl::get_instance().create_data(*get_element_type());
                     }
                     pData->deserialize(cdr);
                     pData->key_element_ = bKeyElement;
@@ -724,19 +723,19 @@ bool DynamicTypeImpl::deserialize(
                 auto it = data.values_.find(MemberId(i));
                 if (it != data.values_.end())
                 {
-                    ((DynamicData*)it->second)->deserialize(cdr);
-                    ((DynamicData*)it->second)->key_element_ = bKeyElement;
+                    std::static_pointer_cast<DynamicDataImpl>(it->second)->deserialize(cdr);
+                    std::static_pointer_cast<DynamicDataImpl>(it->second)->key_element_ = bKeyElement;
                 }
                 else
                 {
-                    DynamicData* pData = nullptr;
+                    std::shared_ptr<DynamicDataImpl> pData;
                     if (bKeyElement)
                     {
-                        pData = DynamicDataFactory::get_instance()->create_data(get_key_element_type());
+                        pData = DynamicDataFactoryImpl::get_instance().create_data(*get_key_element_type());
                     }
                     else
                     {
-                        pData = DynamicDataFactory::get_instance()->create_data(get_element_type());
+                        pData = DynamicDataFactoryImpl::get_instance().create_data(*get_element_type());
                     }
                     pData->deserialize(cdr);
                     pData->key_element_ = bKeyElement;
@@ -755,7 +754,7 @@ bool DynamicTypeImpl::deserialize(
 }
 
 size_t DynamicTypeImpl::getCdrSerializedSize(
-        const DynamicData& data,
+        const DynamicDataImpl& data,
         size_t current_alignment /*= 0*/) const
 {
     if (data.type_ && annotation_is_non_serialized())
@@ -824,7 +823,7 @@ size_t DynamicTypeImpl::getCdrSerializedSize(
             auto it = data.values_.begin();
             // string content (length + characters + 1)
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) +
-                    ((std::string*)it->second)->length() + 1;
+                    std::static_pointer_cast<std::string>(it->second)->length() + 1;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -838,7 +837,7 @@ size_t DynamicTypeImpl::getCdrSerializedSize(
             auto it = data.values_.begin();
             // string content (length + (characters * 4) )
             current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) +
-                    (((std::wstring*)it->second)->length() * 4);
+                    std::static_pointer_cast<std::wstring>(it->second)->length() * 4;
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -853,7 +852,7 @@ size_t DynamicTypeImpl::getCdrSerializedSize(
 #ifdef DYNAMIC_TYPES_CHECKING
                 auto it = data.complex_values_.at(data.union_id_);
 #else
-                auto it = (DynamicData*)data.values_.at(data.union_id_);
+                auto it = std::static_pointer_cast<DynamicDataImpl>(data.values_.at(data.union_id_));
 #endif // ifdef DYNAMIC_TYPES_CHECKING
 
                 current_alignment += get_member(data.union_id_).get_type()->getCdrSerializedSize(*it, current_alignment);
@@ -884,7 +883,7 @@ size_t DynamicTypeImpl::getCdrSerializedSize(
 
                     if (it != value_col.end())
                     {
-                        DynamicData* member_data = static_cast<DynamicData*>(it->second);
+                        auto member_data = std::static_pointer_cast<DynamicDataImpl>(it->second);
                         current_alignment +=
                                 m.get_type()->getCdrSerializedSize(*member_data, current_alignment);
                     }
@@ -902,16 +901,17 @@ size_t DynamicTypeImpl::getCdrSerializedSize(
             for (uint32_t idx = 0; idx < arraySize; ++idx)
             {
 #ifdef DYNAMIC_TYPES_CHECKING
-                auto it = data.complex_values_.find(idx);
+                auto it = data.complex_values_.find(MemberId{idx});
                 if (it != data.complex_values_.end())
 #else
-                auto it = data.values_.find(MemberId(idx));
+                auto it = data.values_.find(MemberId{idx});
                 if (it != data.values_.end())
 #endif // ifdef DYNAMIC_TYPES_CHECKING
                 {
                     // Element Size
-                    current_alignment += element_type_->getCdrSerializedSize(*(DynamicData*)it->second,
-                                    current_alignment);
+                    current_alignment += element_type_->getCdrSerializedSize(
+                            *std::static_pointer_cast<DynamicDataImpl>(it->second),
+                            current_alignment);
                 }
                 else
                 {
@@ -930,13 +930,15 @@ size_t DynamicTypeImpl::getCdrSerializedSize(
             for (auto it = data.complex_values_.begin(); it != data.complex_values_.end(); ++it)
             {
                 // Element Size
-                current_alignment += element_type_->getCdrSerializedSize(it->second, current_alignment);
+                current_alignment += element_type_->getCdrSerializedSize(*it->second, current_alignment);
             }
 #else
             for (auto it = data.values_.begin(); it != data.values_.end(); ++it)
             {
                 // Element Size
-                current_alignment += element_type_->getCdrSerializedSize(*(DynamicData*)it->second, current_alignment);
+                current_alignment += element_type_->getCdrSerializedSize(
+                        *std::static_pointer_cast<DynamicDataImpl>(it->second),
+                        current_alignment);
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
@@ -951,18 +953,21 @@ size_t DynamicTypeImpl::getCdrSerializedSize(
             for (auto it = data.complex_values_.begin(); it != data.complex_values_.end(); ++it)
             {
                 // Key Size
-                current_alignment += key_element_type_->getCdrSerializedSize(it->second, current_alignment);
+                current_alignment += key_element_type_->getCdrSerializedSize(*it++->second, current_alignment);
                 // Element Size
-                current_alignment += element_type_->getCdrSerializedSize(++it->second, current_alignment);
+                current_alignment += element_type_->getCdrSerializedSize(*it->second, current_alignment);
             }
 #else
             for (auto it = data.values_.begin(); it != data.values_.end(); ++it)
             {
                 // Key Size
-                current_alignment += key_element_type_->getCdrSerializedSize(*(DynamicData*)it++->second,
-                                current_alignment);
+                current_alignment += key_element_type_->getCdrSerializedSize(
+                        *std::static_pointer_cast<DynamicDataImpl>(it++->second),
+                        current_alignment);
                 // Element Size
-                current_alignment += element_type_->getCdrSerializedSize(*(DynamicData*)it->second, current_alignment);
+                current_alignment += element_type_->getCdrSerializedSize(
+                        *std::static_pointer_cast<DynamicDataImpl>(it->second),
+                        current_alignment);
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
@@ -1268,7 +1273,7 @@ size_t DynamicTypeImpl::getMaxCdrSerializedSize(
 }
 
 void DynamicTypeImpl::serialize_discriminator(
-        const DynamicData& data,
+        const DynamicDataImpl& data,
         eprosima::fastcdr::Cdr& cdr) const
 {
     assert(discriminator_type_);
@@ -1386,7 +1391,7 @@ void DynamicTypeImpl::serialize_discriminator(
 }
 
 void DynamicTypeImpl::serialize(
-        const DynamicData& data,
+        const DynamicDataImpl& data,
         eprosima::fastcdr::Cdr& cdr) const
 {
     if (annotation_is_non_serialized())
@@ -1409,7 +1414,7 @@ void DynamicTypeImpl::serialize(
             cdr << data.int32_value_;
 #else
             auto it = data.values_.begin();
-            cdr << *((int32_t*)it->second);
+            cdr << *std::static_pointer_cast<int32_t>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -1419,7 +1424,7 @@ void DynamicTypeImpl::serialize(
             cdr << data.uint32_value_;
 #else
             auto it = data.values_.begin();
-            cdr << *((uint32_t*)it->second);
+            cdr << *std::static_pointer_cast<uint32_t>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -1429,7 +1434,7 @@ void DynamicTypeImpl::serialize(
             cdr << data.int16_value_;
 #else
             auto it = data.values_.begin();
-            cdr << *((int16_t*)it->second);
+            cdr << *std::static_pointer_cast<int16_t>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -1439,7 +1444,7 @@ void DynamicTypeImpl::serialize(
             cdr << data.uint16_value_;
 #else
             auto it = data.values_.begin();
-            cdr << *((uint16_t*)it->second);
+            cdr << *std::static_pointer_cast<uint16_t>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -1449,7 +1454,7 @@ void DynamicTypeImpl::serialize(
             cdr << data.int64_value_;
 #else
             auto it = data.values_.begin();
-            cdr << *((int64_t*)it->second);
+            cdr << *std::static_pointer_cast<int64_t>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -1459,7 +1464,7 @@ void DynamicTypeImpl::serialize(
             cdr << data.uint64_value_;
 #else
             auto it = data.values_.begin();
-            cdr << *((uint64_t*)it->second);
+            cdr << *std::static_pointer_cast<uint64_t>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -1469,7 +1474,7 @@ void DynamicTypeImpl::serialize(
             cdr << data.float32_value_;
 #else
             auto it = data.values_.begin();
-            cdr << *((float*)it->second);
+            cdr << *std::static_pointer_cast<float>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -1479,7 +1484,7 @@ void DynamicTypeImpl::serialize(
             cdr << data.float64_value_;
 #else
             auto it = data.values_.begin();
-            cdr << *((double*)it->second);
+            cdr << *std::static_pointer_cast<double>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -1489,7 +1494,7 @@ void DynamicTypeImpl::serialize(
             cdr << data.float128_value_;
 #else
             auto it = data.values_.begin();
-            cdr << *((long double*)it->second);
+            cdr << *std::static_pointer_cast<long double>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -1499,7 +1504,7 @@ void DynamicTypeImpl::serialize(
             cdr << data.char8_value_;
 #else
             auto it = data.values_.begin();
-            cdr << *((char*)it->second);
+            cdr << *std::static_pointer_cast<char>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -1509,7 +1514,7 @@ void DynamicTypeImpl::serialize(
             cdr << data.char16_value_;
 #else
             auto it = data.values_.begin();
-            cdr << *((wchar_t*)it->second);
+            cdr << *std::static_pointer_cast<wchar_t>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -1519,7 +1524,7 @@ void DynamicTypeImpl::serialize(
             cdr << data.bool_value_;
 #else
             auto it = data.values_.begin();
-            cdr << *((bool*)it->second);
+            cdr << *std::static_pointer_cast<bool>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -1529,7 +1534,7 @@ void DynamicTypeImpl::serialize(
             cdr << data.byte_value_;
 #else
             auto it = data.values_.begin();
-            cdr << *((octet*)it->second);
+            cdr << *std::static_pointer_cast<octet>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -1539,7 +1544,7 @@ void DynamicTypeImpl::serialize(
             cdr << data.string_value_;
 #else
             auto it = data.values_.begin();
-            cdr << *((std::string*)it->second);
+            cdr << *std::static_pointer_cast<std::string>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -1549,7 +1554,7 @@ void DynamicTypeImpl::serialize(
             cdr << data.wstring_value_;
 #else
             auto it = data.values_.begin();
-            cdr << *((std::wstring*)it->second);
+            cdr << *std::static_pointer_cast<std::wstring>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -1559,7 +1564,7 @@ void DynamicTypeImpl::serialize(
             cdr << data.uint32_value_;
 #else
             auto it = data.values_.begin();
-            cdr << *((uint32_t*)it->second);
+            cdr << *std::static_pointer_cast<uint32_t>(it->second);
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
         }
@@ -1579,10 +1584,10 @@ void DynamicTypeImpl::serialize(
             auto it = data.values_.begin();
             switch (type_size)
             {
-                case 1: cdr << *((uint8_t*)it->second); break;
-                case 2: cdr << *((uint16_t*)it->second); break;
-                case 3: cdr << *((uint32_t*)it->second); break;
-                case 4: cdr << *((uint64_t*)it->second); break;
+                case 1: cdr << *std::static_pointer_cast<uint8_t>(it->second); break;
+                case 2: cdr << *std::static_pointer_cast<uint16_t>(it->second); break;
+                case 3: cdr << *std::static_pointer_cast<uint32_t>(it->second); break;
+                case 4: cdr << *std::static_pointer_cast<uint64_t>(it->second); break;
                 default: EPROSIMA_LOG_ERROR(DYN_TYPES, "Cannot serialize bitmask of size " << type_size);
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
@@ -1599,7 +1604,7 @@ void DynamicTypeImpl::serialize(
 #ifdef DYNAMIC_TYPES_CHECKING
                 auto it = data.complex_values_.at(data.union_id_);
 #else
-                auto it = (DynamicData*) data.values_.at(data.union_id_);
+                auto it = std::static_pointer_cast<DynamicDataImpl>(data.values_.at(data.union_id_));
 #endif // ifdef DYNAMIC_TYPES_CHECKING
                 it->serialize(cdr);
             }
@@ -1611,7 +1616,7 @@ void DynamicTypeImpl::serialize(
             cdr << static_cast<uint32_t>(data.complex_values_.size());
             for (uint32_t idx = 0; idx < static_cast<uint32_t>(data.complex_values_.size()); ++idx)
             {
-                auto it = data.complex_values_.at(idx);
+                auto it = data.complex_values_.at(MemberId{idx});
                 it->serialize(cdr);
             }
 #else
@@ -1619,7 +1624,7 @@ void DynamicTypeImpl::serialize(
             for (uint32_t idx = 0; idx < static_cast<uint32_t>(data.values_.size()); ++idx)
             {
                 auto it = data.values_.at(MemberId(idx));
-                ((DynamicData*)it)->serialize(cdr);
+                std::static_pointer_cast<DynamicDataImpl>(it)->serialize(cdr);
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
@@ -1648,7 +1653,7 @@ void DynamicTypeImpl::serialize(
 
                     if (it != value_col.end())
                     {
-                        DynamicData* member_data = static_cast<DynamicData*>(it->second);
+                        auto member_data = std::static_pointer_cast<DynamicDataImpl>(it->second);
                         m.get_type()->serialize(*member_data, cdr);
                     }
                 }
@@ -1661,14 +1666,14 @@ void DynamicTypeImpl::serialize(
             for (uint32_t idx = 0; idx < arraySize; ++idx)
             {
 #ifdef DYNAMIC_TYPES_CHECKING
-                auto it = data.complex_values_.find(idx);
+                auto it = data.complex_values_.find(MemberId{idx});
                 if (it != data.complex_values_.end())
 #else
-                auto it = data.values_.find(MemberId(idx));
+                auto it = data.values_.find(MemberId{idx});
                 if (it != data.values_.end())
 #endif // ifdef DYNAMIC_TYPES_CHECKING
                 {
-                    ((DynamicData*)it->second)->serialize(cdr);
+                    std::static_pointer_cast<DynamicDataImpl>(it->second)->serialize(cdr);
                 }
                 else
                 {
@@ -1689,7 +1694,7 @@ void DynamicTypeImpl::serialize(
             cdr << static_cast<uint32_t>(data.values_.size() / 2);
             for (auto it = data.values_.begin(); it != data.values_.end(); ++it)
             {
-                ((DynamicData*)it->second)->serialize(cdr);
+                std::static_pointer_cast<DynamicDataImpl>(it->second)->serialize(cdr);
             }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
             break;
@@ -1701,7 +1706,7 @@ void DynamicTypeImpl::serialize(
 }
 
 void DynamicTypeImpl::serializeKey(
-        const DynamicData& data,
+        const DynamicDataImpl& data,
         eprosima::fastcdr::Cdr& cdr) const
 {
     // Structures check the the size of the key for their children
@@ -1716,7 +1721,7 @@ void DynamicTypeImpl::serializeKey(
 #else
         for (auto it = data.values_.begin(); it != data.values_.end(); ++it)
         {
-            auto& cdata = *static_cast<DynamicData*>(it->second);
+            auto& cdata = *std::static_pointer_cast<DynamicDataImpl>(it->second);
             cdata.type_->serializeKey(cdata, cdr);
         }
 #endif // ifdef DYNAMIC_TYPES_CHECKING
