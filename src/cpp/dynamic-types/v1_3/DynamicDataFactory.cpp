@@ -49,7 +49,7 @@ DynamicData* DynamicDataFactory::create_copy(
 }
 
 ReturnCode_t DynamicDataFactory::delete_data(
-        DynamicData* pData)
+        const DynamicData* pData)
 {
     if (nullptr == pData)
     {

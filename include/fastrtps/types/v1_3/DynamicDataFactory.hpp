@@ -44,7 +44,7 @@ public:
             const DynamicData& data);
 
     ReturnCode_t delete_data(
-            DynamicData* pData);
+            const DynamicData* pData);
 };
 
 } // namespace v1_3

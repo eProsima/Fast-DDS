@@ -925,6 +925,7 @@ namespace v1_3 {
 
 class DynamicType;
 class DynamicTypeBuilder;
+class DynamicData;
 
 using namespace xtypes_names;
 
@@ -952,6 +953,8 @@ namespace v1_3 {
 using DynamicType_ptr = std::shared_ptr<const DynamicType>;
 using DynamicTypeBuilder_ptr = std::shared_ptr<DynamicTypeBuilder>;
 using DynamicTypeBuilder_cptr = std::shared_ptr<const DynamicTypeBuilder>;
+using DynamicData_ptr = std::shared_ptr<DynamicData>;
+using DynamicData_cptr = std::shared_ptr<const DynamicData>;
 
 } // namespace v1_3
 } // namespace types
