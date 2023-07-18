@@ -222,6 +222,48 @@ TEST_F(FixedSizeStringTests, comparisons)
     ASSERT_GT(0, fixed_b.compare(fixed_large));
 }
 
+TEST_F(FixedSizeStringTests, less_than_operator_fixed_string)
+{
+    fixed_string<MAX_CHARS> fixed_string_short = "test string";
+    fixed_string<MAX_CHARS> fixed_string_long = "test string long";
+
+    ASSERT_FALSE(fixed_string_short < fixed_string_short);
+    ASSERT_FALSE(fixed_string_long < fixed_string_long);
+    ASSERT_TRUE(fixed_string_short < fixed_string_long);
+    ASSERT_FALSE(fixed_string_long < fixed_string_short);
+}
+
+TEST_F(FixedSizeStringTests, less_than_operator_std_string)
+{
+    fixed_string<MAX_CHARS> fixed_string_short = "test string";
+    std::string std_string_long = "test string long";
+    std::string std_string_short = "test";
+
+    ASSERT_TRUE(fixed_string_short < std_string_long);
+    ASSERT_FALSE(fixed_string_short < std_string_short);
+}
+
+TEST_F(FixedSizeStringTests, greater_than_operator_fixed_string)
+{
+    fixed_string<MAX_CHARS> fixed_string_short = "test string";
+    fixed_string<MAX_CHARS> fixed_string_long = "test string long";
+
+    ASSERT_FALSE(fixed_string_short > fixed_string_short);
+    ASSERT_FALSE(fixed_string_long > fixed_string_long);
+    ASSERT_FALSE(fixed_string_short > fixed_string_long);
+    ASSERT_TRUE(fixed_string_long > fixed_string_short);
+}
+
+TEST_F(FixedSizeStringTests, greater_than_operator_std_string)
+{
+    fixed_string<MAX_CHARS> fixed_string_short = "test string";
+    std::string std_string_long = "test string long";
+    std::string std_string_short = "test";
+
+    ASSERT_FALSE(fixed_string_short > std_string_long);
+    ASSERT_TRUE(fixed_string_short > std_string_short);
+}
+
 int main(
         int argc,
         char** argv)
