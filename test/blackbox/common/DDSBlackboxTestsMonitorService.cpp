@@ -1883,9 +1883,9 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_instance_disposals)
 /**
  * Refers to DDS-MS-ADV-03 from the test plan.
  *
- * Multiple MSC shall correctly receive the updates after late joining.
+ * A MSC shall correctly receive the updates after late joining.
  */
-TEST(DDSMonitorServiceTest, monitor_service_advanced_late_joiners)
+TEST(DDSMonitorServiceTest, monitor_service_advanced_single_late_joiner)
 {
 #ifdef FASTDDS_STATISTICS
     //! Setup
@@ -1955,6 +1955,72 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_late_joiners)
 #endif //FASTDDS_STATISTICS
 }
 
+/**
+ * Refers to DDS-MS-ADV-04 from the test plan.
+ *
+ * Multiple MSC shall correctly receive the updates after late joining.
+ */
+TEST(DDSMonitorServiceTest, monitor_service_advanced_multiple_late_joiners)
+{
+#ifdef FASTDDS_STATISTICS
+    //! Setup
+    MonitorServiceParticipant MSP;
+    size_t n_participants = 3;
+    std::vector<MonitorServiceConsumer> MSCs;
+    MSCs.reserve(n_participants);
+
+    //! Procedure
+    std::list<MonitorServiceType::type> expected_msgs;
+
+    MSP.setup();
+    MSP.enable_monitor_service();
+
+    DataReaderQos dr_qos;
+    DataWriterQos dw_qos;
+
+    dr_qos.reliability().kind = eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS;
+    dw_qos.reliability().kind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
+
+    MSP.create_topic(0);
+
+    MSP.create_and_add_writer(dw_qos);
+    MSP.create_and_add_reader(dr_qos);
+
+    MonitorServiceType::type endpoint_qos_msg;
+
+    endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::INCOMPATIBLE_QOS);
+    endpoint_qos_msg.local_entity(MSP.get_writer_guids());
+
+    statistics::IncompatibleQoSStatus_s incompatible_qos;
+    statistics::QosPolicyCount_s policy;
+    policy.policy_id(RELIABILITY_QOS_POLICY_ID);
+    incompatible_qos.policies().push_back(policy);
+    endpoint_qos_msg.value().incompatible_qos_status(incompatible_qos);
+
+    expected_msgs.push_back(endpoint_qos_msg);
+
+    endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::INCOMPATIBLE_QOS);
+    endpoint_qos_msg.local_entity(MSP.get_reader_guids());
+
+    expected_msgs.push_back(endpoint_qos_msg);
+
+    std::this_thread::sleep_for(std::chrono::seconds(10));
+
+    for (size_t i = 0; i < n_participants; i++)
+    {
+        MonitorServiceConsumer MSC;
+
+        MSC.init_monitor_service_reader();
+        MSC.start_reception(expected_msgs);
+
+        //! Assertions
+        //! The assertion checking whether the on_data_availble() was called is assumed in the following one
+        ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(10)), expected_msgs.size());
+
+        MSCs.emplace_back(std::move(MSC));
+    }
+#endif //FASTDDS_STATISTICS
+}
 
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
