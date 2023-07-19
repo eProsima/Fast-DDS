@@ -15,6 +15,7 @@
 #ifndef TYPES_1_3_DYNAMIC_TYPE_H
 #define TYPES_1_3_DYNAMIC_TYPE_H
 
+#include <fastrtps/types/TypesBase.h>
 #include <fastrtps/types/v1_3/AnnotationDescriptor.hpp>
 #include <fastrtps/types/v1_3/DynamicTypeMember.hpp>
 #include <fastrtps/types/v1_3/TypeDescriptor.hpp>

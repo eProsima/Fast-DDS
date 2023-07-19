@@ -26,7 +26,7 @@
 
 #include <fastrtps/types/TypeIdentifier.h>
 #include <fastrtps/types/TypeObject.h>
-#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypePtr.h>
 
 namespace eprosima {
 namespace fastrtps {

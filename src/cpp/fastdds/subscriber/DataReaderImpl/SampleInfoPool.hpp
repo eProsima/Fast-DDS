@@ -38,7 +38,7 @@ namespace detail {
 
 struct SampleInfoPool
 {
-    using eprosima::fastrtps::types::ReturnCode_t;
+    using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
     explicit SampleInfoPool(
             const DataReaderQos& qos)

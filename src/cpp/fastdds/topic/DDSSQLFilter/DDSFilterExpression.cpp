@@ -84,5 +84,5 @@ void DDSFilterExpression::set_type(
         const DynamicType_ptr& type)
 {
     dyn_type_ = type;
-    dyn_data_.reset(DynamicDataFactory::get_instance()->create_data(type));
+    dyn_data_.reset(DynamicDataFactory::get_instance().create_data(*type));
 }

@@ -77,11 +77,22 @@ public:
      * @remark This method is thread-safe.
      * @remark This method will always create a new builder object. In order to access primitive static allocated
      *         ones and avoid heap overhead use the `get_xxxx_type()` methods.
-     * @param[in] type @ref DynamicTypeobject
-     * @return new @ref DynamicTypeBuilderobject
+     * @param[in] type @ref DynamicType object
+     * @return new @ref DynamicTypeBuilder object
      */
     DynamicTypeBuilder* create_type_copy(
             const DynamicType& type) noexcept;
+
+    /**
+     * Create a new @ref DynamicTypeBuilder object based on the given @ref DynamicTypeBuilder object.
+     * @remark This method is thread-safe.
+     * @remark This method will always create a new builder object. In order to access primitive static allocated
+     *         ones and avoid heap overhead use the `get_xxxx_type()` methods.
+     * @param[in] type @ref DynamicTypeBuilder object
+     * @return new @ref DynamicTypeBuilder object
+     */
+    DynamicTypeBuilder* create_type_copy(
+            const DynamicTypeBuilder& type) noexcept;
 
     /**
      * Create a new @ref DynamicType object based on the given @ref DynamicType object.

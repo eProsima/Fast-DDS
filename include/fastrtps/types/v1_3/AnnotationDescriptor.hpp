@@ -130,6 +130,14 @@ public:
     void set_type(
                 const DynamicType& type) noexcept;
 
+    /**
+     * Modifies the underlying type by copy
+     * @param[in] type reference
+     * @attention There is ownership transference.
+     */
+    void set_type(
+                const DynamicType* type) noexcept;
+
     //! Clears the base type reference
     void reset_type() noexcept;
 

@@ -2180,7 +2180,7 @@ ReturnCode_t TypeObjectFactory::build_dynamic_type(
                 if (member->common().flags().IS_DEFAULT())
                 {
                     v1_3::AnnotationDescriptor def_flag;
-                    def_flag.set_value(ANNOTATION_DEFAULT_LITERAL_ID.c_str(), CONST_TRUE.c_str());
+                    def_flag.set_value(ANNOTATION_DEFAULT_LITERAL_ID, CONST_TRUE);
                     enum_type->apply_annotation_to_member(id, def_flag);
                 }
             }

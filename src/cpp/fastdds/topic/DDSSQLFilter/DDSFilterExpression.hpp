@@ -26,6 +26,8 @@
 
 #include <fastdds/dds/topic/IContentFilter.hpp>
 #include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/DynamicDataFactory.h>
 
 #include "DDSFilterCondition.hpp"
@@ -72,23 +74,10 @@ public:
 
 private:
 
-    class DynDataDeleter
-    {
-
-    public:
-
-        void operator ()(
-                eprosima::fastrtps::types::v1_3::DynamicData* ptr)
-        {
-            eprosima::fastrtps::types::v1_3::DynamicDataFactory::get_instance()->delete_data(ptr);
-        }
-
-    };
-
     /// The Dynamic type used to deserialize the payloads
     eprosima::fastrtps::types::v1_3::DynamicType_ptr dyn_type_;
     /// The Dynamic data used to deserialize the payloads
-    std::unique_ptr<eprosima::fastrtps::types::v1_3::DynamicData, DynDataDeleter> dyn_data_;
+    std::unique_ptr<eprosima::fastrtps::types::v1_3::DynamicData> dyn_data_;
 };
 
 }  // namespace DDSSQLFilter

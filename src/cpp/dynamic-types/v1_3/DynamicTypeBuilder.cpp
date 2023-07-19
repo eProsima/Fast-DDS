@@ -42,9 +42,21 @@ const char* DynamicTypeBuilder::get_name() const noexcept
     return DynamicTypeBuilderImpl::get_implementation(*this).get_name().c_str();
 }
 
+void DynamicTypeBuilder::set_name(
+        const char* name)
+{
+    DynamicTypeBuilderImpl::get_implementation(*this).set_name(name);
+}
+
 TypeKind DynamicTypeBuilder::get_kind() const noexcept
 {
     return DynamicTypeBuilderImpl::get_implementation(*this).get_kind();
+}
+
+void DynamicTypeBuilder::set_kind(
+        TypeKind kind)
+{
+    return DynamicTypeBuilderImpl::get_implementation(*this).set_kind(kind);
 }
 
 const DynamicTypeMember* DynamicTypeBuilder::get_member_by_name(
@@ -194,4 +206,9 @@ ReturnCode_t DynamicTypeBuilder::annotation_set_bit_bound(
     }
 
     return {};
+}
+
+bool DynamicTypeBuilder::is_primitive() const
+{
+    return DynamicTypeBuilderImpl::get_implementation(*this).is_primitive();
 }

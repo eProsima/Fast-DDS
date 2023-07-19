@@ -22,7 +22,7 @@
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/types/DynamicPubSubType.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
-#include <fastrtps/types/DynamicTypeBuilder.h>
+#include <fastrtps/types/DynamicTypeBuilderPtr.h>
 
 #include <stdio.h>
 #include <string>
@@ -256,7 +256,7 @@ public:
     {
         if (dynamic_types_.find(type_name) != dynamic_types_.end())
         {
-            return new types::DynamicPubSubType(*dynamic_types_[type_name]->build());
+            return new types::DynamicPubSubType(dynamic_types_[type_name]->build());
         }
         return nullptr;
     }

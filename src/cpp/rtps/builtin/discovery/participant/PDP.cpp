@@ -1227,23 +1227,24 @@ void PDP::check_and_notify_type_discovery(
 
     // Are we discovering a type?
     ReturnCode_t res{ReturnCode_t::RETCODE_ERROR};
-    DynamicType_ptr dyn_type;
+    const DynamicType* ret_type = nullptr;
 
     if (type_obj && type_obj->_d() == types::TypeKind::EK_COMPLETE) // Writer shares a Complete TypeObject
     {
         res = types::TypeObjectFactory::get_instance()->build_dynamic_type(
-            dyn_type, type_name.to_string(), type_id, type_obj);
+            ret_type, type_name.to_string(), type_id, type_obj);
     }
     else if (type_id && type_id->_d() != types::TypeKind::TK_NONE
             && type_id->_d() < types::TypeKind::EK_MINIMAL) // Writer shares a TypeIdentifier that doesn't need TypeObject
     {
         res = types::TypeObjectFactory::get_instance()->build_dynamic_type(
-            dyn_type, type_name.to_string(), type_id);
+            ret_type, type_name.to_string(), type_id);
     }
 
     if (!!res)
     {
-        types::DynamicPubSubType type_support(dyn_type);
+        DynamicType_ptr dyn_type{ret_type};
+        types::DynamicPubSubType type_support(*dyn_type);
 
         if (!mp_RTPSParticipant->check_type(type_name.to_string()))
         {

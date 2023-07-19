@@ -39,7 +39,7 @@ namespace detail {
 struct DataReaderLoanManager
 {
     using SampleInfoSeq = LoanableTypedCollection<SampleInfo>;
-    using eprosima::fastrtps::types::ReturnCode_t;
+    using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
     explicit DataReaderLoanManager(
             const DataReaderQos& qos)

@@ -58,10 +58,24 @@ public:
     const char* get_name() const noexcept;
 
     /**
+     * Sets the underlying type name
+     * @param[in] name null terminated string
+     */
+    void set_name(
+            const char* name);
+
+    /**
      * Returns the @ref eprosima::fastrtps::types::TypeKind associated
      * @return standard @ref eprosima::fastrtps::types::TypeKind
      */
     TypeKind get_kind() const noexcept;
+
+    /**
+     * Modifies the underlying kind
+     * @param[in] kind @ref TypeKind
+     */
+    void set_kind(
+            TypeKind kind);
 
     /**
      * Provides a mapping from the name of the member of this type to the member itself (see [standard] 7.5.2.9.15)
@@ -178,6 +192,7 @@ public:
      * according with [standard] section \b 7.5.2.9.7
      * @return @ref DynamicType
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
+     * @attention There is ownership transference. Returned type must be freed by @ref DynamicTypeBuilderFactory
      */
     const DynamicType* build() const noexcept;
 
@@ -200,6 +215,9 @@ public:
      */
     ReturnCode_t annotation_set_bit_bound(
             uint16_t bit_bound);
+
+    //! true if the inner type is primitive
+    bool is_primitive() const;
 };
 
 } // namespace v1_3

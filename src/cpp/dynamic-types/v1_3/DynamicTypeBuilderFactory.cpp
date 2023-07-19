@@ -58,6 +58,14 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_type_copy(
     return &builder->get_interface();
 }
 
+DynamicTypeBuilder* DynamicTypeBuilderFactory::create_type_copy(
+        const DynamicTypeBuilder& build) noexcept
+{
+    const auto & ti = DynamicTypeBuilderImpl::get_implementation(build);
+    auto builder = DynamicTypeBuilderFactoryImpl::get_instance().create_type_copy(ti);
+    return &builder->get_interface();
+}
+
 const DynamicType* DynamicTypeBuilderFactory::create_copy(
         const DynamicType& type) noexcept
 {

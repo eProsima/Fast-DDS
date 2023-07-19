@@ -46,7 +46,7 @@ class TypeSupport : public std::shared_ptr<fastdds::dds::TopicDataType>
 {
 public:
 
-    using eprosima::fastrtps::types::ReturnCode_t;
+    using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
 
     using Base = std::shared_ptr<fastdds::dds::TopicDataType>;
 

@@ -61,59 +61,59 @@ size_t to_size_t(
 
 inline namespace xtypes_names {
 
-const std::string CONST_TRUE = "true";
-const std::string CONST_FALSE = "false";
+const char* CONST_TRUE = "true";
+const char* CONST_FALSE = "false";
 
-const std::string ANNOTATION_KEY_ID = "key";
-const std::string ANNOTATION_EPKEY_ID = "Key";
-const std::string ANNOTATION_TOPIC_ID = "Topic";
-const std::string ANNOTATION_EXTENSIBILITY_ID = "extensibility";
-const std::string ANNOTATION_FINAL_ID = "final";
-const std::string ANNOTATION_APPENDABLE_ID = "appendable";
-const std::string ANNOTATION_MUTABLE_ID = "mutable";
-const std::string ANNOTATION_NESTED_ID = "nested";
-const std::string ANNOTATION_OPTIONAL_ID = "optional";
-const std::string ANNOTATION_MUST_UNDERSTAND_ID = "must_understand";
-const std::string ANNOTATION_NON_SERIALIZED_ID = "non_serialized";
-const std::string ANNOTATION_BIT_BOUND_ID = "bit_bound";
-const std::string ANNOTATION_DEFAULT_ID = "default";
-const std::string ANNOTATION_DEFAULT_LITERAL_ID = "default_literal";
-const std::string ANNOTATION_VALUE_ID = "value";
-const std::string ANNOTATION_POSITION_ID = "position";
-const std::string ANNOTATION_EXTERNAL_ID = "external";
+const char* ANNOTATION_KEY_ID = "key";
+const char* ANNOTATION_EPKEY_ID = "Key";
+const char* ANNOTATION_TOPIC_ID = "Topic";
+const char* ANNOTATION_EXTENSIBILITY_ID = "extensibility";
+const char* ANNOTATION_FINAL_ID = "final";
+const char* ANNOTATION_APPENDABLE_ID = "appendable";
+const char* ANNOTATION_MUTABLE_ID = "mutable";
+const char* ANNOTATION_NESTED_ID = "nested";
+const char* ANNOTATION_OPTIONAL_ID = "optional";
+const char* ANNOTATION_MUST_UNDERSTAND_ID = "must_understand";
+const char* ANNOTATION_NON_SERIALIZED_ID = "non_serialized";
+const char* ANNOTATION_BIT_BOUND_ID = "bit_bound";
+const char* ANNOTATION_DEFAULT_ID = "default";
+const char* ANNOTATION_DEFAULT_LITERAL_ID = "default_literal";
+const char* ANNOTATION_VALUE_ID = "value";
+const char* ANNOTATION_POSITION_ID = "position";
+const char* ANNOTATION_EXTERNAL_ID = "external";
 
-const std::string EXTENSIBILITY_FINAL = "FINAL";
-const std::string EXTENSIBILITY_APPENDABLE = "APPENDABLE";
-const std::string EXTENSIBILITY_MUTABLE = "MUTABLE";
+const char* EXTENSIBILITY_FINAL = "FINAL";
+const char* EXTENSIBILITY_APPENDABLE = "APPENDABLE";
+const char* EXTENSIBILITY_MUTABLE = "MUTABLE";
 
-const std::string TKNAME_BOOLEAN = "bool";
-const std::string TKNAME_INT16 = "int16_t";
-const std::string TKNAME_UINT16 = "uint16_t";
-const std::string TKNAME_INT32 = "int32_t";
-const std::string TKNAME_UINT32 = "uint32_t";
-const std::string TKNAME_INT64 = "int64_t";
-const std::string TKNAME_UINT64 = "uint64_t";
-const std::string TKNAME_CHAR8 = "char";
-const std::string TKNAME_BYTE = "octet";
-const std::string TKNAME_UINT8 = "uint8_t";
-const std::string TKNAME_CHAR16 = "wchar";
-const std::string TKNAME_CHAR16T = "wchar_t";
-const std::string TKNAME_FLOAT32 = "float";
-const std::string TKNAME_FLOAT64 = "double";
-const std::string TKNAME_FLOAT128 = "longdouble";
+const char* TKNAME_BOOLEAN = "bool";
+const char* TKNAME_INT16 = "int16_t";
+const char* TKNAME_UINT16 = "uint16_t";
+const char* TKNAME_INT32 = "int32_t";
+const char* TKNAME_UINT32 = "uint32_t";
+const char* TKNAME_INT64 = "int64_t";
+const char* TKNAME_UINT64 = "uint64_t";
+const char* TKNAME_CHAR8 = "char";
+const char* TKNAME_BYTE = "octet";
+const char* TKNAME_UINT8 = "uint8_t";
+const char* TKNAME_CHAR16 = "wchar";
+const char* TKNAME_CHAR16T = "wchar_t";
+const char* TKNAME_FLOAT32 = "float";
+const char* TKNAME_FLOAT64 = "double";
+const char* TKNAME_FLOAT128 = "longdouble";
 
-const std::string TKNAME_STRING8 = "string";
-const std::string TKNAME_STRING16 = "wstring";
-const std::string TKNAME_ALIAS = "alias";
-const std::string TKNAME_ENUM = "enum";
-const std::string TKNAME_BITMASK = "bitmask";
-const std::string TKNAME_ANNOTATION = "annotation";
-const std::string TKNAME_STRUCTURE = "structure";
-const std::string TKNAME_UNION = "union";
-const std::string TKNAME_BITSET = "bitset";
-const std::string TKNAME_SEQUENCE = "sequence";
-const std::string TKNAME_ARRAY = "array";
-const std::string TKNAME_MAP = "map";
+const char* TKNAME_STRING8 = "string";
+const char* TKNAME_STRING16 = "wstring";
+const char* TKNAME_ALIAS = "alias";
+const char* TKNAME_ENUM = "enum";
+const char* TKNAME_BITMASK = "bitmask";
+const char* TKNAME_ANNOTATION = "annotation";
+const char* TKNAME_STRUCTURE = "structure";
+const char* TKNAME_UNION = "union";
+const char* TKNAME_BITSET = "bitset";
+const char* TKNAME_SEQUENCE = "sequence";
+const char* TKNAME_ARRAY = "array";
+const char* TKNAME_MAP = "map";
 
 } // namespace xtypes_names
 

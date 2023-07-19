@@ -194,6 +194,13 @@ void AnnotationDescriptor::set_type(
     type_ = DynamicTypeBuilderFactory::get_instance().create_copy(type);
 }
 
+void AnnotationDescriptor::set_type(
+            const DynamicType* type) noexcept
+{
+    reset_type();
+    type_ = type;
+}
+
 void AnnotationDescriptor::reset_type() noexcept
 {
     if (type_ != nullptr)

@@ -15,11 +15,20 @@
 #ifndef TYPES_1_3_DYNAMIC_TYPE_BUILDER_PTR_HPP
 #define TYPES_1_3_DYNAMIC_TYPE_BUILDER_PTR_HPP
 
-#include <fastrtps/types/TypesBase.h>
+#include <fastrtps/types/v1_3/DynamicTypeBuilder.hpp>
 #include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
 
 namespace std
 {
+
+template<>
+struct default_delete<eprosima::fastrtps::types::v1_3::DynamicTypeBuilder> {
+    void operator()(const eprosima::fastrtps::types::v1_3::DynamicTypeBuilder* pA) const noexcept
+    {
+        auto& inst = eprosima::fastrtps::types::v1_3::DynamicTypeBuilderFactory::get_instance();
+        inst.delete_type(pA);
+    }
+};
 
 template<>
 class shared_ptr<const eprosima::fastrtps::types::v1_3::DynamicTypeBuilder>
@@ -30,20 +39,10 @@ public:
     using element_type = const eprosima::fastrtps::types::v1_3::DynamicTypeBuilder;
     using base = shared_ptr<const void>;
 
-protected:
-
-    static void deleter(element_type * pA)
-    {
-        auto& inst = eprosima::fastrtps::types::v1_3::DynamicTypeBuilderFactory::get_instance();
-        inst.delete_type(pA);
-    }
-
-public:
-
     constexpr shared_ptr() = default;
 
     explicit shared_ptr(element_type* pA)
-        : base(pA, deleter) {}
+        : base(pA, default_delete<element_type>{}) {}
 
     shared_ptr(const shared_ptr& r) noexcept
         : base(r) {}
@@ -76,7 +75,7 @@ public:
 
     void reset(element_type* pA)
     {
-        base::reset(pA, deleter);
+        base::reset(pA, default_delete<element_type>{});
     }
 
     element_type* get() const noexcept

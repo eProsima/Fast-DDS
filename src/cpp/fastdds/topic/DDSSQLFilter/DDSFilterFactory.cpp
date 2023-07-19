@@ -530,26 +530,31 @@ IContentFilterFactory::ReturnCode_t DDSFilterFactory::create_content_filter(
             if (node)
             {
                 auto type_id = TypeObjectFactory::get_instance()->get_type_identifier(type_name, true);
-                DynamicType_ptr dyn_type;
-                TypeObjectFactory::get_instance()->build_dynamic_type(dyn_type, type_name, type_id, type_object);
-                DDSFilterExpression* expr = get_expression();
-                expr->set_type(dyn_type);
-                size_t n_params = filter_parameters.length();
-                expr->parameters.reserve(n_params);
-                while (expr->parameters.size() < n_params)
+                const fastrtps::types::v1_3::DynamicType* ret_type = nullptr;
+                ret = TypeObjectFactory::get_instance()->build_dynamic_type(ret_type, type_name, type_id, type_object);
+
+                if(!!ret)
                 {
-                    expr->parameters.emplace_back();
-                }
-                ExpressionParsingState state{ type_object, filter_parameters, expr };
-                ret = convert_tree<DDSFilterCondition>(state, expr->root, *(node->children[0]));
-                if (ReturnCode_t::RETCODE_OK == ret)
-                {
-                    delete_content_filter(filter_class_name, filter_instance);
-                    filter_instance = expr;
-                }
-                else
-                {
-                    delete_content_filter(filter_class_name, expr);
+                    DynamicType_ptr dyn_type{ret_type};
+                    DDSFilterExpression* expr = get_expression();
+                    expr->set_type(dyn_type);
+                    size_t n_params = filter_parameters.length();
+                    expr->parameters.reserve(n_params);
+                    while (expr->parameters.size() < n_params)
+                    {
+                        expr->parameters.emplace_back();
+                    }
+                    ExpressionParsingState state{ type_object, filter_parameters, expr };
+                    ret = convert_tree<DDSFilterCondition>(state, expr->root, *(node->children[0]));
+                    if (ReturnCode_t::RETCODE_OK == ret)
+                    {
+                        delete_content_filter(filter_class_name, filter_instance);
+                        filter_instance = expr;
+                    }
+                    else
+                    {
+                        delete_content_filter(filter_class_name, expr);
+                    }
                 }
             }
             else
