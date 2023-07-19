@@ -4060,7 +4060,7 @@ ReturnCode_t DynamicDataImpl::get_bitmask_value(
 }
 
 MemberId DynamicDataImpl::get_array_index(
-        const std::vector<uint32_t>& position)
+        const std::vector<uint32_t>& position) const
 {
     if (get_kind() == TypeKind::TK_ARRAY)
     {

@@ -607,6 +607,14 @@ ReturnCode_t DynamicData::set_discriminator_value(
     return DynamicDataImpl::get_implementation(*this).set_discriminator_value(value);
 }
 
+MemberId DynamicData::get_array_index(
+        const uint32_t* pos,
+        uint32_t size) const noexcept
+{
+    std::vector<uint32_t> v(pos, pos + size);
+    return DynamicDataImpl::get_implementation(*this).get_array_index(v);
+}
+
 ReturnCode_t DynamicData::insert_map_data(
         const DynamicData& key,
         MemberId& outKeyId,

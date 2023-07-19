@@ -938,10 +938,18 @@ constexpr uint32_t LENGTH_UNLIMITED = std::numeric_limits<uint32_t>::max();
 
 namespace std {
 
-template<> class weak_ptr<eprosima::fastrtps::types::v1_3::DynamicTypeBuilder>;
-template<> class shared_ptr<eprosima::fastrtps::types::v1_3::DynamicTypeBuilder>;
 template<> class weak_ptr<const eprosima::fastrtps::types::v1_3::DynamicType>;
 template<> class shared_ptr<const eprosima::fastrtps::types::v1_3::DynamicType>;
+
+template<> class weak_ptr<eprosima::fastrtps::types::v1_3::DynamicTypeBuilder>;
+template<> class shared_ptr<eprosima::fastrtps::types::v1_3::DynamicTypeBuilder>;
+template<> class weak_ptr<const eprosima::fastrtps::types::v1_3::DynamicTypeBuilder>;
+template<> class shared_ptr<const eprosima::fastrtps::types::v1_3::DynamicTypeBuilder>;
+
+template<> class weak_ptr<eprosima::fastrtps::types::v1_3::DynamicData>;
+template<> class shared_ptr<eprosima::fastrtps::types::v1_3::DynamicData>;
+template<> class weak_ptr<const eprosima::fastrtps::types::v1_3::DynamicData>;
+template<> class shared_ptr<const eprosima::fastrtps::types::v1_3::DynamicData>;
 
 } // namespace std
 

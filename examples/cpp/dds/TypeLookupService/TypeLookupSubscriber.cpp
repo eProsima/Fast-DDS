@@ -25,8 +25,9 @@
 #include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
-#include <fastrtps/types/DynamicDataHelper.hpp>
 #include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicDataHelper.hpp>
+#include <fastrtps/types/DynamicDataPtr.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 
 using namespace eprosima::fastdds::dds;
@@ -207,7 +208,7 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                     &subscriber_->m_listener,
                     sub_mask);
 
-                if (type == nullptr)
+                if (!type)
                 {
                     const types::TypeIdentifier* ident =
                             types::TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(name);
@@ -217,12 +218,13 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                         const types::TypeObject* obj =
                                 types::TypeObjectFactory::get_instance()->get_type_object(ident);
 
-                        XTypes::DynamicType_ptr dyn_type;
-                        if (!!types::TypeObjectFactory::get_instance()->build_dynamic_type(dyn_type, name, ident, obj))
+                        const XTypes::DynamicType* ret_type = nullptr;
+                        if (!!types::TypeObjectFactory::get_instance()->build_dynamic_type(ret_type, name, ident, obj))
                         {
+                            XTypes::DynamicType_ptr dyn_type {ret_type};
                             subscriber_->readers_[reader] = dyn_type;
                             XTypes::DynamicData_ptr data(
-                                XTypes::DynamicDataFactory::get_instance()->create_data(dyn_type));
+                                XTypes::DynamicDataFactory::get_instance().create_data(*dyn_type));
                             subscriber_->datas_[reader] = data;
                         }
                         else
@@ -239,7 +241,7 @@ void TypeLookupSubscriber::SubListener::on_type_information_received(
                 {
                     subscriber_->topics_[reader] = topic;
                     subscriber_->readers_[reader] = type;
-                    XTypes::DynamicData_ptr data(XTypes::DynamicDataFactory::get_instance()->create_data(type));
+                    XTypes::DynamicData_ptr data(XTypes::DynamicDataFactory::get_instance().create_data(*type));
                     subscriber_->datas_[reader] = data;
                 }
             };

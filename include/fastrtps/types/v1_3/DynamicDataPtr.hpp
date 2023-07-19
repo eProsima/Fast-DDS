@@ -18,6 +18,9 @@
 #include <fastrtps/types/v1_3/DynamicData.hpp>
 #include <fastrtps/types/v1_3/DynamicDataFactory.hpp>
 
+#include <initializer_list>
+#include <type_traits>
+
 namespace std
 {
 
@@ -43,6 +46,10 @@ public:
 
     explicit shared_ptr(element_type* pA)
         : base(pA, default_delete<element_type>{}) {}
+
+    template<class Deleter>
+    explicit shared_ptr(element_type* pA, Deleter d)
+        : base(pA, d) {}
 
     shared_ptr(const shared_ptr& r) noexcept
         : base(r) {}
@@ -78,6 +85,12 @@ public:
         base::reset(pA, default_delete<element_type>{});
     }
 
+    template<class Deleter>
+    void reset(element_type* pA, Deleter d)
+    {
+        base::reset(pA, d);
+    }
+
     element_type* get() const noexcept
     {
         return static_cast<element_type*>(base::get());
@@ -92,12 +105,56 @@ public:
     {
         return get();
     }
+
+    // ancillary extra methods
+
+    // for stl collections
+    template<typename C,
+        typename T = typename C::value_type,
+        typename = decltype(*std::declval<C>().data()),
+        typename = typename std::enable_if<std::is_convertible<T, uint32_t>::value>::type>
+    eprosima::fastrtps::types::v1_3::MemberId get_array_index(const C& pos) const noexcept
+    {
+        if(*this)
+        {
+            return get()->get_array_index(
+                    pos.data(),
+                    static_cast<uint32_t>(pos.size()));
+        }
+
+        return {};
+    }
+
+    //! for initializer lists arguments
+    eprosima::fastrtps::types::v1_3::MemberId get_array_index(std::initializer_list<uint32_t> ini) const noexcept
+    {
+        std::vector<uint32_t> v(ini);
+        return get_array_index(v);
+    }
+
 };
 
 template<>
 class shared_ptr<eprosima::fastrtps::types::v1_3::DynamicData>
     : public shared_ptr<const eprosima::fastrtps::types::v1_3::DynamicData>
 {
+    // Adapter because deleter methods are defined in the shared_ptr<const void> class
+    template<typename Deleter>
+    struct DeleterAdapter
+    {
+        Deleter d_;
+
+        DeleterAdapter(Deleter d)
+            : d_{d}
+        {
+        }
+
+        void operator()(const void* p)
+        {
+            d_((eprosima::fastrtps::types::v1_3::DynamicData*)p);
+        }
+    };
+
 public:
 
     using element_type = eprosima::fastrtps::types::v1_3::DynamicData;
@@ -114,6 +171,10 @@ public:
     explicit shared_ptr(element_type* pA)
         : base(pA) {}
 
+    template<class Deleter>
+    explicit shared_ptr(element_type* pA, Deleter d)
+        : base(pA, DeleterAdapter<Deleter>{d}) {}
+
     template< class Y >
     shared_ptr(const shared_ptr<Y>& r, element_type* ptr) noexcept
         : base(r, ptr) {}
@@ -121,6 +182,14 @@ public:
     template <class T, typename enable_if<is_convertible<T*, element_type*>::value, int>::type = 0>
     explicit shared_ptr(const weak_ptr<T>& r)
         : base(r) {}
+
+    using base::reset;
+
+    template<class Deleter>
+    void reset(element_type* pA, Deleter d)
+    {
+        base::reset(pA, DeleterAdapter<Deleter>{d});
+    }
 
     shared_ptr& operator=(const shared_ptr& r) noexcept
     {

@@ -27,6 +27,8 @@
 
 #include <fastrtps/types/DynamicDataHelper.hpp>
 #include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicDataPtr.h>
+
 #include <mutex>
 
 using namespace eprosima::fastdds::dds;
@@ -151,7 +153,7 @@ void HelloWorldSubscriber::initialize_entities()
 {
     auto type = m_listener.received_type_;
     std::cout << "Initializing DDS entities for type: " << type->get_name() << std::endl;
-    TypeSupport m_type(new DynamicPubSubType(type));
+    TypeSupport m_type(new DynamicPubSubType(*type));
     m_type.register_type(mp_participant);
 
     if (mp_subscriber == nullptr)
@@ -186,7 +188,7 @@ void HelloWorldSubscriber::initialize_entities()
     topics_[reader] = topic;
     readers_[reader] = type;
     XTypes::DynamicData_ptr data(
-        XTypes::DynamicDataFactory::get_instance()->create_data(type));
+        XTypes::DynamicDataFactory::get_instance().create_data(*type));
     datas_[reader] = data;
 }
 

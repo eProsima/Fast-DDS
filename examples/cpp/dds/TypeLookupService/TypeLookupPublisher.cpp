@@ -27,6 +27,7 @@
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 
 #include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicTypePtr.h>
 
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
@@ -64,9 +65,9 @@ bool TypeLookupPublisher::init()
         return false;
     }
 
-    auto dyn_type = dyn_build->build();
-    TypeSupport m_type(new DynamicPubSubType(dyn_type));
-    m_Hello = XTypes::DynamicDataFactory::get_instance()->create_data(dyn_type);
+    XTypes::DynamicType_ptr dyn_type {dyn_build->build()};
+    TypeSupport m_type(new DynamicPubSubType(*dyn_type));
+    m_Hello.reset(XTypes::DynamicDataFactory::get_instance().create_data(*dyn_type));
 
     m_Hello->set_string_value("Hello DDS Dynamic World", 0_id);
     m_Hello->set_uint32_value(0, 1_id);
@@ -177,10 +178,8 @@ void TypeLookupPublisher::runThread(
         {
             if (publish(false))
             {
-                std::string message;
-                m_Hello->get_string_value(message, 0_id);
-                uint32_t index;
-                m_Hello->get_uint32_value(index, 1_id);
+                std::string message = m_Hello->get_string_value(0_id);
+                uint32_t index = m_Hello->get_uint32_value(1_id);
                 std::cout << "Message: " << message << " with index: " << index << " SENT" << std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
@@ -196,10 +195,8 @@ void TypeLookupPublisher::runThread(
             }
             else
             {
-                std::string message;
-                m_Hello->get_string_value(message, 0_id);
-                uint32_t index;
-                m_Hello->get_uint32_value(index, 1_id);
+                std::string message = m_Hello->get_string_value(0_id);
+                uint32_t index = m_Hello->get_uint32_value(1_id);
                 std::cout << "Message: " << message << " with index: " << index << " SENT" << std::endl;
             }
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));

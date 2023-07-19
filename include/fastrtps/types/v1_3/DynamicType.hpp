@@ -35,10 +35,10 @@ class DynamicType final
 
 public:
 
-    bool operator ==(
+    RTPS_DllAPI bool operator ==(
             const DynamicType& other) const noexcept;
 
-    bool operator !=(
+    RTPS_DllAPI bool operator !=(
             const DynamicType& other) const noexcept;
 
     /**
@@ -48,20 +48,20 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference.
      */
-    ReturnCode_t get_descriptor(TypeDescriptor& td) const noexcept;
+    RTPS_DllAPI ReturnCode_t get_descriptor(TypeDescriptor& td) const noexcept;
 
     /**
      * Returns the fully qualified name of this type
      * @attention The returned value may not persist in time
      * @return const char* type name
      */
-    const char* get_name() const noexcept;
+    RTPS_DllAPI const char* get_name() const noexcept;
 
     /**
      * Returns the @ref eprosima::fastrtps::types::TypeKind associated
      * @return standard @ref eprosima::fastrtps::types::TypeKind
      */
-    TypeKind get_kind() const noexcept;
+    RTPS_DllAPI TypeKind get_kind() const noexcept;
 
     /**
      * Provides a mapping from the name of the member of this type to the member itself (see [standard] 7.5.2.8.3)
@@ -71,7 +71,7 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference. Lifecycle is linked to the referenced member.
      */
-    const DynamicTypeMember* get_member_by_name(const char* name, ReturnCode_t* ec = nullptr) const noexcept;
+    RTPS_DllAPI const DynamicTypeMember* get_member_by_name(const char* name, ReturnCode_t* ec = nullptr) const noexcept;
 
     /**
      * Provides a mapping from the name of the member of this type to the member itself (see [standard] 7.5.2.8.3)
@@ -80,7 +80,7 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference. Lifecycle is linked to the referenced members.
      */
-    DynamicTypeMembersByName get_all_members_by_name(ReturnCode_t* ec = nullptr) const noexcept;
+    RTPS_DllAPI DynamicTypeMembersByName get_all_members_by_name(ReturnCode_t* ec = nullptr) const noexcept;
 
     /**
      * Provides a mapping from the member id to the member itself (see [standard] 7.5.2.8.2)
@@ -90,7 +90,7 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference. Lifecycle is linked to the referenced member.
      */
-    const DynamicTypeMember* get_member(MemberId id, ReturnCode_t* ec = nullptr) const noexcept;
+    RTPS_DllAPI const DynamicTypeMember* get_member(MemberId id, ReturnCode_t* ec = nullptr) const noexcept;
 
     /**
      * Provides a mapping from the member id to the member itself (see [standard] 7.5.2.8.2)
@@ -99,14 +99,14 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference. Lifecycle is linked to the referenced members.
      */
-    DynamicTypeMembersById get_all_members(ReturnCode_t* ec = nullptr) const noexcept;
+    RTPS_DllAPI DynamicTypeMembersById get_all_members(ReturnCode_t* ec = nullptr) const noexcept;
 
     /**
      * This operation returns the current number of members (see [standard] 7.5.2.8.12)
      * @return current number of members
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    uint32_t get_member_count() const noexcept;
+    RTPS_DllAPI uint32_t get_member_count() const noexcept;
 
     /**
      * This operation returns the member that corresponds to the specified index (see [standard] 7.5.2.8.10)
@@ -116,14 +116,14 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference. Lifecycle is linked to the referenced members.
      */
-    const DynamicTypeMember* get_member_by_index(uint32_t index, ReturnCode_t* ec = nullptr) const noexcept;
+    RTPS_DllAPI const DynamicTypeMember* get_member_by_index(uint32_t index, ReturnCode_t* ec = nullptr) const noexcept;
 
     /**
      * This operation returns the current number of annotations to the type (see [standard] 7.5.2.8.7)
      * @return current number of annotations
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    uint32_t get_annotation_count() const noexcept;
+    RTPS_DllAPI uint32_t get_annotation_count() const noexcept;
 
     /**
      * This operation returns the annotation that corresponds to the specified index (see [standard] 7.5.2.8.10)
@@ -133,7 +133,7 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference. Lifecycle is linked to the referenced members.
      */
-    ReturnCode_t get_annotation(AnnotationDescriptor& annotation, uint32_t index) const noexcept;
+    RTPS_DllAPI ReturnCode_t get_annotation(AnnotationDescriptor& annotation, uint32_t index) const noexcept;
 
     /**
      * This operation returns all annotations that have previously been applied to this type (see [standard] 7.5.2.8.10)
@@ -142,10 +142,10 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference. Lifecycle is linked to the referenced members.
      */
-    const Annotations* get_all_annotations(ReturnCode_t* ec = nullptr) const noexcept;
+    RTPS_DllAPI const Annotations* get_all_annotations(ReturnCode_t* ec = nullptr) const noexcept;
 
     //! checks if type is a valid key
-    bool key_annotation() const;
+    RTPS_DllAPI bool key_annotation() const;
 
     /**
      * State comparison according with the [standard] sections \b 7.5.2.7.4 \b 7.5.2.8.4
@@ -154,7 +154,7 @@ public:
      * @return \b bool `true` on equality
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
      */
-    bool equals(
+    RTPS_DllAPI bool equals(
             const DynamicType& other) const noexcept;
 };
 

@@ -776,6 +776,10 @@ public:
     RTPS_DllAPI ReturnCode_t set_discriminator_value(
             MemberId value) noexcept;
 
+    RTPS_DllAPI MemberId get_array_index(
+            const uint32_t* pos,
+            uint32_t size) const noexcept;
+
     //! Insert a new key in a map
     RTPS_DllAPI ReturnCode_t insert_map_data(
             const DynamicData& key,

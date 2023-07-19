@@ -275,7 +275,7 @@ public:
             std::shared_ptr<const DynamicDataImpl> value);
 
     MemberId get_array_index(
-            const std::vector<uint32_t>& position);
+            const std::vector<uint32_t>& position) const;
 
     ReturnCode_t insert_sequence_data(
             MemberId& outId);
