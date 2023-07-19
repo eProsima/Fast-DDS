@@ -793,6 +793,72 @@ public:
     ReturnCode_t remove_map_data(
             MemberId keyId);
 
+    /*
+     * Serialize the object into a given stream
+     * @param cdr @ref eprosima::fastrtps::Cdr to fill in
+     */
+    void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*
+     * Deserialize the object from the given payload
+     * @param cdr @ref eprosima::fastrtps::Cdr to parse
+     * @return bool specifying success
+     */
+    bool deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
+    /*
+     * Serialize the object key into a given stream
+     * @param cdr @ref eprosima::fastrtps::Cdr to fill in
+     */
+    void serializeKey(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    /*
+     * Calculate an object serialized size
+     * @param data @ref DynamicData object to serialize
+     * @param current_alignment size_t
+     * @return size_t calculated size in bytes
+     */
+    static size_t getCdrSerializedSize(
+            const DynamicData& data,
+            size_t current_alignment = 0);
+
+    /*
+     * Calculate an empty object serialized size
+     * @param type @ref DynamicType object to serialize
+     * @param current_alignment size_t
+     * @return size_t calculated size in bytes
+     */
+    static size_t getEmptyCdrSerializedSize(
+            const DynamicType& type,
+            size_t current_alignment = 0);
+
+    /*
+     * Calculate maximum serialized size of the type's key
+     * @param type @ref DynamicType object to serialize
+     * @param current_alignment size_t
+     * @return size_t calculated size in bytes
+     * @remark returned value is a guidance, for example:
+     *  a 100 sequence length is taken as reference
+     */
+    static size_t getKeyMaxCdrSerializedSize(
+            const DynamicType& type,
+            size_t current_alignment = 0);
+
+    /*
+     * Calculate maximum serialized size
+     * @param type @ref DynamicType object to serialize
+     * @param current_alignment size_t
+     * @return size_t calculated size in bytes
+     * @remark returned value is a guidance, for example:
+     *  a 100 sequence length is taken as reference
+     */
+    static size_t getMaxCdrSerializedSize(
+            const DynamicType& type,
+            size_t current_alignment = 0);
+
 };
 
 } // namespace v1_3

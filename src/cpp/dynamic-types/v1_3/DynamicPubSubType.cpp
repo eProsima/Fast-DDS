@@ -196,9 +196,11 @@ bool DynamicPubSubType::getKey(
 std::function<uint32_t()> DynamicPubSubType::getSerializedSizeProvider(
         void* data)
 {
+    assert(data);
+
     return [data]() -> uint32_t
            {
-               return (uint32_t)DynamicData::getCdrSerializedSize((DynamicData*)data) + 4 /*encapsulation*/;
+               return (uint32_t)DynamicData::getCdrSerializedSize(*(DynamicData*)data) + 4 /*encapsulation*/;
            };
 }
 
@@ -238,13 +240,8 @@ void DynamicPubSubType::UpdateDynamicTypeInfo()
         return;
     }
 
-    m_typeSize = static_cast<uint32_t>(DynamicData::getMaxCdrSerializedSize(dynamic_type_) + 4);
-    setName(dynamic_type_->get_name().c_str());
+    m_typeSize = static_cast<uint32_t>(DynamicData::getMaxCdrSerializedSize(*dynamic_type_) + 4);
+    setName(dynamic_type_->get_name());
 
     m_isGetKeyDefined = dynamic_type_->key_annotation();
-
-    if (m_isGetKeyDefined)
-    {
-        return;
-    }
 }

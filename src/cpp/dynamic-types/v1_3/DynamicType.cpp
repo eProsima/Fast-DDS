@@ -154,3 +154,9 @@ bool DynamicType::equals(
 {
     return *this == other;
 }
+
+bool DynamicType::key_annotation() const
+{
+    return DynamicTypeImpl::get_implementation(*this).key_annotation();
+}
+

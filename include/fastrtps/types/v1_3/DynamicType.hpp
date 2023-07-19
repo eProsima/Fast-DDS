@@ -143,6 +143,9 @@ public:
      */
     const Annotations* get_all_annotations(ReturnCode_t* ec = nullptr) const noexcept;
 
+    //! checks if type is a valid key
+    bool key_annotation() const;
+
     /**
      * State comparison according with the [standard] sections \b 7.5.2.7.4 \b 7.5.2.8.4
      * @remarks using `==` and `!=` operators is more convenient

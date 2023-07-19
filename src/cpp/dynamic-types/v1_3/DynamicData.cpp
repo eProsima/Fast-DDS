@@ -632,3 +632,57 @@ ReturnCode_t DynamicData::remove_map_data(
 {
     return DynamicDataImpl::get_implementation(*this).remove_map_data(keyId);
 }
+
+void DynamicData::serialize(
+        eprosima::fastcdr::Cdr& cdr) const
+{
+    DynamicDataImpl::get_implementation(*this).serialize(cdr);
+}
+
+bool DynamicData::deserialize(
+        eprosima::fastcdr::Cdr& cdr)
+{
+    return DynamicDataImpl::get_implementation(*this).deserialize(cdr);
+}
+
+void DynamicData::serializeKey(
+        eprosima::fastcdr::Cdr& cdr) const
+{
+    DynamicDataImpl::get_implementation(*this).serializeKey(cdr);
+}
+
+size_t DynamicData::getCdrSerializedSize(
+        const DynamicData& data,
+        size_t current_alignment /*= 0*/)
+{
+    return DynamicDataImpl::getCdrSerializedSize(
+            DynamicDataImpl::get_implementation(data),
+            current_alignment);
+}
+
+size_t DynamicData::getEmptyCdrSerializedSize(
+        const DynamicType& type,
+        size_t current_alignment /*= 0*/)
+{
+    return DynamicDataImpl::getEmptyCdrSerializedSize(
+            DynamicTypeImpl::get_implementation(type),
+            current_alignment);
+}
+
+size_t DynamicData::getKeyMaxCdrSerializedSize(
+        const DynamicType& type,
+        size_t current_alignment /*= 0*/)
+{
+    return DynamicDataImpl::getKeyMaxCdrSerializedSize(
+            DynamicTypeImpl::get_implementation(type),
+            current_alignment);
+}
+
+size_t DynamicData::getMaxCdrSerializedSize(
+        const DynamicType& type,
+        size_t current_alignment /*= 0*/)
+{
+    return DynamicDataImpl::getMaxCdrSerializedSize(
+            DynamicTypeImpl::get_implementation(type),
+            current_alignment);
+}
