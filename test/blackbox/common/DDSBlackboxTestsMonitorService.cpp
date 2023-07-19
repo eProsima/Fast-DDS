@@ -615,7 +615,7 @@ struct ProxySampleValidator : public SampleValidator
                 ParticipantProxyData pdata(att);
 
                 serialized_msg.init(serialized_proxy.data(), data.value().getCdrSerializedSize(data.value()));
-                ASSERT_TRUE(pdata.readFromCDRMessage(&serialized_msg, true));
+                ASSERT_TRUE(pdata.readFromCDRMessage(&serialized_msg, true, nullptr, true, false));
 
             }
             else if (guid.entityId.is_reader())
@@ -623,7 +623,7 @@ struct ProxySampleValidator : public SampleValidator
                 WriterProxyData writer_proxy_data(5, 5);
 
                 serialized_msg.init(serialized_proxy.data(), data.value().getCdrSerializedSize(data.value()));
-                ASSERT_TRUE(writer_proxy_data.readFromCDRMessage(&serialized_msg));
+                ASSERT_TRUE(writer_proxy_data.readFromCDRMessage(&serialized_msg, true, nullptr, true, false));
 
             }
             else if (guid.entityId.is_writer())
@@ -631,7 +631,7 @@ struct ProxySampleValidator : public SampleValidator
                 ReaderProxyData reader_proxy_data(5, 5);
 
                 serialized_msg.init(serialized_proxy.data(), data.value().getCdrSerializedSize(data.value()));
-                ASSERT_TRUE(reader_proxy_data.readFromCDRMessage(&serialized_msg));
+                ASSERT_TRUE(reader_proxy_data.readFromCDRMessage(&serialized_msg, true, nullptr, true, false));
             }
             else
             {
