@@ -161,3 +161,6 @@ char& FlowControlExample::wasFast()
 }
 
 
+
+
+#include "FlowControlExampleCdrAux.ipp"

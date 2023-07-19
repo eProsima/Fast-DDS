@@ -1935,3 +1935,6 @@ bitmodule::BM2& StructTest::myStructBits()
     return m_myStructBits;
 }
 
+
+
+#include "new_features_4_2CdrAux.ipp"

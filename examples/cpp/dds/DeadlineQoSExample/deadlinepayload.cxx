@@ -161,3 +161,6 @@ eprosima::fastcdr::fixed_string<256>& HelloMsg::payload()
     return m_payload;
 }
 
+
+
+#include "deadlinepayloadCdrAux.ipp"

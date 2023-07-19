@@ -2476,3 +2476,6 @@ BasicStruct& KeyedStruct::basic()
     return m_basic;
 }
 
+
+
+#include "TestCdrAux.ipp"

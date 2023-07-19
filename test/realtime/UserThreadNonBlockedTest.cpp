@@ -49,7 +49,7 @@ public:
         ser.serialize_encapsulation();
         //serialize the object:
         ser.serialize(sample->value_);
-        payload->length = (uint32_t)ser.getSerializedDataLength();
+        payload->length = (uint32_t)ser.get_serialized_data_length();
         return true;
     }
 

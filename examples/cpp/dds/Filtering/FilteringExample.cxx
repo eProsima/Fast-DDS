@@ -115,3 +115,6 @@ int32_t& FilteringExample::sampleNumber()
     return m_sampleNumber;
 }
 
+
+
+#include "FilteringExampleCdrAux.ipp"

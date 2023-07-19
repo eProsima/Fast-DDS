@@ -905,8 +905,8 @@ inline bool QosPoliciesSerializer<TypeIdV1>::add_to_cdr_message(
     ser.serialize_encapsulation();
 
     ser << qos_policy.m_type_identifier;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    size = (ser.getSerializedDataLength() + 3) & ~3;
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
+    size = (ser.get_serialized_data_length() + 3) & ~3;
 
     bool valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
     valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size));
@@ -977,8 +977,8 @@ inline bool QosPoliciesSerializer<TypeObjectV1>::add_to_cdr_message(
     ser.serialize_encapsulation();
 
     ser << qos_policy.m_type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    size = (ser.getSerializedDataLength() + 3) & ~3;
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
+    size = (ser.get_serialized_data_length() + 3) & ~3;
 
     bool valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
     valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size));
@@ -1050,8 +1050,8 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformation>::add_to_cdr_message(
     ser.serialize_encapsulation();
 
     ser << qos_policy.type_information;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    size = (ser.getSerializedDataLength() + 3) & ~3;
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
+    size = (ser.get_serialized_data_length() + 3) & ~3;
 
     bool valid = fastrtps::rtps::CDRMessage::addUInt16(cdr_message, qos_policy.Pid);
     valid &= fastrtps::rtps::CDRMessage::addUInt16(cdr_message, static_cast<uint16_t>(size));

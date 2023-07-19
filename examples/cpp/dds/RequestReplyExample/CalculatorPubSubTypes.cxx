@@ -25,7 +25,7 @@
 #include <fastcdr/CdrSizeCalculator.hpp>
 
 #include "CalculatorPubSubTypes.h"
-#include "CalculatorCdrAux.ipp"
+#include "CalculatorCdrAux.hpp"
 
 using SerializedPayload_t = eprosima::fastrtps::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
@@ -85,7 +85,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
@@ -166,7 +166,7 @@ bool RequestTypePubSubType::getKey(
     if (force_md5 || RequestType_max_key_cdr_typesize > 16)
     {
         m_md5.init();
-        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
         m_md5.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
@@ -236,7 +236,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
@@ -317,7 +317,7 @@ bool ReplyTypePubSubType::getKey(
     if (force_md5 || ReplyType_max_key_cdr_typesize > 16)
     {
         m_md5.init();
-        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
         m_md5.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {

@@ -25,7 +25,7 @@
 #include <fastcdr/CdrSizeCalculator.hpp>
 
 #include "typesPubSubTypes.h"
-#include "typesCdrAux.ipp"
+#include "typesCdrAux.hpp"
 
 using SerializedPayload_t = eprosima::fastrtps::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
@@ -88,7 +88,7 @@ namespace eprosima {
                     }
 
                     // Get the serialized length
-                    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+                    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
                     return true;
                 }
 
@@ -169,7 +169,7 @@ namespace eprosima {
                     if (force_md5 || eprosima_fastdds_statistics_detail_EntityId_s_max_key_cdr_typesize > 16)
                     {
                         m_md5.init();
-                        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+                        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
                         m_md5.finalize();
                         for (uint8_t i = 0; i < 16; ++i)
                         {
@@ -239,7 +239,7 @@ namespace eprosima {
                     }
 
                     // Get the serialized length
-                    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+                    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
                     return true;
                 }
 
@@ -320,7 +320,7 @@ namespace eprosima {
                     if (force_md5 || eprosima_fastdds_statistics_detail_GuidPrefix_s_max_key_cdr_typesize > 16)
                     {
                         m_md5.init();
-                        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+                        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
                         m_md5.finalize();
                         for (uint8_t i = 0; i < 16; ++i)
                         {
@@ -390,7 +390,7 @@ namespace eprosima {
                     }
 
                     // Get the serialized length
-                    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+                    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
                     return true;
                 }
 
@@ -471,7 +471,7 @@ namespace eprosima {
                     if (force_md5 || eprosima_fastdds_statistics_detail_GUID_s_max_key_cdr_typesize > 16)
                     {
                         m_md5.init();
-                        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+                        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
                         m_md5.finalize();
                         for (uint8_t i = 0; i < 16; ++i)
                         {
@@ -541,7 +541,7 @@ namespace eprosima {
                     }
 
                     // Get the serialized length
-                    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+                    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
                     return true;
                 }
 
@@ -622,7 +622,7 @@ namespace eprosima {
                     if (force_md5 || eprosima_fastdds_statistics_detail_SequenceNumber_s_max_key_cdr_typesize > 16)
                     {
                         m_md5.init();
-                        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+                        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
                         m_md5.finalize();
                         for (uint8_t i = 0; i < 16; ++i)
                         {
@@ -692,7 +692,7 @@ namespace eprosima {
                     }
 
                     // Get the serialized length
-                    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+                    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
                     return true;
                 }
 
@@ -773,7 +773,7 @@ namespace eprosima {
                     if (force_md5 || eprosima_fastdds_statistics_detail_SampleIdentity_s_max_key_cdr_typesize > 16)
                     {
                         m_md5.init();
-                        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+                        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
                         m_md5.finalize();
                         for (uint8_t i = 0; i < 16; ++i)
                         {
@@ -843,7 +843,7 @@ namespace eprosima {
                     }
 
                     // Get the serialized length
-                    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+                    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
                     return true;
                 }
 
@@ -924,7 +924,7 @@ namespace eprosima {
                     if (force_md5 || eprosima_fastdds_statistics_detail_Locator_s_max_key_cdr_typesize > 16)
                     {
                         m_md5.init();
-                        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+                        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
                         m_md5.finalize();
                         for (uint8_t i = 0; i < 16; ++i)
                         {
@@ -996,7 +996,7 @@ namespace eprosima {
                 }
 
                 // Get the serialized length
-                payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+                payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
                 return true;
             }
 
@@ -1077,7 +1077,7 @@ namespace eprosima {
                 if (force_md5 || eprosima_fastdds_statistics_DiscoveryTime_max_key_cdr_typesize > 16)
                 {
                     m_md5.init();
-                    m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+                    m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
                     m_md5.finalize();
                     for (uint8_t i = 0; i < 16; ++i)
                     {
@@ -1147,7 +1147,7 @@ namespace eprosima {
                 }
 
                 // Get the serialized length
-                payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+                payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
                 return true;
             }
 
@@ -1228,7 +1228,7 @@ namespace eprosima {
                 if (force_md5 || eprosima_fastdds_statistics_EntityCount_max_key_cdr_typesize > 16)
                 {
                     m_md5.init();
-                    m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+                    m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
                     m_md5.finalize();
                     for (uint8_t i = 0; i < 16; ++i)
                     {
@@ -1298,7 +1298,7 @@ namespace eprosima {
                 }
 
                 // Get the serialized length
-                payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+                payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
                 return true;
             }
 
@@ -1379,7 +1379,7 @@ namespace eprosima {
                 if (force_md5 || eprosima_fastdds_statistics_SampleIdentityCount_max_key_cdr_typesize > 16)
                 {
                     m_md5.init();
-                    m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+                    m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
                     m_md5.finalize();
                     for (uint8_t i = 0; i < 16; ++i)
                     {
@@ -1449,7 +1449,7 @@ namespace eprosima {
                 }
 
                 // Get the serialized length
-                payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+                payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
                 return true;
             }
 
@@ -1530,7 +1530,7 @@ namespace eprosima {
                 if (force_md5 || eprosima_fastdds_statistics_Entity2LocatorTraffic_max_key_cdr_typesize > 16)
                 {
                     m_md5.init();
-                    m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+                    m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
                     m_md5.finalize();
                     for (uint8_t i = 0; i < 16; ++i)
                     {
@@ -1600,7 +1600,7 @@ namespace eprosima {
                 }
 
                 // Get the serialized length
-                payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+                payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
                 return true;
             }
 
@@ -1681,7 +1681,7 @@ namespace eprosima {
                 if (force_md5 || eprosima_fastdds_statistics_WriterReaderData_max_key_cdr_typesize > 16)
                 {
                     m_md5.init();
-                    m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+                    m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
                     m_md5.finalize();
                     for (uint8_t i = 0; i < 16; ++i)
                     {
@@ -1751,7 +1751,7 @@ namespace eprosima {
                 }
 
                 // Get the serialized length
-                payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+                payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
                 return true;
             }
 
@@ -1832,7 +1832,7 @@ namespace eprosima {
                 if (force_md5 || eprosima_fastdds_statistics_Locator2LocatorData_max_key_cdr_typesize > 16)
                 {
                     m_md5.init();
-                    m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+                    m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
                     m_md5.finalize();
                     for (uint8_t i = 0; i < 16; ++i)
                     {
@@ -1902,7 +1902,7 @@ namespace eprosima {
                 }
 
                 // Get the serialized length
-                payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+                payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
                 return true;
             }
 
@@ -1983,7 +1983,7 @@ namespace eprosima {
                 if (force_md5 || eprosima_fastdds_statistics_EntityData_max_key_cdr_typesize > 16)
                 {
                     m_md5.init();
-                    m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+                    m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
                     m_md5.finalize();
                     for (uint8_t i = 0; i < 16; ++i)
                     {
@@ -2053,7 +2053,7 @@ namespace eprosima {
                 }
 
                 // Get the serialized length
-                payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+                payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
                 return true;
             }
 
@@ -2134,7 +2134,7 @@ namespace eprosima {
                 if (force_md5 || eprosima_fastdds_statistics_PhysicalData_max_key_cdr_typesize > 16)
                 {
                     m_md5.init();
-                    m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+                    m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
                     m_md5.finalize();
                     for (uint8_t i = 0; i < 16; ++i)
                     {

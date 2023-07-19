@@ -161,3 +161,6 @@ std::string& Topic::message()
     return m_message;
 }
 
+
+
+#include "TopicCdrAux.ipp"

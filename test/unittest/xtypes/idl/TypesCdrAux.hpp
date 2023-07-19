@@ -27,7 +27,7 @@
             constexpr uint32_t SimpleUnionStruct_max_cdr_typesize {16UL};
             constexpr uint32_t SimpleUnionStruct_max_key_cdr_typesize {0UL};
 
-            constexpr uint32_t SequenceSequenceBoundsStruct_max_cdr_typesize {128UL};
+            constexpr uint32_t SequenceSequenceBoundsStruct_max_cdr_typesize {132UL};
             constexpr uint32_t SequenceSequenceBoundsStruct_max_key_cdr_typesize {0UL};
 
 
@@ -67,7 +67,7 @@
             constexpr uint32_t ArrayDimensionsStruct_max_cdr_typesize {20UL};
             constexpr uint32_t ArrayDimensionsStruct_max_key_cdr_typesize {0UL};
 
-            constexpr uint32_t SequenceSequenceStruct_max_cdr_typesize {44UL};
+            constexpr uint32_t SequenceSequenceStruct_max_cdr_typesize {48UL};
             constexpr uint32_t SequenceSequenceStruct_max_key_cdr_typesize {0UL};
 
             constexpr uint32_t MapBoundsStruct_max_cdr_typesize {40UL};
@@ -85,7 +85,7 @@
             constexpr uint32_t SequenceBoundsStruct_max_cdr_typesize {24UL};
             constexpr uint32_t SequenceBoundsStruct_max_key_cdr_typesize {0UL};
 
-            constexpr uint32_t MapMapStruct_max_cdr_typesize {56UL};
+            constexpr uint32_t MapMapStruct_max_cdr_typesize {60UL};
             constexpr uint32_t MapMapStruct_max_key_cdr_typesize {0UL};
 
             constexpr uint32_t BasicWideStruct_max_cdr_typesize {536UL};
@@ -137,7 +137,7 @@
             constexpr uint32_t StringStruct_max_key_cdr_typesize {0UL};
 
 
-            constexpr uint32_t MapMapBoundsStruct_max_cdr_typesize {104UL};
+            constexpr uint32_t MapMapBoundsStruct_max_cdr_typesize {108UL};
             constexpr uint32_t MapMapBoundsStruct_max_key_cdr_typesize {0UL};
 
 namespace eprosima {

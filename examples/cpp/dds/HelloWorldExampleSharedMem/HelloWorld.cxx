@@ -204,3 +204,6 @@ std::array<char, 1048576>& HelloWorld::data()
     return m_data;
 }
 
+
+
+#include "HelloWorldCdrAux.ipp"

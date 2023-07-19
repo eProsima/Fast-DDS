@@ -268,3 +268,6 @@ int64_t& ReplyType::z()
     return m_z;
 }
 
+
+
+#include "CalculatorCdrAux.ipp"

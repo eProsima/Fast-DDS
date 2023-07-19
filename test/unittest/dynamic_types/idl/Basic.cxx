@@ -3805,3 +3805,6 @@ WCharUnion& WCharUnionStruct::my_union()
     return m_my_union;
 }
 
+
+
+#include "BasicCdrAux.ipp"

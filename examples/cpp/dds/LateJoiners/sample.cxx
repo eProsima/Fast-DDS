@@ -152,3 +152,6 @@ uint8_t& sample::key_value()
 }
 
 
+
+
+#include "sampleCdrAux.ipp"

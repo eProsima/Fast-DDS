@@ -115,3 +115,6 @@ uint32_t& AllocTestType::index()
     return m_index;
 }
 
+
+
+#include "AllocTestTypeCdrAux.ipp"

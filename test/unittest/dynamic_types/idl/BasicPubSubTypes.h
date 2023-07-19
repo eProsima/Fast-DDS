@@ -2365,7 +2365,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 68ULL == (detail::ArrayArrayStruct_offset_of<ArrayArrayStruct, detail::ArrayArrayStruct_f>() + sizeof(std::array<std::array<MyArray, 2>, 2>));
+        return 72ULL == (detail::ArrayArrayStruct_offset_of<ArrayArrayStruct, detail::ArrayArrayStruct_f>() + sizeof(std::array<std::array<MyArray, 2>, 2>));
 
     }};
 

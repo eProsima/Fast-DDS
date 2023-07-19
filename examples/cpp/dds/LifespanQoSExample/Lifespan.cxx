@@ -161,3 +161,6 @@ std::string& Lifespan::message()
     return m_message;
 }
 
+
+
+#include "LifespanCdrAux.ipp"

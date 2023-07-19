@@ -157,7 +157,7 @@ const TypeObject* GetMinimalHelloWorldObject()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -241,7 +241,7 @@ const TypeObject* GetCompleteHelloWorldObject()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();

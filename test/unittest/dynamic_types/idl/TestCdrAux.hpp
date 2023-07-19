@@ -34,12 +34,12 @@
             constexpr uint32_t BasicStruct_max_key_cdr_typesize {0UL};
 
 
-            constexpr uint32_t ComplexStruct_max_cdr_typesize {69480468UL};
+            constexpr uint32_t ComplexStruct_max_cdr_typesize {69481704UL};
             constexpr uint32_t ComplexStruct_max_key_cdr_typesize {0UL};
 
 
 
-            constexpr uint32_t CompleteStruct_max_cdr_typesize {69480740UL};
+            constexpr uint32_t CompleteStruct_max_cdr_typesize {69481976UL};
             constexpr uint32_t CompleteStruct_max_key_cdr_typesize {0UL};
 
 

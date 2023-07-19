@@ -161,3 +161,6 @@ std::vector<uint8_t>& KeyedData1mb::data()
     return m_data;
 }
 
+
+
+#include "KeyedData1mbCdrAux.ipp"

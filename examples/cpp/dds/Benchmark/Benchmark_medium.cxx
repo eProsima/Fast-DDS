@@ -161,3 +161,6 @@ uint32_t& BenchMarkMedium::index()
 }
 
 
+
+
+#include "Benchmark_mediumCdrAux.ipp"

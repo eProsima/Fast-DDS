@@ -195,3 +195,6 @@ eprosima::fastcdr::fixed_string<128>& KeyedHelloWorld::message()
     return m_message;
 }
 
+
+
+#include "KeyedHelloWorldCdrAux.ipp"

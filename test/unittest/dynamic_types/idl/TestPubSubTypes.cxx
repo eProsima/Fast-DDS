@@ -25,7 +25,7 @@
 #include <fastcdr/CdrSizeCalculator.hpp>
 
 #include "TestPubSubTypes.h"
-#include "TestCdrAux.ipp"
+#include "TestCdrAux.hpp"
 
 using SerializedPayload_t = eprosima::fastrtps::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
@@ -88,7 +88,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
@@ -169,7 +169,7 @@ bool BasicStructPubSubType::getKey(
     if (force_md5 || BasicStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
-        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
         m_md5.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
@@ -244,7 +244,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
@@ -325,7 +325,7 @@ bool ComplexStructPubSubType::getKey(
     if (force_md5 || ComplexStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
-        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
         m_md5.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
@@ -397,7 +397,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
@@ -478,7 +478,7 @@ bool CompleteStructPubSubType::getKey(
     if (force_md5 || CompleteStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
-        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
         m_md5.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {
@@ -548,7 +548,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::DELIMIT_CDR2
     }
 
     // Get the serialized length
-    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
     return true;
 }
 
@@ -629,7 +629,7 @@ bool KeyedStructPubSubType::getKey(
     if (force_md5 || KeyedStruct_max_key_cdr_typesize > 16)
     {
         m_md5.init();
-        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.getSerializedDataLength()));
+        m_md5.update(m_keyBuffer, static_cast<unsigned int>(ser.get_serialized_data_length()));
         m_md5.finalize();
         for (uint8_t i = 0; i < 16; ++i)
         {

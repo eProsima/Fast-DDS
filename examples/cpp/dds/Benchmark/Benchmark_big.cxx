@@ -161,3 +161,6 @@ uint32_t& BenchMarkBig::index()
 }
 
 
+
+
+#include "Benchmark_bigCdrAux.ipp"

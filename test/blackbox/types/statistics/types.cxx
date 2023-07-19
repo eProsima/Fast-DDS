@@ -3077,3 +3077,6 @@ eprosima::fastdds::statistics::PhysicalData& eprosima::fastdds::statistics::Data
 
 
 
+
+
+#include "typesCdrAux.ipp"

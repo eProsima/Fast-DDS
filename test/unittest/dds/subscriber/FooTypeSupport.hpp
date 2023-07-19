@@ -46,7 +46,7 @@ public:
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fb(reinterpret_cast<char*>(payload->data), payload->max_size);
         // Object that serializes the data.
-        eprosima::fastcdr::Cdr ser(fb, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::CdrVersion::XCDRv1);
+        eprosima::fastcdr::Cdr ser(fb, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastdds::dds::DEFAULT_XCDR_VERSION);
         payload->encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
         // Serialize encapsulation
         ser.serialize_encapsulation();
@@ -62,7 +62,7 @@ public:
         }
 
         // Get the serialized length
-        payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());
+        payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());
         return true;
     }
 
@@ -77,7 +77,7 @@ public:
         eprosima::fastcdr::FastBuffer fb(reinterpret_cast<char*>(payload->data), payload->length);
 
         // Object that deserializes the data.
-        eprosima::fastcdr::Cdr deser(fb, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN, eprosima::fastcdr::CdrVersion::XCDRv1);
+        eprosima::fastcdr::Cdr deser(fb);
 
         // Deserialize encapsulation.
         deser.read_encapsulation();
@@ -135,7 +135,7 @@ public:
         {
             MD5 md5;
             md5.init();
-            md5.update(key_buf, static_cast<unsigned int>(ser.getSerializedDataLength()));
+            md5.update(key_buf, static_cast<unsigned int>(ser.get_serialized_data_length()));
             md5.finalize();
             for (uint8_t i = 0; i < 16; ++i)
             {

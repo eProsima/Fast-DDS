@@ -157,7 +157,7 @@ public:
             void* data,
             fastrtps::rtps::SerializedPayload_t* payload)
     {
-        return serialize(data, payload, DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+        return serialize(data, payload, DEFAULT_DATA_REPRESENTATION);
     }
 
     RTPS_DllAPI virtual bool serialize(

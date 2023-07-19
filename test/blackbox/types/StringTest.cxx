@@ -125,3 +125,6 @@ eprosima::fastcdr::fixed_string<10000>& StringTest::message()
     return m_message;
 }
 
+
+
+#include "StringTestCdrAux.ipp"

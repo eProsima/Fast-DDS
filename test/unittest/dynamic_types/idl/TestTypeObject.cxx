@@ -236,7 +236,7 @@ const TypeObject* GetMinimalMyEnumObject()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -328,7 +328,7 @@ const TypeObject* GetCompleteMyEnumObject()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -430,7 +430,7 @@ const TypeObject* GetMinimalMyAliasEnumObject()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -513,7 +513,7 @@ const TypeObject* GetCompleteMyAliasEnumObject()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -618,7 +618,7 @@ const TypeObject* GetMinimalMyAliasEnum2Object()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -701,7 +701,7 @@ const TypeObject* GetCompleteMyAliasEnum2Object()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -806,7 +806,7 @@ const TypeObject* GetMinimalMyAliasEnum3Object()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -889,7 +889,7 @@ const TypeObject* GetCompleteMyAliasEnum3Object()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -1244,7 +1244,7 @@ const TypeObject* GetMinimalBasicStructObject()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -1524,7 +1524,7 @@ const TypeObject* GetCompleteBasicStructObject()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -1626,7 +1626,7 @@ const TypeObject* GetMinimalMyOctetArray500Object()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -1709,7 +1709,7 @@ const TypeObject* GetCompleteMyOctetArray500Object()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -1814,7 +1814,7 @@ const TypeObject* GetMinimalBSAlias5Object()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -1897,7 +1897,7 @@ const TypeObject* GetCompleteBSAlias5Object()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -2002,7 +2002,7 @@ const TypeObject* GetMinimalMA3Object()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -2085,7 +2085,7 @@ const TypeObject* GetCompleteMA3Object()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -2190,7 +2190,7 @@ const TypeObject* GetMinimalMyMiniArrayObject()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -2273,7 +2273,7 @@ const TypeObject* GetCompleteMyMiniArrayObject()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -2378,7 +2378,7 @@ const TypeObject* GetMinimalMySequenceLongObject()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -2461,7 +2461,7 @@ const TypeObject* GetCompleteMySequenceLongObject()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -2955,7 +2955,7 @@ const TypeObject* GetMinimalComplexStructObject()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -3353,7 +3353,7 @@ const TypeObject* GetCompleteComplexStructObject()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -3478,7 +3478,7 @@ const TypeObject* GetMinimalMyUnionObject()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -3573,7 +3573,7 @@ const TypeObject* GetCompleteMyUnionObject()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -3720,7 +3720,7 @@ const TypeObject* GetMinimalMyUnion2Object()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -3833,7 +3833,7 @@ const TypeObject* GetCompleteMyUnion2Object()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -3948,7 +3948,7 @@ const TypeObject* GetMinimalCompleteStructObject()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -4029,7 +4029,7 @@ const TypeObject* GetCompleteCompleteStructObject()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -4144,7 +4144,7 @@ const TypeObject* GetMinimalKeyedStructObject()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();
@@ -4247,7 +4247,7 @@ const TypeObject* GetCompleteKeyedStructObject()
     payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
     ser << *type_object;
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     MD5 objectHash;
     objectHash.update((char*)payload.data, payload.length);
     objectHash.finalize();

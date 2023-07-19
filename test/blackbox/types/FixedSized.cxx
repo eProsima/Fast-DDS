@@ -115,3 +115,6 @@ uint16_t& FixedSized::index()
     return m_index;
 }
 
+
+
+#include "FixedSizedCdrAux.ipp"

@@ -68,7 +68,7 @@
             constexpr uint32_t ULongStruct_max_cdr_typesize {8UL};
             constexpr uint32_t ULongStruct_max_key_cdr_typesize {0UL};
 
-            constexpr uint32_t SequenceSequenceStruct_max_cdr_typesize {44UL};
+            constexpr uint32_t SequenceSequenceStruct_max_cdr_typesize {48UL};
             constexpr uint32_t SequenceSequenceStruct_max_key_cdr_typesize {0UL};
 
             constexpr uint32_t FloatStruct_max_cdr_typesize {8UL};
@@ -86,13 +86,13 @@
             constexpr uint32_t BoolStruct_max_cdr_typesize {5UL};
             constexpr uint32_t BoolStruct_max_key_cdr_typesize {0UL};
 
-            constexpr uint32_t MapMapStruct_max_cdr_typesize {56UL};
+            constexpr uint32_t MapMapStruct_max_cdr_typesize {60UL};
             constexpr uint32_t MapMapStruct_max_key_cdr_typesize {0UL};
 
             constexpr uint32_t AliasAliasStruct_max_cdr_typesize {8UL};
             constexpr uint32_t AliasAliasStruct_max_key_cdr_typesize {0UL};
 
-            constexpr uint32_t ArrayArrayStruct_max_cdr_typesize {68UL};
+            constexpr uint32_t ArrayArrayStruct_max_cdr_typesize {72UL};
             constexpr uint32_t ArrayArrayStruct_max_key_cdr_typesize {0UL};
 
             constexpr uint32_t ShortStruct_max_cdr_typesize {6UL};

@@ -164,3 +164,6 @@ eprosima::fastcdr::fixed_string<128>& HelloWorld::message()
     return m_message;
 }
 
+
+
+#include "HelloWorldCdrAux.ipp"

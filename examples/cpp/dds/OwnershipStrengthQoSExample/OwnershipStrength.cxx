@@ -195,3 +195,6 @@ std::string& ExampleMessage::message()
     return m_message;
 }
 
+
+
+#include "OwnershipStrengthCdrAux.ipp"

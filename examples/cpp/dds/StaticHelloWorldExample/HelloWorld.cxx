@@ -161,3 +161,6 @@ std::string& HelloWorld::message()
     return m_message;
 }
 
+
+
+#include "HelloWorldCdrAux.ipp"

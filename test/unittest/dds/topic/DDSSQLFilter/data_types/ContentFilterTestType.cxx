@@ -3288,3 +3288,6 @@ std::vector<StructType>& ContentFilterTestType::unbounded_sequence_struct_field(
     return m_unbounded_sequence_struct_field;
 }
 
+
+
+#include "ContentFilterTestTypeCdrAux.ipp"

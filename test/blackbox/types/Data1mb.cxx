@@ -125,3 +125,6 @@ std::vector<uint8_t>& Data1mb::data()
     return m_data;
 }
 
+
+
+#include "Data1mbCdrAux.ipp"

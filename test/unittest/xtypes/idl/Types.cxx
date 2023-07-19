@@ -5140,3 +5140,6 @@ SimpleBadDiscUnion& SimplBadDiscUnionStruct::my_union()
     return m_my_union;
 }
 
+
+
+#include "TypesCdrAux.ipp"

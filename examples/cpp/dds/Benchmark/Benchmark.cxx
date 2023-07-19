@@ -115,3 +115,6 @@ uint32_t& BenchMark::index()
     return m_index;
 }
 
+
+
+#include "BenchmarkCdrAux.ipp"

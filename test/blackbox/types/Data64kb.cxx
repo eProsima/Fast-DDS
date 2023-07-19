@@ -125,3 +125,6 @@ std::vector<uint8_t>& Data64kb::data()
     return m_data;
 }
 
+
+
+#include "Data64kbCdrAux.ipp"

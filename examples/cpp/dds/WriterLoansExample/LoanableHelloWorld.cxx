@@ -161,3 +161,6 @@ std::array<char, 256>& LoanableHelloWorld::message()
     return m_message;
 }
 
+
+
+#include "LoanableHelloWorldCdrAux.ipp"

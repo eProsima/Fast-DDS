@@ -148,7 +148,7 @@ public:
 
             cdr << magicword_;
             cdr << *it;
-            ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());
+            ch->serializedPayload.length = static_cast<uint32_t>(cdr.get_serialized_data_length());
 
             history_->add_change(ch);
             it = msgs.erase(it);
