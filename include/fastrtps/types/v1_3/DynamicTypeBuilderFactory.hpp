@@ -196,7 +196,7 @@ public:
      */
     DynamicTypeBuilder* create_alias_type(
             const DynamicType& base_type,
-            const std::string& sName);
+            const char* sName) noexcept;
 
     /**
      * Creates a new @ref DynamicTypeBuilder object representing an enum

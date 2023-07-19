@@ -1202,7 +1202,7 @@ ReturnCode_t DynamicDataImpl::return_loaned_value(
         auto it = complex_values_.find(*loanIt);
         if (it != complex_values_.end() && it->second == value)
         {
-            it->second = DynamicDataFactoryImpl::get_instance().create_data(std::move(*value));
+            it->second = DynamicDataFactoryImpl::get_instance().create_copy(std::move(*value));
             loaned_values_.erase(loanIt);
             return ReturnCode_t::RETCODE_OK;
         }
@@ -1210,7 +1210,7 @@ ReturnCode_t DynamicDataImpl::return_loaned_value(
         auto it = values_.find(*loanIt);
         if (it != values_.end() && std::static_pointer_cast<DynamicDataImpl>(it->second) == value)
         {
-            it->second = DynamicDataFactoryImpl::get_instance().create_data(std::move(*value));
+            it->second = DynamicDataFactoryImpl::get_instance().create_copy(std::move(*value));
             loaned_values_.erase(loanIt);
             return ReturnCode_t::RETCODE_OK;
         }

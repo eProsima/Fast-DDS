@@ -132,9 +132,9 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_bitset_type(
     return &builder->get_interface();
 }
 
-DynamicTypeBuilder* create_alias_type(
+DynamicTypeBuilder* DynamicTypeBuilderFactory::create_alias_type(
         const DynamicType& base_type,
-        const char* sName)
+        const char* sName) noexcept
 {
     const auto& impl = DynamicTypeImpl::get_implementation(base_type);
     auto builder = DynamicTypeBuilderFactoryImpl::get_instance().create_alias_type(impl, std::string(sName));

@@ -116,6 +116,12 @@ std::shared_ptr<DynamicDataImpl> DynamicDataFactoryImpl::create_copy(
     return create_data_impl(data);
 }
 
+std::shared_ptr<DynamicDataImpl> DynamicDataFactoryImpl::create_copy(
+        DynamicDataImpl&& data) noexcept
+{
+    return create_data_impl(std::move(data));
+}
+
 ReturnCode_t DynamicDataFactoryImpl::delete_data(
         const DynamicDataImpl& data) noexcept
 {

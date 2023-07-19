@@ -93,17 +93,6 @@ public:
             const DynamicTypeImpl& type) noexcept;
 
     /**
-     * Create a new @ref DynamicDataImpl object based on the given @ref DynamicDataImpl
-     * @remark This method is thread-safe.
-     * @param[in] data @ref DynamicDataImpl associated
-     * @return new @ref DynamicDataImpl object
-     */
-    std::shared_ptr<DynamicDataImpl> create_data(
-            const DynamicDataImpl& data) noexcept;
-    std::shared_ptr<DynamicDataImpl> create_data(
-            DynamicDataImpl&& data) noexcept;
-
-    /**
      * Create a new @ref DynamicDataImpl object based on the given @ref DynamicDataImpl object.
      * @remark This method is thread-safe.
      * @param[in] type @ref DynamicDataImpl object
@@ -111,6 +100,8 @@ public:
      */
     std::shared_ptr<DynamicDataImpl> create_copy(
             const DynamicDataImpl& data) noexcept;
+    std::shared_ptr<DynamicDataImpl> create_copy(
+            DynamicDataImpl&& data) noexcept;
 
     /**
      * Frees any framework resources associated with the given data according with [standard] section 7.5.2.10.2.

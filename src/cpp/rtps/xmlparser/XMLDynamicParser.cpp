@@ -905,7 +905,7 @@ static void dimensionsToArrayBounds(
 
 static bool dimensionsToLabels(
         const std::string& labelStr,
-        std::vector<uint64_t>& labels)
+        std::vector<uint32_t>& labels)
 {
     std::stringstream ss(labelStr);
     std::string item;
@@ -920,22 +920,11 @@ static bool dimensionsToLabels(
         }
         else
         {
-            labels.push_back(static_cast<uint64_t>(std::atoi(item.c_str())));
+            labels.push_back(static_cast<uint32_t>(std::atoi(item.c_str())));
         }
     }
 
     return def;
-}
-
-static bool dimensionsToLabels(
-        const std::string& labelStr,
-        std::vector<uint32_t>& labels)
-{
-    std::vector<uint64_t> llabels;
-    bool ret = dimensionsToLabels(labelStr, llabels);
-    labels.assign(llabels.begin(), llabels.end());
-
-    return ret;
 }
 
 DynamicTypeBuilder_cptr XMLParser::parseXMLMemberDynamicType(

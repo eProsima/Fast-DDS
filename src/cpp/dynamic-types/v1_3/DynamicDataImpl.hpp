@@ -104,7 +104,7 @@ public:
             use_the_create_method,
             DynamicDataImpl&& data) noexcept;
 
-    ~DynamicDataImpl() noexcept;
+    ~DynamicDataImpl() = default;
 
     static const DynamicDataImpl& get_implementation(const DynamicData& t)
     {

@@ -53,17 +53,26 @@ target_sources(xtypes INTERFACE
 
     # version 1.3
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/AnnotationDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/AnnotationDescriptorImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/AnnotationManager.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicData.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicDataImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicDataFactory.cpp
-    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicDataPtr.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicDataFactoryImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicPubSubType.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicType.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicTypeImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicTypeBuilder.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicTracker.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicTypeBuilderImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicTypeBuilderFactory.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicTypeBuilderFactoryImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicTypeMember.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/DynamicTypeMemberImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/MemberDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/MemberDescriptorImpl.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/TypeDescriptor.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/TypeState.cpp
 )
 
 # Set source files
@@ -488,6 +497,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
     $<$<BOOL:${SHM_TRANSPORT_DEFAULT}>:SHM_TRANSPORT_BUILTIN> # Enable SHM as built-in transport
     $<$<BOOL:${STDOUTERR_LOG_CONSUMER}>:STDOUTERR_LOG_CONSUMER> # Enable StdoutErrConsumer as default LogConsumer
+    # DYNAMIC_TYPES_CHECKING
     )
 
 # Define public headers

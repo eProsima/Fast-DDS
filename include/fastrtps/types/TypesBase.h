@@ -61,59 +61,59 @@ size_t to_size_t(
 
 inline namespace xtypes_names {
 
-const char* CONST_TRUE = "true";
-const char* CONST_FALSE = "false";
+const char* const CONST_TRUE = "true";
+const char* const CONST_FALSE = "false";
 
-const char* ANNOTATION_KEY_ID = "key";
-const char* ANNOTATION_EPKEY_ID = "Key";
-const char* ANNOTATION_TOPIC_ID = "Topic";
-const char* ANNOTATION_EXTENSIBILITY_ID = "extensibility";
-const char* ANNOTATION_FINAL_ID = "final";
-const char* ANNOTATION_APPENDABLE_ID = "appendable";
-const char* ANNOTATION_MUTABLE_ID = "mutable";
-const char* ANNOTATION_NESTED_ID = "nested";
-const char* ANNOTATION_OPTIONAL_ID = "optional";
-const char* ANNOTATION_MUST_UNDERSTAND_ID = "must_understand";
-const char* ANNOTATION_NON_SERIALIZED_ID = "non_serialized";
-const char* ANNOTATION_BIT_BOUND_ID = "bit_bound";
-const char* ANNOTATION_DEFAULT_ID = "default";
-const char* ANNOTATION_DEFAULT_LITERAL_ID = "default_literal";
-const char* ANNOTATION_VALUE_ID = "value";
-const char* ANNOTATION_POSITION_ID = "position";
-const char* ANNOTATION_EXTERNAL_ID = "external";
+const char* const ANNOTATION_KEY_ID = "key";
+const char* const ANNOTATION_EPKEY_ID = "Key";
+const char* const ANNOTATION_TOPIC_ID = "Topic";
+const char* const ANNOTATION_EXTENSIBILITY_ID = "extensibility";
+const char* const ANNOTATION_FINAL_ID = "final";
+const char* const ANNOTATION_APPENDABLE_ID = "appendable";
+const char* const ANNOTATION_MUTABLE_ID = "mutable";
+const char* const ANNOTATION_NESTED_ID = "nested";
+const char* const ANNOTATION_OPTIONAL_ID = "optional";
+const char* const ANNOTATION_MUST_UNDERSTAND_ID = "must_understand";
+const char* const ANNOTATION_NON_SERIALIZED_ID = "non_serialized";
+const char* const ANNOTATION_BIT_BOUND_ID = "bit_bound";
+const char* const ANNOTATION_DEFAULT_ID = "default";
+const char* const ANNOTATION_DEFAULT_LITERAL_ID = "default_literal";
+const char* const ANNOTATION_VALUE_ID = "value";
+const char* const ANNOTATION_POSITION_ID = "position";
+const char* const ANNOTATION_EXTERNAL_ID = "external";
 
-const char* EXTENSIBILITY_FINAL = "FINAL";
-const char* EXTENSIBILITY_APPENDABLE = "APPENDABLE";
-const char* EXTENSIBILITY_MUTABLE = "MUTABLE";
+const char* const EXTENSIBILITY_FINAL = "FINAL";
+const char* const EXTENSIBILITY_APPENDABLE = "APPENDABLE";
+const char* const EXTENSIBILITY_MUTABLE = "MUTABLE";
 
-const char* TKNAME_BOOLEAN = "bool";
-const char* TKNAME_INT16 = "int16_t";
-const char* TKNAME_UINT16 = "uint16_t";
-const char* TKNAME_INT32 = "int32_t";
-const char* TKNAME_UINT32 = "uint32_t";
-const char* TKNAME_INT64 = "int64_t";
-const char* TKNAME_UINT64 = "uint64_t";
-const char* TKNAME_CHAR8 = "char";
-const char* TKNAME_BYTE = "octet";
-const char* TKNAME_UINT8 = "uint8_t";
-const char* TKNAME_CHAR16 = "wchar";
-const char* TKNAME_CHAR16T = "wchar_t";
-const char* TKNAME_FLOAT32 = "float";
-const char* TKNAME_FLOAT64 = "double";
-const char* TKNAME_FLOAT128 = "longdouble";
+const char* const TKNAME_BOOLEAN = "bool";
+const char* const TKNAME_INT16 = "int16_t";
+const char* const TKNAME_UINT16 = "uint16_t";
+const char* const TKNAME_INT32 = "int32_t";
+const char* const TKNAME_UINT32 = "uint32_t";
+const char* const TKNAME_INT64 = "int64_t";
+const char* const TKNAME_UINT64 = "uint64_t";
+const char* const TKNAME_CHAR8 = "char";
+const char* const TKNAME_BYTE = "octet";
+const char* const TKNAME_UINT8 = "uint8_t";
+const char* const TKNAME_CHAR16 = "wchar";
+const char* const TKNAME_CHAR16T = "wchar_t";
+const char* const TKNAME_FLOAT32 = "float";
+const char* const TKNAME_FLOAT64 = "double";
+const char* const TKNAME_FLOAT128 = "longdouble";
 
-const char* TKNAME_STRING8 = "string";
-const char* TKNAME_STRING16 = "wstring";
-const char* TKNAME_ALIAS = "alias";
-const char* TKNAME_ENUM = "enum";
-const char* TKNAME_BITMASK = "bitmask";
-const char* TKNAME_ANNOTATION = "annotation";
-const char* TKNAME_STRUCTURE = "structure";
-const char* TKNAME_UNION = "union";
-const char* TKNAME_BITSET = "bitset";
-const char* TKNAME_SEQUENCE = "sequence";
-const char* TKNAME_ARRAY = "array";
-const char* TKNAME_MAP = "map";
+const char* const TKNAME_STRING8 = "string";
+const char* const TKNAME_STRING16 = "wstring";
+const char* const TKNAME_ALIAS = "alias";
+const char* const TKNAME_ENUM = "enum";
+const char* const TKNAME_BITMASK = "bitmask";
+const char* const TKNAME_ANNOTATION = "annotation";
+const char* const TKNAME_STRUCTURE = "structure";
+const char* const TKNAME_UNION = "union";
+const char* const TKNAME_BITSET = "bitset";
+const char* const TKNAME_SEQUENCE = "sequence";
+const char* const TKNAME_ARRAY = "array";
+const char* const TKNAME_MAP = "map";
 
 } // namespace xtypes_names
 
