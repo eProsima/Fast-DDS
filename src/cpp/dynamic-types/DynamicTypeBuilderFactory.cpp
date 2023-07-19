@@ -1490,7 +1490,7 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         ser << object;
-        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);
         objectHash.finalize();
@@ -1545,7 +1545,7 @@ void DynamicTypeBuilderFactory::build_alias_type_code(
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         ser << object;
-        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);
         objectHash.finalize();
@@ -1607,7 +1607,7 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         ser << object;
-        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);
         objectHash.finalize();
@@ -1652,7 +1652,7 @@ void DynamicTypeBuilderFactory::build_enum_type_code(
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         ser << object;
-        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);
         objectHash.finalize();
@@ -1759,7 +1759,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         {
             ser << st;
         }
-        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);
         objectHash.finalize();
@@ -1851,7 +1851,7 @@ void DynamicTypeBuilderFactory::build_struct_type_code(
         {
             ser << st;
         }
-        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);
         objectHash.finalize();
@@ -1962,7 +1962,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         ser << object;
-        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);
         objectHash.finalize();
@@ -2063,7 +2063,7 @@ void DynamicTypeBuilderFactory::build_union_type_code(
         payload.encapsulation = ser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
 
         ser << object;
-        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);
         objectHash.finalize();
@@ -2143,7 +2143,7 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         {
             ser << st;
         }
-        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);
         objectHash.finalize();
@@ -2209,7 +2209,7 @@ void DynamicTypeBuilderFactory::build_bitset_type_code(
         {
             ser << st;
         }
-        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);
         objectHash.finalize();
@@ -2276,7 +2276,7 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
         {
             ser << st;
         }
-        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);
         objectHash.finalize();
@@ -2328,7 +2328,7 @@ void DynamicTypeBuilderFactory::build_bitmask_type_code(
         {
             ser << st;
         }
-        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);
         objectHash.finalize();
@@ -2403,7 +2403,7 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
         {
             ser << st;
         }
-        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);
         objectHash.finalize();
@@ -2468,7 +2468,7 @@ void DynamicTypeBuilderFactory::build_annotation_type_code(
         {
             ser << st;
         }
-        payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+        payload.length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
         MD5 objectHash;
         objectHash.update((char*)payload.data, payload.length);
         objectHash.finalize();

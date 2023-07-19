@@ -1,4 +1,4 @@
-// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,29 +13,20 @@
 // limitations under the License.
 
 /**
- * @file PublicationMatchedStatus.hpp
+ * @file TopicDataType.hpp
  */
 
-#ifndef _PUBLICATION_MATCHED_STATUS_HPP_
-#define _PUBLICATION_MATCHED_STATUS_HPP_
+#ifndef _FASTDDS_DDS_COMMON_CDRSERIALIZATION_HPP_
+#define _FASTDDS_DDS_COMMON_CDRSERIALIZATION_HPP_
 
-#include <cstdint>
-#include <fastdds/dds/core/status/MatchedStatus.hpp>
-#include <fastdds/dds/common/InstanceHandle.hpp>
+#include <fastcdr/CdrEncoding.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
-
-//! @brief A structure storing the publication status
-struct PublicationMatchedStatus : public MatchedStatus
-{
-    //! @brief Handle to the last reader that matched the writer causing the status to change
-    InstanceHandle_t last_subscription_handle;
-};
-
+constexpr eprosima::fastcdr::CdrVersion DEFAULT_XCDR_VERSION {eprosima::fastcdr::CdrVersion::XCDRv1};
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
 
-#endif //_PUBLICATION_MATCHED_STATUS_HPP_
+#endif // _FASTDDS_DDS_COMMON_CDRSERIALIZATION_HPP_

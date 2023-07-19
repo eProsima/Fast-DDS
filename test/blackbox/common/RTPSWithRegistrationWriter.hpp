@@ -233,7 +233,7 @@ public:
             cdr.serialize_encapsulation();
             cdr << *it;
 
-            ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());
+            ch->serializedPayload.length = static_cast<uint32_t>(cdr.get_serialized_data_length());
             if (ch->serializedPayload.length > 65000u)
             {
                 ch->setFragmentSize(65000u);
@@ -256,7 +256,7 @@ public:
         cdr.serialize_encapsulation();
         cdr << msg;
 
-        ch->serializedPayload.length = static_cast<uint32_t>(cdr.getSerializedDataLength());
+        ch->serializedPayload.length = static_cast<uint32_t>(cdr.get_serialized_data_length());
         if (ch->serializedPayload.length > 65000u)
         {
             ch->setFragmentSize(65000u);

@@ -855,7 +855,7 @@ bool TypeLookup_RequestTypeSupport::serialize(
         return false;
     }
 
-    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());     //Get the serialized length
+    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());     //Get the serialized length
     return true;
 }
 
@@ -950,7 +950,7 @@ bool TypeLookup_ReplyTypeSupport::serialize(
         return false;
     }
 
-    payload->length = static_cast<uint32_t>(ser.getSerializedDataLength());     //Get the serialized length
+    payload->length = static_cast<uint32_t>(ser.get_serialized_data_length());     //Get the serialized length
     return true;
 }
 

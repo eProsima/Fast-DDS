@@ -69,7 +69,7 @@ public:
     RTPS_DllAPI std::function<uint32_t()> getSerializedSizeProvider(
             void* data) override
     {
-        return getSerializedSizeProvider(data, fastdds::dds::DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+        return getSerializedSizeProvider(data, fastdds::dds::DEFAULT_DATA_REPRESENTATION);
     }
 
     RTPS_DllAPI std::function<uint32_t()> getSerializedSizeProvider(
@@ -80,7 +80,7 @@ public:
             void* data,
             eprosima::fastrtps::rtps::SerializedPayload_t* payload) override
     {
-        return serialize(data, payload, fastdds::dds::DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+        return serialize(data, payload, fastdds::dds::DEFAULT_DATA_REPRESENTATION);
     }
 
     RTPS_DllAPI bool serialize(

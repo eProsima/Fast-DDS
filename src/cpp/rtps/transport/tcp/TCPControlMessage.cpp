@@ -169,7 +169,7 @@ bool ConnectionRequest_t::serialize(
         return false;
     }
 
-    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload->length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     return true;
 }
 
@@ -256,7 +256,7 @@ bool OpenLogicalPortRequest_t::serialize(
         return false;
     }
 
-    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload->length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     return true;
 }
 
@@ -344,7 +344,7 @@ bool CheckLogicalPortsRequest_t::serialize(
         return false;
     }
 
-    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload->length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     return true;
 }
 
@@ -431,7 +431,7 @@ bool KeepAliveRequest_t::serialize(
         return false;
     }
 
-    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload->length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     return true;
 }
 
@@ -518,7 +518,7 @@ bool LogicalPortIsClosedRequest_t::serialize(
         return false;
     }
 
-    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload->length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     return true;
 }
 
@@ -605,7 +605,7 @@ bool BindConnectionResponse_t::serialize(
         return false;
     }
 
-    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload->length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     return true;
 }
 
@@ -693,7 +693,7 @@ bool CheckLogicalPortsResponse_t::serialize(
         return false;
     }
 
-    payload->length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
+    payload->length = (uint32_t)ser.get_serialized_data_length(); //Get the serialized length
     return true;
 }
 

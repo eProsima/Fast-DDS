@@ -26,6 +26,7 @@
 #include <vector>
 
 #include <fastcdr/CdrSizeCalculator.hpp>
+#include <fastdds/dds/common/CdrSerialization.hpp>
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
@@ -50,8 +51,6 @@ class FlowController;
 namespace dds {
 
 class DataWriterImpl;
-
-constexpr eprosima::fastcdr::CdrVersion DEFAULT_XCDR_VERSION {eprosima::fastcdr::CdrVersion::XCDRv1};
 
 } // namespace dds
 } // namespace fastdds
