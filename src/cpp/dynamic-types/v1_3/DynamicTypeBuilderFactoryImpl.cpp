@@ -186,7 +186,7 @@ const DynamicTypeImpl& DynamicTypeBuilderFactoryImpl::create_copy(
 }
 
 std::shared_ptr<DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_type_copy(
-        const DynamicTypeImpl& type) noexcept
+        const TypeState& type) noexcept
 {
     assert(type.is_consistent());
     return create_type(type);

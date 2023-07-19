@@ -21,6 +21,10 @@
 namespace eprosima {
 namespace fastrtps {
 namespace types {
+
+class TypeIdentifier;
+class TypeObject;
+
 namespace v1_3 {
 
 class DynamicTypeBuilderFactoryImpl;
@@ -352,6 +356,54 @@ public:
 
     //! returns the cache type associated to get_byte_type()
     const DynamicType* get_byte_type();
+
+    /**
+     * Create a @ref TypeIdentifier from a @ref DynamicTypeBuilder
+     * @param bld @ref DynamicTypeBuilder object to transform
+     * @param identifier @ref TypeIdentifier to populate
+     * @param complete bool specify if TypeIdentifier should be complete
+     */
+    void build_type_identifier(
+            const DynamicTypeBuilder& bld,
+            TypeIdentifier& identifier,
+            bool complete = true) const;
+
+    /**
+     * Create a @ref TypeIdentifier from a @ref DynamicType
+     * @param bld @ref DynamicType object to transform
+     * @param identifier @ref TypeIdentifier to populate
+     * @param complete bool specify if TypeIdentifier should be complete
+     */
+    void build_type_identifier(
+            const DynamicType& tp,
+            TypeIdentifier& identifier,
+            bool complete = true) const;
+
+    /**
+     * Create a @ref TypeObject from a @ref DynamicTypeBuilder
+     * @param bld @ref DynamicTypeBuilder object to transform
+     * @param identifier @ref TypeObject to populate
+     * @param complete bool specify if TypeIdentifier should be complete
+     * @param force bool specify if the object creation is mandatory
+     */
+    void build_type_object(
+            const DynamicTypeBuilder& bld,
+            TypeObject& object,
+            bool complete = true,
+            bool force = false) const;
+
+    /**
+     * Create a @ref TypeObject from a @ref DynamicType
+     * @param bld @ref DynamicType object to transform
+     * @param identifier @ref TypeObject to populate
+     * @param complete bool specify if TypeIdentifier should be complete
+     * @param force bool specify if the object creation is mandatory
+     */
+    void build_type_object(
+            const DynamicType& tp,
+            TypeObject& object,
+            bool complete = true,
+            bool force = false) const;
 };
 
 } // namespace v1_3

@@ -195,6 +195,8 @@ public:
 
     using TypeState::set_name;
 
+    using TypeState::set_kind;
+
     using TypeState::set_base_type;
 
     using TypeState::get_member_by_name;

@@ -385,3 +385,45 @@ const DynamicType* DynamicTypeBuilderFactory::get_byte_type()
     const auto ti = DynamicTypeBuilderFactoryImpl::get_instance().get_byte_type();
     return &ti->get_interface();
 }
+
+void DynamicTypeBuilderFactory::build_type_identifier(
+        const DynamicTypeBuilder& bld,
+        TypeIdentifier& identifier,
+        bool complete /*= true*/) const
+{
+    const auto& builder = DynamicTypeBuilderImpl::get_implementation(bld);
+    return DynamicTypeBuilderFactoryImpl::get_instance()
+                   .build_type_identifier(builder, identifier, complete);
+}
+
+void DynamicTypeBuilderFactory::build_type_object(
+        const DynamicTypeBuilder& bld,
+        TypeObject& object,
+        bool complete /*= true*/,
+        bool force /*= false*/) const
+{
+    const auto& builder = DynamicTypeBuilderImpl::get_implementation(bld);
+    return DynamicTypeBuilderFactoryImpl::get_instance()
+                   .build_type_object(builder, object, complete, force);
+}
+
+void DynamicTypeBuilderFactory::build_type_identifier(
+        const DynamicType& tp,
+        TypeIdentifier& identifier,
+        bool complete /*= true*/) const
+{
+    const auto& type = DynamicTypeImpl::get_implementation(tp);
+    return DynamicTypeBuilderFactoryImpl::get_instance()
+                   .build_type_identifier(type, identifier, complete);
+}
+
+void DynamicTypeBuilderFactory::build_type_object(
+        const DynamicType& tp,
+        TypeObject& object,
+        bool complete /*= true*/,
+        bool force /*= false*/) const
+{
+    const auto& type = DynamicTypeImpl::get_implementation(tp);
+    return DynamicTypeBuilderFactoryImpl::get_instance()
+                   .build_type_object(type, object, complete, force);
+}

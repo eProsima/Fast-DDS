@@ -639,8 +639,8 @@ XMLP_ret XMLProfileManager::getDynamicTypeByName(
     types::TypeObject obj;
     types::TypeIdentifier id;
 
-    types::v1_3::DynamicTypeBuilderFactory::get_instance().build_type_object(p->get_descriptor(), obj);
-    types::v1_3::DynamicTypeBuilderFactory::get_instance().build_type_identifier(p->get_descriptor(), id);
+    types::v1_3::DynamicTypeBuilderFactory::get_instance().build_type_object(*p, obj);
+    types::v1_3::DynamicTypeBuilderFactory::get_instance().build_type_identifier(*p, id);
 
     // Build old dynamic type
     types::v1_1::DynamicType_ptr ptr;

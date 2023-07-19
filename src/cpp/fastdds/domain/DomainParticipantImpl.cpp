@@ -1542,16 +1542,16 @@ bool DomainParticipantImpl::register_dynamic_type_to_factories(
 
             DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
             TypeObject typeObj;
-            DynamicType_ptr dtype;
 
-            dpst->GetDynamicType(dtype);
-            auto descriptor = dtype->get_descriptor();
+            const DynamicType* rtype = nullptr;
+            dpst->GetDynamicType(rtype);
+            std::unique_ptr<const DynamicType> dtype{rtype};
 
             // complete
-            factory.build_type_object(descriptor, typeObj);
+            factory.build_type_object(*dtype, typeObj);
 
             // Minimal too
-            factory.build_type_object(descriptor, typeObj, false);
+            factory.build_type_object(*dtype, typeObj, false);
         }
         break;
 
@@ -1821,14 +1821,15 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
     // Check if plain
     if (type_information.complete().typeid_with_size().type_id()._d() < fastrtps::types::TypeKind::EK_MINIMAL)
     {
-        DynamicType_ptr dyn;
+        const DynamicType* dt = nullptr;
         auto res = factory->build_dynamic_type(
-            dyn,
+            dt,
             type_name,
             &type_information.minimal().typeid_with_size().type_id());
 
         if (!!res)
         {
+            DynamicType_ptr dyn{dt};
             //callback(type_name, dyn); // For plain types, don't call the callback
             return register_dynamic_type(dyn);
         }
@@ -1844,9 +1845,9 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
 
     if (obj._d() != fastrtps::types::TypeKind::TK_NONE)
     {
-        DynamicType_ptr dyn;
+        const DynamicType* dp = nullptr;
         auto res = factory->build_dynamic_type(
-            dyn,
+            dp,
             type_name,
             &type_information.complete().typeid_with_size().type_id(),
             &obj);
@@ -1854,6 +1855,7 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
         if (!!res)
         {
             //callback(type_name, dyn); // If the type is already registered, don't call the callback.
+            DynamicType_ptr dyn{dp};
             return register_dynamic_type(dyn);
         }
     }
@@ -2053,12 +2055,13 @@ bool DomainParticipantImpl::check_get_type_request(
             auto pending = v13_state_.parent_requests_.find(requestId);
             if (pending != v13_state_.parent_requests_.end() && pending->second.size() < 2) // Exists and everything is solved.
             {
-                fastrtps::types::v1_3::DynamicType_ptr dynamic;
+                const fastrtps::types::v1_3::DynamicType* dt = nullptr;
                 auto res = fastrtps::types::TypeObjectFactory::get_instance()->build_dynamic_type(
-                    dynamic, name, identifier, object);
+                    dt, name, identifier, object);
 
                 if (!!res)
                 {
+                    fastrtps::types::v1_3::DynamicType_ptr dynamic{dt};
                     if (register_dynamic_type(dynamic) == ReturnCode_t::RETCODE_OK)
                     {
                         callback(name, dynamic);
@@ -2310,7 +2313,7 @@ ReturnCode_t DomainParticipantImpl::register_dynamic_type(
 ReturnCode_t DomainParticipantImpl::register_dynamic_type(
         fastrtps::types::v1_3::DynamicType_ptr dyn_type)
 {
-    TypeSupport type(new fastrtps::types::DynamicPubSubType(dyn_type));
+    TypeSupport type(new fastrtps::types::DynamicPubSubType(*dyn_type));
     return get_participant()->register_type(type);
 }
 

@@ -27,6 +27,7 @@
 #include <fastdds/dds/subscriber/SubscriberListener.hpp>
 #include <fastdds/dds/topic/TopicListener.hpp>
 
+#include <fastrtps/types/DynamicTypePtr.h>
 #include <fastrtps/types/TypeIdentifier.h>
 #include <fastrtps/types/TypeObject.h>
 

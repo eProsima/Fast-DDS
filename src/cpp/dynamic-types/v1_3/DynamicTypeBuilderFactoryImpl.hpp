@@ -173,17 +173,17 @@ public:
             const TypeState& td) noexcept;
 
     /**
-     * Create a new @ref DynamicTypeBuilderImpl object based on the given @ref DynamicTypeImpl object.
+     * Create a new @ref DynamicTypeBuilderImpl object based on the given @ref TypeState object.
      * @remark This method is thread-safe.
      * @remark In the [standard](https://www.omg.org/spec/DDS-XTypes/1.3/) section \b 7.5.2.2.7 this method is
      *         called `create_type_copy` which is misguiding. Note it returns a builder associated with the type.
      * @remark This method will always create a new builder object. In order to access primitive static allocated
      *         ones and avoid heap overhead use the `get_xxxx_type()` methods.
-     * @param[in] type @ref DynamicTypeImpl object
+     * @param[in] type @ref TypeState object
      * @return new @ref DynamicTypeBuilderImpl object
      */
     std::shared_ptr<DynamicTypeBuilderImpl> create_type_copy(
-            const DynamicTypeImpl& type) noexcept;
+            const TypeState& type) noexcept;
 
     /**
      * Create a new @ref DynamicTypeImpl object based on the given @ref DynamicTypeImpl object.

@@ -403,16 +403,16 @@ bool Domain::registerDynamicType(
 
             DynamicTypeBuilderFactory& factory = DynamicTypeBuilderFactory::get_instance();
             TypeObject typeObj;
-            DynamicType_ptr dtype;
 
-            type->GetDynamicType(dtype);
-            auto descriptor = dtype->get_descriptor();
+            const DynamicType* rtype = nullptr;
+            type->GetDynamicType(rtype);
+            std::unique_ptr<const DynamicType> dtype{rtype};
 
             // complete
-            factory.build_type_object(descriptor, typeObj);
+            factory.build_type_object(*dtype, typeObj);
 
             // Minimal too
-            factory.build_type_object(descriptor, typeObj, false);
+            factory.build_type_object(*dtype, typeObj, false);
         }
         break;
 
