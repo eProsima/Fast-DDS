@@ -42,11 +42,19 @@ public:
     RTPS_DllAPI DynamicPubSubType(
             v1_1::DynamicType_ptr pDynamicType);
 
-    //! transferred ownership
+    /*
+     * Constructs a @ref DynamicPubSubType from a @ref v1_3::DynamicType
+     * @param type @ref v1_3::DynamicType object associated to the data
+     * @remark Ownership is transferred.
+     */
     RTPS_DllAPI DynamicPubSubType(
             const v1_3::DynamicType* type);
 
-    //! not transferred ownership
+    /*
+     * Constructs a @ref DynamicPubSubType from a @ref v1_3::DynamicType
+     * @param type @ref v1_3::DynamicType object associated to the data
+     * @remark Ownership is not transferred.
+     */
     RTPS_DllAPI DynamicPubSubType(
             const v1_3::DynamicType& type);
 
@@ -54,11 +62,21 @@ public:
     RTPS_DllAPI ReturnCode_t SetDynamicType(
             v1_1::DynamicType_ptr pType);
 
-    //! transferred ownership
+    /*
+     * Sets up the internal @ref v1_3::DynamicType object
+     * @param @ref v1_3::DynamicData object whose type to keep
+     * @return @ref ReturnCode_t with operation status
+     * @remark Ownership is transferred.
+     */
     RTPS_DllAPI ReturnCode_t SetDynamicType(
             const v1_3::DynamicType* type);
 
-    //! not transferred ownership
+    /*
+     * Sets up the internal @ref v1_3::DynamicType object
+     * @param @ref v1_3::DynamicData object whose type to copy
+     * @return @ref ReturnCode_t with operation status
+     * @remark Ownership is not transferred.
+     */
     RTPS_DllAPI ReturnCode_t SetDynamicType(
             const v1_3::DynamicType& type);
 
@@ -69,7 +87,12 @@ public:
         return active_;
     }
 
-    //! transferred ownership
+    /*
+     * Returns a copy of the internal  @ref v1_3::DynamicType object
+     * @param pointer to fill in with the new object
+     * @return @ref ReturnCode_t with operation status
+     * @remark Ownership is transferred. This object must be removed using @ref deleteData
+     */
     RTPS_DllAPI ReturnCode_t GetDynamicType(
             const v1_3::DynamicType*& p) const;
 

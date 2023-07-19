@@ -25,10 +25,18 @@
 #include <fastrtps/types/v1_3/DynamicTypeMember.hpp>
 
 using namespace eprosima::fastrtps::types::v1_3;
+using eprosima::fastrtps::types::ReturnCode_t;
 
 DynamicPubSubType::DynamicPubSubType(
         const DynamicType& type)
     : dynamic_type_(DynamicTypeBuilderFactory::get_instance().create_copy(type))
+{
+    UpdateDynamicTypeInfo();
+}
+
+DynamicPubSubType::DynamicPubSubType(
+        const DynamicType* type)
+    : dynamic_type_(type)
 {
     UpdateDynamicTypeInfo();
 }
@@ -53,10 +61,10 @@ void DynamicPubSubType::CleanDynamicType()
     dynamic_type_ = nullptr;
 }
 
-DynamicType_ptr DynamicPubSubType::GetDynamicType() const
+const DynamicType* DynamicPubSubType::GetDynamicType() const
 {
     return nullptr == dynamic_type_ ? nullptr :
-            DynamicTypeBuilderFactory::get_instance().create_copy(dynamic_type_);
+            DynamicTypeBuilderFactory::get_instance().create_copy(*dynamic_type_);
 }
 
 ReturnCode_t DynamicPubSubType::SetDynamicType(
@@ -64,9 +72,7 @@ ReturnCode_t DynamicPubSubType::SetDynamicType(
 {
     if (nullptr == dynamic_type_)
     {
-        dynamic_type_ = DynamicTypeBuilderFactory::get_instance().create_copy(data.get_type());
-        UpdateDynamicTypeInfo();
-        return ReturnCode_t::RETCODE_OK;
+        return SetDynamicType(data.get_type());
     }
     else
     {
@@ -80,7 +86,21 @@ ReturnCode_t DynamicPubSubType::SetDynamicType(
 {
     if (nullptr == dynamic_type_)
     {
-        dynamic_type_ = DynamicTypeBuilderFactory::get_instance().create_copy(type);
+        return SetDynamicType(DynamicTypeBuilderFactory::get_instance().create_copy(type));
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(DYN_TYPES, "Error Setting the dynamic type. There is already a registered type");
+        return ReturnCode_t::RETCODE_BAD_PARAMETER;
+    }
+}
+
+ReturnCode_t DynamicPubSubType::SetDynamicType(
+        const DynamicType* type)
+{
+    if (nullptr == dynamic_type_)
+    {
+        dynamic_type_ = type;
         UpdateDynamicTypeInfo();
         return ReturnCode_t::RETCODE_OK;
     }
@@ -100,14 +120,14 @@ void* DynamicPubSubType::createData()
     }
     else
     {
-        return DynamicDataFactory::get_instance()->create_data(*dynamic_type_);
+        return DynamicDataFactory::get_instance().create_data(*dynamic_type_);
     }
 }
 
 void DynamicPubSubType::deleteData(
         void* data)
 {
-    DynamicDataFactory::get_instance()->delete_data(static_cast<DynamicData*>(data));
+    DynamicDataFactory::get_instance().delete_data(static_cast<DynamicData*>(data));
 }
 
 bool DynamicPubSubType::deserialize(

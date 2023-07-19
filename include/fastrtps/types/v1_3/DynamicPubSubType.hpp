@@ -49,6 +49,14 @@ public:
     RTPS_DllAPI DynamicPubSubType(
             const v1_3::DynamicType& type);
 
+    /*
+     * Constructs a @ref DynamicPubSubType from a @ref v1_3::DynamicType
+     * @param type @ref v1_3::DynamicType object associated to the data
+     * @remark Ownership is transferred.
+     */
+    RTPS_DllAPI DynamicPubSubType(
+            const v1_3::DynamicType* type);
+
     RTPS_DllAPI virtual ~DynamicPubSubType();
 
     /*
@@ -134,6 +142,15 @@ public:
      */
     RTPS_DllAPI ReturnCode_t SetDynamicType(
             const v1_3::DynamicType& type);
+
+    /*
+     * Sets up the internal @ref v1_3::DynamicType object
+     * @param @ref v1_3::DynamicType to keep
+     * @return @ref ReturnCode_t with operation status
+     * @remark Ownership is transferred.
+     */
+    RTPS_DllAPI ReturnCode_t SetDynamicType(
+            const v1_3::DynamicType* type);
 };
 
 } // namespace v1_3

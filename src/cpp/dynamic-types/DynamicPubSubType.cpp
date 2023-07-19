@@ -24,8 +24,15 @@ DynamicPubSubType::DynamicPubSubType(
 }
 
 DynamicPubSubType::DynamicPubSubType(
-        v1_3::DynamicType_ptr pDynamicType)
-    : v1_3::DynamicPubSubType(*pDynamicType)
+        const v1_3::DynamicType& pDynamicType)
+    : v1_3::DynamicPubSubType(pDynamicType)
+    , active_(version::v1_3)
+{
+}
+
+DynamicPubSubType::DynamicPubSubType(
+        const v1_3::DynamicType* DynamicType)
+    : v1_3::DynamicPubSubType(DynamicType)
     , active_(version::v1_3)
 {
 }
@@ -39,11 +46,19 @@ ReturnCode_t DynamicPubSubType::SetDynamicType(
 }
 
 ReturnCode_t DynamicPubSubType::SetDynamicType(
-        v1_3::DynamicType_ptr pType)
+        const v1_3::DynamicType* pType)
 {
     CleanDynamicType();
     active_ = version::v1_3;
-    return v1_3::DynamicPubSubType::SetDynamicType(*pType);
+    return v1_3::DynamicPubSubType::SetDynamicType(pType);
+}
+
+ReturnCode_t DynamicPubSubType::SetDynamicType(
+        const v1_3::DynamicType& type)
+{
+    CleanDynamicType();
+    active_ = version::v1_3;
+    return v1_3::DynamicPubSubType::SetDynamicType(type);
 }
 
 void DynamicPubSubType::CleanDynamicType()
@@ -54,7 +69,7 @@ void DynamicPubSubType::CleanDynamicType()
 }
 
 ReturnCode_t DynamicPubSubType::GetDynamicType(
-        v1_3::DynamicType_ptr& p) const
+        const v1_3::DynamicType*& p) const
 {
     if (version::v1_3 == active_)
     {
