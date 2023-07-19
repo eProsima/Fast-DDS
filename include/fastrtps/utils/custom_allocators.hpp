@@ -217,8 +217,9 @@ protected:
 
     constexpr external_reference_counting() noexcept = default;
 
-    external_reference_counting(const external_reference_counting&) noexcept
-        : counter_{0}
+    external_reference_counting(const external_reference_counting& e) noexcept
+        : std::enable_shared_from_this<T>{e}
+        , counter_{0}
     {}
 
     external_reference_counting& operator=(const external_reference_counting&) noexcept

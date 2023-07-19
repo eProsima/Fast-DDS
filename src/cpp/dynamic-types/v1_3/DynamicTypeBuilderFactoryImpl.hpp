@@ -16,7 +16,7 @@
 #define TYPES_1_3_DYNAMIC_TYPE_BUILDER_FACTORY_IMPL_HPP
 
 #include <fastrtps/types/AnnotationParameterValue.h>
-#include <fastrtps/types/TypesBase.h>
+#include <dynamic-types/v1_3/DynamicTypeBuilderImpl.hpp>
 #include <fastrtps/utils/custom_allocators.hpp>
 
 #include <cassert>

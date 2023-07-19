@@ -18,8 +18,9 @@
 #include <fastrtps/types/v1_3/MemberDescriptor.hpp>
 
 #include <dynamic-types/v1_3/AnnotationDescriptorImpl.hpp>
-#include <dynamic-types/v1_3/DynamicTypeImpl.hpp>
 #include <dynamic-types/v1_3/DynamicTypeBuilderFactoryImpl.hpp>
+#include <dynamic-types/v1_3/DynamicTypeImpl.hpp>
+#include <dynamic-types/v1_3/TypeState.hpp>
 
 #include <algorithm>
 #include <initializer_list>
@@ -77,6 +78,7 @@ TypeState::TypeState(
 TypeState::TypeState(
         const TypeState& other)
     : TypeStateData(other)
+    , AnnotationManager(other)
 {
     refresh_indexes();
 }

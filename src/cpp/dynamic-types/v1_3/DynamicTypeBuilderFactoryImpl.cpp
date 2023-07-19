@@ -157,7 +157,7 @@ std::shared_ptr<DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::create_ty
             traits::construct(
                 al,
                 new_instance,
-                DynamicTypeBuilder::use_the_create_method{},
+                DynamicTypeBuilderImpl::use_the_create_method{},
                 td);
 
             sp.reset(new_instance);
@@ -287,7 +287,7 @@ std::shared_ptr<DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::new_primi
         builder.reset(new DynamicTypeBuilderImpl(
             DynamicTypeBuilderImpl::use_the_create_method{},
             td,
-            true);         // will be a static object
+            true));         // will be a static object
 #endif // _MSC_VER
 
         // notify the tracker
@@ -327,7 +327,7 @@ std::shared_ptr<DynamicTypeBuilderImpl> DynamicTypeBuilderFactoryImpl::new_unlim
         builder.reset(new DynamicTypeBuilderImpl(
             DynamicTypeBuilderImpl::use_the_create_method{},
             td,
-            true);         // will be a static object
+            true));         // will be a static object
 #endif // _MSC_VER
 
         // notify the tracker
