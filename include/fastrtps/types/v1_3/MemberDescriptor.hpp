@@ -136,7 +136,7 @@ public:
      * @param[in] default const char*
      */
     void set_default_value(
-            const char* default) noexcept;
+            const char* value) noexcept;
 
     /**
      * Getter for @b index property (see [standard] table 53)
