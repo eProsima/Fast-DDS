@@ -35,10 +35,10 @@ class DynamicTypeBuilder final
 
 public:
 
-    bool operator ==(
+    RTPS_DllAPI bool operator ==(
             const DynamicTypeBuilder& other) const noexcept;
 
-    bool operator !=(
+    RTPS_DllAPI bool operator !=(
             const DynamicTypeBuilder& other) const noexcept;
 
     /**
@@ -48,33 +48,33 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference.
      */
-    ReturnCode_t get_descriptor(TypeDescriptor& td) const noexcept;
+    RTPS_DllAPI ReturnCode_t get_descriptor(TypeDescriptor& td) const noexcept;
 
     /**
      * Returns the fully qualified name of this type
      * @attention The returned value may not persist in time
      * @return const char* type name
      */
-    const char* get_name() const noexcept;
+    RTPS_DllAPI const char* get_name() const noexcept;
 
     /**
      * Sets the underlying type name
      * @param[in] name null terminated string
      */
-    void set_name(
+    RTPS_DllAPI void set_name(
             const char* name);
 
     /**
      * Returns the @ref eprosima::fastrtps::types::TypeKind associated
      * @return standard @ref eprosima::fastrtps::types::TypeKind
      */
-    TypeKind get_kind() const noexcept;
+    RTPS_DllAPI TypeKind get_kind() const noexcept;
 
     /**
      * Modifies the underlying kind
      * @param[in] kind @ref TypeKind
      */
-    void set_kind(
+    RTPS_DllAPI void set_kind(
             TypeKind kind);
 
     /**
@@ -85,7 +85,7 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference. Livecycle is linked to the referenced member.
      */
-    const DynamicTypeMember* get_member_by_name(const char* name, ReturnCode_t* ec = nullptr) const noexcept;
+    RTPS_DllAPI const DynamicTypeMember* get_member_by_name(const char* name, ReturnCode_t* ec = nullptr) const noexcept;
 
     /**
      * Provides a mapping from the name of the member of this type to the member itself
@@ -94,7 +94,7 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference. Livecycle is linked to the referenced members.
      */
-    DynamicTypeMembersByName get_all_members_by_name(ReturnCode_t* ec = nullptr) const noexcept;
+    RTPS_DllAPI DynamicTypeMembersByName get_all_members_by_name(ReturnCode_t* ec = nullptr) const noexcept;
 
     /**
      * Provides a mapping from the member id to the member itself (see [standard] 7.5.2.9.13)
@@ -104,7 +104,7 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference. Livecycle is linked to the referenced member.
      */
-    const DynamicTypeMember* get_member(MemberId id, ReturnCode_t* ec = nullptr) const noexcept;
+    RTPS_DllAPI const DynamicTypeMember* get_member(MemberId id, ReturnCode_t* ec = nullptr) const noexcept;
 
     /**
      * Adds a 'member' to this type, where the new 'member' has the meaning defined in the specification of
@@ -114,7 +114,7 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference.
      */
-    ReturnCode_t add_member(const MemberDescriptor& md) noexcept;
+    RTPS_DllAPI ReturnCode_t add_member(const MemberDescriptor& md) noexcept;
 
     /**
      * Provides a mapping from the member id to the member itself
@@ -123,14 +123,14 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference. Livecycle is linked to the referenced members.
      */
-    DynamicTypeMembersById get_all_members(ReturnCode_t* ec = nullptr) const noexcept;
+    RTPS_DllAPI DynamicTypeMembersById get_all_members(ReturnCode_t* ec = nullptr) const noexcept;
 
     /**
      * This operation returns the current number of members (see [standard] 7.5.2.9.16)
      * @return current number of members
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    uint32_t get_member_count() const noexcept;
+    RTPS_DllAPI uint32_t get_member_count() const noexcept;
 
     /**
      * This operation returns the member that corresponds to the specified index (see [standard] 7.5.2.9.14)
@@ -140,14 +140,14 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference. Livecycle is linked to the referenced members.
      */
-    const DynamicTypeMember* get_member_by_index(uint32_t index, ReturnCode_t* ec = nullptr) const noexcept;
+    RTPS_DllAPI const DynamicTypeMember* get_member_by_index(uint32_t index, ReturnCode_t* ec = nullptr) const noexcept;
 
     /**
      * This operation returns the current number of annotations to the type (see [standard] 7.5.2.9.11)
      * @return current number of annotations
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    uint32_t get_annotation_count() const noexcept;
+    RTPS_DllAPI uint32_t get_annotation_count() const noexcept;
 
     /**
      * This operation returns the annotation that corresponds to the specified index (see [standard] 7.5.2.9.10)
@@ -157,7 +157,7 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference. Livecycle is linked to the referenced members.
      */
-    ReturnCode_t get_annotation(AnnotationDescriptor& annotation, uint32_t index) const noexcept;
+    RTPS_DllAPI ReturnCode_t get_annotation(AnnotationDescriptor& annotation, uint32_t index) const noexcept;
 
     /**
      * Apply the given annotation to this type (see [standard] 7.5.2.9.5)
@@ -166,7 +166,7 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference. Livecycle is linked to the referenced members.
      */
-    ReturnCode_t apply_annotation(const AnnotationDescriptor& annotation) noexcept;
+    RTPS_DllAPI ReturnCode_t apply_annotation(const AnnotationDescriptor& annotation) noexcept;
 
     /**
      * Apply the given annotation to this type (see [standard] 7.5.2.9.6)
@@ -176,7 +176,7 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference. Livecycle is linked to the referenced members.
      */
-    ReturnCode_t apply_annotation_to_member(MemberId id, const AnnotationDescriptor& annotation) noexcept;
+    RTPS_DllAPI ReturnCode_t apply_annotation_to_member(MemberId id, const AnnotationDescriptor& annotation) noexcept;
 
     /**
      * This operation returns all annotations that have previously been applied to this type
@@ -185,7 +185,7 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      * @attention There is no ownership transference. Livecycle is linked to the referenced members.
      */
-    const Annotations* get_all_annotations(ReturnCode_t* ec = nullptr) const noexcept;
+    RTPS_DllAPI const Annotations* get_all_annotations(ReturnCode_t* ec = nullptr) const noexcept;
 
     /**
      * Create an immutable DynamicType object containing a snapshot of this builder's current state
@@ -194,7 +194,7 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
      * @attention There is ownership transference. Returned type must be freed by @ref DynamicTypeBuilderFactory
      */
-    const DynamicType* build() const noexcept;
+    RTPS_DllAPI const DynamicType* build() const noexcept;
 
     /**
      * State comparison according with the [standard] section \b 7.5.2.9.9
@@ -203,7 +203,7 @@ public:
      * @return \b bool `true` on equality
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
      */
-    bool equals(
+    RTPS_DllAPI bool equals(
             const DynamicType& other) const noexcept;
 
 
@@ -213,11 +213,11 @@ public:
      * @return @ReturCode_t
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
      */
-    ReturnCode_t annotation_set_bit_bound(
+    RTPS_DllAPI ReturnCode_t annotation_set_bit_bound(
             uint16_t bit_bound);
 
     //! true if the inner type is primitive
-    bool is_primitive() const;
+    RTPS_DllAPI bool is_primitive() const;
 };
 
 } // namespace v1_3

@@ -35,10 +35,10 @@ class DynamicTypeMember final
 
 public:
 
-    bool operator ==(
+    RTPS_DllAPI bool operator ==(
             const DynamicTypeMember& descriptor) const noexcept;
 
-    bool operator !=(
+    RTPS_DllAPI bool operator !=(
             const DynamicTypeMember& descriptor) const noexcept;
 
     /**
@@ -56,7 +56,7 @@ public:
      * @return \b bool `true` on equality
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
      */
-    bool equals(
+    RTPS_DllAPI bool equals(
             const DynamicTypeMember& descriptor) const noexcept;
 
     /**
@@ -64,27 +64,27 @@ public:
      * @attention The returned value may not persist in time
      * @return const char* member name
      */
-    const char* get_name() const noexcept;
+    RTPS_DllAPI const char* get_name() const noexcept;
 
     /**
      * Getter for @b id property (see [standard] table 52)
      * @return @ref MemberId
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    MemberId get_id() const noexcept;
+    RTPS_DllAPI MemberId get_id() const noexcept;
 
     /**
      * Getter for @b annotation property (see [standard] table 52)
      * @return readonly @ref Annotations collection
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "OMG standard"
      */
-    const Annotations* get_annotation() const noexcept;
+    RTPS_DllAPI const Annotations* get_annotation() const noexcept;
 
 };
 
 class DynamicTypeMemberImpl;
 
-class DynamicTypeMembersByName final
+class RTPS_DllAPI DynamicTypeMembersByName final
 {
     // const because we don't want to modify the ref map from this class
     using mapping = const std::map<std::string, const DynamicTypeMemberImpl*>;
@@ -100,7 +100,7 @@ class DynamicTypeMembersByName final
 public:
 
     //! This class is conceived for stack use only
-    RTPS_DllAPI ~DynamicTypeMembersByName()
+    ~DynamicTypeMembersByName()
     {
         delete map_;
     }
@@ -110,24 +110,24 @@ public:
      * @param key name
      * @return associated member or nullptr if not present
      */
-    RTPS_DllAPI const DynamicTypeMember* operator[](const char* key) const noexcept;
+    const DynamicTypeMember* operator[](const char* key) const noexcept;
 
     //! get collection size
-    RTPS_DllAPI uint64_t size() const noexcept;
+    uint64_t size() const noexcept;
 
     //! check contents
-    RTPS_DllAPI bool empty() const noexcept;
+    bool empty() const noexcept;
 
     /*
      * Iterate over the key elements.
      * @param key name of the previous key. Use nullptr (default) to get the first key
      * @return next key name or nullptr as end marker
      */
-    RTPS_DllAPI const char* next_key(const char* key = nullptr);
+    const char* next_key(const char* key = nullptr);
 
 };
 
-class DynamicTypeMembersById final
+class RTPS_DllAPI DynamicTypeMembersById final
 {
     // const because we don't want to modify the ref map from this class
     using mapping = const std::map<MemberId, const DynamicTypeMemberImpl*>;
@@ -143,7 +143,7 @@ class DynamicTypeMembersById final
 public:
 
     //! This class is conceived for stack use only
-    RTPS_DllAPI ~DynamicTypeMembersById()
+    ~DynamicTypeMembersById()
     {
         delete map_;
     }
@@ -153,20 +153,20 @@ public:
      * @param key id
      * @return associated member or nullptr if not present
      */
-    RTPS_DllAPI const DynamicTypeMember* operator[](MemberId) const noexcept;
+    const DynamicTypeMember* operator[](MemberId) const noexcept;
 
     //! get collection size
-    RTPS_DllAPI uint64_t size() const noexcept;
+    uint64_t size() const noexcept;
 
     //! check contents
-    RTPS_DllAPI bool empty() const noexcept;
+    bool empty() const noexcept;
 
     /*
      * Iterate over the key elements.
      * @param key id of the previous key. Use MEMBER_ID_INVALID (default) to get the first key
      * @return next key id or MEMBER_ID_INVALID as end marker
      */
-    RTPS_DllAPI MemberId next_key(MemberId = MEMBER_ID_INVALID);
+    MemberId next_key(MemberId = MEMBER_ID_INVALID);
 };
 
 } // namespace v1_3

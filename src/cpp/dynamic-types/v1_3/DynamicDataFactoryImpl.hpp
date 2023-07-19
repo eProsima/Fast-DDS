@@ -84,9 +84,9 @@ public:
     static ReturnCode_t delete_instance() noexcept;
 
     /**
-     * Create a new @ref DynamicDataImpl object based on the given @ref TypeState state.
+     * Create a new @ref DynamicDataImpl object based on the given @ref DynamicTypeImpl
      * @remark This method is thread-safe.
-     * @param[in] type @ref DynamicType associated
+     * @param[in] type @ref DynamicTypeImpl associated
      * @return new @ref DynamicDataImpl object
      */
     std::shared_ptr<DynamicDataImpl> create_data(

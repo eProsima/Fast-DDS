@@ -25,25 +25,56 @@ namespace v1_3 {
 class DynamicType;
 class DynamicData;
 
-class RTPS_DllAPI DynamicDataFactory final
+class DynamicDataFactory final
 {
     DynamicDataFactory() = default;
 
 public:
 
-    ~DynamicDataFactory() = default;
+    RTPS_DllAPI ~DynamicDataFactory() = default;
 
-    static DynamicDataFactory& get_instance();
+    /**
+     * Returns the singleton factory object
+     * @remark This method is thread-safe.
+     * @remark The singleton is allocated using C++11 builtin double-checked locking lazy initialization.
+     * @return @ref DynamicDataFactory&
+     */
+    RTPS_DllAPI static DynamicDataFactory& get_instance();
 
-    static ReturnCode_t delete_instance();
+    /**
+     * Resets the state of the factory
+     * @remark This method is thread-safe.
+     * @return standard @ref ReturnCode_t
+     */
+    RTPS_DllAPI static ReturnCode_t delete_instance();
 
-    DynamicData* create_data(
+    /**
+     * Create a new @ref DynamicData object based on the given @ref DynamicType state.
+     * @remark This method is thread-safe.
+     * @param[in] type @ref DynamicType associated
+     * @return new @ref DynamicData object
+     */
+    RTPS_DllAPI DynamicData* create_data(
             const DynamicType& type);
 
-    DynamicData* create_copy(
+    /**
+     * Create a new @ref DynamicDataImpl object based on the given object.
+     * @remark This method is thread-safe.
+     * @param[in] type @ref DynamicDataImpl object
+     * @return new @ref DynamicDataImpl object
+     */
+    RTPS_DllAPI DynamicData* create_copy(
             const DynamicData& data);
 
-    ReturnCode_t delete_data(
+    /**
+     * Frees any framework resources associated with the given data according with [standard] section 7.5.2.10.2.
+     * @remark This method is thread-safe.
+     * @remark Non-primitive types will not be tracked by the framework after this call.
+     * @param[in] type @ref DynamicData object whose resources to free
+     * @return standard ReturnCode_t
+     * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
+     */
+    RTPS_DllAPI ReturnCode_t delete_data(
             const DynamicData* pData);
 };
 
