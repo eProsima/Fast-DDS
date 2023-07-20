@@ -43,6 +43,8 @@ public:
     using element_type = const eprosima::fastrtps::types::v1_3::DynamicTypeBuilder;
     using base = shared_ptr<const void>;
 
+    using DynamicType = eprosima::fastrtps::types::v1_3::DynamicType;
+
     constexpr shared_ptr() = default;
 
     explicit shared_ptr(element_type* pA)
@@ -96,6 +98,17 @@ public:
     {
         return get();
     }
+
+    // ancillary methods
+
+    std::shared_ptr<const DynamicType> build() const
+    {
+        if(*this)
+        {
+            return std::shared_ptr<const DynamicType> {get()->build()};
+        }
+        return {};
+    }
 };
 
 template<>
@@ -110,7 +123,6 @@ public:
     using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
     using MemberId = eprosima::fastrtps::types::v1_3::MemberId;
     using MemberDescriptor = eprosima::fastrtps::types::v1_3::MemberDescriptor;
-    using DynamicType = eprosima::fastrtps::types::v1_3::DynamicType;
 
     constexpr shared_ptr() = default;
 
@@ -157,15 +169,6 @@ public:
     }
 
     // ancillary methods
-
-    std::shared_ptr<const DynamicType> build() const
-    {
-        if(*this)
-        {
-            return std::shared_ptr<const DynamicType> {get()->build()};
-        }
-        return {};
-    }
 
     template<typename S,
              typename = typename std::enable_if<std::is_convertible<S, std::string>::value>::type>
