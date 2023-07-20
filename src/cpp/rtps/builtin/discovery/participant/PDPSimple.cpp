@@ -350,12 +350,11 @@ bool PDPSimple::createPDPEndpoints()
         {
             const NetworkFactory& network = mp_RTPSParticipant->network_factory();
             LocatorList_t fixed_locators;
-            Locator_t local_locator;
             for (const Locator_t& loc : mp_builtin->m_initialPeersList)
             {
-                if (network.transform_remote_locator(loc, local_locator))
+                if (network.is_locator_allowed(loc))
                 {
-                    fixed_locators.push_back(local_locator);
+                    fixed_locators.push_back(loc);
                 }
             }
             endpoints->writer.writer_->set_fixed_locators(fixed_locators);

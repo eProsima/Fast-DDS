@@ -161,6 +161,15 @@ public:
     }
 
     /*!
+     * Call the low-level transport `is_localhost_allowed()`.
+     * Must report whether localhost locator is allowed
+     */
+    RTPS_DllAPI bool is_localhost_allowed() const override
+    {
+        return low_level_transport_->is_localhost_allowed();
+    }
+
+    /*!
      * Call the low-level transport `is_locator_allowed()`.
      * Must report whether the given locator is allowed by this transport.
      */
@@ -287,6 +296,18 @@ public:
             fastrtps::rtps::Locator_t& result_locator) const override
     {
         return low_level_transport_->transform_remote_locator(remote_locator, result_locator);
+    }
+
+    //! Call the low-level transport `transform_remote_locator()`.
+    //! Transforms a remote locator into a locator optimized for local communications,
+    //! if allowed by both local and remote transports.
+    RTPS_DllAPI bool transform_remote_locator(
+            const fastrtps::rtps::Locator_t& remote_locator,
+            fastrtps::rtps::Locator_t& result_locator,
+            bool allowed_remote_localhost,
+            bool allowed_local_localhost) const override
+    {
+        return low_level_transport_->transform_remote_locator(remote_locator, result_locator, allowed_remote_localhost, allowed_local_localhost);
     }
 
     /**

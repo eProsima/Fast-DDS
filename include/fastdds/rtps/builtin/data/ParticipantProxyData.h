@@ -81,6 +81,8 @@ public:
     bool m_expectsInlineQos;
     //!Available builtin endpoints
     BuiltinEndpointSet_t m_availableBuiltinEndpoints;
+    //!Network configuration
+    NetworkConfigSet_t m_networkConfiguration;
     //!Metatraffic locators
     RemoteLocatorList metatraffic_locators;
     //!Default locators

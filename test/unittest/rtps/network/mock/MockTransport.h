@@ -112,6 +112,11 @@ public:
         return false;
     }
 
+    bool is_localhost_allowed() const override
+    {
+        return false;
+    }
+
     TransportDescriptorInterface* get_configuration() override
     {
         return nullptr;
@@ -181,6 +186,15 @@ public:
     bool transform_remote_locator(
             const fastrtps::rtps::Locator_t&,
             fastrtps::rtps::Locator_t&) const override
+    {
+        return true;
+    }
+
+    bool transform_remote_locator(
+            const fastrtps::rtps::Locator_t&,
+            fastrtps::rtps::Locator_t&,
+            bool,
+            bool) const override
     {
         return true;
     }

@@ -613,6 +613,28 @@ inline bool ParameterSerializer<ParameterBuiltinEndpointSet_t>::read_content_fro
 }
 
 template<>
+inline bool ParameterSerializer<ParameterNetworkConfigSet_t>::add_content_to_cdr_message(
+        const ParameterNetworkConfigSet_t& parameter,
+        fastrtps::rtps::CDRMessage_t* cdr_message)
+{
+    return fastrtps::rtps::CDRMessage::addUInt32(cdr_message, parameter.netconfigSet);
+}
+
+template<>
+inline bool ParameterSerializer<ParameterNetworkConfigSet_t>::read_content_from_cdr_message(
+        ParameterNetworkConfigSet_t& parameter,
+        fastrtps::rtps::CDRMessage_t* cdr_message,
+        const uint16_t parameter_length)
+{
+    if (parameter_length != PARAMETER_NETWORKCONFIGSET_LENGTH)
+    {
+        return false;
+    }
+    parameter.length = parameter_length;
+    return fastrtps::rtps::CDRMessage::readUInt32(cdr_message, &parameter.netconfigSet);
+}
+
+template<>
 inline uint32_t ParameterSerializer<ParameterPropertyList_t>::cdr_serialized_size(
         const ParameterPropertyList_t& parameter)
 {
