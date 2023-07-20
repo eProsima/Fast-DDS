@@ -83,11 +83,14 @@ public:
      * Constructs a RTPSMessageGroup allowing to allocate its own buffer.
      * @param participant Pointer to the participant sending data.
      * @param internal_buffer true indicates this object to allocate its own buffer. false indicates to get a buffer
+     * @param max_blocking_time_point Future time point where blocking send should end.
      * from the participant.
      */
     RTPSMessageGroup(
             RTPSParticipantImpl* participant,
-            bool internal_buffer = false);
+            bool internal_buffer = false,
+            std::chrono::steady_clock::time_point max_blocking_time_point =
+            std::chrono::steady_clock::now() + std::chrono::hours(24));
 
     /**
      * Basic constructor.
@@ -312,8 +315,6 @@ private:
      #endif // if HAVE_SECURITY
 
     std::chrono::steady_clock::time_point max_blocking_time_point_;
-
-    bool max_blocking_time_is_set_ = false;
 
     std::unique_ptr<RTPSMessageGroup_t> send_buffer_;
 

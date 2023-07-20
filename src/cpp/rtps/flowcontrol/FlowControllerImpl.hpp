@@ -4,13 +4,13 @@
 #include "FlowController.hpp"
 #include <fastdds/rtps/common/Guid.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastrtps/utils/TimedMutex.hpp>
+#include <fastrtps/utils/TimedConditionVariable.hpp>
 
 #include <atomic>
 #include <cassert>
 #include <chrono>
-#include <condition_variable>
 #include <map>
-#include <mutex>
 #include <thread>
 #include <unordered_map>
 
@@ -207,7 +207,7 @@ struct FlowControllerAsyncPublishMode
         if (running)
         {
             {
-                std::unique_lock<std::mutex> lock(changes_interested_mutex);
+                std::unique_lock<fastrtps::TimedMutex> lock(changes_interested_mutex);
                 running = false;
                 cv.notify_one();
             }
@@ -222,7 +222,7 @@ struct FlowControllerAsyncPublishMode
     }
 
     bool wait(
-            std::unique_lock<std::mutex>& lock)
+            std::unique_lock<fastrtps::TimedMutex>& lock)
     {
         cv.wait(lock);
         return false;
@@ -242,12 +242,12 @@ struct FlowControllerAsyncPublishMode
 
     std::atomic_bool running {false};
 
-    std::condition_variable cv;
+    fastrtps::TimedConditionVariable cv;
 
     fastrtps::rtps::RTPSMessageGroup group;
 
     //! Mutex for interested samples to be added.
-    std::mutex changes_interested_mutex;
+    fastrtps::TimedMutex changes_interested_mutex;
 
     //! Used to warning async thread a writer wants to remove a sample.
     std::atomic<uint32_t> writers_interested_in_remove = {0};
@@ -319,7 +319,7 @@ struct FlowControllerLimitedAsyncPublishMode : public FlowControllerAsyncPublish
      * @return false if the condition_variable was awaken because a new change was added. true if the condition_variable was awaken because the bandwidth limitation has to be reset.
      */
     bool wait(
-            std::unique_lock<std::mutex>& lock)
+            std::unique_lock<fastrtps::TimedMutex>& lock)
     {
         auto lapse = std::chrono::steady_clock::now() - last_period_;
         bool reset_limit = true;
@@ -1065,7 +1065,7 @@ private:
     register_writer_impl(
             fastrtps::rtps::RTPSWriter* writer)
     {
-        std::unique_lock<std::mutex> in_lock(async_mode.changes_interested_mutex);
+        std::unique_lock<fastrtps::TimedMutex> in_lock(async_mode.changes_interested_mutex);
         sched.register_writer(writer);
     }
 
@@ -1082,7 +1082,7 @@ private:
     unregister_writer_impl(
             fastrtps::rtps::RTPSWriter* writer)
     {
-        std::unique_lock<std::mutex> in_lock(async_mode.changes_interested_mutex);
+        std::unique_lock<fastrtps::TimedMutex> in_lock(async_mode.changes_interested_mutex);
         sched.unregister_writer(writer);
     }
 
@@ -1104,15 +1104,25 @@ private:
     enqueue_new_sample_impl(
             fastrtps::rtps::RTPSWriter* writer,
             fastrtps::rtps::CacheChange_t* change,
-            const std::chrono::time_point<std::chrono::steady_clock>& /* TODO max_blocking_time*/)
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
     {
+        bool ret_value = false;
         assert(!change->writer_info.is_linked.load());
         // Sync delivery failed. Try to store for asynchronous delivery.
-        std::unique_lock<std::mutex> lock(async_mode.changes_interested_mutex);
-        sched.add_new_sample(writer, change);
-        async_mode.cv.notify_one();
+#if HAVE_STRICT_REALTIME
+        std::unique_lock<fastrtps::TimedMutex> lock(async_mode.changes_interested_mutex, std::defer_lock);
+        if (lock.try_lock_until(max_blocking_time))
+#else
+        static_cast<void>(max_blocking_time);
+        std::unique_lock<fastrtps::TimedMutex> lock(async_mode.changes_interested_mutex);
+#endif // if HAVE_STRICT_REALTIME{
+        {
+            sched.add_new_sample(writer, change);
+            async_mode.cv.notify_one();
+            ret_value = true;
+        }
 
-        return true;
+        return ret_value;
     }
 
     /*! This function is used when PublishMode = FlowControllerPureSyncPublishMode.
@@ -1143,17 +1153,32 @@ private:
             fastrtps::rtps::CacheChange_t* change,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
     {
+        bool ret_value = false;
         // This call should be made with writer's mutex locked.
         fastrtps::rtps::LocatorSelectorSender& locator_selector = writer->get_general_locator_selector();
-        std::lock_guard<fastrtps::rtps::LocatorSelectorSender> lock(locator_selector);
-        fastrtps::rtps::RTPSMessageGroup group(participant_, writer, &locator_selector);
-        if (fastrtps::rtps::DeliveryRetCode::DELIVERED !=
-                writer->deliver_sample_nts(change, group, locator_selector, max_blocking_time))
+#if HAVE_STRICT_REALTIME
+        std::unique_lock<fastrtps::rtps::LocatorSelectorSender> lock(locator_selector, std::defer_lock);
+        if (lock.try_lock_until(max_blocking_time))
+#else
+        std::unique_lock<fastrtps::rtps::LocatorSelectorSender> lock(locator_selector);
+#endif // if HAVE_STRICT_REALTIME{
         {
-            return enqueue_new_sample_impl(writer, change, max_blocking_time);
+            try
+            {
+                fastrtps::rtps::RTPSMessageGroup group(participant_, writer, &locator_selector, max_blocking_time);
+                ret_value = true;
+                if (fastrtps::rtps::DeliveryRetCode::DELIVERED !=
+                        writer->deliver_sample_nts(change, group, locator_selector, max_blocking_time))
+                {
+                    ret_value =  enqueue_new_sample_impl(writer, change, max_blocking_time);
+                }
+            }
+            catch (fastrtps::rtps::RTPSMessageGroup::timeout&)
+            {
+            }
         }
 
-        return true;
+        return ret_value;
     }
 
     /*!
@@ -1179,18 +1204,27 @@ private:
     add_old_sample_impl(
             fastrtps::rtps::RTPSWriter* writer,
             fastrtps::rtps::CacheChange_t* change,
-            const std::chrono::time_point<std::chrono::steady_clock>& /* TODO max_blocking_time*/)
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
     {
+        bool ret_value = false;
+
         if (!change->writer_info.is_linked.load())
         {
-            std::unique_lock<std::mutex> lock(async_mode.changes_interested_mutex);
-            sched.add_old_sample(writer, change);
-            async_mode.cv.notify_one();
-
-            return true;
+#if HAVE_STRICT_REALTIME
+            std::unique_lock<fastrtps::TimedMutex> lock(async_mode.changes_interested_mutex, std::defer_lock);
+            if (lock.try_lock_until(max_blocking_time))
+#else
+            static_cast<void>(max_blocking_time);
+            std::unique_lock<fastrtps::TimedMutex> lock(async_mode.changes_interested_mutex);
+#endif // if HAVE_STRICT_REALTIME{
+            {
+                sched.add_old_sample(writer, change);
+                async_mode.cv.notify_one();
+                ret_value = true;
+            }
         }
 
-        return false;
+        return ret_value;
     }
 
     /*! This function is used when PublishMode = FlowControllerPureSyncPublishMode.
@@ -1220,7 +1254,7 @@ private:
         {
             ++async_mode.writers_interested_in_remove;
             std::unique_lock<std::mutex> lock(mutex_);
-            std::unique_lock<std::mutex> interested_lock(async_mode.changes_interested_mutex);
+            std::unique_lock<fastrtps::TimedMutex> interested_lock(async_mode.changes_interested_mutex);
 
             // When blocked, both pointer are different than nullptr or equal.
             assert((nullptr != change->writer_info.previous &&
@@ -1270,7 +1304,7 @@ private:
 
             //Check if we have to sleep.
             {
-                std::unique_lock<std::mutex> in_lock(async_mode.changes_interested_mutex);
+                std::unique_lock<fastrtps::TimedMutex> in_lock(async_mode.changes_interested_mutex);
                 // Add interested changes into the queue.
                 sched.add_interested_changes_to_queue_nts();
 
@@ -1364,7 +1398,7 @@ private:
 
                 // Add interested changes into the queue.
                 {
-                    std::unique_lock<std::mutex> in_lock(async_mode.changes_interested_mutex);
+                    std::unique_lock<fastrtps::TimedMutex> in_lock(async_mode.changes_interested_mutex);
                     sched.add_interested_changes_to_queue_nts();
                 }
 
