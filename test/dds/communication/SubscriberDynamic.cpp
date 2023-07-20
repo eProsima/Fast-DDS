@@ -35,7 +35,7 @@
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/subscriber/SampleInfo.h>
-#include <fastrtps/types/DynamicData.h>
+#include <fastrtps/types/DynamicDataPtr.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 
 using namespace eprosima::fastdds::dds;
@@ -328,11 +328,14 @@ int main(
             const TypeObject* obj =
                     TypeObjectFactory::get_instance()->get_type_object(ident);
 
-            if (!TypeObjectFactory::get_instance()->build_dynamic_type(type, type_name, ident, obj))
+            const DynamicType* ret_type = nullptr;
+            if (!TypeObjectFactory::get_instance()->build_dynamic_type(ret_type, type_name, ident, obj))
             {
                 std::cout << "ERROR: DynamicType cannot be created for type: " << type_name << std::endl;
                 throw 1;
             }
+
+            type.reset(ret_type);
         }
 
         // Create the Topic & DataReader
@@ -367,7 +370,7 @@ int main(
         while ((notexit || number_samples < samples ) && listener.run_)
         {
             // loop taking samples
-            DynamicPubSubType pst(type);
+            DynamicPubSubType pst(*type);
             DynamicData_ptr sample(static_cast<DynamicData*>(pst.createData()));
             eprosima::fastdds::dds::SampleInfo info;
 
@@ -381,12 +384,11 @@ int main(
 
                     ++number_samples;
 
-                    sample->get_string_value(message, 0_id);
-                    sample->get_uint32_value(index, 1_id);
+                    message = sample->get_string_value(0_id);
+                    index = sample->get_uint32_value(1_id);
 
-                    DynamicData* inner = sample->loan_value(2_id);
+                    DynamicData_ptr inner = sample.loan_value(2_id);
                     inner->get_byte_value(count, 0_id);
-                    sample->return_loaned_value(inner);
 
                     std::cout << "Received sample: index(" << index << "), message("
                               << message << "), inner_count(" << std::hex << (uint32_t)count << ")" << std::endl;
