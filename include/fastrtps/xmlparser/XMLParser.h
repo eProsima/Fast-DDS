@@ -25,7 +25,7 @@
 #include <fastrtps/types/TypesBase.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 
-#include <fastrtps/types/DynamicTypeBuilderPtr.h>
+#include <fastrtps/types/v1_1/DynamicTypeBuilderPtr.h>
 
 #include <map>
 #include <stdio.h>
