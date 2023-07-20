@@ -83,21 +83,6 @@ private:
     }
     m_listener;
 
-    struct LoanDeleter
-    {
-        eprosima::fastrtps::types::v1_3::DynamicData& lender_;
-
-        LoanDeleter(eprosima::fastrtps::types::v1_3::DynamicData& lender)
-            : lender_(lender)
-        {
-        }
-
-        void operator()(eprosima::fastrtps::types::v1_3::DynamicData* array)
-        {
-            lender_.return_loaned_value(array);
-        }
-    };
-
     void runThread(
             uint32_t number,
             uint32_t sleep);

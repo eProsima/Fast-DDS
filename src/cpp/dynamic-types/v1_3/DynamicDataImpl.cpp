@@ -119,6 +119,8 @@ DynamicDataImpl::DynamicDataImpl(
         const DynamicDataImpl& data) noexcept
     : DataState(data)
 {
+    // only copy non-loaned objects
+    assert(lender_.expired());
 }
 
 DynamicDataImpl::DynamicDataImpl(
@@ -126,6 +128,8 @@ DynamicDataImpl::DynamicDataImpl(
         DynamicDataImpl&& data) noexcept
     : DataState(std::move(data))
 {
+    // only copy non-loaned objects
+    assert(lender_.expired());
 }
 
 const DynamicTypeImpl& DynamicDataImpl::get_type() const noexcept
@@ -1136,6 +1140,7 @@ std::shared_ptr<DynamicDataImpl> DynamicDataImpl::loan_value(
                         set_union_id(id);
                     }
                     loaned_values_.push_back(id);
+                    it->second->lender_ = weak_from_this();
                     return it->second;
                 }
             }
@@ -1144,7 +1149,9 @@ std::shared_ptr<DynamicDataImpl> DynamicDataImpl::loan_value(
                 if (insert_array_data(id) == ReturnCode_t::RETCODE_OK)
                 {
                     loaned_values_.push_back(id);
-                    return complex_values_.at(id);
+                    auto & sp = complex_values_.at(id);
+                    sp->lender_ = weak_from_this();
+                    return sp;
                 }
             }
 #else
@@ -1158,20 +1165,27 @@ std::shared_ptr<DynamicDataImpl> DynamicDataImpl::loan_value(
                 }
                 else
                 {
+                    auto sp = std::static_pointer_cast<DynamicDataImpl>(it->second);
+
                     if (get_kind() == TypeKind::TK_UNION && union_id_ != id)
                     {
                         set_union_id(id);
                     }
+
                     loaned_values_.push_back(id);
-                    return std::static_pointer_cast<DynamicDataImpl>(it->second);
+                    sp->lender_ = weak_from_this();
+                    return sp;
                 }
             }
             else if (get_kind() == TypeKind::TK_ARRAY)
             {
                 if (insert_array_data(id) == ReturnCode_t::RETCODE_OK)
                 {
+                    auto sp = std::static_pointer_cast<DynamicDataImpl>(values_.at(id));
+
                     loaned_values_.push_back(id);
-                    return std::static_pointer_cast<DynamicDataImpl>(values_.at(id));
+                    sp->lender_ = weak_from_this();
+                    return sp;
                 }
             }
 
@@ -1194,7 +1208,7 @@ std::shared_ptr<DynamicDataImpl> DynamicDataImpl::loan_value(
 }
 
 ReturnCode_t DynamicDataImpl::return_loaned_value(
-        std::shared_ptr<const DynamicDataImpl> value)
+        std::shared_ptr<DynamicDataImpl> value)
 {
     for (auto loanIt = loaned_values_.begin(); loanIt != loaned_values_.end(); ++loanIt)
     {
@@ -1202,6 +1216,7 @@ ReturnCode_t DynamicDataImpl::return_loaned_value(
         auto it = complex_values_.find(*loanIt);
         if (it != complex_values_.end() && it->second == value)
         {
+            value->lender_.reset();
             it->second = DynamicDataFactoryImpl::get_instance().create_copy(std::move(*value));
             loaned_values_.erase(loanIt);
             return ReturnCode_t::RETCODE_OK;
@@ -1210,6 +1225,7 @@ ReturnCode_t DynamicDataImpl::return_loaned_value(
         auto it = values_.find(*loanIt);
         if (it != values_.end() && std::static_pointer_cast<DynamicDataImpl>(it->second) == value)
         {
+            value->lender_.reset();
             it->second = DynamicDataFactoryImpl::get_instance().create_copy(std::move(*value));
             loaned_values_.erase(loanIt);
             return ReturnCode_t::RETCODE_OK;

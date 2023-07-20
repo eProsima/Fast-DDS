@@ -24,6 +24,10 @@
 #include <memory>
 #include <type_traits>
 
+#if defined(__has_include) && __has_include(<version>)
+#   include <version>
+#endif // if defined(__has_include) && __has_include(<version>)
+
 namespace eprosima {
 namespace detail {
 
@@ -212,6 +216,16 @@ class external_reference_counting
     mutable std::shared_ptr<T> external_lock_;
     //! External references tracker
     mutable std::atomic_long counter_ = {0l};
+
+public:
+
+#ifndef __cpp_lib_enable_shared_from_this
+
+    std::weak_ptr<T> weak_from_this() noexcept {
+        return std::weak_ptr<T>{this->shared_from_this()};
+    }
+
+#endif
 
 protected:
 

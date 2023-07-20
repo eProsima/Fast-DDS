@@ -70,7 +70,7 @@ bool HelloWorldPublisher::init()
     m_Hello->set_string_value("Hello DDS Dynamic World", 0_id);
     m_Hello->set_uint32_value(0, 1_id);
 
-    XTypes::DynamicData_ptr array {m_Hello->loan_value(2_id), LoanDeleter{*m_Hello}};
+    XTypes::DynamicData_ptr array = m_Hello.loan_value(2_id);
 
     array->set_uint32_value(10, array.get_array_index({0, 0}));
     array->set_uint32_value(20, array.get_array_index({1, 0}));
@@ -178,7 +178,7 @@ void HelloWorldPublisher::runThread(
                 uint32_t index = m_Hello->get_uint32_value(1_id);
                 std::string aux_array = "[";
 
-                XTypes::DynamicData_ptr array {m_Hello->loan_value(2_id), LoanDeleter{*m_Hello}};
+                XTypes::DynamicData_ptr array = m_Hello.loan_value(2_id);
 
                 for (uint32_t i = 0; i < 5; ++i)
                 {
@@ -212,7 +212,7 @@ void HelloWorldPublisher::runThread(
                 uint32_t index;
                 m_Hello->get_uint32_value(index, 1_id);
                 std::string aux_array = "[";
-                XTypes::DynamicData_ptr array {m_Hello->loan_value(2_id), LoanDeleter{*m_Hello}};
+                XTypes::DynamicData_ptr array = m_Hello.loan_value(2_id);
                 for (uint32_t i = 0; i < 5; ++i)
                 {
                     aux_array += "[";
@@ -260,7 +260,7 @@ bool HelloWorldPublisher::publish(
         m_Hello->get_uint32_value(index, 1_id);
         m_Hello->set_uint32_value(index + 1, 1_id);
 
-        XTypes::DynamicData_ptr array {m_Hello->loan_value(2_id), LoanDeleter{*m_Hello}};
+        XTypes::DynamicData_ptr array = m_Hello.loan_value(2_id);
 
         array->set_uint32_value(10 + index, array.get_array_index({0, 0}));
         array->set_uint32_value(20 + index, array.get_array_index({1, 0}));

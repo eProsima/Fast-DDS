@@ -42,13 +42,15 @@ public:
     using element_type = const eprosima::fastrtps::types::v1_3::DynamicData;
     using base = shared_ptr<const void>;
 
+    using MemberId = eprosima::fastrtps::types::v1_3::MemberId;
+
     constexpr shared_ptr() = default;
 
     explicit shared_ptr(element_type* pA)
         : base(pA, default_delete<element_type>{}) {}
 
     template<class Deleter>
-    explicit shared_ptr(element_type* pA, Deleter d)
+    shared_ptr(element_type* pA, Deleter d)
         : base(pA, d) {}
 
     shared_ptr(const shared_ptr& r) noexcept
@@ -113,7 +115,7 @@ public:
         typename T = typename C::value_type,
         typename = decltype(*std::declval<C>().data()),
         typename = typename std::enable_if<std::is_convertible<T, uint32_t>::value>::type>
-    eprosima::fastrtps::types::v1_3::MemberId get_array_index(const C& pos) const noexcept
+    MemberId get_array_index(const C& pos) const noexcept
     {
         if(*this)
         {
@@ -126,7 +128,7 @@ public:
     }
 
     //! for initializer lists arguments
-    eprosima::fastrtps::types::v1_3::MemberId get_array_index(std::initializer_list<uint32_t> ini) const noexcept
+    MemberId get_array_index(std::initializer_list<uint32_t> ini) const noexcept
     {
         std::vector<uint32_t> v(ini);
         return get_array_index(v);
@@ -160,6 +162,22 @@ public:
     using element_type = eprosima::fastrtps::types::v1_3::DynamicData;
     using base = shared_ptr<const eprosima::fastrtps::types::v1_3::DynamicData>;
 
+    // deleter associated to loans
+    struct LoanDeleter
+    {
+        eprosima::fastrtps::types::v1_3::DynamicData& lender_;
+
+        LoanDeleter(eprosima::fastrtps::types::v1_3::DynamicData& lender)
+            : lender_(lender)
+        {
+        }
+
+        void operator()(eprosima::fastrtps::types::v1_3::DynamicData* p)
+        {
+            lender_.return_loaned_value(p);
+        }
+    };
+
     constexpr shared_ptr() = default;
 
     shared_ptr(const shared_ptr& r) noexcept
@@ -172,7 +190,7 @@ public:
         : base(pA) {}
 
     template<class Deleter>
-    explicit shared_ptr(element_type* pA, Deleter d)
+    shared_ptr(element_type* pA, Deleter d)
         : base(pA, DeleterAdapter<Deleter>{d}) {}
 
     template< class Y >
@@ -215,6 +233,22 @@ public:
     {
         return get();
     }
+
+    // ancillary extra methods
+    shared_ptr loan_value(MemberId id) noexcept
+    {
+        if (*this)
+        {
+            element_type* loan = get()->loan_value(id);
+            if (nullptr != loan)
+            {
+                return { loan, LoanDeleter{*get()}};
+            }
+        }
+
+        return {};
+    }
+
 };
 
 template<>

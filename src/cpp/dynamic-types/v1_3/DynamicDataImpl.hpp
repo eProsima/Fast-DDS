@@ -74,6 +74,7 @@ struct DataState
     bool key_element_ = false;
     std::shared_ptr<DynamicDataImpl> default_array_value_;
     MemberId union_id_ = MEMBER_ID_INVALID;
+    std::weak_ptr<DynamicDataImpl> lender_;
 
     DataState(const DynamicTypeImpl& type);
 };
@@ -131,8 +132,18 @@ public:
     static ReturnCode_t delete_data(
             const DynamicDataImpl& data) noexcept
     {
-        data.release();
-        return ReturnCode_t::RETCODE_OK;
+        // check if is a loan
+        if(data.lender_.expired())
+        {
+            data.release();
+            return ReturnCode_t::RETCODE_OK;
+        }
+        else
+        {
+            std::shared_ptr<DynamicDataImpl> lender(data.lender_);
+            return lender->return_loaned_value(
+                    std::const_pointer_cast<DynamicDataImpl>(data.shared_from_this()));
+        }
     }
 
 protected:
@@ -272,7 +283,7 @@ public:
      * @param [in] value @ref DynamicDataImpl previously loaned
      */
     ReturnCode_t return_loaned_value(
-            std::shared_ptr<const DynamicDataImpl> value);
+            std::shared_ptr<DynamicDataImpl> value);
 
     MemberId get_array_index(
             const std::vector<uint32_t>& position) const;
