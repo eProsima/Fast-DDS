@@ -17,7 +17,7 @@
 #include <fastrtps/xmlparser/XMLTree.h>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/types/DynamicType.h>
-#include <fastrtps/types/v1_1/DynamicTypeMember.h>
+#include <fastrtps/types/DynamicTypeMember.h>
 #include <fastdds/dds/log/Log.hpp>
 
 #include <cstdlib>
