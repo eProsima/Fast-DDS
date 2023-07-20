@@ -127,7 +127,9 @@ target_include_directories(XMLProfileParserTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPTransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
-    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp
+    ${PROJECT_BINARY_DIR}/include
     ${Asio_INCLUDE_DIR}
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
