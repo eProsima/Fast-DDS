@@ -28,6 +28,7 @@
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 
 #include <fastrtps/types/DynamicDataFactory.h>
+#include <fastrtps/types/DynamicDataPtr.h>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
@@ -312,12 +313,11 @@ int main(
                 });
     }
 
-    DynamicData_ptr data(DynamicDataFactory::get_instance()->create_data(dyn_type));
+    DynamicData_ptr data(DynamicDataFactory::get_instance().create_data(*dyn_type));
     data->set_string_value("Hello DDS Dynamic World", 0_id);
     data->set_uint32_value(1, 1_id);
-    DynamicData* inner = data->loan_value(2_id);
+    DynamicData_ptr inner = data.loan_value(2_id);
     inner->set_byte_value(10, 0_id);
-    data->return_loaned_value(inner);
 
     while (run)
     {
@@ -335,11 +335,10 @@ int main(
             data->set_uint32_value(index + 1, 1_id);
         }
 
-        inner = data->loan_value(2_id);
+        inner = data.loan_value(2_id);
         octet inner_count;
         inner->get_byte_value(inner_count, 0_id);
         inner->set_byte_value(inner_count + 1, 0_id);
-        data->return_loaned_value(inner);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
