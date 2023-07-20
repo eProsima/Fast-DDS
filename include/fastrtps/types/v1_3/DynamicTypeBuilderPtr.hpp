@@ -16,7 +16,11 @@
 #define TYPES_1_3_DYNAMIC_TYPE_BUILDER_PTR_HPP
 
 #include <fastrtps/types/v1_3/DynamicTypeBuilder.hpp>
-#include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
+#include <fastrtps/types/v1_3/DynamicTypePtr.hpp>
+#include <fastrtps/types/v1_3/MemberDescriptor.hpp>
+
+#include <string>
+#include <type_traits>
 
 namespace std
 {
@@ -103,6 +107,11 @@ public:
     using element_type = eprosima::fastrtps::types::v1_3::DynamicTypeBuilder;
     using base = shared_ptr<const eprosima::fastrtps::types::v1_3::DynamicTypeBuilder>;
 
+    using ReturnCode_t = eprosima::fastrtps::types::ReturnCode_t;
+    using MemberId = eprosima::fastrtps::types::v1_3::MemberId;
+    using MemberDescriptor = eprosima::fastrtps::types::v1_3::MemberDescriptor;
+    using DynamicType = eprosima::fastrtps::types::v1_3::DynamicType;
+
     constexpr shared_ptr() = default;
 
     shared_ptr(const shared_ptr& r) noexcept
@@ -146,6 +155,185 @@ public:
     {
         return get();
     }
+
+    // ancillary methods
+
+    std::shared_ptr<const DynamicType> build() const
+    {
+        if(*this)
+        {
+            return std::shared_ptr<const DynamicType> {get()->build()};
+        }
+        return {};
+    }
+
+    template<typename S,
+             typename = typename std::enable_if<std::is_convertible<S, std::string>::value>::type>
+    ReturnCode_t add_member(
+            const MemberId& id,
+            const S& name)
+    {
+        if(*this)
+        {
+            MemberDescriptor md;
+            md.set_id(id);
+            md.set_name(get_null_terminated(name));
+
+            return get()->add_member(md);
+        }
+        return {};
+    }
+
+    template<typename S,
+             typename = typename std::enable_if<std::is_convertible<S, std::string>::value>::type>
+    ReturnCode_t add_member(
+            uint32_t index,
+            const S& name)
+    {
+        if(*this)
+        {
+            MemberDescriptor md;
+            md.set_index(index);
+            md.set_name(get_null_terminated(name));
+
+            return get()->add_member(md);
+        }
+        return {};
+    }
+
+    template<typename S,
+             typename D,
+             typename = typename std::enable_if<
+                 std::is_convertible<S, std::string>::value ||
+                 std::is_constructible<const std::shared_ptr<const DynamicType>, D>::value ||
+                 std::is_constructible<const DynamicType&, D>::value>::type>
+    ReturnCode_t add_member(
+            uint32_t index,
+            const S& name,
+            const D& type)
+    {
+        if(*this)
+        {
+            MemberDescriptor md;
+            md.set_index(index);
+            md.set_name(get_null_terminated(name));
+            set_descriptor_type(md, type);
+
+            return get()->add_member(md);
+        }
+        return {};
+    }
+
+    template<typename S,
+             typename D,
+             typename = typename std::enable_if<
+                 std::is_convertible<S, std::string>::value ||
+                 std::is_constructible<const std::shared_ptr<const DynamicType>, D>::value ||
+                 std::is_constructible<const DynamicType&, D>::value>::type>
+    ReturnCode_t add_member(
+            const MemberId& id,
+            const S& name,
+            const D& type)
+    {
+        if(*this)
+        {
+            MemberDescriptor md;
+            md.set_id(id);
+            md.set_name(get_null_terminated(name));
+            set_descriptor_type(md, type);
+
+            return get()->add_member(md);
+        }
+        return {};
+    }
+
+    template<typename S1,
+             typename D,
+             typename S2,
+             typename = typename std::enable_if<
+                 std::is_convertible<S1, std::string>::value ||
+                 std::is_convertible<S2, std::string>::value ||
+                 std::is_constructible<const std::shared_ptr<const DynamicType>, D>::value ||
+                 std::is_constructible<const DynamicType&, D>::value>::type>
+    ReturnCode_t add_member(
+            const MemberId& id,
+            const S1& name,
+            const D& type,
+            const S2& defaultValue)
+    {
+        if(*this)
+        {
+            MemberDescriptor md;
+            md.set_id(id);
+            md.set_name(get_null_terminated(name));
+            set_descriptor_type(md, type);
+            md.set_default_value(get_null_terminated(defaultValue));
+
+            return get()->add_member(md);
+        }
+        return {};
+    }
+
+    template<typename S1,
+             typename D,
+             typename S2,
+             typename C,
+             typename = typename std::enable_if<
+                 std::is_convertible<S1, std::string>::value ||
+                 std::is_convertible<S2, std::string>::value ||
+                 std::is_constructible<const std::shared_ptr<const DynamicType>, D>::value ||
+                 std::is_constructible<const DynamicType&, D>::value>::type,
+             typename T = typename C::value_type,
+             typename = decltype(*std::declval<C>().data()),
+             typename = typename std::enable_if<std::is_convertible<T, uint32_t>::value>::type>
+    ReturnCode_t add_member(
+            const MemberId& id,
+            const S1& name,
+            const D& type,
+            const S2& defaultValue,
+            const C& labels)
+    {
+        if(*this)
+        {
+            MemberDescriptor md;
+            md.set_id(id);
+            md.set_name(get_null_terminated(name));
+            set_descriptor_type(md, type);
+            md.set_default_value(get_null_terminated(defaultValue));
+            md.set_labels(labels.data(), static_cast<uint32_t>(labels.size()));
+
+            return get()->add_member(md);
+        }
+        return {};
+    }
+
+protected:
+
+    static const char* const get_null_terminated(const char* const name)
+    {
+        return name;
+    }
+
+    static const char* const get_null_terminated(const std::string& name)
+    {
+        return name.c_str();
+    }
+
+    static void set_descriptor_type(MemberDescriptor& md, const std::shared_ptr<const DynamicType> sp)
+    {
+        md.set_type(*sp); // avoid ownership transfer
+    }
+
+    static void set_descriptor_type(MemberDescriptor& md, const DynamicType* p)
+    {
+        md.set_type(p); // enforce ownership transfer
+    }
+
+    static void set_descriptor_type(MemberDescriptor& md, const DynamicType& r)
+    {
+        md.set_type(r); // avoid ownership transfer
+    }
+
 };
 
 template<>
