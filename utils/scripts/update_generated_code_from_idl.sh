@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 files_to_exclude=(
     './include/fastrtps/types/*'
