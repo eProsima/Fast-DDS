@@ -54,6 +54,7 @@ using ParameterCount_t = fastdds::dds::ParameterCount_t;
 using ParameterEntityId_t = fastdds::dds::ParameterEntityId_t;
 using ParameterTime_t = fastdds::dds::ParameterTime_t;
 using ParameterBuiltinEndpointSet_t = fastdds::dds::ParameterBuiltinEndpointSet_t;
+using ParameterNetworkConfigSet_t = fastdds::dds::ParameterNetworkConfigSet_t;
 using ParameterPropertyList_t = fastdds::dds::ParameterPropertyList_t;
 using ParameterSampleIdentity_t = fastdds::dds::ParameterSampleIdentity_t;
 #if HAVE_SECURITY

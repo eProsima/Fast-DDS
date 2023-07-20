@@ -283,6 +283,12 @@ void PDP::initializeParticipantProxyData(
     }
 #endif // if HAVE_SECURITY
 
+    // TODO: sort code blocks?
+    if (announce_locators)
+    {
+        participant_data->m_networkConfiguration = attributes.builtin.network_configuration;
+    }
+
     if (announce_locators)
     {
         for (const Locator_t& loc : attributes.defaultUnicastLocatorList)
@@ -817,6 +823,9 @@ ReaderProxyData* PDP::addReaderProxyData(
                 reader_proxies_pool_.pop_back();
             }
 
+            // Copy network configuration from participant to reader proxy
+            ret_val->networkConfiguration(pit->m_networkConfiguration);
+
             // Add to ParticipantProxyData
             (*pit->m_readers)[reader_guid.entityId] = ret_val;
 
@@ -911,6 +920,9 @@ WriterProxyData* PDP::addWriterProxyData(
                 ret_val = writer_proxies_pool_.back();
                 writer_proxies_pool_.pop_back();
             }
+
+            // Copy network configuration from participant to writer proxy
+            ret_val->networkConfiguration(pit->m_networkConfiguration);
 
             // Add to ParticipantProxyData
             (*pit->m_writers)[writer_guid.entityId] = ret_val;

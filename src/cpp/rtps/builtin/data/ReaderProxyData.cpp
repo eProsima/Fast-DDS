@@ -45,6 +45,7 @@ ReaderProxyData::ReaderProxyData (
     , security_attributes_(0UL)
     , plugin_security_attributes_(0UL)
 #endif // if HAVE_SECURITY
+    , m_networkConfiguration(0)
     , remote_locators_(max_unicast_locators, max_multicast_locators)
     , m_userDefinedId(0)
     , m_isAlive(true)
@@ -89,6 +90,7 @@ ReaderProxyData::ReaderProxyData(
     , plugin_security_attributes_(readerInfo.plugin_security_attributes_)
 #endif // if HAVE_SECURITY
     , m_guid(readerInfo.m_guid)
+    , m_networkConfiguration(readerInfo.m_networkConfiguration)
     , remote_locators_(readerInfo.remote_locators_)
     , m_key(readerInfo.m_key)
     , m_RTPSParticipantKey(readerInfo.m_RTPSParticipantKey)
@@ -130,6 +132,7 @@ ReaderProxyData& ReaderProxyData::operator =(
     plugin_security_attributes_ = readerInfo.plugin_security_attributes_;
 #endif // if HAVE_SECURITY
     m_guid = readerInfo.m_guid;
+    m_networkConfiguration = readerInfo.m_networkConfiguration;
     remote_locators_ = readerInfo.remote_locators_;
     m_key = readerInfo.m_key;
     m_RTPSParticipantKey = readerInfo.m_RTPSParticipantKey;
@@ -180,6 +183,9 @@ uint32_t ReaderProxyData::get_serialized_size(
         bool include_encapsulation) const
 {
     uint32_t ret_val = include_encapsulation ? 4 : 0;
+
+    // PID_NETWORK_CONFIGURATION_SET
+    ret_val += 4 + PARAMETER_NETWORKCONFIGSET_LENGTH;
 
     // PID_UNICAST_LOCATOR
     ret_val += static_cast<uint32_t>((4 + PARAMETER_LOCATOR_LENGTH) * remote_locators_.unicast.size());
@@ -337,6 +343,15 @@ bool ReaderProxyData::writeToCDRMessage(
     if (write_encapsulation)
     {
         if (!ParameterList::writeEncapsulationToCDRMsg(msg))
+        {
+            return false;
+        }
+    }
+
+    {
+        ParameterNetworkConfigSet_t p(fastdds::dds::PID_NETWORK_CONFIGURATION_SET, PARAMETER_NETWORKCONFIGSET_LENGTH);
+        p.netconfigSet = m_networkConfiguration;
+        if (!fastdds::dds::ParameterSerializer<ParameterNetworkConfigSet_t>::add_to_cdr_message(p, msg))
         {
             return false;
         }
@@ -821,6 +836,18 @@ bool ReaderProxyData::readFromCDRMessage(
                         m_key = p.guid;
                         break;
                     }
+                    case fastdds::dds::PID_NETWORK_CONFIGURATION_SET:
+                    {
+                        ParameterNetworkConfigSet_t p(pid, plength);
+                        if (!fastdds::dds::ParameterSerializer<ParameterNetworkConfigSet_t>::read_from_cdr_message(p,
+                                msg, plength))
+                        {
+                            return false;
+                        }
+
+                        m_networkConfiguration = p.netconfigSet;
+                        break;
+                    }
                     case fastdds::dds::PID_UNICAST_LOCATOR:
                     {
                         ParameterLocator_t p(pid, plength);
@@ -831,7 +858,7 @@ bool ReaderProxyData::readFromCDRMessage(
                         }
 
                         Locator_t temp_locator;
-                        if (network.transform_remote_locator(p.locator, temp_locator))
+                        if (network.transform_remote_locator(p.locator, temp_locator, m_networkConfiguration))
                         {
                             ProxyDataFilters::filter_locators(
                                 is_shm_transport_available,
@@ -851,7 +878,7 @@ bool ReaderProxyData::readFromCDRMessage(
                         }
 
                         Locator_t temp_locator;
-                        if (network.transform_remote_locator(p.locator, temp_locator))
+                        if (network.transform_remote_locator(p.locator, temp_locator, m_networkConfiguration))
                         {
                             ProxyDataFilters::filter_locators(
                                 is_shm_transport_available,
@@ -1042,6 +1069,7 @@ void ReaderProxyData::clear()
     plugin_security_attributes_ = 0UL;
 #endif // if HAVE_SECURITY
     m_guid = c_Guid_Unknown;
+    m_networkConfiguration = 0;
     remote_locators_.unicast.clear();
     remote_locators_.multicast.clear();
     m_key = InstanceHandle_t();
@@ -1094,6 +1122,7 @@ bool ReaderProxyData::is_update_allowed(
 void ReaderProxyData::update(
         ReaderProxyData* rdata)
 {
+    // m_networkConfiguration = rdata->m_networkConfiguration; // TODO: update?
     remote_locators_ = rdata->remote_locators_;
     m_qos.setQos(rdata->m_qos, false);
     m_isAlive = rdata->m_isAlive;
@@ -1105,6 +1134,7 @@ void ReaderProxyData::copy(
         ReaderProxyData* rdata)
 {
     m_guid = rdata->m_guid;
+    m_networkConfiguration = rdata->m_networkConfiguration;
     remote_locators_ = rdata->remote_locators_;
     m_key = rdata->m_key;
     m_RTPSParticipantKey = rdata->m_RTPSParticipantKey;
@@ -1169,13 +1199,12 @@ void ReaderProxyData::set_remote_unicast_locators(
         const LocatorList_t& locators,
         const NetworkFactory& network)
 {
-    Locator_t local_locator;
     remote_locators_.unicast.clear();
     for (const Locator_t& locator : locators)
     {
-        if (network.transform_remote_locator(locator, local_locator))
+        if (network.is_locator_allowed(locator))
         {
-            remote_locators_.add_unicast_locator(local_locator);
+            remote_locators_.add_unicast_locator(locator);
         }
     }
 }
@@ -1190,11 +1219,10 @@ void ReaderProxyData::set_multicast_locators(
         const LocatorList_t& locators,
         const NetworkFactory& network)
 {
-    Locator_t local_locator;
     remote_locators_.multicast.clear();
     for (const Locator_t& locator : locators)
     {
-        if (network.transform_remote_locator(locator, local_locator))
+        if (network.is_locator_allowed(locator))
         {
             remote_locators_.add_multicast_locator(locator);
         }
@@ -1212,15 +1240,14 @@ void ReaderProxyData::set_remote_locators(
         const NetworkFactory& network,
         bool use_multicast_locators)
 {
-    Locator_t local_locator;
     remote_locators_.unicast.clear();
     remote_locators_.multicast.clear();
 
     for (const Locator_t& locator : locators.unicast)
     {
-        if (network.transform_remote_locator(locator, local_locator))
+        if (network.is_locator_allowed(locator))
         {
-            remote_locators_.add_unicast_locator(local_locator);
+            remote_locators_.add_unicast_locator(locator);
         }
     }
 
@@ -1228,7 +1255,7 @@ void ReaderProxyData::set_remote_locators(
     {
         for (const Locator_t& locator : locators.multicast)
         {
-            if (network.transform_remote_locator(locator, local_locator))
+            if (network.is_locator_allowed(locator))
             {
                 remote_locators_.add_multicast_locator(locator);
             }
