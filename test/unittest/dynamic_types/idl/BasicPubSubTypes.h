@@ -1802,7 +1802,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 8ULL == (detail::WCharStruct_offset_of<WCharStruct, detail::WCharStruct_f>() + sizeof(wchar_t));
+        return 6ULL == (detail::WCharStruct_offset_of<WCharStruct, detail::WCharStruct_f>() + sizeof(wchar_t));
 
     }};
 

@@ -35,7 +35,7 @@ ExampleMessagePubSubType::ExampleMessagePubSubType()
 {
     setName("ExampleMessage");
     uint32_t type_size = ExampleMessage_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = ExampleMessage_max_key_cdr_typesize > 16 ? ExampleMessage_max_key_cdr_typesize : 16;

@@ -39,7 +39,7 @@ namespace eprosima {
                 {
                     setName("eprosima::fastdds::statistics::detail::EntityId_s");
                     uint32_t type_size = eprosima_fastdds_statistics_detail_EntityId_s_max_cdr_typesize;
-                    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+                    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
                     m_typeSize = type_size + 4; /*encapsulation*/
                     m_isGetKeyDefined = false;
                     uint32_t keyLength = eprosima_fastdds_statistics_detail_EntityId_s_max_key_cdr_typesize > 16 ? eprosima_fastdds_statistics_detail_EntityId_s_max_key_cdr_typesize : 16;
@@ -190,7 +190,7 @@ namespace eprosima {
                 {
                     setName("eprosima::fastdds::statistics::detail::GuidPrefix_s");
                     uint32_t type_size = eprosima_fastdds_statistics_detail_GuidPrefix_s_max_cdr_typesize;
-                    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+                    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
                     m_typeSize = type_size + 4; /*encapsulation*/
                     m_isGetKeyDefined = false;
                     uint32_t keyLength = eprosima_fastdds_statistics_detail_GuidPrefix_s_max_key_cdr_typesize > 16 ? eprosima_fastdds_statistics_detail_GuidPrefix_s_max_key_cdr_typesize : 16;
@@ -341,7 +341,7 @@ namespace eprosima {
                 {
                     setName("eprosima::fastdds::statistics::detail::GUID_s");
                     uint32_t type_size = eprosima_fastdds_statistics_detail_GUID_s_max_cdr_typesize;
-                    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+                    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
                     m_typeSize = type_size + 4; /*encapsulation*/
                     m_isGetKeyDefined = false;
                     uint32_t keyLength = eprosima_fastdds_statistics_detail_GUID_s_max_key_cdr_typesize > 16 ? eprosima_fastdds_statistics_detail_GUID_s_max_key_cdr_typesize : 16;
@@ -492,7 +492,7 @@ namespace eprosima {
                 {
                     setName("eprosima::fastdds::statistics::detail::SequenceNumber_s");
                     uint32_t type_size = eprosima_fastdds_statistics_detail_SequenceNumber_s_max_cdr_typesize;
-                    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+                    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
                     m_typeSize = type_size + 4; /*encapsulation*/
                     m_isGetKeyDefined = false;
                     uint32_t keyLength = eprosima_fastdds_statistics_detail_SequenceNumber_s_max_key_cdr_typesize > 16 ? eprosima_fastdds_statistics_detail_SequenceNumber_s_max_key_cdr_typesize : 16;
@@ -643,7 +643,7 @@ namespace eprosima {
                 {
                     setName("eprosima::fastdds::statistics::detail::SampleIdentity_s");
                     uint32_t type_size = eprosima_fastdds_statistics_detail_SampleIdentity_s_max_cdr_typesize;
-                    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+                    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
                     m_typeSize = type_size + 4; /*encapsulation*/
                     m_isGetKeyDefined = false;
                     uint32_t keyLength = eprosima_fastdds_statistics_detail_SampleIdentity_s_max_key_cdr_typesize > 16 ? eprosima_fastdds_statistics_detail_SampleIdentity_s_max_key_cdr_typesize : 16;
@@ -794,7 +794,7 @@ namespace eprosima {
                 {
                     setName("eprosima::fastdds::statistics::detail::Locator_s");
                     uint32_t type_size = eprosima_fastdds_statistics_detail_Locator_s_max_cdr_typesize;
-                    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+                    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
                     m_typeSize = type_size + 4; /*encapsulation*/
                     m_isGetKeyDefined = false;
                     uint32_t keyLength = eprosima_fastdds_statistics_detail_Locator_s_max_key_cdr_typesize > 16 ? eprosima_fastdds_statistics_detail_Locator_s_max_key_cdr_typesize : 16;
@@ -947,7 +947,7 @@ namespace eprosima {
             {
                 setName("eprosima::fastdds::statistics::DiscoveryTime");
                 uint32_t type_size = eprosima_fastdds_statistics_DiscoveryTime_max_cdr_typesize;
-                type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+                type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
                 m_typeSize = type_size + 4; /*encapsulation*/
                 m_isGetKeyDefined = true;
                 uint32_t keyLength = eprosima_fastdds_statistics_DiscoveryTime_max_key_cdr_typesize > 16 ? eprosima_fastdds_statistics_DiscoveryTime_max_key_cdr_typesize : 16;
@@ -1098,7 +1098,7 @@ namespace eprosima {
             {
                 setName("eprosima::fastdds::statistics::EntityCount");
                 uint32_t type_size = eprosima_fastdds_statistics_EntityCount_max_cdr_typesize;
-                type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+                type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
                 m_typeSize = type_size + 4; /*encapsulation*/
                 m_isGetKeyDefined = true;
                 uint32_t keyLength = eprosima_fastdds_statistics_EntityCount_max_key_cdr_typesize > 16 ? eprosima_fastdds_statistics_EntityCount_max_key_cdr_typesize : 16;
@@ -1249,7 +1249,7 @@ namespace eprosima {
             {
                 setName("eprosima::fastdds::statistics::SampleIdentityCount");
                 uint32_t type_size = eprosima_fastdds_statistics_SampleIdentityCount_max_cdr_typesize;
-                type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+                type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
                 m_typeSize = type_size + 4; /*encapsulation*/
                 m_isGetKeyDefined = true;
                 uint32_t keyLength = eprosima_fastdds_statistics_SampleIdentityCount_max_key_cdr_typesize > 16 ? eprosima_fastdds_statistics_SampleIdentityCount_max_key_cdr_typesize : 16;
@@ -1400,7 +1400,7 @@ namespace eprosima {
             {
                 setName("eprosima::fastdds::statistics::Entity2LocatorTraffic");
                 uint32_t type_size = eprosima_fastdds_statistics_Entity2LocatorTraffic_max_cdr_typesize;
-                type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+                type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
                 m_typeSize = type_size + 4; /*encapsulation*/
                 m_isGetKeyDefined = true;
                 uint32_t keyLength = eprosima_fastdds_statistics_Entity2LocatorTraffic_max_key_cdr_typesize > 16 ? eprosima_fastdds_statistics_Entity2LocatorTraffic_max_key_cdr_typesize : 16;
@@ -1551,7 +1551,7 @@ namespace eprosima {
             {
                 setName("eprosima::fastdds::statistics::WriterReaderData");
                 uint32_t type_size = eprosima_fastdds_statistics_WriterReaderData_max_cdr_typesize;
-                type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+                type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
                 m_typeSize = type_size + 4; /*encapsulation*/
                 m_isGetKeyDefined = true;
                 uint32_t keyLength = eprosima_fastdds_statistics_WriterReaderData_max_key_cdr_typesize > 16 ? eprosima_fastdds_statistics_WriterReaderData_max_key_cdr_typesize : 16;
@@ -1702,7 +1702,7 @@ namespace eprosima {
             {
                 setName("eprosima::fastdds::statistics::Locator2LocatorData");
                 uint32_t type_size = eprosima_fastdds_statistics_Locator2LocatorData_max_cdr_typesize;
-                type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+                type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
                 m_typeSize = type_size + 4; /*encapsulation*/
                 m_isGetKeyDefined = true;
                 uint32_t keyLength = eprosima_fastdds_statistics_Locator2LocatorData_max_key_cdr_typesize > 16 ? eprosima_fastdds_statistics_Locator2LocatorData_max_key_cdr_typesize : 16;
@@ -1853,7 +1853,7 @@ namespace eprosima {
             {
                 setName("eprosima::fastdds::statistics::EntityData");
                 uint32_t type_size = eprosima_fastdds_statistics_EntityData_max_cdr_typesize;
-                type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+                type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
                 m_typeSize = type_size + 4; /*encapsulation*/
                 m_isGetKeyDefined = true;
                 uint32_t keyLength = eprosima_fastdds_statistics_EntityData_max_key_cdr_typesize > 16 ? eprosima_fastdds_statistics_EntityData_max_key_cdr_typesize : 16;
@@ -2004,7 +2004,7 @@ namespace eprosima {
             {
                 setName("eprosima::fastdds::statistics::PhysicalData");
                 uint32_t type_size = eprosima_fastdds_statistics_PhysicalData_max_cdr_typesize;
-                type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+                type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
                 m_typeSize = type_size + 4; /*encapsulation*/
                 m_isGetKeyDefined = true;
                 uint32_t keyLength = eprosima_fastdds_statistics_PhysicalData_max_key_cdr_typesize > 16 ? eprosima_fastdds_statistics_PhysicalData_max_key_cdr_typesize : 16;

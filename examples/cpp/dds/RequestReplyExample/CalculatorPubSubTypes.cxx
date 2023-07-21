@@ -36,7 +36,7 @@ RequestTypePubSubType::RequestTypePubSubType()
 {
     setName("RequestType");
     uint32_t type_size = RequestType_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = RequestType_max_key_cdr_typesize > 16 ? RequestType_max_key_cdr_typesize : 16;
@@ -187,7 +187,7 @@ ReplyTypePubSubType::ReplyTypePubSubType()
 {
     setName("ReplyType");
     uint32_t type_size = ReplyType_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = ReplyType_max_key_cdr_typesize > 16 ? ReplyType_max_key_cdr_typesize : 16;

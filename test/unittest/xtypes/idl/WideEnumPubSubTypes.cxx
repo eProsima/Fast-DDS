@@ -36,7 +36,7 @@ MyEnumWideStructPubSubType::MyEnumWideStructPubSubType()
 {
     setName("MyEnumWideStruct");
     uint32_t type_size = MyEnumWideStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = MyEnumWideStruct_max_key_cdr_typesize > 16 ? MyEnumWideStruct_max_key_cdr_typesize : 16;
@@ -188,7 +188,7 @@ SimpleWideUnionStructPubSubType::SimpleWideUnionStructPubSubType()
 {
     setName("SimpleWideUnionStruct");
     uint32_t type_size = SimpleWideUnionStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = SimpleWideUnionStruct_max_key_cdr_typesize > 16 ? SimpleWideUnionStruct_max_key_cdr_typesize : 16;

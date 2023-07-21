@@ -51,14 +51,14 @@
             constexpr uint32_t DoubleStruct_max_cdr_typesize {16UL};
             constexpr uint32_t DoubleStruct_max_key_cdr_typesize {0UL};
 
-            constexpr uint32_t LargeWStringStruct_max_cdr_typesize {167708UL};
+            constexpr uint32_t LargeWStringStruct_max_cdr_typesize {83858UL};
             constexpr uint32_t LargeWStringStruct_max_key_cdr_typesize {0UL};
 
-            constexpr uint32_t WCharStruct_max_cdr_typesize {8UL};
+            constexpr uint32_t WCharStruct_max_cdr_typesize {6UL};
             constexpr uint32_t WCharStruct_max_key_cdr_typesize {0UL};
 
 
-            constexpr uint32_t WStringStruct_max_cdr_typesize {1028UL};
+            constexpr uint32_t WStringStruct_max_cdr_typesize {518UL};
             constexpr uint32_t WStringStruct_max_key_cdr_typesize {0UL};
 
             constexpr uint32_t SequenceStruct_max_cdr_typesize {16UL};
@@ -137,563 +137,563 @@ class CdrSizeCalculator;
 
 
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const EnumStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const EnumStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         EnumStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const EnumStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const AliasStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const AliasStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         AliasStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const AliasAliasStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const AliasAliasStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         AliasAliasStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const AliasAliasStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const BoolStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const BoolStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         BoolStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BoolStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const OctetStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const OctetStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         OctetStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const OctetStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const ShortStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const ShortStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         ShortStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ShortStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const LongStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const LongStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         LongStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const LongStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const LongLongStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const LongLongStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         LongLongStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const LongLongStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const UShortStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const UShortStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         UShortStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UShortStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const ULongStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const ULongStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         ULongStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ULongStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const ULongLongStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const ULongLongStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         ULongLongStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ULongLongStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const FloatStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const FloatStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         FloatStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const FloatStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const DoubleStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const DoubleStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         DoubleStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const DoubleStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const LongDoubleStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const LongDoubleStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         LongDoubleStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const LongDoubleStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const CharStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const CharStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         CharStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const CharStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const WCharStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const WCharStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         WCharStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const WCharStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const StringStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const StringStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         StringStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const StringStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const WStringStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const WStringStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         WStringStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const WStringStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const LargeStringStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const LargeStringStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         LargeStringStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const LargeStringStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const LargeWStringStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const LargeWStringStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         LargeWStringStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const LargeWStringStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const ArraytStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const ArraytStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         ArraytStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArraytStruct& data);
 
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const ArrayArrayStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayArrayStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         ArrayArrayStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const ArrayArrayStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const SequenceStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         SequenceStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const SequenceSequenceStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceSequenceStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         SequenceSequenceStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SequenceSequenceStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const MapStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const MapStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         MapStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const MapMapStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const MapMapStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         MapMapStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MapMapStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const MyBitset& ,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const MyBitset& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         MyBitset& data);
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const BitsetStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const BitsetStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         BitsetStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const BitsetStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const StructStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const StructStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         StructStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const StructStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const StructStructStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const StructStructStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         StructStructStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const StructStructStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const SimpleUnion& data,
         size_t current_alignment);
 
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const SimpleUnion& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         SimpleUnion& data);
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const UnionUnion& data,
         size_t current_alignment);
 
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const UnionUnion& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         UnionUnion& data);
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const WCharUnion& data,
         size_t current_alignment);
 
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const WCharUnion& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         WCharUnion& data);
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const SimpleUnionStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const SimpleUnionStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         SimpleUnionStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const SimpleUnionStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const UnionUnionUnionStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const UnionUnionUnionStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         UnionUnionUnionStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const UnionUnionUnionStruct& data);
 
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const WCharUnionStruct& data,
         size_t current_alignment);
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const WCharUnionStruct& data);
 
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         WCharUnionStruct& data);
 
-void serialize_key(
+eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const WCharUnionStruct& data);
 

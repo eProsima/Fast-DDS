@@ -35,7 +35,7 @@ NewAliasesPubSubType::NewAliasesPubSubType()
 {
     setName("NewAliases");
     uint32_t type_size = NewAliases_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = NewAliases_max_key_cdr_typesize > 16 ? NewAliases_max_key_cdr_typesize : 16;
@@ -193,7 +193,7 @@ namespace bitmodule {
     {
         setName("bitmodule::BitsetBitmask");
         uint32_t type_size = bitmodule_BitsetBitmask_max_cdr_typesize;
-        type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+        type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
         m_typeSize = type_size + 4; /*encapsulation*/
         m_isGetKeyDefined = false;
         uint32_t keyLength = bitmodule_BitsetBitmask_max_key_cdr_typesize > 16 ? bitmodule_BitsetBitmask_max_key_cdr_typesize : 16;
@@ -344,7 +344,7 @@ namespace bitmodule {
     {
         setName("bitmodule::BM2");
         uint32_t type_size = bitmodule_BM2_max_cdr_typesize;
-        type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+        type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
         m_typeSize = type_size + 4; /*encapsulation*/
         m_isGetKeyDefined = false;
         uint32_t keyLength = bitmodule_BM2_max_key_cdr_typesize > 16 ? bitmodule_BM2_max_key_cdr_typesize : 16;
@@ -497,7 +497,7 @@ StructTestPubSubType::StructTestPubSubType()
 {
     setName("StructTest");
     uint32_t type_size = StructTest_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = StructTest_max_key_cdr_typesize > 16 ? StructTest_max_key_cdr_typesize : 16;

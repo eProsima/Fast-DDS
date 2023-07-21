@@ -479,14 +479,14 @@ ret_value = false;
 }
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const bitmodule::ParentBitset& ,
+        const bitmodule::ParentBitset& data,
         size_t current_alignment)
 {
     static_cast<void>(calculator);
     size_t initial_alignment = current_alignment;
 
 
-        
+    current_alignment += calculator.calculate_serialized_size(data.bitset(), current_alignment);
 
     return current_alignment - initial_alignment;
 }
@@ -515,13 +515,7 @@ size_t calculate_serialized_size(
 
     current_alignment += calculator.calculate_serialized_size(data, current_alignment); 
 
-        
-        
-        
-        
-        
-        
-        
+    current_alignment += calculator.calculate_serialized_size(data.bitset(), current_alignment);
 
     return current_alignment - initial_alignment;
 }

@@ -39,7 +39,7 @@ BasicStructPubSubType::BasicStructPubSubType()
 {
     setName("BasicStruct");
     uint32_t type_size = BasicStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = BasicStruct_max_key_cdr_typesize > 16 ? BasicStruct_max_key_cdr_typesize : 16;
@@ -195,7 +195,7 @@ ComplexStructPubSubType::ComplexStructPubSubType()
 {
     setName("ComplexStruct");
     uint32_t type_size = ComplexStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = ComplexStruct_max_key_cdr_typesize > 16 ? ComplexStruct_max_key_cdr_typesize : 16;
@@ -348,7 +348,7 @@ CompleteStructPubSubType::CompleteStructPubSubType()
 {
     setName("CompleteStruct");
     uint32_t type_size = CompleteStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = CompleteStruct_max_key_cdr_typesize > 16 ? CompleteStruct_max_key_cdr_typesize : 16;
@@ -499,7 +499,7 @@ KeyedStructPubSubType::KeyedStructPubSubType()
 {
     setName("KeyedStruct");
     uint32_t type_size = KeyedStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = true;
     uint32_t keyLength = KeyedStruct_max_key_cdr_typesize > 16 ? KeyedStruct_max_key_cdr_typesize : 16;

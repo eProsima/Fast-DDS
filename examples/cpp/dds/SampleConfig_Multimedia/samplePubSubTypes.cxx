@@ -35,7 +35,7 @@ samplePubSubType::samplePubSubType()
 {
     setName("sample");
     uint32_t type_size = sample_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = true;
     uint32_t keyLength = sample_max_key_cdr_typesize > 16 ? sample_max_key_cdr_typesize : 16;

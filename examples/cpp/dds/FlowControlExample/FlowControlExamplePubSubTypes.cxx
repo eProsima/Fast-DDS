@@ -35,7 +35,7 @@ FlowControlExamplePubSubType::FlowControlExamplePubSubType()
 {
     setName("FlowControlExample");
     uint32_t type_size = FlowControlExample_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = FlowControlExample_max_key_cdr_typesize > 16 ? FlowControlExample_max_key_cdr_typesize : 16;

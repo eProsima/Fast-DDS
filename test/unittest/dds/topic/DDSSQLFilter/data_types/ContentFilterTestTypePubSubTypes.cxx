@@ -37,7 +37,7 @@ StructTypePubSubType::StructTypePubSubType()
 {
     setName("StructType");
     uint32_t type_size = StructType_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = StructType_max_key_cdr_typesize > 16 ? StructType_max_key_cdr_typesize : 16;
@@ -190,7 +190,7 @@ ContentFilterTestTypePubSubType::ContentFilterTestTypePubSubType()
 {
     setName("ContentFilterTestType");
     uint32_t type_size = ContentFilterTestType_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = ContentFilterTestType_max_key_cdr_typesize > 16 ? ContentFilterTestType_max_key_cdr_typesize : 16;

@@ -38,7 +38,7 @@ EnumStructPubSubType::EnumStructPubSubType()
 {
     setName("EnumStruct");
     uint32_t type_size = EnumStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = EnumStruct_max_key_cdr_typesize > 16 ? EnumStruct_max_key_cdr_typesize : 16;
@@ -189,7 +189,7 @@ AliasStructPubSubType::AliasStructPubSubType()
 {
     setName("AliasStruct");
     uint32_t type_size = AliasStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = AliasStruct_max_key_cdr_typesize > 16 ? AliasStruct_max_key_cdr_typesize : 16;
@@ -340,7 +340,7 @@ AliasAliasStructPubSubType::AliasAliasStructPubSubType()
 {
     setName("AliasAliasStruct");
     uint32_t type_size = AliasAliasStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = AliasAliasStruct_max_key_cdr_typesize > 16 ? AliasAliasStruct_max_key_cdr_typesize : 16;
@@ -491,7 +491,7 @@ BoolStructPubSubType::BoolStructPubSubType()
 {
     setName("BoolStruct");
     uint32_t type_size = BoolStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = BoolStruct_max_key_cdr_typesize > 16 ? BoolStruct_max_key_cdr_typesize : 16;
@@ -642,7 +642,7 @@ OctetStructPubSubType::OctetStructPubSubType()
 {
     setName("OctetStruct");
     uint32_t type_size = OctetStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = OctetStruct_max_key_cdr_typesize > 16 ? OctetStruct_max_key_cdr_typesize : 16;
@@ -793,7 +793,7 @@ ShortStructPubSubType::ShortStructPubSubType()
 {
     setName("ShortStruct");
     uint32_t type_size = ShortStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = ShortStruct_max_key_cdr_typesize > 16 ? ShortStruct_max_key_cdr_typesize : 16;
@@ -944,7 +944,7 @@ LongStructPubSubType::LongStructPubSubType()
 {
     setName("LongStruct");
     uint32_t type_size = LongStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = LongStruct_max_key_cdr_typesize > 16 ? LongStruct_max_key_cdr_typesize : 16;
@@ -1095,7 +1095,7 @@ LongLongStructPubSubType::LongLongStructPubSubType()
 {
     setName("LongLongStruct");
     uint32_t type_size = LongLongStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = LongLongStruct_max_key_cdr_typesize > 16 ? LongLongStruct_max_key_cdr_typesize : 16;
@@ -1246,7 +1246,7 @@ UShortStructPubSubType::UShortStructPubSubType()
 {
     setName("UShortStruct");
     uint32_t type_size = UShortStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = UShortStruct_max_key_cdr_typesize > 16 ? UShortStruct_max_key_cdr_typesize : 16;
@@ -1397,7 +1397,7 @@ ULongStructPubSubType::ULongStructPubSubType()
 {
     setName("ULongStruct");
     uint32_t type_size = ULongStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = ULongStruct_max_key_cdr_typesize > 16 ? ULongStruct_max_key_cdr_typesize : 16;
@@ -1548,7 +1548,7 @@ ULongLongStructPubSubType::ULongLongStructPubSubType()
 {
     setName("ULongLongStruct");
     uint32_t type_size = ULongLongStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = ULongLongStruct_max_key_cdr_typesize > 16 ? ULongLongStruct_max_key_cdr_typesize : 16;
@@ -1699,7 +1699,7 @@ FloatStructPubSubType::FloatStructPubSubType()
 {
     setName("FloatStruct");
     uint32_t type_size = FloatStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = FloatStruct_max_key_cdr_typesize > 16 ? FloatStruct_max_key_cdr_typesize : 16;
@@ -1850,7 +1850,7 @@ DoubleStructPubSubType::DoubleStructPubSubType()
 {
     setName("DoubleStruct");
     uint32_t type_size = DoubleStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = DoubleStruct_max_key_cdr_typesize > 16 ? DoubleStruct_max_key_cdr_typesize : 16;
@@ -2001,7 +2001,7 @@ LongDoubleStructPubSubType::LongDoubleStructPubSubType()
 {
     setName("LongDoubleStruct");
     uint32_t type_size = LongDoubleStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = LongDoubleStruct_max_key_cdr_typesize > 16 ? LongDoubleStruct_max_key_cdr_typesize : 16;
@@ -2152,7 +2152,7 @@ CharStructPubSubType::CharStructPubSubType()
 {
     setName("CharStruct");
     uint32_t type_size = CharStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = CharStruct_max_key_cdr_typesize > 16 ? CharStruct_max_key_cdr_typesize : 16;
@@ -2303,7 +2303,7 @@ WCharStructPubSubType::WCharStructPubSubType()
 {
     setName("WCharStruct");
     uint32_t type_size = WCharStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = WCharStruct_max_key_cdr_typesize > 16 ? WCharStruct_max_key_cdr_typesize : 16;
@@ -2454,7 +2454,7 @@ StringStructPubSubType::StringStructPubSubType()
 {
     setName("StringStruct");
     uint32_t type_size = StringStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = StringStruct_max_key_cdr_typesize > 16 ? StringStruct_max_key_cdr_typesize : 16;
@@ -2605,7 +2605,7 @@ WStringStructPubSubType::WStringStructPubSubType()
 {
     setName("WStringStruct");
     uint32_t type_size = WStringStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = WStringStruct_max_key_cdr_typesize > 16 ? WStringStruct_max_key_cdr_typesize : 16;
@@ -2756,7 +2756,7 @@ LargeStringStructPubSubType::LargeStringStructPubSubType()
 {
     setName("LargeStringStruct");
     uint32_t type_size = LargeStringStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = LargeStringStruct_max_key_cdr_typesize > 16 ? LargeStringStruct_max_key_cdr_typesize : 16;
@@ -2907,7 +2907,7 @@ LargeWStringStructPubSubType::LargeWStringStructPubSubType()
 {
     setName("LargeWStringStruct");
     uint32_t type_size = LargeWStringStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = LargeWStringStruct_max_key_cdr_typesize > 16 ? LargeWStringStruct_max_key_cdr_typesize : 16;
@@ -3058,7 +3058,7 @@ ArraytStructPubSubType::ArraytStructPubSubType()
 {
     setName("ArraytStruct");
     uint32_t type_size = ArraytStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = ArraytStruct_max_key_cdr_typesize > 16 ? ArraytStruct_max_key_cdr_typesize : 16;
@@ -3210,7 +3210,7 @@ ArrayArrayStructPubSubType::ArrayArrayStructPubSubType()
 {
     setName("ArrayArrayStruct");
     uint32_t type_size = ArrayArrayStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = ArrayArrayStruct_max_key_cdr_typesize > 16 ? ArrayArrayStruct_max_key_cdr_typesize : 16;
@@ -3361,7 +3361,7 @@ SequenceStructPubSubType::SequenceStructPubSubType()
 {
     setName("SequenceStruct");
     uint32_t type_size = SequenceStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = SequenceStruct_max_key_cdr_typesize > 16 ? SequenceStruct_max_key_cdr_typesize : 16;
@@ -3512,7 +3512,7 @@ SequenceSequenceStructPubSubType::SequenceSequenceStructPubSubType()
 {
     setName("SequenceSequenceStruct");
     uint32_t type_size = SequenceSequenceStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = SequenceSequenceStruct_max_key_cdr_typesize > 16 ? SequenceSequenceStruct_max_key_cdr_typesize : 16;
@@ -3663,7 +3663,7 @@ MapStructPubSubType::MapStructPubSubType()
 {
     setName("MapStruct");
     uint32_t type_size = MapStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = MapStruct_max_key_cdr_typesize > 16 ? MapStruct_max_key_cdr_typesize : 16;
@@ -3814,7 +3814,7 @@ MapMapStructPubSubType::MapMapStructPubSubType()
 {
     setName("MapMapStruct");
     uint32_t type_size = MapMapStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = MapMapStruct_max_key_cdr_typesize > 16 ? MapMapStruct_max_key_cdr_typesize : 16;
@@ -3966,7 +3966,7 @@ BitsetStructPubSubType::BitsetStructPubSubType()
 {
     setName("BitsetStruct");
     uint32_t type_size = BitsetStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = BitsetStruct_max_key_cdr_typesize > 16 ? BitsetStruct_max_key_cdr_typesize : 16;
@@ -4117,7 +4117,7 @@ StructStructPubSubType::StructStructPubSubType()
 {
     setName("StructStruct");
     uint32_t type_size = StructStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = StructStruct_max_key_cdr_typesize > 16 ? StructStruct_max_key_cdr_typesize : 16;
@@ -4268,7 +4268,7 @@ StructStructStructPubSubType::StructStructStructPubSubType()
 {
     setName("StructStructStruct");
     uint32_t type_size = StructStructStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = StructStructStruct_max_key_cdr_typesize > 16 ? StructStructStruct_max_key_cdr_typesize : 16;
@@ -4422,7 +4422,7 @@ SimpleUnionStructPubSubType::SimpleUnionStructPubSubType()
 {
     setName("SimpleUnionStruct");
     uint32_t type_size = SimpleUnionStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = SimpleUnionStruct_max_key_cdr_typesize > 16 ? SimpleUnionStruct_max_key_cdr_typesize : 16;
@@ -4573,7 +4573,7 @@ UnionUnionUnionStructPubSubType::UnionUnionUnionStructPubSubType()
 {
     setName("UnionUnionUnionStruct");
     uint32_t type_size = UnionUnionUnionStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = UnionUnionUnionStruct_max_key_cdr_typesize > 16 ? UnionUnionUnionStruct_max_key_cdr_typesize : 16;
@@ -4724,7 +4724,7 @@ WCharUnionStructPubSubType::WCharUnionStructPubSubType()
 {
     setName("WCharUnionStruct");
     uint32_t type_size = WCharUnionStruct_max_cdr_typesize;
-    type_size += eprosima::fastcdr::Cdr::alignment(type_size, 4); /* possible submessage alignment */
+    type_size += static_cast<uint32_t>(eprosima::fastcdr::Cdr::alignment(type_size, 4)); /* possible submessage alignment */
     m_typeSize = type_size + 4; /*encapsulation*/
     m_isGetKeyDefined = false;
     uint32_t keyLength = WCharUnionStruct_max_key_cdr_typesize > 16 ? WCharUnionStruct_max_key_cdr_typesize : 16;
