@@ -1687,6 +1687,11 @@ public:
         return status;
     }
 
+    eprosima::fastdds::dds::DomainParticipant* get_participant()
+    {
+        return participant_;
+    }
+
 protected:
 
     virtual void receive_one(

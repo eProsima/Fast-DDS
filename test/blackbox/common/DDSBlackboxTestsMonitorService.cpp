@@ -15,7 +15,7 @@
 #include <gtest/gtest.h>
 
 #include "BlackboxTests.hpp"
-#include "PubSubReader.hpp"
+#include "../dds-pim/PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
 #include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
@@ -41,6 +41,7 @@ enum communication_type
 };
 
 class DDSMonitorServiceTest : public testing::TestWithParam<communication_type>
+
 {
 public:
 
@@ -88,7 +89,10 @@ using StatisticsGUIDList = std::vector<statistics::detail::GUID_s>;
 
 struct SampleValidator;
 
+#ifdef FASTDDS_STATISTICS
+
 void validator_selector(
+        statistics::dds::DomainParticipant* participant,
         SampleValidator*& validator,
         const statistics::StatusKind status_kind,
         SampleInfo& info,
@@ -494,7 +498,8 @@ struct SampleValidator
             MonitorServiceType::type&,
             std::list<MonitorServiceType::type>&,
             std::atomic<size_t>&,
-            std::condition_variable& )
+            std::condition_variable&,
+            statistics::dds::DomainParticipant*&)
     {
     }
 
@@ -509,7 +514,7 @@ public:
         : PubSubReader<MonitorServiceType>("fastdds_monitor_service_status", true, true)
         , sample_validator_( new SampleValidator())
     {
-
+        statistics_part_ = statistics::dds::DomainParticipant::narrow(get_participant());
     }
 
     virtual ~MonitorServiceConsumer()
@@ -567,12 +572,13 @@ protected:
             ASSERT_LT(last_seq[seq_info], info.sample_identity.sequence_number());
             last_seq[seq_info] = info.sample_identity.sequence_number();
 
-            validator_selector(sample_validator_,
-                    data.status_kind(), info, data, total_msgs_, current_processed_count_, cv_);
+            validator_selector(statistics_part_, sample_validator_, data.status_kind(), info, data, total_msgs_, current_processed_count_, cv_);
         }
     }
 
     SampleValidator* sample_validator_;
+
+    statistics::dds::DomainParticipant* statistics_part_;
 };
 
 struct ProxySampleValidator : public SampleValidator
@@ -582,7 +588,8 @@ struct ProxySampleValidator : public SampleValidator
             MonitorServiceType::type& data,
             std::list<MonitorServiceType::type>& total_msgs,
             std::atomic<size_t>& processed_count,
-            std::condition_variable& cv)
+            std::condition_variable& cv,
+            statistics::dds::DomainParticipant* participant = nullptr)
     {
         if (info.valid_data
                 && info.instance_state == eprosima::fastdds::dds::ALIVE_INSTANCE_STATE)
@@ -615,23 +622,7 @@ struct ProxySampleValidator : public SampleValidator
                 ParticipantProxyData pdata(att);
 
                 serialized_msg.init(serialized_proxy.data(), data.value().getCdrSerializedSize(data.value()));
-                ASSERT_TRUE(pdata.readFromCDRMessage(&serialized_msg, true, nullptr, true, false));
-
-            }
-            else if (guid.entityId.is_reader())
-            {
-                WriterProxyData writer_proxy_data(5, 5);
-
-                serialized_msg.init(serialized_proxy.data(), data.value().getCdrSerializedSize(data.value()));
-                ASSERT_TRUE(writer_proxy_data.readFromCDRMessage(&serialized_msg, true, nullptr, true, false));
-
-            }
-            else if (guid.entityId.is_writer())
-            {
-                ReaderProxyData reader_proxy_data(5, 5);
-
-                serialized_msg.init(serialized_proxy.data(), data.value().getCdrSerializedSize(data.value()));
-                ASSERT_TRUE(reader_proxy_data.readFromCDRMessage(&serialized_msg, true, nullptr, true, false));
+                ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(pdata, data), ReturnCode_t::RETCODE_ERROR);
             }
             else
             {
@@ -933,6 +924,7 @@ struct SampleLostSampleValidator : public SampleValidator
 };
 
 void validator_selector(
+        statistics::dds::DomainParticipant* participant,
         SampleValidator*& validator,
         const statistics::StatusKind status_kind,
         SampleInfo& info,
@@ -946,7 +938,7 @@ void validator_selector(
         case statistics::StatusKind::PROXY:
         {
             auto sample_validator = static_cast<ProxySampleValidator*>(validator);
-            sample_validator->validate(info, data, total_msgs, processed_count, cv);
+            sample_validator->validate(info, data, total_msgs, processed_count, cv, participant);
             break;
         }
         case statistics::StatusKind::CONNECTION_LIST:
@@ -993,6 +985,8 @@ void validator_selector(
             break;
     }
 }
+
+#endif //FASTDDS_STATISTICS
 
 /*
  * Abbreviations
@@ -1966,8 +1960,6 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_multiple_late_joiners)
     //! Setup
     MonitorServiceParticipant MSP;
     size_t n_participants = 3;
-    std::vector<MonitorServiceConsumer> MSCs;
-    MSCs.reserve(n_participants);
 
     //! Procedure
     std::list<MonitorServiceType::type> expected_msgs;
@@ -1987,9 +1979,12 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_multiple_late_joiners)
     MSP.create_and_add_reader(dr_qos);
 
     MonitorServiceType::type endpoint_qos_msg;
+    StatisticsGUIDList w_guids, r_guids;
 
     endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::INCOMPATIBLE_QOS);
-    endpoint_qos_msg.local_entity(MSP.get_writer_guids());
+    w_guids = MSP.get_writer_guids();
+    ASSERT_EQ(w_guids.size(), 1);
+    endpoint_qos_msg.local_entity(w_guids.back());
 
     statistics::IncompatibleQoSStatus_s incompatible_qos;
     statistics::QosPolicyCount_s policy;
@@ -2000,7 +1995,9 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_multiple_late_joiners)
     expected_msgs.push_back(endpoint_qos_msg);
 
     endpoint_qos_msg.status_kind(eprosima::fastdds::statistics::INCOMPATIBLE_QOS);
-    endpoint_qos_msg.local_entity(MSP.get_reader_guids());
+    r_guids = MSP.get_reader_guids();
+    ASSERT_EQ(r_guids.size(), 1);
+    endpoint_qos_msg.local_entity(r_guids.back());
 
     expected_msgs.push_back(endpoint_qos_msg);
 
@@ -2016,8 +2013,6 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_multiple_late_joiners)
         //! Assertions
         //! The assertion checking whether the on_data_availble() was called is assumed in the following one
         ASSERT_EQ(MSC.block_for_all(std::chrono::seconds(10)), expected_msgs.size());
-
-        MSCs.emplace_back(std::move(MSC));
     }
 #endif //FASTDDS_STATISTICS
 }

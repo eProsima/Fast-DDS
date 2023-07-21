@@ -37,6 +37,7 @@ using namespace eprosima::fastrtps::rtps;
  * +--------+----------------------------+
  */
 
+
 class MonitorServiceRTPSParticipant
 {
 
@@ -46,6 +47,7 @@ public:
     {
 
     }
+#ifdef FASTDDS_STATISTICS
 
     void init()
     {
@@ -75,10 +77,12 @@ public:
         return rtps_participant_->create_monitor_service();
     }
 
+#endif //FASTDDS_STATISTICS
 protected:
 
     RTPSParticipant* rtps_participant_;
 };
+
 
 /**
  * Refers to RTPS-MS-API-01 from the test plan.
@@ -89,6 +93,8 @@ protected:
  */
 TEST(RTPSMonitorServiceTest, monitor_service_create_is_created)
 {
+    #ifdef FASTDDS_STATISTICS
+
     //! Setup
     MonitorServiceRTPSParticipant MSRTPS;
 
@@ -99,6 +105,8 @@ TEST(RTPSMonitorServiceTest, monitor_service_create_is_created)
     ASSERT_TRUE(MSRTPS.is_monitor_service_created());
     ASSERT_TRUE(MSRTPS.create_monitor_service());
     ASSERT_TRUE(MSRTPS.is_monitor_service_created());
+
+    #endif //FASTDDS_STATISTICS
 }
 
 /**
@@ -109,6 +117,8 @@ TEST(RTPSMonitorServiceTest, monitor_service_create_is_created)
  */
 TEST(RTPSMonitorServiceTest, monitor_service_create_enable_disable)
 {
+    #ifdef FASTDDS_STATISTICS
+
     //! Setup
     MonitorServiceRTPSParticipant MSRTPS;
 
@@ -119,5 +129,7 @@ TEST(RTPSMonitorServiceTest, monitor_service_create_enable_disable)
     ASSERT_TRUE(MSRTPS.create_monitor_service());
     ASSERT_TRUE(MSRTPS.enable_monitor_service());
     ASSERT_TRUE(MSRTPS.disable_monitor_service());
+
+    #endif //FASTDDS_STATISTICS
 }
 
