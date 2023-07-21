@@ -75,6 +75,8 @@ target_sources(xtypes INTERFACE
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/v1_3/TypeState.cpp
 )
 
+target_include_directories(xtypes INTERFACE ${PROJECT_SOURCE_DIR}/src/cpp)
+
 # Set source files
 
 if(WIN32)
@@ -497,7 +499,7 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     $<$<NOT:$<BOOL:${IS_THIRDPARTY_BOOST_SUPPORTED}>>:FASTDDS_SHM_TRANSPORT_DISABLED> # Do not compile SHM Transport
     $<$<BOOL:${SHM_TRANSPORT_DEFAULT}>:SHM_TRANSPORT_BUILTIN> # Enable SHM as built-in transport
     $<$<BOOL:${STDOUTERR_LOG_CONSUMER}>:STDOUTERR_LOG_CONSUMER> # Enable StdoutErrConsumer as default LogConsumer
-    # DYNAMIC_TYPES_CHECKING
+    DYNAMIC_TYPES_CHECKING
     )
 
 # Define public headers
@@ -505,7 +507,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
     $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}>
-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/cpp>
     $<INSTALL_INTERFACE:${INCLUDE_INSTALL_DIR}>
     PRIVATE
     ${Asio_INCLUDE_DIR}
