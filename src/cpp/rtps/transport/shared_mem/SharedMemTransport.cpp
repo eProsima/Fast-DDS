@@ -415,6 +415,10 @@ bool SharedMemTransport::send(
 {
     using namespace eprosima::fastdds::statistics::rtps;
 
+#if !defined(_WIN32)
+    cleanup_output_ports();
+#endif // if !defined(_WIN32)
+
     fastrtps::rtps::LocatorsIterator& it = *destination_locators_begin;
 
     bool ret = true;
@@ -465,6 +469,22 @@ bool SharedMemTransport::send(
 
 }
 
+void SharedMemTransport::cleanup_output_ports()
+{
+    auto it = opened_ports_.begin();
+    while (it != opened_ports_.end())
+    {
+        if (it->second->has_listeners())
+        {
+            ++it;
+        }
+        else
+        {
+            it = opened_ports_.erase(it);
+        }
+    }
+}
+
 std::shared_ptr<SharedMemManager::Port> SharedMemTransport::find_port(
         uint32_t port_id)
 {
@@ -492,9 +512,22 @@ bool SharedMemTransport::push_discard(
 {
     try
     {
-        if (!find_port(remote_locator.port)->try_push(buffer))
+        bool is_port_ok = false;
+        const size_t num_retries = 2;
+        for (size_t i = 0; i < num_retries && !is_port_ok; ++i)
         {
-            logInfo(RTPS_MSG_OUT, "Port " << remote_locator.port << " full. Buffer dropped");
+            if (!find_port(remote_locator.port)->try_push(buffer, is_port_ok))
+            {
+                if (is_port_ok)
+                {
+                    logInfo(RTPS_MSG_OUT, "Port " << remote_locator.port << " full. Buffer dropped");
+                }
+                else
+                {
+                    logWarning(RTPS_MSG_OUT, "Port " << remote_locator.port << " inconsistent. Port dropped");
+                    opened_ports_.erase(remote_locator.port);
+                }
+            }
         }
     }
     catch (const std::exception& error)
