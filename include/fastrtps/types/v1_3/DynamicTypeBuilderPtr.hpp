@@ -170,6 +170,11 @@ public:
 
     // ancillary methods
 
+    ReturnCode_t set_name(const std::string & s)
+    {
+        return set_name(s.c_str());
+    }
+
     template<typename S,
              typename = typename std::enable_if<std::is_convertible<S, std::string>::value>::type>
     ReturnCode_t add_member(
@@ -184,7 +189,7 @@ public:
 
             return get()->add_member(md);
         }
-        return {};
+        return ReturnCode_t::RETCODE_ERROR;
     }
 
     template<typename S,
@@ -201,7 +206,7 @@ public:
 
             return get()->add_member(md);
         }
-        return {};
+        return ReturnCode_t::RETCODE_ERROR;
     }
 
     template<typename S,
@@ -224,7 +229,7 @@ public:
 
             return get()->add_member(md);
         }
-        return {};
+        return ReturnCode_t::RETCODE_ERROR;
     }
 
     template<typename S,
@@ -247,7 +252,7 @@ public:
 
             return get()->add_member(md);
         }
-        return {};
+        return ReturnCode_t::RETCODE_ERROR;
     }
 
     template<typename S1,
@@ -274,7 +279,7 @@ public:
 
             return get()->add_member(md);
         }
-        return {};
+        return ReturnCode_t::RETCODE_ERROR;
     }
 
     template<typename S1,
@@ -307,7 +312,34 @@ public:
 
             return get()->add_member(md);
         }
-        return {};
+        return ReturnCode_t::RETCODE_ERROR;
+    }
+
+    template<typename S1,
+             typename S2,
+             typename S3,
+             typename = typename std::enable_if<
+                std::is_convertible<S1, std::string>::value ||
+                std::is_convertible<S2, std::string>::value ||
+                std::is_convertible<S3, std::string>::value>::type>
+    ReturnCode_t apply_annotation_to_member(
+            MemberId id,
+            const S1& annotation_name,
+            const S2& key,
+            const S3& value)
+    {
+        if(*this)
+        {
+            AnnotationDescriptor ad;
+            ad.set_type(DynamicTypeBuilderFactory::get_instance().
+                    create_annotation_primitive(get_null_terminated(annotation_name)));
+            ad.set_value(
+                get_null_terminated(key),
+                get_null_terminated(value));
+
+            return get()->apply_annotation_to_member(id, ad);
+        }
+        return ReturnCode_t::RETCODE_ERROR;
     }
 
 protected:

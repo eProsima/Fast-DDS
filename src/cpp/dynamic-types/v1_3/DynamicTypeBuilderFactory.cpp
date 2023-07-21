@@ -42,6 +42,13 @@ const DynamicType* DynamicTypeBuilderFactory::get_primitive_type(
     return &type->get_interface();
 }
 
+const DynamicTypeBuilder* DynamicTypeBuilderFactory::create_primitive_type(
+        TypeKind kind) noexcept
+{
+    auto type = DynamicTypeBuilderFactoryImpl::get_instance().create_primitive_type(kind);
+    return &type->get_interface();
+}
+
 DynamicTypeBuilder* DynamicTypeBuilderFactory::create_type(
         const TypeDescriptor& td) noexcept
 {
@@ -141,7 +148,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_alias_type(
     return &builder->get_interface();
 }
 
-DynamicTypeBuilder* DynamicTypeBuilderFactory::create_enum_type()
+DynamicTypeBuilder* DynamicTypeBuilderFactory::create_enum_type() noexcept
 {
     auto builder = DynamicTypeBuilderFactoryImpl::get_instance().create_enum_type();
     return &builder->get_interface();
@@ -154,7 +161,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_struct_type() noexcept
 }
 
 DynamicTypeBuilder* DynamicTypeBuilderFactory::create_child_struct_type(
-        const DynamicType& parent_type)
+        const DynamicType& parent_type) noexcept
 {
     const auto& impl = DynamicTypeImpl::get_implementation(parent_type);
     auto builder = DynamicTypeBuilderFactoryImpl::get_instance().create_child_struct_type(impl);
@@ -162,7 +169,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_child_struct_type(
 }
 
 DynamicTypeBuilder* DynamicTypeBuilderFactory::create_union_type(
-        const DynamicType& discriminator_type)
+        const DynamicType& discriminator_type) noexcept
 {
     const auto& impl = DynamicTypeImpl::get_implementation(discriminator_type);
     auto builder = DynamicTypeBuilderFactoryImpl::get_instance().create_union_type(impl);
@@ -170,7 +177,7 @@ DynamicTypeBuilder* DynamicTypeBuilderFactory::create_union_type(
 }
 
 const DynamicType* DynamicTypeBuilderFactory::create_annotation_primitive(
-        const char* name)
+        const char* name) noexcept
 {
     auto type = DynamicTypeBuilderFactoryImpl::get_instance().create_annotation_primitive(std::string(name));
     return &type->get_interface();
@@ -178,7 +185,7 @@ const DynamicType* DynamicTypeBuilderFactory::create_annotation_primitive(
 
 const DynamicType* DynamicTypeBuilderFactory::get_alias_type(
         const DynamicType& base_type,
-        const char* sName)
+        const char* sName) noexcept
 {
     const auto& impl = DynamicTypeImpl::get_implementation(base_type);
     auto type = DynamicTypeBuilderFactoryImpl::get_instance().get_alias_type(impl, std::string(sName));
@@ -200,7 +207,7 @@ const DynamicType* DynamicTypeBuilderFactory::get_wstring_type(
 }
 
 const DynamicType* DynamicTypeBuilderFactory::get_bitset_type(
-        uint32_t bound)
+        uint32_t bound) noexcept
 {
     auto type = DynamicTypeBuilderFactoryImpl::get_instance().get_bitset_type(bound);
     return &type->get_interface();
@@ -308,79 +315,79 @@ const DynamicTypeBuilder* DynamicTypeBuilderFactory::create_byte_type() noexcept
     return &ti->get_interface();
 }
 
-const DynamicType* DynamicTypeBuilderFactory::get_int16_type()
+const DynamicType* DynamicTypeBuilderFactory::get_int16_type() noexcept
 {
     const auto ti = DynamicTypeBuilderFactoryImpl::get_instance().get_int16_type();
     return &ti->get_interface();
 }
 
-const DynamicType* DynamicTypeBuilderFactory::get_uint16_type()
+const DynamicType* DynamicTypeBuilderFactory::get_uint16_type() noexcept
 {
     const auto ti = DynamicTypeBuilderFactoryImpl::get_instance().get_uint16_type();
     return &ti->get_interface();
 }
 
-const DynamicType* DynamicTypeBuilderFactory::get_int32_type()
+const DynamicType* DynamicTypeBuilderFactory::get_int32_type() noexcept
 {
     const auto ti = DynamicTypeBuilderFactoryImpl::get_instance().get_int32_type();
     return &ti->get_interface();
 }
 
-const DynamicType* DynamicTypeBuilderFactory::get_uint32_type()
+const DynamicType* DynamicTypeBuilderFactory::get_uint32_type() noexcept
 {
     const auto ti = DynamicTypeBuilderFactoryImpl::get_instance().get_uint32_type();
     return &ti->get_interface();
 }
 
-const DynamicType* DynamicTypeBuilderFactory::get_int64_type()
+const DynamicType* DynamicTypeBuilderFactory::get_int64_type() noexcept
 {
     const auto ti = DynamicTypeBuilderFactoryImpl::get_instance().get_int64_type();
     return &ti->get_interface();
 }
 
-const DynamicType* DynamicTypeBuilderFactory::get_uint64_type()
+const DynamicType* DynamicTypeBuilderFactory::get_uint64_type() noexcept
 {
     const auto ti = DynamicTypeBuilderFactoryImpl::get_instance().get_uint64_type();
     return &ti->get_interface();
 }
 
-const DynamicType* DynamicTypeBuilderFactory::get_float32_type()
+const DynamicType* DynamicTypeBuilderFactory::get_float32_type() noexcept
 {
     const auto ti = DynamicTypeBuilderFactoryImpl::get_instance().get_float32_type();
     return &ti->get_interface();
 }
 
-const DynamicType* DynamicTypeBuilderFactory::get_float64_type()
+const DynamicType* DynamicTypeBuilderFactory::get_float64_type() noexcept
 {
     const auto ti = DynamicTypeBuilderFactoryImpl::get_instance().get_float64_type();
     return &ti->get_interface();
 }
 
-const DynamicType* DynamicTypeBuilderFactory::get_float128_type()
+const DynamicType* DynamicTypeBuilderFactory::get_float128_type() noexcept
 {
     const auto ti = DynamicTypeBuilderFactoryImpl::get_instance().get_float128_type();
     return &ti->get_interface();
 }
 
-const DynamicType* DynamicTypeBuilderFactory::get_char8_type()
+const DynamicType* DynamicTypeBuilderFactory::get_char8_type() noexcept
 {
     const auto ti = DynamicTypeBuilderFactoryImpl::get_instance().get_char8_type();
     return &ti->get_interface();
 }
 
-const DynamicType* DynamicTypeBuilderFactory::get_char16_type()
+const DynamicType* DynamicTypeBuilderFactory::get_char16_type() noexcept
 {
     const auto ti = DynamicTypeBuilderFactoryImpl::get_instance().get_char16_type();
     return &ti->get_interface();
 }
 
-const DynamicType* DynamicTypeBuilderFactory::get_bool_type()
+const DynamicType* DynamicTypeBuilderFactory::get_bool_type() noexcept
 {
     const auto ti = DynamicTypeBuilderFactoryImpl::get_instance().get_bool_type();
     return &ti->get_interface();
 }
 
-const DynamicType* DynamicTypeBuilderFactory::get_byte_type()
+const DynamicType* DynamicTypeBuilderFactory::get_byte_type() noexcept
 {
     const auto ti = DynamicTypeBuilderFactoryImpl::get_instance().get_byte_type();
     return &ti->get_interface();
@@ -389,7 +396,7 @@ const DynamicType* DynamicTypeBuilderFactory::get_byte_type()
 void DynamicTypeBuilderFactory::build_type_identifier(
         const DynamicTypeBuilder& bld,
         TypeIdentifier& identifier,
-        bool complete /*= true*/) const
+        bool complete /*= true*/) const noexcept
 {
     const auto& builder = DynamicTypeBuilderImpl::get_implementation(bld);
     return DynamicTypeBuilderFactoryImpl::get_instance()
@@ -400,7 +407,7 @@ void DynamicTypeBuilderFactory::build_type_object(
         const DynamicTypeBuilder& bld,
         TypeObject& object,
         bool complete /*= true*/,
-        bool force /*= false*/) const
+        bool force /*= false*/) const noexcept
 {
     const auto& builder = DynamicTypeBuilderImpl::get_implementation(bld);
     return DynamicTypeBuilderFactoryImpl::get_instance()
@@ -410,7 +417,7 @@ void DynamicTypeBuilderFactory::build_type_object(
 void DynamicTypeBuilderFactory::build_type_identifier(
         const DynamicType& tp,
         TypeIdentifier& identifier,
-        bool complete /*= true*/) const
+        bool complete /*= true*/) const noexcept
 {
     const auto& type = DynamicTypeImpl::get_implementation(tp);
     return DynamicTypeBuilderFactoryImpl::get_instance()
@@ -421,9 +428,14 @@ void DynamicTypeBuilderFactory::build_type_object(
         const DynamicType& tp,
         TypeObject& object,
         bool complete /*= true*/,
-        bool force /*= false*/) const
+        bool force /*= false*/) const noexcept
 {
     const auto& type = DynamicTypeImpl::get_implementation(tp);
     return DynamicTypeBuilderFactoryImpl::get_instance()
                    .build_type_object(type, object, complete, force);
+}
+
+bool DynamicTypeBuilderFactory::is_empty() const noexcept
+{
+    return DynamicTypeBuilderFactoryImpl::get_instance().is_empty();
 }

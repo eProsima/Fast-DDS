@@ -19,21 +19,21 @@
 
 using namespace eprosima::fastrtps::types::v1_3;
 
-DynamicDataFactory& DynamicDataFactory::get_instance()
+DynamicDataFactory& DynamicDataFactory::get_instance() noexcept
 {
     // C++11 guarantees the construction to be atomic
     static DynamicDataFactory instance;
     return instance;
 }
 
-ReturnCode_t DynamicDataFactory::delete_instance()
+ReturnCode_t DynamicDataFactory::delete_instance() noexcept
 {
     // Delegate into the implementation class
     return DynamicDataFactoryImpl::delete_instance();
 }
 
 DynamicData* DynamicDataFactory::create_data(
-        const DynamicType& type)
+        const DynamicType& type) noexcept
 {
     // Delegate into the implementation class
     auto data = DynamicDataFactoryImpl::get_instance().create_data(DynamicTypeImpl::get_implementation(type));
@@ -42,14 +42,14 @@ DynamicData* DynamicDataFactory::create_data(
 }
 
 DynamicData* DynamicDataFactory::create_copy(
-        const DynamicData& data)
+        const DynamicData& data) noexcept
 {
     return &DynamicDataFactoryImpl::get_instance()
             .create_copy(DynamicDataImpl::get_implementation(data))->get_interface();
 }
 
 ReturnCode_t DynamicDataFactory::delete_data(
-        const DynamicData* pData)
+        const DynamicData* pData) noexcept
 {
     if (nullptr == pData)
     {
@@ -58,4 +58,9 @@ ReturnCode_t DynamicDataFactory::delete_data(
 
     const auto& ti = DynamicDataImpl::get_implementation(*pData);
     return DynamicDataFactoryImpl::get_instance().delete_data(ti);
+}
+
+bool DynamicDataFactory::is_empty() const noexcept
+{
+    return DynamicDataFactoryImpl::get_instance().is_empty();
 }

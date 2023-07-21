@@ -319,3 +319,19 @@ bool TypeDescriptor::is_consistent() const noexcept
 {
     return TypeState(*this).is_consistent();
 }
+
+ReturnCode_t TypeDescriptor::pretty_print(const char* buffer, uint32_t size, uint32_t& required) const noexcept;
+{
+    std::ostringstream os;
+    os << TypeState(*this);
+    auto str = os.str();
+    required = str.size() + 1;
+
+    if (size >= required)
+    {
+        str.copy(buffer, size);
+        return {};
+    }
+
+    return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
+}

@@ -58,9 +58,18 @@ public:
      * Retrieve the cached @ref DynamicType object associated to a given primitive
      * @remark This method is thread-safe.
      * @param[in] kind type identifying the primitive type to retrieve
-     * @return @ref DynamicTypeobject
+     * @return @ref DynamicType object
      */
     RTPS_DllAPI const DynamicType* get_primitive_type(
+            TypeKind kind) noexcept;
+
+    /**
+     * Retrieve a @ref DynamicTypeBuilder object associated to a given primitive
+     * @remark This method is thread-safe.
+     * @param[in] kind type identifying the primitive type to retrieve
+     * @return @ref DynamicTypeBuilder object
+     */
+    RTPS_DllAPI const DynamicTypeBuilder* create_primitive_type(
             TypeKind kind) noexcept;
 
     /**
@@ -202,7 +211,7 @@ public:
      * Creates a new @ref DynamicTypeBuilder object representing an enum
      * @return new @ref DynamicTypeBuilder object
      */
-    RTPS_DllAPI DynamicTypeBuilder* create_enum_type();
+    RTPS_DllAPI DynamicTypeBuilder* create_enum_type() noexcept;
 
     /**
      * Returns a @ref DynamicTypeBuilder associated with a `TypeKind::TK_STRUCTURE`
@@ -216,7 +225,7 @@ public:
      * @return new @ref DynamicTypeBuilder object
      */
     RTPS_DllAPI DynamicTypeBuilder* create_child_struct_type(
-            const DynamicType& parent_type);
+            const DynamicType& parent_type) noexcept;
 
     /**
      * Creates a new @ref DynamicTypeBuilder object representing a union
@@ -224,7 +233,7 @@ public:
      * @return new @ref DynamicTypeBuilder object
      */
     RTPS_DllAPI DynamicTypeBuilder* create_union_type(
-            const DynamicType& discriminator_type);
+            const DynamicType& discriminator_type) noexcept;
 
     /**
      * Creates a new @ref DynamicTypeBuilder object representing an annotation
@@ -232,12 +241,12 @@ public:
      * @return new @ref DynamicTypeBuilder object
      */
     RTPS_DllAPI const DynamicType* create_annotation_primitive(
-            const char* name);
+            const char* name) noexcept;
 
     //! returns type instantiation of the @ref DynamicTypeBuilderFactory::create_alias_type builder
     RTPS_DllAPI const DynamicType* get_alias_type(
             const DynamicType& base_type,
-            const char* sName);
+            const char* sName) noexcept;
 
     //! returns the cache type associated to create_string_type()
     RTPS_DllAPI const DynamicType* get_string_type(
@@ -253,7 +262,7 @@ public:
      * @return new @ref DynamicTypeBuilder object
      */
     RTPS_DllAPI const DynamicType* get_bitset_type(
-            uint32_t bound);
+            uint32_t bound) noexcept;
 
     /**
      * Frees any framework resources associated with the given type according with [standard] section 7.5.2.2.10.
@@ -319,43 +328,43 @@ public:
     RTPS_DllAPI const DynamicTypeBuilder* create_byte_type() noexcept;
 
     //! returns the cache type associated to create_int16_type()
-    RTPS_DllAPI const DynamicType* get_int16_type();
+    RTPS_DllAPI const DynamicType* get_int16_type() noexcept;
 
     //! returns the cache type associated to create_uint16_type()
-    RTPS_DllAPI const DynamicType* get_uint16_type();
+    RTPS_DllAPI const DynamicType* get_uint16_type() noexcept;
 
     //! returns the cache type associated to create_int32_type()
-    RTPS_DllAPI const DynamicType* get_int32_type();
+    RTPS_DllAPI const DynamicType* get_int32_type() noexcept;
 
     //! returns the cache type associated to create_uint32_type()
-    RTPS_DllAPI const DynamicType* get_uint32_type();
+    RTPS_DllAPI const DynamicType* get_uint32_type() noexcept;
 
     //! returns the cache type associated to create_int64_type()
-    RTPS_DllAPI const DynamicType* get_int64_type();
+    RTPS_DllAPI const DynamicType* get_int64_type() noexcept;
 
     //! returns the cache type associated to create_uint64_type()
-    RTPS_DllAPI const DynamicType* get_uint64_type();
+    RTPS_DllAPI const DynamicType* get_uint64_type() noexcept;
 
     //! returns the cache type associated to create_float32_type()
-    RTPS_DllAPI const DynamicType* get_float32_type();
+    RTPS_DllAPI const DynamicType* get_float32_type() noexcept;
 
     //! returns the cache type associated to create_float64_type()
-    RTPS_DllAPI const DynamicType* get_float64_type();
+    RTPS_DllAPI const DynamicType* get_float64_type() noexcept;
 
     //! returns the cache type associated to create_float128_type()
-    RTPS_DllAPI const DynamicType* get_float128_type();
+    RTPS_DllAPI const DynamicType* get_float128_type() noexcept;
 
     //! returns the cache type associated to create_char8_type()
-    RTPS_DllAPI const DynamicType* get_char8_type();
+    RTPS_DllAPI const DynamicType* get_char8_type() noexcept;
 
     //! returns the cache type associated to create_char16_type()
-    RTPS_DllAPI const DynamicType* get_char16_type();
+    RTPS_DllAPI const DynamicType* get_char16_type() noexcept;
 
     //! returns the cache type associated to create_bool_type()
-    RTPS_DllAPI const DynamicType* get_bool_type();
+    RTPS_DllAPI const DynamicType* get_bool_type() noexcept;
 
     //! returns the cache type associated to get_byte_type()
-    RTPS_DllAPI const DynamicType* get_byte_type();
+    RTPS_DllAPI const DynamicType* get_byte_type() noexcept;
 
     /**
      * Create a @ref TypeIdentifier from a @ref DynamicTypeBuilder
@@ -366,7 +375,7 @@ public:
     RTPS_DllAPI void build_type_identifier(
             const DynamicTypeBuilder& bld,
             TypeIdentifier& identifier,
-            bool complete = true) const;
+            bool complete = true) const noexcept;
 
     /**
      * Create a @ref TypeIdentifier from a @ref DynamicType
@@ -377,7 +386,7 @@ public:
     RTPS_DllAPI void build_type_identifier(
             const DynamicType& tp,
             TypeIdentifier& identifier,
-            bool complete = true) const;
+            bool complete = true) const noexcept;
 
     /**
      * Create a @ref TypeObject from a @ref DynamicTypeBuilder
@@ -390,7 +399,7 @@ public:
             const DynamicTypeBuilder& bld,
             TypeObject& object,
             bool complete = true,
-            bool force = false) const;
+            bool force = false) const noexcept;
 
     /**
      * Create a @ref TypeObject from a @ref DynamicType
@@ -403,7 +412,10 @@ public:
             const DynamicType& tp,
             TypeObject& object,
             bool complete = true,
-            bool force = false) const;
+            bool force = false) const noexcept;
+
+    //! Check if there are outstanding objects to free
+    RTPS_DllAPI bool is_empty() const noexcept;
 };
 
 } // namespace v1_3

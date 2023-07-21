@@ -206,7 +206,6 @@ public:
     RTPS_DllAPI bool equals(
             const DynamicType& other) const noexcept;
 
-
     /**
      * Set the `@bit_bound` annotation in an enumerated type (bitmask included)
      * @param[in] bit_bound word value with type context dependent meaning (see [standard] section \b 7.3.1.2.2)
@@ -217,7 +216,10 @@ public:
             uint16_t bit_bound);
 
     //! true if the inner type is primitive
-    RTPS_DllAPI bool is_primitive() const;
+    RTPS_DllAPI bool is_primitive() const noexcept;
+
+    //! true if the inner type is consistent
+    RTPS_DllAPI bool is_consistent() const noexcept;
 };
 
 } // namespace v1_3

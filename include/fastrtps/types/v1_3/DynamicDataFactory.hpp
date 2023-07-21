@@ -39,14 +39,14 @@ public:
      * @remark The singleton is allocated using C++11 builtin double-checked locking lazy initialization.
      * @return @ref DynamicDataFactory&
      */
-    RTPS_DllAPI static DynamicDataFactory& get_instance();
+    RTPS_DllAPI static DynamicDataFactory& get_instance() noexcept;
 
     /**
      * Resets the state of the factory
      * @remark This method is thread-safe.
      * @return standard @ref ReturnCode_t
      */
-    RTPS_DllAPI static ReturnCode_t delete_instance();
+    RTPS_DllAPI static ReturnCode_t delete_instance() noexcept;
 
     /**
      * Create a new @ref DynamicData object based on the given @ref DynamicType state.
@@ -55,7 +55,7 @@ public:
      * @return new @ref DynamicData object
      */
     RTPS_DllAPI DynamicData* create_data(
-            const DynamicType& type);
+            const DynamicType& type) noexcept;
 
     /**
      * Create a new @ref DynamicDataImpl object based on the given object.
@@ -64,7 +64,7 @@ public:
      * @return new @ref DynamicDataImpl object
      */
     RTPS_DllAPI DynamicData* create_copy(
-            const DynamicData& data);
+            const DynamicData& data) noexcept;
 
     /**
      * Frees any framework resources associated with the given data according with [standard] section 7.5.2.10.2.
@@ -75,7 +75,10 @@ public:
      * [standard]: https://www.omg.org/spec/DDS-XTypes/1.3/ "to the OMG standard"
      */
     RTPS_DllAPI ReturnCode_t delete_data(
-            const DynamicData* pData);
+            const DynamicData* pData) noexcept;
+
+    // check if there are outstanding objects associated
+    RTPS_DllAPI bool is_empty() const noexcept;
 };
 
 } // namespace v1_3

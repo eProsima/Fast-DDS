@@ -17,6 +17,8 @@
 #include <fastrtps/types/v1_3/DynamicTypeBuilderFactory.hpp>
 #include <dynamic-types/v1_3/MemberDescriptorImpl.hpp>
 
+#include <sstream>
+
 using namespace eprosima::fastrtps::types::v1_3;
 using eprosima::fastrtps::types::ReturnCode_t;
 
@@ -75,6 +77,26 @@ MemberDescriptor::MemberDescriptor(MemberDescriptor&& member) noexcept
     , index_(member.index_)
     , labels_(member.labels_)
     , default_label_(member.default_label_)
+{
+}
+
+MemberDescriptor::MemberDescriptor(
+        MemberId id,
+        const char * name,
+        const DynamicType* type) noexcept
+    : name_(name)
+    , id_(id)
+    , type_(type)
+{
+}
+
+MemberDescriptor::MemberDescriptor(
+        uint32_t index,
+        const char * name,
+        const DynamicType* type) noexcept
+    : name_(name)
+    , type_(type)
+    , index_(index)
 {
 }
 
@@ -277,4 +299,20 @@ bool MemberDescriptor::equals(
 bool MemberDescriptor::is_consistent(TypeKind parentKind /* = TypeKind::TK_STRUCTURE*/) const noexcept
 {
     return MemberDescriptorImpl(*this).is_consistent(parentKind);
+}
+
+ReturnCode_t MemberDescriptor::pretty_print(const char* buffer, uint32_t size, uint32_t& required) const noexcept;
+{
+    std::ostringstream os;
+    os << MemberDescriptorImpl(*this);
+    auto str = os.str();
+    required = str.size() + 1;
+
+    if (size >= required)
+    {
+        str.copy(buffer, size);
+        return {};
+    }
+
+    return ReturnCode_t::RETCODE_OUT_OF_RESOURCES;
 }

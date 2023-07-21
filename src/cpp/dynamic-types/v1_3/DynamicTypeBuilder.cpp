@@ -208,7 +208,12 @@ ReturnCode_t DynamicTypeBuilder::annotation_set_bit_bound(
     return {};
 }
 
-bool DynamicTypeBuilder::is_primitive() const
+bool DynamicTypeBuilder::is_primitive() const noexcept
 {
     return DynamicTypeBuilderImpl::get_implementation(*this).is_primitive();
+}
+
+bool DynamicTypeBuilder::is_consistent() const noexcept
+{
+    return DynamicTypeBuilderImpl::get_implementation(*this).is_consistent();
 }

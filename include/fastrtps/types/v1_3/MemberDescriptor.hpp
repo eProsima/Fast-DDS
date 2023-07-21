@@ -53,6 +53,32 @@ public:
 
     MemberDescriptor& operator=(MemberDescriptor&& type) noexcept;
 
+    /**
+     * Convenience constructor
+     * @param id @ref MemberId
+     * @param name const char*
+     * @param type @ref DynamicType
+     * @attention There is ownership transference on the type.
+     */
+    MemberDescriptor(
+            MemberId id,
+            const char * name,
+            const DynamicType* type
+    ) noexcept;
+
+    /**
+     * Convenience constructor
+     * @param index uint32_t
+     * @param name const char*
+     * @param type @ref DynamicType
+     * @attention There is ownership transference on the type.
+     */
+    MemberDescriptor(
+            uint32_t index,
+            const char * name,
+            const DynamicType* type
+    ) noexcept;
+
     bool operator ==(
             const MemberDescriptor& descriptor) const noexcept;
 
@@ -227,7 +253,35 @@ public:
      * @return \b bool `true` if consistent
      */
     bool is_consistent(TypeKind parentKind = TypeKind::TK_STRUCTURE) const noexcept;
+
+    /**
+     * contents pretty print
+     * @param[in] buffer to fill in
+     * @param[in] size of buffer
+     * @param[out] required total print size
+     * @return success
+     */
+    ReturnCode_t pretty_print(const char* buffer, uint32_t size, uint32_t& required) const noexcept;
 };
+
+//! @ref MemberDescriptor expected `std::ostream` non-member override of `operator<<`
+std::ostream& operator <<(
+        std::ostream& os,
+        const MemberDescriptor& md)
+{
+    uint32_t size = 256;
+    uint32_t required;
+    std::vector<char> buf(size);
+
+    if(!md.pretty_print(buf.data(), size, required))
+    {
+        size = required;
+        buf.resize(size);
+        md.pretty_print(buf.data(), size, required);
+    }
+
+    return os.write(buf.data(), required);
+}
 
 } // namespace v1_3
 } // namespace types

@@ -40,6 +40,7 @@ using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::types::v1_3;
 
 // common types
+using eprosima::fastrtps::types::TypeKind;
 using eprosima::fastrtps::types::TypeIdentifier;
 using eprosima::fastrtps::types::TypeObject;
 using eprosima::fastrtps::types::TypeObjectFactory;
