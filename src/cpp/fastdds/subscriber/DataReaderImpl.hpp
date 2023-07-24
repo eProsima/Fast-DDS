@@ -484,8 +484,7 @@ protected:
     DataReader* user_datareader_ = nullptr;
 
     std::shared_ptr<detail::SampleLoanManager> sample_pool_;
-    std::shared_ptr<ITopicPayloadPool> payload_pool_; // TODO remove this
-    //std::shared_ptr<IPayloadPool> payload_pool_;    // TODO uncomment this
+    std::shared_ptr<IPayloadPool> payload_pool_;
 
     bool is_custom_payload_pool_ = false;
 
