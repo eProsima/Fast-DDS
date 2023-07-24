@@ -5,11 +5,11 @@ files_to_exclude=(
     './include/fastrtps/types/dds-language_binding.idl'
     './include/fastrtps/types/dds-xtypes_discovery.idl'
     './include/fastrtps/types/dds-xtypes_typeobject.idl'
-    './include/fastrtps/types/BuiltinAnnotations.idl'
     )
 
 files_needing_typeobject=(
     './examples/cpp/dds/ContentFilteredTopicExample/HelloWorld.idl'
+    './include/fastrtps/types/BuiltinAnnotations.idl'
     './test/unittest/dynamic_types/idl/Basic.idl'
     './test/unittest/dynamic_types/idl/new_features_4_2.idl'
     './test/unittest/dynamic_types/idl/Test.idl'
@@ -94,6 +94,7 @@ mv ./include/fastrtps/types/TypeIdentifierTypes.cxx ./src/cpp/dynamic-types/Type
 mv ./include/fastrtps/types/TypeIdentifier.cxx ./src/cpp/dynamic-types/TypeIdentifier.cxx
 mv ./include/fastrtps/types/AnnotationParameterValue.cxx ./src/cpp/dynamic-types/AnnotationParameterValue.cxx
 mv ./include/fastrtps/types/TypeObject.cxx ./src/cpp/dynamic-types/TypeObject.cxx
+mv ./include/fastrtps/types/BuiltinAnnotations.cxx ./src/cpp/dynamic-types/BuiltinAnnotationsTypeObject.cxx
 
 # Remove unused files
 rm ./include/fastrtps/types/XTypesBase.cxx
@@ -103,6 +104,8 @@ rm ./include/fastrtps/types/AnnotationParameterValuePubSubTypes.cxx
 rm ./include/fastrtps/types/AnnotationParameterValuePubSubTypes.h
 rm ./include/fastrtps/types/TypeObjectPubSubTypes.cxx
 rm ./include/fastrtps/types/TypeObjectPubSubTypes.h
+rm ./include/fastrtps/types/BuiltinAnnotations.cxx
+rm ./include/fastrtps/types/BuiltinAnnotations.h
 
 echo "Please, remember also to keep changes related to non-supported @external annotation in TypeIdentifierTypes files and dependent source files"
 
