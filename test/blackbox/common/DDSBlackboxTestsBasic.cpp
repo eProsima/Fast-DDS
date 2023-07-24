@@ -750,6 +750,8 @@ TEST(DDSBasic, endpoint_custom_payload_pools)
 
     data_writer->write(&data, HANDLE_NIL);
 
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+
     ASSERT_EQ(reader_payload_pool->requested_payload_count, 1u);
     ASSERT_EQ(writer_payload_pool->requested_payload_count, 1u);
 
