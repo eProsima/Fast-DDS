@@ -50,7 +50,7 @@ static void send_ack_if_datasharing(
         const SequenceNumber_t& sequence_number)
 {
     // If not datasharing, we are done
-    if (!writer || !writer->is_datasharing_writer())
+    if (!writer || !writer->is_datasharing_writer() || writer->is_on_same_process())
     {
         return;
     }
