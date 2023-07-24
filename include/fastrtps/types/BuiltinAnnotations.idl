@@ -19,12 +19,12 @@
 
 /* Clause 8.3.1 Group of Annotations General Purpose*/
 // Clause 8.3.1.1 @id Annotation
-@annotation id {
+@annotation _id {
     unsigned long value;
 };
 
 // Clause 8.3.1.2 @autoid Annotation
-@annotation autoid {
+@annotation _autoid {
     enum AutoidKind {
         SEQUENTIAL,
         HASH
@@ -33,22 +33,24 @@
 };
 
 // Clause 8.3.1.3 @optional Annotation
-@annotation optional {
+@annotation _optional {
     boolean value default TRUE;
 };
 
 // Clause 8.3.1.4 @position Annotation
-@annotation position {
+@annotation _position {
     unsigned short value;
 };
 
+/* TODO: pending any definition
 // Clause 8.3.1.5 @value Annotation
-@annotation value {
+@annotation _value {
     any value;
 };
+*/
 
 // Clause 8.3.1.6 @extensibility Annotation
-@annotation extensibility {
+@annotation _extensibility {
     enum ExtensibilityKind {
         FINAL,
         APPENDABLE,
@@ -58,78 +60,80 @@
 };
 
 // Clause 8.3.1.7 @final Annotation
-@annotation final {
+@annotation _final {
 };
 
 // Clause 8.3.1.8 @appendable Annotation
-@annotation appendable {
+@annotation _appendable {
 };
 
 // Clause 8.3.1.9 @mutable Annotation
-@annotation mutable {
+@annotation _mutable {
 };
 
 /* Clause 8.3.2 Group of Annotations Data Modeling */
 // Clause 8.3.2.1 @key annotation
-@annotation key {
+@annotation _key {
     boolean value default TRUE;
 };
 
 // Clause 8.3.2.2 @must_understand Annotation
-@annotation must_understand {
+@annotation _must_understand {
     boolean value default TRUE;
 };
 
 // Clause 8.3.2.3 @default_literal Annotation
-@annotation default_literal{
+@annotation _default_literal{
 };
 
 /* Clause 8.3.3 Group of Annotations: Units and Ranges*/
+/* TODO: pending any definition
 // Clause 8.3.3.1 @default Annotation
-@annotation default {
+@annotation _default {
     any value;
 };
 
 // Clause 8.3.3.2 @range Annotation
-@annotation range {
+@annotation _range {
     any min;
     any max;
 };
 
 // Clause 8.3.3.3 @min Annotation
-@annotation min {
+@annotation _min {
     any value;
 };
 
 // Clause 8.3.3.4 @max Annotation
-@annotation max {
+@annotation _max {
     any value;
 };
+*/
 
 // Clause 8.3.3.5 @unit Annotation
-@annotation unit {
+@annotation _unit {
     string value;
 };
 
 /* Clause 8.3.4 Group of Annotations Data Implementation */
 // Clause 8.3.4.1 @bit_bound Annotation
-@annotation bit_bound {
+@annotation _bit_bound {
     unsigned short value;
 };
 
 // Clause 8.3.4.2 @external Annotation
-@annotation external {
+@annotation _external {
     boolean value default TRUE;
 };
 
 // Clause 8.3.4.3 @nested Annotation
-@annotation nested {
+@annotation _nested {
     boolean value default TRUE;
 };
 
 /* Clause 8.3.5 Group of Annotations Code Generation */
 // Clause 8.3.5.1 @verbatim Annotation
-@annotation verbatim {
+@annotation _verbatim {
     enum PlacementKind {
         BEGIN_FILE,
         BEFORE_DECLARATION,
@@ -145,48 +149,49 @@
 
 /* Clause 8.3.6 Group of Annotations Interfaces */
 // Clause 8.3.6.1 @service Annotation
-@annotation service {
+@annotation _service {
     string platform default "*";
 };
 
 // Clause 8.3.6.2 @oneway Annotation
-@annotation oneway {
+@annotation _oneway {
     boolean value default TRUE;
 };
 
 // Clause 8.3.6.3 @ami Annotation
-@annotation ami {
+@annotation _ami {
     boolean value default TRUE;
 };
 
 // XTypes v1.3 Clause 7.3.1.2.1 Built-in Annotations
 // Clause 7.3.1.2.1.1 Member IDs
-@annotation hashid {
+@annotation _hashid {
     string value default "";
 };
 
 // Clause 7.3.1.2.1.7 Nested Types
-@annotation default_nested {
-    boolean value default true;
+@annotation _default_nested {
+    boolean value default TRUE;
 };
 
 // Clause 7.3.1.2.1.11 Ignore Literal Names for Enumeration
-@annotation ignore_literal_names {
+@annotation _ignore_literal_names {
     boolean value default TRUE;
 };
 
 // Clause 7.3.1.2.1.12 TryConstruct Elements and Members
-@annotation try_construct {
-    enum TryConstructFailAction {
-        DISCARD,
-        USE_DEFAULT,
-        TRIM
-    };
+enum TryConstructFailAction {
+    DISCARD,
+    USE_DEFAULT,
+    TRIM
+};
+
+@annotation _try_construct {
     TryConstructFailAction value default USE_DEFAULT;
 };
 
 // Clause 7.3.1.2.1.14 Non-serialized Members
-@annotation non_serialized {
+@annotation _non_serialized {
     boolean value default TRUE;
 };
 
@@ -201,12 +206,12 @@ bitmask DataRepresentationMask {
     @position(2) XCDR2
 }
 
-@annotation data_representation {
+@annotation _data_representation {
     DataRepresentationMask allowed_kinds;
 };
 
 // Clause 7.3.1.2.1.16 Explicit declaration of Topic types
-@annotation topic {
+@annotation _topic {
     string name default "";
     string platform default "*";
 };
