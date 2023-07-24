@@ -85,7 +85,7 @@ std::unique_ptr<RTPSMessageGroup_t> SendBuffersManager::get_buffer(
         throw RTPSMessageGroup::timeout();
     }
 #else
-    std::unique_lock<TimedMutex> lock(mutex_, std::defer_lock);
+    std::unique_lock<TimedMutex> lock(mutex_);
 #endif // if HAVE_STRICT_REALTIME
 
     std::unique_ptr<RTPSMessageGroup_t> ret_val;
