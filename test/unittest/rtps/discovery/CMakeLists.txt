@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+#EDP TESTS
 set(EDPTESTS_SOURCE EdpTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/builtin/discovery/endpoint/EDP.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/publisher/qos/WriterQos.cpp
@@ -51,8 +52,6 @@ set(EDPTESTS_SOURCE EdpTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     )
-
-set(PDPTESTS_SOURCE EdpTests.cpp)
 
 if(WIN32)
     add_definitions(-D_WIN32_WINNT=0x0601)
@@ -99,7 +98,12 @@ endif()
 
 add_gtest(EdpTests SOURCES ${EDPTESTS_SOURCE})
 
+
+#PDP TESTS
+set(PDPTESTS_SOURCE PDPTests.cpp)
+
 add_executable(PDPTests ${PDPTESTS_SOURCE})
+
 target_compile_definitions(PDPTests PRIVATE FASTRTPS_NO_LIB
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
