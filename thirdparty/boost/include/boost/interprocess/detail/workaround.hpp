@@ -190,6 +190,17 @@
    #define BOOST_INTERPROCESS_TIMEOUT_WHEN_LOCKING_DURATION_MS 10000
 #endif
 
+// Max open or create tries with managed memory segments
+#ifndef BOOST_INTERPROCESS_MANAGED_OPEN_OR_CREATE_INITIALIZE_MAX_TRIES
+   #define BOOST_INTERPROCESS_MANAGED_OPEN_OR_CREATE_INITIALIZE_MAX_TRIES 20u
+#endif
+
+// Maximum timeout in seconds with open or create tries with managed memory segments
+// waiting the creator to initialize the shared memory
+#ifndef BOOST_INTERPROCESS_MANAGED_OPEN_OR_CREATE_INITIALIZE_TIMEOUT_SEC
+   #define BOOST_INTERPROCESS_MANAGED_OPEN_OR_CREATE_INITIALIZE_TIMEOUT_SEC 300u
+#endif
+
 //Other switches
 //BOOST_INTERPROCESS_MSG_QUEUE_USES_CIRC_INDEX
 //message queue uses a circular queue as index instead of an array (better performance)
