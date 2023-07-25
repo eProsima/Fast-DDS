@@ -97,10 +97,9 @@ public:
      */
     double getRemainingTimeMilliSec()
     {
-        return static_cast<double>(
-            std::chrono::duration_cast<std::chrono::milliseconds>(
-                next_trigger_time_.load() - std::chrono::steady_clock::now()).
-            count());
+        const auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+            next_trigger_time_.load() - std::chrono::steady_clock::now());
+        return static_cast<double>(ms.count());
     }
 
     /*!
