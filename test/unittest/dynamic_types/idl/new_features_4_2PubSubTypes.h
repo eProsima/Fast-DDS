@@ -239,7 +239,7 @@ namespace bitmodule
 
         static constexpr bool is_plain_impl()
         {
-            return 21ULL == (detail::BitsetBitmask_offset_of<BitsetBitmask, detail::BitsetBitmask_f>() + sizeof(bitmodule::MyBitMask));
+            return 17ULL == (detail::BitsetBitmask_offset_of<BitsetBitmask, detail::BitsetBitmask_f>() + sizeof(bitmodule::MyBitMask));
 
         }};
 
@@ -356,7 +356,7 @@ namespace bitmodule
 
         static constexpr bool is_plain_impl()
         {
-            return 28ULL == (detail::BM2_offset_of<BM2, detail::BM2_f>() + sizeof(int32_t));
+            return 24ULL == (detail::BM2_offset_of<BM2, detail::BM2_f>() + sizeof(int32_t));
 
         }};
 }
@@ -444,3 +444,4 @@ public:
 };
 
 #endif // _FAST_DDS_GENERATED_NEW_FEATURES_4_2_PUBSUBTYPES_H_
+

@@ -170,6 +170,7 @@ TEST(RTPSWriterTests, WriterWithCustomPayloadPool_DoesNotInitializePool_WhenDyna
 
 namespace eprosima {
 namespace fastcdr {
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::rtps::TestDataType&,

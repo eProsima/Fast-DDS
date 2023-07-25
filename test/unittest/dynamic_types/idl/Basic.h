@@ -2469,9 +2469,9 @@ public:
      */
     eProsima_user_DllExport uint32_t b() const;
 
-    eProsima_user_DllExport const std::bitset<30>& bitset() const;
+    eProsima_user_DllExport std::bitset<30> bitset() const;
 
-    eProsima_user_DllExport std::bitset<30>& bitset();
+    eProsima_user_DllExport void bitset(const std::bitset<30>&);
 
 
 
@@ -3475,3 +3475,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_BASIC_H_
+

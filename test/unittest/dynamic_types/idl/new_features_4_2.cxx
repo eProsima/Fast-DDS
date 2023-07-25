@@ -586,7 +586,7 @@ int32_t WCharUnion::case_zero() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_case_zero;
@@ -606,7 +606,7 @@ int32_t& WCharUnion::case_zero()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_case_zero;
@@ -632,7 +632,7 @@ int32_t WCharUnion::case_one() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_case_one;
@@ -652,7 +652,7 @@ int32_t& WCharUnion::case_one()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_case_one;
@@ -842,7 +842,7 @@ int32_t OctetUnion::case_five() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_case_five;
@@ -862,7 +862,7 @@ int32_t& OctetUnion::case_five()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_case_five;
@@ -888,7 +888,7 @@ int32_t OctetUnion::case_seven() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_case_seven;
@@ -908,7 +908,7 @@ int32_t& OctetUnion::case_seven()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_case_seven;
@@ -1098,7 +1098,7 @@ int32_t Int8Union::case_three() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_case_three;
@@ -1118,7 +1118,7 @@ int32_t& Int8Union::case_three()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_case_three;
@@ -1144,7 +1144,7 @@ int32_t Int8Union::case_six() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_case_six;
@@ -1164,7 +1164,7 @@ int32_t& Int8Union::case_six()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_case_six;
@@ -1249,14 +1249,25 @@ uint32_t bitmodule::ParentBitset::parent_bitfield() const
     return static_cast<uint32_t>(aux.to_ullong());
 }
 
-const std::bitset<17>& bitmodule::ParentBitset::bitset() const
+std::bitset<17> bitmodule::ParentBitset::bitset() const
 {
-    return m_bitset;
+    std::string str_value;
+
+
+    str_value = m_bitset.to_string() + str_value;
+
+    return std::bitset<17>(str_value);
 }
 
-std::bitset<17>& bitmodule::ParentBitset::bitset()
+void bitmodule::ParentBitset::bitset(const std::bitset<17>& bitset)
 {
-    return m_bitset;
+    std::string str_value {bitset.to_string()};
+    size_t base_diff {0};
+    size_t last_post {std::string::npos};
+
+
+    base_diff += 17;
+    m_bitset = std::bitset<17>(str_value.substr(str_value.length() - base_diff, last_post));
 }
 
 bitmodule::MyBitset::MyBitset()    : bitmodule::ParentBitset() 
@@ -1379,7 +1390,7 @@ void bitmodule::MyBitset::d(
         int16_t _d)
 {
     int base = 18;
-    int size = 12;
+    int size = 5;
     for (int i = base; i < base + size; ++i)
     {
         m_bitset.set(i, !!(_d & 0x01));
@@ -1390,8 +1401,8 @@ void bitmodule::MyBitset::d(
 int16_t bitmodule::MyBitset::d() const
 {
     int base = 18;
-    int size = 12;
-    std::bitset<12> aux;
+    int size = 5;
+    std::bitset<5> aux;
     for (int i = 0; i < size; ++i)
     {
         aux.set(i, m_bitset.test(i + base));
@@ -1401,8 +1412,8 @@ int16_t bitmodule::MyBitset::d() const
 void bitmodule::MyBitset::e(
         int16_t _e)
 {
-    int base = 30;
-    int size = 12;
+    int base = 23;
+    int size = 5;
     for (int i = base; i < base + size; ++i)
     {
         m_bitset.set(i, !!(_e & 0x01));
@@ -1412,9 +1423,9 @@ void bitmodule::MyBitset::e(
 
 int16_t bitmodule::MyBitset::e() const
 {
-    int base = 30;
-    int size = 12;
-    std::bitset<12> aux;
+    int base = 23;
+    int size = 5;
+    std::bitset<5> aux;
     for (int i = 0; i < size; ++i)
     {
         aux.set(i, m_bitset.test(i + base));
@@ -1424,8 +1435,8 @@ int16_t bitmodule::MyBitset::e() const
 void bitmodule::MyBitset::f(
         int16_t _f)
 {
-    int base = 42;
-    int size = 12;
+    int base = 28;
+    int size = 5;
     for (int i = base; i < base + size; ++i)
     {
         m_bitset.set(i, !!(_f & 0x01));
@@ -1435,9 +1446,9 @@ void bitmodule::MyBitset::f(
 
 int16_t bitmodule::MyBitset::f() const
 {
-    int base = 42;
-    int size = 12;
-    std::bitset<12> aux;
+    int base = 28;
+    int size = 5;
+    std::bitset<5> aux;
     for (int i = 0; i < size; ++i)
     {
         aux.set(i, m_bitset.test(i + base));
@@ -1445,14 +1456,36 @@ int16_t bitmodule::MyBitset::f() const
     return static_cast<int16_t>(aux.to_ullong());
 }
 
-const std::bitset<54>& bitmodule::MyBitset::bitset() const
+std::bitset<50> bitmodule::MyBitset::bitset() const
 {
-    return m_bitset;
+    std::string str_value;
+
+
+            str_value = static_cast<const bitmodule::ParentBitset*>(this)->bitset().to_string() + str_value;
+        
+
+    str_value = m_bitset.to_string() + str_value;
+
+    return std::bitset<50>(str_value);
 }
 
-std::bitset<54>& bitmodule::MyBitset::bitset()
+void bitmodule::MyBitset::bitset(const std::bitset<50>& bitset)
 {
-    return m_bitset;
+    std::string str_value {bitset.to_string()};
+    size_t base_diff {0};
+    size_t last_post {std::string::npos};
+
+
+            {
+                base_diff += 17;
+                std::bitset<17> internal_bitset(str_value.substr(str_value.length() - base_diff, last_post));
+                static_cast<bitmodule::ParentBitset*>(this)->bitset(internal_bitset);
+                last_post = base_diff;
+            }
+        
+
+    base_diff += 33;
+    m_bitset = std::bitset<33>(str_value.substr(str_value.length() - base_diff, last_post));
 }
 
 

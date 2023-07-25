@@ -49,7 +49,7 @@ module bitmodule
 		bitfield<1> b;
 		bitfield<4>;
 		bitfield<10> c;
-		bitfield<12, short> d, e, f;
+		bitfield<5, short> d, e, f;
 	};
 
 	@bit_bound(8)

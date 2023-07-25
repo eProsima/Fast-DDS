@@ -34,6 +34,7 @@ namespace eprosima {
 namespace fastcdr {
 
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const MyEnumWideStruct& data,
@@ -59,6 +60,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 
     return current_alignment - initial_alignment;
 }
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const MyEnumWideStruct& data)
@@ -77,6 +79,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     scdr.end_serialize_type(current_state);
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         MyEnumWideStruct& data)
@@ -111,6 +114,7 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const SimpleWideUnion& data,
@@ -157,6 +161,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const SimpleWideUnion& data)
@@ -190,6 +195,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     scdr.end_serialize_type(current_state);
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         SimpleWideUnion& data)
@@ -232,6 +238,7 @@ ret_value = false;
                 return ret_value;
             });
 }
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const SimpleWideUnionStruct& data,
@@ -257,6 +264,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 
     return current_alignment - initial_alignment;
 }
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const SimpleWideUnionStruct& data)
@@ -275,6 +283,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     scdr.end_serialize_type(current_state);
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         SimpleWideUnionStruct& data)

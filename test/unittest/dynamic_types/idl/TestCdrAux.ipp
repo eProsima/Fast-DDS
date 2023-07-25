@@ -37,6 +37,7 @@ namespace fastcdr {
 
 
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const BasicStruct& data,
@@ -76,6 +77,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 
     return current_alignment - initial_alignment;
 }
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const BasicStruct& data)
@@ -108,6 +110,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     scdr.end_serialize_type(current_state);
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         BasicStruct& data)
@@ -203,6 +206,7 @@ void serialize_key(
 
 
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const ComplexStruct& data,
@@ -249,6 +253,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 
     return current_alignment - initial_alignment;
 }
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const ComplexStruct& data)
@@ -288,6 +293,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     scdr.end_serialize_type(current_state);
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         ComplexStruct& data)
@@ -406,6 +412,7 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const MyUnion& data,
@@ -448,6 +455,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const MyUnion& data)
@@ -478,6 +486,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     scdr.end_serialize_type(current_state);
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         MyUnion& data)
@@ -516,6 +525,7 @@ ret_value = false;
                 return ret_value;
             });
 }
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const MyUnion2& data,
@@ -562,6 +572,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const MyUnion2& data)
@@ -595,6 +606,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     scdr.end_serialize_type(current_state);
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         MyUnion2& data)
@@ -637,6 +649,7 @@ ret_value = false;
                 return ret_value;
             });
 }
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const CompleteStruct& data,
@@ -663,6 +676,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 
     return current_alignment - initial_alignment;
 }
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const CompleteStruct& data)
@@ -682,6 +696,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     scdr.end_serialize_type(current_state);
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         CompleteStruct& data)
@@ -720,6 +735,7 @@ void serialize_key(
     static_cast<void>(data);
 }
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const KeyedStruct& data,
@@ -746,6 +762,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 
     return current_alignment - initial_alignment;
 }
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedStruct& data)
@@ -765,6 +782,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     scdr.end_serialize_type(current_state);
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         KeyedStruct& data)

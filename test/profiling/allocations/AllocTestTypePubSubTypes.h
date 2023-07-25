@@ -154,3 +154,4 @@ private:
     }};
 
 #endif // _FAST_DDS_GENERATED_ALLOCTESTTYPE_PUBSUBTYPES_H_
+

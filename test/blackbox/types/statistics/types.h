@@ -2258,3 +2258,4 @@ namespace eprosima {
 } // namespace eprosima
 
 #endif // _FAST_DDS_GENERATED_EPROSIMA_FASTDDS_STATISTICS_TYPES_H_
+

@@ -33,6 +33,7 @@ using namespace eprosima::fastcdr::exception;
 namespace eprosima {
 namespace fastcdr {
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const ExampleMessage& data,
@@ -60,6 +61,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 
     return current_alignment - initial_alignment;
 }
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const ExampleMessage& data)
@@ -80,6 +82,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     scdr.end_serialize_type(current_state);
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         ExampleMessage& data)

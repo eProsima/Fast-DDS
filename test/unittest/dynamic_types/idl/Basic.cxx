@@ -2400,14 +2400,25 @@ uint32_t MyBitset::b() const
     return static_cast<uint32_t>(aux.to_ullong());
 }
 
-const std::bitset<30>& MyBitset::bitset() const
+std::bitset<30> MyBitset::bitset() const
 {
-    return m_bitset;
+    std::string str_value;
+
+
+    str_value = m_bitset.to_string() + str_value;
+
+    return std::bitset<30>(str_value);
 }
 
-std::bitset<30>& MyBitset::bitset()
+void MyBitset::bitset(const std::bitset<30>& bitset)
 {
-    return m_bitset;
+    std::string str_value {bitset.to_string()};
+    size_t base_diff {0};
+    size_t last_post {std::string::npos};
+
+
+    base_diff += 30;
+    m_bitset = std::bitset<30>(str_value.substr(str_value.length() - base_diff, last_post));
 }
 
 BitsetStruct::BitsetStruct()
@@ -2935,7 +2946,7 @@ int32_t SimpleUnion::first() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_first;
@@ -2955,7 +2966,7 @@ int32_t& SimpleUnion::first()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_first;
@@ -2981,7 +2992,7 @@ int64_t SimpleUnion::second() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_second;
@@ -3001,7 +3012,7 @@ int64_t& SimpleUnion::second()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_second;
@@ -3191,7 +3202,7 @@ int32_t UnionUnion::first() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_first;
@@ -3211,7 +3222,7 @@ int32_t& UnionUnion::first()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_first;
@@ -3244,7 +3255,7 @@ const SimpleUnion& UnionUnion::second() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_second;
@@ -3264,7 +3275,7 @@ SimpleUnion& UnionUnion::second()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_second;
@@ -3454,7 +3465,7 @@ int32_t WCharUnion::first() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_first;
@@ -3474,7 +3485,7 @@ int32_t& WCharUnion::first()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_first;
@@ -3500,7 +3511,7 @@ int64_t WCharUnion::second() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_second;
@@ -3520,7 +3531,7 @@ int64_t& WCharUnion::second()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_second;

@@ -1590,6 +1590,8 @@ void AppliedBuiltinMemberAnnotations::serializeKey(
 
 namespace eprosima {
 namespace fastcdr {
+
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::ExtendedAnnotationParameterValue&,
@@ -1599,18 +1601,21 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr&,
         const eprosima::fastrtps::types::ExtendedAnnotationParameterValue&)
 {
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr&,
         eprosima::fastrtps::types::ExtendedAnnotationParameterValue&)
 {
 }
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::AnnotationParameterValue& data,
@@ -1716,6 +1721,7 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::AnnotationParameterValue& data)
@@ -1778,6 +1784,7 @@ void serialize(
     }
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::AnnotationParameterValue& data)
@@ -1840,6 +1847,7 @@ void deserialize(
     }
 }
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::AppliedAnnotationParameter& data,
@@ -1861,6 +1869,7 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::AppliedAnnotationParameter& data)
@@ -1869,6 +1878,7 @@ void serialize(
     scdr << data.value();
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::AppliedAnnotationParameter& data)
@@ -1877,6 +1887,7 @@ void deserialize(
     dcdr >> data.value();
 }
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::AppliedAnnotation& data,
@@ -1898,6 +1909,7 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::AppliedAnnotation& data)
@@ -1906,6 +1918,7 @@ void serialize(
     scdr << data.param_seq();
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::AppliedAnnotation& data)
@@ -1914,6 +1927,7 @@ void deserialize(
     dcdr >> data.param_seq();
 }
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::AppliedVerbatimAnnotation& data,
@@ -1937,6 +1951,7 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::AppliedVerbatimAnnotation& data)
@@ -1946,6 +1961,7 @@ void serialize(
     scdr << data.text();
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::AppliedVerbatimAnnotation& data)
@@ -1955,6 +1971,7 @@ void deserialize(
     dcdr >> data.text();
 }
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::AppliedBuiltinMemberAnnotations& data,
@@ -1980,6 +1997,7 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::AppliedBuiltinMemberAnnotations& data)
@@ -1990,6 +2008,7 @@ void serialize(
     scdr << data.hash_id();
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::AppliedBuiltinMemberAnnotations& data)

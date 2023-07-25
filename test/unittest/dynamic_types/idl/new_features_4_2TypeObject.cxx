@@ -1536,7 +1536,7 @@ namespace bitmodule {
         mbf_d.common().flags().IS_KEY(false);
         mbf_d.common().flags().IS_DEFAULT(false);
         mbf_d.common().position(18);
-        mbf_d.common().bitcount(12);
+        mbf_d.common().bitcount(5);
         mbf_d.common().holder_type(TK_INT16);
         MD5 d_hash("d");
         for(int i = 0; i < 4; ++i)
@@ -1552,8 +1552,8 @@ namespace bitmodule {
         mbf_e.common().flags().IS_MUST_UNDERSTAND(false);
         mbf_e.common().flags().IS_KEY(false);
         mbf_e.common().flags().IS_DEFAULT(false);
-        mbf_e.common().position(30);
-        mbf_e.common().bitcount(12);
+        mbf_e.common().position(23);
+        mbf_e.common().bitcount(5);
         mbf_e.common().holder_type(TK_INT16);
         MD5 e_hash("e");
         for(int i = 0; i < 4; ++i)
@@ -1569,8 +1569,8 @@ namespace bitmodule {
         mbf_f.common().flags().IS_MUST_UNDERSTAND(false);
         mbf_f.common().flags().IS_KEY(false);
         mbf_f.common().flags().IS_DEFAULT(false);
-        mbf_f.common().position(42);
-        mbf_f.common().bitcount(12);
+        mbf_f.common().position(28);
+        mbf_f.common().bitcount(5);
         mbf_f.common().holder_type(TK_INT16);
         MD5 f_hash("f");
         for(int i = 0; i < 4; ++i)
@@ -1803,7 +1803,7 @@ namespace bitmodule {
         cbf_d.common().flags().IS_KEY(false);
         cbf_d.common().flags().IS_DEFAULT(false);
         cbf_d.common().position(18);
-        cbf_d.common().bitcount(12);
+        cbf_d.common().bitcount(5);
         cbf_d.common().holder_type(TK_INT16);
         cbf_d.detail().name("d");
 
@@ -1840,7 +1840,7 @@ namespace bitmodule {
             }
             AnnotationParameterValue paramValue;
             paramValue._d(TK_UINT16);
-            paramValue.uint_16_value(12);
+            paramValue.uint_16_value(5);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
 
@@ -1856,8 +1856,8 @@ namespace bitmodule {
         cbf_e.common().flags().IS_MUST_UNDERSTAND(false);
         cbf_e.common().flags().IS_KEY(false);
         cbf_e.common().flags().IS_DEFAULT(false);
-        cbf_e.common().position(30);
-        cbf_e.common().bitcount(12);
+        cbf_e.common().position(23);
+        cbf_e.common().bitcount(5);
         cbf_e.common().holder_type(TK_INT16);
         cbf_e.detail().name("e");
 
@@ -1874,7 +1874,7 @@ namespace bitmodule {
             }
             AnnotationParameterValue paramValue;
             paramValue._d(TK_UINT16);
-            paramValue.uint_16_value(30);
+            paramValue.uint_16_value(23);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
 
@@ -1894,7 +1894,7 @@ namespace bitmodule {
             }
             AnnotationParameterValue paramValue;
             paramValue._d(TK_UINT16);
-            paramValue.uint_16_value(12);
+            paramValue.uint_16_value(5);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
 
@@ -1910,8 +1910,8 @@ namespace bitmodule {
         cbf_f.common().flags().IS_MUST_UNDERSTAND(false);
         cbf_f.common().flags().IS_KEY(false);
         cbf_f.common().flags().IS_DEFAULT(false);
-        cbf_f.common().position(42);
-        cbf_f.common().bitcount(12);
+        cbf_f.common().position(28);
+        cbf_f.common().bitcount(5);
         cbf_f.common().holder_type(TK_INT16);
         cbf_f.detail().name("f");
 
@@ -1928,7 +1928,7 @@ namespace bitmodule {
             }
             AnnotationParameterValue paramValue;
             paramValue._d(TK_UINT16);
-            paramValue.uint_16_value(42);
+            paramValue.uint_16_value(28);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
 
@@ -1948,7 +1948,7 @@ namespace bitmodule {
             }
             AnnotationParameterValue paramValue;
             paramValue._d(TK_UINT16);
-            paramValue.uint_16_value(12);
+            paramValue.uint_16_value(5);
             annParam.value(paramValue);
             ann.param_seq().push_back(annParam);
 

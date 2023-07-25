@@ -943,6 +943,7 @@ namespace eprosima {
 
 
             } //End of namespace detail
+
             DiscoveryTimePubSubType::DiscoveryTimePubSubType()
             {
                 setName("eprosima::fastdds::statistics::DiscoveryTime");
@@ -2156,6 +2157,9 @@ namespace eprosima {
 
         } //End of namespace statistics
 
+
     } //End of namespace fastdds
 
+
 } //End of namespace eprosima
+

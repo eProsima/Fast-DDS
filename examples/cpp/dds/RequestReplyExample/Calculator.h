@@ -290,3 +290,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_CALCULATOR_H_
+

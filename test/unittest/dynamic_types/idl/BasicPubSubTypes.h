@@ -2811,7 +2811,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 12ULL == (detail::BitsetStruct_offset_of<BitsetStruct, detail::BitsetStruct_f>() + sizeof(MyBitset));
+        return 8ULL == (detail::BitsetStruct_offset_of<BitsetStruct, detail::BitsetStruct_f>() + sizeof(MyBitset));
 
     }};
 
@@ -3299,3 +3299,4 @@ public:
 };
 
 #endif // _FAST_DDS_GENERATED_BASIC_PUBSUBTYPES_H_
+

@@ -28,7 +28,7 @@
             constexpr uint32_t MyEnumWideStruct_max_key_cdr_typesize {0UL};
 
 
-            constexpr uint32_t SimpleWideUnionStruct_max_cdr_typesize {16UL};
+            constexpr uint32_t SimpleWideUnionStruct_max_cdr_typesize {24UL};
             constexpr uint32_t SimpleWideUnionStruct_max_key_cdr_typesize {0UL};
 
 
@@ -39,45 +39,10 @@ class Cdr;
 class CdrSizeCalculator;
 
 
-eProsima_user_DllExport size_t calculate_serialized_size(
-        eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const MyEnumWideStruct& data,
-        size_t current_alignment);
-eProsima_user_DllExport void serialize(
-        eprosima::fastcdr::Cdr& scdr,
-        const MyEnumWideStruct& data);
-
-eProsima_user_DllExport void deserialize(
-        eprosima::fastcdr::Cdr& cdr,
-        MyEnumWideStruct& data);
-
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,
         const MyEnumWideStruct& data);
 
-eProsima_user_DllExport size_t calculate_serialized_size(
-        eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const SimpleWideUnion& data,
-        size_t current_alignment);
-
-eProsima_user_DllExport void serialize(
-        eprosima::fastcdr::Cdr& scdr,
-        const SimpleWideUnion& data);
-
-eProsima_user_DllExport void deserialize(
-        eprosima::fastcdr::Cdr& cdr,
-        SimpleWideUnion& data);
-eProsima_user_DllExport size_t calculate_serialized_size(
-        eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const SimpleWideUnionStruct& data,
-        size_t current_alignment);
-eProsima_user_DllExport void serialize(
-        eprosima::fastcdr::Cdr& scdr,
-        const SimpleWideUnionStruct& data);
-
-eProsima_user_DllExport void deserialize(
-        eprosima::fastcdr::Cdr& cdr,
-        SimpleWideUnionStruct& data);
 
 eProsima_user_DllExport void serialize_key(
         eprosima::fastcdr::Cdr& scdr,

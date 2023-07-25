@@ -199,3 +199,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_OWNERSHIPSTRENGTH_H_
+

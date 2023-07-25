@@ -788,9 +788,9 @@ namespace bitmodule {
          */
         eProsima_user_DllExport uint32_t parent_bitfield() const;
 
-        eProsima_user_DllExport const std::bitset<17>& bitset() const;
+        eProsima_user_DllExport std::bitset<17> bitset() const;
 
-        eProsima_user_DllExport std::bitset<17>& bitset();
+        eProsima_user_DllExport void bitset(const std::bitset<17>&);
 
 
 
@@ -932,15 +932,15 @@ namespace bitmodule {
          */
         eProsima_user_DllExport int16_t f() const;
 
-        eProsima_user_DllExport const std::bitset<54>& bitset() const;
+        eProsima_user_DllExport std::bitset<50> bitset() const;
 
-        eProsima_user_DllExport std::bitset<54>& bitset();
+        eProsima_user_DllExport void bitset(const std::bitset<50>&);
 
 
 
     private:
 
-        std::bitset<54> m_bitset;
+        std::bitset<33> m_bitset;
     };
     /*!
      * @brief This class represents the bitmask MyBitMask defined by the user in the IDL file.
@@ -1348,3 +1348,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_NEW_FEATURES_4_2_H_
+

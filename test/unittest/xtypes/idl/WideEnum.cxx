@@ -329,7 +329,7 @@ int32_t SimpleWideUnion::first() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_first;
@@ -349,7 +349,7 @@ int32_t& SimpleWideUnion::first()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_first;
@@ -375,7 +375,7 @@ int64_t SimpleWideUnion::second() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_second;
@@ -395,7 +395,7 @@ int64_t& SimpleWideUnion::second()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_second;
@@ -421,7 +421,7 @@ uint8_t SimpleWideUnion::third() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_third;
@@ -441,7 +441,7 @@ uint8_t& SimpleWideUnion::third()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_third;

@@ -3486,7 +3486,7 @@ int32_t SimpleUnion::first() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_first;
@@ -3506,7 +3506,7 @@ int32_t& SimpleUnion::first()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_first;
@@ -3532,7 +3532,7 @@ int64_t SimpleUnion::second() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_second;
@@ -3552,7 +3552,7 @@ int64_t& SimpleUnion::second()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_second;
@@ -3742,7 +3742,7 @@ int32_t SimpleUnionNames::first_case() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_first_case;
@@ -3762,7 +3762,7 @@ int32_t& SimpleUnionNames::first_case()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_first_case;
@@ -3788,7 +3788,7 @@ int64_t SimpleUnionNames::second_case() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_second_case;
@@ -3808,7 +3808,7 @@ int64_t& SimpleUnionNames::second_case()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_second_case;
@@ -3998,7 +3998,7 @@ uint8_t SimpleTypeUnion::first() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_first;
@@ -4018,7 +4018,7 @@ uint8_t& SimpleTypeUnion::first()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_first;
@@ -4044,7 +4044,7 @@ int64_t SimpleTypeUnion::second() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_second;
@@ -4064,7 +4064,7 @@ int64_t& SimpleTypeUnion::second()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_second;
@@ -4254,7 +4254,7 @@ int32_t SimpleBadUnion::first() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_first;
@@ -4274,7 +4274,7 @@ int32_t& SimpleBadUnion::first()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_first;
@@ -4300,7 +4300,7 @@ int64_t SimpleBadUnion::second() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_second;
@@ -4320,7 +4320,7 @@ int64_t& SimpleBadUnion::second()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_second;
@@ -4510,7 +4510,7 @@ int32_t SimpleBadDiscUnion::first() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_first;
@@ -4530,7 +4530,7 @@ int32_t& SimpleBadDiscUnion::first()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_first;
@@ -4556,7 +4556,7 @@ int64_t SimpleBadDiscUnion::second() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_second;
@@ -4576,7 +4576,7 @@ int64_t& SimpleBadDiscUnion::second()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_second;

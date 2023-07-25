@@ -1793,7 +1793,7 @@ const BasicStruct& MyUnion::basic() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_basic;
@@ -1813,7 +1813,7 @@ BasicStruct& MyUnion::basic()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_basic;
@@ -1847,7 +1847,7 @@ const ComplexStruct& MyUnion::complex() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_complex;
@@ -1868,7 +1868,7 @@ ComplexStruct& MyUnion::complex()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_complex;
@@ -2084,7 +2084,7 @@ int32_t MyUnion2::uno() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_uno;
@@ -2104,7 +2104,7 @@ int32_t& MyUnion2::uno()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_uno;
@@ -2137,7 +2137,7 @@ const std::string& MyUnion2::imString() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_imString;
@@ -2157,7 +2157,7 @@ std::string& MyUnion2::imString()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_imString;
@@ -2183,7 +2183,7 @@ int32_t MyUnion2::tres() const
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_tres;
@@ -2203,7 +2203,7 @@ int32_t& MyUnion2::tres()
     }
     if(!b)
     {
-        throw BadParamException("This member is not been selected");
+        throw BadParamException("This member has not been selected");
     }
 
     return m_tres;

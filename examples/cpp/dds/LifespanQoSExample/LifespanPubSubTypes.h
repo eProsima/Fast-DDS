@@ -119,3 +119,4 @@ public:
 };
 
 #endif // _FAST_DDS_GENERATED_LIFESPAN_PUBSUBTYPES_H_
+

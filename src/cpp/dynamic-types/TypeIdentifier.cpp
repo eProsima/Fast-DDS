@@ -1317,6 +1317,7 @@ bool TypeIdentifier::consistent(
 
 namespace eprosima {
 namespace fastcdr {
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::TypeIdentifier& data,
@@ -1395,11 +1396,7 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
-} // namespace fastcdr
-} // namespace eprosima
-
-namespace eprosima {
-namespace fastcdr {
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::TypeIdentifier& data)
@@ -1452,6 +1449,7 @@ void serialize(
     }
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::TypeIdentifier& data)

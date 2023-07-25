@@ -154,3 +154,4 @@ private:
     }};
 
 #endif // _FAST_DDS_GENERATED_BENCHMARK_BIG_PUBSUBTYPES_H_
+

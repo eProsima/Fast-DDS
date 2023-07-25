@@ -173,3 +173,4 @@ private:
 };
 
 #endif // _FAST_DDS_GENERATED_SAMPLE_H_
+
