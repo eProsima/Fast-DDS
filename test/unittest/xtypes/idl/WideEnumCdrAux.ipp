@@ -35,7 +35,7 @@ namespace fastcdr {
 
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const MyEnumWideStruct& data,
         size_t current_alignment)
@@ -61,7 +61,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const MyEnumWideStruct& data)
 {
@@ -80,7 +80,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         MyEnumWideStruct& data)
 {
@@ -115,7 +115,7 @@ void serialize_key(
 }
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const SimpleWideUnion& data,
         size_t current_alignment)
@@ -162,7 +162,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const SimpleWideUnion& data)
 {
@@ -196,7 +196,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         SimpleWideUnion& data)
 {
@@ -239,7 +239,7 @@ ret_value = false;
             });
 }
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const SimpleWideUnionStruct& data,
         size_t current_alignment)
@@ -265,7 +265,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const SimpleWideUnionStruct& data)
 {
@@ -284,7 +284,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         SimpleWideUnionStruct& data)
 {

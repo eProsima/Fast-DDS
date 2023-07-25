@@ -34,7 +34,7 @@ namespace eprosima {
 namespace fastcdr {
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const KeyedHelloWorld& data,
         size_t current_alignment)
@@ -62,7 +62,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedHelloWorld& data)
 {
@@ -83,7 +83,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         KeyedHelloWorld& data)
 {

@@ -34,7 +34,7 @@ namespace eprosima {
 namespace fastcdr {
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::statistics::detail::EntityId_s& data,
         size_t current_alignment)
@@ -60,7 +60,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::detail::EntityId_s& data)
 {
@@ -79,7 +79,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastdds::statistics::detail::EntityId_s& data)
 {
@@ -114,7 +114,7 @@ void serialize_key(
 }
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::statistics::detail::GuidPrefix_s& data,
         size_t current_alignment)
@@ -140,7 +140,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::detail::GuidPrefix_s& data)
 {
@@ -159,7 +159,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastdds::statistics::detail::GuidPrefix_s& data)
 {
@@ -194,7 +194,7 @@ void serialize_key(
 }
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::statistics::detail::GUID_s& data,
         size_t current_alignment)
@@ -221,7 +221,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::detail::GUID_s& data)
 {
@@ -241,7 +241,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastdds::statistics::detail::GUID_s& data)
 {
@@ -280,7 +280,7 @@ void serialize_key(
 }
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::statistics::detail::SequenceNumber_s& data,
         size_t current_alignment)
@@ -307,7 +307,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::detail::SequenceNumber_s& data)
 {
@@ -327,7 +327,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastdds::statistics::detail::SequenceNumber_s& data)
 {
@@ -366,7 +366,7 @@ void serialize_key(
 }
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::statistics::detail::SampleIdentity_s& data,
         size_t current_alignment)
@@ -393,7 +393,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::detail::SampleIdentity_s& data)
 {
@@ -413,7 +413,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastdds::statistics::detail::SampleIdentity_s& data)
 {
@@ -452,7 +452,7 @@ void serialize_key(
 }
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::statistics::detail::Locator_s& data,
         size_t current_alignment)
@@ -480,7 +480,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::detail::Locator_s& data)
 {
@@ -501,7 +501,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastdds::statistics::detail::Locator_s& data)
 {
@@ -545,7 +545,7 @@ void serialize_key(
 
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::statistics::DiscoveryTime& data,
         size_t current_alignment)
@@ -576,7 +576,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::DiscoveryTime& data)
 {
@@ -600,7 +600,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastdds::statistics::DiscoveryTime& data)
 {
@@ -663,7 +663,7 @@ void serialize_key(
 }
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::statistics::EntityCount& data,
         size_t current_alignment)
@@ -690,7 +690,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::EntityCount& data)
 {
@@ -710,7 +710,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastdds::statistics::EntityCount& data)
 {
@@ -752,7 +752,7 @@ void serialize_key(
 }
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::statistics::SampleIdentityCount& data,
         size_t current_alignment)
@@ -779,7 +779,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::SampleIdentityCount& data)
 {
@@ -799,7 +799,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastdds::statistics::SampleIdentityCount& data)
 {
@@ -841,7 +841,7 @@ void serialize_key(
 }
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::statistics::Entity2LocatorTraffic& data,
         size_t current_alignment)
@@ -871,7 +871,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::Entity2LocatorTraffic& data)
 {
@@ -894,7 +894,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastdds::statistics::Entity2LocatorTraffic& data)
 {
@@ -952,7 +952,7 @@ void serialize_key(
 }
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::statistics::WriterReaderData& data,
         size_t current_alignment)
@@ -980,7 +980,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::WriterReaderData& data)
 {
@@ -1001,7 +1001,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastdds::statistics::WriterReaderData& data)
 {
@@ -1049,7 +1049,7 @@ void serialize_key(
 }
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::statistics::Locator2LocatorData& data,
         size_t current_alignment)
@@ -1077,7 +1077,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::Locator2LocatorData& data)
 {
@@ -1098,7 +1098,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastdds::statistics::Locator2LocatorData& data)
 {
@@ -1146,7 +1146,7 @@ void serialize_key(
 }
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::statistics::EntityData& data,
         size_t current_alignment)
@@ -1173,7 +1173,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::EntityData& data)
 {
@@ -1193,7 +1193,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastdds::statistics::EntityData& data)
 {
@@ -1235,7 +1235,7 @@ void serialize_key(
 }
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::statistics::PhysicalData& data,
         size_t current_alignment)
@@ -1264,7 +1264,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::PhysicalData& data)
 {
@@ -1286,7 +1286,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastdds::statistics::PhysicalData& data)
 {
@@ -1339,7 +1339,7 @@ void serialize_key(
 
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::statistics::Data& data,
         size_t current_alignment)
@@ -1420,7 +1420,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastdds::statistics::Data& data)
 {
@@ -1483,7 +1483,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastdds::statistics::Data& data)
 {

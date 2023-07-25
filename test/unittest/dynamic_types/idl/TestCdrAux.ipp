@@ -38,7 +38,7 @@ namespace fastcdr {
 
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const BasicStruct& data,
         size_t current_alignment)
@@ -78,7 +78,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const BasicStruct& data)
 {
@@ -111,7 +111,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         BasicStruct& data)
 {
@@ -207,7 +207,7 @@ void serialize_key(
 
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const ComplexStruct& data,
         size_t current_alignment)
@@ -254,7 +254,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const ComplexStruct& data)
 {
@@ -294,7 +294,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         ComplexStruct& data)
 {
@@ -413,7 +413,7 @@ void serialize_key(
 }
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const MyUnion& data,
         size_t current_alignment)
@@ -456,7 +456,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const MyUnion& data)
 {
@@ -487,7 +487,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         MyUnion& data)
 {
@@ -526,7 +526,7 @@ ret_value = false;
             });
 }
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const MyUnion2& data,
         size_t current_alignment)
@@ -573,7 +573,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const MyUnion2& data)
 {
@@ -607,7 +607,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         MyUnion2& data)
 {
@@ -650,7 +650,7 @@ ret_value = false;
             });
 }
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const CompleteStruct& data,
         size_t current_alignment)
@@ -677,7 +677,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const CompleteStruct& data)
 {
@@ -697,7 +697,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         CompleteStruct& data)
 {
@@ -736,7 +736,7 @@ void serialize_key(
 }
 
 template<>
-size_t calculate_serialized_size(
+eProsima_user_DllExport size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const KeyedStruct& data,
         size_t current_alignment)
@@ -763,7 +763,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
     return current_alignment - initial_alignment;
 }
 template<>
-void serialize(
+eProsima_user_DllExport void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const KeyedStruct& data)
 {
@@ -783,7 +783,7 @@ eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR
 }
 
 template<>
-void deserialize(
+eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         KeyedStruct& data)
 {
