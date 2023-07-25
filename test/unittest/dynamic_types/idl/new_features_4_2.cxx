@@ -1471,7 +1471,7 @@ void bitmodule::MyBitset::d(
         int16_t _d)
 {
     int base = 18;
-    int size = 12;
+    int size = 5;
     for (int i = base; i < base + size; ++i)
     {
         m_bitset.set(i, !!(_d & 0x01));
@@ -1483,8 +1483,8 @@ void bitmodule::MyBitset::d(
 int16_t bitmodule::MyBitset::d() const
 {
     int base = 18;
-    int size = 12;
-    std::bitset<12> aux;
+    int size = 5;
+    std::bitset<5> aux;
     for (int i = 0; i < size; ++i)
     {
         aux.set(i, m_bitset.test(i + base));
@@ -1497,8 +1497,8 @@ int16_t bitmodule::MyBitset::d() const
 void bitmodule::MyBitset::e(
         int16_t _e)
 {
-    int base = 30;
-    int size = 12;
+    int base = 23;
+    int size = 5;
     for (int i = base; i < base + size; ++i)
     {
         m_bitset.set(i, !!(_e & 0x01));
@@ -1509,9 +1509,9 @@ void bitmodule::MyBitset::e(
 
 int16_t bitmodule::MyBitset::e() const
 {
-    int base = 30;
-    int size = 12;
-    std::bitset<12> aux;
+    int base = 23;
+    int size = 5;
+    std::bitset<5> aux;
     for (int i = 0; i < size; ++i)
     {
         aux.set(i, m_bitset.test(i + base));
@@ -1524,8 +1524,8 @@ int16_t bitmodule::MyBitset::e() const
 void bitmodule::MyBitset::f(
         int16_t _f)
 {
-    int base = 42;
-    int size = 12;
+    int base = 28;
+    int size = 5;
     for (int i = base; i < base + size; ++i)
     {
         m_bitset.set(i, !!(_f & 0x01));
@@ -1536,9 +1536,9 @@ void bitmodule::MyBitset::f(
 
 int16_t bitmodule::MyBitset::f() const
 {
-    int base = 42;
-    int size = 12;
-    std::bitset<12> aux;
+    int base = 28;
+    int size = 5;
+    std::bitset<5> aux;
     for (int i = 0; i < size; ++i)
     {
         aux.set(i, m_bitset.test(i + base));
@@ -1548,7 +1548,7 @@ int16_t bitmodule::MyBitset::f() const
 }
 
 
-std::bitset<71> bitmodule::MyBitset::bitset() const
+std::bitset<50> bitmodule::MyBitset::bitset() const
 {
     std::string str_value;
 
@@ -1557,10 +1557,10 @@ std::bitset<71> bitmodule::MyBitset::bitset() const
 
     str_value = m_bitset.to_string() + str_value;
 
-    return std::bitset<71>(str_value);
+    return std::bitset<50>(str_value);
 }
 
-void bitmodule::MyBitset::bitset(const std::bitset<71>& bitset)
+void bitmodule::MyBitset::bitset(const std::bitset<50>& bitset)
 {
     std::string str_value {bitset.to_string()};
     size_t base_diff {0};
@@ -1574,8 +1574,8 @@ void bitmodule::MyBitset::bitset(const std::bitset<71>& bitset)
             }
 
 
-    base_diff += 54;
-    m_bitset = std::bitset<54>(str_value.substr(str_value.length() - base_diff, last_post));
+    base_diff += 33;
+    m_bitset = std::bitset<33>(str_value.substr(str_value.length() - base_diff, last_post));
 }
 
 

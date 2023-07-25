@@ -1255,6 +1255,7 @@ bool ExtendedTypeDefn::consistent(
 
 namespace eprosima {
 namespace fastcdr {
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::StringSTypeDefn& data,
@@ -1275,6 +1276,7 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::StringLTypeDefn& data,
@@ -1295,6 +1297,7 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::PlainCollectionHeader& data,
@@ -1317,6 +1320,7 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::PlainSequenceSElemDefn& data,
@@ -1349,6 +1353,7 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::PlainSequenceLElemDefn& data,
@@ -1381,6 +1386,7 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::PlainArraySElemDefn& data,
@@ -1414,6 +1420,7 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::PlainArrayLElemDefn& data,
@@ -1446,6 +1453,7 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::PlainMapSTypeDefn& data,
@@ -1491,6 +1499,7 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::PlainMapLTypeDefn& data,
@@ -1536,6 +1545,7 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::StronglyConnectedComponentId& data,
@@ -1559,6 +1569,7 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::ExtendedTypeDefn&,
@@ -1569,11 +1580,7 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
-} // namespace fastcdr
-} // namespace eprosima
-
-namespace eprosima {
-namespace fastcdr {
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::StringSTypeDefn& data)
@@ -1581,6 +1588,7 @@ void serialize(
     scdr << data.bound();
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::StringSTypeDefn& data)
@@ -1588,6 +1596,7 @@ void deserialize(
     dcdr >> data.bound();
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::StringLTypeDefn& data)
@@ -1595,6 +1604,7 @@ void serialize(
     scdr << data.bound();
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::StringLTypeDefn& data)
@@ -1602,6 +1612,7 @@ void deserialize(
     dcdr >> data.bound();
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::PlainCollectionHeader& data)
@@ -1610,6 +1621,7 @@ void serialize(
     scdr << data.element_flags();
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::PlainCollectionHeader& data)
@@ -1618,6 +1630,7 @@ void deserialize(
     dcdr >> data.element_flags();
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::PlainSequenceSElemDefn& data)
@@ -1635,6 +1648,7 @@ void serialize(
     }
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::PlainSequenceSElemDefn& data)
@@ -1648,6 +1662,7 @@ void deserialize(
     dcdr >> *data.element_identifier();
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::PlainSequenceLElemDefn& data)
@@ -1665,6 +1680,7 @@ void serialize(
     }
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::PlainSequenceLElemDefn& data)
@@ -1678,6 +1694,7 @@ void deserialize(
     dcdr >> *data.element_identifier();
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::PlainArraySElemDefn& data)
@@ -1696,6 +1713,7 @@ void serialize(
     }
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::PlainArraySElemDefn& data)
@@ -1709,6 +1727,7 @@ void deserialize(
     dcdr >> *data.element_identifier();
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::PlainArrayLElemDefn& data)
@@ -1726,6 +1745,7 @@ void serialize(
     }
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::PlainArrayLElemDefn& data)
@@ -1739,6 +1759,7 @@ void deserialize(
     dcdr >> *data.element_identifier();
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::PlainMapSTypeDefn& data)
@@ -1766,6 +1787,7 @@ void serialize(
     }
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::PlainMapSTypeDefn& data)
@@ -1785,6 +1807,7 @@ void deserialize(
     dcdr >> *data.key_identifier();
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::PlainMapLTypeDefn& data)
@@ -1812,6 +1835,7 @@ void serialize(
     }
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::PlainMapLTypeDefn& data)
@@ -1831,6 +1855,7 @@ void deserialize(
     dcdr >> *data.key_identifier();
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::StronglyConnectedComponentId& data)
@@ -1840,6 +1865,7 @@ void serialize(
     scdr << data.scc_index();
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::StronglyConnectedComponentId& data)
@@ -1849,12 +1875,14 @@ void deserialize(
     dcdr >> data.scc_index();
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr&,
         const eprosima::fastrtps::types::ExtendedTypeDefn&)
 {
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr&,
         eprosima::fastrtps::types::ExtendedTypeDefn&)

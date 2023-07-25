@@ -523,7 +523,7 @@ eProsima_user_DllExport void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         bitmodule::MyBitset& data)
 {
-    std::bitset<71> bitset;
+    std::bitset<50> bitset;
     dcdr >> bitset;
     data.bitset(bitset);
 }

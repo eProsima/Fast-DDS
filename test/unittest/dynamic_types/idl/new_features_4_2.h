@@ -946,15 +946,15 @@ namespace bitmodule {
         eProsima_user_DllExport int16_t f() const;
 
 
-        eProsima_user_DllExport std::bitset<71> bitset() const;
+        eProsima_user_DllExport std::bitset<50> bitset() const;
 
-        eProsima_user_DllExport void bitset(const std::bitset<71>&);
+        eProsima_user_DllExport void bitset(const std::bitset<50>&);
 
 
 
     private:
 
-        std::bitset<54> m_bitset;
+        std::bitset<33> m_bitset;
     };
     /*!
      * @brief This class represents the bitmask MyBitMask defined by the user in the IDL file.

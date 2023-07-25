@@ -217,6 +217,7 @@ EquivalenceHash& TypeObjectHashId::hash()
 
 namespace eprosima {
 namespace fastcdr {
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::TypeObjectHashId& data,
@@ -245,6 +246,7 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const eprosima::fastrtps::types::TypeObjectHashId& data)
@@ -265,6 +267,7 @@ void serialize(
     }
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         eprosima::fastrtps::types::TypeObjectHashId& data)

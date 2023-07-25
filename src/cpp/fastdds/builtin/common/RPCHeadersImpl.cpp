@@ -26,6 +26,7 @@ using namespace eprosima::fastdds::dds::rpc;
 
 namespace eprosima {
 namespace fastcdr {
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::dds::rpc::ReplyHeader& data,
@@ -47,6 +48,7 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const ReplyHeader& data)
@@ -66,6 +68,7 @@ void serialize(
     scdr << static_cast<uint32_t>(data.remoteEx);
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         ReplyHeader& data)
@@ -84,6 +87,7 @@ void deserialize(
     dcdr >> data.remoteEx;
 }
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::dds::rpc::RequestHeader& data,
@@ -106,6 +110,7 @@ size_t calculate_serialized_size(
     return current_alignment - initial_alignment;
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& scdr,
         const RequestHeader& data)
@@ -124,6 +129,7 @@ void serialize(
     scdr << data.instanceName.to_string();
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& dcdr,
         RequestHeader& data)

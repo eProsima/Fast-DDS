@@ -22,6 +22,7 @@
 
 namespace eprosima {
 namespace fastcdr {
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::MemberFlag&,
@@ -30,6 +31,7 @@ size_t calculate_serialized_size(
     return 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& cdr,
         const eprosima::fastrtps::types::MemberFlag& data)
@@ -38,6 +40,7 @@ void serialize(
     cdr << data.bitset();
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastrtps::types::MemberFlag& data)
@@ -46,6 +49,7 @@ void deserialize(
     cdr >> data.bitset();
 }
 
+template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::TypeFlag&,
@@ -54,6 +58,7 @@ size_t calculate_serialized_size(
     return 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
 }
 
+template<>
 void serialize(
         eprosima::fastcdr::Cdr& cdr,
         const eprosima::fastrtps::types::TypeFlag& data)
@@ -61,6 +66,7 @@ void serialize(
     cdr << data.bitset();
 }
 
+template<>
 void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastrtps::types::TypeFlag& data)
