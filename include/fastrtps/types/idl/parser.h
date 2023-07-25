@@ -367,7 +367,7 @@ struct action
             std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
-        std::cout << "Rule1: " << typeid(Rule).name() << " " << in.string() << std::endl;
+        std::cout << "Rule: " << typeid(Rule).name() << " " << in.string() << std::endl;
     }
 
 };
@@ -389,213 +389,39 @@ struct action<identifier>
 
 };
 
-template<>
-struct action<boolean_type>
-{
-    template<typename Input>
-    static void apply(
-            const Input& in,
-            Context* ctx,
-            std::map<std::string, std::string>& state,
-            std::string& evaluated,
-            std::vector<v1_3::DynamicData_ptr>& operands)
-    {
-        state["type"] = "boolean";
-    }
+#define load_type_action(Rule, id) \
+    template<> \
+    struct action<Rule> \
+    { \
+        template<typename Input> \
+        static void apply( \
+            const Input& in, \
+            Context * ctx, \
+            std::map<std::string, std::string>& state, \
+            std::string& evaluated, \
+            std::vector<v1_3::DynamicData_ptr>& operands) \
+        { \
+            std::cout << "load_type_action: " << typeid(Rule).name() << " " \
+                      << in.string() << std::endl; \
+            state["type"] = std::string{#id}; \
+        } \
+    };
 
-};
-
-template<>
-struct action<signed_tiny_int>
-{
-    template<typename Input>
-    static void apply(
-            const Input& in,
-            Context* ctx,
-            std::map<std::string, std::string>& state,
-            std::string& evaluated,
-            std::vector<v1_3::DynamicData_ptr>& operands)
-    {
-        state["type"] = "int8";
-    }
-
-};
-
-template<>
-struct action<unsigned_tiny_int>
-{
-    template<typename Input>
-    static void apply(
-            const Input& in,
-            Context* ctx,
-            std::map<std::string, std::string>& state,
-            std::string& evaluated,
-            std::vector<v1_3::DynamicData_ptr>& operands)
-    {
-        state["type"] = "uint8";
-    }
-
-};
-
-template<>
-struct action<octet_type>
-{
-    template<typename Input>
-    static void apply(
-            const Input& in,
-            Context* ctx,
-            std::map<std::string, std::string>& state,
-            std::string& evaluated,
-            std::vector<v1_3::DynamicData_ptr>& operands)
-    {
-        state["type"] = "uint8";
-    }
-
-};
-
-template<>
-struct action<signed_short_int>
-{
-    template<typename Input>
-    static void apply(
-            const Input& in,
-            Context* ctx,
-            std::map<std::string, std::string>& state,
-            std::string& evaluated,
-            std::vector<v1_3::DynamicData_ptr>& operands)
-    {
-        state["type"] = "int16";
-    }
-
-};
-
-template<>
-struct action<unsigned_short_int>
-{
-    template<typename Input>
-    static void apply(
-            const Input& in,
-            Context* ctx,
-            std::map<std::string, std::string>& state,
-            std::string& evaluated,
-            std::vector<v1_3::DynamicData_ptr>& operands)
-    {
-        state["type"] = "uint16";
-    }
-
-};
-
-template<>
-struct action<signed_long_int>
-{
-    template<typename Input>
-    static void apply(
-            const Input& in,
-            Context* ctx,
-            std::map<std::string, std::string>& state,
-            std::string& evaluated,
-            std::vector<v1_3::DynamicData_ptr>& operands)
-    {
-        state["type"] = "int32";
-    }
-
-};
-
-template<>
-struct action<unsigned_long_int>
-{
-    template<typename Input>
-    static void apply(
-            const Input& in,
-            Context* ctx,
-            std::map<std::string, std::string>& state,
-            std::string& evaluated,
-            std::vector<v1_3::DynamicData_ptr>& operands)
-    {
-        state["type"] = "uint32";
-    }
-
-};
-
-template<>
-struct action<signed_longlong_int>
-{
-    template<typename Input>
-    static void apply(
-            const Input& in,
-            Context* ctx,
-            std::map<std::string, std::string>& state,
-            std::string& evaluated,
-            std::vector<v1_3::DynamicData_ptr>& operands)
-    {
-        state["type"] = "int64";
-    }
-
-};
-
-template<>
-struct action<unsigned_longlong_int>
-{
-    template<typename Input>
-    static void apply(
-            const Input& in,
-            Context* ctx,
-            std::map<std::string, std::string>& state,
-            std::string& evaluated,
-            std::vector<v1_3::DynamicData_ptr>& operands)
-    {
-        state["type"] = "uint64";
-    }
-
-};
-
-template<>
-struct action<float_type>
-{
-    template<typename Input>
-    static void apply(
-            const Input& in,
-            Context* ctx,
-            std::map<std::string, std::string>& state,
-            std::string& evaluated,
-            std::vector<v1_3::DynamicData_ptr>& operands)
-    {
-        state["type"] = "float";
-    }
-
-};
-
-template<>
-struct action<double_type>
-{
-    template<typename Input>
-    static void apply(
-            const Input& in,
-            Context* ctx,
-            std::map<std::string, std::string>& state,
-            std::string& evaluated,
-            std::vector<v1_3::DynamicData_ptr>& operands)
-    {
-        state["type"] = "double";
-    }
-
-};
-
-template<>
-struct action<long_double_type>
-{
-    template<typename Input>
-    static void apply(
-            const Input& in,
-            Context* ctx,
-            std::map<std::string, std::string>& state,
-            std::string& evaluated,
-            std::vector<v1_3::DynamicData_ptr>& operands)
-    {
-        state["type"] = "long double";
-    }
-
-};
+load_type_action(boolean_type, boolean)
+load_type_action(signed_tiny_int, int8)
+load_type_action(unsigned_tiny_int, uint8)
+load_type_action(octet_type, uint8)
+load_type_action(signed_short_int, int16)
+load_type_action(unsigned_short_int, uint16)
+load_type_action(signed_long_int, int32)
+load_type_action(unsigned_long_int, uint32)
+load_type_action(signed_longlong_int, int64)
+load_type_action(unsigned_longlong_int, uint64)
+load_type_action(float_type, float)
+load_type_action(double_type, double)
+load_type_action(long_double_type, long double)
+load_type_action(string_type, string)
+load_type_action(wide_string_type, wstring)
 
 template<>
 struct action<char_type>
@@ -665,77 +491,30 @@ struct action<positive_int_const>
 
 };
 
-template<>
-struct action<string_size>
-{
-    template<typename Input>
-    static void apply(
-            const Input& in,
-            Context* ctx,
-            std::map<std::string, std::string>& state,
-            std::string& evaluated,
-            std::vector<v1_3::DynamicData_ptr>& operands)
-    {
-        if (state.count("positive_int_const"))
-        {
-            state["string_size"] = state["positive_int_const"];
-            state.erase("positive_int_const");
-        }
-    }
+#define load_stringsize_action(Rule, id) \
+    template<> \
+    struct action<Rule> \
+    { \
+        template<typename Input> \
+        static void apply( \
+            const Input& in, \
+            Context * ctx, \
+            std::map<std::string, std::string>& state, \
+            std::string& evaluated, \
+            std::vector<v1_3::DynamicData_ptr>& operands) \
+        { \
+            std::cout << "load_stringsize_action: " << typeid(Rule).name() << " " \
+                      << in.string() << std::endl; \
+            if (state.count("positive_int_const")) \
+            { \
+                state[#id] = state["positive_int_const"]; \
+                state.erase("positive_int_const"); \
+            } \
+        } \
+    };
 
-};
-
-template<>
-struct action<string_type>
-{
-    template<typename Input>
-    static void apply(
-            const Input& in,
-            Context* ctx,
-            std::map<std::string, std::string>& state,
-            std::string& evaluated,
-            std::vector<v1_3::DynamicData_ptr>& operands)
-    {
-        state["type"] = "string";
-    }
-
-};
-
-template<>
-struct action<wstring_size>
-{
-    template<typename Input>
-    static void apply(
-            const Input& in,
-            Context* ctx,
-            std::map<std::string, std::string>& state,
-            std::string& evaluated,
-            std::vector<v1_3::DynamicData_ptr>& operands)
-    {
-        if (state.count("positive_int_const"))
-        {
-            state["wstring_size"] = state["positive_int_const"];
-            state.erase("positive_int_const");
-        }
-    }
-
-};
-
-template<>
-struct action<wide_string_type>
-{
-    template<typename Input>
-    static void apply(
-            const Input& in,
-            Context* ctx,
-            std::map<std::string, std::string>& state,
-            std::string& evaluated,
-            std::vector<v1_3::DynamicData_ptr>& operands)
-    {
-        state["type"] = "wstring";
-    }
-
-};
+load_stringsize_action(string_size, string_size)
+load_stringsize_action(wstring_size, wstring_size)
 
 // TODO sequence type, map type
 
@@ -800,7 +579,7 @@ struct action<boolean_literal>
             std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
-        std::cout << "Rule2: " << typeid(boolean_literal).name()
+        std::cout << "boolean_literal: " << typeid(boolean_literal).name()
                   << " " << in.string() << std::endl;
 
         evaluated += (evaluated.empty() ? "" : ";") + std::string{"bool"};
@@ -835,7 +614,7 @@ struct action<boolean_literal>
 
 };
 
-#define load_action(Rule, id, type, create_type, set_value) \
+#define load_literal_action(Rule, id, type, create_type, set_value) \
     template<> \
     struct action<Rule> \
     { \
@@ -847,20 +626,17 @@ struct action<boolean_literal>
             std::string& evaluated, \
             std::vector<v1_3::DynamicData_ptr>& operands) \
         { \
+            std::cout << "load_literal_action: " << typeid(Rule).name() << " " \
+                      << in.string() << std::endl; \
+ \
             evaluated += (evaluated.empty() ? "" : ";") + std::string{#id}; \
-            std::cout << "Rule3: " << typeid(Rule).name() \
-                      << " " << in.string() << std::endl; \
+ \
             std::istringstream ss(in.string()); \
             type res; \
-            if (#id == "octal") { \
-                ss >> std::setbase(std::ios_base::oct) >> res; \
-            } \
-            else if (#id == "hexa") { \
-                ss >> std::setbase(std::ios_base::hex) >> res; \
-            } \
-            else { \
-                ss >> res; \
-            } \
+            if (#id == "octal") ss >> std::setbase(std::ios_base::oct) >> res; \
+            else if (#id == "hexa") ss >> std::setbase(std::ios_base::hex) >> res; \
+            else ss >> res; \
+ \
             v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance(); \
             v1_3::DynamicTypeBuilder_cptr builder = factory.create_type; \
             auto xtype = builder->build(); \
@@ -870,11 +646,11 @@ struct action<boolean_literal>
         } \
     };
 
-load_action(dec_literal, decimal, long long, create_uint64_type(), set_uint64_value)
-load_action(oct_literal, octal, long long, create_uint64_type(), set_uint64_value)
-load_action(hex_literal, hexa, long long, create_uint64_type(), set_uint64_value)
-load_action(float_literal, float, long double, create_float128_type(), set_float128_value)
-load_action(fixed_pt_literal, fixed, long double, create_float128_type(), set_float128_value)
+load_literal_action(dec_literal, decimal, long long, create_uint64_type(), set_uint64_value)
+load_literal_action(oct_literal, octal, long long, create_uint64_type(), set_uint64_value)
+load_literal_action(hex_literal, hexa, long long, create_uint64_type(), set_uint64_value)
+load_literal_action(float_literal, float, long double, create_float128_type(), set_float128_value)
+load_literal_action(fixed_pt_literal, fixed, long double, create_float128_type(), set_float128_value)
 
 #define float_op_action(Rule, id, operation) \
     template<> \
@@ -888,8 +664,8 @@ load_action(fixed_pt_literal, fixed, long double, create_float128_type(), set_fl
             std::string& evaluated, \
             std::vector<v1_3::DynamicData_ptr>& operands) \
         { \
-            std::cout << "Rule4: " << typeid(Rule).name() \
-                      << " " << in.string() << std::endl; \
+            std::cout << "float_op_action: " << typeid(Rule).name() << " " \
+                      << in.string() << std::endl; \
  \
             evaluated += (evaluated.empty() ? "" : ";") + std::string{#id}; \
  \
@@ -951,8 +727,8 @@ load_action(fixed_pt_literal, fixed, long double, create_float128_type(), set_fl
             std::string& evaluated, \
             std::vector<v1_3::DynamicData_ptr>& operands) \
         { \
-            std::cout << "Rule5: " << typeid(Rule).name() \
-                      << " " << in.string() << std::endl; \
+            std::cout << "int_op_action: " << typeid(Rule).name() << " " \
+                      << in.string() << std::endl; \
  \
             evaluated += (evaluated.empty() ? "" : ";") + std::string{#id}; \
  \
@@ -1002,8 +778,8 @@ load_action(fixed_pt_literal, fixed, long double, create_float128_type(), set_fl
             std::string& evaluated, \
             std::vector<v1_3::DynamicData_ptr>& operands) \
         { \
-            std::cout << "Rule6: " << typeid(Rule).name() \
-                      << " " << in.string() << std::endl; \
+            std::cout << "bool_op_action: " << typeid(Rule).name() << " " \
+                      << in.string() << std::endl; \
  \
             evaluated += (evaluated.empty() ? "" : ";") + std::string{#id}; \
  \
@@ -1075,7 +851,8 @@ struct action<minus_exec>
             std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
-        std::cout << "Rule7: " << typeid(minus_exec).name() << " " << in.string() << std::endl;
+        std::cout << "minus_exec: " << typeid(minus_exec).name() << " "
+                  << in.string() << std::endl;
 
         evaluated += (evaluated.empty() ? "" : ";") + std::string{"minus"};
 
@@ -1109,7 +886,8 @@ struct action<plus_exec>
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
         // noop
-        std::cout << "Rule8: " << typeid(plus_exec).name() << " " << in.string() << std::endl;
+        std::cout << "plus_exec: " << typeid(plus_exec).name() << " "
+                  << in.string() << std::endl;
         evaluated += (evaluated.empty() ? "" : ";") + std::string{"plus"};
     }
 
@@ -1126,7 +904,8 @@ struct action<inv_exec>
             std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
-        std::cout << "Rule9: " << typeid(inv_exec).name() << " " << in.string() << std::endl;
+        std::cout << "inv_exec: " << typeid(inv_exec).name() << " "
+                  << in.string() << std::endl;
 
         evaluated += (evaluated.empty() ? "" : ";") + std::string{"inv"};
 
@@ -1229,11 +1008,33 @@ struct action<const_dcl>
 class Parser
     : public std::enable_shared_from_this<Parser>
 {
+protected:
+
+    // Use protected struct to prevent the public Parser constructor being
+    // invoked externally, indicate user to use the instance method instead,
+    // and take advantage of make_shared in instance() which requires the
+    // Parser constructor to be public.
+    struct use_the_instance_method
+    {
+        explicit use_the_instance_method() = default;
+    };
+
 public:
+
+    Parser(
+            use_the_instance_method)
+        : context_(nullptr)
+    {
+    }
+
+    Parser(
+            const Parser&) = delete;
+    Parser& operator =(
+            const Parser&) = delete;
 
     static std::shared_ptr<Parser> instance()
     {
-        static std::shared_ptr<Parser> instance_(new Parser);
+        static std::shared_ptr<Parser> instance_ = std::make_shared<Parser>(use_the_instance_method{});
         return instance_;
     }
 
@@ -1354,16 +1155,6 @@ private:
     //peg::parser parser_;
     Context* context_;
 
-    Parser()
-        : context_(nullptr)
-    {
-    }
-
-    Parser(
-            const Parser&) = delete;
-    Parser& operator =(
-            const Parser&) = delete;
-
     v1_3::DynamicType_ptr type_spec(
             std::map<std::string, std::string>& state)
     {
@@ -1376,9 +1167,9 @@ private:
             builder = factory.create_bool_type();
             type = builder->build();
         }
-        else if (state["type"] == "int8") // TODO
+        else if (state["type"] == "int8")
         {
-            builder = factory.create_byte_type();
+            builder = factory.create_char8_type();
             type = builder->build();
         }
         else if (state["type"] == "uint8")

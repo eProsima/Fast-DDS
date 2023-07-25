@@ -34,19 +34,32 @@ int main(
     Log::SetVerbosity(Log::Kind::Info);
     Log::SetCategoryFilter(std::regex("IDLPARSER"));
 
-    std::cout << "Processing struct forward declaration:" << std::endl;
+    std::cout << "Processing forward declarations:" << std::endl;
     std::string test00 =
             R"(
         struct StructDcl;
         union UnionDcl;
-        const boolean C_BOOL = true;
-        const string<100> C_STR = "hello";
-        const int32 C_LITERAL = (0x5 | (4 + 3)) + 4 * 2;
     )";
     idl::Context context00 = idl::parse(test00);
 
+    std::cout << "Processing literals, expressions, and consts:" << std::endl;
+    std::string test01 =
+            R"(
+        const boolean C_BOOL = true;
+        const string<100> C_STR = "hello";
+        const int32 C_LITERALS1 = (0x5 | (4 + 3)) + (4 << 1) * 2; // 23
+        const int32 C_LITERALS2 = (02 + 0x1) * 2; // 6
+        const int32 C_LITERALS3 = 4 / ( 07 & 0x2 ); // 2
+        const int32 C_LITERALS4 = -(5 * ( 03 + 0xF )); // -90
+        const int32 C_LITERALS5 = 0xf0 & ~(4 * ( 0x7 - 02 )); // 224
+        const int32 C_LITERALS6 = (0x7 | 0x9) & ~(6 * ( 024 - 5 )); // 5
+        const float C_LITERALS7 = (2 + 4) / 3.0d; /* 2.0 */
+        const float C_LITERALS8 = (2e0 + 4) / 3.0d; /* 2.0 */
+    )";
+    idl::Context context01 = idl::parse(test01);
+
     std::cout << "Processing IDL string:" << std::endl;
-    std::string idl_spec =
+    std::string test02 =
             R"(
         struct InnerType
         {
@@ -54,10 +67,10 @@ int main(
             float im2;
         };
     )";
-    idl::Context context = idl::parse(idl_spec);
+    idl::Context context02 = idl::parse(test02);
 
     std::cout << "Processing IDL file:" << std::endl;
-    idl::Context context_file = idl::parse_file("idl/test02.idl");
+    idl::Context context03 = idl::parse_file("idl/test02.idl");
 
     Log::Flush();
     Log::Reset();
