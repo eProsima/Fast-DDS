@@ -212,7 +212,7 @@ public:
     const uint32_t& get_cb_count(
             CallbackIndex cb_idx)
     {
-        return listener_.get_cb_cout_of(cb_idx);
+        return listener_.get_cb_count_of(cb_idx);
     }
 
     void create_topic(
@@ -473,7 +473,7 @@ protected:
             std::cout << "on_sample_lost " << reader->guid() << " total_count " << status.total_count << std::endl;
         }
 
-        const uint32_t& get_cb_cout_of(
+        const uint32_t& get_cb_count_of(
                 CallbackIndex cb_idx)
         {
             std::unique_lock<std::mutex> lock(mtx_);
@@ -572,7 +572,8 @@ protected:
             ASSERT_LT(last_seq[seq_info], info.sample_identity.sequence_number());
             last_seq[seq_info] = info.sample_identity.sequence_number();
 
-            validator_selector(statistics_part_, sample_validator_, data.status_kind(), info, data, total_msgs_, current_processed_count_, cv_);
+            validator_selector(statistics_part_, sample_validator_,
+                    data.status_kind(), info, data, total_msgs_, current_processed_count_, cv_);
         }
     }
 

@@ -47,6 +47,7 @@ public:
     {
 
     }
+
 #ifdef FASTDDS_STATISTICS
 
     void init()
@@ -78,6 +79,7 @@ public:
     }
 
 #endif //FASTDDS_STATISTICS
+
 protected:
 
     RTPSParticipant* rtps_participant_;
