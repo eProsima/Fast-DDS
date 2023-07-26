@@ -90,7 +90,7 @@ public:
 
     /**
      * Constructor
-     * @param builtin Pointer to the BuiltinProcols object.
+     * @param builtin Pointer to the BuiltinProtocols object.
      * @param allocation Participant allocation parameters.
      */
     PDP(
@@ -253,7 +253,7 @@ public:
     /**
      * This method removes and deletes a WriterProxyData object from its corresponding RTPSParticipant.
      *
-     * @param[in] writer_guid GUID_t of the wtiter to remove.
+     * @param[in] writer_guid GUID_t of the writer to remove.
      * @return true if found and deleted.
      */
     bool removeWriterProxyData(
@@ -262,7 +262,7 @@ public:
     /**
      * This method removes and deletes a WriterProxyData object from its corresponding RTPSParticipant.
      *
-     * @param[in] writer_guid GUID_t of the wtiter to remove.
+     * @param[in] writer_guid GUID_t of the writer to remove.
      * @param[in] reason Why the writer is being removed (dropped, removed, or ignored)
      * @return true if found and deleted.
      */
