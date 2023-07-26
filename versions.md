@@ -1,6 +1,8 @@
 Forthcoming
 -----------
 
+* Exposed custom payload pool on DDS endpoints declaration
+
 Version 2.11.0
 --------------
 
