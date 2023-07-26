@@ -146,7 +146,8 @@ DataWriterImpl::DataWriterImpl(
         TypeSupport type,
         Topic* topic,
         const DataWriterQos& qos,
-        DataWriterListener* listen)
+        DataWriterListener* listen,
+        std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool)
     : publisher_(p)
     , type_(type)
     , topic_(topic)
@@ -174,6 +175,9 @@ DataWriterImpl::DataWriterImpl(
     fastrtps::rtps::RTPSParticipantImpl::preprocess_endpoint_attributes<WRITER, 0x03, 0x02>(
         EntityId_t::unknown(), publisher_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
     guid_.guidPrefix = publisher_->get_participant_impl()->guid().guidPrefix;
+
+    // TODO implementation goes here
+    static_cast<void>(payload_pool);
 }
 
 DataWriterImpl::DataWriterImpl(
