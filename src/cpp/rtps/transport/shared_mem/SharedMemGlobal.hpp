@@ -630,6 +630,11 @@ public:
             return node_->is_port_ok;
         }
 
+        inline void mark_as_ok() const
+        {
+            node_->is_port_ok = true;
+        }
+
         /**
          * Checks if a port is OK and is opened for reading with listeners active
          */

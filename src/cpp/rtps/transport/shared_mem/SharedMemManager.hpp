@@ -765,11 +765,17 @@ public:
                 }
                 else
                 {
-                    EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM,
-                            "SHM Listener on port " << global_port_->port_id() << " failure: "
-                                                    << e.what());
-
-                    regenerate_port();
+                    if (global_port_->open_mode() == SharedMemGlobal::Port::OpenMode::ReadExclusive)
+                    {
+                        global_port_->mark_as_ok();
+                    }
+                    else
+                    {
+                        EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM,
+                                "SHM Listener on port " << global_port_->port_id() << " failure: "
+                                                        << e.what());
+                        regenerate_port();
+                    }
                 }
             }
 
