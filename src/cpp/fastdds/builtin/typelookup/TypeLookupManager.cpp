@@ -330,8 +330,17 @@ bool TypeLookupManager::create_endpoints()
     // Built-in history attributes.
     HistoryAttributes hatt;
     hatt.initialReservedCaches = 20;
-    hatt.maximumReservedCaches = 1000;
-    hatt.payloadMaxSize = TYPELOOKUP_DATA_MAX_SIZE;
+    hatt.maximumReservedCaches = 0;
+
+    // Built-in writer history attributes.
+    HistoryAttributes w_hatt = hatt;
+    w_hatt.memoryPolicy = pattr.builtin.writerHistoryMemoryPolicy;
+    w_hatt.payloadMaxSize = pattr.builtin.writerPayloadSize;
+
+    // Built-in reader history attributes.
+    HistoryAttributes r_hatt = hatt;
+    r_hatt.memoryPolicy = pattr.builtin.readerHistoryMemoryPolicy;
+    r_hatt.payloadMaxSize = pattr.builtin.readerPayloadSize;
 
     WriterAttributes watt;
     watt.endpoint.unicastLocatorList = builtin_protocols_->m_metatrafficUnicastLocatorList;
@@ -347,7 +356,7 @@ bool TypeLookupManager::create_endpoints()
     // Built-in request writer
     if (builtin_protocols_->m_att.typelookup_config.use_client)
     {
-        builtin_request_writer_history_ = new WriterHistory(hatt);
+        builtin_request_writer_history_ = new WriterHistory(w_hatt);
 
         RTPSWriter* req_writer;
         if (participant_->createWriter(
@@ -373,7 +382,7 @@ bool TypeLookupManager::create_endpoints()
     // Built-in reply writer
     if (builtin_protocols_->m_att.typelookup_config.use_server)
     {
-        builtin_reply_writer_history_ = new WriterHistory(hatt);
+        builtin_reply_writer_history_ = new WriterHistory(w_hatt);
 
         RTPSWriter* rep_writer;
         if (participant_->createWriter(
@@ -412,7 +421,7 @@ bool TypeLookupManager::create_endpoints()
     if (builtin_protocols_->m_att.typelookup_config.use_server)
     {
         request_listener_ = new TypeLookupRequestListener(this);
-        builtin_request_reader_history_ = new ReaderHistory(hatt);
+        builtin_request_reader_history_ = new ReaderHistory(r_hatt);
 
         RTPSReader* req_reader;
         if (participant_->createReader(
@@ -441,7 +450,7 @@ bool TypeLookupManager::create_endpoints()
     if (builtin_protocols_->m_att.typelookup_config.use_client)
     {
         reply_listener_ = new TypeLookupReplyListener(this);
-        builtin_reply_reader_history_ = new ReaderHistory(hatt);
+        builtin_reply_reader_history_ = new ReaderHistory(r_hatt);
 
         RTPSReader* rep_reader;
         if (participant_->createReader(
