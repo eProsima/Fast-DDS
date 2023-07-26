@@ -442,6 +442,7 @@ public:
         Port(
                 std::shared_ptr<SharedMemSegment>&& port_segment,
                 PortNode* node,
+                OpenMode open_mode,
                 std::unique_ptr<RobustExclusiveLock>&& read_exclusive_lock = std::unique_ptr<RobustExclusiveLock>())
             : port_segment_(std::move(port_segment))
             , node_(node)
@@ -460,9 +461,12 @@ public:
 
             node_->ref_counter.fetch_add(1);
 
-            auto port_context = std::make_shared<Port::WatchTask::PortContext>();
-            *port_context = {port_segment_, node_, buffer_.get(), { BufferDescriptor{} } };
-            Port::WatchTask::get()->add_port(std::move(port_context));
+            if (Port::OpenMode::Write == open_mode)
+            {
+                auto port_context = std::make_shared<Port::WatchTask::PortContext>();
+                *port_context = { port_segment_, node_, buffer_.get(), { BufferDescriptor{} } };
+                Port::WatchTask::get()->add_port(std::move(port_context));
+            }
         }
 
         ~Port()
@@ -1091,7 +1095,7 @@ private:
 
                 if (port_node)
                 {
-                    port = std::make_shared<Port>(std::move(port_segment), port_node);
+                    port = std::make_shared<Port>(std::move(port_segment), port_node, open_mode);
                 }
                 else
                 {
@@ -1273,7 +1277,7 @@ private:
         port_node->buffer_node = segment->get_offset_from_address(buffer_node);
 
         port_node->is_port_ok = true;
-        port = std::make_shared<Port>(std::move(segment), port_node, std::move(lock_read_exclusive));
+        port = std::make_shared<Port>(std::move(segment), port_node, open_mode, std::move(lock_read_exclusive));
 
         if (open_mode == Port::OpenMode::ReadShared)
         {
