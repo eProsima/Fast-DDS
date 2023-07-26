@@ -678,17 +678,20 @@ bool SharedMemTransport::fillUnicastLocator(
 void SharedMemTransport::output_port_has_been_open(
         uint32_t port_id)
 {
+    output_port_failures_.erase(port_id);
 }
 
 void SharedMemTransport::mark_output_port_failure(
         uint32_t port_id)
 {
+    output_port_failures_[port_id]++;
 }
 
 bool SharedMemTransport::output_port_is_blocked(
         uint32_t port_id)
 {
-    return false;
+    auto it = output_port_failures_.find(port_id);
+    return (it != output_port_failures_.end()) && (it->second >= 2);
 }
 
 }  // namsepace rtps

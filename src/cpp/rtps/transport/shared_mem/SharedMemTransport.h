@@ -22,6 +22,7 @@
 #include <rtps/transport/shared_mem/SharedMemLog.hpp>
 
 #include <map>
+#include <mutex>
 
 namespace eprosima {
 namespace fastdds {
@@ -212,6 +213,8 @@ private:
     void clean_up();
 
     std::map<uint32_t, std::shared_ptr<SharedMemManager::Port>> opened_ports_;
+
+    std::map<uint32_t, uint32_t> output_port_failures_;
 
     mutable std::recursive_mutex input_channels_mutex_;
 
