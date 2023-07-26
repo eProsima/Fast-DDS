@@ -21,6 +21,7 @@
 #include <rtps/transport/shared_mem/SharedMemManager.hpp>
 #include <rtps/transport/shared_mem/SharedMemLog.hpp>
 
+#include <chrono>
 #include <map>
 #include <mutex>
 
@@ -216,6 +217,10 @@ private:
 
     std::map<uint32_t, uint32_t> output_port_failures_;
 
+    std::size_t last_checked_output_failures_{ 0 };
+    std::chrono::time_point<std::chrono::system_clock> next_cleanup_timepoint_;
+    std::chrono::milliseconds cleanup_period_;
+
     mutable std::recursive_mutex input_channels_mutex_;
 
     std::vector<SharedMemChannelResource*> input_channels_;
@@ -270,6 +275,12 @@ private:
 
     bool output_port_is_blocked(
             uint32_t port_id);
+
+    bool cleanup_period_elapsed();
+
+    bool at_least_one_new_output_port_has_failed();
+
+    void reset_output_ports();
 
 };
 

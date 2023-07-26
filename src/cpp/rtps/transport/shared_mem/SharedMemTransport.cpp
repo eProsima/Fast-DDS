@@ -288,6 +288,9 @@ bool SharedMemTransport::init(
             packet_logger_ = std::make_shared<PacketsLog<SHMPacketFileConsumer>>();
             packet_logger_->RegisterConsumer(std::move(packets_file_consumer));
         }
+
+        cleanup_period_ = std::chrono::milliseconds(500);
+        next_cleanup_timepoint_ = std::chrono::system_clock::now() + cleanup_period_;
     }
     catch (std::exception& e)
     {
@@ -435,9 +438,7 @@ bool SharedMemTransport::send(
 {
     using namespace eprosima::fastdds::statistics::rtps;
 
-#if !defined(_WIN32)
     cleanup_output_ports();
-#endif // if !defined(_WIN32)
 
     fastrtps::rtps::LocatorsIterator& it = *destination_locators_begin;
 
@@ -478,6 +479,13 @@ bool SharedMemTransport::send(
 
 void SharedMemTransport::cleanup_output_ports()
 {
+    // Periodically remove all ports under certain conditions
+    if (cleanup_period_elapsed() && at_least_one_new_output_port_has_failed())
+    {
+        reset_output_ports();
+    }
+
+#if !defined(_WIN32)
     auto it = opened_ports_.begin();
     while (it != opened_ports_.end())
     {
@@ -490,6 +498,7 @@ void SharedMemTransport::cleanup_output_ports()
             it = opened_ports_.erase(it);
         }
     }
+#endif // if !defined(_WIN32)
 }
 
 std::shared_ptr<SharedMemManager::Port> SharedMemTransport::find_port(
@@ -685,6 +694,7 @@ void SharedMemTransport::mark_output_port_failure(
         uint32_t port_id)
 {
     output_port_failures_[port_id]++;
+    ++last_checked_output_failures_;
 }
 
 bool SharedMemTransport::output_port_is_blocked(
@@ -692,6 +702,28 @@ bool SharedMemTransport::output_port_is_blocked(
 {
     auto it = output_port_failures_.find(port_id);
     return (it != output_port_failures_.end()) && (it->second >= 2);
+}
+
+bool SharedMemTransport::cleanup_period_elapsed()
+{
+    auto now = std::chrono::system_clock::now();
+    bool ret_val = now >= next_cleanup_timepoint_;
+    if (ret_val)
+    {
+        next_cleanup_timepoint_ = now + cleanup_period_;
+    }
+    return ret_val;
+}
+
+bool SharedMemTransport::at_least_one_new_output_port_has_failed()
+{
+    return last_checked_output_failures_ > 0;
+}
+
+void SharedMemTransport::reset_output_ports()
+{
+    last_checked_output_failures_ = 0;
+    opened_ports_.clear();
 }
 
 }  // namsepace rtps
