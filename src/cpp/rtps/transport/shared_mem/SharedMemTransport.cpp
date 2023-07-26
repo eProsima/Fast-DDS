@@ -348,31 +348,38 @@ bool SharedMemTransport::OpenOutputChannel(
         return false;
     }
 
-    // We try to find a SenderResource that can be reuse to this locator.
+    // We try to find a SenderResource that can be reused for this locator.
     // Note: This is done in this level because if we do in NetworkFactory level, we have to mantain what transport
     // already reuses a SenderResource.
+    bool resource_found = false;
     for (auto& sender_resource : sender_resource_list)
     {
         SharedMemSenderResource* sm_sender_resource = SharedMemSenderResource::cast(*this, sender_resource.get());
 
         if (sm_sender_resource)
         {
-            return true;
+            resource_found = true;
+            break;
         }
     }
 
-    try
+    if (!resource_found)
     {
-        sender_resource_list.emplace_back(
-            static_cast<SenderResource*>(new SharedMemSenderResource(*this)));
-    }
-    catch (std::exception& e)
-    {
-        EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "SharedMemTransport error opening port " << std::to_string(locator.port)
-                                                                                  << " with msg: " << e.what());
+        try
+        {
+            sender_resource_list.emplace_back(
+                static_cast<SenderResource*>(new SharedMemSenderResource(*this)));
+        }
+        catch (std::exception& e)
+        {
+            EPROSIMA_LOG_ERROR(RTPS_MSG_OUT, "SharedMemTransport error creating SharedMemSenderResource: "
+                    << e.what());
 
-        return false;
+            return false;
+        }
     }
+
+    output_port_has_been_open(locator.port);
 
     return true;
 }
@@ -434,8 +441,6 @@ bool SharedMemTransport::send(
 
     fastrtps::rtps::LocatorsIterator& it = *destination_locators_begin;
 
-    bool ret = true;
-
     std::shared_ptr<SharedMemManager::Buffer> shared_buffer;
 
     try
@@ -451,8 +456,7 @@ bool SharedMemTransport::send(
                     shared_buffer = copy_to_shared_buffer(send_buffer, send_buffer_size, max_blocking_time_point);
                 }
 
-                ret &= send(shared_buffer, *it);
-
+                bool ret = send(shared_buffer, *it);
                 if (packet_logger_ && ret)
                 {
                     packet_logger_->QueueLog({packet_logger_->now(), Locator(), *it, shared_buffer});
@@ -466,19 +470,9 @@ bool SharedMemTransport::send(
     {
         EPROSIMA_LOG_INFO(RTPS_TRANSPORT_SHM, e.what());
         (void)e;
-
-        // Segment overflow with discard policy doesn't return error.
-        if (!shared_buffer)
-        {
-            ret = true;
-        }
-        else
-        {
-            ret = false;
-        }
     }
 
-    return ret;
+    return true;
 
 }
 
@@ -523,28 +517,35 @@ bool SharedMemTransport::push_discard(
         const std::shared_ptr<SharedMemManager::Buffer>& buffer,
         const Locator& remote_locator)
 {
+    uint32_t port_id = remote_locator.port;
+    if (output_port_is_blocked(port_id))
+    {
+        return false;
+    }
+
     try
     {
         bool is_port_ok = false;
         const size_t num_retries = 2;
         for (size_t i = 0; i < num_retries && !is_port_ok; ++i)
         {
-            if (!find_port(remote_locator.port)->try_push(buffer, is_port_ok))
+            if (!find_port(port_id)->try_push(buffer, is_port_ok))
             {
                 if (is_port_ok)
                 {
-                    EPROSIMA_LOG_INFO(RTPS_MSG_OUT, "Port " << remote_locator.port << " full. Buffer dropped");
+                    EPROSIMA_LOG_INFO(RTPS_MSG_OUT, "Port " << port_id << " full. Buffer dropped");
                 }
                 else
                 {
-                    EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "Port " << remote_locator.port << " inconsistent. Port dropped");
-                    opened_ports_.erase(remote_locator.port);
+                    EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "Port " << port_id << " inconsistent. Port dropped");
+                    opened_ports_.erase(port_id);
                 }
             }
         }
     }
     catch (const std::exception& error)
     {
+        mark_output_port_failure(port_id);
         EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, error.what());
         return false;
     }
@@ -672,6 +673,22 @@ bool SharedMemTransport::fillUnicastLocator(
     }
 
     return true;
+}
+
+void SharedMemTransport::output_port_has_been_open(
+        uint32_t port_id)
+{
+}
+
+void SharedMemTransport::mark_output_port_failure(
+        uint32_t port_id)
+{
+}
+
+bool SharedMemTransport::output_port_is_blocked(
+        uint32_t port_id)
+{
+    return false;
 }
 
 }  // namsepace rtps

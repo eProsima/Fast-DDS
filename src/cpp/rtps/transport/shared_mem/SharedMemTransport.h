@@ -258,6 +258,16 @@ private:
 
     void delete_input_channel(
             SharedMemChannelResource* channel);
+
+    void output_port_has_been_open(
+            uint32_t port_id);
+
+    void mark_output_port_failure(
+            uint32_t port_id);
+
+    bool output_port_is_blocked(
+            uint32_t port_id);
+
 };
 
 } // namespace rtps
