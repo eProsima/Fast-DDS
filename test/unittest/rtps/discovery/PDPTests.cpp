@@ -12,13 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
+#include <iostream>
+#include <future>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <string>
 
+#include <fastdds/dds/domain/DomainParticipant.hpp>
+#include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/dds/publisher/DataWriterListener.hpp>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
 #include <rtps/participant/RTPSParticipantImpl.h>
+#include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
+#include <statistics/rtps/StatisticsBase.hpp>
+
+#if defined(__cplusplus_winrt)
+#define GET_PID GetCurrentProcessId
+#elif defined(_WIN32)
+#include <process.h>
+#define GET_PID _getpid
+#else
+#define GET_PID getpid
+#endif // if defined(_WIN32)
 
 namespace eprosima {
 namespace fastrtps {
@@ -147,6 +166,70 @@ protected:
     }
 };
 
+
+class Listener : public eprosima::fastdds::dds::DomainParticipantListener
+{
+public:
+
+    Listener()
+        : matched(0)
+    {
+    }
+
+    ~Listener() override
+    {
+    }
+
+    void on_participant_discovery(
+        fastdds::dds::DomainParticipant* participant,
+        fastrtps::rtps::ParticipantDiscoveryInfo&& /*info*/) override
+    {
+        if (std::find(p_matched_.begin(), p_matched_.end(),participant->guid())==p_matched_.end())
+        {
+            matched++;
+            p_matched_.push_back(participant->guid());
+        }
+    }
+
+    void on_participant_discovery(
+            fastdds::dds::DomainParticipant* participant,
+            fastrtps::rtps::ParticipantDiscoveryInfo&& /*info*/,
+            bool& /*should_be_ignored*/) override
+    {
+        if (std::find(p_matched_.begin(), p_matched_.end(),participant->guid())==p_matched_.end())
+        {
+            matched++;
+            p_matched_.push_back(participant->guid());
+        }
+    }
+
+    int matched;
+
+private:
+    std::vector<fastrtps::rtps::GUID_t> p_matched_;
+};
+
+class Participant
+{
+
+public:
+
+    Participant()
+        : listener(new Listener())
+    {
+    }
+
+    ~Participant() = default;
+
+    void setup()
+    {
+        fastdds::dds::DomainParticipantFactory::get_instance()->create_participant(
+                (uint32_t)GET_PID() % 230, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT, listener);
+    }
+
+    Listener* listener;
+};
+
 class PDPTests : public ::testing::Test
 {
 
@@ -154,11 +237,8 @@ protected:
 
     void SetUp() override
     {
-        //BuiltinProtocols bp;
-        RTPSParticipantAllocationAttributes attrs;
-        //bp.initBuiltinProtocols(participant_, attrs);
-
-        //pdp = new PDPMock(&bp, &attrs);
+        const RTPSParticipantAllocationAttributes attrs;
+        pdp = new PDPMock(nullptr, attrs);
     }
 
     void TearDown() override
@@ -166,32 +246,29 @@ protected:
         delete pdp;
     }
 
-    void set_incompatible_topic()
-    {
-        //rdata->topicName("AnotherTopic");
-    }
-
-    void set_incompatible_topic_kind()
-    {
-        //rdata->topicKind(TopicKind_t::WITH_KEY);
-    }
-
-    void set_incompatible_type()
-    {
-        //rdata->typeName("AnotherTypeName");
-    }
-
-    //::testing::NiceMock<BuiltinProtocols> builtin_prot_;
-    //::testing::NiceMock<RTPSParticipantImpl> participant_;
-    //::testing::NiceMock<WriterProxyData>* wdata;
-    //::testing::NiceMock<ReaderProxyData>* rdata;
     PDPMock* pdp;
 };
 
-TEST(PDPTests, Sample)
+TEST(PDPTests, ParticipantsMatch)
 {
-    //foo
+    Participant* p1 = new Participant();
+    ASSERT_EQ(p1->listener->matched, 0);
+
+    Participant* p2 = new Participant();
+    ASSERT_EQ(p2->listener->matched, 0);
+
+    p1->setup();
+    p2->setup();
+
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+
+    ASSERT_EQ(p1->listener->matched, 1);
+    ASSERT_EQ(p2->listener->matched, 1);
 }
+
+} // namespace rtps
+} // namespace fastrtps
+} // namespace eprosima
 
 int main(
         int argc,
@@ -201,6 +278,3 @@ int main(
     return RUN_ALL_TESTS();
 }
 
-} /* namespace rtps */
-} /* namespace fastrtps */
-} /* namespace eprosima */
