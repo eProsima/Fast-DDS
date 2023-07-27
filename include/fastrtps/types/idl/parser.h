@@ -998,9 +998,12 @@ struct action<const_dcl>
             std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
-        v1_3::DynamicType_ptr type = ctx->get_type(state);
-        const std::string& identifier = state["identifier"];
-        //v1_3::DynamicData expr(type);
+        const std::string& name = state["identifier"];
+        Module& module = ctx->module();
+
+        EPROSIMA_LOG_INFO(IDLPARSER, "Found const: " << name);
+        module.create_constant(name, operands.back());
+        operands.pop_back();
     }
 
 };

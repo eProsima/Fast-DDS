@@ -45,7 +45,8 @@ int main(
     std::cout << "Processing literals, expressions, and consts:" << std::endl;
     std::string test01 =
             R"(
-        const boolean C_BOOL = true;
+        // boolean literals in IDL are case sensitive and should be exactly TRUE or FALSE
+        const boolean C_BOOL = TRUE;
         const string<100> C_STR = "hello";
         const int32 C_LITERALS1 = (0x5 | (4 + 3)) + (4 << 1) * 2; // 23
         const int32 C_LITERALS2 = (02 + 0x1) * 2; // 6

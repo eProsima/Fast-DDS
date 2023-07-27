@@ -136,11 +136,45 @@ public:
         return result.second;
     }
 
+    bool create_constant(
+            const std::string& name,
+            v1_3::DynamicData_ptr value,
+            bool replace = false,
+            bool from_enumeration = false)
+    {
+        if (name.find("::") != std::string::npos)
+        {
+            return false; // Cannot add a symbol with scoped name.
+        }
+
+        if (replace)
+        {
+            auto it = constants_.find(name);
+            if (it != constants_.end())
+            {
+                constants_.erase(it);
+                constants_types_.erase(constants_types_.find(name));
+            }
+        }
+
+        auto inserted = constants_types_.emplace(name, Type(*this, *value->get_type()));
+        if (inserted.second)
+        {
+            auto result = constants_.emplace(name, value);
+            if (result.second && from_enumeration)
+            {
+                from_enum_.push_back(name);
+            }
+            return result.second;
+        }
+        return false;
+    }
+
 protected:
 
     std::map<std::string, Type> aliases_;
     std::map<std::string, Type> constants_types_;
-    //std::map<std::string, v1_3::DynamicData> constants_;
+    std::map<std::string, v1_3::DynamicData_ptr> constants_;
     std::vector<std::string> from_enum_;
     std::map<std::string, Type> enumerations_32_;
     std::map<std::string, Type> structs_;
