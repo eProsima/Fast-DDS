@@ -57,7 +57,6 @@ public:
     {
     }
 
-
     virtual ~PDPMock() // = default;
     {
     }
@@ -117,7 +116,6 @@ public:
         return;
     }
 
-
     void notifyAboveRemoteEndpoints(
             const ParticipantProxyData& /*pdata*/,
             bool /*notify_secure_endpoints*/) override
@@ -157,6 +155,7 @@ public:
     {
         return true;
     }
+
 #endif // HAVE_SECURITY
 
 protected:
@@ -164,6 +163,7 @@ protected:
     void update_builtin_locators() override
     {
     }
+
 };
 
 
@@ -181,10 +181,10 @@ public:
     }
 
     void on_participant_discovery(
-        fastdds::dds::DomainParticipant* participant,
-        fastrtps::rtps::ParticipantDiscoveryInfo&& /*info*/) override
+            fastdds::dds::DomainParticipant* participant,
+            fastrtps::rtps::ParticipantDiscoveryInfo&& /*info*/) override
     {
-        if (std::find(p_matched_.begin(), p_matched_.end(),participant->guid())==p_matched_.end())
+        if (std::find(p_matched_.begin(), p_matched_.end(), participant->guid()) == p_matched_.end())
         {
             matched++;
             p_matched_.push_back(participant->guid());
@@ -196,7 +196,7 @@ public:
             fastrtps::rtps::ParticipantDiscoveryInfo&& /*info*/,
             bool& /*should_be_ignored*/) override
     {
-        if (std::find(p_matched_.begin(), p_matched_.end(),participant->guid())==p_matched_.end())
+        if (std::find(p_matched_.begin(), p_matched_.end(), participant->guid()) == p_matched_.end())
         {
             matched++;
             p_matched_.push_back(participant->guid());
@@ -206,6 +206,7 @@ public:
     int matched;
 
 private:
+
     std::vector<fastrtps::rtps::GUID_t> p_matched_;
 };
 
@@ -224,7 +225,7 @@ public:
     void setup()
     {
         fastdds::dds::DomainParticipantFactory::get_instance()->create_participant(
-                (uint32_t)GET_PID() % 230, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT, listener);
+            (uint32_t)GET_PID() % 230, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT, listener);
     }
 
     Listener* listener;
@@ -277,4 +278,3 @@ int main(
     testing::InitGoogleMock(&argc, argv);
     return RUN_ALL_TESTS();
 }
-

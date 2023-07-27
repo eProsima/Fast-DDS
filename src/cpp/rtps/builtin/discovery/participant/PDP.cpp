@@ -976,17 +976,22 @@ bool PDP::pairing_remote_reader_with_local_writer_after_security(
 #endif // HAVE_SECURITY
 
 #ifdef FASTDDS_STATISTICS
-bool PDP::get_all_local_proxies(std::vector<GUID_t> &guids)
+bool PDP::get_all_local_proxies(
+        std::vector<GUID_t>& guids)
 {
     static_cast<void>(guids);
     return false;
 }
-bool PDP::get_serialized_proxy(const GUID_t &guid, CDRMessage_t* msg)
+
+bool PDP::get_serialized_proxy(
+        const GUID_t& guid,
+        CDRMessage_t* msg)
 {
     static_cast<void>(guid);
     static_cast<void>(msg);
     return false;
 }
+
 #endif // FASTDDS_STATISTICS
 
 bool PDP::remove_remote_participant(

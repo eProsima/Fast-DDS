@@ -432,13 +432,26 @@ public:
 #endif // HAVE_SECURITY
 
 #ifdef FASTDDS_STATISTICS
-    bool get_all_local_proxies(std::vector<GUID_t> &guids) override;
+    bool get_all_local_proxies(
+            std::vector<GUID_t>& guids) override;
 
-    bool get_serialized_proxy(const GUID_t &guid, CDRMessage_t* msg) override;
+    bool get_serialized_proxy(
+            const GUID_t& guid,
+            CDRMessage_t* msg) override;
 #else
-    bool get_all_local_proxies(std::vector<GUID_t> &) override { return false;}
+    bool get_all_local_proxies(
+            std::vector<GUID_t>&) override
+    {
+        return false;
+    }
 
-    bool get_serialized_proxy(const GUID_t &, CDRMessage_t*) override { return false;}
+    bool get_serialized_proxy(
+            const GUID_t&,
+            CDRMessage_t*) override
+    {
+        return false;
+    }
+
 #endif // HAVE_SECURITY
 
 protected:

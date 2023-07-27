@@ -122,7 +122,7 @@ class WLP;
  */
 class RTPSParticipantImpl
     : public fastdds::statistics::StatisticsParticipantImpl,
-      public fastdds::statistics::rtps::IConnectionsQueryable
+    public fastdds::statistics::rtps::IConnectionsQueryable
 
 {
     /*
@@ -1221,12 +1221,15 @@ public:
             fastrtps::rtps::ReaderProxyData& data,
             const fastdds::statistics::MonitorServiceStatusData& msg);
 
-    std::vector<fastdds::statistics::Connection> get_entity_connections(const GUID_t &) override;
+    std::vector<fastdds::statistics::Connection> get_entity_connections(
+            const GUID_t&) override;
 #else
-    std::vector<fastdds::statistics::Connection> get_entity_connections(const GUID_t &) override
+    std::vector<fastdds::statistics::Connection> get_entity_connections(
+            const GUID_t&) override
     {
         return std::vector<fastdds::statistics::Connection>();
     }
+
 #endif // FASTDDS_STATISTICS
 
     bool should_match_local_endpoints()

@@ -58,7 +58,7 @@ namespace dds {
 class PublisherImpl;
 
 class DomainParticipantImpl : public efd::DomainParticipantImpl,
-                              public rtps::IStatusQueryable
+    public rtps::IStatusQueryable
 {
 public:
 
