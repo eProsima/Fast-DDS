@@ -452,7 +452,7 @@ public:
         return false;
     }
 
-#endif // HAVE_SECURITY
+#endif // FASTDDS_STATISTICS
 
 protected:
 
