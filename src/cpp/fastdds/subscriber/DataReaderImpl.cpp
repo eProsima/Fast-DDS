@@ -126,8 +126,11 @@ DataReaderImpl::DataReaderImpl(
         EntityId_t::unknown(), subscriber_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
     guid_.guidPrefix = subscriber_->get_participant_impl()->guid().guidPrefix;
 
-    // TODO implementation goes here
-    static_cast<void>(payload_pool);
+    if (payload_pool != nullptr)
+    {
+        is_custom_payload_pool_ = true;
+        payload_pool_ = payload_pool;
+    }
 }
 
 ReturnCode_t DataReaderImpl::enable()
@@ -1721,13 +1724,17 @@ std::shared_ptr<IPayloadPool> DataReaderImpl::get_payload_pool()
 
     PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
 
-    if (!payload_pool_)
+    if (!sample_pool_)
     {
-        payload_pool_ = TopicPayloadPoolRegistry::get(topic_->get_impl()->get_rtps_topic_name(), config);
         sample_pool_ = std::make_shared<detail::SampleLoanManager>(config, type_);
     }
-
-    payload_pool_->reserve_history(config, true);
+    if (!is_custom_payload_pool_)
+    {
+        std::shared_ptr<ITopicPayloadPool> topic_payload_pool = TopicPayloadPoolRegistry::get(
+            topic_->get_impl()->get_rtps_topic_name(), config);
+        topic_payload_pool->reserve_history(config, true);
+        payload_pool_ = topic_payload_pool;
+    }
     return payload_pool_;
 }
 
@@ -1735,8 +1742,14 @@ void DataReaderImpl::release_payload_pool()
 {
     assert(payload_pool_);
 
-    PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
-    payload_pool_->release_history(config, true);
+    if (!is_custom_payload_pool_)
+    {
+        PoolConfig config = PoolConfig::from_history_attributes(history_.m_att);
+        std::shared_ptr<fastrtps::rtps::ITopicPayloadPool> topic_payload_pool =
+                std::dynamic_pointer_cast<fastrtps::rtps::ITopicPayloadPool>(payload_pool_);
+        topic_payload_pool->release_history(config, true);
+    }
+
     payload_pool_.reset();
 }
 

@@ -176,8 +176,11 @@ DataWriterImpl::DataWriterImpl(
         EntityId_t::unknown(), publisher_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
     guid_.guidPrefix = publisher_->get_participant_impl()->guid().guidPrefix;
 
-    // TODO implementation goes here
-    static_cast<void>(payload_pool);
+    if (payload_pool != nullptr)
+    {
+        is_custom_payload_pool_ = true;
+        payload_pool_ = payload_pool;
+    }
 }
 
 DataWriterImpl::DataWriterImpl(
@@ -1943,7 +1946,7 @@ bool DataWriterImpl::release_payload_pool()
 
     bool result = true;
 
-    if (is_data_sharing_compatible_)
+    if (is_data_sharing_compatible_ || is_custom_payload_pool_)
     {
         // No-op
     }
@@ -1992,6 +1995,11 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
     bool has_key = type_->m_isGetKeyDefined;
 
     is_datasharing_compatible = false;
+    if (is_custom_payload_pool_)
+    {
+        EPROSIMA_LOG_INFO(DATA_WRITER, "Custom payload pool detected. Data Sharing disabled.");
+        return ReturnCode_t::RETCODE_OK;
+    }
     switch (qos_.data_sharing().kind())
     {
         case DataSharingKind::OFF:
