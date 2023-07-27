@@ -56,9 +56,9 @@ void DataSharingListener::run()
         {
             lock.lock();
             notification_->notification_->notification_cv.wait(lock, [&]
-                {
-                    return !is_running_.load() || notification_->notification_->new_data.load();
-                });
+                    {
+                        return !is_running_.load() || notification_->notification_->new_data.load();
+                    });
 
             lock.unlock();
         }
