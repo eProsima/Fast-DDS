@@ -22,9 +22,6 @@
 
 #include <fastrtps/utils/TimeConversion.h>
 
-#include <atomic>
-#include <functional>
-
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -73,12 +70,10 @@ bool TimedEventImpl::update(
 
     if (set_time)
     {
-        std::lock_guard<std::mutex> lock(mutex_);
-        next_trigger_time_ = current_time + interval_microsec_;
+        next_trigger_time_ = current_time + interval_microsec_.load();
     }
     else if (expected == StateCode::INACTIVE)
     {
-        std::lock_guard<std::mutex> lock(mutex_);
         next_trigger_time_ = cancel_time;
     }
 
@@ -103,14 +98,12 @@ void TimedEventImpl::trigger(
                 expected = StateCode::INACTIVE;
                 if (state_.compare_exchange_strong(expected, StateCode::WAITING))
                 {
-                    std::lock_guard<std::mutex> lock(mutex_);
-                    next_trigger_time_ = current_time + interval_microsec_;
+                    next_trigger_time_ = current_time + interval_microsec_.load();
                     return;
                 }
             }
         }
 
-        std::lock_guard<std::mutex> lock(mutex_);
         next_trigger_time_ = cancel_time;
     }
 }
@@ -118,7 +111,6 @@ void TimedEventImpl::trigger(
 bool TimedEventImpl::update_interval(
         const eprosima::fastrtps::Duration_t& interval)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
     interval_microsec_ = std::chrono::microseconds(TimeConv::Duration_t2MicroSecondsInt64(interval));
     return true;
 }
@@ -126,7 +118,6 @@ bool TimedEventImpl::update_interval(
 bool TimedEventImpl::update_interval_millisec(
         double interval)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
     interval_microsec_ = std::chrono::microseconds(static_cast<int64_t>(interval * 1000));
     return true;
 }
