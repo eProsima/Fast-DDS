@@ -225,11 +225,11 @@ private:
 
     uint32_t minSendBufferSize_;
 
-    // Whether unicast metatraffic on SHM transport is allowed
-    bool allow_shm_unicast_metatraffic_ = false;
+    // Whether unicast metatraffic on SHM transport should always be used
+    bool enforce_shm_unicast_metatraffic_ = false;
 
-    // Whether multicast metatraffic on SHM transport is allowed
-    bool allow_shm_multicast_metatraffic_ = false;
+    // Whether multicast metatraffic on SHM transport should always be used
+    bool enforce_shm_multicast_metatraffic_ = false;
 
     /**
      * Calculate well-known ports.

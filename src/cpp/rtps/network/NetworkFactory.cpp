@@ -40,23 +40,23 @@ NetworkFactory::NetworkFactory(
     , minSendBufferSize_(std::numeric_limits<uint32_t>::max())
 {
     const std::string* allow_metatraffic = nullptr;
-    allow_metatraffic = PropertyPolicyHelper::find_property(PParam.properties, "fastdds.shm.allow_metatraffic");
+    allow_metatraffic = PropertyPolicyHelper::find_property(PParam.properties, "fastdds.shm.enforce_metatraffic");
     if (allow_metatraffic)
     {
         if (*allow_metatraffic == "unicast")
         {
-            allow_shm_unicast_metatraffic_ = true;
-            allow_shm_multicast_metatraffic_ = false;
+            enforce_shm_unicast_metatraffic_ = true;
+            enforce_shm_multicast_metatraffic_ = false;
         }
         else if (*allow_metatraffic == "all")
         {
-            allow_shm_unicast_metatraffic_ = true;
-            allow_shm_multicast_metatraffic_ = true;
+            enforce_shm_unicast_metatraffic_ = true;
+            enforce_shm_multicast_metatraffic_ = true;
         }
         else if (*allow_metatraffic == "none")
         {
-            allow_shm_unicast_metatraffic_ = false;
-            allow_shm_multicast_metatraffic_ = false;
+            enforce_shm_unicast_metatraffic_ = false;
+            enforce_shm_multicast_metatraffic_ = false;
         }
         else
         {
@@ -274,7 +274,7 @@ bool NetworkFactory::getDefaultMetatrafficMulticastLocators(
     {
         // For better fault-tolerance reasons, SHM metatraffic is avoided if it is already provided
         // by another transport
-        if (allow_shm_multicast_metatraffic_ || transport->kind() != LOCATOR_KIND_SHM)
+        if (enforce_shm_multicast_metatraffic_ || transport->kind() != LOCATOR_KIND_SHM)
         {
             result |= transport->getDefaultMetatrafficMulticastLocators(locators, metatraffic_multicast_port);
         }
@@ -319,7 +319,7 @@ bool NetworkFactory::getDefaultMetatrafficUnicastLocators(
     {
         // For better fault-tolerance reasons, SHM metatraffic is avoided if it is already provided
         // by another transport
-        if (allow_shm_unicast_metatraffic_ || transport->kind() != LOCATOR_KIND_SHM)
+        if (enforce_shm_unicast_metatraffic_ || transport->kind() != LOCATOR_KIND_SHM)
         {
             result |= transport->getDefaultMetatrafficUnicastLocators(locators, metatraffic_unicast_port);
         }

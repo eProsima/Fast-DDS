@@ -24,7 +24,6 @@
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastrtps/utils/IPLocator.h>
 
-
 #include <MockTransport.h>
 #include <rtps/network/NetworkFactory.h>
 
