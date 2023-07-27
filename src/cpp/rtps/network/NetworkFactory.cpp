@@ -39,6 +39,31 @@ NetworkFactory::NetworkFactory(
     : maxMessageSizeBetweenTransports_(std::numeric_limits<uint32_t>::max())
     , minSendBufferSize_(std::numeric_limits<uint32_t>::max())
 {
+    const std::string* allow_metatraffic = nullptr;
+    allow_metatraffic = PropertyPolicyHelper::find_property(PParam.properties, "fastdds.shm.allow_metatraffic");
+    if (allow_metatraffic)
+    {
+        if (*allow_metatraffic == "unicast")
+        {
+            allow_shm_unicast_metatraffic_ = true;
+            allow_shm_multicast_metatraffic_ = false;
+        }
+        else if (*allow_metatraffic == "all")
+        {
+            allow_shm_unicast_metatraffic_ = true;
+            allow_shm_multicast_metatraffic_ = true;
+        }
+        else if (*allow_metatraffic == "none")
+        {
+            allow_shm_unicast_metatraffic_ = false;
+            allow_shm_multicast_metatraffic_ = false;
+        }
+        else
+        {
+            EPROSIMA_LOG_WARNING(RTPS_NETWORK, "Unrecognized value '" << *allow_metatraffic << "'" <<
+                    " for 'fastdds.shm.allow_metatraffic'. Using default value: 'none'");
+        }
+    }
 }
 
 bool NetworkFactory::build_send_resources(
