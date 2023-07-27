@@ -39,29 +39,29 @@ NetworkFactory::NetworkFactory(
     : maxMessageSizeBetweenTransports_(std::numeric_limits<uint32_t>::max())
     , minSendBufferSize_(std::numeric_limits<uint32_t>::max())
 {
-    const std::string* allow_metatraffic = nullptr;
-    allow_metatraffic = PropertyPolicyHelper::find_property(PParam.properties, "fastdds.shm.enforce_metatraffic");
-    if (allow_metatraffic)
+    const std::string* enforce_metatraffic = nullptr;
+    enforce_metatraffic = PropertyPolicyHelper::find_property(PParam.properties, "fastdds.shm.enforce_metatraffic");
+    if (enforce_metatraffic)
     {
-        if (*allow_metatraffic == "unicast")
+        if (*enforce_metatraffic == "unicast")
         {
             enforce_shm_unicast_metatraffic_ = true;
             enforce_shm_multicast_metatraffic_ = false;
         }
-        else if (*allow_metatraffic == "all")
+        else if (*enforce_metatraffic == "all")
         {
             enforce_shm_unicast_metatraffic_ = true;
             enforce_shm_multicast_metatraffic_ = true;
         }
-        else if (*allow_metatraffic == "none")
+        else if (*enforce_metatraffic == "none")
         {
             enforce_shm_unicast_metatraffic_ = false;
             enforce_shm_multicast_metatraffic_ = false;
         }
         else
         {
-            EPROSIMA_LOG_WARNING(RTPS_NETWORK, "Unrecognized value '" << *allow_metatraffic << "'" <<
-                    " for 'fastdds.shm.allow_metatraffic'. Using default value: 'none'");
+            EPROSIMA_LOG_WARNING(RTPS_NETWORK, "Unrecognized value '" << *enforce_metatraffic << "'" <<
+                    " for 'fastdds.shm.enforce_metatraffic'. Using default value: 'none'");
         }
     }
 }
