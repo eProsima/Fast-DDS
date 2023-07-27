@@ -16,12 +16,14 @@
 
 #include <gtest/gtest.h>
 
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastrtps/utils/IPLocator.h>
+
 
 #include <MockTransport.h>
 #include <rtps/network/NetworkFactory.h>
@@ -34,7 +36,8 @@ class NetworkTests : public ::testing::Test
 {
 public:
 
-    NetworkFactory networkFactoryUnderTest;
+    RTPSParticipantAttributes pattr{};
+    NetworkFactory networkFactoryUnderTest{pattr};
     void HELPER_RegisterTransportWithKindAndChannels(
             int kind,
             unsigned int channels);
@@ -648,7 +651,7 @@ TEST_F(NetworkTests, LocatorShrink)
     std::vector<ShrinkLocatorCase_t> test_cases;
     fill_blackbox_locators_test_cases(test_cases);
 
-    NetworkFactory f;
+    NetworkFactory f{pattr};
     UDPv4TransportDescriptor udpv4;
     f.RegisterTransport(&udpv4);
     // TODO: Register more transports
