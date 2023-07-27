@@ -248,7 +248,7 @@ bool NetworkFactory::getDefaultMetatrafficMulticastLocators(
     {
         // For better fault-tolerance reasons, SHM metatraffic is avoided if it is already provided
         // by another transport
-        if (transport->kind() != LOCATOR_KIND_SHM)
+        if (allow_shm_multicast_metatraffic_ || transport->kind() != LOCATOR_KIND_SHM)
         {
             result |= transport->getDefaultMetatrafficMulticastLocators(locators, metatraffic_multicast_port);
         }
@@ -293,7 +293,7 @@ bool NetworkFactory::getDefaultMetatrafficUnicastLocators(
     {
         // For better fault-tolerance reasons, SHM metatraffic is avoided if it is already provided
         // by another transport
-        if (transport->kind() != LOCATOR_KIND_SHM)
+        if (allow_shm_unicast_metatraffic_ || transport->kind() != LOCATOR_KIND_SHM)
         {
             result |= transport->getDefaultMetatrafficUnicastLocators(locators, metatraffic_unicast_port);
         }
