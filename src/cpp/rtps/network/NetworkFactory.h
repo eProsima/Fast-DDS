@@ -43,7 +43,8 @@ class NetworkFactory
 {
 public:
 
-    NetworkFactory();
+    NetworkFactory(
+            const RTPSParticipantAttributes& PParam);
 
     /**
      * Allow registration of a transport statically, by specifying the transport type and

@@ -34,7 +34,8 @@ namespace rtps {
 
 using SendResourceList = fastdds::rtps::SendResourceList;
 
-NetworkFactory::NetworkFactory()
+NetworkFactory::NetworkFactory(
+        const RTPSParticipantAttributes& PParam)
     : maxMessageSizeBetweenTransports_(std::numeric_limits<uint32_t>::max())
     , minSendBufferSize_(std::numeric_limits<uint32_t>::max())
 {

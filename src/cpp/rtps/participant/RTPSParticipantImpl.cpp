@@ -132,6 +132,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , mp_builtinProtocols(nullptr)
     , mp_ResourceSemaphore(new Semaphore(0))
     , IdCounter(0)
+    , m_network_Factory(PParam)
     , type_check_fn_(nullptr)
     , client_override_(false)
     , internal_metatraffic_locators_(false)
