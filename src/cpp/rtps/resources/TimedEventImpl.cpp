@@ -20,6 +20,7 @@
 
 #include "TimedEventImpl.h"
 
+#include <chrono>
 #include <fastrtps/utils/TimeConversion.h>
 
 namespace eprosima {
@@ -30,6 +31,7 @@ TimedEventImpl::TimedEventImpl(
         Callback callback,
         std::chrono::microseconds interval)
     : interval_microsec_(interval)
+    , next_trigger_time_(std::chrono::steady_clock::now())
     , callback_(std::move(callback))
     , state_(StateCode::INACTIVE)
 {
