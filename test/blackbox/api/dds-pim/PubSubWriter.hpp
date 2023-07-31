@@ -1215,6 +1215,13 @@ public:
         return *this;
     }
 
+    PubSubWriter& avoid_builtin_multicast(
+            bool value)
+    {
+        participant_qos_.wire_protocol().builtin.avoid_builtin_multicast = value;
+        return *this;
+    }
+
     PubSubWriter& property_policy(
             const eprosima::fastrtps::rtps::PropertyPolicy& property_policy)
     {
