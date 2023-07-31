@@ -178,6 +178,63 @@ TEST_P(SHMUDP, Transport_Reliable_Reliable_test)
     run_parametrized_test(true, true);
 }
 
+static bool has_shm_locators(
+        const ResourceLimitedVector<Locator_t>& locators)
+{
+    auto loc_is_shm = [](const Locator_t& loc)
+            {
+                return LOCATOR_KIND_SHM == loc.kind;
+            };
+    return std::any_of(locators.cbegin(), locators.cend(), loc_is_shm);
+}
+
+static void check_shm_locators(
+        const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info,
+        bool unicast,
+        bool multicast)
+{
+    EXPECT_EQ(multicast, has_shm_locators(info.info.metatraffic_locators.multicast));
+    EXPECT_EQ(unicast, has_shm_locators(info.info.metatraffic_locators.unicast));
+}
+
+static void shm_metatraffic_test(
+        const std::string& topic_name,
+        const char* const value,
+        bool unicast,
+        bool multicast)
+{
+    PubSubWriter<HelloWorldPubSubType> writer(topic_name + "/" + value);
+    PubSubReader<HelloWorldPubSubType> reader(topic_name + "/" + value);
+
+    auto discovery_checker = [unicast, multicast](const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)
+            {
+                check_shm_locators(info, unicast, multicast);
+                return true;
+            };
+    reader.setOnDiscoveryFunction(discovery_checker);
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    PropertyPolicy properties;
+    Property p;
+    p.name("fastdds.shm.enforce_metatraffic");
+    p.value(value);
+    properties.properties().push_back(p);
+    writer.property_policy(properties);
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.wait_discovery();
+    writer.wait_discovery();
+}
+
+TEST(SHMUDP, SHM_metatraffic_config)
+{
+    shm_metatraffic_test(TEST_TOPIC_NAME, "none", false, false);
+    shm_metatraffic_test(TEST_TOPIC_NAME, "unicast", true, false);
+    shm_metatraffic_test(TEST_TOPIC_NAME, "all", true, true);
+}
+
 #ifdef INSTANTIATE_TEST_SUITE_P
 #define GTEST_INSTANTIATE_TEST_MACRO(x, y, z, w) INSTANTIATE_TEST_SUITE_P(x, y, z, w)
 #else
