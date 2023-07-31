@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "BlackboxTests.hpp"
+#include "mock/BlackboxMockConsumer.h"
 
 #include <chrono>
 #include <cstdint>
@@ -233,6 +234,30 @@ TEST(SHMUDP, SHM_metatraffic_config)
     shm_metatraffic_test(TEST_TOPIC_NAME, "none", false, false);
     shm_metatraffic_test(TEST_TOPIC_NAME, "unicast", true, false);
     shm_metatraffic_test(TEST_TOPIC_NAME, "all", true, true);
+}
+
+TEST(SHMUDP, SHM_metatraffic_wrong_config)
+{
+    using eprosima::fastdds::dds::BlackboxMockConsumer;
+
+    /* Set up log */
+    BlackboxMockConsumer* helper_consumer = new BlackboxMockConsumer();
+    Log::ClearConsumers();  // Remove default consumers
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(helper_consumer)); // Registering a consumer transfer ownership
+    // Filter specific message
+    Log::SetVerbosity(Log::Kind::Warning);
+    Log::SetCategoryFilter(std::regex("RTPS_NETWORK"));
+    Log::SetErrorStringFilter(std::regex(".*__WRONG_VALUE__.*"));
+
+    // Perfrorm test
+    shm_metatraffic_test(TEST_TOPIC_NAME, "__WRONG_VALUE__", false, false);
+
+    /* Check logs */
+    Log::Flush();
+    EXPECT_EQ(helper_consumer->ConsumedEntries().size(), 1u);
+
+    /* Clean-up */
+    Log::Reset();  // This calls to ClearConsumers, which deletes the registered consumer
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
