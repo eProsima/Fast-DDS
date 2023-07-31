@@ -15,6 +15,7 @@
 #include "BlackboxTests.hpp"
 #include "mock/BlackboxMockConsumer.h"
 
+#include <algorithm>
 #include <chrono>
 #include <cstdint>
 #include <memory>
@@ -250,7 +251,7 @@ TEST(SHMUDP, SHM_metatraffic_wrong_config)
     Log::SetCategoryFilter(std::regex("RTPS_NETWORK"));
     Log::SetErrorStringFilter(std::regex(".*__WRONG_VALUE__.*"));
 
-    // Perfrorm test
+    // Perform test
     shm_metatraffic_test(TEST_TOPIC_NAME, "__WRONG_VALUE__", false, false);
 
     /* Check logs */
