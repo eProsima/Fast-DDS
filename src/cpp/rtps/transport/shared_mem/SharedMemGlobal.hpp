@@ -820,10 +820,6 @@ public:
                 uint32_t listener_index,
                 const BufferDescriptor& buffer_descriptor)
         {
-<<<<<<< HEAD
-            node_->listeners_status[listener_index].descriptor = buffer_descriptor;
-            node_->listeners_status[listener_index].is_processing = true;
-=======
             try
             {
                 std::lock_guard<SharedMemSegment::mutex> lock(node_->empty_cv_mutex);
@@ -835,7 +831,6 @@ public:
             {
                 // Timeout when locking
             }
->>>>>>> 7cf43a62c (Improve SHM resilience to crashing participants (#3759))
         }
 
         /**
@@ -845,9 +840,6 @@ public:
         void listener_processing_stop(
                 uint32_t listener_index)
         {
-<<<<<<< HEAD
-            node_->listeners_status[listener_index].is_processing = false;
-=======
             try
             {
                 std::lock_guard<SharedMemSegment::mutex> lock(node_->empty_cv_mutex);
@@ -858,7 +850,6 @@ public:
             {
                 // Timeout when locking
             }
->>>>>>> 7cf43a62c (Improve SHM resilience to crashing participants (#3759))
         }
 
         /**
