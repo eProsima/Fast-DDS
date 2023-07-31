@@ -1995,17 +1995,17 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
     bool has_key = type_->m_isGetKeyDefined;
 
     is_datasharing_compatible = false;
-    if (is_custom_payload_pool_)
-    {
-        EPROSIMA_LOG_INFO(DATA_WRITER, "Custom payload pool detected. Data Sharing disabled.");
-        return ReturnCode_t::RETCODE_OK;
-    }
     switch (qos_.data_sharing().kind())
     {
         case DataSharingKind::OFF:
             return ReturnCode_t::RETCODE_OK;
             break;
         case DataSharingKind::ON:
+            if (is_custom_payload_pool_)
+            {
+                EPROSIMA_LOG_ERROR(DATA_WRITER, "Custom payload pool detected. Cannot force Data sharing usage.");
+                return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+            }
 #if HAVE_SECURITY
             if (has_security_enabled)
             {
@@ -2031,6 +2031,11 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
             return ReturnCode_t::RETCODE_OK;
             break;
         case DataSharingKind::AUTO:
+            if (is_custom_payload_pool_)
+            {
+                EPROSIMA_LOG_INFO(DATA_WRITER, "Custom payload pool detected. Data Sharing disabled.");
+                return ReturnCode_t::RETCODE_OK;
+            }
 #if HAVE_SECURITY
             if (has_security_enabled)
             {
