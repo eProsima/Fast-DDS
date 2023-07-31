@@ -53,10 +53,17 @@ public:
      */
     inline void notify()
     {
-        std::unique_lock<Segment::mutex> lock(notification_->notification_mutex);
-        notification_->new_data.store(true);
-        lock.unlock();
-        notification_->notification_cv.notify_all();
+        try
+        {
+            std::unique_lock<Segment::mutex> lock(notification_->notification_mutex);
+            notification_->new_data.store(true);
+            lock.unlock();
+            notification_->notification_cv.notify_all();
+        }
+        catch (const boost::interprocess::interprocess_exception& /*e*/)
+        {
+            // Timeout when locking
+        }
     }
 
     /**
