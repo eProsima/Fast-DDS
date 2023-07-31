@@ -1326,6 +1326,13 @@ public:
         return *this;
     }
 
+    PubSubReader& max_multicast_locators_number(
+            size_t max_multicast_locators)
+    {
+        participant_qos_.allocation().locators.max_multicast_locators = max_multicast_locators;
+        return *this;
+    }
+
     PubSubReader& lease_duration(
             eprosima::fastrtps::Duration_t lease_duration,
             eprosima::fastrtps::Duration_t announce_period)
