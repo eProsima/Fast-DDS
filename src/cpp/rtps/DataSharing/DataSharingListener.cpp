@@ -52,13 +52,21 @@ void DataSharingListener::run()
     std::unique_lock<Segment::mutex> lock(notification_->notification_->notification_mutex, std::defer_lock);
     while (is_running_.load())
     {
-        lock.lock();
-        notification_->notification_->notification_cv.wait(lock, [&]
-                {
-                    return !is_running_.load() || notification_->notification_->new_data.load();
-                });
+        try
+        {
+            lock.lock();
+            notification_->notification_->notification_cv.wait(lock, [&]
+                    {
+                        return !is_running_.load() || notification_->notification_->new_data.load();
+                    });
 
-        lock.unlock();
+            lock.unlock();
+        }
+        catch (const boost::interprocess::interprocess_exception& /*e*/)
+        {
+            // Timeout when locking
+            continue;
+        }
 
         if (!is_running_.load())
         {
