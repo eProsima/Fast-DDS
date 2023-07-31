@@ -718,7 +718,9 @@ public:
                         throw std::runtime_error("");
                     }
 
+                    // Read and pop descriptor
                     SharedMemGlobal::BufferDescriptor buffer_descriptor = head_cell->data();
+                    global_port_->pop(*global_listener_, was_cell_freed);
 
                     auto segment = shared_mem_manager_->find_segment(buffer_descriptor.source_segment_id);
                     auto buffer_node =
@@ -729,9 +731,6 @@ public:
                     buffer_ref = std::make_shared<SharedMemBuffer>(segment, buffer_descriptor.source_segment_id,
                                     buffer_node,
                                     buffer_descriptor.validity_id);
-
-                    // If the cell has been read by all listeners
-                    global_port_->pop(*global_listener_, was_cell_freed);
 
                     if (buffer_ref)
                     {
