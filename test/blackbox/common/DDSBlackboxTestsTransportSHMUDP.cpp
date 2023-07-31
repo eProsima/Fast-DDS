@@ -213,6 +213,7 @@ static void shm_metatraffic_test(
                 return true;
             };
     reader.setOnDiscoveryFunction(discovery_checker);
+    reader.max_multicast_locators_number(2);
     reader.init();
     ASSERT_TRUE(reader.isInitialized());
 
@@ -221,7 +222,7 @@ static void shm_metatraffic_test(
     p.name("fastdds.shm.enforce_metatraffic");
     p.value(value);
     properties.properties().push_back(p);
-    writer.property_policy(properties);
+    writer.property_policy(properties).avoid_builtin_multicast(false).max_multicast_locators_number(2);
     writer.init();
     ASSERT_TRUE(writer.isInitialized());
 
