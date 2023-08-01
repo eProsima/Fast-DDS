@@ -52,7 +52,7 @@ public:
 
     bool get_payload(
             eprosima::fastrtps::rtps::SerializedPayload_t& data,
-            eprosima::fastrtps::rtps::IPayloadPool*& data_owner,
+            eprosima::fastrtps::rtps::IPayloadPool*& /*data_owner*/,
             eprosima::fastrtps::rtps::CacheChange_t& cache_change)
     {
         // Reserve new memory for the payload buffer
@@ -67,7 +67,7 @@ public:
         cache_change.serializedPayload.max_size = data.length;
 
         // Tell the CacheChange who needs to release its payload
-        cache_change.payload_owner(data_owner);
+        cache_change.payload_owner(this);
 
         ++requested_payload_count;
 
