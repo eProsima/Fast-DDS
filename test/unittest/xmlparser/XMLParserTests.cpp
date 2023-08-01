@@ -61,6 +61,8 @@ TEST_F(XMLParserTests, regressions)
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/14456_profile_bin.xml", root));
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/15344_profile_bin.xml", root));
     EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/18395_profile_bin.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/simple_participant_profiles_nok.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_OK, XMLParser::loadXML("regressions/simple_participant_profiles_ok.xml", root));
 }
 
 TEST_F(XMLParserTests, NoFile)
@@ -1611,10 +1613,9 @@ TEST_F(XMLParserTests, parseLogConfig)
 /*
  * This test checks the return of the negative cases of the fillDataNode given a ParticipantAttributes DataNode
  * 1. Check passing a nullptr as if the XMLElement was wrongly parsed above
- * 2. Check missing required rtps tag
- * 3. Check missing DomainId value in tag
- * 4. Check bad values for all attributes
- * 5. Check a non existant attribute tag
+ * 2. Check missing DomainId value in tag
+ * 3. Check bad values for all attributes
+ * 4. Check a non existant attribute tag
  */
 TEST_F(XMLParserTests, fillDataNodeParticipantNegativeClauses)
 {
@@ -1635,12 +1636,6 @@ TEST_F(XMLParserTests, fillDataNodeParticipantNegativeClauses)
                 </participant>\
                 ";
         char xml[500];
-
-        // Misssing rtps tag
-        sprintf(xml, xml_p, "<domainId>0</domainId>");
-        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
-        titleElement = xml_doc.RootElement();
-        EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::fillDataNode_wrapper(titleElement, *participant_node));
 
         // Misssing DomainId Value
         sprintf(xml, xml_p, "<domainId></domainId><rtps></rtps>");
@@ -1759,6 +1754,7 @@ TEST_F(XMLParserTests, parseXMLProfilesRoot)
     // <topic>, <requester>, <replier>, <types>, and <log> are read as xml child elements of the <profiles>
     // root element.
     std::vector<std::string> elements_ok {
+        "participant",
         "publisher",
         "data_writer",
         "subscriber",
@@ -1776,7 +1772,6 @@ TEST_F(XMLParserTests, parseXMLProfilesRoot)
 
     std::vector<std::string> elements_error {
         "library_settings",
-        "participant",
         "requester",
         "replier"
     };
