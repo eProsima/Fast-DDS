@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "fastdds/rtps/messages/CDRMessage.h"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -1194,6 +1195,25 @@ TEST(BuiltinDataSerializationTests, contentfilterproperty_interoperability)
     ASSERT_EQ("200", out.content_filter().expression_parameters[1].to_string());
     ASSERT_EQ("100", out.content_filter().expression_parameters[2].to_string());
     ASSERT_EQ("200", out.content_filter().expression_parameters[3].to_string());
+}
+
+TEST(BuiltinDataSerializationTests, null_checks)
+{
+    {
+        // Test deserialization sanity checks
+        uint32_t msg_size = 100;
+        CDRMessage_t msg(msg_size);
+
+        ASSERT_FALSE(CDRMessage::addData(nullptr, (octet*) &msg, msg_size));
+        ASSERT_FALSE(CDRMessage::addData(&msg, nullptr, msg_size));
+        ASSERT_TRUE(CDRMessage::addData(&msg, nullptr, 0));
+
+        // Test deserialization sanity checks
+
+        ASSERT_FALSE(CDRMessage::readData(nullptr, (octet*) &msg, msg_size));
+        ASSERT_FALSE(CDRMessage::readData(&msg, nullptr, msg_size));
+        ASSERT_TRUE(CDRMessage::readData(&msg, nullptr, 0));
+    }
 }
 
 } // namespace rtps
