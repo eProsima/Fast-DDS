@@ -100,7 +100,7 @@ protected:
 
 #pragma warning(push)
 #pragma warning(disable:4324)
-    struct alignas (uint64_t) Notification
+    struct alignas (8) Notification
     {
         //! CV to wait for new notifications
         Segment::condition_variable notification_cv;
