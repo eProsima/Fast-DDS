@@ -2,6 +2,7 @@ Forthcoming
 -----------
 
 * Added participant property to configure SHM transport metatraffic behavior.
+  No metatraffic over SHM transport by default.
 
 Version 2.11.0
 --------------
