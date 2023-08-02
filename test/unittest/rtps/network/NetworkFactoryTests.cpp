@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-<<<<<<< HEAD
-=======
 #include <vector>
 
 #include <gtest/gtest.h>
@@ -23,7 +21,6 @@
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/transport/UDPv6TransportDescriptor.h>
->>>>>>> 25631e635 (User configuration for SHM metatraffic (#3753))
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
 #include <fastrtps/rtps/network/NetworkFactory.h>
 
