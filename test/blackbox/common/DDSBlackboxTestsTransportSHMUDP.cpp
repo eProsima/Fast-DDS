@@ -13,7 +13,9 @@
 // limitations under the License.
 
 #include "BlackboxTests.hpp"
+#include "mock/BlackboxMockConsumer.h"
 
+#include <algorithm>
 #include <chrono>
 #include <cstdint>
 #include <memory>
@@ -176,6 +178,88 @@ TEST_P(SHMUDP, Transport_Reliable_Reliable_test)
 {
     // Test RELIABLE writer and reader
     run_parametrized_test(true, true);
+}
+
+static bool has_shm_locators(
+        const ResourceLimitedVector<Locator_t>& locators)
+{
+    auto loc_is_shm = [](const Locator_t& loc)
+            {
+                return LOCATOR_KIND_SHM == loc.kind;
+            };
+    return std::any_of(locators.cbegin(), locators.cend(), loc_is_shm);
+}
+
+static void check_shm_locators(
+        const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info,
+        bool unicast,
+        bool multicast)
+{
+    EXPECT_EQ(multicast, has_shm_locators(info.info.metatraffic_locators.multicast));
+    EXPECT_EQ(unicast, has_shm_locators(info.info.metatraffic_locators.unicast));
+}
+
+static void shm_metatraffic_test(
+        const std::string& topic_name,
+        const char* const value,
+        bool unicast,
+        bool multicast)
+{
+    PubSubWriter<HelloWorldPubSubType> writer(topic_name + "/" + value);
+    PubSubReader<HelloWorldPubSubType> reader(topic_name + "/" + value);
+
+    auto discovery_checker = [unicast, multicast](const eprosima::fastrtps::rtps::ParticipantDiscoveryInfo& info)
+            {
+                check_shm_locators(info, unicast, multicast);
+                return true;
+            };
+    reader.setOnDiscoveryFunction(discovery_checker);
+    reader.max_multicast_locators_number(2);
+    reader.init();
+    ASSERT_TRUE(reader.isInitialized());
+
+    PropertyPolicy properties;
+    Property p;
+    p.name("fastdds.shm.enforce_metatraffic");
+    p.value(value);
+    properties.properties().push_back(p);
+    writer.property_policy(properties).avoid_builtin_multicast(false).max_multicast_locators_number(2);
+    writer.init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    reader.wait_discovery();
+    writer.wait_discovery();
+}
+
+TEST(SHMUDP, SHM_metatraffic_config)
+{
+    shm_metatraffic_test(TEST_TOPIC_NAME, "none", false, false);
+    shm_metatraffic_test(TEST_TOPIC_NAME, "unicast", true, false);
+    shm_metatraffic_test(TEST_TOPIC_NAME, "all", true, true);
+}
+
+TEST(SHMUDP, SHM_metatraffic_wrong_config)
+{
+    using eprosima::fastdds::dds::BlackboxMockConsumer;
+
+    /* Set up log */
+    BlackboxMockConsumer* helper_consumer = new BlackboxMockConsumer();
+    Log::ClearConsumers();  // Remove default consumers
+    Log::RegisterConsumer(std::unique_ptr<LogConsumer>(helper_consumer)); // Registering a consumer transfer ownership
+    // Filter specific message
+    Log::SetVerbosity(Log::Kind::Warning);
+    Log::SetCategoryFilter(std::regex("RTPS_NETWORK"));
+    Log::SetErrorStringFilter(std::regex(".*__WRONG_VALUE__.*"));
+
+    // Perform test
+    shm_metatraffic_test(TEST_TOPIC_NAME, "__WRONG_VALUE__", false, false);
+
+    /* Check logs */
+    Log::Flush();
+    EXPECT_EQ(helper_consumer->ConsumedEntries().size(), 1u);
+
+    /* Clean-up */
+    Log::Reset();  // This calls to ClearConsumers, which deletes the registered consumer
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
