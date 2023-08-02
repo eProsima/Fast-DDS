@@ -687,11 +687,6 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
         return ReturnCode_t::RETCODE_NOT_ENABLED;
     }
 
-    if (history_.getHistorySize() == 0)
-    {
-        return ReturnCode_t::RETCODE_NO_DATA;
-    }
-
 #if HAVE_STRICT_REALTIME
     auto max_blocking_time = std::chrono::steady_clock::now() +
             std::chrono::microseconds(::TimeConv::Time_t2MicroSecondsInt64(qos_.reliability().max_blocking_time));
@@ -705,6 +700,11 @@ ReturnCode_t DataReaderImpl::read_or_take_next_sample(
 #else
     std::lock_guard<RecursiveTimedMutex> _(reader_->getMutex());
 #endif // if HAVE_STRICT_REALTIME
+
+    if (history_.getHistorySize() == 0)
+    {
+        return ReturnCode_t::RETCODE_NO_DATA;
+    }
 
     set_read_communication_status(false);
 
