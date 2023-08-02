@@ -60,7 +60,7 @@ NetworkFactory::NetworkFactory(
         }
         else
         {
-            EPROSIMA_LOG_WARNING(RTPS_NETWORK, "Unrecognized value '" << *enforce_metatraffic << "'" <<
+            logWarning(RTPS_NETWORK, "Unrecognized value '" << *enforce_metatraffic << "'" <<
                     " for 'fastdds.shm.enforce_metatraffic'. Using default value: 'none'");
         }
     }
