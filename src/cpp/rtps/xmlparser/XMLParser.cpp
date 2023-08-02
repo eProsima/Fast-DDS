@@ -1825,7 +1825,7 @@ XMLP_ret XMLParser::fillDataNode(
         if (tags_present.count(name) != 0)
         {
             EPROSIMA_LOG_ERROR(XMLPARSER,
-                    "Duplicated element found in 'rtpsParticipantAttributesType'. Name: " << name);
+                    "Duplicated element found in 'rtpsParticipantAttributesType'. Tag: " << name);
             return XMLP_ret::XML_ERROR;
         }
         tags_present.emplace(name);

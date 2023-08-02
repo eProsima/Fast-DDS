@@ -8,6 +8,10 @@
             <rtps></rtps>
         </participant>
 
+        <participant profile_name="only_rtps_participant">
+            <rtps/>
+        </participant>
+
         <participant profile_name="only_domainid_participant">
             <domainId>1</domainId>
         </participant>
