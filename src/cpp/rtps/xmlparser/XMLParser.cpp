@@ -1377,23 +1377,28 @@ XMLP_ret XMLParser::parseLogConfig(
         tinyxml2::XMLElement* p_root)
 {
     /*
-       <xs:element name="log">
-       <xs:complexType>
-        <xs:boolean name="use_default"/>
-        <xs:sequence>
-          <xs:element maxOccurs="consumer">
-            <xs:complexType>
-              <xs:element name="class" type="string" minOccurs="1" maxOccurs="1"/>
-              <xs:sequence>
-                <xs:element name="propertyType"/>
-              </xs:sequence>
-            </xs:complexType>
-        </xs:sequence>
-       </xs:complexType>
-       </xs:element>
+        <xs:element name="log" type="logType"/>
+        <xs:complexType name="logType">
+            <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                <xs:choice minOccurs="1">
+                    <xs:element name="use_default" type="booleanCaps" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="consumer" type="logConsumerType" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+     */
+
+    /*
+     * TODO(eduponz): Uphold XSD validation in parsing
+     *   Even though the XSD above enforces the log tag to have at least one consumer,
+     *   the parsing allows for an empty log tag (e.g. `<log></log>`).
+     *   This inconsistency is kept to keep a backwards compatible behaviour.
+     *   In fact, test XMLParserTests.parseXMLNoRoot even checks that an empty log tag
+     *   is valid.
      */
 
     XMLP_ret ret = XMLP_ret::XML_OK;
+
     tinyxml2::XMLElement* p_aux0 = p_root->FirstChildElement(LOG);
     if (p_aux0 == nullptr)
     {
@@ -1401,31 +1406,37 @@ XMLP_ret XMLParser::parseLogConfig(
     }
 
     tinyxml2::XMLElement* p_element = p_aux0->FirstChildElement();
-    const char* tag = nullptr;
-    while (nullptr != p_element)
+
+    while (ret == XMLP_ret::XML_OK && nullptr != p_element)
     {
-        if (nullptr != (tag = p_element->Value()))
+        const char* tag = p_element->Value();
+        if (nullptr != tag)
         {
             if (strcmp(tag, USE_DEFAULT) == 0)
             {
-                bool use_default = true;
-                std::string auxBool = p_element->GetText();
-                if (std::strcmp(auxBool.c_str(), "FALSE") == 0)
+                if (nullptr == p_element->GetText())
                 {
-                    use_default = false;
+                    logError(XMLPARSER, "Cannot get text from tag: '" << tag << "'")
+                    ret = XMLP_ret::XML_ERROR;
                 }
-                if (!use_default)
+
+                if (ret == XMLP_ret::XML_OK)
                 {
-                    eprosima::fastdds::dds::Log::ClearConsumers();
+                    bool use_default = true;
+                    std::string auxBool = p_element->GetText();
+                    if (std::strcmp(auxBool.c_str(), "FALSE") == 0)
+                    {
+                        use_default = false;
+                    }
+                    if (!use_default)
+                    {
+                        eprosima::fastdds::dds::Log::ClearConsumers();
+                    }
                 }
             }
             else if (strcmp(tag, CONSUMER) == 0)
             {
                 ret = parseXMLConsumer(*p_element);
-                if (ret == XMLP_ret::XML_ERROR)
-                {
-                    return ret;
-                }
             }
             else
             {
@@ -1433,8 +1444,13 @@ XMLP_ret XMLParser::parseLogConfig(
                 ret = XMLP_ret::XML_ERROR;
             }
         }
-        p_element = p_element->NextSiblingElement(CONSUMER);
+
+        if (ret == XMLP_ret::XML_OK)
+        {
+            p_element = p_element->NextSiblingElement(CONSUMER);
+        }
     }
+
     return ret;
 }
 
