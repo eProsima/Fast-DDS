@@ -1025,6 +1025,13 @@ public:
         return *this;
     }
 
+    PubSubReader& avoid_builtin_multicast(
+            bool value)
+    {
+        participant_attr_.rtps.builtin.avoid_builtin_multicast = value;
+        return *this;
+    }
+
     PubSubReader& property_policy(
             const eprosima::fastrtps::rtps::PropertyPolicy property_policy)
     {

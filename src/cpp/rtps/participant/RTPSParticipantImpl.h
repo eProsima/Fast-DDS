@@ -247,12 +247,6 @@ public:
         return (uint32_t)m_att.participantID;
     }
 
-    //!Post to the resource semaphore
-    void ResourceSemaphorePost();
-
-    //!Wait for the resource semaphore
-    void ResourceSemaphoreWait();
-
     //!Get Pointer to the Event Resource.
     ResourceEvent& getEventResource()
     {
@@ -532,8 +526,6 @@ private:
     ResourceEvent mp_event_thr;
     //! BuiltinProtocols of this RTPSParticipant
     BuiltinProtocols* mp_builtinProtocols;
-    //!Semaphore to wait for the listen thread creation.
-    Semaphore* mp_ResourceSemaphore;
     //!Id counter to correctly assign the ids to writers and readers.
     uint32_t IdCounter;
     //! Mutex to safely access endpoints collections
