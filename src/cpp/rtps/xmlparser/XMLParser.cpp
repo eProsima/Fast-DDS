@@ -1774,7 +1774,7 @@ XMLP_ret XMLParser::fillDataNode(
     tinyxml2::XMLElement* p_element;
     tinyxml2::XMLElement* p_aux0 = nullptr;
     const char* name = nullptr;
-    std::unordered_map<std::string, bool> tags_present;
+    std::set<std::string> tags_present;
 
     /*
      * The only allowed elements are <domainId> and <rtps>
@@ -1784,12 +1784,12 @@ XMLP_ret XMLParser::fillDataNode(
     for (p_element = p_profile->FirstChildElement(); p_element != nullptr; p_element = p_element->NextSiblingElement())
     {
         name = p_element->Name();
-        if (tags_present[name])
+        if (tags_present.count(name) != 0)
         {
-            EPROSIMA_LOG_ERROR(XMLPARSER, "Duplicated element found in 'participant'. Name: " << name);
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Duplicated element found in 'participant'. Tag: " << name);
             return XMLP_ret::XML_ERROR;
         }
-        tags_present[name] = true;
+        tags_present.emplace(name);
 
         if (strcmp(p_element->Name(), DOMAIN_ID) == 0)
         {
@@ -1822,13 +1822,13 @@ XMLP_ret XMLParser::fillDataNode(
     {
         name = p_aux0->Name();
 
-        if (tags_present[name])
+        if (tags_present.count(name) != 0)
         {
             EPROSIMA_LOG_ERROR(XMLPARSER,
                     "Duplicated element found in 'rtpsParticipantAttributesType'. Name: " << name);
             return XMLP_ret::XML_ERROR;
         }
-        tags_present[name] = true;
+        tags_present.emplace(name);
 
         if (strcmp(name, ALLOCATION) == 0)
         {
