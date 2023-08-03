@@ -106,18 +106,20 @@ DataReader* Subscriber::create_datareader(
         TopicDescription* topic,
         const DataReaderQos& reader_qos,
         DataReaderListener* listener,
-        const StatusMask& mask)
+        const StatusMask& mask,
+        std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool)
 {
-    return impl_->create_datareader(topic, reader_qos, listener, mask);
+    return impl_->create_datareader(topic, reader_qos, listener, mask, payload_pool);
 }
 
 DataReader* Subscriber::create_datareader_with_profile(
         TopicDescription* topic,
         const std::string& profile_name,
         DataReaderListener* listener,
-        const StatusMask& mask)
+        const StatusMask& mask,
+        std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool)
 {
-    return impl_->create_datareader_with_profile(topic, profile_name, listener, mask);
+    return impl_->create_datareader_with_profile(topic, profile_name, listener, mask, payload_pool);
 }
 
 ReturnCode_t Subscriber::delete_datareader(
