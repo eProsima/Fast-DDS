@@ -175,16 +175,18 @@ DataReaderImpl* SubscriberImpl::create_datareader_impl(
         const TypeSupport& type,
         TopicDescription* topic,
         const DataReaderQos& qos,
-        DataReaderListener* listener)
+        DataReaderListener* listener,
+        std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool)
 {
-    return new DataReaderImpl(this, type, topic, qos, listener);
+    return new DataReaderImpl(this, type, topic, qos, listener, payload_pool);
 }
 
 DataReader* SubscriberImpl::create_datareader(
         TopicDescription* topic,
         const DataReaderQos& qos,
         DataReaderListener* listener,
-        const StatusMask& mask)
+        const StatusMask& mask,
+        std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool)
 {
     EPROSIMA_LOG_INFO(SUBSCRIBER, "CREATING SUBSCRIBER IN TOPIC: " << topic->get_name());
     //Look for the correct type registration
@@ -205,7 +207,7 @@ DataReader* SubscriberImpl::create_datareader(
 
     topic->get_impl()->reference();
 
-    DataReaderImpl* impl = create_datareader_impl(type_support, topic, qos, listener);
+    DataReaderImpl* impl = create_datareader_impl(type_support, topic, qos, listener, payload_pool);
     DataReader* reader = new DataReader(impl, mask);
     impl->user_datareader_ = reader;
 
@@ -230,7 +232,8 @@ DataReader* SubscriberImpl::create_datareader_with_profile(
         TopicDescription* topic,
         const std::string& profile_name,
         DataReaderListener* listener,
-        const StatusMask& mask)
+        const StatusMask& mask,
+        std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool)
 {
     // TODO (ILG): Change when we have full XML support for DDS QoS profiles
     SubscriberAttributes attr;
@@ -238,7 +241,7 @@ DataReader* SubscriberImpl::create_datareader_with_profile(
     {
         DataReaderQos qos = default_datareader_qos_;
         utils::set_qos_from_attributes(qos, attr);
-        return create_datareader(topic, qos, listener, mask);
+        return create_datareader(topic, qos, listener, mask, payload_pool);
     }
 
     return nullptr;
