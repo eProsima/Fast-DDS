@@ -146,7 +146,8 @@ DataWriterImpl::DataWriterImpl(
         TypeSupport type,
         Topic* topic,
         const DataWriterQos& qos,
-        DataWriterListener* listen)
+        DataWriterListener* listen,
+        std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool)
     : publisher_(p)
     , type_(type)
     , topic_(topic)
@@ -174,6 +175,12 @@ DataWriterImpl::DataWriterImpl(
     fastrtps::rtps::RTPSParticipantImpl::preprocess_endpoint_attributes<WRITER, 0x03, 0x02>(
         EntityId_t::unknown(), publisher_->get_participant_impl()->id_counter(), endpoint_attributes, guid_.entityId);
     guid_.guidPrefix = publisher_->get_participant_impl()->guid().guidPrefix;
+
+    if (payload_pool != nullptr)
+    {
+        is_custom_payload_pool_ = true;
+        payload_pool_ = payload_pool;
+    }
 }
 
 DataWriterImpl::DataWriterImpl(
@@ -1935,7 +1942,7 @@ bool DataWriterImpl::release_payload_pool()
 
     bool result = true;
 
-    if (is_data_sharing_compatible_)
+    if (is_data_sharing_compatible_ || is_custom_payload_pool_)
     {
         // No-op
     }
@@ -1990,6 +1997,11 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
             return ReturnCode_t::RETCODE_OK;
             break;
         case DataSharingKind::ON:
+            if (is_custom_payload_pool_)
+            {
+                EPROSIMA_LOG_ERROR(DATA_WRITER, "Custom payload pool detected. Cannot force Data sharing usage.");
+                return ReturnCode_t::RETCODE_INCONSISTENT_POLICY;
+            }
 #if HAVE_SECURITY
             if (has_security_enabled)
             {
@@ -2015,6 +2027,11 @@ ReturnCode_t DataWriterImpl::check_datasharing_compatible(
             return ReturnCode_t::RETCODE_OK;
             break;
         case DataSharingKind::AUTO:
+            if (is_custom_payload_pool_)
+            {
+                EPROSIMA_LOG_INFO(DATA_WRITER, "Custom payload pool detected. Data Sharing disabled.");
+                return ReturnCode_t::RETCODE_OK;
+            }
 #if HAVE_SECURITY
             if (has_security_enabled)
             {
