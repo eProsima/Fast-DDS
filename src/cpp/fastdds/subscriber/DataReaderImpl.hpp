@@ -102,7 +102,8 @@ protected:
             const TypeSupport& type,
             TopicDescription* topic,
             const DataReaderQos& qos,
-            DataReaderListener* listener = nullptr);
+            DataReaderListener* listener = nullptr,
+            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool = nullptr);
 
 public:
 
@@ -482,8 +483,10 @@ protected:
 
     DataReader* user_datareader_ = nullptr;
 
-    std::shared_ptr<ITopicPayloadPool> payload_pool_;
     std::shared_ptr<detail::SampleLoanManager> sample_pool_;
+    std::shared_ptr<IPayloadPool> payload_pool_;
+
+    bool is_custom_payload_pool_ = false;
 
     detail::SampleInfoPool sample_info_pool_;
     detail::DataReaderLoanManager loan_manager_;
