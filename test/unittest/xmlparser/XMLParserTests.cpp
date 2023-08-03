@@ -54,12 +54,13 @@ TEST_F(XMLParserTests, regressions)
 {
     std::unique_ptr<BaseNode> root;
 
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/12736.xml", root));
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13418.xml", root));
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13454.xml", root));
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13513.xml", root));
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/14456.xml", root));
-    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/15344.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/12736_profile_bin.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13418_profile_bin.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13454_profile_bin.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/13513_profile_bin.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/14456_profile_bin.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/15344_profile_bin.xml", root));
+    EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParser::loadXML("regressions/18395_profile_bin.xml", root));
 }
 
 TEST_F(XMLParserTests, NoFile)
