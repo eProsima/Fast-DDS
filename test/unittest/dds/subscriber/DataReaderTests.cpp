@@ -17,6 +17,7 @@
 #include <chrono>
 #include <forward_list>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <thread>
 #include <type_traits>
@@ -67,6 +68,10 @@
 
 #include <fastdds/rtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include "../../common/CustomPayloadPool.hpp"
+#include "fastdds/dds/common/InstanceHandle.hpp"
+#include "fastdds/dds/core/policy/QosPolicies.hpp"
 
 #include <asio.hpp>
 
@@ -3487,6 +3492,57 @@ TEST_F(DataReaderTests, InstancePolicyAllocationConsistencyKeyed)
     qos2.resource_limits().max_samples_per_instance = 500;
 
     ASSERT_EQ(ReturnCode_t::RETCODE_OK, default_data_reader2->set_qos(qos2));
+}
+
+/*
+ * This test checks the proper behavior of the custom payload pool DataReader overload.
+ */
+TEST_F(DataReaderTests, CustomPoolCreation)
+{
+    DomainParticipant* participant =
+            DomainParticipantFactory::get_instance()->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+    ASSERT_NE(participant, nullptr);
+
+    Subscriber* subscriber = participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT);
+    ASSERT_NE(subscriber, nullptr);
+
+    Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
+    ASSERT_NE(publisher, nullptr);
+
+    TypeSupport type(new FooTypeSupport());
+    type.register_type(participant);
+
+    Topic* topic = participant->create_topic("footopic", type.get_type_name(), TOPIC_QOS_DEFAULT);
+    ASSERT_NE(topic, nullptr);
+
+    // Next QoS config checks the default qos configuration,
+    // create_datareader() should not return nullptr.
+    DataReaderQos reader_qos = DATAREADER_QOS_DEFAULT;
+
+    std::shared_ptr<CustomPayloadPool> payload_pool = std::make_shared<CustomPayloadPool>();
+
+    DataReader* data_reader =
+            subscriber->create_datareader(topic, reader_qos, nullptr, StatusMask::all(), payload_pool);
+
+    DataWriterQos writer_qos = DATAWRITER_QOS_DEFAULT;
+    writer_qos.reliability().kind = eprosima::fastdds::dds::BEST_EFFORT_RELIABILITY_QOS;
+
+    DataWriter* data_writer = publisher->create_datawriter(topic, writer_qos);
+
+    FooType data;
+    data.index(0);
+    data.message()[0] = '\0';
+    data.message()[1] = '\0';
+
+    data_writer->write(&data, HANDLE_NIL);
+
+    ASSERT_EQ(payload_pool->requested_payload_count, 1u);
+
+    ASSERT_NE(data_reader, nullptr);
+
+    participant->delete_contained_entities();
+
+    DomainParticipantFactory::get_instance()->delete_participant(participant);
 }
 
 int main(
