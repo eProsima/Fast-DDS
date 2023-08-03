@@ -41,7 +41,17 @@ message(STATUS "Version: ${PROJECT_VERSION}")
 # eProsima build options
 ###############################################################################
 option(EPROSIMA_BUILD "Activate internal building" OFF)
-
+###############################################################################
+# Replace _Thrd_success with _Thrd_result::_Success. As a workround of the
+# unreleased version of MSVC, it will be deleted after release.
+###############################################################################
+if(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL "19.38.32926.95")
+        file(READ "${PROJECT_SOURCE_DIR}/include/fastrtps/utils/TimedMutex.hpp" _contents)
+        string(REPLACE "_Thrd_success" "_Thrd_result::_Success" _contents "${_contents}")
+        file(WRITE "${PROJECT_SOURCE_DIR}/include/fastrtps/utils/TimedMutex.hpp" "${_contents}")
+    endif()
+endif()
 ###############################################################################
 # Warning level
 ###############################################################################

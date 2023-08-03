@@ -98,11 +98,11 @@ public:
             nsecs -= secs;
             max_wait.tv_sec += secs.count();
             max_wait.tv_nsec = (long)nsecs.count();
-            return (_Thrd_result::_Success == _Mtx_timedlock(mutex_, (xtime*)&max_wait));
+            return (_Thrd_success == _Mtx_timedlock(mutex_, (xtime*)&max_wait));
         }
         else
         {
-            return (_Thrd_result::_Success == _Mtx_trylock(mutex_));
+            return (_Thrd_success == _Mtx_trylock(mutex_));
         }
     }
 
@@ -147,7 +147,7 @@ public:
 
     bool try_lock()
     {
-        return (_Thrd_result::_Success == _Mtx_trylock(mutex_));
+        return (_Thrd_success == _Mtx_trylock(mutex_));
     }
 
     template <class Rep, class Period>
@@ -173,11 +173,11 @@ public:
             nsecs -= secs;
             max_wait.tv_sec += secs.count();
             max_wait.tv_nsec = (long)nsecs.count();
-            return (_Thrd_result::_Success == _Mtx_timedlock(mutex_, (xtime*)&max_wait));
+            return (_Thrd_success == _Mtx_timedlock(mutex_, (xtime*)&max_wait));
         }
         else
         {
-            return (_Thrd_result::_Success == _Mtx_trylock(mutex_));
+            return (_Thrd_success == _Mtx_trylock(mutex_));
         }
     }
 
