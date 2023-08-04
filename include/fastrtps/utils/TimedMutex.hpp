@@ -51,7 +51,7 @@ class TimedMutex
     // See https://github.com/eProsima/Fast-DDS/issues/3783
     // See https://github.com/microsoft/STL/pull/3897
 #if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 193832926
-using _Thrd_success = _Thrd_result::_Success;
+    using _Thrd_success = _Thrd_result::_Success;
 #endif
 public:
 
