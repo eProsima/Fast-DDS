@@ -88,8 +88,8 @@ private:
     /**
      * @brief Check that the ParticipantMessageData kind is a valid one for WLP
      *
-     * @param A pointer to the first octet of the kind array. The function assumes 4 elements in the
-     *        array.
+     * @param kind A pointer to the first octet of the kind array. The function assumes 4 elements
+     *        in the array.
      *
      * @return True if the kind corresponds with one for WLP, false otherwise.
      */
