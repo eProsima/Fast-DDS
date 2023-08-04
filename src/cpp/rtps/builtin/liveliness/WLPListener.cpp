@@ -92,7 +92,7 @@ void WLPListener::onNewCacheChangeAdded(
         }
         else
         {
-            logInfo(RTPS_LIVELINESS,"Ignoring not WLP ParticipantDataMessage");
+            logInfo(RTPS_LIVELINESS, "Ignoring not WLP ParticipantDataMessage");
             history->remove_change(change);
             return;
         }
@@ -105,7 +105,7 @@ void WLPListener::onNewCacheChangeAdded(
                     &guidP,
                     &livelinessKind))
         {
-            logInfo(RTPS_LIVELINESS,"Ignoring not WLP ParticipantDataMessage");
+            logInfo(RTPS_LIVELINESS, "Ignoring not WLP ParticipantDataMessage");
             history->remove_change(change);
             return;
         }
@@ -167,13 +167,14 @@ bool WLPListener::computeKey(
     return true;
 }
 
-bool WLPListener::is_wlp_kind(octet* kind)
+bool WLPListener::is_wlp_kind(
+        octet* kind)
 {
     /*
-    * From RTPS 2.5 9.6.3.1, the ParticipantMessageData kinds for WLP are:
-    *   - PARTICIPANT_MESSAGE_DATA_KIND_AUTOMATIC_LIVELINESS_UPDATE {0x00, 0x00, 0x00, 0x01}
-    *   - PARTICIPANT_MESSAGE_DATA_KIND_MANUAL_LIVELINESS_UPDATE {0x00, 0x00, 0x00, 0x02}
-    */
+     * From RTPS 2.5 9.6.3.1, the ParticipantMessageData kinds for WLP are:
+     *   - PARTICIPANT_MESSAGE_DATA_KIND_AUTOMATIC_LIVELINESS_UPDATE {0x00, 0x00, 0x00, 0x01}
+     *   - PARTICIPANT_MESSAGE_DATA_KIND_MANUAL_LIVELINESS_UPDATE {0x00, 0x00, 0x00, 0x02}
+     */
     bool is_wlp = true;
     is_wlp &= kind[0] == 0;
     is_wlp &= kind[1] == 0;
