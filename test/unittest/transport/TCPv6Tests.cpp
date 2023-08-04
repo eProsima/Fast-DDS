@@ -19,6 +19,7 @@
 #include <gtest/gtest.h>
 #include <MockReceiverResource.h>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/attributes/RTPSParticipantAttributes.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/rtps/network/NetworkFactory.h>
 #include <fastrtps/utils/Semaphore.h>
@@ -149,7 +150,8 @@ TEST_F(TCPv6Tests, opening_and_closing_input_channel)
     multicastFilterLocator.port = g_default_port; // arbitrary
     IPLocator::setIPv6(multicastFilterLocator, 0xff31, 0, 0, 0, 0, 0, 0x8000, 0x1234);
 
-    NetworkFactory factory;
+    RTPSParticipantAttributes p_attr{};
+    NetworkFactory factory{p_attr};
     factory.RegisterTransport<TCPv6Transport, TCPv6TransportDescriptor>(descriptor);
     std::vector<std::shared_ptr<ReceiverResource>> receivers;
     factory.BuildReceiverResources(multicastFilterLocator, receivers, 0x8FFF);

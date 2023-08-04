@@ -42,7 +42,8 @@ class NetworkFactory
 {
 public:
 
-    NetworkFactory();
+    NetworkFactory(
+            const RTPSParticipantAttributes& PParam);
 
     /**
      * Allow registration of a transport statically, by specifying the transport type and
@@ -222,6 +223,12 @@ private:
     uint32_t maxMessageSizeBetweenTransports_;
 
     uint32_t minSendBufferSize_;
+
+    // Whether unicast metatraffic on SHM transport should always be used
+    bool enforce_shm_unicast_metatraffic_ = false;
+
+    // Whether multicast metatraffic on SHM transport should always be used
+    bool enforce_shm_multicast_metatraffic_ = false;
 
     /**
      * Calculate well-known ports.
