@@ -45,8 +45,14 @@ class TimedMutex
     // See https://github.com/microsoft/STL/pull/3594
 #if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 193632528
     using xtime = _timespec64;
-#endif  // _MSC_FULL_VER check
-
+#endif  
+    // _MSC_FULL_VER check
+    // On MSVC 19.38.32926.95 `_Thrd_success` was changed into `_Thrd_result::_Success`.
+    // See https://github.com/eProsima/Fast-DDS/issues/3783
+    // See https://github.com/microsoft/STL/pull/3897
+#if defined(_MSC_FULL_VER) && _MSC_FULL_VER >= 193832926
+using _Thrd_success = _Thrd_result::_Success;
+#endif
 public:
 
     TimedMutex()
