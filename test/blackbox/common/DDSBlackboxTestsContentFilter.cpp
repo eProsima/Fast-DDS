@@ -31,6 +31,8 @@
 #include "PubSubWriter.hpp"
 
 #include "../types/HelloWorldTypeObject.h"
+#include "../types/TestRegression3361PubSubTypes.h"
+#include "../types/TestRegression3361TypeObject.h"
 
 namespace eprosima {
 namespace fastdds {
@@ -574,6 +576,44 @@ TEST_P(DDSContentFilter, WithLimitsDynamicReaders)
     state.writer.wait_discovery(4);
     std::this_thread::sleep_for(std::chrono::milliseconds(250));
     state.send_data(reader_4, filter_counter, 3u, { 2, 3, 4 }, true, 2u);
+}
+
+//! Regression test for https://github.com/eProsima/Fast-DDS/issues/3361
+//! Correctly resolve an alias defined in another header
+TEST(DDSContentFilter, CorrectlyHandleAliasOtherHeader)
+{
+    registerTestRegression3361Types();
+
+    auto dpf = DomainParticipantFactory::get_instance();
+
+    auto participant = dpf->create_participant(0, PARTICIPANT_QOS_DEFAULT);
+
+    TypeSupport type( new TestRegression3361PubSubType());
+
+    auto ret = type.register_type(participant);
+
+    if (ret != ReturnCode_t::RETCODE_OK)
+    {
+        throw std::runtime_error("Failed to register type");
+    }
+
+    auto topic = participant->create_topic("TestTopic", type->getName(), TOPIC_QOS_DEFAULT);
+    if (topic == nullptr)
+    {
+        throw std::runtime_error("Failed to create topic");
+    }
+
+    std::string expression = "uuid <> %0";
+    std::vector<std::string> parameters = {"'1235'"};
+
+    auto filtered_topic = participant->create_contentfilteredtopic(
+        "FilteredTestTopic", topic, expression, parameters);
+
+    EXPECT_NE(nullptr, filtered_topic);
+
+    participant->delete_contentfilteredtopic(filtered_topic);
+    participant->delete_topic(topic);
+    dpf->delete_participant(participant);
 }
 
 #ifdef INSTANTIATE_TEST_SUITE_P
