@@ -74,22 +74,28 @@ void WLPListener::onNewCacheChangeAdded(
             break;
         }
     }
-    if (change->serializedPayload.length > 0)
+
+    // Data should have at least 4 bytes of representation header, 12 of GuidPrefix, and 4 of kind.
+    if (change->serializedPayload.length >= 20)
     {
-        if (PL_CDR_BE == change->serializedPayload.data[1])
+        // Encapsulation in the second byte of the representation header.
+        change->serializedPayload.encapsulation = (uint16_t)change->serializedPayload.data[1];
+
+        // Extract GuidPrefix
+        memcpy(guidP.value, change->serializedPayload.data + 4, 12);
+
+        // Extract liveliness kind
+        if (is_wlp_kind(&change->serializedPayload.data[16]))
         {
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_BE;
+            // Adjust and cast to LivelinessQosPolicyKind enum, where AUTOMATIC_LIVELINESS_QOS == 0
+            livelinessKind = (LivelinessQosPolicyKind)(change->serializedPayload.data[19] - 0x01);
         }
         else
         {
-            change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+            logInfo(RTPS_LIVELINESS,"Ignoring not WLP ParticipantDataMessage");
+            history->remove_change(change);
+            return;
         }
-
-        for (size_t i = 0; i < 12; ++i)
-        {
-            guidP.value[i] = change->serializedPayload.data[i + 4];
-        }
-        livelinessKind = (LivelinessQosPolicyKind)(change->serializedPayload.data[19] - 0x01);
 
     }
     else
@@ -99,6 +105,8 @@ void WLPListener::onNewCacheChangeAdded(
                     &guidP,
                     &livelinessKind))
         {
+            logInfo(RTPS_LIVELINESS,"Ignoring not WLP ParticipantDataMessage");
+            history->remove_change(change);
             return;
         }
     }
@@ -130,12 +138,17 @@ bool WLPListener::separateKey(
         GuidPrefix_t* guidP,
         LivelinessQosPolicyKind* liveliness)
 {
-    for (uint8_t i = 0; i < 12; ++i)
+    bool ret = false;
+    if (is_wlp_kind(&key.value[12]))
     {
-        guidP->value[i] = key.value[i];
+        // Extract GuidPrefix
+        memcpy(guidP->value, key.value, 12);
+
+        // Extract liveliness kind
+        *liveliness = (LivelinessQosPolicyKind)key.value[15];
+        ret = true;
     }
-    *liveliness = (LivelinessQosPolicyKind)key.value[15];
-    return true;
+    return ret;
 }
 
 bool WLPListener::computeKey(
@@ -152,6 +165,21 @@ bool WLPListener::computeKey(
         return false;
     }
     return true;
+}
+
+bool WLPListener::is_wlp_kind(octet* kind)
+{
+    /*
+    * From RTPS 2.5 9.6.3.1, the ParticipantMessageData kinds for WLP are:
+    *   - PARTICIPANT_MESSAGE_DATA_KIND_AUTOMATIC_LIVELINESS_UPDATE {0x00, 0x00, 0x00, 0x01}
+    *   - PARTICIPANT_MESSAGE_DATA_KIND_MANUAL_LIVELINESS_UPDATE {0x00, 0x00, 0x00, 0x02}
+    */
+    bool is_wlp = true;
+    is_wlp &= kind[0] == 0;
+    is_wlp &= kind[1] == 0;
+    is_wlp &= kind[2] == 0;
+    is_wlp &= kind[3] == 0x01 || kind[3] == 0x02;
+    return is_wlp;
 }
 
 } /* namespace rtps */

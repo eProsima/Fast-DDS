@@ -82,6 +82,16 @@ private:
     */
     bool computeKey(CacheChange_t* change);
 
+    /**
+     * @brief Check that the ParticipantMessageData kind is a valid one for WLP
+     *
+     * @param A pointer to the first octet of the kind array. The function assumes 4 elements in the
+     *        array.
+     *
+     * @return True if the kind corresponds with one for WLP, false otherwise.
+     */
+    bool is_wlp_kind(octet* kind);
+
     //! A pointer to the writer liveliness protocol
     WLP* mp_WLP;
 
