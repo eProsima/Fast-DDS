@@ -57,7 +57,7 @@ void WLPListener::onNewCacheChangeAdded(
     std::lock_guard<std::recursive_mutex> guard2(*mp_WLP->mp_builtinProtocols->mp_PDP->getMutex());
 
     GuidPrefix_t guidP;
-    LivelinessQosPolicyKind livelinessKind;
+    LivelinessQosPolicyKind livelinessKind = AUTOMATIC_LIVELINESS_QOS;
     CacheChange_t* change = (CacheChange_t*)changeIN;
     if (!computeKey(change))
     {
@@ -77,12 +77,17 @@ void WLPListener::onNewCacheChangeAdded(
 
     // Serialized payload should have at least 4 bytes of representation header, 12 of GuidPrefix,
     // 4 of kind, and 4 of length.
-    const uint32_t min_serialized_length = 4 + 12 + 4 + 4;
+    const uint32_t representation_header_size = 4;
+    const uint32_t guid_prefix_size = 12;
+    const uint32_t participant_msg_data_kind_size = 4;
+    const uint32_t participant_msg_data_length_size = 4;
+    const uint32_t min_serialized_length = representation_header_size
+            + guid_prefix_size
+            + participant_msg_data_kind_size
+            + participant_msg_data_length_size;
+
     if (change->serializedPayload.length >= min_serialized_length)
     {
-        const uint32_t representation_header_size = 4;
-        const uint32_t guid_prefix_size = 12;
-        const uint32_t participant_msg_data_size = 4;
         const uint32_t participant_msg_data_pos = 16;
         const uint32_t encapsulation_pos = 16;
         uint32_t data_length;
@@ -96,7 +101,7 @@ void WLPListener::onNewCacheChangeAdded(
             // Extract GuidPrefix
             && CDRMessage::readData(&cdr_message, guidP.value, guid_prefix_size)
             // Skip kind, it will be validated later
-            && CDRMessage::skip(&cdr_message, participant_msg_data_size)
+            && CDRMessage::skip(&cdr_message, participant_msg_data_length_size)
             // Extract and validate liveliness kind
             && get_wlp_kind(&change->serializedPayload.data[participant_msg_data_pos], livelinessKind)
             // Extract data length

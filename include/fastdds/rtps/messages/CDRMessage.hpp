@@ -1309,6 +1309,7 @@ inline bool CDRMessage::skip(
     bool ret = (msg != nullptr) && (msg->pos + length <= msg->length);
     if (ret)
     {
+        // Advance index the number of specified bytes
         msg->pos += length;
     }
     return ret;
