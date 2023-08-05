@@ -75,28 +75,46 @@ void WLPListener::onNewCacheChangeAdded(
         }
     }
 
-    // Data should have at least 4 bytes of representation header, 12 of GuidPrefix, and 4 of kind.
-    if (change->serializedPayload.length >= 20)
+    // Serialized payload should have at least 4 bytes of representation header, 12 of GuidPrefix,
+    // 4 of kind, and 4 of length.
+    const uint32_t min_serialized_length = 4 + 12 + 4 + 4;
+    if (change->serializedPayload.length >= min_serialized_length)
     {
-        // Encapsulation in the second byte of the representation header.
-        change->serializedPayload.encapsulation = (uint16_t)change->serializedPayload.data[1];
+        const uint32_t representation_header_size = 4;
+        const uint32_t guid_prefix_size = 12;
+        const uint32_t participant_msg_data_size = 4;
+        const uint32_t participant_msg_data_pos = 16;
+        const uint32_t encapsulation_pos = 16;
+        uint32_t data_length;
 
-        // Extract GuidPrefix
-        memcpy(guidP.value, change->serializedPayload.data + 4, 12);
+        // Create CDR message from buffer to deserialize contents for further validation
+        CDRMessage_t cdr_message(change->serializedPayload);
 
-        // Extract liveliness kind
-        if (is_wlp_kind(&change->serializedPayload.data[16]))
+        bool message_ok = (
+            // Skip representation header
+            CDRMessage::skip(&cdr_message, representation_header_size)
+            // Extract GuidPrefix
+            && CDRMessage::readData(&cdr_message, guidP.value, guid_prefix_size)
+            // Skip kind, it will be validated later
+            && CDRMessage::skip(&cdr_message, participant_msg_data_size)
+            // Extract and validate liveliness kind
+            && get_wlp_kind(&change->serializedPayload.data[participant_msg_data_pos], livelinessKind)
+            // Extract data length
+            && CDRMessage::readUInt32(&cdr_message, &data_length)
+            // Check that serialized length is correctly set
+            && (change->serializedPayload.length >= min_serialized_length + data_length));
+
+        if (message_ok)
         {
-            // Adjust and cast to LivelinessQosPolicyKind enum, where AUTOMATIC_LIVELINESS_QOS == 0
-            livelinessKind = (LivelinessQosPolicyKind)(change->serializedPayload.data[19] - 0x01);
+            // Extract encapsulation from the second byte of the representation header.
+            change->serializedPayload.encapsulation = (uint16_t)change->serializedPayload.data[encapsulation_pos];
         }
         else
         {
-            logInfo(RTPS_LIVELINESS, "Ignoring not WLP ParticipantDataMessage");
+            logInfo(RTPS_LIVELINESS, "Ignoring incorrect WLP ParticipantDataMessage");
             history->remove_change(change);
             return;
         }
-
     }
     else
     {
@@ -138,15 +156,11 @@ bool WLPListener::separateKey(
         GuidPrefix_t* guidP,
         LivelinessQosPolicyKind* liveliness)
 {
-    bool ret = false;
-    if (is_wlp_kind(&key.value[12]))
+    bool ret = get_wlp_kind(&key.value[12], *liveliness);
+    if (ret)
     {
         // Extract GuidPrefix
         memcpy(guidP->value, key.value, 12);
-
-        // Extract liveliness kind
-        *liveliness = (LivelinessQosPolicyKind)key.value[15];
-        ret = true;
     }
     return ret;
 }
@@ -167,19 +181,27 @@ bool WLPListener::computeKey(
     return true;
 }
 
-bool WLPListener::is_wlp_kind(
-        octet* kind)
+bool WLPListener::get_wlp_kind(
+        octet* serialized_kind,
+        LivelinessQosPolicyKind& liveliness_kind)
 {
     /*
      * From RTPS 2.5 9.6.3.1, the ParticipantMessageData kinds for WLP are:
      *   - PARTICIPANT_MESSAGE_DATA_KIND_AUTOMATIC_LIVELINESS_UPDATE {0x00, 0x00, 0x00, 0x01}
      *   - PARTICIPANT_MESSAGE_DATA_KIND_MANUAL_LIVELINESS_UPDATE {0x00, 0x00, 0x00, 0x02}
      */
-    bool is_wlp = true;
-    is_wlp &= kind[0] == 0;
-    is_wlp &= kind[1] == 0;
-    is_wlp &= kind[2] == 0;
-    is_wlp &= kind[3] == 0x01 || kind[3] == 0x02;
+    bool is_wlp = (
+        serialized_kind[0] == 0
+        && serialized_kind[1] == 0
+        && serialized_kind[2] == 0
+        && (serialized_kind[3] == 0x01 || serialized_kind[3] == 0x02));
+
+    if (is_wlp)
+    {
+        // Adjust and cast to LivelinessQosPolicyKind enum, where AUTOMATIC_LIVELINESS_QOS == 0
+        liveliness_kind = (LivelinessQosPolicyKind)(serialized_kind[3] - 0x01);
+    }
+
     return is_wlp;
 }
 

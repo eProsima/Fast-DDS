@@ -1301,6 +1301,19 @@ inline bool CDRMessage::readParticipantGenericMessage(
     return true;
 }
 
+inline bool CDRMessage::skip(
+        CDRMessage_t* msg,
+        uint32_t length)
+{
+    // Validate input
+    bool ret = (msg != nullptr) && (msg->pos + length <= msg->length);
+    if (ret)
+    {
+        msg->pos += length;
+    }
+    return ret;
+}
+
 } // namespace rtps
 } // namespace fastrtps
 } // namespace eprosima

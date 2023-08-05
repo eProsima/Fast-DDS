@@ -86,15 +86,17 @@ private:
             CacheChange_t* change);
 
     /**
-     * @brief Check that the ParticipantMessageData kind is a valid one for WLP
+     * @brief Check that the ParticipantMessageData kind is a valid one for WLP and extract the liveliness kind.
      *
-     * @param kind A pointer to the first octet of the kind array. The function assumes 4 elements
+     * @param[in] serialized_kind A pointer to the first octet of the kind array. The function assumes 4 elements
      *        in the array.
+     * @param[out] liveliness_kind A reference to the LivelinessQosPolicyKind.
      *
      * @return True if the kind corresponds with one for WLP, false otherwise.
      */
-    bool is_wlp_kind(
-            octet* kind);
+    bool get_wlp_kind(
+            octet* serialized_kind,
+            LivelinessQosPolicyKind& liveliness_kind);
 
     //! A pointer to the writer liveliness protocol
     WLP* mp_WLP;
