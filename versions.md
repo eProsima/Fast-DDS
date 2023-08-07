@@ -2,14 +2,7 @@ Forthcoming
 -----------
 
 * Added Participant ignore local endpoints feature.
-<<<<<<< HEAD
-=======
-* Remove `FASTDDS_STATIC` CMake option.
-  Please, use `BUILD_SHARED_LIBS=OFF` instead.
-* Fixed exported symbols on ContentFilteredTopic (ABI break)
-* Deprecated the DDS:Crypto:AES-GCM-GMAC plugin configuration through the DomainParticipant PropertyPolicyQos (security vulnerability).
 * `DomainParticipantListener::on_participant_discovery` changed behavior (fix API break in 2.10.0).
->>>>>>> f15c7c74f (Calling old `on_participant_discovery` overload (#3479))
 
 Version 2.10.1
 --------------
