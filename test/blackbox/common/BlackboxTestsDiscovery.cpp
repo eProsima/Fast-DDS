@@ -1810,10 +1810,10 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
     auto reader_test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
     auto writer_test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
 
-    uint32_t num_reader_heartbeat = 0;
-    uint32_t num_reader_acknack = 0;
+    uint32_t num_wlp_reader_heartbeat = 0;
+    uint32_t num_wlp_reader_acknack = 0;
 
-    reader_test_transport->drop_heartbeat_messages_filter_ = [&num_reader_heartbeat](CDRMessage_t& msg)
+    reader_test_transport->drop_heartbeat_messages_filter_ = [&num_wlp_reader_heartbeat](CDRMessage_t& msg)
             {
                 auto old_pos = msg.pos;
                 msg.pos += 4;
@@ -1823,12 +1823,12 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
 
                 if (eprosima::fastrtps::rtps::c_EntityId_WriterLiveliness == writer_entity_id)
                 {
-                    num_reader_heartbeat++;
+                    num_wlp_reader_heartbeat++;
                 }
                 return false;
             };
 
-    reader_test_transport->drop_ack_nack_messages_filter_ = [&num_reader_acknack](CDRMessage_t& msg)
+    reader_test_transport->drop_ack_nack_messages_filter_ = [&num_wlp_reader_acknack](CDRMessage_t& msg)
             {
                 auto old_pos = msg.pos;
                 msg.pos += 4;
@@ -1838,15 +1838,15 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
 
                 if (eprosima::fastrtps::rtps::c_EntityId_WriterLiveliness == writer_entity_id)
                 {
-                    num_reader_acknack++;
+                    num_wlp_reader_acknack++;
                 }
                 return false;
             };
 
-    uint32_t num_writer_heartbeat = 0;
-    uint32_t num_writer_acknack = 0;
+    uint32_t num_wlp_writer_heartbeat = 0;
+    uint32_t num_wlp_writer_acknack = 0;
 
-    writer_test_transport->drop_heartbeat_messages_filter_ = [&num_writer_heartbeat](CDRMessage_t& msg)
+    writer_test_transport->drop_heartbeat_messages_filter_ = [&num_wlp_writer_heartbeat](CDRMessage_t& msg)
             {
                 auto old_pos = msg.pos;
                 msg.pos += 4;
@@ -1856,12 +1856,12 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
 
                 if (eprosima::fastrtps::rtps::c_EntityId_WriterLiveliness == writer_entity_id)
                 {
-                    num_writer_heartbeat++;
+                    num_wlp_writer_heartbeat++;
                 }
                 return false;
             };
 
-    writer_test_transport->drop_ack_nack_messages_filter_ = [&num_writer_acknack](CDRMessage_t& msg)
+    writer_test_transport->drop_ack_nack_messages_filter_ = [&num_wlp_writer_acknack](CDRMessage_t& msg)
             {
                 auto old_pos = msg.pos;
                 msg.pos += 4;
@@ -1871,7 +1871,7 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
 
                 if (eprosima::fastrtps::rtps::c_EntityId_WriterLiveliness == writer_entity_id)
                 {
-                    num_writer_acknack++;
+                    num_wlp_writer_acknack++;
                 }
                 return false;
             };
@@ -1892,10 +1892,10 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
 
     std::this_thread::sleep_for(std::chrono::seconds(5));
 
-    ASSERT_EQ(num_reader_heartbeat, 0u);
-    ASSERT_EQ(num_reader_acknack, 0u);
-    ASSERT_EQ(num_writer_heartbeat, 0u);
-    ASSERT_EQ(num_writer_acknack, 0u);
+    ASSERT_EQ(num_wlp_reader_heartbeat, 0u);
+    ASSERT_EQ(num_wlp_reader_acknack, 0u);
+    ASSERT_EQ(num_wlp_writer_heartbeat, 0u);
+    ASSERT_EQ(num_wlp_writer_acknack, 0u);
 }
 
 //! Regression test for redmine issue 10674
