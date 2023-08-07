@@ -43,7 +43,6 @@ namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 
-
 WLPListener::WLPListener(
         WLP* plwp)
     : mp_WLP(plwp)
@@ -92,7 +91,7 @@ void WLPListener::onNewCacheChangeAdded(
     {
         constexpr uint32_t participant_msg_data_kind_pos = 16;
         constexpr uint32_t encapsulation_pos = 1;
-        uint32_t data_length;
+        uint32_t data_length = 0;
 
         // Extract encapsulation from the second byte of the representation header. Done prior to
         // creating the CDRMessage_t, as the CDRMessage_t ctor uses it for its own state.
