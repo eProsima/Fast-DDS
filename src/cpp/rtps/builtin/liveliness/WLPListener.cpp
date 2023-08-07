@@ -40,16 +40,11 @@
 #include <fastrtps/qos/QosPolicies.h>
 
 namespace eprosima {
-namespace fastrtps{
+namespace fastrtps {
 namespace rtps {
 
-<<<<<<< HEAD
-
-WLPListener::WLPListener(WLP* plwp)
-=======
 WLPListener::WLPListener(
         WLP* plwp)
->>>>>>> 3a83d7c61 (Fix encapsulation format in WLP (#3784))
     : mp_WLP(plwp)
 {
 }
@@ -67,16 +62,16 @@ void WLPListener::onNewCacheChangeAdded(
     GuidPrefix_t guidP;
     LivelinessQosPolicyKind livelinessKind = AUTOMATIC_LIVELINESS_QOS;
     CacheChange_t* change = (CacheChange_t*)changeIN;
-    if(!computeKey(change))
+    if (!computeKey(change))
     {
-        logWarning(RTPS_LIVELINESS,"Problem obtaining the Key");
+        logWarning(RTPS_LIVELINESS, "Problem obtaining the Key");
         return;
     }
     //Check the serializedPayload:
     auto history = reader->getHistory();
-    for(auto ch = history->changesBegin(); ch!=history->changesEnd(); ++ch)
+    for (auto ch = history->changesBegin(); ch != history->changesEnd(); ++ch)
     {
-        if((*ch)->instanceHandle == change->instanceHandle && (*ch)->sequenceNumber < change->sequenceNumber)
+        if ((*ch)->instanceHandle == change->instanceHandle && (*ch)->sequenceNumber < change->sequenceNumber)
         {
             history->remove_change(*ch);
             break;
@@ -98,18 +93,10 @@ void WLPListener::onNewCacheChangeAdded(
         constexpr uint32_t encapsulation_pos = 1;
         uint32_t data_length = 0;
 
-<<<<<<< HEAD
-        for(size_t i = 0; i<12; ++i)
-        {
-            guidP.value[i] = change->serializedPayload.data[i + 4];
-        }
-        livelinessKind = (LivelinessQosPolicyKind)(change->serializedPayload.data[19]-0x01);
-=======
         // Extract encapsulation from the second byte of the representation header. Done prior to
         // creating the CDRMessage_t, as the CDRMessage_t ctor uses it for its own state.
         change->serializedPayload.encapsulation =
                 static_cast<uint16_t>(change->serializedPayload.data[encapsulation_pos]);
->>>>>>> 3a83d7c61 (Fix encapsulation format in WLP (#3784))
 
         // Create CDR message from buffer to deserialize contents for further validation
         CDRMessage_t cdr_message(change->serializedPayload);
@@ -130,27 +117,27 @@ void WLPListener::onNewCacheChangeAdded(
 
         if (!message_ok)
         {
-            EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Ignoring incorrect WLP ParticipantDataMessage");
+            logInfo(RTPS_LIVELINESS, "Ignoring incorrect WLP ParticipantDataMessage");
             history->remove_change(change);
             return;
         }
     }
     else
     {
-        if(!separateKey(
+        if (!separateKey(
                     change->instanceHandle,
                     &guidP,
                     &livelinessKind))
         {
-            EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Ignoring not WLP ParticipantDataMessage");
+            logInfo(RTPS_LIVELINESS, "Ignoring not WLP ParticipantDataMessage");
             history->remove_change(change);
             return;
         }
     }
 
-    if(guidP == reader->getGuid().guidPrefix)
+    if (guidP == reader->getGuid().guidPrefix)
     {
-        logInfo(RTPS_LIVELINESS,"Message from own RTPSParticipant, ignoring");
+        logInfo(RTPS_LIVELINESS, "Message from own RTPSParticipant, ignoring");
         history->remove_change(change);
         return;
     }
@@ -175,12 +162,8 @@ bool WLPListener::separateKey(
         GuidPrefix_t* guidP,
         LivelinessQosPolicyKind* liveliness)
 {
-<<<<<<< HEAD
-    for(uint8_t i=0;i<12;++i)
-=======
     bool ret = get_wlp_kind(&key.value[12], *liveliness);
     if (ret)
->>>>>>> 3a83d7c61 (Fix encapsulation format in WLP (#3784))
     {
         // Extract GuidPrefix
         memcpy(guidP->value, key.value, 12);
@@ -188,12 +171,13 @@ bool WLPListener::separateKey(
     return ret;
 }
 
-bool WLPListener::computeKey(CacheChange_t* change)
+bool WLPListener::computeKey(
+        CacheChange_t* change)
 {
-    if(change->instanceHandle == c_InstanceHandle_Unknown)
+    if (change->instanceHandle == c_InstanceHandle_Unknown)
     {
         SerializedPayload_t* pl = &change->serializedPayload;
-        if(pl->length >= 20)
+        if (pl->length >= 20)
         {
             memcpy(change->instanceHandle.value, pl->data + 4, 16);
             return true;
@@ -203,8 +187,6 @@ bool WLPListener::computeKey(CacheChange_t* change)
     return true;
 }
 
-<<<<<<< HEAD
-=======
 bool WLPListener::get_wlp_kind(
         const octet* serialized_kind,
         LivelinessQosPolicyKind& liveliness_kind)
@@ -228,8 +210,7 @@ bool WLPListener::get_wlp_kind(
 
     return is_wlp;
 }
->>>>>>> 3a83d7c61 (Fix encapsulation format in WLP (#3784))
 
 } /* namespace rtps */
 } /* namespace eprosima */
-}
+} // namespace eprosima
