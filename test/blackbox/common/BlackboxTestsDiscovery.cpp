@@ -1813,30 +1813,66 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
     uint32_t num_reader_heartbeat = 0;
     uint32_t num_reader_acknack = 0;
 
-    reader_test_transport->drop_heartbeat_messages_filter_ = [&num_reader_heartbeat](CDRMessage_t&)
+    reader_test_transport->drop_heartbeat_messages_filter_ = [&num_reader_heartbeat](CDRMessage_t& msg)
             {
-                num_reader_heartbeat++;
+                auto old_pos = msg.pos;
+                msg.pos += 4;
+                eprosima::fastrtps::rtps::EntityId_t writer_entity_id;
+                eprosima::fastrtps::rtps::CDRMessage::readEntityId(&msg, &writer_entity_id);
+                msg.pos = old_pos;
+
+                if (eprosima::fastrtps::rtps::c_EntityId_WriterLiveliness == writer_entity_id)
+                {
+                    num_reader_heartbeat++;
+                }
                 return false;
             };
 
-    reader_test_transport->drop_ack_nack_messages_filter_ = [&num_reader_acknack](CDRMessage_t&)
+    reader_test_transport->drop_ack_nack_messages_filter_ = [&num_reader_acknack](CDRMessage_t& msg)
             {
-                num_reader_acknack++;
+                auto old_pos = msg.pos;
+                msg.pos += 4;
+                eprosima::fastrtps::rtps::EntityId_t writer_entity_id;
+                eprosima::fastrtps::rtps::CDRMessage::readEntityId(&msg, &writer_entity_id);
+                msg.pos = old_pos;
+
+                if (eprosima::fastrtps::rtps::c_EntityId_WriterLiveliness == writer_entity_id)
+                {
+                    num_reader_acknack++;
+                }
                 return false;
             };
 
     uint32_t num_writer_heartbeat = 0;
     uint32_t num_writer_acknack = 0;
 
-    writer_test_transport->drop_heartbeat_messages_filter_ = [&num_writer_heartbeat](CDRMessage_t&)
+    writer_test_transport->drop_heartbeat_messages_filter_ = [&num_writer_heartbeat](CDRMessage_t& msg)
             {
-                num_writer_heartbeat++;
+                auto old_pos = msg.pos;
+                msg.pos += 4;
+                eprosima::fastrtps::rtps::EntityId_t writer_entity_id;
+                eprosima::fastrtps::rtps::CDRMessage::readEntityId(&msg, &writer_entity_id);
+                msg.pos = old_pos;
+
+                if (eprosima::fastrtps::rtps::c_EntityId_WriterLiveliness == writer_entity_id)
+                {
+                    num_writer_heartbeat++;
+                }
                 return false;
             };
 
-    writer_test_transport->drop_ack_nack_messages_filter_ = [&num_writer_acknack](CDRMessage_t&)
+    writer_test_transport->drop_ack_nack_messages_filter_ = [&num_writer_acknack](CDRMessage_t& msg)
             {
-                num_writer_acknack++;
+                auto old_pos = msg.pos;
+                msg.pos += 4;
+                eprosima::fastrtps::rtps::EntityId_t writer_entity_id;
+                eprosima::fastrtps::rtps::CDRMessage::readEntityId(&msg, &writer_entity_id);
+                msg.pos = old_pos;
+
+                if (eprosima::fastrtps::rtps::c_EntityId_WriterLiveliness == writer_entity_id)
+                {
+                    num_writer_acknack++;
+                }
                 return false;
             };
 
