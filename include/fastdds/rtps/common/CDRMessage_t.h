@@ -97,7 +97,7 @@ struct RTPS_DllAPI CDRMessage_t final
         : wraps(true)
     {
         msg_endian = LITTLEEND;
-        if (payload.encapsulation == PL_CDR_BE || payload.encapsulation == PL_CDR_BE)
+        if (payload.encapsulation == PL_CDR_BE || payload.encapsulation == CDR_BE)
         {
             msg_endian = BIGEND;
         }
