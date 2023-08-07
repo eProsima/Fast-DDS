@@ -130,8 +130,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , m_att(PParam)
     , m_guid(guidP, c_EntityId_RTPSParticipant)
     , mp_builtinProtocols(nullptr)
-    , mp_ResourceSemaphore(new Semaphore(0))
     , IdCounter(0)
+    , m_network_Factory(PParam)
     , type_check_fn_(nullptr)
     , client_override_(false)
     , internal_metatraffic_locators_(false)
@@ -512,7 +512,6 @@ RTPSParticipantImpl::~RTPSParticipantImpl()
     }
     m_receiverResourcelist.clear();
 
-    delete mp_ResourceSemaphore;
     delete mp_userParticipant;
     mp_userParticipant = nullptr;
     send_resource_list_.clear();
@@ -2032,22 +2031,6 @@ bool RTPSParticipantImpl::newRemoteEndpointDiscovered(
     }
 
     return false;
-}
-
-void RTPSParticipantImpl::ResourceSemaphorePost()
-{
-    if (mp_ResourceSemaphore != nullptr)
-    {
-        mp_ResourceSemaphore->post();
-    }
-}
-
-void RTPSParticipantImpl::ResourceSemaphoreWait()
-{
-    if (mp_ResourceSemaphore != nullptr)
-    {
-        mp_ResourceSemaphore->wait();
-    }
 }
 
 void RTPSParticipantImpl::assert_remote_participant_liveliness(
