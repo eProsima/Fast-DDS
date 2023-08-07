@@ -1843,6 +1843,8 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
                 return false;
             };
 
+    reader_test_transport->interfaceWhiteList.push_back("127.0.0.1");
+
     uint32_t num_wlp_writer_heartbeat = 0;
     uint32_t num_wlp_writer_acknack = 0;
 
@@ -1875,6 +1877,8 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
                 }
                 return false;
             };
+
+    writer_test_transport->interfaceWhiteList.push_back("127.0.0.1");
 
     reader.disable_builtin_transport().add_user_transport_to_pparams(reader_test_transport).
             use_writer_liveliness_protocol(false);
