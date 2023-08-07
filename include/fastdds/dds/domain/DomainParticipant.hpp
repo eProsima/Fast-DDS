@@ -850,19 +850,21 @@ public:
             const fastrtps::types::TypeIdentifierSeq& in) const;
 
     /**
-     * Helps the user to solve all dependencies calling internally to the typelookup service
-     * and registers the resulting dynamic type.
-     * The registration will be perform asynchronously and the user will be notified through the
-     * given callback, which receives the type_name as unique argument.
-     * If the type is already registered, the function will return true, but the callback will not be called.
-     * If the given type_information is enough to build the type without using the typelookup service,
-     * it will return true and the callback will be never called.
+     * Helps the user to solve all dependencies calling internally to the typelookup service and
+     * registers the resulting dynamic type.
+     * The registration may be perform asynchronously, case in which the user will be notified
+     * through the given callback, which receives the type_name as unique argument.
      *
      * @param type_information
      * @param type_name
      * @param callback
-     * @return true if type is already available (callback will not be called). false if type isn't available yet
-     * (the callback will be called if negotiation is success, and ignored in other case).
+     * @return ReturnCode_t::RETCODE_NOT_ENABLED if the DomainParticipant is not enabled.
+     * @return ReturnCode_t::RETCODE_OK If the given type_information is enough to build the type
+     *         without using the typelookup service (callback will not be called).
+     * @return ReturnCode_t::RETCODE_OK if the given type is already available (callback will not be
+     *         called).
+     * @return ReturnCode_t::RETCODE_TIMEOUT if type is not available yet (the callback will be
+     *         called if negotiation is success, and ignored in other case).
      */
     RTPS_DllAPI ReturnCode_t register_remote_type(
             const fastrtps::types::TypeInformation& type_information,
