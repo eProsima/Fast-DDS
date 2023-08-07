@@ -39,8 +39,6 @@
 #include <fastdds/rtps/writer/LivelinessManager.h>
 #include <fastrtps/qos/QosPolicies.h>
 
-#include <rtps/reader/WriterProxy.h>
-
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -55,8 +53,6 @@ WLPListener::WLPListener(
 WLPListener::~WLPListener()
 {
 }
-
-typedef std::vector<WriterProxy*>::iterator WPIT;
 
 void WLPListener::onNewCacheChangeAdded(
         RTPSReader* reader,
