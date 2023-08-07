@@ -16,22 +16,30 @@
  * @file WLPListener.cpp
  *
  */
-
 #include <fastdds/rtps/builtin/liveliness/WLPListener.h>
-#include <fastdds/rtps/builtin/liveliness/WLP.h>
 
-#include <fastdds/rtps/history/ReaderHistory.h>
-
-#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
-#include <fastdds/rtps/builtin/BuiltinProtocols.h>
-
-#include <fastdds/rtps/reader/StatefulReader.h>
-#include <fastdds/rtps/writer/LivelinessManager.h>
-#include <fastdds/dds/log/Log.hpp>
-
+#include <cstdint>
+#include <cstring>
 #include <mutex>
+#include <vector>
 
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/builtin/BuiltinProtocols.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/common/CacheChange.h>
+#include <fastdds/rtps/common/CDRMessage_t.h>
+#include <fastdds/rtps/common/GuidPrefix_t.hpp>
+#include <fastdds/rtps/common/InstanceHandle.h>
+#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/history/ReaderHistory.h>
+#include <fastdds/rtps/messages/CDRMessage.h>
+#include <fastdds/rtps/reader/RTPSReader.h>
+#include <fastdds/rtps/writer/LivelinessManager.h>
+#include <fastrtps/qos/QosPolicies.h>
 
+#include <rtps/reader/WriterProxy.h>
 
 namespace eprosima {
 namespace fastrtps {
@@ -77,46 +85,44 @@ void WLPListener::onNewCacheChangeAdded(
 
     // Serialized payload should have at least 4 bytes of representation header, 12 of GuidPrefix,
     // 4 of kind, and 4 of length.
-    const uint32_t representation_header_size = 4;
-    const uint32_t guid_prefix_size = 12;
-    const uint32_t participant_msg_data_kind_size = 4;
-    const uint32_t participant_msg_data_length_size = 4;
-    const uint32_t min_serialized_length = representation_header_size
-            + guid_prefix_size
+    constexpr uint32_t participant_msg_data_kind_size = 4;
+    constexpr uint32_t participant_msg_data_length_size = 4;
+    constexpr uint32_t min_serialized_length = SerializedPayload_t::representation_header_size
+            + GuidPrefix_t::size
             + participant_msg_data_kind_size
             + participant_msg_data_length_size;
 
     if (change->serializedPayload.length >= min_serialized_length)
     {
-        const uint32_t participant_msg_data_pos = 16;
-        const uint32_t encapsulation_pos = 16;
+        constexpr uint32_t participant_msg_data_kind_pos = 16;
+        constexpr uint32_t encapsulation_pos = 1;
         uint32_t data_length;
+
+        // Extract encapsulation from the second byte of the representation header. Done prior to
+        // creating the CDRMessage_t, as the CDRMessage_t ctor uses it for its own state.
+        change->serializedPayload.encapsulation =
+                static_cast<uint16_t>(change->serializedPayload.data[encapsulation_pos]);
 
         // Create CDR message from buffer to deserialize contents for further validation
         CDRMessage_t cdr_message(change->serializedPayload);
 
         bool message_ok = (
             // Skip representation header
-            CDRMessage::skip(&cdr_message, representation_header_size)
+            CDRMessage::skip(&cdr_message, SerializedPayload_t::representation_header_size)
             // Extract GuidPrefix
-            && CDRMessage::readData(&cdr_message, guidP.value, guid_prefix_size)
+            && CDRMessage::readData(&cdr_message, guidP.value, GuidPrefix_t::size)
             // Skip kind, it will be validated later
-            && CDRMessage::skip(&cdr_message, participant_msg_data_length_size)
+            && CDRMessage::skip(&cdr_message, participant_msg_data_kind_size)
             // Extract and validate liveliness kind
-            && get_wlp_kind(&change->serializedPayload.data[participant_msg_data_pos], livelinessKind)
+            && get_wlp_kind(&change->serializedPayload.data[participant_msg_data_kind_pos], livelinessKind)
             // Extract data length
             && CDRMessage::readUInt32(&cdr_message, &data_length)
             // Check that serialized length is correctly set
             && (change->serializedPayload.length >= min_serialized_length + data_length));
 
-        if (message_ok)
+        if (!message_ok)
         {
-            // Extract encapsulation from the second byte of the representation header.
-            change->serializedPayload.encapsulation = (uint16_t)change->serializedPayload.data[encapsulation_pos];
-        }
-        else
-        {
-            logInfo(RTPS_LIVELINESS, "Ignoring incorrect WLP ParticipantDataMessage");
+            EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Ignoring incorrect WLP ParticipantDataMessage");
             history->remove_change(change);
             return;
         }
@@ -128,7 +134,7 @@ void WLPListener::onNewCacheChangeAdded(
                     &guidP,
                     &livelinessKind))
         {
-            logInfo(RTPS_LIVELINESS, "Ignoring not WLP ParticipantDataMessage");
+            EPROSIMA_LOG_INFO(RTPS_LIVELINESS, "Ignoring not WLP ParticipantDataMessage");
             history->remove_change(change);
             return;
         }
@@ -187,7 +193,7 @@ bool WLPListener::computeKey(
 }
 
 bool WLPListener::get_wlp_kind(
-        octet* serialized_kind,
+        const octet* serialized_kind,
         LivelinessQosPolicyKind& liveliness_kind)
 {
     /*
@@ -204,7 +210,7 @@ bool WLPListener::get_wlp_kind(
     if (is_wlp)
     {
         // Adjust and cast to LivelinessQosPolicyKind enum, where AUTOMATIC_LIVELINESS_QOS == 0
-        liveliness_kind = (LivelinessQosPolicyKind)(serialized_kind[3] - 0x01);
+        liveliness_kind = static_cast<LivelinessQosPolicyKind>(serialized_kind[3] - 0x01);
     }
 
     return is_wlp;

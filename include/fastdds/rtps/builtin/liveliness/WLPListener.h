@@ -21,10 +21,10 @@
 #define _FASTDDS_RTPS_WLPLISTENER_H_
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastdds/rtps/reader/ReaderListener.h>
-#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/common/GuidPrefix_t.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
-
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/reader/ReaderListener.h>
 #include <fastrtps/qos/QosPolicies.h>
 
 namespace eprosima {
@@ -95,7 +95,7 @@ private:
      * @return True if the kind corresponds with one for WLP, false otherwise.
      */
     bool get_wlp_kind(
-            octet* serialized_kind,
+            const octet* serialized_kind,
             LivelinessQosPolicyKind& liveliness_kind);
 
     //! A pointer to the writer liveliness protocol
