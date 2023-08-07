@@ -1892,10 +1892,10 @@ TEST(Discovery, RemoteBuiltinEndpointHonoring)
 
     std::this_thread::sleep_for(std::chrono::seconds(5));
 
-    ASSERT_EQ(num_reader_heartbeat, 3u);
-    ASSERT_EQ(num_reader_acknack, 3u);
-    ASSERT_EQ(num_writer_heartbeat, 3u);
-    ASSERT_EQ(num_writer_acknack, 3u);
+    ASSERT_EQ(num_reader_heartbeat, 0u);
+    ASSERT_EQ(num_reader_acknack, 0u);
+    ASSERT_EQ(num_writer_heartbeat, 0u);
+    ASSERT_EQ(num_writer_acknack, 0u);
 }
 
 //! Regression test for redmine issue 10674
