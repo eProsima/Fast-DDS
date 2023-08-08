@@ -1,6 +1,8 @@
 Forthcoming
 -----------
 
+* Added participant property to configure SHM transport metatraffic behavior.
+  No metatraffic over SHM transport by default.
 * Added Participant ignore local endpoints feature.
 
 Version 2.10.1
