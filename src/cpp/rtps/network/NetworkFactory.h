@@ -103,6 +103,7 @@ public:
      *
      * @param [in]  remote_locator Locator to be converted.
      * @param [out] result_locator Converted locator.
+     * @param [in]  remote_network_config Remote network configuration.
      *
      * @return false if the input locator is not supported/allowed by any of the registered transports,
      *         true otherwise.
