@@ -839,9 +839,13 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
             }
         }
 
-        on_sample_datas(cache_change->write_params.sample_identity(),
-                cache_change->writer_info.num_sent_submessages);
-        on_data_sent();
+        // Do not send data without information (submessages)
+        if (cache_change->writer_info.num_sent_submessages)
+        {
+            on_sample_datas(cache_change->write_params.sample_identity(),
+                    cache_change->writer_info.num_sent_submessages);
+            on_data_sent();
+        }
 
     }
     catch (const RTPSMessageGroup::timeout&)
