@@ -524,6 +524,7 @@ bool TCPTransportInterface::transform_remote_locator(
             if (is_locator_allowed(loopbackLocator))
             {
                 // Locator localhost is in the whitelist, so use localhost instead of remote_locator
+                fill_local_ip(result_locator);
                 IPLocator::setPhysicalPort(result_locator, IPLocator::getPhysicalPort(remote_locator));
                 IPLocator::setLogicalPort(result_locator, IPLocator::getLogicalPort(remote_locator));
                 return true;
