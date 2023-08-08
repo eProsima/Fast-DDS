@@ -68,9 +68,21 @@ void TCPChannelResourceBasic::connect(
         {
             ip::tcp::resolver resolver(service_);
 
+            std::string unscoped_locator = IPLocator::ip_to_string(locator_);
+            std::string scoped_locator = unscoped_locator;
+            auto scoped_interfaces = parent_->get_binding_interfaces_list();
+            for (auto& scoped_interface : scoped_interfaces)
+            {
+                std::string unscoped_interface = scoped_interface.substr(0, scoped_interface.find('%'));
+                if (unscoped_locator == unscoped_interface)
+                {
+                    scoped_locator = scoped_interface;
+                    break;
+                }
+            }
+
             auto endpoints = resolver.resolve({
-                            IPLocator::hasWan(locator_) ? IPLocator::toWanstring(locator_) : IPLocator::ip_to_string(
-                                locator_),
+                            IPLocator::hasWan(locator_) ? IPLocator::toWanstring(locator_) : scoped_locator,
                             std::to_string(IPLocator::getPhysicalPort(locator_))});
 
             socket_ = std::make_shared<asio::ip::tcp::socket>(service_);
