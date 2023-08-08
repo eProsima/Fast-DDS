@@ -17,16 +17,17 @@
  *
  */
 
-#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
-#include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
-#include <fastdds/rtps/builtin/discovery/endpoint/EDPStatic.h>
-#include <fastdds/rtps/resources/TimedEvent.h>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
-#include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/builtin/data/NetworkConfiguration.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDPStatic.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
 
 #include <fastdds/rtps/participant/RTPSParticipantListener.h>
 #include <fastdds/rtps/writer/StatelessWriter.h>
@@ -354,7 +355,24 @@ bool PDPSimple::createPDPEndpoints()
             {
                 if (network.is_locator_allowed(loc))
                 {
+                    // Add initial peers locator without transformation
                     fixed_locators.push_back(loc);
+
+                    // Check whether the locator is local and/or localhost
+                    Locator_t local_locator;
+                    network.transform_remote_locator(loc, local_locator, DISC_NETWORK_CONFIGURATION_LISTENING_LOCALHOST_ALL);
+                    if (loc != local_locator)
+                    {
+                        // WARNING: In TCP, client will only listen in loopback when adding localhost to fixed locators.
+                        // Hence, when the TCP locator is local (but not localhost) communication will not be established,
+                        // as server would convert client's locators to localhost (if client and server's interface
+                        // whitelists allow for it).
+                        EPROSIMA_LOG_WARNING(RTPS_PDP, "Initial peers locator " << loc << " might require (manual) conversion to localhost.");
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_WARNING(RTPS_PDP, "Ignoring initial peers locator " << loc << " : not allowed.");
                 }
             }
             endpoints->writer.writer_->set_fixed_locators(fixed_locators);
