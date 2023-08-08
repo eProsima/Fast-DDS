@@ -183,6 +183,10 @@ void BuiltinProtocols::filter_server_remote_locators(
             {
                 allowed_locators.push_back(loc);
             }
+            else
+            {
+                EPROSIMA_LOG_WARNING(RTPS_PDP, "Ignoring remote server locator " << loc << " : not allowed.");
+            }
         }
         rs.metatrafficUnicastLocatorList.swap(allowed_locators);
     }
