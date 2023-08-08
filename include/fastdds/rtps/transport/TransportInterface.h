@@ -127,30 +127,6 @@ public:
         return false;
     }
 
-    /**
-     * Transforms a remote locator into a locator optimized for local communications.
-     *
-     * If the remote locator corresponds to one of the local interfaces, it is converted
-     * to the corresponding local address if allowed by both local and remote transports.
-     *
-     * @param [in]  remote_locator Locator to be converted.
-     * @param [out] result_locator Converted locator.
-     * @param [in]  allowed_remote_localhost Whether localhost is allowed (and hence used) in the remote transport.
-     * @param [in]  allowed_local_localhost Whether localhost is allowed locally (by this or other transport).
-     *
-     * @return false if the input locator is not supported/allowed by this transport, true otherwise.
-     */
-    virtual bool transform_remote_locator(
-            const Locator& remote_locator,
-            Locator& result_locator,
-            bool allowed_remote_localhost,
-            bool allowed_local_localhost) const
-    {
-        (void)allowed_remote_localhost;
-        (void)allowed_local_localhost;
-        return transform_remote_locator(remote_locator, result_locator);
-    }
-
     //! Must open the channel that maps to/from the given locator. This method must allocate, reserve and mark
     //! any resources that are needed for said channel.
     virtual bool OpenOutputChannel(
@@ -198,9 +174,6 @@ public:
     //! Must report whether the given locator is from the local host
     virtual bool is_local_locator(
             const Locator& locator) const = 0;
-
-    //! Must report whether localhost locator is allowed
-    virtual bool is_localhost_allowed() const = 0;
 
     //! Return the transport configuration (Transport Descriptor)
     virtual TransportDescriptorInterface* get_configuration() = 0;
@@ -269,6 +242,36 @@ public:
     int32_t kind() const
     {
         return transport_kind_;
+    }
+
+    /**
+     * Transforms a remote locator into a locator optimized for local communications.
+     *
+     * If the remote locator corresponds to one of the local interfaces, it is converted
+     * to the corresponding local address if allowed by both local and remote transports.
+     *
+     * @param [in]  remote_locator Locator to be converted.
+     * @param [out] result_locator Converted locator.
+     * @param [in]  allowed_remote_localhost Whether localhost is allowed (and hence used) in the remote transport.
+     * @param [in]  allowed_local_localhost Whether localhost is allowed locally (by this or other transport).
+     *
+     * @return false if the input locator is not supported/allowed by this transport, true otherwise.
+     */
+    virtual bool transform_remote_locator(
+            const Locator& remote_locator,
+            Locator& result_locator,
+            bool allowed_remote_localhost,
+            bool allowed_local_localhost) const
+    {
+        static_cast<void>(allowed_remote_localhost);
+        static_cast<void>(allowed_local_localhost);
+        return transform_remote_locator(remote_locator, result_locator);
+    }
+
+    //! Must report whether localhost locator is allowed
+    virtual bool is_localhost_allowed() const
+    {
+        return true;
     }
 
 protected:
