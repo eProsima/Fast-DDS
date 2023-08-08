@@ -2,7 +2,7 @@ Forthcoming
 -----------
 
 * Added Participant ignore local endpoints feature.
-* `DomainParticipantListener::on_participant_discovery` changed behavior (fix API break in 2.10.0).
+* `DomainParticipantListener::on_participant_discovery` changed behavior (fix ABI break in 2.10.0).
 
 Version 2.10.1
 --------------
