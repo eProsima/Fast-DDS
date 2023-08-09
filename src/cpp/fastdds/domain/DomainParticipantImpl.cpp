@@ -1554,11 +1554,16 @@ void DomainParticipantImpl::MyRTPSParticipantListener::onParticipantDiscovery(
         ParticipantDiscoveryInfo&& info,
         bool& should_be_ignored)
 {
+    should_be_ignored = false;
     Sentry sentinel(this);
     if (sentinel)
     {
         participant_->listener_->on_participant_discovery(participant_->participant_, std::move(info),
                 should_be_ignored);
+        if (!should_be_ignored)
+        {
+            participant_->listener_->on_participant_discovery(participant_->participant_, std::move(info));
+        }
     }
 }
 

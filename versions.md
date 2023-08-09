@@ -4,6 +4,7 @@ Forthcoming
 * Added participant property to configure SHM transport metatraffic behavior.
   No metatraffic over SHM transport by default.
 * Added Participant ignore local endpoints feature.
+* `DomainParticipantListener::on_participant_discovery` changed behavior (fix ABI break in 2.10.0).
 
 Version 2.10.1
 --------------
