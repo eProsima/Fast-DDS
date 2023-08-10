@@ -404,7 +404,7 @@ bool UDPTransportInterface::transform_remote_locator(
 
         // If we get here, the locator is a local unicast address
 
-        // Attempt conversion to localhost if remote transport listening on it
+        // Attempt conversion to localhost if remote transport listening on it allows it
         if (allowed_remote_localhost)
         {
             Locator loopbackLocator;
