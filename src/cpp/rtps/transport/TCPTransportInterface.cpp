@@ -516,7 +516,7 @@ bool TCPTransportInterface::transform_remote_locator(
 
         // If we get here, the locator is a local unicast address
 
-        // Attempt conversion to localhost if remote transport listening on it
+        // Attempt conversion to localhost if remote transport listening on it allows it
         if (allowed_remote_localhost)
         {
             Locator loopbackLocator;
@@ -1304,13 +1304,13 @@ void TCPTransportInterface::SocketAccepted(
             channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
                     channel_weak_ptr, rtcp_manager_weak_ptr));
 
-            EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: " << IPLocator::to_string(locator)
+            EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: " << IPLocator::to_string(locator)
                                                                     << ", remote: " << channel->remote_endpoint().address()
                                                                     << ":" << channel->remote_endpoint().port() << ")");
         }
         else
         {
-            EPROSIMA_LOG_INFO(RTCP, " Accepting connection (" << error.message() << ")");
+            EPROSIMA_LOG_INFO(RTCP, "Accepting connection (" << error.message() << ")");
             std::this_thread::sleep_for(std::chrono::milliseconds(200)); // Wait a little to accept again.
         }
 
