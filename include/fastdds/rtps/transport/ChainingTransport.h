@@ -359,7 +359,8 @@ public:
             bool allowed_remote_localhost,
             bool allowed_local_localhost) const override
     {
-        return low_level_transport_->transform_remote_locator(remote_locator, result_locator, allowed_remote_localhost, allowed_local_localhost);
+        return low_level_transport_->transform_remote_locator(remote_locator, result_locator, allowed_remote_localhost,
+                       allowed_local_localhost);
     }
 
     /*!

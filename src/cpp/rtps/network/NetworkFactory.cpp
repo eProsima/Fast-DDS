@@ -196,7 +196,8 @@ bool NetworkFactory::transform_remote_locator(
 {
     for (auto& transport : mRegisteredTransports)
     {
-        if (transport->transform_remote_locator(remote_locator, result_locator, remote_network_config & remote_locator.kind, network_configuration_ & remote_locator.kind))
+        if (transport->transform_remote_locator(remote_locator, result_locator,
+                remote_network_config & remote_locator.kind, network_configuration_ & remote_locator.kind))
         {
             return true;
         }

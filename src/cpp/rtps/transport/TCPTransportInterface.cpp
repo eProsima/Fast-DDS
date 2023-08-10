@@ -1304,9 +1304,10 @@ void TCPTransportInterface::SocketAccepted(
             channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
                     channel_weak_ptr, rtcp_manager_weak_ptr));
 
-            EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: " << IPLocator::to_string(locator)
-                                                                    << ", remote: " << channel->remote_endpoint().address()
-                                                                    << ":" << channel->remote_endpoint().port() << ")");
+            EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: "
+                    << IPLocator::to_string(locator) << ", remote: "
+                    << channel->remote_endpoint().address() << ":"
+                    << channel->remote_endpoint().port() << ")");
         }
         else
         {

@@ -374,10 +374,11 @@ bool PDPSimple::createPDPEndpoints()
                      *   3. Checking that the network configuration allows for localhost locators
                      */
                     Locator_t local_locator;
-                    network.transform_remote_locator(loc, local_locator, DISC_NETWORK_CONFIGURATION_LISTENING_LOCALHOST_ALL);
+                    network.transform_remote_locator(loc, local_locator,
+                            DISC_NETWORK_CONFIGURATION_LISTENING_LOCALHOST_ALL);
                     if (loc != local_locator
-                        && (loc.kind == LOCATOR_KIND_TCPv4 || loc.kind == LOCATOR_KIND_TCPv6)
-                        && network.is_locator_allowed(local_locator))
+                            && (loc.kind == LOCATOR_KIND_TCPv4 || loc.kind == LOCATOR_KIND_TCPv6)
+                            && network.is_locator_allowed(local_locator))
                     {
                         fixed_locators.push_back(local_locator);
                     }
