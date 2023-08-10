@@ -283,14 +283,10 @@ void PDP::initializeParticipantProxyData(
     }
 #endif // if HAVE_SECURITY
 
-    // TODO: sort code blocks?
     if (announce_locators)
     {
         participant_data->m_networkConfiguration = attributes.builtin.network_configuration;
-    }
 
-    if (announce_locators)
-    {
         for (const Locator_t& loc : attributes.defaultUnicastLocatorList)
         {
             participant_data->default_locators.add_unicast_locator(loc);
