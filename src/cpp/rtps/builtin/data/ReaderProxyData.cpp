@@ -1122,7 +1122,6 @@ bool ReaderProxyData::is_update_allowed(
 void ReaderProxyData::update(
         ReaderProxyData* rdata)
 {
-    // m_networkConfiguration = rdata->m_networkConfiguration; // TODO: update?
     remote_locators_ = rdata->remote_locators_;
     m_qos.setQos(rdata->m_qos, false);
     m_isAlive = rdata->m_isAlive;

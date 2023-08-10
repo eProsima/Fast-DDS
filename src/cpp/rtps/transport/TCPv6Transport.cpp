@@ -367,8 +367,8 @@ void TCPv6Transport::endpoint_to_locator(
 }
 
 bool TCPv6Transport::compare_ips(
-            const std::string& ip1,
-            const std::string& ip2) const
+        const std::string& ip1,
+        const std::string& ip2) const
 {
     // string::find returns string::npos if the character is not found
     // If the second parameter is string::npos value, it indicates to take all characters until the end of the string
