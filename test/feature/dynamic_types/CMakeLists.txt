@@ -19,6 +19,10 @@ if(WIN32)
         )
 endif()
 
+set(DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE
+    DynamicTypesDDSTypesTest.cpp
+)
+
 add_executable(DynamicTypesTests DynamicTypesTests.cpp)
 target_compile_definitions(DynamicTypesTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -36,5 +40,18 @@ if(QNX)
     target_link_libraries(DynamicTypesTests socket)
 endif()
 gtest_discover_tests(DynamicTypesTests)
+
+add_executable(DynamicTypesDDSTypesTest ${DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE})
+target_compile_definitions(DynamicTypesDDSTypesTest PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_link_libraries(DynamicTypesDDSTypesTest GTest::gtest
+    $<$<BOOL:${WIN32}>:iphlpapi$<SEMICOLON>Shlwapi>
+    $<$<BOOL:${WIN32}>:ws2_32>
+    fastcdr
+    fastrtps
+    )
+add_gtest(DynamicTypesDDSTypesTest SOURCES ${DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE})
 
 configure_file("types_profile.xml" "types_profile.xml" COPYONLY)
