@@ -19,6 +19,8 @@
 
 #include <gtest/gtest.h>
 
+#include <fastdds/rtps/transport/ChainingTransport.h>
+#include <fastdds/rtps/transport/ChainingTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
@@ -505,6 +507,52 @@ TEST_P(TransportUDP, whitelisting_udp_localhost_alone)
         writer.init();
         ASSERT_TRUE(writer.isInitialized());
     }
+}
+
+TEST(TransportUDP, DatagramInjection)
+{
+    using namespace eprosima::fastdds::rtps;
+
+    struct DatagramInjectionTransport : public ChainingTransportDescriptor, public ChainingTransport
+    {
+        DatagramInjectionTransport()
+            : ChainingTransportDescriptor(std::make_shared<UDPv4TransportDescriptor>())
+            , ChainingTransport(static_cast<const ChainingTransportDescriptor&>(*this))
+        {
+        }
+
+        TransportInterface* create_transport() const override
+        {
+            return const_cast<DatagramInjectionTransport*>(this);
+        }
+
+        TransportDescriptorInterface* get_configuration() override
+        {
+            return this;
+        }
+
+        bool send(
+            eprosima::fastrtps::rtps::SenderResource* /*low_sender_resource*/,
+            const eprosima::fastrtps::rtps::octet* /*send_buffer*/,
+            uint32_t /*send_buffer_size*/,
+            eprosima::fastrtps::rtps::LocatorsIterator* /*destination_locators_begin*/,
+            eprosima::fastrtps::rtps::LocatorsIterator* /*destination_locators_end*/,
+            const std::chrono::steady_clock::time_point& /*timeout*/) override
+        {
+            return true;
+        }
+
+        void receive(
+            TransportReceiverInterface* /*next_receiver*/,
+            const eprosima::fastrtps::rtps::octet* /*receive_buffer*/,
+            uint32_t /*receive_buffer_size*/,
+            const eprosima::fastrtps::rtps::Locator_t& /*local_locator*/,
+            const eprosima::fastrtps::rtps::Locator_t& /*remote_locator*/) override
+        {
+        }
+    };
+
+    auto transport = std::make_shared<DatagramInjectionTransport>();
 }
 
 // Test for ==operator UDPTransportDescriptor is not required as it is an abstract class and in UDPv4 is same method
