@@ -413,7 +413,10 @@ void PDPSimple::assignRemoteEndpoints(
         temp_reader_data->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         endpoints->writer.writer_->matched_reader_add(*temp_reader_data);
 
-        StatelessWriter* pW = endpoints->writer.writer_;
+        //! Avoid sending discovery messages to all known PDP endpoints every
+        //! new participant is discovered to diminish initial discovery transient
+
+        /*StatelessWriter* pW = endpoints->writer.writer_;
 
         if (pW != nullptr)
         {
@@ -422,7 +425,7 @@ void PDPSimple::assignRemoteEndpoints(
         else
         {
             EPROSIMA_LOG_ERROR(RTPS_PDP, "Using PDPSimple protocol with a reliable writer");
-        }
+        }*/
     }
 
 #if HAVE_SECURITY
