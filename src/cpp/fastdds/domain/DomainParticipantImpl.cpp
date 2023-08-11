@@ -1801,7 +1801,7 @@ ReturnCode_t DomainParticipantImpl::register_remote_type(
         // Move the filled vector to the map
         parent_requests_.emplace(std::make_pair(requestId, std::move(vector)));
 
-        return ReturnCode_t::RETCODE_OK;
+        return ReturnCode_t::RETCODE_NO_DATA;
     }
     return ReturnCode_t::RETCODE_PRECONDITION_NOT_MET;
 }
