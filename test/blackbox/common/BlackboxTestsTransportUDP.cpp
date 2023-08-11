@@ -550,9 +550,39 @@ TEST(TransportUDP, DatagramInjection)
             const eprosima::fastrtps::rtps::Locator_t& /*remote_locator*/) override
         {
         }
+
+        bool OpenInputChannel(
+            const eprosima::fastrtps::rtps::Locator_t& loc,
+            TransportReceiverInterface* receiver_interface,
+            uint32_t max_message_size) override
+        {
+            bool ret_val = ChainingTransport::OpenInputChannel(loc, receiver_interface, max_message_size);
+            if (ret_val)
+            {
+                std::lock_guard<std::mutex> guard(mtx_);
+                receivers_.insert(receiver_interface);
+            }
+            return ret_val;
+        }
+
+        std::set<TransportReceiverInterface*> get_receivers()
+        {
+            std::lock_guard<std::mutex> guard(mtx_);
+            return receivers_;
+        }
+
+        std::mutex mtx_;
+        std::set<TransportReceiverInterface*> receivers_;
     };
 
     auto transport = std::make_shared<DatagramInjectionTransport>();
+
+    PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
+    writer.disable_builtin_transport().add_user_transport_to_pparams(transport).init();
+    ASSERT_TRUE(writer.isInitialized());
+
+    auto receivers = transport->get_receivers();
+    ASSERT_FALSE(receivers.empty());
 }
 
 // Test for ==operator UDPTransportDescriptor is not required as it is an abstract class and in UDPv4 is same method
