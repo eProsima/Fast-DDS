@@ -26,6 +26,10 @@
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/log/Log.h>
 
+#include <fstream>
+#include <mutex>
+#include <set>
+
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
@@ -509,6 +513,24 @@ TEST_P(TransportUDP, whitelisting_udp_localhost_alone)
     }
 }
 
+void deliver_datagram_from_file(
+    const std::set<eprosima::fastdds::rtps::TransportReceiverInterface*>& receivers,
+    const char* filename)
+{
+    std::basic_ifstream<uint8_t> file(filename, std::ios::binary | std::ios::in);
+
+    file.seekg(0, file.end);
+    size_t file_size = file.tellg();
+    file.seekg(0, file.beg);
+    
+    std::vector<uint8_t> buf(file_size);
+    file.read(buf.data(), file_size);
+
+    eprosima::fastdds::rtps::Locator loc;
+    for (const auto& rec : receivers)
+        rec->OnDataReceived(buf.data(), static_cast<uint32_t>(file_size), loc, loc);
+}
+
 TEST(TransportUDP, DatagramInjection)
 {
     using namespace eprosima::fastdds::rtps;
@@ -583,6 +605,8 @@ TEST(TransportUDP, DatagramInjection)
 
     auto receivers = transport->get_receivers();
     ASSERT_FALSE(receivers.empty());
+
+    deliver_datagram_from_file(receivers, "datagrams/16784.bin");
 }
 
 // Test for ==operator UDPTransportDescriptor is not required as it is an abstract class and in UDPv4 is same method
