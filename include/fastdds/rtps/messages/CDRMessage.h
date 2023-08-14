@@ -312,6 +312,17 @@ inline bool addParticipantGenericMessage(
 
 ///@}
 
+/**
+ * @brief Skip bytes in serialized buffer
+ *
+ * @param msg The CDR message
+ * @param length The number of bytes to skip
+ * @return true if skipped, false otherwise
+ */
+inline bool skip(
+        CDRMessage_t* msg,
+        uint32_t length);
+
 } /* namespace CDRMessage */
 
 } /* namespace rtps */
