@@ -333,6 +333,7 @@ TEST_P(TransportUDP, whitelisting_udp_localhost_multi)
             readerMultiOk.wait_discovery();
             ASSERT_TRUE(writer.is_matched());
             ASSERT_TRUE(readerMultiOk.is_matched());
+            std::cout << "Iteration " << i << std::endl;
         }
     }
 }

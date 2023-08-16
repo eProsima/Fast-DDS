@@ -804,6 +804,8 @@ TEST(Discovery, LocalInitialPeersDiferrentLocators)
     // - Uses the test transport, to check destination behavior
     // - Listens for metatraffic on `writer_port`
     // - Has no automatic announcements
+    //!     (Fix) Need to configure an announcement period in hte writer,
+    //!     otherwise the reader will never receive the data (P) of the writer
     {
         auto test_transport = std::make_shared<test_UDPv4TransportDescriptor>();
 
@@ -1312,9 +1314,8 @@ TEST_P(Discovery, AsymmeticIgnoreParticipantFlags)
     // This will hold the multicast port. Since the test is not always run in the same domain, we'll need to set
     // its value when the first multicast datagram is sent.
     std::atomic<uint32_t> multicast_port{ 0 };
-    // Only two multicast datagrams are allowed: the initial DATA(p) and the DATA(p) sent in response of the discovery
-    // of p1.
-    constexpr uint32_t allowed_messages_on_port = 2;
+    // Only one multicast datagram is allowed: the initial DATA(p)
+    constexpr uint32_t allowed_messages_on_port = 1;
 
     auto test_transport = std::make_shared<eprosima::fastdds::rtps::test_UDPv4TransportDescriptor>();
 
