@@ -17,6 +17,7 @@
  *
  */
 
+
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
 #include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
 #include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
@@ -42,6 +43,7 @@
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/utils/IPLocator.h>
 
+#include <rtps/builtin/discovery/participant/DirectMessageSender.hpp>
 #include <rtps/builtin/discovery/participant/simple/SimplePDPEndpoints.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
@@ -413,19 +415,46 @@ void PDPSimple::assignRemoteEndpoints(
         temp_reader_data->m_qos.m_durability.kind = TRANSIENT_LOCAL_DURABILITY_QOS;
         endpoints->writer.writer_->matched_reader_add(*temp_reader_data);
 
-        //! Avoid sending discovery messages to all known PDP endpoints every
-        //! new participant is discovered to diminish initial discovery transient
+        StatelessWriter* pW = endpoints->writer.writer_;
 
-        /*StatelessWriter* pW = endpoints->writer.writer_;
+        //! Avoid sending discovery messages to all known PDP endpoints every
+        //! new participant is discovered in order to diminish initial discovery transient
+        //pW->unsent_changes_reset();
 
         if (pW != nullptr)
         {
-            pW->unsent_changes_reset();
+            CacheChange_t* change = nullptr;
+
+            if (endpoints->writer.history_->get_min_change(&change) &&
+                    change->serializedPayload.length &&
+                    !pdata->metatraffic_locators.unicast.empty())
+            {
+                CDRMessage_t aux_msg(change->serializedPayload);
+
+                change->serializedPayload.encapsulation = (uint16_t)PL_CDR_LE;
+                aux_msg.msg_endian =  LITTLEEND;
+
+                LocatorList_t locators;
+                for (auto& x : pdata->metatraffic_locators.unicast)
+                {
+                    locators.push_back(x);
+                }
+
+                //! Downwards, if a multicast locator is selected by the algoeithm,
+                //! the unicast resources may not be created, enforce it for now
+                getRTPSParticipant()->createSenderResources(locators);
+
+                std::vector<GUID_t> guids;
+
+                DirectMessageSender sender(getRTPSParticipant(), &guids, &locators);
+                RTPSMessageGroup group(getRTPSParticipant(), pW, &sender);
+
+                if (!group.add_data(*change, false))
+                {
+                    EPROSIMA_LOG_ERROR(RTPS_PDP, "Error sending direct replies");
+                }
+            }
         }
-        else
-        {
-            EPROSIMA_LOG_ERROR(RTPS_PDP, "Using PDPSimple protocol with a reliable writer");
-        }*/
     }
 
 #if HAVE_SECURITY
