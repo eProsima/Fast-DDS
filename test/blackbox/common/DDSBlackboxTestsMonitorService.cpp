@@ -18,11 +18,10 @@
 #include "../dds-pim/PubSubReader.hpp"
 #include "PubSubWriter.hpp"
 
-#include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastdds/statistics/dds/domain/DomainParticipant.hpp>
+#include <fastrtps/transport/test_UDPv4TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
-#include <rtps/transport/test_UDPv4Transport.cpp>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
 #include <statistics/types/monitorservice_typesPubSubTypes.h>
@@ -611,7 +610,7 @@ struct ProxySampleValidator : public SampleValidator
             auto serialized_proxy(std::move(data.value().entity_proxy()));
 
             CDRMessage_t serialized_msg;
-            serialized_msg.init(serialized_proxy.data(), data.value().getCdrSerializedSize(data.value()));
+            serialized_msg.init(serialized_proxy.data(), (uint32_t) data.value().getCdrSerializedSize(data.value()));
 
             GUID_t guid = statistics::to_fastdds_type(data.local_entity());
 
@@ -622,7 +621,8 @@ struct ProxySampleValidator : public SampleValidator
                 RTPSParticipantAllocationAttributes att;
                 ParticipantProxyData pdata(att);
 
-                serialized_msg.init(serialized_proxy.data(), data.value().getCdrSerializedSize(data.value()));
+                serialized_msg.init(serialized_proxy.data(),
+                        (uint32_t) data.value().getCdrSerializedSize(data.value()));
                 ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(pdata, data), ReturnCode_t::RETCODE_ERROR);
             }
             else
@@ -1784,7 +1784,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_proxy)
 
         if (i != 0)
         {
-            MSP.create_topic(i);
+            MSP.create_topic((int)i);
         }
 
         MSP.create_and_add_writer();
@@ -1848,7 +1848,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_instance_disposals)
 
         if (i != 0)
         {
-            MSP.create_topic(i);
+            MSP.create_topic((int)i);
         }
 
         MSP.create_and_add_writer();
@@ -1907,7 +1907,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_single_late_joiner)
 
         if (i != 0)
         {
-            MSP.create_topic(i);
+            MSP.create_topic((int)i);
         }
 
         MSP.create_and_add_writer(dw_qos);
