@@ -439,7 +439,7 @@ public:
 
 #endif // FASTDDS_STATISTICS
 
-private:
+protected:
 
     //!Pointer to the implementation.
     RTPSParticipantImpl* mp_impl;
