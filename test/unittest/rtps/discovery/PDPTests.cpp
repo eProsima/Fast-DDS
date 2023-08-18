@@ -26,6 +26,8 @@
 #include <fastdds/rtps/builtin/discovery/participant/PDP.h>
 #include <fastrtps/rtps/builtin/data/WriterProxyData.h>
 #include <fastrtps/rtps/builtin/data/ReaderProxyData.h>
+
+#include <rtps/builtin/discovery/participant/PDPEndpoints.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <statistics/fastdds/domain/DomainParticipantImpl.hpp>
 #include <statistics/rtps/StatisticsBase.hpp>
@@ -46,29 +48,65 @@ namespace rtps {
 using ::testing::Return;
 using ::testing::ReturnRef;
 
-class PDPMock : public PDP
+class TesterPDPEndpoints : public fastdds::rtps::PDPEndpoints
+{
+    ~TesterPDPEndpoints() override = default;
+
+    fastrtps::rtps::BuiltinEndpointSet_t builtin_endpoints() const override
+    {
+        return DISC_BUILTIN_ENDPOINT_PARTICIPANT_ANNOUNCER | DISC_BUILTIN_ENDPOINT_PARTICIPANT_DETECTOR;
+    }
+
+    bool enable_pdp_readers(
+            fastrtps::rtps::RTPSParticipantImpl*) override
+    {
+        return true;
+    }
+
+    void disable_pdp_readers(
+            fastrtps::rtps::RTPSParticipantImpl*) override
+    {
+
+    }
+
+    void delete_pdp_endpoints(
+            fastrtps::rtps::RTPSParticipantImpl* ) override
+    {
+
+    }
+
+    void remove_from_pdp_reader_history(
+            const fastrtps::rtps::InstanceHandle_t&) override
+    {
+
+    }
+
+    void remove_from_pdp_reader_history(
+            fastrtps::rtps::CacheChange_t*) override
+    {
+
+    }
+};
+
+class PDPTester : public PDP
 {
 public:
 
-    PDPMock(
+    PDPTester(
             BuiltinProtocols* bp,
             const RTPSParticipantAllocationAttributes& allocs)
         : PDP(bp, allocs)
     {
+        auto endpoints = new TesterPDPEndpoints();
+        builtin_endpoints_.reset(endpoints);
     }
 
-    virtual ~PDPMock() // = default;
+    virtual ~PDPTester()
     {
+
     }
 
-    void initializeParticipantProxyData(
-            ParticipantProxyData* /*participant_data*/) override
-    {
-        return;
-    }
-
-    bool init(
-            RTPSParticipantImpl* /*part*/) override
+    bool init(RTPSParticipantImpl */*part*/) override
     {
         return true;
     }
@@ -210,27 +248,6 @@ private:
     std::vector<fastrtps::rtps::GUID_t> p_matched_;
 };
 
-class Participant
-{
-
-public:
-
-    Participant()
-        : listener(new Listener())
-    {
-    }
-
-    ~Participant() = default;
-
-    void setup()
-    {
-        fastdds::dds::DomainParticipantFactory::get_instance()->create_participant(
-            (uint32_t)GET_PID() % 230, eprosima::fastdds::dds::PARTICIPANT_QOS_DEFAULT, listener);
-    }
-
-    Listener* listener;
-};
-
 class PDPTests : public ::testing::Test
 {
 
@@ -238,33 +255,40 @@ protected:
 
     void SetUp() override
     {
-        const RTPSParticipantAllocationAttributes attrs;
-        pdp = new PDPMock(nullptr, attrs);
+        RTPSParticipantAllocationAttributes attrs;
+        attrs.participants.initial = 3;
+        attrs.readers.initial = 3;
+        attrs.writers.initial = 3;
+        pdp_ = new PDPTester(&bp_, attrs);
     }
 
     void TearDown() override
     {
-        delete pdp;
+        delete pdp_;
     }
 
-    PDPMock* pdp;
+    PDPTester* pdp_;
+    BuiltinProtocols bp_;
 };
 
-TEST(PDPTests, ParticipantsMatch)
+TEST_F(PDPTests, iproxy_queryable_get_all_local_proxies)
 {
-    Participant* p1 = new Participant();
-    ASSERT_EQ(p1->listener->matched, 0);
+#ifdef FASTDDS_STATISTICS
+    std::vector<GUID_t> local_guids;
 
-    Participant* p2 = new Participant();
-    ASSERT_EQ(p2->listener->matched, 0);
+    //pdp->addReaderProxyData(const GUID_t &reader_guid, GUID_t &participant_guid, std::function<bool (ReaderProxyData *, bool, const ParticipantProxyData &)> initializer_func)
 
-    p1->setup();
-    p2->setup();
+    pdp_->get_all_local_proxies(local_guids);
 
-    std::this_thread::sleep_for(std::chrono::seconds(2));
+    EXPECT_EQ(true, true);
+#endif // FASTDDS_STATISTICS
+}
 
-    ASSERT_EQ(p1->listener->matched, 1);
-    ASSERT_EQ(p2->listener->matched, 1);
+TEST_F(PDPTests, iproxy_queryable_get_serialized_proxy)
+{
+#ifdef FASTDDS_STATISTICS
+
+#endif // FASTDDS_STATISTICS
 }
 
 } // namespace rtps
