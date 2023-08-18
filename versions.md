@@ -1,10 +1,20 @@
 Forthcoming
 -----------
 
+Version 2.10.2
+--------------
+
+* Shared memory improvements.
+* Data-sharing improvements.
+* Improve performance of intraprocess plus data-sharing.
 * Added participant property to configure SHM transport metatraffic behavior.
   No metatraffic over SHM transport by default.
 * Added Participant ignore local endpoints feature.
 * `DomainParticipantListener::on_participant_discovery` changed behavior (fix ABI break in 2.10.0).
+* Improve content filter expression parameters checks and verbosity.
+* Support new endpoint QoS XML tags.
+* Allow participant profiles with no rtps tag.
+
 
 Version 2.10.1
 --------------
