@@ -979,39 +979,7 @@ bool PDP::pairing_remote_reader_with_local_writer_after_security(
 bool PDP::get_all_local_proxies(
         std::vector<GUID_t>& guids)
 {
-    size_t original_size = guids.size();
-    for (size_t i = 0; i < participant_proxies_.size(); i++)
-    {
-        if (std::find(guids.begin(), guids.end(), participant_proxies_.at(i)->m_guid) == guids.end())
-        {
-            guids.push_back(participant_proxies_.at(i)->m_guid);
-        }
-    }
-    for (size_t i = 0; i < participant_proxies_pool_.size(); i++)
-    {
-        if (std::find(guids.begin(), guids.end(), participant_proxies_pool_.at(i)->m_guid) == guids.end())
-        {
-            guids.push_back(participant_proxies_pool_.at(i)->m_guid);
-        }
-    }
-    for (size_t i = 0; i < reader_proxies_pool_.size(); i++)
-    {
-        if (std::find(guids.begin(), guids.end(), reader_proxies_pool_.at(i)->guid()) == guids.end())
-        {
-            guids.push_back(reader_proxies_pool_.at(i)->guid());
-        }
-    }
-    for (size_t i = 0; i < writer_proxies_pool_.size(); i++)
-    {
-        if (std::find(guids.begin(), guids.end(), writer_proxies_pool_.at(i)->guid()) == guids.end())
-        {
-            guids.push_back(writer_proxies_pool_.at(i)->guid());
-        }
-    }
-    if (guids.size() > original_size)
-    {
-        return true;
-    }
+    static_cast<void>(guids);
     return false;
 }
 
@@ -1019,34 +987,8 @@ bool PDP::get_serialized_proxy(
         const GUID_t& guid,
         CDRMessage_t* msg)
 {
-    for (size_t i = 0; i < participant_proxies_.size(); i++)
-    {
-        if (participant_proxies_.at(i)->m_guid == guid)
-        {
-            return participant_proxies_.at(i)->writeToCDRMessage(msg, false);
-        }
-    }
-    for (size_t i = 0; i < participant_proxies_pool_.size(); i++)
-    {
-        if (participant_proxies_pool_.at(i)->m_guid == guid)
-        {
-            return participant_proxies_pool_.at(i)->writeToCDRMessage(msg, false);
-        }
-    }
-    for (size_t i = 0; i < reader_proxies_pool_.size(); i++)
-    {
-        if (reader_proxies_pool_.at(i)->guid() == guid)
-        {
-            return reader_proxies_pool_.at(i)->writeToCDRMessage(msg, false);
-        }
-    }
-    for (size_t i = 0; i < writer_proxies_pool_.size(); i++)
-    {
-        if (writer_proxies_pool_.at(i)->guid() == guid)
-        {
-            return writer_proxies_pool_.at(i)->writeToCDRMessage(msg, false);
-        }
-    }
+    static_cast<void>(guid);
+    static_cast<void>(msg);
     return false;
 }
 
