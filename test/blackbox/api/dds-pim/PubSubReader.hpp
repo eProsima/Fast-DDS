@@ -1687,9 +1687,14 @@ public:
         return status;
     }
 
-private:
+    eprosima::fastdds::dds::DomainParticipant* get_participant()
+    {
+        return participant_;
+    }
 
-    void receive_one(
+protected:
+
+    virtual void receive_one(
             eprosima::fastdds::dds::DataReader* datareader,
             bool& returnedValue)
     {
@@ -1788,8 +1793,6 @@ private:
 
     //! functor to check which API to retrieve samples
     std::function<void (eprosima::fastdds::dds::DataReader* datareader, bool&)> receive_;
-
-protected:
 
     void receive(
             eprosima::fastdds::dds::DataReader* datareader,
