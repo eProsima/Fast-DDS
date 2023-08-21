@@ -102,7 +102,7 @@ public:
                         for (size_t i = 1; i <= static_cast<size_t>(n_local_entities); i++)
                         {
                             fastrtps::rtps::GUID_t guid;
-                            guid.entityId.value[3] = i;
+                            guid.entityId.value[3] = (fastrtps::rtps::octet)i;
                             guids.push_back(guid);
                             mock_guids.push_back(guid);
                         }
