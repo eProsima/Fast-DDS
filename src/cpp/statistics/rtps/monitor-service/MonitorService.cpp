@@ -30,6 +30,7 @@ MonitorService::MonitorService(
         IStatusQueryable& status_q)
     : enabled_(false)
     , initialized_(false)
+    , timer_active_(false)
     , local_participant_guid_(guid)
     , proxy_queryable_(proxy_q)
     , conns_queryable_(conns_q)
@@ -38,6 +39,7 @@ MonitorService::MonitorService(
     //! TODO
     static_cast<void>(enabled_);
     static_cast<void>(initialized_);
+    static_cast<void>(timer_active_);
     static_cast<void>(proxy_queryable_);
     static_cast<void>(conns_queryable_);
     static_cast<void>(status_queryable_);
