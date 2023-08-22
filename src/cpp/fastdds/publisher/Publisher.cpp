@@ -112,18 +112,20 @@ DataWriter* Publisher::create_datawriter(
         Topic* topic,
         const DataWriterQos& qos,
         DataWriterListener* listener,
-        const StatusMask& mask)
+        const StatusMask& mask,
+        std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool)
 {
-    return impl_->create_datawriter(topic, qos, listener, mask);
+    return impl_->create_datawriter(topic, qos, listener, mask, payload_pool);
 }
 
 DataWriter* Publisher::create_datawriter_with_profile(
         Topic* topic,
         const std::string& profile_name,
         DataWriterListener* listener,
-        const StatusMask& mask)
+        const StatusMask& mask,
+        std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool)
 {
-    return impl_->create_datawriter_with_profile(topic, profile_name, listener, mask);
+    return impl_->create_datawriter_with_profile(topic, profile_name, listener, mask, payload_pool);
 }
 
 ReturnCode_t Publisher::delete_datawriter(

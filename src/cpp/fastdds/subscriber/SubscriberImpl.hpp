@@ -97,13 +97,15 @@ public:
             TopicDescription* topic,
             const DataReaderQos& reader_qos,
             DataReaderListener* listener = nullptr,
-            const StatusMask& mask = StatusMask::all());
+            const StatusMask& mask = StatusMask::all(),
+            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool = nullptr);
 
     DataReader* create_datareader_with_profile(
             TopicDescription* topic,
             const std::string& profile_name,
             DataReaderListener* listener,
-            const StatusMask& mask = StatusMask::all());
+            const StatusMask& mask = StatusMask::all(),
+            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool = nullptr);
 
     ReturnCode_t delete_datareader(
             const DataReader* reader);
@@ -298,7 +300,8 @@ protected:
             const TypeSupport& type,
             TopicDescription* topic,
             const DataReaderQos& qos,
-            DataReaderListener* listener);
+            DataReaderListener* listener,
+            std::shared_ptr<fastrtps::rtps::IPayloadPool> payload_pool);
 };
 
 } /* namespace dds */

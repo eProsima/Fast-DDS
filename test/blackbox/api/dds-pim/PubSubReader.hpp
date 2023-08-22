@@ -1270,6 +1270,13 @@ public:
         return *this;
     }
 
+    PubSubReader& avoid_builtin_multicast(
+            bool value)
+    {
+        participant_qos_.wire_protocol().builtin.avoid_builtin_multicast = value;
+        return *this;
+    }
+
     PubSubReader& property_policy(
             const eprosima::fastrtps::rtps::PropertyPolicy& property_policy)
     {
@@ -1316,6 +1323,13 @@ public:
             size_t max_partitions)
     {
         participant_qos_.allocation().data_limits.max_partitions = max_partitions;
+        return *this;
+    }
+
+    PubSubReader& max_multicast_locators_number(
+            size_t max_multicast_locators)
+    {
+        participant_qos_.allocation().locators.max_multicast_locators = max_multicast_locators;
         return *this;
     }
 
