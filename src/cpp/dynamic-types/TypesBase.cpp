@@ -36,7 +36,6 @@ void serialize(
         eprosima::fastcdr::Cdr& cdr,
         const eprosima::fastrtps::types::MemberFlag& data)
 {
-    //cdr << m_MemberFlag;
     cdr << data.bitset();
 }
 
@@ -45,8 +44,9 @@ void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastrtps::types::MemberFlag& data)
 {
-    //cdr >> (uint16_t)m_MemberFlag;
-    cdr >> data.bitset();
+    std::bitset<16> bitset;
+    cdr >> bitset;
+    data.bitset(bitset);
 }
 
 template<>
@@ -71,7 +71,9 @@ void deserialize(
         eprosima::fastcdr::Cdr& cdr,
         eprosima::fastrtps::types::TypeFlag& data)
 {
-    cdr >> data.bitset();
+    std::bitset<16> bitset;
+    cdr >> bitset;
+    data.bitset(bitset);
 }
 
 } // namespace fastcdr

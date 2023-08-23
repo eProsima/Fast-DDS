@@ -449,14 +449,24 @@ public:
         return m_MemberFlag == other.m_MemberFlag;
     }
 
-    const std::bitset<16>& bitset() const
+    std::bitset<16> bitset() const
     {
-        return m_MemberFlag;
+        std::string str_value;
+
+        str_value = m_MemberFlag.to_string() + str_value;
+
+        return std::bitset<16>(str_value);
     }
 
-    std::bitset<16>& bitset()
+    void bitset(
+            const std::bitset<16>& bitset)
     {
-        return m_MemberFlag;
+        std::string str_value {bitset.to_string()};
+        size_t base_diff {0};
+        size_t last_post {std::string::npos};
+
+        base_diff += 16;
+        m_MemberFlag = std::bitset<16>(str_value.substr(str_value.length() - base_diff, last_post));
     }
 
 };
@@ -578,14 +588,24 @@ public:
         return m_TypeFlag == other.m_TypeFlag;
     }
 
-    const std::bitset<16>& bitset() const
+    std::bitset<16> bitset() const
     {
-        return m_TypeFlag;
+        std::string str_value;
+
+        str_value = m_TypeFlag.to_string() + str_value;
+
+        return std::bitset<16>(str_value);
     }
 
-    std::bitset<16>& bitset()
+    void bitset(
+            const std::bitset<16>& bitset)
     {
-        return m_TypeFlag;
+        std::string str_value {bitset.to_string()};
+        size_t base_diff {0};
+        size_t last_post {std::string::npos};
+
+        base_diff += 16;
+        m_TypeFlag = std::bitset<16>(str_value.substr(str_value.length() - base_diff, last_post));
     }
 
 };
