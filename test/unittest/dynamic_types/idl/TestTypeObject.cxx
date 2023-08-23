@@ -2604,8 +2604,7 @@ const TypeObject* GetMinimalComplexStructObject()
     mst_my_alias_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_alias_enum.common().member_flags().IS_KEY(false);
     mst_my_alias_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_my_alias_enum.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyAliasEnum", false));
-
+    mst_my_alias_enum.common().member_type_id(*GetMyAliasEnumIdentifier(false));
 
     MD5 my_alias_enum_hash("my_alias_enum");
     for(int i = 0; i < 4; ++i)
@@ -2623,8 +2622,7 @@ const TypeObject* GetMinimalComplexStructObject()
     mst_my_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_enum.common().member_flags().IS_KEY(false);
     mst_my_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_my_enum.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyEnum", false));
-
+    mst_my_enum.common().member_type_id(*GetMyEnumIdentifier(false));
 
     MD5 my_enum_hash("my_enum");
     for(int i = 0; i < 4; ++i)
@@ -2696,8 +2694,7 @@ const TypeObject* GetMinimalComplexStructObject()
     mst_my_octet_array_500.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_octet_array_500.common().member_flags().IS_KEY(false);
     mst_my_octet_array_500.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_my_octet_array_500.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyOctetArray500", false));
-
+    mst_my_octet_array_500.common().member_type_id(*GetMyOctetArray500Identifier(false));
 
     MD5 my_octet_array_500_hash("my_octet_array_500");
     for(int i = 0; i < 4; ++i)
@@ -2913,8 +2910,7 @@ const TypeObject* GetMinimalComplexStructObject()
     mst_multi_alias_array_42.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_multi_alias_array_42.common().member_flags().IS_KEY(false);
     mst_multi_alias_array_42.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_multi_alias_array_42.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MA3", false));
-
+    mst_multi_alias_array_42.common().member_type_id(*GetMA3Identifier(false));
 
     MD5 multi_alias_array_42_hash("multi_alias_array_42");
     for(int i = 0; i < 4; ++i)
@@ -3052,8 +3048,7 @@ const TypeObject* GetCompleteComplexStructObject()
     cst_my_alias_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_alias_enum.common().member_flags().IS_KEY(false);
     cst_my_alias_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_my_alias_enum.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyAliasEnum", false));
-
+    cst_my_alias_enum.common().member_type_id(*GetMyAliasEnumIdentifier(true));
 
     cst_my_alias_enum.detail().name("my_alias_enum");
 
@@ -3068,8 +3063,7 @@ const TypeObject* GetCompleteComplexStructObject()
     cst_my_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_enum.common().member_flags().IS_KEY(false);
     cst_my_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_my_enum.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyEnum", false));
-
+    cst_my_enum.common().member_type_id(*GetMyEnumIdentifier(true));
 
     cst_my_enum.detail().name("my_enum");
 
@@ -3129,8 +3123,7 @@ const TypeObject* GetCompleteComplexStructObject()
     cst_my_octet_array_500.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_octet_array_500.common().member_flags().IS_KEY(false);
     cst_my_octet_array_500.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_my_octet_array_500.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyOctetArray500", false));
-
+    cst_my_octet_array_500.common().member_type_id(*GetMyOctetArray500Identifier(true));
 
     cst_my_octet_array_500.detail().name("my_octet_array_500");
 
@@ -3310,8 +3303,7 @@ const TypeObject* GetCompleteComplexStructObject()
     cst_multi_alias_array_42.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_multi_alias_array_42.common().member_flags().IS_KEY(false);
     cst_multi_alias_array_42.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_multi_alias_array_42.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MA3", false));
-
+    cst_multi_alias_array_42.common().member_type_id(*GetMA3Identifier(true));
 
     cst_multi_alias_array_42.detail().name("multi_alias_array_42");
 
@@ -3433,7 +3425,7 @@ const TypeObject* GetMinimalMyUnionObject()
     type_object->minimal().union_type().discriminator().common().member_flags().IS_KEY(false); // Unsupported
     type_object->minimal().union_type().discriminator().common().member_flags().IS_DEFAULT(false); // Doesn't apply
 
-    type_object->minimal().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyEnum", false));
+    type_object->minimal().union_type().discriminator().common().type_id(*GetMyEnumIdentifier(false));
 
     MemberId memberId = 0;
     MinimalUnionMember mst_basic;
@@ -3536,7 +3528,7 @@ const TypeObject* GetCompleteMyUnionObject()
     type_object->complete().union_type().discriminator().common().member_flags().IS_KEY(false); // Unsupported
     type_object->complete().union_type().discriminator().common().member_flags().IS_DEFAULT(false); // Doesn't apply
 
-    type_object->complete().union_type().discriminator().common().type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyEnum", false));
+    type_object->complete().union_type().discriminator().common().type_id(*GetMyEnumIdentifier(true));
 
     MemberId memberId = 0;
     CompleteUnionMember cst_basic;

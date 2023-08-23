@@ -925,8 +925,7 @@ const TypeObject* GetMinimalStructTypeObject()
     mst_enum_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_enum_field.common().member_flags().IS_KEY(false);
     mst_enum_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_enum_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("Color", false));
-
+    mst_enum_field.common().member_type_id(*GetColorIdentifier(false));
 
     MD5 enum_field_hash("enum_field");
     for(int i = 0; i < 4; ++i)
@@ -944,8 +943,7 @@ const TypeObject* GetMinimalStructTypeObject()
     mst_enum2_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_enum2_field.common().member_flags().IS_KEY(false);
     mst_enum2_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_enum2_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("Material", false));
-
+    mst_enum2_field.common().member_type_id(*GetMaterialIdentifier(false));
 
     MD5 enum2_field_hash("enum2_field");
     for(int i = 0; i < 4; ++i)
@@ -1223,8 +1221,7 @@ const TypeObject* GetCompleteStructTypeObject()
     cst_enum_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_enum_field.common().member_flags().IS_KEY(false);
     cst_enum_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_enum_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("Color", false));
-
+    cst_enum_field.common().member_type_id(*GetColorIdentifier(true));
 
     cst_enum_field.detail().name("enum_field");
 
@@ -1239,8 +1236,7 @@ const TypeObject* GetCompleteStructTypeObject()
     cst_enum2_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_enum2_field.common().member_flags().IS_KEY(false);
     cst_enum2_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_enum2_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("Material", false));
-
+    cst_enum2_field.common().member_type_id(*GetMaterialIdentifier(true));
 
     cst_enum2_field.detail().name("enum2_field");
 
@@ -1604,8 +1600,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_enum_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_enum_field.common().member_flags().IS_KEY(false);
     mst_enum_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_enum_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("Color", false));
-
+    mst_enum_field.common().member_type_id(*GetColorIdentifier(false));
 
     MD5 enum_field_hash("enum_field");
     for(int i = 0; i < 4; ++i)
@@ -1623,8 +1618,7 @@ const TypeObject* GetMinimalContentFilterTestTypeObject()
     mst_enum2_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_enum2_field.common().member_flags().IS_KEY(false);
     mst_enum2_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_enum2_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("Material", false));
-
+    mst_enum2_field.common().member_type_id(*GetMaterialIdentifier(false));
 
     MD5 enum2_field_hash("enum2_field");
     for(int i = 0; i < 4; ++i)
@@ -2784,8 +2778,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_enum_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_enum_field.common().member_flags().IS_KEY(false);
     cst_enum_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_enum_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("Color", false));
-
+    cst_enum_field.common().member_type_id(*GetColorIdentifier(true));
 
     cst_enum_field.detail().name("enum_field");
 
@@ -2800,8 +2793,7 @@ const TypeObject* GetCompleteContentFilterTestTypeObject()
     cst_enum2_field.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_enum2_field.common().member_flags().IS_KEY(false);
     cst_enum2_field.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_enum2_field.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("Material", false));
-
+    cst_enum2_field.common().member_type_id(*GetMaterialIdentifier(true));
 
     cst_enum2_field.detail().name("enum2_field");
 

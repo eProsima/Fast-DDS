@@ -2586,8 +2586,7 @@ namespace bitmodule {
         mst_mybitmask.common().member_flags().IS_MUST_UNDERSTAND(false);
         mst_mybitmask.common().member_flags().IS_KEY(false);
         mst_mybitmask.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-        mst_mybitmask.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bitmodule::MyBitMask", false));
-
+        mst_mybitmask.common().member_type_id(*bitmodule::GetMyBitMaskIdentifier(false));
 
         MD5 mybitmask_hash("mybitmask");
         for(int i = 0; i < 4; ++i)
@@ -2673,8 +2672,7 @@ namespace bitmodule {
         cst_mybitmask.common().member_flags().IS_MUST_UNDERSTAND(false);
         cst_mybitmask.common().member_flags().IS_KEY(false);
         cst_mybitmask.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-        cst_mybitmask.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bitmodule::MyBitMask", false));
-
+        cst_mybitmask.common().member_type_id(*bitmodule::GetMyBitMaskIdentifier(true));
 
         cst_mybitmask.detail().name("mybitmask");
 
@@ -2768,8 +2766,7 @@ namespace bitmodule {
         mst_two.common().member_flags().IS_MUST_UNDERSTAND(false);
         mst_two.common().member_flags().IS_KEY(false);
         mst_two.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-        mst_two.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bitmodule::MyBitMask", false));
-
+        mst_two.common().member_type_id(*bitmodule::GetMyBitMaskIdentifier(false));
 
         MD5 two_hash("two");
         for(int i = 0; i < 4; ++i)
@@ -2860,8 +2857,7 @@ namespace bitmodule {
         cst_two.common().member_flags().IS_MUST_UNDERSTAND(false);
         cst_two.common().member_flags().IS_KEY(false);
         cst_two.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-        cst_two.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("bitmodule::MyBitMask", false));
-
+        cst_two.common().member_type_id(*bitmodule::GetMyBitMaskIdentifier(true));
 
         cst_two.detail().name("two");
 

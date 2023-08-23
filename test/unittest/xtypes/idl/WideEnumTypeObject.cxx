@@ -373,8 +373,7 @@ const TypeObject* GetMinimalMyEnumWideStructObject()
     mst_my_enum_wide.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_enum_wide.common().member_flags().IS_KEY(false);
     mst_my_enum_wide.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_my_enum_wide.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyEnumWide", false));
-
+    mst_my_enum_wide.common().member_type_id(*GetMyEnumWideIdentifier(false));
 
     MD5 my_enum_wide_hash("my_enum_wide");
     for(int i = 0; i < 4; ++i)
@@ -445,8 +444,7 @@ const TypeObject* GetCompleteMyEnumWideStructObject()
     cst_my_enum_wide.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_enum_wide.common().member_flags().IS_KEY(false);
     cst_my_enum_wide.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_my_enum_wide.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyEnumWide", false));
-
+    cst_my_enum_wide.common().member_type_id(*GetMyEnumWideIdentifier(true));
 
     cst_my_enum_wide.detail().name("my_enum_wide");
 

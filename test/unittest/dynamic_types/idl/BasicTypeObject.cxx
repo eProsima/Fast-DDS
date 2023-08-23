@@ -936,8 +936,7 @@ const TypeObject* GetMinimalEnumStructObject()
     mst_my_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_enum.common().member_flags().IS_KEY(false);
     mst_my_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_my_enum.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyEnum", false));
-
+    mst_my_enum.common().member_type_id(*GetMyEnumIdentifier(false));
 
     MD5 my_enum_hash("my_enum");
     for(int i = 0; i < 4; ++i)
@@ -1008,8 +1007,7 @@ const TypeObject* GetCompleteEnumStructObject()
     cst_my_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_enum.common().member_flags().IS_KEY(false);
     cst_my_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_my_enum.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyEnum", false));
-
+    cst_my_enum.common().member_type_id(*GetMyEnumIdentifier(true));
 
     cst_my_enum.detail().name("my_enum");
 
@@ -1103,8 +1101,7 @@ const TypeObject* GetMinimalAliasStructObject()
     mst_my_alias.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_alias.common().member_flags().IS_KEY(false);
     mst_my_alias.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_my_alias.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyAliasEnum", false));
-
+    mst_my_alias.common().member_type_id(*GetMyAliasEnumIdentifier(false));
 
     MD5 my_alias_hash("my_alias");
     for(int i = 0; i < 4; ++i)
@@ -1175,8 +1172,7 @@ const TypeObject* GetCompleteAliasStructObject()
     cst_my_alias.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_alias.common().member_flags().IS_KEY(false);
     cst_my_alias.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_my_alias.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyAliasEnum", false));
-
+    cst_my_alias.common().member_type_id(*GetMyAliasEnumIdentifier(true));
 
     cst_my_alias.detail().name("my_alias");
 
@@ -1270,8 +1266,7 @@ const TypeObject* GetMinimalAliasAliasStructObject()
     mst_my_alias_alias.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_alias_alias.common().member_flags().IS_KEY(false);
     mst_my_alias_alias.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_my_alias_alias.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyAliasAliasEnum", false));
-
+    mst_my_alias_alias.common().member_type_id(*GetMyAliasAliasEnumIdentifier(false));
 
     MD5 my_alias_alias_hash("my_alias_alias");
     for(int i = 0; i < 4; ++i)
@@ -1342,8 +1337,7 @@ const TypeObject* GetCompleteAliasAliasStructObject()
     cst_my_alias_alias.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_alias_alias.common().member_flags().IS_KEY(false);
     cst_my_alias_alias.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_my_alias_alias.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyAliasAliasEnum", false));
-
+    cst_my_alias_alias.common().member_type_id(*GetMyAliasAliasEnumIdentifier(true));
 
     cst_my_alias_alias.detail().name("my_alias_alias");
 

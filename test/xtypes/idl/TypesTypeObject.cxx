@@ -801,8 +801,7 @@ const TypeObject* GetMinimalMyEnumStructObject()
     mst_my_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_enum.common().member_flags().IS_KEY(false);
     mst_my_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_my_enum.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyEnum", false));
-
+    mst_my_enum.common().member_type_id(*GetMyEnumIdentifier(false));
 
     MD5 my_enum_hash("my_enum");
     for(int i = 0; i < 4; ++i)
@@ -873,8 +872,7 @@ const TypeObject* GetCompleteMyEnumStructObject()
     cst_my_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_enum.common().member_flags().IS_KEY(false);
     cst_my_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_my_enum.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyEnum", false));
-
+    cst_my_enum.common().member_type_id(*GetMyEnumIdentifier(true));
 
     cst_my_enum.detail().name("my_enum");
 
@@ -968,8 +966,7 @@ const TypeObject* GetMinimalMyBadEnumStructObject()
     mst_my_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_enum.common().member_flags().IS_KEY(false);
     mst_my_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_my_enum.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyBadEnum", false));
-
+    mst_my_enum.common().member_type_id(*GetMyBadEnumIdentifier(false));
 
     MD5 my_enum_hash("my_enum");
     for(int i = 0; i < 4; ++i)
@@ -1040,8 +1037,7 @@ const TypeObject* GetCompleteMyBadEnumStructObject()
     cst_my_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_enum.common().member_flags().IS_KEY(false);
     cst_my_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_my_enum.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyBadEnum", false));
-
+    cst_my_enum.common().member_type_id(*GetMyBadEnumIdentifier(true));
 
     cst_my_enum.detail().name("my_enum");
 
@@ -1323,8 +1319,7 @@ const TypeObject* GetMinimalMyAliasEnumStructObject()
     mst_my_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     mst_my_enum.common().member_flags().IS_KEY(false);
     mst_my_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_my_enum.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyAliasEnum", false));
-
+    mst_my_enum.common().member_type_id(*GetMyAliasEnumIdentifier(false));
 
     MD5 my_enum_hash("my_enum");
     for(int i = 0; i < 4; ++i)
@@ -1395,8 +1390,7 @@ const TypeObject* GetCompleteMyAliasEnumStructObject()
     cst_my_enum.common().member_flags().IS_MUST_UNDERSTAND(false);
     cst_my_enum.common().member_flags().IS_KEY(false);
     cst_my_enum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_my_enum.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("MyAliasEnum", false));
-
+    cst_my_enum.common().member_type_id(*GetMyAliasEnumIdentifier(true));
 
     cst_my_enum.detail().name("my_enum");
 
