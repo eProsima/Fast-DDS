@@ -883,7 +883,8 @@ inline uint32_t QosPoliciesSerializer<TypeIdV1>::cdr_serialized_size(
         const TypeIdV1& qos_policy)
 {
     eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
-    size_t size = calculator.calculate_serialized_size(qos_policy.m_type_identifier, 0) + 4;
+    size_t current_alignment {0};
+    size_t size = calculator.calculate_serialized_size(qos_policy.m_type_identifier, current_alignment) + 4;
     return 2 + 2 + static_cast<uint32_t>(size);
 }
 
@@ -893,7 +894,8 @@ inline bool QosPoliciesSerializer<TypeIdV1>::add_to_cdr_message(
         fastrtps::rtps::CDRMessage_t* cdr_message)
 {
     eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
-    size_t size = calculator.calculate_serialized_size(qos_policy.m_type_identifier, 0)
+    size_t current_alignment {0};
+    size_t size = calculator.calculate_serialized_size(qos_policy.m_type_identifier, current_alignment)
             + eprosima::fastrtps::rtps::SerializedPayload_t::representation_header_size;
     fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
@@ -955,7 +957,8 @@ inline uint32_t QosPoliciesSerializer<TypeObjectV1>::cdr_serialized_size(
         const TypeObjectV1& qos_policy)
 {
     eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
-    size_t size = calculator.calculate_serialized_size(qos_policy.m_type_object, 0) + 4;
+    size_t current_alignment {0};
+    size_t size = calculator.calculate_serialized_size(qos_policy.m_type_object, current_alignment) + 4;
     return 2 + 2 + static_cast<uint32_t>(size);
 }
 
@@ -965,7 +968,8 @@ inline bool QosPoliciesSerializer<TypeObjectV1>::add_to_cdr_message(
         fastrtps::rtps::CDRMessage_t* cdr_message)
 {
     eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
-    size_t size = calculator.calculate_serialized_size(qos_policy.m_type_object, 0)
+    size_t current_alignment {0};
+    size_t size = calculator.calculate_serialized_size(qos_policy.m_type_object, current_alignment)
             + eprosima::fastrtps::rtps::SerializedPayload_t::representation_header_size;
     fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
@@ -1027,7 +1031,8 @@ inline uint32_t QosPoliciesSerializer<xtypes::TypeInformation>::cdr_serialized_s
         const xtypes::TypeInformation& qos_policy)
 {
     eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
-    size_t size = calculator.calculate_serialized_size(qos_policy.type_information, 0) + 4;
+    size_t current_alignment {0};
+    size_t size = calculator.calculate_serialized_size(qos_policy.type_information, current_alignment) + 4;
     return 2 + 2 + static_cast<uint32_t>(size);
 }
 
@@ -1037,9 +1042,10 @@ inline bool QosPoliciesSerializer<xtypes::TypeInformation>::add_to_cdr_message(
         fastrtps::rtps::CDRMessage_t* cdr_message)
 {
     eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    size_t current_alignment {0};
     size_t size =
             calculator.calculate_serialized_size(qos_policy.type_information,
-                    0) + eprosima::fastrtps::rtps::SerializedPayload_t::representation_header_size;
+                    current_alignment) + eprosima::fastrtps::rtps::SerializedPayload_t::representation_header_size;
     fastrtps::rtps::SerializedPayload_t payload(static_cast<uint32_t>(size));
     eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
 

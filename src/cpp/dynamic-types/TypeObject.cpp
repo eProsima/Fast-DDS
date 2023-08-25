@@ -7203,24 +7203,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonStructMember& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.member_id(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.member_flags(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.member_type_id(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -7247,24 +7245,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteMemberDetail& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.name(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.ann_builtin(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.ann_custom(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -7291,20 +7287,18 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalMemberDetail& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.name_hash(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -7327,22 +7321,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteStructMember& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.detail(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -7367,22 +7359,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalStructMember& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.detail(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -7407,20 +7397,18 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::AppliedBuiltinTypeAnnotations& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.verbatim(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -7443,10 +7431,9 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::MinimalTypeDetail&,
-        size_t current_alignment)
+        size_t&)
 {
-    size_t initial_alignment = current_alignment;
-    return current_alignment - initial_alignment;
+    return 0;
 }
 
 template<>
@@ -7467,24 +7454,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteTypeDetail& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.ann_builtin(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.ann_custom(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.type_name(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -7511,22 +7496,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteStructHeader& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.base_type(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.detail(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -7551,22 +7534,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalStructHeader& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.base_type(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.detail(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -7591,24 +7572,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteStructType& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.struct_flags(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.header(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.member_seq(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -7635,24 +7614,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalStructType& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.struct_flags(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.header(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.member_seq(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -7679,26 +7656,24 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonUnionMember& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.member_id(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.member_flags(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.type_id(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         3), data.label_seq(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -7727,22 +7702,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteUnionMember& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.detail(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -7767,22 +7740,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalUnionMember& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.detail(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -7807,22 +7778,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonDiscriminatorMember& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.member_flags(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.type_id(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -7847,24 +7816,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteDiscriminatorMember& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.ann_builtin(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.ann_custom(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -7891,20 +7858,18 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalDiscriminatorMember& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -7927,20 +7892,18 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteUnionHeader& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.detail(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -7963,20 +7926,18 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalUnionHeader& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.detail(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -7999,26 +7960,24 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteUnionType& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.union_flags(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.header(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.discriminator(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         3), data.member_seq(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8047,26 +8006,24 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalUnionType& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.union_flags(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.header(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.discriminator(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         3), data.member_seq(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8095,22 +8052,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonAnnotationParameter& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.member_flags(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.member_type_id(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8135,24 +8090,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteAnnotationParameter& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.name(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.default_value(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8179,24 +8132,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalAnnotationParameter& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.name(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.default_value(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8223,20 +8174,18 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteAnnotationHeader& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.annotation_name(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8259,11 +8208,9 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::MinimalAnnotationHeader&,
-        size_t current_alignment)
+        size_t&)
 {
-    size_t initial_alignment = current_alignment;
-
-    return current_alignment - initial_alignment;
+    return 0;
 }
 
 template<>
@@ -8284,24 +8231,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteAnnotationType& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.annotation_flag(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.header(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.member_seq(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8328,24 +8273,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalAnnotationType& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.annotation_flag(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.header(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.member_seq(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8372,22 +8315,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonAliasBody& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.related_flags(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.related_type(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8412,24 +8353,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteAliasBody& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.ann_builtin(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.ann_custom(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8456,20 +8395,18 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalAliasBody& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8492,20 +8429,18 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteAliasHeader& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.detail(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8528,11 +8463,9 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::MinimalAliasHeader&,
-        size_t current_alignment)
+        size_t&)
 {
-    size_t initial_alignment = current_alignment;
-
-    return current_alignment - initial_alignment;
+    return 0;
 }
 
 template<>
@@ -8553,24 +8486,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteAliasType& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.alias_flags(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.header(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.body(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8597,24 +8528,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalAliasType& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.alias_flags(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.header(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.body(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8641,22 +8570,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteElementDetail& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.ann_builtin(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.ann_custom(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8681,22 +8608,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonCollectionElement& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.element_flags(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.type(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8721,22 +8646,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteCollectionElement& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.detail(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8761,20 +8684,18 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalCollectionElement& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8797,20 +8718,18 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonCollectionHeader& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.bound(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8833,22 +8752,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteCollectionHeader& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.detail(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8873,20 +8790,18 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalCollectionHeader& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8909,24 +8824,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalSequenceType& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.collection_flag(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.header(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.element(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8953,24 +8866,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteSequenceType& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.collection_flag(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.header(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.element(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -8997,20 +8908,18 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonArrayHeader& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.bound_seq(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9033,22 +8942,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteArrayHeader& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.detail(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9073,20 +8980,18 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalArrayHeader& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9109,24 +9014,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteArrayType& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.collection_flag(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.header(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.element(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9153,24 +9056,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalArrayType& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.collection_flag(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.header(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.element(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9197,26 +9098,24 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteMapType& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.collection_flag(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.header(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.key(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         3), data.element(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9245,26 +9144,24 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalMapType& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.collection_flag(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.header(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.key(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.element(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9293,22 +9190,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonEnumeratedLiteral& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.value(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.flags(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9333,22 +9228,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteEnumeratedLiteral& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.detail(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9373,22 +9266,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalEnumeratedLiteral& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.detail(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9413,20 +9304,18 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonEnumeratedHeader& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.bit_bound(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9449,22 +9338,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteEnumeratedHeader& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.detail(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9489,20 +9376,18 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalEnumeratedHeader& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9525,24 +9410,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteEnumeratedType& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.enum_flags(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.header(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.literal_seq(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9569,24 +9452,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalEnumeratedType& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.enum_flags(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.header(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.literal_seq(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9613,22 +9494,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonBitflag& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.position(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.flags(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9653,22 +9532,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteBitflag& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.detail(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9693,22 +9570,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalBitflag& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.detail(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9733,20 +9608,18 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonBitmaskHeader& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.bit_bound(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9769,24 +9642,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteBitmaskType& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.bitmask_flags(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.header(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.flag_seq(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9813,24 +9684,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalBitmaskType& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.bitmask_flags(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.header(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.flag_seq(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9857,26 +9726,24 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CommonBitfield& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.position(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.flags(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.bitcount(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         3), data.holder_type(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9905,22 +9772,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteBitfield& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.common(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.detail(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9945,22 +9810,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalBitfield& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.name_hash(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.common(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -9985,22 +9848,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteBitsetHeader& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.detail(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.base_type(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -10025,20 +9886,18 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalBitsetHeader& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.base_type(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -10061,24 +9920,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteBitsetType& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.bitset_flags(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.header(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.field_seq(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -10105,24 +9962,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalBitsetType& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.bitset_flags(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.header(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.field_seq(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -10149,11 +10004,9 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::CompleteExtendedType&,
-        size_t current_alignment)
+        size_t&)
 {
-    size_t initial_alignment = current_alignment;
-
-    return current_alignment - initial_alignment;
+    return 0;
 }
 
 template<>
@@ -10174,11 +10027,9 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::MinimalExtendedType&,
-        size_t current_alignment)
+        size_t&)
 {
-    size_t initial_alignment = current_alignment;
-
-    return current_alignment - initial_alignment;
+    return 0;
 }
 
 template<>
@@ -10199,22 +10050,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::TypeIdentifierTypeObjectPair& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.type_identifier(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.type_object(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -10239,22 +10088,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::TypeIdentifierPair& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.type_identifier1(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.type_identifier2(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -10279,22 +10126,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::TypeIdentifierWithSize& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.type_id(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.typeobject_serialized_size(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -10319,24 +10164,22 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::TypeIdentifierWithDependencies& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.typeid_with_size(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.dependent_typeid_count(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         2), data.dependent_typeids(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -10363,68 +10206,66 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::CompleteTypeObject& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data._d(), current_alignment);
 
     switch (data._d())
     {
         case eprosima::fastrtps::types::TK_ALIAS:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 1), data.alias_type(), current_alignment);
             break;
         case eprosima::fastrtps::types::TK_ANNOTATION:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 2), data.annotation_type(), current_alignment);
             break;
         case eprosima::fastrtps::types::TK_STRUCTURE:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 3), data.struct_type(), current_alignment);
             break;
         case eprosima::fastrtps::types::TK_UNION:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 4), data.union_type(), current_alignment);
             break;
         case eprosima::fastrtps::types::TK_BITSET:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 5), data.bitset_type(), current_alignment);
             break;
         case eprosima::fastrtps::types::TK_SEQUENCE:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 6), data.sequence_type(), current_alignment);
             break;
         case eprosima::fastrtps::types::TK_ARRAY:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 7), data.array_type(), current_alignment);
             break;
         case eprosima::fastrtps::types::TK_MAP:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 8), data.map_type(), current_alignment);
             break;
         case eprosima::fastrtps::types::TK_ENUM:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 9), data.enumerated_type(), current_alignment);
             break;
         case eprosima::fastrtps::types::TK_BITMASK:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 10), data.bitmask_type(), current_alignment);
             break;
         default:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 11), data.extended_type(), current_alignment);
             break;
     }
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -10521,68 +10362,66 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::MinimalTypeObject& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data._d(), current_alignment);
 
     switch (data._d())
     {
         case eprosima::fastrtps::types::TK_ALIAS:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 1), data.alias_type(), current_alignment);
             break;
         case eprosima::fastrtps::types::TK_ANNOTATION:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 2), data.annotation_type(), current_alignment);
             break;
         case eprosima::fastrtps::types::TK_STRUCTURE:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 3), data.struct_type(), current_alignment);
             break;
         case eprosima::fastrtps::types::TK_UNION:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 4), data.union_type(), current_alignment);
             break;
         case eprosima::fastrtps::types::TK_BITSET:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 5), data.bitset_type(), current_alignment);
             break;
         case eprosima::fastrtps::types::TK_SEQUENCE:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 6), data.sequence_type(), current_alignment);
             break;
         case eprosima::fastrtps::types::TK_ARRAY:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 7), data.array_type(), current_alignment);
             break;
         case eprosima::fastrtps::types::TK_MAP:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 8), data.map_type(), current_alignment);
             break;
         case eprosima::fastrtps::types::TK_ENUM:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 9), data.enumerated_type(), current_alignment);
             break;
         case eprosima::fastrtps::types::TK_BITMASK:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 10), data.bitmask_type(), current_alignment);
             break;
         default:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 11), data.extended_type(), current_alignment);
             break;
     }
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -10679,34 +10518,32 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::TypeObject& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data._d(), current_alignment);
 
     switch (data._d())
     {
         case eprosima::fastrtps::types::EK_COMPLETE:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 1), data.complete(), current_alignment);
             break;
         case eprosima::fastrtps::types::EK_MINIMAL:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 2), data.minimal(), current_alignment);
             break;
         default:
             break;
     }
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -10753,22 +10590,20 @@ template<>
 RTPS_DllAPI size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::TypeInformation& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data.minimal(), current_alignment);
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         1), data.complete(), current_alignment);
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>

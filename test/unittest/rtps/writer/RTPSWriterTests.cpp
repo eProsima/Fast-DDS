@@ -174,9 +174,11 @@ template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::rtps::TestDataType&,
-        size_t)
+        size_t& current_alignment)
 {
-    return eprosima::fastrtps::rtps::TestDataType::data_size;
+    size_t calculated_size {eprosima::fastrtps::rtps::TestDataType::data_size};
+    current_alignment += calculated_size;
+    return calculated_size;
 }
 
 } // namespace fastcdr

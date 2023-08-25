@@ -1321,79 +1321,77 @@ template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::TypeIdentifier& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data._d(), current_alignment);
 
-    current_alignment += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
+    calculated_size += 1 + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
 
     switch (data._d())
     {
         case eprosima::fastrtps::types::TI_STRING8_SMALL:
         case eprosima::fastrtps::types::TI_STRING16_SMALL:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 1), data.string_sdefn(), current_alignment);
 
             break;
         case eprosima::fastrtps::types::TI_STRING8_LARGE:
         case eprosima::fastrtps::types::TI_STRING16_LARGE:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 2), data.string_ldefn(), current_alignment);
 
             break;
         case eprosima::fastrtps::types::TI_PLAIN_SEQUENCE_SMALL:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 3), data.seq_sdefn(), current_alignment);
 
             break;
         case eprosima::fastrtps::types::TI_PLAIN_SEQUENCE_LARGE:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 4), data.seq_ldefn(), current_alignment);
 
             break;
         case eprosima::fastrtps::types::TI_PLAIN_ARRAY_SMALL:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 5), data.array_sdefn(), current_alignment);
 
             break;
         case eprosima::fastrtps::types::TI_PLAIN_ARRAY_LARGE:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 6), data.array_ldefn(), current_alignment);
 
             break;
         case eprosima::fastrtps::types::TI_PLAIN_MAP_SMALL:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 7), data.map_sdefn(), current_alignment);
 
             break;
         case eprosima::fastrtps::types::TI_PLAIN_MAP_LARGE:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 8), data.map_ldefn(), current_alignment);
 
             break;
         case eprosima::fastrtps::types::TI_STRONGLY_CONNECTED_COMPONENT:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 9), data.sc_component_id(), current_alignment);
 
             break;
         case eprosima::fastrtps::types::EK_COMPLETE:
         case eprosima::fastrtps::types::EK_MINIMAL:
-            current_alignment += 14 + eprosima::fastcdr::Cdr::alignment(current_alignment, 14);
+            calculated_size += 14 + eprosima::fastcdr::Cdr::alignment(current_alignment, 14);
 
             break;
         default:
-            current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+            calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                                 11), data.extended_defn(), current_alignment);
             break;
     }
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>

@@ -314,8 +314,9 @@ void TypeObjectFactory::fill_minimal_information(
     else
     {
         eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+        size_t current_alignment {0};
         info->minimal().typeid_with_size().typeobject_serialized_size(
-            static_cast<uint32_t>(calculator.calculate_serialized_size(*obj, 0)));
+            static_cast<uint32_t>(calculator.calculate_serialized_size(*obj, current_alignment)));
     }
 
     switch (ident->_d())
@@ -583,8 +584,9 @@ void TypeObjectFactory::fill_complete_information(
     else
     {
         eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+        size_t current_alignment {0};
         info->complete().typeid_with_size().typeobject_serialized_size(
-            static_cast<uint32_t>(calculator.calculate_serialized_size(*obj, 0)));
+            static_cast<uint32_t>(calculator.calculate_serialized_size(*obj, current_alignment)));
     }
 
     switch (ident->_d())

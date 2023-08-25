@@ -126,7 +126,8 @@ public:
                        {
                            eprosima::fastcdr::CdrSizeCalculator calculator(
                                eprosima::fastdds::dds::DEFAULT_XCDR_VERSION);
-                           return (uint32_t)calculator.calculate_serialized_size(data, 0);
+                           size_t current_alignment {0};
+                           return (uint32_t)calculator.calculate_serialized_size(data, current_alignment);
                        }, changeKind, handle);
     }
 

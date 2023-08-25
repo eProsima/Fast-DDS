@@ -29,23 +29,20 @@ namespace fastcdr {
 template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
-        const eprosima::fastdds::dds::rpc::ReplyHeader& data,
-        size_t current_alignment)
+        const eprosima::fastdds::dds::rpc::ReplyHeader&,
+        size_t& current_alignment)
 {
-    (void)data;
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
+    calculated_size += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16); // SampleIdentity.GUID_t
+    calculated_size += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8); // SampleIdentity.SequenceNumber_t
+    calculated_size += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4); // RemoteException
+
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16); // SampleIdentity.GUID_t
-    current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8); // SampleIdentity.SequenceNumber_t
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4); // RemoteException
-
-    current_alignment += calculator.end_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
@@ -91,23 +88,20 @@ template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastdds::dds::rpc::RequestHeader& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    (void)data;
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
+    calculated_size += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16); // SampleIdentity.GUID_t
+    calculated_size += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8); // SampleIdentity.SequenceNumber_t
+    calculated_size += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.instanceName.size() + 1;
 
-    current_alignment += 16 + eprosima::fastcdr::Cdr::alignment(current_alignment, 16); // SampleIdentity.GUID_t
-    current_alignment += 8 + eprosima::fastcdr::Cdr::alignment(current_alignment, 8); // SampleIdentity.SequenceNumber_t
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.instanceName.size() + 1;
-
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>

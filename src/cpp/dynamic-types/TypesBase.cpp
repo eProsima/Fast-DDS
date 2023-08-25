@@ -26,9 +26,11 @@ template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::MemberFlag&,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    return 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    size_t calculated_size {2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2)};
+    current_alignment += calculated_size;
+    return calculated_size;
 }
 
 template<>
@@ -53,9 +55,11 @@ template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator&,
         const eprosima::fastrtps::types::TypeFlag&,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    return 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
+    size_t calculated_size {2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2)};
+    current_alignment += calculated_size;
+    return calculated_size;
 }
 
 template<>

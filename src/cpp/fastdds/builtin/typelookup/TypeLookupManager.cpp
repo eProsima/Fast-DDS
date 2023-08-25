@@ -546,7 +546,8 @@ bool TypeLookupManager::send_request(
         [&req]()
         {
             eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
-            return static_cast<uint32_t>(calculator.calculate_serialized_size(req, 0) + 4);
+            size_t current_alignment {0};
+            return static_cast<uint32_t>(calculator.calculate_serialized_size(req, current_alignment) + 4);
         },
         ALIVE);
 
@@ -588,7 +589,8 @@ bool TypeLookupManager::send_reply(
         [&rep]()
         {
             eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
-            return static_cast<uint32_t>(calculator.calculate_serialized_size(rep, 0) + 4);
+            size_t current_alignment {0};
+            return static_cast<uint32_t>(calculator.calculate_serialized_size(rep, current_alignment) + 4);
         },
         ALIVE);
 

@@ -2297,8 +2297,9 @@ TEST_F(DynamicComplexTypesTests, TypeInformation)
     ASSERT_TRUE(info->complete().typeid_with_size().type_id()._d() == EK_COMPLETE);
     ASSERT_TRUE(info->complete().dependent_typeid_count() == 2);
     eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    size_t current_alignment {0};
     ASSERT_TRUE(info->complete().typeid_with_size().typeobject_serialized_size()
-            == calculator.calculate_serialized_size(*compl_obj, 0));
+            == calculator.calculate_serialized_size(*compl_obj, current_alignment));
     const TypeInformation* enum_info = TypeObjectFactory::get_instance()->get_type_information("MyAliasEnum");
     ASSERT_TRUE(enum_info->minimal().typeid_with_size().type_id()._d() == EK_MINIMAL);
     const TypeInformation* bool_info = TypeObjectFactory::get_instance()->get_type_information("bool");

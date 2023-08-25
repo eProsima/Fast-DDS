@@ -221,29 +221,27 @@ template<>
 size_t calculate_serialized_size(
         eprosima::fastcdr::CdrSizeCalculator& calculator,
         const eprosima::fastrtps::types::TypeObjectHashId& data,
-        size_t current_alignment)
+        size_t& current_alignment)
 {
-    size_t initial_alignment = current_alignment;
+    size_t calculated_size {calculator.begin_calculate_type_serialized_size(
+                                eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
-    current_alignment += calculator.begin_calculate_type_serialized_size(
-        eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
-
-    current_alignment += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
+    calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
                         0), data._d(), current_alignment);
 
     switch (data._d())
     {
         case eprosima::fastrtps::types::EK_COMPLETE:
         case eprosima::fastrtps::types::EK_MINIMAL:
-            current_alignment += ((14) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1); break;
+            calculated_size += ((14) * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1); break;
         default:
             break;
     }
 
-    current_alignment += calculator.end_calculate_type_serialized_size(
+    calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
 
-    return current_alignment - initial_alignment;
+    return calculated_size;
 }
 
 template<>
