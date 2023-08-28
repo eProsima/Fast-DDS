@@ -21,7 +21,7 @@ if(NOT fastcdr_FOUND)
     find_package(fastcdr REQUIRED)
 endif()
 
-if(NOT foonathan_memory_FOUND)
+if(NOT TARGET foonathan_memory)
     find_package(foonathan_memory REQUIRED)
 endif()
 
