@@ -23,6 +23,8 @@
 #ifndef FILEWATCHER_H
 #define FILEWATCHER_H
 
+#include <utils/threading.hpp>
+
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #define stat _stat
@@ -209,6 +211,7 @@ namespace filewatch {
 #endif // WIN32
             _callback_thread = std::move(std::thread([this]() {
                 try {
+                    eprosima::set_name_to_current_thread("dds.fwatch.cb");
                     callback_thread();
                 } catch (...) {
                     try {
@@ -219,6 +222,7 @@ namespace filewatch {
             }));
             _watch_thread = std::move(std::thread([this]() {
                 try {
+                    eprosima::set_name_to_current_thread("dds.fwatch");
                     monitor_directory();
                 } catch (...) {
                     try {
