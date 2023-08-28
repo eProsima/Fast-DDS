@@ -19,8 +19,6 @@
 
 #include <gtest/gtest.h>
 
-#include <fastdds/rtps/transport/ChainingTransport.h>
-#include <fastdds/rtps/transport/ChainingTransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv4TransportDescriptor.h>
 #include <fastdds/rtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/utils/IPFinder.h>
@@ -32,6 +30,8 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+
+#include "DatagramIntectionTransport.hpp"
 
 enum communication_type
 {
@@ -533,71 +533,7 @@ void deliver_datagram_from_file(
 
 TEST(TransportUDP, DatagramInjection)
 {
-    using namespace eprosima::fastdds::rtps;
-
-    struct DatagramInjectionTransport : public ChainingTransportDescriptor, public ChainingTransport
-    {
-        DatagramInjectionTransport()
-            : ChainingTransportDescriptor(std::make_shared<UDPv4TransportDescriptor>())
-            , ChainingTransport(static_cast<const ChainingTransportDescriptor&>(*this))
-        {
-        }
-
-        TransportInterface* create_transport() const override
-        {
-            return const_cast<DatagramInjectionTransport*>(this);
-        }
-
-        TransportDescriptorInterface* get_configuration() override
-        {
-            return this;
-        }
-
-        bool send(
-            eprosima::fastrtps::rtps::SenderResource* /*low_sender_resource*/,
-            const eprosima::fastrtps::rtps::octet* /*send_buffer*/,
-            uint32_t /*send_buffer_size*/,
-            eprosima::fastrtps::rtps::LocatorsIterator* /*destination_locators_begin*/,
-            eprosima::fastrtps::rtps::LocatorsIterator* /*destination_locators_end*/,
-            const std::chrono::steady_clock::time_point& /*timeout*/) override
-        {
-            return true;
-        }
-
-        void receive(
-            TransportReceiverInterface* /*next_receiver*/,
-            const eprosima::fastrtps::rtps::octet* /*receive_buffer*/,
-            uint32_t /*receive_buffer_size*/,
-            const eprosima::fastrtps::rtps::Locator_t& /*local_locator*/,
-            const eprosima::fastrtps::rtps::Locator_t& /*remote_locator*/) override
-        {
-        }
-
-        bool OpenInputChannel(
-            const eprosima::fastrtps::rtps::Locator_t& loc,
-            TransportReceiverInterface* receiver_interface,
-            uint32_t max_message_size) override
-        {
-            bool ret_val = ChainingTransport::OpenInputChannel(loc, receiver_interface, max_message_size);
-            if (ret_val)
-            {
-                std::lock_guard<std::mutex> guard(mtx_);
-                receivers_.insert(receiver_interface);
-            }
-            return ret_val;
-        }
-
-        std::set<TransportReceiverInterface*> get_receivers()
-        {
-            std::lock_guard<std::mutex> guard(mtx_);
-            return receivers_;
-        }
-
-        std::mutex mtx_;
-        std::set<TransportReceiverInterface*> receivers_;
-    };
-
-    auto transport = std::make_shared<DatagramInjectionTransport>();
+    auto transport = std::make_shared<DatagramInjectionTransportDescriptor>();
 
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     writer.disable_builtin_transport().add_user_transport_to_pparams(transport).init();
