@@ -236,8 +236,11 @@ eprosima_find_package(fastcdr REQUIRED)
 eprosima_find_thirdparty(Asio asio VERSION 1.10.8)
 eprosima_find_thirdparty(TinyXML2 tinyxml2)
 
-find_package(foonathan_memory REQUIRED)
-message(STATUS "Found foonathan_memory: ${foonathan_memory_DIR}")
+if(NOT TARGET foonathan_memory)
+  find_package(foonathan_memory REQUIRED)
+  message(STATUS "Found foonathan_memory: ${foonathan_memory_DIR}")
+endif()
+
 find_package(ThirdpartyBoost REQUIRED)
 
 if(ANDROID)
