@@ -34,6 +34,7 @@
 #endif // if TLS_FOUND
 #include <statistics/rtps/messages/RTPSStatisticsMessages.hpp>
 #include <utils/SystemInfo.hpp>
+#include <utils/threading.hpp>
 
 using namespace std;
 using namespace asio;
@@ -418,6 +419,7 @@ bool TCPTransportInterface::init(
 
     auto ioServiceFunction = [&]()
             {
+                set_name_to_current_thread("dds.tcp_accept");
 #if ASIO_VERSION >= 101200
                 asio::executor_work_guard<asio::io_service::executor_type> work(io_service_.get_executor());
 #else
@@ -431,7 +433,7 @@ bool TCPTransportInterface::init(
     {
         io_service_timers_thread_ = std::make_shared<std::thread>([&]()
                         {
-
+                            set_name_to_current_thread("dds.tcp_keep");
 #if ASIO_VERSION >= 101200
                             asio::executor_work_guard<asio::io_service::executor_type> work(io_service_timers_.
                                     get_executor());
@@ -805,6 +807,9 @@ void TCPTransportInterface::perform_listen_operation(
 
         if (channel)
         {
+            uint32_t port = channel->local_endpoint().port();
+            set_name_to_current_thread("dds.tcp.%u", port);
+
             if (channel->tcp_connection_type() == TCPChannelResource::TCPConnectionType::TCP_CONNECT_TYPE)
             {
                 rtcp_message_manager->sendConnectionRequest(channel);
