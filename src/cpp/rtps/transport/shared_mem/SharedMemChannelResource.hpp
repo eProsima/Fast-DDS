@@ -185,7 +185,7 @@ protected:
         {
             (void)error;
             EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM,
-                    "Error receiving data: " << error.what() << " - " << message_receiver()
+                    "Error receiving data from SHM: " << error.what() << " - " << message_receiver()
                                              << " (" << this << ")");
             return nullptr;
         }

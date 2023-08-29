@@ -104,7 +104,7 @@ bool UDPChannelResource::Receive(
     catch (const std::exception& error)
     {
         (void)error;
-        EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "Error receiving data: " << error.what() << " - " << message_receiver()
+        EPROSIMA_LOG_WARNING(RTPS_MSG_OUT, "Error receiving data from UDP: " << error.what() << " - " << message_receiver()
                                                                     << " (" << this << ")");
         return false;
     }

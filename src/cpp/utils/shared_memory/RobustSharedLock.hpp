@@ -223,7 +223,7 @@ private:
         {
             if (0 != std::remove(file_path.c_str()))
             {
-                EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "Failed to remove " << file_path);
+                EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "RobustSharedLock (test_lock 1): Failed to remove " << file_path);
             }
         }
 
@@ -314,7 +314,7 @@ private:
         {
             if (0 != std::remove(file_path.c_str()))
             {
-                EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "Failed to remove " << file_path);
+                EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "RobustSharedLock (test_lock 2): Failed to remove " << file_path);
             }
         }
 
