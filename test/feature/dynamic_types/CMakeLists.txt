@@ -21,7 +21,46 @@ endif()
 
 set(DYNAMIC_TYPES_DDS_TYPES_TEST_SOURCE
     DynamicTypesDDSTypesTest.cpp
-)
+    idl/dds-types-test/helpers/basic_inner_types.cxx
+    idl/dds-types-test/helpers/basic_inner_typesPubSubTypes.cxx
+    idl/dds-types-test/helpers/basic_inner_typesTypeObject.cxx
+    idl/dds-types-test/aliases.cxx
+    idl/dds-types-test/aliasesPubSubTypes.cxx
+    idl/dds-types-test/aliasesTypeObject.cxx
+    idl/dds-types-test/arrays.cxx
+    idl/dds-types-test/arraysPubSubTypes.cxx
+    idl/dds-types-test/arraysTypeObject.cxx
+    idl/dds-types-test/bitsets.cxx
+    idl/dds-types-test/bitsetsPubSubTypes.cxx
+    idl/dds-types-test/bitsetsTypeObject.cxx
+    idl/dds-types-test/declarations.cxx
+    idl/dds-types-test/declarationsPubSubTypes.cxx
+    idl/dds-types-test/declarationsTypeObject.cxx
+    idl/dds-types-test/enumerations.cxx
+    idl/dds-types-test/enumerationsPubSubTypes.cxx
+    idl/dds-types-test/enumerationsTypeObject.cxx
+    idl/dds-types-test/inheritance.cxx
+    idl/dds-types-test/inheritancePubSubTypes.cxx
+    idl/dds-types-test/inheritanceTypeObject.cxx
+    idl/dds-types-test/maps.cxx
+    idl/dds-types-test/mapsPubSubTypes.cxx
+    idl/dds-types-test/mapsTypeObject.cxx
+    idl/dds-types-test/primitives.cxx
+    idl/dds-types-test/primitivesPubSubTypes.cxx
+    idl/dds-types-test/primitivesTypeObject.cxx
+    idl/dds-types-test/sequences.cxx
+    idl/dds-types-test/sequencesPubSubTypes.cxx
+    idl/dds-types-test/sequencesTypeObject.cxx
+    idl/dds-types-test/strings.cxx
+    idl/dds-types-test/stringsPubSubTypes.cxx
+    idl/dds-types-test/stringsTypeObject.cxx
+    idl/dds-types-test/structures.cxx
+    idl/dds-types-test/structuresPubSubTypes.cxx
+    idl/dds-types-test/structuresTypeObject.cxx
+    idl/dds-types-test/unions.cxx
+    idl/dds-types-test/unionsPubSubTypes.cxx
+    idl/dds-types-test/unionsTypeObject.cxx
+    )
 
 add_executable(DynamicTypesTests DynamicTypesTests.cpp)
 target_compile_definitions(DynamicTypesTests PRIVATE

@@ -28,9 +28,33 @@
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
-#include "idl/BasicPubSubTypes.h"
-#include "idl/BasicTypeObject.h"
 #include <tinyxml2.h>
+
+
+#include "idl/dds-types-test/aliasesPubSubTypes.h"
+#include "idl/dds-types-test/aliasesTypeObject.h"
+#include "idl/dds-types-test/arraysPubSubTypes.h"
+#include "idl/dds-types-test/arraysTypeObject.h"
+#include "idl/dds-types-test/bitsetsPubSubTypes.h"
+#include "idl/dds-types-test/bitsetsTypeObject.h"
+#include "idl/dds-types-test/declarationsPubSubTypes.h"
+#include "idl/dds-types-test/declarationsTypeObject.h"
+#include "idl/dds-types-test/enumerationsPubSubTypes.h"
+#include "idl/dds-types-test/enumerationsTypeObject.h"
+#include "idl/dds-types-test/inheritancePubSubTypes.h"
+#include "idl/dds-types-test/inheritanceTypeObject.h"
+#include "idl/dds-types-test/mapsPubSubTypes.h"
+#include "idl/dds-types-test/mapsTypeObject.h"
+#include "idl/dds-types-test/primitivesPubSubTypes.h"
+#include "idl/dds-types-test/primitivesTypeObject.h"
+#include "idl/dds-types-test/sequencesPubSubTypes.h"
+#include "idl/dds-types-test/sequencesTypeObject.h"
+#include "idl/dds-types-test/stringsPubSubTypes.h"
+#include "idl/dds-types-test/stringsTypeObject.h"
+#include "idl/dds-types-test/structuresPubSubTypes.h"
+#include "idl/dds-types-test/structuresTypeObject.h"
+#include "idl/dds-types-test/unionsPubSubTypes.h"
+#include "idl/dds-types-test/unionsTypeObject.h"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -207,7 +231,6 @@ std::map<ExpectedType, GetMethod> getTypeToMethod = {
 };
 
 
-
 void check_set_values(DynamicData* data, const std::vector<ExpectedType>& expected_types, void* type_value, MemberId member_id = MEMBER_ID_INVALID)
 {
     for (const auto& typeMethodPair : setTypeToMethod) {
@@ -243,6 +266,8 @@ void check_get_values(DynamicData* data, const std::vector<ExpectedType>& expect
     }
 }
 
+
+
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Short)
 {        
     {
@@ -273,8 +298,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Short)
         ASSERT_TRUE(data2->equals(data));
 
         // SERIALIZATION TEST
-        ShortStruct wshort;
-        ShortStructPubSubType wshortpb;
+        ShortStructStruct wshort;
+        ShortStructStructPubSubType wshortpb;
 
         SerializedPayload_t dynamic_payload(payloadSize);
         ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
@@ -752,8 +777,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Boolean)
         ASSERT_TRUE(data2->equals(data));
 
         // SERIALIZATION TEST
-        BoolStruct wbool;
-        BoolStructPubSubType wboolpb;
+        BooleanStruct wbool;
+        BooleanStructPubSubType wboolpb;
 
         SerializedPayload_t dynamic_payload(payloadSize);
         ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
@@ -936,7 +961,6 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_WChar)
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
-
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_String)
 {
@@ -1281,7 +1305,6 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_LargeBoundedWString)
 }
 
 
-
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Enum)
 {
     {
@@ -1326,8 +1349,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Enum)
         ASSERT_TRUE(data2->equals(data));
 
         // SERIALIZATION TEST
-        EnumStruct wenum;
-        EnumStructPubSubType wenumpb;
+        EnumStructure wenum;
+        EnumStructurePubSubType wenumpb;
 
         SerializedPayload_t dynamic_payload(payloadSize);
         ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
@@ -1430,21 +1453,21 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Bitmask)
         ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
         ASSERT_TRUE(data2->equals(data));
 
-        // // SERIALIZATION TEST
-        // BitmaskStruct wbitmask;
-        // BitmaskSPubSubType wbitmaskpb;
+        // SERIALIZATION TEST
+        BitMaskStructure wbitmask;
+        BitMaskStructurePubSubType wbitmaskpb;
 
-        // SerializedPayload_t dynamic_payload(payloadSize);
-        // ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
-        // ASSERT_TRUE(wbitmaskpb.deserialize(&dynamic_payload, &wbitmask));
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wbitmaskpb.deserialize(&dynamic_payload, &wbitmask));
 
-        // uint32_t static_payloadSize = static_cast<uint32_t>(wbitmaskpb.getSerializedSizeProvider(&wbitmask)());
-        // SerializedPayload_t static_payload(static_payloadSize);
-        // ASSERT_TRUE(wbitmaskpb.serialize(&wbitmask, &static_payload));
-        // ASSERT_TRUE(static_payload.length == static_payloadSize);
-        // types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
-        // ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
-        // ASSERT_TRUE(data3->equals(data));
+        uint32_t static_payloadSize = static_cast<uint32_t>(wbitmaskpb.getSerializedSizeProvider(&wbitmask)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wbitmaskpb.serialize(&wbitmask, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(created_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
 
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
@@ -1489,8 +1512,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasUInt32)
         ASSERT_TRUE(data2->equals(data));
 
         // SERIALIZATION TEST
-        AliasStruct walias;
-        AliasStructPubSubType waliaspb;
+        AliasUInt32 walias;
+        AliasUInt32PubSubType waliaspb;
 
         SerializedPayload_t dynamic_payload(payloadSize);
         ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
@@ -1584,8 +1607,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MultidimensionalArray)
         ASSERT_TRUE(data2->equals(data));
 
         // SERIALIZATION TEST
-        ArraytStruct seq;
-        ArraytStructPubSubType seqpb;
+        ArrayLong seq;
+        ArrayLongPubSubType seqpb;
 
         SerializedPayload_t dynamic_payload(payloadSize);
         ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
@@ -1733,8 +1756,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Sequence)
         ASSERT_TRUE(data2->equals(data));
 
         // SERIALIZATION TEST
-        SequenceStruct seq;
-        SequenceStructPubSubType seqpb;
+        SequenceLong seq;
+        SequenceLongPubSubType seqpb;
 
         SerializedPayload_t dynamic_payload(payloadSize);
         ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
@@ -1756,7 +1779,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Sequence)
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ShortStruct)
+
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_LongStruct)
 {
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
@@ -1797,8 +1821,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ShortStruct)
         ASSERT_TRUE(data2->equals(struct_data));
 
         // SERIALIZATION TEST
-        StructStruct seq;
-        StructStructPubSubType seqpb;
+        LongStruct seq;
+        LongStructPubSubType seqpb;
 
         uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(struct_data)());
         SerializedPayload_t dynamic_payload(payloadSize3);
