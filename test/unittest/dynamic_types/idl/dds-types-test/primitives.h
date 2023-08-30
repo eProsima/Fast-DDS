@@ -64,64 +64,64 @@ class Cdr;
 
 
 /*!
- * @brief This class represents the structure ShortStructStruct defined by the user in the IDL file.
+ * @brief This class represents the structure ShortStruct defined by the user in the IDL file.
  * @ingroup primitives
  */
-class ShortStructStruct
+class ShortStruct
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport ShortStructStruct();
+    eProsima_user_DllExport ShortStruct();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~ShortStructStruct();
+    eProsima_user_DllExport ~ShortStruct();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object ShortStructStruct that will be copied.
+     * @param x Reference to the object ShortStruct that will be copied.
      */
-    eProsima_user_DllExport ShortStructStruct(
-            const ShortStructStruct& x);
+    eProsima_user_DllExport ShortStruct(
+            const ShortStruct& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object ShortStructStruct that will be copied.
+     * @param x Reference to the object ShortStruct that will be copied.
      */
-    eProsima_user_DllExport ShortStructStruct(
-            ShortStructStruct&& x) noexcept;
+    eProsima_user_DllExport ShortStruct(
+            ShortStruct&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object ShortStructStruct that will be copied.
+     * @param x Reference to the object ShortStruct that will be copied.
      */
-    eProsima_user_DllExport ShortStructStruct& operator =(
-            const ShortStructStruct& x);
+    eProsima_user_DllExport ShortStruct& operator =(
+            const ShortStruct& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object ShortStructStruct that will be copied.
+     * @param x Reference to the object ShortStruct that will be copied.
      */
-    eProsima_user_DllExport ShortStructStruct& operator =(
-            ShortStructStruct&& x) noexcept;
+    eProsima_user_DllExport ShortStruct& operator =(
+            ShortStruct&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x ShortStructStruct object to compare.
+     * @param x ShortStruct object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const ShortStructStruct& x) const;
+            const ShortStruct& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x ShortStructStruct object to compare.
+     * @param x ShortStruct object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const ShortStructStruct& x) const;
+            const ShortStruct& x) const;
 
     /*!
      * @brief This function sets a value in member var_short
@@ -159,7 +159,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const ShortStructStruct& data,
+            const ShortStruct& data,
             size_t current_alignment = 0);
 
 

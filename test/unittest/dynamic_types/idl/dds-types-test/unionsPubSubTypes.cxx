@@ -66,12 +66,6 @@ using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
 
 
 
-
-
-
-
-
-
 UnionShortPubSubType::UnionShortPubSubType()
 {
     setName("UnionShort");

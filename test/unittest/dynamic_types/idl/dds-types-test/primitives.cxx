@@ -40,29 +40,29 @@ using namespace eprosima::fastcdr::exception;
 #define LongDoubleStruct_max_cdr_typesize 16ULL;
 #define OctetStruct_max_cdr_typesize 1ULL;
 #define LongStruct_max_cdr_typesize 4ULL;
+#define ShortStruct_max_cdr_typesize 2ULL;
 #define UShortStruct_max_cdr_typesize 2ULL;
 #define DoubleStruct_max_cdr_typesize 8ULL;
 #define ULongLongStruct_max_cdr_typesize 8ULL;
 #define BooleanStruct_max_cdr_typesize 1ULL;
 #define CharStruct_max_cdr_typesize 1ULL;
 #define WCharStruct_max_cdr_typesize 4ULL;
-#define ShortStructStruct_max_cdr_typesize 2ULL;
 #define LongLongStruct_max_cdr_typesize 8ULL;
 #define ULongStruct_max_key_cdr_typesize 0ULL;
 #define FloatStruct_max_key_cdr_typesize 0ULL;
 #define LongDoubleStruct_max_key_cdr_typesize 0ULL;
 #define OctetStruct_max_key_cdr_typesize 0ULL;
 #define LongStruct_max_key_cdr_typesize 0ULL;
+#define ShortStruct_max_key_cdr_typesize 0ULL;
 #define UShortStruct_max_key_cdr_typesize 0ULL;
 #define DoubleStruct_max_key_cdr_typesize 0ULL;
 #define ULongLongStruct_max_key_cdr_typesize 0ULL;
 #define BooleanStruct_max_key_cdr_typesize 0ULL;
 #define CharStruct_max_key_cdr_typesize 0ULL;
 #define WCharStruct_max_key_cdr_typesize 0ULL;
-#define ShortStructStruct_max_key_cdr_typesize 0ULL;
 #define LongLongStruct_max_key_cdr_typesize 0ULL;
 
-ShortStructStruct::ShortStructStruct()
+ShortStruct::ShortStruct()
 {
     // short m_var_short
     m_var_short = 0;
@@ -71,33 +71,24 @@ ShortStructStruct::ShortStructStruct()
     registerprimitivesTypes();
 }
 
-ShortStructStruct::~ShortStructStruct()
+ShortStruct::~ShortStruct()
 {
 }
 
-ShortStructStruct::ShortStructStruct(
-        const ShortStructStruct& x)
-{
-    m_var_short = x.m_var_short;
-}
-
-ShortStructStruct::ShortStructStruct(
-        ShortStructStruct&& x) noexcept 
+ShortStruct::ShortStruct(
+        const ShortStruct& x)
 {
     m_var_short = x.m_var_short;
 }
 
-ShortStructStruct& ShortStructStruct::operator =(
-        const ShortStructStruct& x)
+ShortStruct::ShortStruct(
+        ShortStruct&& x) noexcept 
 {
-
     m_var_short = x.m_var_short;
-
-    return *this;
 }
 
-ShortStructStruct& ShortStructStruct::operator =(
-        ShortStructStruct&& x) noexcept
+ShortStruct& ShortStruct::operator =(
+        const ShortStruct& x)
 {
 
     m_var_short = x.m_var_short;
@@ -105,28 +96,37 @@ ShortStructStruct& ShortStructStruct::operator =(
     return *this;
 }
 
-bool ShortStructStruct::operator ==(
-        const ShortStructStruct& x) const
+ShortStruct& ShortStruct::operator =(
+        ShortStruct&& x) noexcept
+{
+
+    m_var_short = x.m_var_short;
+
+    return *this;
+}
+
+bool ShortStruct::operator ==(
+        const ShortStruct& x) const
 {
 
     return (m_var_short == x.m_var_short);
 }
 
-bool ShortStructStruct::operator !=(
-        const ShortStructStruct& x) const
+bool ShortStruct::operator !=(
+        const ShortStruct& x) const
 {
     return !(*this == x);
 }
 
-size_t ShortStructStruct::getMaxCdrSerializedSize(
+size_t ShortStruct::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return ShortStructStruct_max_cdr_typesize;
+    return ShortStruct_max_cdr_typesize;
 }
 
-size_t ShortStructStruct::getCdrSerializedSize(
-        const ShortStructStruct& data,
+size_t ShortStruct::getCdrSerializedSize(
+        const ShortStruct& data,
         size_t current_alignment)
 {
     (void)data;
@@ -139,14 +139,14 @@ size_t ShortStructStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void ShortStructStruct::serialize(
+void ShortStruct::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_short;
 }
 
-void ShortStructStruct::deserialize(
+void ShortStruct::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -157,7 +157,7 @@ void ShortStructStruct::deserialize(
  * @brief This function sets a value in member var_short
  * @param _var_short New value for member var_short
  */
-void ShortStructStruct::var_short(
+void ShortStruct::var_short(
         int16_t _var_short)
 {
     m_var_short = _var_short;
@@ -167,7 +167,7 @@ void ShortStructStruct::var_short(
  * @brief This function returns the value of member var_short
  * @return Value of member var_short
  */
-int16_t ShortStructStruct::var_short() const
+int16_t ShortStruct::var_short() const
 {
     return m_var_short;
 }
@@ -176,26 +176,26 @@ int16_t ShortStructStruct::var_short() const
  * @brief This function returns a reference to member var_short
  * @return Reference to member var_short
  */
-int16_t& ShortStructStruct::var_short()
+int16_t& ShortStruct::var_short()
 {
     return m_var_short;
 }
 
 
 
-size_t ShortStructStruct::getKeyMaxCdrSerializedSize(
+size_t ShortStruct::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return ShortStructStruct_max_key_cdr_typesize;
+    return ShortStruct_max_key_cdr_typesize;
 }
 
-bool ShortStructStruct::isKeyDefined()
+bool ShortStruct::isKeyDefined()
 {
     return false;
 }
 
-void ShortStructStruct::serializeKey(
+void ShortStruct::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;

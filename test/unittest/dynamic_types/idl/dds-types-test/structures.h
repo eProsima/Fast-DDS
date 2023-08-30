@@ -64,71 +64,65 @@ class Cdr;
 } // namespace eprosima
 
 
-typedef int32_t InnerAliasHelper;
-typedef eprosima::fastrtps::fixed_string<10> Inner_alias_bounded_string_helper;
-typedef std::wstring Inner_alias_bounded_wstring_helper;
-typedef std::array<int16_t, 2> Inner_alias_array_helper;
-typedef std::vector<int16_t> Inner_alias_sequence_helper;
-typedef std::map<int32_t, int32_t> Inner_alias_map_helper;
 /*!
- * @brief This class represents the structure ShortStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructShort defined by the user in the IDL file.
  * @ingroup structures
  */
-class ShortStruct
+class StructShort
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport ShortStruct();
+    eProsima_user_DllExport StructShort();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~ShortStruct();
+    eProsima_user_DllExport ~StructShort();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object ShortStruct that will be copied.
+     * @param x Reference to the object StructShort that will be copied.
      */
-    eProsima_user_DllExport ShortStruct(
-            const ShortStruct& x);
+    eProsima_user_DllExport StructShort(
+            const StructShort& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object ShortStruct that will be copied.
+     * @param x Reference to the object StructShort that will be copied.
      */
-    eProsima_user_DllExport ShortStruct(
-            ShortStruct&& x) noexcept;
+    eProsima_user_DllExport StructShort(
+            StructShort&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object ShortStruct that will be copied.
+     * @param x Reference to the object StructShort that will be copied.
      */
-    eProsima_user_DllExport ShortStruct& operator =(
-            const ShortStruct& x);
+    eProsima_user_DllExport StructShort& operator =(
+            const StructShort& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object ShortStruct that will be copied.
+     * @param x Reference to the object StructShort that will be copied.
      */
-    eProsima_user_DllExport ShortStruct& operator =(
-            ShortStruct&& x) noexcept;
+    eProsima_user_DllExport StructShort& operator =(
+            StructShort&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x ShortStruct object to compare.
+     * @param x StructShort object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const ShortStruct& x) const;
+            const StructShort& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x ShortStruct object to compare.
+     * @param x StructShort object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const ShortStruct& x) const;
+            const StructShort& x) const;
 
     /*!
      * @brief This function sets a value in member var_short
@@ -166,7 +160,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const ShortStruct& data,
+            const StructShort& data,
             size_t current_alignment = 0);
 
 
@@ -213,64 +207,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure UnsignedShortStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructUnsignedShort defined by the user in the IDL file.
  * @ingroup structures
  */
-class UnsignedShortStruct
+class StructUnsignedShort
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport UnsignedShortStruct();
+    eProsima_user_DllExport StructUnsignedShort();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~UnsignedShortStruct();
+    eProsima_user_DllExport ~StructUnsignedShort();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object UnsignedShortStruct that will be copied.
+     * @param x Reference to the object StructUnsignedShort that will be copied.
      */
-    eProsima_user_DllExport UnsignedShortStruct(
-            const UnsignedShortStruct& x);
+    eProsima_user_DllExport StructUnsignedShort(
+            const StructUnsignedShort& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object UnsignedShortStruct that will be copied.
+     * @param x Reference to the object StructUnsignedShort that will be copied.
      */
-    eProsima_user_DllExport UnsignedShortStruct(
-            UnsignedShortStruct&& x) noexcept;
+    eProsima_user_DllExport StructUnsignedShort(
+            StructUnsignedShort&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object UnsignedShortStruct that will be copied.
+     * @param x Reference to the object StructUnsignedShort that will be copied.
      */
-    eProsima_user_DllExport UnsignedShortStruct& operator =(
-            const UnsignedShortStruct& x);
+    eProsima_user_DllExport StructUnsignedShort& operator =(
+            const StructUnsignedShort& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object UnsignedShortStruct that will be copied.
+     * @param x Reference to the object StructUnsignedShort that will be copied.
      */
-    eProsima_user_DllExport UnsignedShortStruct& operator =(
-            UnsignedShortStruct&& x) noexcept;
+    eProsima_user_DllExport StructUnsignedShort& operator =(
+            StructUnsignedShort&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x UnsignedShortStruct object to compare.
+     * @param x StructUnsignedShort object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const UnsignedShortStruct& x) const;
+            const StructUnsignedShort& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x UnsignedShortStruct object to compare.
+     * @param x StructUnsignedShort object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const UnsignedShortStruct& x) const;
+            const StructUnsignedShort& x) const;
 
     /*!
      * @brief This function sets a value in member var_ushort
@@ -308,7 +302,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const UnsignedShortStruct& data,
+            const StructUnsignedShort& data,
             size_t current_alignment = 0);
 
 
@@ -355,64 +349,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure LongStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructLong defined by the user in the IDL file.
  * @ingroup structures
  */
-class LongStruct
+class StructLong
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport LongStruct();
+    eProsima_user_DllExport StructLong();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~LongStruct();
+    eProsima_user_DllExport ~StructLong();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object LongStruct that will be copied.
+     * @param x Reference to the object StructLong that will be copied.
      */
-    eProsima_user_DllExport LongStruct(
-            const LongStruct& x);
+    eProsima_user_DllExport StructLong(
+            const StructLong& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object LongStruct that will be copied.
+     * @param x Reference to the object StructLong that will be copied.
      */
-    eProsima_user_DllExport LongStruct(
-            LongStruct&& x) noexcept;
+    eProsima_user_DllExport StructLong(
+            StructLong&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object LongStruct that will be copied.
+     * @param x Reference to the object StructLong that will be copied.
      */
-    eProsima_user_DllExport LongStruct& operator =(
-            const LongStruct& x);
+    eProsima_user_DllExport StructLong& operator =(
+            const StructLong& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object LongStruct that will be copied.
+     * @param x Reference to the object StructLong that will be copied.
      */
-    eProsima_user_DllExport LongStruct& operator =(
-            LongStruct&& x) noexcept;
+    eProsima_user_DllExport StructLong& operator =(
+            StructLong&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x LongStruct object to compare.
+     * @param x StructLong object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const LongStruct& x) const;
+            const StructLong& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x LongStruct object to compare.
+     * @param x StructLong object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const LongStruct& x) const;
+            const StructLong& x) const;
 
     /*!
      * @brief This function sets a value in member var_long
@@ -450,7 +444,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const LongStruct& data,
+            const StructLong& data,
             size_t current_alignment = 0);
 
 
@@ -497,64 +491,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure UnsignedLongStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructUnsignedLong defined by the user in the IDL file.
  * @ingroup structures
  */
-class UnsignedLongStruct
+class StructUnsignedLong
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport UnsignedLongStruct();
+    eProsima_user_DllExport StructUnsignedLong();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~UnsignedLongStruct();
+    eProsima_user_DllExport ~StructUnsignedLong();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object UnsignedLongStruct that will be copied.
+     * @param x Reference to the object StructUnsignedLong that will be copied.
      */
-    eProsima_user_DllExport UnsignedLongStruct(
-            const UnsignedLongStruct& x);
+    eProsima_user_DllExport StructUnsignedLong(
+            const StructUnsignedLong& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object UnsignedLongStruct that will be copied.
+     * @param x Reference to the object StructUnsignedLong that will be copied.
      */
-    eProsima_user_DllExport UnsignedLongStruct(
-            UnsignedLongStruct&& x) noexcept;
+    eProsima_user_DllExport StructUnsignedLong(
+            StructUnsignedLong&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object UnsignedLongStruct that will be copied.
+     * @param x Reference to the object StructUnsignedLong that will be copied.
      */
-    eProsima_user_DllExport UnsignedLongStruct& operator =(
-            const UnsignedLongStruct& x);
+    eProsima_user_DllExport StructUnsignedLong& operator =(
+            const StructUnsignedLong& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object UnsignedLongStruct that will be copied.
+     * @param x Reference to the object StructUnsignedLong that will be copied.
      */
-    eProsima_user_DllExport UnsignedLongStruct& operator =(
-            UnsignedLongStruct&& x) noexcept;
+    eProsima_user_DllExport StructUnsignedLong& operator =(
+            StructUnsignedLong&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x UnsignedLongStruct object to compare.
+     * @param x StructUnsignedLong object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const UnsignedLongStruct& x) const;
+            const StructUnsignedLong& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x UnsignedLongStruct object to compare.
+     * @param x StructUnsignedLong object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const UnsignedLongStruct& x) const;
+            const StructUnsignedLong& x) const;
 
     /*!
      * @brief This function sets a value in member var_ulong
@@ -592,7 +586,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const UnsignedLongStruct& data,
+            const StructUnsignedLong& data,
             size_t current_alignment = 0);
 
 
@@ -639,64 +633,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure LongLongStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructLongLong defined by the user in the IDL file.
  * @ingroup structures
  */
-class LongLongStruct
+class StructLongLong
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport LongLongStruct();
+    eProsima_user_DllExport StructLongLong();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~LongLongStruct();
+    eProsima_user_DllExport ~StructLongLong();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object LongLongStruct that will be copied.
+     * @param x Reference to the object StructLongLong that will be copied.
      */
-    eProsima_user_DllExport LongLongStruct(
-            const LongLongStruct& x);
+    eProsima_user_DllExport StructLongLong(
+            const StructLongLong& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object LongLongStruct that will be copied.
+     * @param x Reference to the object StructLongLong that will be copied.
      */
-    eProsima_user_DllExport LongLongStruct(
-            LongLongStruct&& x) noexcept;
+    eProsima_user_DllExport StructLongLong(
+            StructLongLong&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object LongLongStruct that will be copied.
+     * @param x Reference to the object StructLongLong that will be copied.
      */
-    eProsima_user_DllExport LongLongStruct& operator =(
-            const LongLongStruct& x);
+    eProsima_user_DllExport StructLongLong& operator =(
+            const StructLongLong& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object LongLongStruct that will be copied.
+     * @param x Reference to the object StructLongLong that will be copied.
      */
-    eProsima_user_DllExport LongLongStruct& operator =(
-            LongLongStruct&& x) noexcept;
+    eProsima_user_DllExport StructLongLong& operator =(
+            StructLongLong&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x LongLongStruct object to compare.
+     * @param x StructLongLong object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const LongLongStruct& x) const;
+            const StructLongLong& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x LongLongStruct object to compare.
+     * @param x StructLongLong object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const LongLongStruct& x) const;
+            const StructLongLong& x) const;
 
     /*!
      * @brief This function sets a value in member var_longlong
@@ -734,7 +728,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const LongLongStruct& data,
+            const StructLongLong& data,
             size_t current_alignment = 0);
 
 
@@ -781,64 +775,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure UnsignedLongLongStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructUnsignedLongLong defined by the user in the IDL file.
  * @ingroup structures
  */
-class UnsignedLongLongStruct
+class StructUnsignedLongLong
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport UnsignedLongLongStruct();
+    eProsima_user_DllExport StructUnsignedLongLong();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~UnsignedLongLongStruct();
+    eProsima_user_DllExport ~StructUnsignedLongLong();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object UnsignedLongLongStruct that will be copied.
+     * @param x Reference to the object StructUnsignedLongLong that will be copied.
      */
-    eProsima_user_DllExport UnsignedLongLongStruct(
-            const UnsignedLongLongStruct& x);
+    eProsima_user_DllExport StructUnsignedLongLong(
+            const StructUnsignedLongLong& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object UnsignedLongLongStruct that will be copied.
+     * @param x Reference to the object StructUnsignedLongLong that will be copied.
      */
-    eProsima_user_DllExport UnsignedLongLongStruct(
-            UnsignedLongLongStruct&& x) noexcept;
+    eProsima_user_DllExport StructUnsignedLongLong(
+            StructUnsignedLongLong&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object UnsignedLongLongStruct that will be copied.
+     * @param x Reference to the object StructUnsignedLongLong that will be copied.
      */
-    eProsima_user_DllExport UnsignedLongLongStruct& operator =(
-            const UnsignedLongLongStruct& x);
+    eProsima_user_DllExport StructUnsignedLongLong& operator =(
+            const StructUnsignedLongLong& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object UnsignedLongLongStruct that will be copied.
+     * @param x Reference to the object StructUnsignedLongLong that will be copied.
      */
-    eProsima_user_DllExport UnsignedLongLongStruct& operator =(
-            UnsignedLongLongStruct&& x) noexcept;
+    eProsima_user_DllExport StructUnsignedLongLong& operator =(
+            StructUnsignedLongLong&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x UnsignedLongLongStruct object to compare.
+     * @param x StructUnsignedLongLong object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const UnsignedLongLongStruct& x) const;
+            const StructUnsignedLongLong& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x UnsignedLongLongStruct object to compare.
+     * @param x StructUnsignedLongLong object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const UnsignedLongLongStruct& x) const;
+            const StructUnsignedLongLong& x) const;
 
     /*!
      * @brief This function sets a value in member var_ulonglong
@@ -876,7 +870,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const UnsignedLongLongStruct& data,
+            const StructUnsignedLongLong& data,
             size_t current_alignment = 0);
 
 
@@ -923,64 +917,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure FloatStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructFloat defined by the user in the IDL file.
  * @ingroup structures
  */
-class FloatStruct
+class StructFloat
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport FloatStruct();
+    eProsima_user_DllExport StructFloat();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~FloatStruct();
+    eProsima_user_DllExport ~StructFloat();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object FloatStruct that will be copied.
+     * @param x Reference to the object StructFloat that will be copied.
      */
-    eProsima_user_DllExport FloatStruct(
-            const FloatStruct& x);
+    eProsima_user_DllExport StructFloat(
+            const StructFloat& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object FloatStruct that will be copied.
+     * @param x Reference to the object StructFloat that will be copied.
      */
-    eProsima_user_DllExport FloatStruct(
-            FloatStruct&& x) noexcept;
+    eProsima_user_DllExport StructFloat(
+            StructFloat&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object FloatStruct that will be copied.
+     * @param x Reference to the object StructFloat that will be copied.
      */
-    eProsima_user_DllExport FloatStruct& operator =(
-            const FloatStruct& x);
+    eProsima_user_DllExport StructFloat& operator =(
+            const StructFloat& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object FloatStruct that will be copied.
+     * @param x Reference to the object StructFloat that will be copied.
      */
-    eProsima_user_DllExport FloatStruct& operator =(
-            FloatStruct&& x) noexcept;
+    eProsima_user_DllExport StructFloat& operator =(
+            StructFloat&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x FloatStruct object to compare.
+     * @param x StructFloat object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const FloatStruct& x) const;
+            const StructFloat& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x FloatStruct object to compare.
+     * @param x StructFloat object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const FloatStruct& x) const;
+            const StructFloat& x) const;
 
     /*!
      * @brief This function sets a value in member var_float
@@ -1018,7 +1012,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const FloatStruct& data,
+            const StructFloat& data,
             size_t current_alignment = 0);
 
 
@@ -1065,64 +1059,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure DoubleStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructDouble defined by the user in the IDL file.
  * @ingroup structures
  */
-class DoubleStruct
+class StructDouble
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport DoubleStruct();
+    eProsima_user_DllExport StructDouble();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~DoubleStruct();
+    eProsima_user_DllExport ~StructDouble();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object DoubleStruct that will be copied.
+     * @param x Reference to the object StructDouble that will be copied.
      */
-    eProsima_user_DllExport DoubleStruct(
-            const DoubleStruct& x);
+    eProsima_user_DllExport StructDouble(
+            const StructDouble& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object DoubleStruct that will be copied.
+     * @param x Reference to the object StructDouble that will be copied.
      */
-    eProsima_user_DllExport DoubleStruct(
-            DoubleStruct&& x) noexcept;
+    eProsima_user_DllExport StructDouble(
+            StructDouble&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object DoubleStruct that will be copied.
+     * @param x Reference to the object StructDouble that will be copied.
      */
-    eProsima_user_DllExport DoubleStruct& operator =(
-            const DoubleStruct& x);
+    eProsima_user_DllExport StructDouble& operator =(
+            const StructDouble& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object DoubleStruct that will be copied.
+     * @param x Reference to the object StructDouble that will be copied.
      */
-    eProsima_user_DllExport DoubleStruct& operator =(
-            DoubleStruct&& x) noexcept;
+    eProsima_user_DllExport StructDouble& operator =(
+            StructDouble&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x DoubleStruct object to compare.
+     * @param x StructDouble object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const DoubleStruct& x) const;
+            const StructDouble& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x DoubleStruct object to compare.
+     * @param x StructDouble object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const DoubleStruct& x) const;
+            const StructDouble& x) const;
 
     /*!
      * @brief This function sets a value in member var_double
@@ -1160,7 +1154,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const DoubleStruct& data,
+            const StructDouble& data,
             size_t current_alignment = 0);
 
 
@@ -1207,64 +1201,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure LongDoubleStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructLongDouble defined by the user in the IDL file.
  * @ingroup structures
  */
-class LongDoubleStruct
+class StructLongDouble
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport LongDoubleStruct();
+    eProsima_user_DllExport StructLongDouble();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~LongDoubleStruct();
+    eProsima_user_DllExport ~StructLongDouble();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object LongDoubleStruct that will be copied.
+     * @param x Reference to the object StructLongDouble that will be copied.
      */
-    eProsima_user_DllExport LongDoubleStruct(
-            const LongDoubleStruct& x);
+    eProsima_user_DllExport StructLongDouble(
+            const StructLongDouble& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object LongDoubleStruct that will be copied.
+     * @param x Reference to the object StructLongDouble that will be copied.
      */
-    eProsima_user_DllExport LongDoubleStruct(
-            LongDoubleStruct&& x) noexcept;
+    eProsima_user_DllExport StructLongDouble(
+            StructLongDouble&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object LongDoubleStruct that will be copied.
+     * @param x Reference to the object StructLongDouble that will be copied.
      */
-    eProsima_user_DllExport LongDoubleStruct& operator =(
-            const LongDoubleStruct& x);
+    eProsima_user_DllExport StructLongDouble& operator =(
+            const StructLongDouble& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object LongDoubleStruct that will be copied.
+     * @param x Reference to the object StructLongDouble that will be copied.
      */
-    eProsima_user_DllExport LongDoubleStruct& operator =(
-            LongDoubleStruct&& x) noexcept;
+    eProsima_user_DllExport StructLongDouble& operator =(
+            StructLongDouble&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x LongDoubleStruct object to compare.
+     * @param x StructLongDouble object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const LongDoubleStruct& x) const;
+            const StructLongDouble& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x LongDoubleStruct object to compare.
+     * @param x StructLongDouble object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const LongDoubleStruct& x) const;
+            const StructLongDouble& x) const;
 
     /*!
      * @brief This function sets a value in member var_longdouble
@@ -1302,7 +1296,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const LongDoubleStruct& data,
+            const StructLongDouble& data,
             size_t current_alignment = 0);
 
 
@@ -1349,64 +1343,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure BooleanStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructBoolean defined by the user in the IDL file.
  * @ingroup structures
  */
-class BooleanStruct
+class StructBoolean
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport BooleanStruct();
+    eProsima_user_DllExport StructBoolean();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~BooleanStruct();
+    eProsima_user_DllExport ~StructBoolean();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object BooleanStruct that will be copied.
+     * @param x Reference to the object StructBoolean that will be copied.
      */
-    eProsima_user_DllExport BooleanStruct(
-            const BooleanStruct& x);
+    eProsima_user_DllExport StructBoolean(
+            const StructBoolean& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object BooleanStruct that will be copied.
+     * @param x Reference to the object StructBoolean that will be copied.
      */
-    eProsima_user_DllExport BooleanStruct(
-            BooleanStruct&& x) noexcept;
+    eProsima_user_DllExport StructBoolean(
+            StructBoolean&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object BooleanStruct that will be copied.
+     * @param x Reference to the object StructBoolean that will be copied.
      */
-    eProsima_user_DllExport BooleanStruct& operator =(
-            const BooleanStruct& x);
+    eProsima_user_DllExport StructBoolean& operator =(
+            const StructBoolean& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object BooleanStruct that will be copied.
+     * @param x Reference to the object StructBoolean that will be copied.
      */
-    eProsima_user_DllExport BooleanStruct& operator =(
-            BooleanStruct&& x) noexcept;
+    eProsima_user_DllExport StructBoolean& operator =(
+            StructBoolean&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x BooleanStruct object to compare.
+     * @param x StructBoolean object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const BooleanStruct& x) const;
+            const StructBoolean& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x BooleanStruct object to compare.
+     * @param x StructBoolean object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const BooleanStruct& x) const;
+            const StructBoolean& x) const;
 
     /*!
      * @brief This function sets a value in member var_boolean
@@ -1444,7 +1438,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const BooleanStruct& data,
+            const StructBoolean& data,
             size_t current_alignment = 0);
 
 
@@ -1491,64 +1485,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure OctetStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructOctet defined by the user in the IDL file.
  * @ingroup structures
  */
-class OctetStruct
+class StructOctet
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport OctetStruct();
+    eProsima_user_DllExport StructOctet();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~OctetStruct();
+    eProsima_user_DllExport ~StructOctet();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object OctetStruct that will be copied.
+     * @param x Reference to the object StructOctet that will be copied.
      */
-    eProsima_user_DllExport OctetStruct(
-            const OctetStruct& x);
+    eProsima_user_DllExport StructOctet(
+            const StructOctet& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object OctetStruct that will be copied.
+     * @param x Reference to the object StructOctet that will be copied.
      */
-    eProsima_user_DllExport OctetStruct(
-            OctetStruct&& x) noexcept;
+    eProsima_user_DllExport StructOctet(
+            StructOctet&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object OctetStruct that will be copied.
+     * @param x Reference to the object StructOctet that will be copied.
      */
-    eProsima_user_DllExport OctetStruct& operator =(
-            const OctetStruct& x);
+    eProsima_user_DllExport StructOctet& operator =(
+            const StructOctet& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object OctetStruct that will be copied.
+     * @param x Reference to the object StructOctet that will be copied.
      */
-    eProsima_user_DllExport OctetStruct& operator =(
-            OctetStruct&& x) noexcept;
+    eProsima_user_DllExport StructOctet& operator =(
+            StructOctet&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x OctetStruct object to compare.
+     * @param x StructOctet object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const OctetStruct& x) const;
+            const StructOctet& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x OctetStruct object to compare.
+     * @param x StructOctet object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const OctetStruct& x) const;
+            const StructOctet& x) const;
 
     /*!
      * @brief This function sets a value in member var_octet
@@ -1586,7 +1580,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const OctetStruct& data,
+            const StructOctet& data,
             size_t current_alignment = 0);
 
 
@@ -1633,64 +1627,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure Char8Struct defined by the user in the IDL file.
+ * @brief This class represents the structure StructChar8 defined by the user in the IDL file.
  * @ingroup structures
  */
-class Char8Struct
+class StructChar8
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport Char8Struct();
+    eProsima_user_DllExport StructChar8();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~Char8Struct();
+    eProsima_user_DllExport ~StructChar8();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object Char8Struct that will be copied.
+     * @param x Reference to the object StructChar8 that will be copied.
      */
-    eProsima_user_DllExport Char8Struct(
-            const Char8Struct& x);
+    eProsima_user_DllExport StructChar8(
+            const StructChar8& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object Char8Struct that will be copied.
+     * @param x Reference to the object StructChar8 that will be copied.
      */
-    eProsima_user_DllExport Char8Struct(
-            Char8Struct&& x) noexcept;
+    eProsima_user_DllExport StructChar8(
+            StructChar8&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object Char8Struct that will be copied.
+     * @param x Reference to the object StructChar8 that will be copied.
      */
-    eProsima_user_DllExport Char8Struct& operator =(
-            const Char8Struct& x);
+    eProsima_user_DllExport StructChar8& operator =(
+            const StructChar8& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object Char8Struct that will be copied.
+     * @param x Reference to the object StructChar8 that will be copied.
      */
-    eProsima_user_DllExport Char8Struct& operator =(
-            Char8Struct&& x) noexcept;
+    eProsima_user_DllExport StructChar8& operator =(
+            StructChar8&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x Char8Struct object to compare.
+     * @param x StructChar8 object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const Char8Struct& x) const;
+            const StructChar8& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x Char8Struct object to compare.
+     * @param x StructChar8 object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const Char8Struct& x) const;
+            const StructChar8& x) const;
 
     /*!
      * @brief This function sets a value in member var_char8
@@ -1728,7 +1722,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const Char8Struct& data,
+            const StructChar8& data,
             size_t current_alignment = 0);
 
 
@@ -1775,64 +1769,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure Char16Struct defined by the user in the IDL file.
+ * @brief This class represents the structure StructChar16 defined by the user in the IDL file.
  * @ingroup structures
  */
-class Char16Struct
+class StructChar16
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport Char16Struct();
+    eProsima_user_DllExport StructChar16();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~Char16Struct();
+    eProsima_user_DllExport ~StructChar16();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object Char16Struct that will be copied.
+     * @param x Reference to the object StructChar16 that will be copied.
      */
-    eProsima_user_DllExport Char16Struct(
-            const Char16Struct& x);
+    eProsima_user_DllExport StructChar16(
+            const StructChar16& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object Char16Struct that will be copied.
+     * @param x Reference to the object StructChar16 that will be copied.
      */
-    eProsima_user_DllExport Char16Struct(
-            Char16Struct&& x) noexcept;
+    eProsima_user_DllExport StructChar16(
+            StructChar16&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object Char16Struct that will be copied.
+     * @param x Reference to the object StructChar16 that will be copied.
      */
-    eProsima_user_DllExport Char16Struct& operator =(
-            const Char16Struct& x);
+    eProsima_user_DllExport StructChar16& operator =(
+            const StructChar16& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object Char16Struct that will be copied.
+     * @param x Reference to the object StructChar16 that will be copied.
      */
-    eProsima_user_DllExport Char16Struct& operator =(
-            Char16Struct&& x) noexcept;
+    eProsima_user_DllExport StructChar16& operator =(
+            StructChar16&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x Char16Struct object to compare.
+     * @param x StructChar16 object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const Char16Struct& x) const;
+            const StructChar16& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x Char16Struct object to compare.
+     * @param x StructChar16 object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const Char16Struct& x) const;
+            const StructChar16& x) const;
 
     /*!
      * @brief This function sets a value in member var_char16
@@ -1870,7 +1864,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const Char16Struct& data,
+            const StructChar16& data,
             size_t current_alignment = 0);
 
 
@@ -1917,64 +1911,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure StringStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructString defined by the user in the IDL file.
  * @ingroup structures
  */
-class StringStruct
+class StructString
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport StringStruct();
+    eProsima_user_DllExport StructString();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~StringStruct();
+    eProsima_user_DllExport ~StructString();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object StringStruct that will be copied.
+     * @param x Reference to the object StructString that will be copied.
      */
-    eProsima_user_DllExport StringStruct(
-            const StringStruct& x);
+    eProsima_user_DllExport StructString(
+            const StructString& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object StringStruct that will be copied.
+     * @param x Reference to the object StructString that will be copied.
      */
-    eProsima_user_DllExport StringStruct(
-            StringStruct&& x) noexcept;
+    eProsima_user_DllExport StructString(
+            StructString&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object StringStruct that will be copied.
+     * @param x Reference to the object StructString that will be copied.
      */
-    eProsima_user_DllExport StringStruct& operator =(
-            const StringStruct& x);
+    eProsima_user_DllExport StructString& operator =(
+            const StructString& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object StringStruct that will be copied.
+     * @param x Reference to the object StructString that will be copied.
      */
-    eProsima_user_DllExport StringStruct& operator =(
-            StringStruct&& x) noexcept;
+    eProsima_user_DllExport StructString& operator =(
+            StructString&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x StringStruct object to compare.
+     * @param x StructString object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const StringStruct& x) const;
+            const StructString& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x StringStruct object to compare.
+     * @param x StructString object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const StringStruct& x) const;
+            const StructString& x) const;
 
     /*!
      * @brief This function copies the value in member var_string
@@ -2018,7 +2012,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const StringStruct& data,
+            const StructString& data,
             size_t current_alignment = 0);
 
 
@@ -2065,64 +2059,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure WStringStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructWString defined by the user in the IDL file.
  * @ingroup structures
  */
-class WStringStruct
+class StructWString
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport WStringStruct();
+    eProsima_user_DllExport StructWString();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~WStringStruct();
+    eProsima_user_DllExport ~StructWString();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object WStringStruct that will be copied.
+     * @param x Reference to the object StructWString that will be copied.
      */
-    eProsima_user_DllExport WStringStruct(
-            const WStringStruct& x);
+    eProsima_user_DllExport StructWString(
+            const StructWString& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object WStringStruct that will be copied.
+     * @param x Reference to the object StructWString that will be copied.
      */
-    eProsima_user_DllExport WStringStruct(
-            WStringStruct&& x) noexcept;
+    eProsima_user_DllExport StructWString(
+            StructWString&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object WStringStruct that will be copied.
+     * @param x Reference to the object StructWString that will be copied.
      */
-    eProsima_user_DllExport WStringStruct& operator =(
-            const WStringStruct& x);
+    eProsima_user_DllExport StructWString& operator =(
+            const StructWString& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object WStringStruct that will be copied.
+     * @param x Reference to the object StructWString that will be copied.
      */
-    eProsima_user_DllExport WStringStruct& operator =(
-            WStringStruct&& x) noexcept;
+    eProsima_user_DllExport StructWString& operator =(
+            StructWString&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x WStringStruct object to compare.
+     * @param x StructWString object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const WStringStruct& x) const;
+            const StructWString& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x WStringStruct object to compare.
+     * @param x StructWString object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const WStringStruct& x) const;
+            const StructWString& x) const;
 
     /*!
      * @brief This function copies the value in member var_wstring
@@ -2166,7 +2160,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const WStringStruct& data,
+            const StructWString& data,
             size_t current_alignment = 0);
 
 
@@ -2213,64 +2207,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure BoundedStringStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructBoundedString defined by the user in the IDL file.
  * @ingroup structures
  */
-class BoundedStringStruct
+class StructBoundedString
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport BoundedStringStruct();
+    eProsima_user_DllExport StructBoundedString();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~BoundedStringStruct();
+    eProsima_user_DllExport ~StructBoundedString();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object BoundedStringStruct that will be copied.
+     * @param x Reference to the object StructBoundedString that will be copied.
      */
-    eProsima_user_DllExport BoundedStringStruct(
-            const BoundedStringStruct& x);
+    eProsima_user_DllExport StructBoundedString(
+            const StructBoundedString& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object BoundedStringStruct that will be copied.
+     * @param x Reference to the object StructBoundedString that will be copied.
      */
-    eProsima_user_DllExport BoundedStringStruct(
-            BoundedStringStruct&& x) noexcept;
+    eProsima_user_DllExport StructBoundedString(
+            StructBoundedString&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object BoundedStringStruct that will be copied.
+     * @param x Reference to the object StructBoundedString that will be copied.
      */
-    eProsima_user_DllExport BoundedStringStruct& operator =(
-            const BoundedStringStruct& x);
+    eProsima_user_DllExport StructBoundedString& operator =(
+            const StructBoundedString& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object BoundedStringStruct that will be copied.
+     * @param x Reference to the object StructBoundedString that will be copied.
      */
-    eProsima_user_DllExport BoundedStringStruct& operator =(
-            BoundedStringStruct&& x) noexcept;
+    eProsima_user_DllExport StructBoundedString& operator =(
+            StructBoundedString&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x BoundedStringStruct object to compare.
+     * @param x StructBoundedString object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const BoundedStringStruct& x) const;
+            const StructBoundedString& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x BoundedStringStruct object to compare.
+     * @param x StructBoundedString object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const BoundedStringStruct& x) const;
+            const StructBoundedString& x) const;
 
     /*!
      * @brief This function copies the value in member var_bounded_string
@@ -2314,7 +2308,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const BoundedStringStruct& data,
+            const StructBoundedString& data,
             size_t current_alignment = 0);
 
 
@@ -2361,64 +2355,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure BoundedWStringStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructBoundedWString defined by the user in the IDL file.
  * @ingroup structures
  */
-class BoundedWStringStruct
+class StructBoundedWString
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport BoundedWStringStruct();
+    eProsima_user_DllExport StructBoundedWString();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~BoundedWStringStruct();
+    eProsima_user_DllExport ~StructBoundedWString();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object BoundedWStringStruct that will be copied.
+     * @param x Reference to the object StructBoundedWString that will be copied.
      */
-    eProsima_user_DllExport BoundedWStringStruct(
-            const BoundedWStringStruct& x);
+    eProsima_user_DllExport StructBoundedWString(
+            const StructBoundedWString& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object BoundedWStringStruct that will be copied.
+     * @param x Reference to the object StructBoundedWString that will be copied.
      */
-    eProsima_user_DllExport BoundedWStringStruct(
-            BoundedWStringStruct&& x) noexcept;
+    eProsima_user_DllExport StructBoundedWString(
+            StructBoundedWString&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object BoundedWStringStruct that will be copied.
+     * @param x Reference to the object StructBoundedWString that will be copied.
      */
-    eProsima_user_DllExport BoundedWStringStruct& operator =(
-            const BoundedWStringStruct& x);
+    eProsima_user_DllExport StructBoundedWString& operator =(
+            const StructBoundedWString& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object BoundedWStringStruct that will be copied.
+     * @param x Reference to the object StructBoundedWString that will be copied.
      */
-    eProsima_user_DllExport BoundedWStringStruct& operator =(
-            BoundedWStringStruct&& x) noexcept;
+    eProsima_user_DllExport StructBoundedWString& operator =(
+            StructBoundedWString&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x BoundedWStringStruct object to compare.
+     * @param x StructBoundedWString object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const BoundedWStringStruct& x) const;
+            const StructBoundedWString& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x BoundedWStringStruct object to compare.
+     * @param x StructBoundedWString object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const BoundedWStringStruct& x) const;
+            const StructBoundedWString& x) const;
 
     /*!
      * @brief This function copies the value in member var_bounded_wstring
@@ -2462,7 +2456,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const BoundedWStringStruct& data,
+            const StructBoundedWString& data,
             size_t current_alignment = 0);
 
 
@@ -2509,64 +2503,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure EnumStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructEnum defined by the user in the IDL file.
  * @ingroup structures
  */
-class EnumStruct
+class StructEnum
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport EnumStruct();
+    eProsima_user_DllExport StructEnum();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~EnumStruct();
+    eProsima_user_DllExport ~StructEnum();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object EnumStruct that will be copied.
+     * @param x Reference to the object StructEnum that will be copied.
      */
-    eProsima_user_DllExport EnumStruct(
-            const EnumStruct& x);
+    eProsima_user_DllExport StructEnum(
+            const StructEnum& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object EnumStruct that will be copied.
+     * @param x Reference to the object StructEnum that will be copied.
      */
-    eProsima_user_DllExport EnumStruct(
-            EnumStruct&& x) noexcept;
+    eProsima_user_DllExport StructEnum(
+            StructEnum&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object EnumStruct that will be copied.
+     * @param x Reference to the object StructEnum that will be copied.
      */
-    eProsima_user_DllExport EnumStruct& operator =(
-            const EnumStruct& x);
+    eProsima_user_DllExport StructEnum& operator =(
+            const StructEnum& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object EnumStruct that will be copied.
+     * @param x Reference to the object StructEnum that will be copied.
      */
-    eProsima_user_DllExport EnumStruct& operator =(
-            EnumStruct&& x) noexcept;
+    eProsima_user_DllExport StructEnum& operator =(
+            StructEnum&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x EnumStruct object to compare.
+     * @param x StructEnum object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const EnumStruct& x) const;
+            const StructEnum& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x EnumStruct object to compare.
+     * @param x StructEnum object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const EnumStruct& x) const;
+            const StructEnum& x) const;
 
     /*!
      * @brief This function sets a value in member var_enum
@@ -2604,7 +2598,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const EnumStruct& data,
+            const StructEnum& data,
             size_t current_alignment = 0);
 
 
@@ -2651,64 +2645,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure BitMaskStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructBitMask defined by the user in the IDL file.
  * @ingroup structures
  */
-class BitMaskStruct
+class StructBitMask
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport BitMaskStruct();
+    eProsima_user_DllExport StructBitMask();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~BitMaskStruct();
+    eProsima_user_DllExport ~StructBitMask();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object BitMaskStruct that will be copied.
+     * @param x Reference to the object StructBitMask that will be copied.
      */
-    eProsima_user_DllExport BitMaskStruct(
-            const BitMaskStruct& x);
+    eProsima_user_DllExport StructBitMask(
+            const StructBitMask& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object BitMaskStruct that will be copied.
+     * @param x Reference to the object StructBitMask that will be copied.
      */
-    eProsima_user_DllExport BitMaskStruct(
-            BitMaskStruct&& x) noexcept;
+    eProsima_user_DllExport StructBitMask(
+            StructBitMask&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object BitMaskStruct that will be copied.
+     * @param x Reference to the object StructBitMask that will be copied.
      */
-    eProsima_user_DllExport BitMaskStruct& operator =(
-            const BitMaskStruct& x);
+    eProsima_user_DllExport StructBitMask& operator =(
+            const StructBitMask& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object BitMaskStruct that will be copied.
+     * @param x Reference to the object StructBitMask that will be copied.
      */
-    eProsima_user_DllExport BitMaskStruct& operator =(
-            BitMaskStruct&& x) noexcept;
+    eProsima_user_DllExport StructBitMask& operator =(
+            StructBitMask&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x BitMaskStruct object to compare.
+     * @param x StructBitMask object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const BitMaskStruct& x) const;
+            const StructBitMask& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x BitMaskStruct object to compare.
+     * @param x StructBitMask object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const BitMaskStruct& x) const;
+            const StructBitMask& x) const;
 
     /*!
      * @brief This function sets a value in member var_bitmask
@@ -2746,7 +2740,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const BitMaskStruct& data,
+            const StructBitMask& data,
             size_t current_alignment = 0);
 
 
@@ -2793,64 +2787,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure AliasStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructAlias defined by the user in the IDL file.
  * @ingroup structures
  */
-class AliasStruct
+class StructAlias
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport AliasStruct();
+    eProsima_user_DllExport StructAlias();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~AliasStruct();
+    eProsima_user_DllExport ~StructAlias();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object AliasStruct that will be copied.
+     * @param x Reference to the object StructAlias that will be copied.
      */
-    eProsima_user_DllExport AliasStruct(
-            const AliasStruct& x);
+    eProsima_user_DllExport StructAlias(
+            const StructAlias& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object AliasStruct that will be copied.
+     * @param x Reference to the object StructAlias that will be copied.
      */
-    eProsima_user_DllExport AliasStruct(
-            AliasStruct&& x) noexcept;
+    eProsima_user_DllExport StructAlias(
+            StructAlias&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object AliasStruct that will be copied.
+     * @param x Reference to the object StructAlias that will be copied.
      */
-    eProsima_user_DllExport AliasStruct& operator =(
-            const AliasStruct& x);
+    eProsima_user_DllExport StructAlias& operator =(
+            const StructAlias& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object AliasStruct that will be copied.
+     * @param x Reference to the object StructAlias that will be copied.
      */
-    eProsima_user_DllExport AliasStruct& operator =(
-            AliasStruct&& x) noexcept;
+    eProsima_user_DllExport StructAlias& operator =(
+            StructAlias&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x AliasStruct object to compare.
+     * @param x StructAlias object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const AliasStruct& x) const;
+            const StructAlias& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x AliasStruct object to compare.
+     * @param x StructAlias object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const AliasStruct& x) const;
+            const StructAlias& x) const;
 
     /*!
      * @brief This function sets a value in member var_alias
@@ -2888,7 +2882,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const AliasStruct& data,
+            const StructAlias& data,
             size_t current_alignment = 0);
 
 
@@ -2935,64 +2929,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure ShortArrayStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructShortArray defined by the user in the IDL file.
  * @ingroup structures
  */
-class ShortArrayStruct
+class StructShortArray
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport ShortArrayStruct();
+    eProsima_user_DllExport StructShortArray();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~ShortArrayStruct();
+    eProsima_user_DllExport ~StructShortArray();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object ShortArrayStruct that will be copied.
+     * @param x Reference to the object StructShortArray that will be copied.
      */
-    eProsima_user_DllExport ShortArrayStruct(
-            const ShortArrayStruct& x);
+    eProsima_user_DllExport StructShortArray(
+            const StructShortArray& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object ShortArrayStruct that will be copied.
+     * @param x Reference to the object StructShortArray that will be copied.
      */
-    eProsima_user_DllExport ShortArrayStruct(
-            ShortArrayStruct&& x) noexcept;
+    eProsima_user_DllExport StructShortArray(
+            StructShortArray&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object ShortArrayStruct that will be copied.
+     * @param x Reference to the object StructShortArray that will be copied.
      */
-    eProsima_user_DllExport ShortArrayStruct& operator =(
-            const ShortArrayStruct& x);
+    eProsima_user_DllExport StructShortArray& operator =(
+            const StructShortArray& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object ShortArrayStruct that will be copied.
+     * @param x Reference to the object StructShortArray that will be copied.
      */
-    eProsima_user_DllExport ShortArrayStruct& operator =(
-            ShortArrayStruct&& x) noexcept;
+    eProsima_user_DllExport StructShortArray& operator =(
+            StructShortArray&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x ShortArrayStruct object to compare.
+     * @param x StructShortArray object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const ShortArrayStruct& x) const;
+            const StructShortArray& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x ShortArrayStruct object to compare.
+     * @param x StructShortArray object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const ShortArrayStruct& x) const;
+            const StructShortArray& x) const;
 
     /*!
      * @brief This function copies the value in member var_array_short
@@ -3036,7 +3030,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const ShortArrayStruct& data,
+            const StructShortArray& data,
             size_t current_alignment = 0);
 
 
@@ -3083,64 +3077,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure SequenceStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructSequence defined by the user in the IDL file.
  * @ingroup structures
  */
-class SequenceStruct
+class StructSequence
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport SequenceStruct();
+    eProsima_user_DllExport StructSequence();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~SequenceStruct();
+    eProsima_user_DllExport ~StructSequence();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object SequenceStruct that will be copied.
+     * @param x Reference to the object StructSequence that will be copied.
      */
-    eProsima_user_DllExport SequenceStruct(
-            const SequenceStruct& x);
+    eProsima_user_DllExport StructSequence(
+            const StructSequence& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object SequenceStruct that will be copied.
+     * @param x Reference to the object StructSequence that will be copied.
      */
-    eProsima_user_DllExport SequenceStruct(
-            SequenceStruct&& x) noexcept;
+    eProsima_user_DllExport StructSequence(
+            StructSequence&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object SequenceStruct that will be copied.
+     * @param x Reference to the object StructSequence that will be copied.
      */
-    eProsima_user_DllExport SequenceStruct& operator =(
-            const SequenceStruct& x);
+    eProsima_user_DllExport StructSequence& operator =(
+            const StructSequence& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object SequenceStruct that will be copied.
+     * @param x Reference to the object StructSequence that will be copied.
      */
-    eProsima_user_DllExport SequenceStruct& operator =(
-            SequenceStruct&& x) noexcept;
+    eProsima_user_DllExport StructSequence& operator =(
+            StructSequence&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x SequenceStruct object to compare.
+     * @param x StructSequence object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const SequenceStruct& x) const;
+            const StructSequence& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x SequenceStruct object to compare.
+     * @param x StructSequence object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const SequenceStruct& x) const;
+            const StructSequence& x) const;
 
     /*!
      * @brief This function copies the value in member var_sequence
@@ -3184,7 +3178,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const SequenceStruct& data,
+            const StructSequence& data,
             size_t current_alignment = 0);
 
 
@@ -3231,64 +3225,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure MapStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructMap defined by the user in the IDL file.
  * @ingroup structures
  */
-class MapStruct
+class StructMap
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport MapStruct();
+    eProsima_user_DllExport StructMap();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~MapStruct();
+    eProsima_user_DllExport ~StructMap();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object MapStruct that will be copied.
+     * @param x Reference to the object StructMap that will be copied.
      */
-    eProsima_user_DllExport MapStruct(
-            const MapStruct& x);
+    eProsima_user_DllExport StructMap(
+            const StructMap& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object MapStruct that will be copied.
+     * @param x Reference to the object StructMap that will be copied.
      */
-    eProsima_user_DllExport MapStruct(
-            MapStruct&& x) noexcept;
+    eProsima_user_DllExport StructMap(
+            StructMap&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object MapStruct that will be copied.
+     * @param x Reference to the object StructMap that will be copied.
      */
-    eProsima_user_DllExport MapStruct& operator =(
-            const MapStruct& x);
+    eProsima_user_DllExport StructMap& operator =(
+            const StructMap& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object MapStruct that will be copied.
+     * @param x Reference to the object StructMap that will be copied.
      */
-    eProsima_user_DllExport MapStruct& operator =(
-            MapStruct&& x) noexcept;
+    eProsima_user_DllExport StructMap& operator =(
+            StructMap&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x MapStruct object to compare.
+     * @param x StructMap object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const MapStruct& x) const;
+            const StructMap& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x MapStruct object to compare.
+     * @param x StructMap object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const MapStruct& x) const;
+            const StructMap& x) const;
 
     /*!
      * @brief This function copies the value in member var_map
@@ -3332,7 +3326,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const MapStruct& data,
+            const StructMap& data,
             size_t current_alignment = 0);
 
 
@@ -3379,64 +3373,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure UnionStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructUnion defined by the user in the IDL file.
  * @ingroup structures
  */
-class UnionStruct
+class StructUnion
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport UnionStruct();
+    eProsima_user_DllExport StructUnion();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~UnionStruct();
+    eProsima_user_DllExport ~StructUnion();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object UnionStruct that will be copied.
+     * @param x Reference to the object StructUnion that will be copied.
      */
-    eProsima_user_DllExport UnionStruct(
-            const UnionStruct& x);
+    eProsima_user_DllExport StructUnion(
+            const StructUnion& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object UnionStruct that will be copied.
+     * @param x Reference to the object StructUnion that will be copied.
      */
-    eProsima_user_DllExport UnionStruct(
-            UnionStruct&& x) noexcept;
+    eProsima_user_DllExport StructUnion(
+            StructUnion&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object UnionStruct that will be copied.
+     * @param x Reference to the object StructUnion that will be copied.
      */
-    eProsima_user_DllExport UnionStruct& operator =(
-            const UnionStruct& x);
+    eProsima_user_DllExport StructUnion& operator =(
+            const StructUnion& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object UnionStruct that will be copied.
+     * @param x Reference to the object StructUnion that will be copied.
      */
-    eProsima_user_DllExport UnionStruct& operator =(
-            UnionStruct&& x) noexcept;
+    eProsima_user_DllExport StructUnion& operator =(
+            StructUnion&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x UnionStruct object to compare.
+     * @param x StructUnion object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const UnionStruct& x) const;
+            const StructUnion& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x UnionStruct object to compare.
+     * @param x StructUnion object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const UnionStruct& x) const;
+            const StructUnion& x) const;
 
     /*!
      * @brief This function copies the value in member var_union
@@ -3480,7 +3474,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const UnionStruct& data,
+            const StructUnion& data,
             size_t current_alignment = 0);
 
 
@@ -3527,64 +3521,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure StructureStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructStructure defined by the user in the IDL file.
  * @ingroup structures
  */
-class StructureStruct
+class StructStructure
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport StructureStruct();
+    eProsima_user_DllExport StructStructure();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~StructureStruct();
+    eProsima_user_DllExport ~StructStructure();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object StructureStruct that will be copied.
+     * @param x Reference to the object StructStructure that will be copied.
      */
-    eProsima_user_DllExport StructureStruct(
-            const StructureStruct& x);
+    eProsima_user_DllExport StructStructure(
+            const StructStructure& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object StructureStruct that will be copied.
+     * @param x Reference to the object StructStructure that will be copied.
      */
-    eProsima_user_DllExport StructureStruct(
-            StructureStruct&& x) noexcept;
+    eProsima_user_DllExport StructStructure(
+            StructStructure&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object StructureStruct that will be copied.
+     * @param x Reference to the object StructStructure that will be copied.
      */
-    eProsima_user_DllExport StructureStruct& operator =(
-            const StructureStruct& x);
+    eProsima_user_DllExport StructStructure& operator =(
+            const StructStructure& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object StructureStruct that will be copied.
+     * @param x Reference to the object StructStructure that will be copied.
      */
-    eProsima_user_DllExport StructureStruct& operator =(
-            StructureStruct&& x) noexcept;
+    eProsima_user_DllExport StructStructure& operator =(
+            StructStructure&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x StructureStruct object to compare.
+     * @param x StructStructure object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const StructureStruct& x) const;
+            const StructStructure& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x StructureStruct object to compare.
+     * @param x StructStructure object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const StructureStruct& x) const;
+            const StructStructure& x) const;
 
     /*!
      * @brief This function copies the value in member var_structure
@@ -3628,7 +3622,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const StructureStruct& data,
+            const StructStructure& data,
             size_t current_alignment = 0);
 
 
@@ -3675,64 +3669,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure BitsetStruct defined by the user in the IDL file.
+ * @brief This class represents the structure StructBitset defined by the user in the IDL file.
  * @ingroup structures
  */
-class BitsetStruct
+class StructBitset
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport BitsetStruct();
+    eProsima_user_DllExport StructBitset();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~BitsetStruct();
+    eProsima_user_DllExport ~StructBitset();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object BitsetStruct that will be copied.
+     * @param x Reference to the object StructBitset that will be copied.
      */
-    eProsima_user_DllExport BitsetStruct(
-            const BitsetStruct& x);
+    eProsima_user_DllExport StructBitset(
+            const StructBitset& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object BitsetStruct that will be copied.
+     * @param x Reference to the object StructBitset that will be copied.
      */
-    eProsima_user_DllExport BitsetStruct(
-            BitsetStruct&& x) noexcept;
+    eProsima_user_DllExport StructBitset(
+            StructBitset&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object BitsetStruct that will be copied.
+     * @param x Reference to the object StructBitset that will be copied.
      */
-    eProsima_user_DllExport BitsetStruct& operator =(
-            const BitsetStruct& x);
+    eProsima_user_DllExport StructBitset& operator =(
+            const StructBitset& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object BitsetStruct that will be copied.
+     * @param x Reference to the object StructBitset that will be copied.
      */
-    eProsima_user_DllExport BitsetStruct& operator =(
-            BitsetStruct&& x) noexcept;
+    eProsima_user_DllExport StructBitset& operator =(
+            StructBitset&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x BitsetStruct object to compare.
+     * @param x StructBitset object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const BitsetStruct& x) const;
+            const StructBitset& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x BitsetStruct object to compare.
+     * @param x StructBitset object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const BitsetStruct& x) const;
+            const StructBitset& x) const;
 
     /*!
      * @brief This function copies the value in member var_bitset
@@ -3776,7 +3770,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const BitsetStruct& data,
+            const StructBitset& data,
             size_t current_alignment = 0);
 
 
@@ -3823,64 +3817,64 @@ private:
 
 };
 /*!
- * @brief This class represents the structure EmptyStructure defined by the user in the IDL file.
+ * @brief This class represents the structure StructEmpty defined by the user in the IDL file.
  * @ingroup structures
  */
-class EmptyStructure
+class StructEmpty
 {
 public:
 
     /*!
      * @brief Default constructor.
      */
-    eProsima_user_DllExport EmptyStructure();
+    eProsima_user_DllExport StructEmpty();
 
     /*!
      * @brief Default destructor.
      */
-    eProsima_user_DllExport ~EmptyStructure();
+    eProsima_user_DllExport ~StructEmpty();
 
     /*!
      * @brief Copy constructor.
-     * @param x Reference to the object EmptyStructure that will be copied.
+     * @param x Reference to the object StructEmpty that will be copied.
      */
-    eProsima_user_DllExport EmptyStructure(
-            const EmptyStructure& x);
+    eProsima_user_DllExport StructEmpty(
+            const StructEmpty& x);
 
     /*!
      * @brief Move constructor.
-     * @param x Reference to the object EmptyStructure that will be copied.
+     * @param x Reference to the object StructEmpty that will be copied.
      */
-    eProsima_user_DllExport EmptyStructure(
-            EmptyStructure&& x) noexcept;
+    eProsima_user_DllExport StructEmpty(
+            StructEmpty&& x) noexcept;
 
     /*!
      * @brief Copy assignment.
-     * @param x Reference to the object EmptyStructure that will be copied.
+     * @param x Reference to the object StructEmpty that will be copied.
      */
-    eProsima_user_DllExport EmptyStructure& operator =(
-            const EmptyStructure& x);
+    eProsima_user_DllExport StructEmpty& operator =(
+            const StructEmpty& x);
 
     /*!
      * @brief Move assignment.
-     * @param x Reference to the object EmptyStructure that will be copied.
+     * @param x Reference to the object StructEmpty that will be copied.
      */
-    eProsima_user_DllExport EmptyStructure& operator =(
-            EmptyStructure&& x) noexcept;
+    eProsima_user_DllExport StructEmpty& operator =(
+            StructEmpty&& x) noexcept;
 
     /*!
      * @brief Comparison operator.
-     * @param x EmptyStructure object to compare.
+     * @param x StructEmpty object to compare.
      */
     eProsima_user_DllExport bool operator ==(
-            const EmptyStructure& x) const;
+            const StructEmpty& x) const;
 
     /*!
      * @brief Comparison operator.
-     * @param x EmptyStructure object to compare.
+     * @param x StructEmpty object to compare.
      */
     eProsima_user_DllExport bool operator !=(
-            const EmptyStructure& x) const;
+            const StructEmpty& x) const;
 
 
     /*!
@@ -3899,7 +3893,7 @@ public:
      * @return Serialized size.
      */
     eProsima_user_DllExport static size_t getCdrSerializedSize(
-            const EmptyStructure& data,
+            const StructEmpty& data,
             size_t current_alignment = 0);
 
 
@@ -4005,630 +3999,630 @@ public:
             const Structures& x) const;
 
     /*!
-     * @brief This function copies the value in member var_ShortStruct
-     * @param _var_ShortStruct New value to be copied in member var_ShortStruct
+     * @brief This function copies the value in member var_StructShort
+     * @param _var_StructShort New value to be copied in member var_StructShort
      */
-    eProsima_user_DllExport void var_ShortStruct(
-            const ShortStruct& _var_ShortStruct);
+    eProsima_user_DllExport void var_StructShort(
+            const StructShort& _var_StructShort);
 
     /*!
-     * @brief This function moves the value in member var_ShortStruct
-     * @param _var_ShortStruct New value to be moved in member var_ShortStruct
+     * @brief This function moves the value in member var_StructShort
+     * @param _var_StructShort New value to be moved in member var_StructShort
      */
-    eProsima_user_DllExport void var_ShortStruct(
-            ShortStruct&& _var_ShortStruct);
+    eProsima_user_DllExport void var_StructShort(
+            StructShort&& _var_StructShort);
 
     /*!
-     * @brief This function returns a constant reference to member var_ShortStruct
-     * @return Constant reference to member var_ShortStruct
+     * @brief This function returns a constant reference to member var_StructShort
+     * @return Constant reference to member var_StructShort
      */
-    eProsima_user_DllExport const ShortStruct& var_ShortStruct() const;
+    eProsima_user_DllExport const StructShort& var_StructShort() const;
 
     /*!
-     * @brief This function returns a reference to member var_ShortStruct
-     * @return Reference to member var_ShortStruct
+     * @brief This function returns a reference to member var_StructShort
+     * @return Reference to member var_StructShort
      */
-    eProsima_user_DllExport ShortStruct& var_ShortStruct();
+    eProsima_user_DllExport StructShort& var_StructShort();
     /*!
-     * @brief This function copies the value in member var_UnsignedShortStruct
-     * @param _var_UnsignedShortStruct New value to be copied in member var_UnsignedShortStruct
+     * @brief This function copies the value in member var_StructUnsignedShort
+     * @param _var_StructUnsignedShort New value to be copied in member var_StructUnsignedShort
      */
-    eProsima_user_DllExport void var_UnsignedShortStruct(
-            const UnsignedShortStruct& _var_UnsignedShortStruct);
+    eProsima_user_DllExport void var_StructUnsignedShort(
+            const StructUnsignedShort& _var_StructUnsignedShort);
 
     /*!
-     * @brief This function moves the value in member var_UnsignedShortStruct
-     * @param _var_UnsignedShortStruct New value to be moved in member var_UnsignedShortStruct
+     * @brief This function moves the value in member var_StructUnsignedShort
+     * @param _var_StructUnsignedShort New value to be moved in member var_StructUnsignedShort
      */
-    eProsima_user_DllExport void var_UnsignedShortStruct(
-            UnsignedShortStruct&& _var_UnsignedShortStruct);
+    eProsima_user_DllExport void var_StructUnsignedShort(
+            StructUnsignedShort&& _var_StructUnsignedShort);
 
     /*!
-     * @brief This function returns a constant reference to member var_UnsignedShortStruct
-     * @return Constant reference to member var_UnsignedShortStruct
+     * @brief This function returns a constant reference to member var_StructUnsignedShort
+     * @return Constant reference to member var_StructUnsignedShort
      */
-    eProsima_user_DllExport const UnsignedShortStruct& var_UnsignedShortStruct() const;
+    eProsima_user_DllExport const StructUnsignedShort& var_StructUnsignedShort() const;
 
     /*!
-     * @brief This function returns a reference to member var_UnsignedShortStruct
-     * @return Reference to member var_UnsignedShortStruct
+     * @brief This function returns a reference to member var_StructUnsignedShort
+     * @return Reference to member var_StructUnsignedShort
      */
-    eProsima_user_DllExport UnsignedShortStruct& var_UnsignedShortStruct();
+    eProsima_user_DllExport StructUnsignedShort& var_StructUnsignedShort();
     /*!
-     * @brief This function copies the value in member var_LongStruct
-     * @param _var_LongStruct New value to be copied in member var_LongStruct
+     * @brief This function copies the value in member var_StructLong
+     * @param _var_StructLong New value to be copied in member var_StructLong
      */
-    eProsima_user_DllExport void var_LongStruct(
-            const LongStruct& _var_LongStruct);
+    eProsima_user_DllExport void var_StructLong(
+            const StructLong& _var_StructLong);
 
     /*!
-     * @brief This function moves the value in member var_LongStruct
-     * @param _var_LongStruct New value to be moved in member var_LongStruct
+     * @brief This function moves the value in member var_StructLong
+     * @param _var_StructLong New value to be moved in member var_StructLong
      */
-    eProsima_user_DllExport void var_LongStruct(
-            LongStruct&& _var_LongStruct);
+    eProsima_user_DllExport void var_StructLong(
+            StructLong&& _var_StructLong);
 
     /*!
-     * @brief This function returns a constant reference to member var_LongStruct
-     * @return Constant reference to member var_LongStruct
+     * @brief This function returns a constant reference to member var_StructLong
+     * @return Constant reference to member var_StructLong
      */
-    eProsima_user_DllExport const LongStruct& var_LongStruct() const;
+    eProsima_user_DllExport const StructLong& var_StructLong() const;
 
     /*!
-     * @brief This function returns a reference to member var_LongStruct
-     * @return Reference to member var_LongStruct
+     * @brief This function returns a reference to member var_StructLong
+     * @return Reference to member var_StructLong
      */
-    eProsima_user_DllExport LongStruct& var_LongStruct();
+    eProsima_user_DllExport StructLong& var_StructLong();
     /*!
-     * @brief This function copies the value in member var_UnsignedLongStruct
-     * @param _var_UnsignedLongStruct New value to be copied in member var_UnsignedLongStruct
+     * @brief This function copies the value in member var_StructUnsignedLong
+     * @param _var_StructUnsignedLong New value to be copied in member var_StructUnsignedLong
      */
-    eProsima_user_DllExport void var_UnsignedLongStruct(
-            const UnsignedLongStruct& _var_UnsignedLongStruct);
+    eProsima_user_DllExport void var_StructUnsignedLong(
+            const StructUnsignedLong& _var_StructUnsignedLong);
 
     /*!
-     * @brief This function moves the value in member var_UnsignedLongStruct
-     * @param _var_UnsignedLongStruct New value to be moved in member var_UnsignedLongStruct
+     * @brief This function moves the value in member var_StructUnsignedLong
+     * @param _var_StructUnsignedLong New value to be moved in member var_StructUnsignedLong
      */
-    eProsima_user_DllExport void var_UnsignedLongStruct(
-            UnsignedLongStruct&& _var_UnsignedLongStruct);
+    eProsima_user_DllExport void var_StructUnsignedLong(
+            StructUnsignedLong&& _var_StructUnsignedLong);
 
     /*!
-     * @brief This function returns a constant reference to member var_UnsignedLongStruct
-     * @return Constant reference to member var_UnsignedLongStruct
+     * @brief This function returns a constant reference to member var_StructUnsignedLong
+     * @return Constant reference to member var_StructUnsignedLong
      */
-    eProsima_user_DllExport const UnsignedLongStruct& var_UnsignedLongStruct() const;
+    eProsima_user_DllExport const StructUnsignedLong& var_StructUnsignedLong() const;
 
     /*!
-     * @brief This function returns a reference to member var_UnsignedLongStruct
-     * @return Reference to member var_UnsignedLongStruct
+     * @brief This function returns a reference to member var_StructUnsignedLong
+     * @return Reference to member var_StructUnsignedLong
      */
-    eProsima_user_DllExport UnsignedLongStruct& var_UnsignedLongStruct();
+    eProsima_user_DllExport StructUnsignedLong& var_StructUnsignedLong();
     /*!
-     * @brief This function copies the value in member var_LongLongStruct
-     * @param _var_LongLongStruct New value to be copied in member var_LongLongStruct
+     * @brief This function copies the value in member var_StructLongLong
+     * @param _var_StructLongLong New value to be copied in member var_StructLongLong
      */
-    eProsima_user_DllExport void var_LongLongStruct(
-            const LongLongStruct& _var_LongLongStruct);
+    eProsima_user_DllExport void var_StructLongLong(
+            const StructLongLong& _var_StructLongLong);
 
     /*!
-     * @brief This function moves the value in member var_LongLongStruct
-     * @param _var_LongLongStruct New value to be moved in member var_LongLongStruct
+     * @brief This function moves the value in member var_StructLongLong
+     * @param _var_StructLongLong New value to be moved in member var_StructLongLong
      */
-    eProsima_user_DllExport void var_LongLongStruct(
-            LongLongStruct&& _var_LongLongStruct);
+    eProsima_user_DllExport void var_StructLongLong(
+            StructLongLong&& _var_StructLongLong);
 
     /*!
-     * @brief This function returns a constant reference to member var_LongLongStruct
-     * @return Constant reference to member var_LongLongStruct
+     * @brief This function returns a constant reference to member var_StructLongLong
+     * @return Constant reference to member var_StructLongLong
      */
-    eProsima_user_DllExport const LongLongStruct& var_LongLongStruct() const;
+    eProsima_user_DllExport const StructLongLong& var_StructLongLong() const;
 
     /*!
-     * @brief This function returns a reference to member var_LongLongStruct
-     * @return Reference to member var_LongLongStruct
+     * @brief This function returns a reference to member var_StructLongLong
+     * @return Reference to member var_StructLongLong
      */
-    eProsima_user_DllExport LongLongStruct& var_LongLongStruct();
+    eProsima_user_DllExport StructLongLong& var_StructLongLong();
     /*!
-     * @brief This function copies the value in member var_UnsignedLongLongStruct
-     * @param _var_UnsignedLongLongStruct New value to be copied in member var_UnsignedLongLongStruct
+     * @brief This function copies the value in member var_StructUnsignedLongLong
+     * @param _var_StructUnsignedLongLong New value to be copied in member var_StructUnsignedLongLong
      */
-    eProsima_user_DllExport void var_UnsignedLongLongStruct(
-            const UnsignedLongLongStruct& _var_UnsignedLongLongStruct);
+    eProsima_user_DllExport void var_StructUnsignedLongLong(
+            const StructUnsignedLongLong& _var_StructUnsignedLongLong);
 
     /*!
-     * @brief This function moves the value in member var_UnsignedLongLongStruct
-     * @param _var_UnsignedLongLongStruct New value to be moved in member var_UnsignedLongLongStruct
+     * @brief This function moves the value in member var_StructUnsignedLongLong
+     * @param _var_StructUnsignedLongLong New value to be moved in member var_StructUnsignedLongLong
      */
-    eProsima_user_DllExport void var_UnsignedLongLongStruct(
-            UnsignedLongLongStruct&& _var_UnsignedLongLongStruct);
+    eProsima_user_DllExport void var_StructUnsignedLongLong(
+            StructUnsignedLongLong&& _var_StructUnsignedLongLong);
 
     /*!
-     * @brief This function returns a constant reference to member var_UnsignedLongLongStruct
-     * @return Constant reference to member var_UnsignedLongLongStruct
+     * @brief This function returns a constant reference to member var_StructUnsignedLongLong
+     * @return Constant reference to member var_StructUnsignedLongLong
      */
-    eProsima_user_DllExport const UnsignedLongLongStruct& var_UnsignedLongLongStruct() const;
+    eProsima_user_DllExport const StructUnsignedLongLong& var_StructUnsignedLongLong() const;
 
     /*!
-     * @brief This function returns a reference to member var_UnsignedLongLongStruct
-     * @return Reference to member var_UnsignedLongLongStruct
+     * @brief This function returns a reference to member var_StructUnsignedLongLong
+     * @return Reference to member var_StructUnsignedLongLong
      */
-    eProsima_user_DllExport UnsignedLongLongStruct& var_UnsignedLongLongStruct();
+    eProsima_user_DllExport StructUnsignedLongLong& var_StructUnsignedLongLong();
     /*!
-     * @brief This function copies the value in member var_FloatStruct
-     * @param _var_FloatStruct New value to be copied in member var_FloatStruct
+     * @brief This function copies the value in member var_StructFloat
+     * @param _var_StructFloat New value to be copied in member var_StructFloat
      */
-    eProsima_user_DllExport void var_FloatStruct(
-            const FloatStruct& _var_FloatStruct);
+    eProsima_user_DllExport void var_StructFloat(
+            const StructFloat& _var_StructFloat);
 
     /*!
-     * @brief This function moves the value in member var_FloatStruct
-     * @param _var_FloatStruct New value to be moved in member var_FloatStruct
+     * @brief This function moves the value in member var_StructFloat
+     * @param _var_StructFloat New value to be moved in member var_StructFloat
      */
-    eProsima_user_DllExport void var_FloatStruct(
-            FloatStruct&& _var_FloatStruct);
+    eProsima_user_DllExport void var_StructFloat(
+            StructFloat&& _var_StructFloat);
 
     /*!
-     * @brief This function returns a constant reference to member var_FloatStruct
-     * @return Constant reference to member var_FloatStruct
+     * @brief This function returns a constant reference to member var_StructFloat
+     * @return Constant reference to member var_StructFloat
      */
-    eProsima_user_DllExport const FloatStruct& var_FloatStruct() const;
+    eProsima_user_DllExport const StructFloat& var_StructFloat() const;
 
     /*!
-     * @brief This function returns a reference to member var_FloatStruct
-     * @return Reference to member var_FloatStruct
+     * @brief This function returns a reference to member var_StructFloat
+     * @return Reference to member var_StructFloat
      */
-    eProsima_user_DllExport FloatStruct& var_FloatStruct();
+    eProsima_user_DllExport StructFloat& var_StructFloat();
     /*!
-     * @brief This function copies the value in member var_DoubleStruct
-     * @param _var_DoubleStruct New value to be copied in member var_DoubleStruct
+     * @brief This function copies the value in member var_StructDouble
+     * @param _var_StructDouble New value to be copied in member var_StructDouble
      */
-    eProsima_user_DllExport void var_DoubleStruct(
-            const DoubleStruct& _var_DoubleStruct);
+    eProsima_user_DllExport void var_StructDouble(
+            const StructDouble& _var_StructDouble);
 
     /*!
-     * @brief This function moves the value in member var_DoubleStruct
-     * @param _var_DoubleStruct New value to be moved in member var_DoubleStruct
+     * @brief This function moves the value in member var_StructDouble
+     * @param _var_StructDouble New value to be moved in member var_StructDouble
      */
-    eProsima_user_DllExport void var_DoubleStruct(
-            DoubleStruct&& _var_DoubleStruct);
+    eProsima_user_DllExport void var_StructDouble(
+            StructDouble&& _var_StructDouble);
 
     /*!
-     * @brief This function returns a constant reference to member var_DoubleStruct
-     * @return Constant reference to member var_DoubleStruct
+     * @brief This function returns a constant reference to member var_StructDouble
+     * @return Constant reference to member var_StructDouble
      */
-    eProsima_user_DllExport const DoubleStruct& var_DoubleStruct() const;
+    eProsima_user_DllExport const StructDouble& var_StructDouble() const;
 
     /*!
-     * @brief This function returns a reference to member var_DoubleStruct
-     * @return Reference to member var_DoubleStruct
+     * @brief This function returns a reference to member var_StructDouble
+     * @return Reference to member var_StructDouble
      */
-    eProsima_user_DllExport DoubleStruct& var_DoubleStruct();
+    eProsima_user_DllExport StructDouble& var_StructDouble();
     /*!
-     * @brief This function copies the value in member var_LongDoubleStruct
-     * @param _var_LongDoubleStruct New value to be copied in member var_LongDoubleStruct
+     * @brief This function copies the value in member var_StructLongDouble
+     * @param _var_StructLongDouble New value to be copied in member var_StructLongDouble
      */
-    eProsima_user_DllExport void var_LongDoubleStruct(
-            const LongDoubleStruct& _var_LongDoubleStruct);
+    eProsima_user_DllExport void var_StructLongDouble(
+            const StructLongDouble& _var_StructLongDouble);
 
     /*!
-     * @brief This function moves the value in member var_LongDoubleStruct
-     * @param _var_LongDoubleStruct New value to be moved in member var_LongDoubleStruct
+     * @brief This function moves the value in member var_StructLongDouble
+     * @param _var_StructLongDouble New value to be moved in member var_StructLongDouble
      */
-    eProsima_user_DllExport void var_LongDoubleStruct(
-            LongDoubleStruct&& _var_LongDoubleStruct);
+    eProsima_user_DllExport void var_StructLongDouble(
+            StructLongDouble&& _var_StructLongDouble);
 
     /*!
-     * @brief This function returns a constant reference to member var_LongDoubleStruct
-     * @return Constant reference to member var_LongDoubleStruct
+     * @brief This function returns a constant reference to member var_StructLongDouble
+     * @return Constant reference to member var_StructLongDouble
      */
-    eProsima_user_DllExport const LongDoubleStruct& var_LongDoubleStruct() const;
+    eProsima_user_DllExport const StructLongDouble& var_StructLongDouble() const;
 
     /*!
-     * @brief This function returns a reference to member var_LongDoubleStruct
-     * @return Reference to member var_LongDoubleStruct
+     * @brief This function returns a reference to member var_StructLongDouble
+     * @return Reference to member var_StructLongDouble
      */
-    eProsima_user_DllExport LongDoubleStruct& var_LongDoubleStruct();
+    eProsima_user_DllExport StructLongDouble& var_StructLongDouble();
     /*!
-     * @brief This function copies the value in member var_BooleanStruct
-     * @param _var_BooleanStruct New value to be copied in member var_BooleanStruct
+     * @brief This function copies the value in member var_StructBoolean
+     * @param _var_StructBoolean New value to be copied in member var_StructBoolean
      */
-    eProsima_user_DllExport void var_BooleanStruct(
-            const BooleanStruct& _var_BooleanStruct);
+    eProsima_user_DllExport void var_StructBoolean(
+            const StructBoolean& _var_StructBoolean);
 
     /*!
-     * @brief This function moves the value in member var_BooleanStruct
-     * @param _var_BooleanStruct New value to be moved in member var_BooleanStruct
+     * @brief This function moves the value in member var_StructBoolean
+     * @param _var_StructBoolean New value to be moved in member var_StructBoolean
      */
-    eProsima_user_DllExport void var_BooleanStruct(
-            BooleanStruct&& _var_BooleanStruct);
+    eProsima_user_DllExport void var_StructBoolean(
+            StructBoolean&& _var_StructBoolean);
 
     /*!
-     * @brief This function returns a constant reference to member var_BooleanStruct
-     * @return Constant reference to member var_BooleanStruct
+     * @brief This function returns a constant reference to member var_StructBoolean
+     * @return Constant reference to member var_StructBoolean
      */
-    eProsima_user_DllExport const BooleanStruct& var_BooleanStruct() const;
+    eProsima_user_DllExport const StructBoolean& var_StructBoolean() const;
 
     /*!
-     * @brief This function returns a reference to member var_BooleanStruct
-     * @return Reference to member var_BooleanStruct
+     * @brief This function returns a reference to member var_StructBoolean
+     * @return Reference to member var_StructBoolean
      */
-    eProsima_user_DllExport BooleanStruct& var_BooleanStruct();
+    eProsima_user_DllExport StructBoolean& var_StructBoolean();
     /*!
-     * @brief This function copies the value in member var_OctetStruct
-     * @param _var_OctetStruct New value to be copied in member var_OctetStruct
+     * @brief This function copies the value in member var_StructOctet
+     * @param _var_StructOctet New value to be copied in member var_StructOctet
      */
-    eProsima_user_DllExport void var_OctetStruct(
-            const OctetStruct& _var_OctetStruct);
+    eProsima_user_DllExport void var_StructOctet(
+            const StructOctet& _var_StructOctet);
 
     /*!
-     * @brief This function moves the value in member var_OctetStruct
-     * @param _var_OctetStruct New value to be moved in member var_OctetStruct
+     * @brief This function moves the value in member var_StructOctet
+     * @param _var_StructOctet New value to be moved in member var_StructOctet
      */
-    eProsima_user_DllExport void var_OctetStruct(
-            OctetStruct&& _var_OctetStruct);
+    eProsima_user_DllExport void var_StructOctet(
+            StructOctet&& _var_StructOctet);
 
     /*!
-     * @brief This function returns a constant reference to member var_OctetStruct
-     * @return Constant reference to member var_OctetStruct
+     * @brief This function returns a constant reference to member var_StructOctet
+     * @return Constant reference to member var_StructOctet
      */
-    eProsima_user_DllExport const OctetStruct& var_OctetStruct() const;
+    eProsima_user_DllExport const StructOctet& var_StructOctet() const;
 
     /*!
-     * @brief This function returns a reference to member var_OctetStruct
-     * @return Reference to member var_OctetStruct
+     * @brief This function returns a reference to member var_StructOctet
+     * @return Reference to member var_StructOctet
      */
-    eProsima_user_DllExport OctetStruct& var_OctetStruct();
+    eProsima_user_DllExport StructOctet& var_StructOctet();
     /*!
-     * @brief This function copies the value in member var_Char8Struct
-     * @param _var_Char8Struct New value to be copied in member var_Char8Struct
+     * @brief This function copies the value in member var_StructChar8
+     * @param _var_StructChar8 New value to be copied in member var_StructChar8
      */
-    eProsima_user_DllExport void var_Char8Struct(
-            const Char8Struct& _var_Char8Struct);
+    eProsima_user_DllExport void var_StructChar8(
+            const StructChar8& _var_StructChar8);
 
     /*!
-     * @brief This function moves the value in member var_Char8Struct
-     * @param _var_Char8Struct New value to be moved in member var_Char8Struct
+     * @brief This function moves the value in member var_StructChar8
+     * @param _var_StructChar8 New value to be moved in member var_StructChar8
      */
-    eProsima_user_DllExport void var_Char8Struct(
-            Char8Struct&& _var_Char8Struct);
+    eProsima_user_DllExport void var_StructChar8(
+            StructChar8&& _var_StructChar8);
 
     /*!
-     * @brief This function returns a constant reference to member var_Char8Struct
-     * @return Constant reference to member var_Char8Struct
+     * @brief This function returns a constant reference to member var_StructChar8
+     * @return Constant reference to member var_StructChar8
      */
-    eProsima_user_DllExport const Char8Struct& var_Char8Struct() const;
+    eProsima_user_DllExport const StructChar8& var_StructChar8() const;
 
     /*!
-     * @brief This function returns a reference to member var_Char8Struct
-     * @return Reference to member var_Char8Struct
+     * @brief This function returns a reference to member var_StructChar8
+     * @return Reference to member var_StructChar8
      */
-    eProsima_user_DllExport Char8Struct& var_Char8Struct();
+    eProsima_user_DllExport StructChar8& var_StructChar8();
     /*!
-     * @brief This function copies the value in member var_Char16Struct
-     * @param _var_Char16Struct New value to be copied in member var_Char16Struct
+     * @brief This function copies the value in member var_StructChar16
+     * @param _var_StructChar16 New value to be copied in member var_StructChar16
      */
-    eProsima_user_DllExport void var_Char16Struct(
-            const Char16Struct& _var_Char16Struct);
+    eProsima_user_DllExport void var_StructChar16(
+            const StructChar16& _var_StructChar16);
 
     /*!
-     * @brief This function moves the value in member var_Char16Struct
-     * @param _var_Char16Struct New value to be moved in member var_Char16Struct
+     * @brief This function moves the value in member var_StructChar16
+     * @param _var_StructChar16 New value to be moved in member var_StructChar16
      */
-    eProsima_user_DllExport void var_Char16Struct(
-            Char16Struct&& _var_Char16Struct);
+    eProsima_user_DllExport void var_StructChar16(
+            StructChar16&& _var_StructChar16);
 
     /*!
-     * @brief This function returns a constant reference to member var_Char16Struct
-     * @return Constant reference to member var_Char16Struct
+     * @brief This function returns a constant reference to member var_StructChar16
+     * @return Constant reference to member var_StructChar16
      */
-    eProsima_user_DllExport const Char16Struct& var_Char16Struct() const;
+    eProsima_user_DllExport const StructChar16& var_StructChar16() const;
 
     /*!
-     * @brief This function returns a reference to member var_Char16Struct
-     * @return Reference to member var_Char16Struct
+     * @brief This function returns a reference to member var_StructChar16
+     * @return Reference to member var_StructChar16
      */
-    eProsima_user_DllExport Char16Struct& var_Char16Struct();
+    eProsima_user_DllExport StructChar16& var_StructChar16();
     /*!
-     * @brief This function copies the value in member var_StringStruct
-     * @param _var_StringStruct New value to be copied in member var_StringStruct
+     * @brief This function copies the value in member var_StructString
+     * @param _var_StructString New value to be copied in member var_StructString
      */
-    eProsima_user_DllExport void var_StringStruct(
-            const StringStruct& _var_StringStruct);
+    eProsima_user_DllExport void var_StructString(
+            const StructString& _var_StructString);
 
     /*!
-     * @brief This function moves the value in member var_StringStruct
-     * @param _var_StringStruct New value to be moved in member var_StringStruct
+     * @brief This function moves the value in member var_StructString
+     * @param _var_StructString New value to be moved in member var_StructString
      */
-    eProsima_user_DllExport void var_StringStruct(
-            StringStruct&& _var_StringStruct);
+    eProsima_user_DllExport void var_StructString(
+            StructString&& _var_StructString);
 
     /*!
-     * @brief This function returns a constant reference to member var_StringStruct
-     * @return Constant reference to member var_StringStruct
+     * @brief This function returns a constant reference to member var_StructString
+     * @return Constant reference to member var_StructString
      */
-    eProsima_user_DllExport const StringStruct& var_StringStruct() const;
+    eProsima_user_DllExport const StructString& var_StructString() const;
 
     /*!
-     * @brief This function returns a reference to member var_StringStruct
-     * @return Reference to member var_StringStruct
+     * @brief This function returns a reference to member var_StructString
+     * @return Reference to member var_StructString
      */
-    eProsima_user_DllExport StringStruct& var_StringStruct();
+    eProsima_user_DllExport StructString& var_StructString();
     /*!
-     * @brief This function copies the value in member var_WStringStruct
-     * @param _var_WStringStruct New value to be copied in member var_WStringStruct
+     * @brief This function copies the value in member var_StructWString
+     * @param _var_StructWString New value to be copied in member var_StructWString
      */
-    eProsima_user_DllExport void var_WStringStruct(
-            const WStringStruct& _var_WStringStruct);
+    eProsima_user_DllExport void var_StructWString(
+            const StructWString& _var_StructWString);
 
     /*!
-     * @brief This function moves the value in member var_WStringStruct
-     * @param _var_WStringStruct New value to be moved in member var_WStringStruct
+     * @brief This function moves the value in member var_StructWString
+     * @param _var_StructWString New value to be moved in member var_StructWString
      */
-    eProsima_user_DllExport void var_WStringStruct(
-            WStringStruct&& _var_WStringStruct);
+    eProsima_user_DllExport void var_StructWString(
+            StructWString&& _var_StructWString);
 
     /*!
-     * @brief This function returns a constant reference to member var_WStringStruct
-     * @return Constant reference to member var_WStringStruct
+     * @brief This function returns a constant reference to member var_StructWString
+     * @return Constant reference to member var_StructWString
      */
-    eProsima_user_DllExport const WStringStruct& var_WStringStruct() const;
+    eProsima_user_DllExport const StructWString& var_StructWString() const;
 
     /*!
-     * @brief This function returns a reference to member var_WStringStruct
-     * @return Reference to member var_WStringStruct
+     * @brief This function returns a reference to member var_StructWString
+     * @return Reference to member var_StructWString
      */
-    eProsima_user_DllExport WStringStruct& var_WStringStruct();
+    eProsima_user_DllExport StructWString& var_StructWString();
     /*!
-     * @brief This function copies the value in member var_EnumStruct
-     * @param _var_EnumStruct New value to be copied in member var_EnumStruct
+     * @brief This function copies the value in member var_StructEnum
+     * @param _var_StructEnum New value to be copied in member var_StructEnum
      */
-    eProsima_user_DllExport void var_EnumStruct(
-            const EnumStruct& _var_EnumStruct);
+    eProsima_user_DllExport void var_StructEnum(
+            const StructEnum& _var_StructEnum);
 
     /*!
-     * @brief This function moves the value in member var_EnumStruct
-     * @param _var_EnumStruct New value to be moved in member var_EnumStruct
+     * @brief This function moves the value in member var_StructEnum
+     * @param _var_StructEnum New value to be moved in member var_StructEnum
      */
-    eProsima_user_DllExport void var_EnumStruct(
-            EnumStruct&& _var_EnumStruct);
+    eProsima_user_DllExport void var_StructEnum(
+            StructEnum&& _var_StructEnum);
 
     /*!
-     * @brief This function returns a constant reference to member var_EnumStruct
-     * @return Constant reference to member var_EnumStruct
+     * @brief This function returns a constant reference to member var_StructEnum
+     * @return Constant reference to member var_StructEnum
      */
-    eProsima_user_DllExport const EnumStruct& var_EnumStruct() const;
+    eProsima_user_DllExport const StructEnum& var_StructEnum() const;
 
     /*!
-     * @brief This function returns a reference to member var_EnumStruct
-     * @return Reference to member var_EnumStruct
+     * @brief This function returns a reference to member var_StructEnum
+     * @return Reference to member var_StructEnum
      */
-    eProsima_user_DllExport EnumStruct& var_EnumStruct();
+    eProsima_user_DllExport StructEnum& var_StructEnum();
     /*!
-     * @brief This function copies the value in member var_BitMaskStruct
-     * @param _var_BitMaskStruct New value to be copied in member var_BitMaskStruct
+     * @brief This function copies the value in member var_StructBitMask
+     * @param _var_StructBitMask New value to be copied in member var_StructBitMask
      */
-    eProsima_user_DllExport void var_BitMaskStruct(
-            const BitMaskStruct& _var_BitMaskStruct);
+    eProsima_user_DllExport void var_StructBitMask(
+            const StructBitMask& _var_StructBitMask);
 
     /*!
-     * @brief This function moves the value in member var_BitMaskStruct
-     * @param _var_BitMaskStruct New value to be moved in member var_BitMaskStruct
+     * @brief This function moves the value in member var_StructBitMask
+     * @param _var_StructBitMask New value to be moved in member var_StructBitMask
      */
-    eProsima_user_DllExport void var_BitMaskStruct(
-            BitMaskStruct&& _var_BitMaskStruct);
+    eProsima_user_DllExport void var_StructBitMask(
+            StructBitMask&& _var_StructBitMask);
 
     /*!
-     * @brief This function returns a constant reference to member var_BitMaskStruct
-     * @return Constant reference to member var_BitMaskStruct
+     * @brief This function returns a constant reference to member var_StructBitMask
+     * @return Constant reference to member var_StructBitMask
      */
-    eProsima_user_DllExport const BitMaskStruct& var_BitMaskStruct() const;
+    eProsima_user_DllExport const StructBitMask& var_StructBitMask() const;
 
     /*!
-     * @brief This function returns a reference to member var_BitMaskStruct
-     * @return Reference to member var_BitMaskStruct
+     * @brief This function returns a reference to member var_StructBitMask
+     * @return Reference to member var_StructBitMask
      */
-    eProsima_user_DllExport BitMaskStruct& var_BitMaskStruct();
+    eProsima_user_DllExport StructBitMask& var_StructBitMask();
     /*!
-     * @brief This function copies the value in member var_AliasStruct
-     * @param _var_AliasStruct New value to be copied in member var_AliasStruct
+     * @brief This function copies the value in member var_StructAlias
+     * @param _var_StructAlias New value to be copied in member var_StructAlias
      */
-    eProsima_user_DllExport void var_AliasStruct(
-            const AliasStruct& _var_AliasStruct);
+    eProsima_user_DllExport void var_StructAlias(
+            const StructAlias& _var_StructAlias);
 
     /*!
-     * @brief This function moves the value in member var_AliasStruct
-     * @param _var_AliasStruct New value to be moved in member var_AliasStruct
+     * @brief This function moves the value in member var_StructAlias
+     * @param _var_StructAlias New value to be moved in member var_StructAlias
      */
-    eProsima_user_DllExport void var_AliasStruct(
-            AliasStruct&& _var_AliasStruct);
+    eProsima_user_DllExport void var_StructAlias(
+            StructAlias&& _var_StructAlias);
 
     /*!
-     * @brief This function returns a constant reference to member var_AliasStruct
-     * @return Constant reference to member var_AliasStruct
+     * @brief This function returns a constant reference to member var_StructAlias
+     * @return Constant reference to member var_StructAlias
      */
-    eProsima_user_DllExport const AliasStruct& var_AliasStruct() const;
+    eProsima_user_DllExport const StructAlias& var_StructAlias() const;
 
     /*!
-     * @brief This function returns a reference to member var_AliasStruct
-     * @return Reference to member var_AliasStruct
+     * @brief This function returns a reference to member var_StructAlias
+     * @return Reference to member var_StructAlias
      */
-    eProsima_user_DllExport AliasStruct& var_AliasStruct();
+    eProsima_user_DllExport StructAlias& var_StructAlias();
     /*!
-     * @brief This function copies the value in member var_ShortArrayStruct
-     * @param _var_ShortArrayStruct New value to be copied in member var_ShortArrayStruct
+     * @brief This function copies the value in member var_StructShortArray
+     * @param _var_StructShortArray New value to be copied in member var_StructShortArray
      */
-    eProsima_user_DllExport void var_ShortArrayStruct(
-            const ShortArrayStruct& _var_ShortArrayStruct);
+    eProsima_user_DllExport void var_StructShortArray(
+            const StructShortArray& _var_StructShortArray);
 
     /*!
-     * @brief This function moves the value in member var_ShortArrayStruct
-     * @param _var_ShortArrayStruct New value to be moved in member var_ShortArrayStruct
+     * @brief This function moves the value in member var_StructShortArray
+     * @param _var_StructShortArray New value to be moved in member var_StructShortArray
      */
-    eProsima_user_DllExport void var_ShortArrayStruct(
-            ShortArrayStruct&& _var_ShortArrayStruct);
+    eProsima_user_DllExport void var_StructShortArray(
+            StructShortArray&& _var_StructShortArray);
 
     /*!
-     * @brief This function returns a constant reference to member var_ShortArrayStruct
-     * @return Constant reference to member var_ShortArrayStruct
+     * @brief This function returns a constant reference to member var_StructShortArray
+     * @return Constant reference to member var_StructShortArray
      */
-    eProsima_user_DllExport const ShortArrayStruct& var_ShortArrayStruct() const;
+    eProsima_user_DllExport const StructShortArray& var_StructShortArray() const;
 
     /*!
-     * @brief This function returns a reference to member var_ShortArrayStruct
-     * @return Reference to member var_ShortArrayStruct
+     * @brief This function returns a reference to member var_StructShortArray
+     * @return Reference to member var_StructShortArray
      */
-    eProsima_user_DllExport ShortArrayStruct& var_ShortArrayStruct();
+    eProsima_user_DllExport StructShortArray& var_StructShortArray();
     /*!
-     * @brief This function copies the value in member var_SequenceStruct
-     * @param _var_SequenceStruct New value to be copied in member var_SequenceStruct
+     * @brief This function copies the value in member var_StructSequence
+     * @param _var_StructSequence New value to be copied in member var_StructSequence
      */
-    eProsima_user_DllExport void var_SequenceStruct(
-            const SequenceStruct& _var_SequenceStruct);
+    eProsima_user_DllExport void var_StructSequence(
+            const StructSequence& _var_StructSequence);
 
     /*!
-     * @brief This function moves the value in member var_SequenceStruct
-     * @param _var_SequenceStruct New value to be moved in member var_SequenceStruct
+     * @brief This function moves the value in member var_StructSequence
+     * @param _var_StructSequence New value to be moved in member var_StructSequence
      */
-    eProsima_user_DllExport void var_SequenceStruct(
-            SequenceStruct&& _var_SequenceStruct);
+    eProsima_user_DllExport void var_StructSequence(
+            StructSequence&& _var_StructSequence);
 
     /*!
-     * @brief This function returns a constant reference to member var_SequenceStruct
-     * @return Constant reference to member var_SequenceStruct
+     * @brief This function returns a constant reference to member var_StructSequence
+     * @return Constant reference to member var_StructSequence
      */
-    eProsima_user_DllExport const SequenceStruct& var_SequenceStruct() const;
+    eProsima_user_DllExport const StructSequence& var_StructSequence() const;
 
     /*!
-     * @brief This function returns a reference to member var_SequenceStruct
-     * @return Reference to member var_SequenceStruct
+     * @brief This function returns a reference to member var_StructSequence
+     * @return Reference to member var_StructSequence
      */
-    eProsima_user_DllExport SequenceStruct& var_SequenceStruct();
+    eProsima_user_DllExport StructSequence& var_StructSequence();
     /*!
-     * @brief This function copies the value in member var_MapStruct
-     * @param _var_MapStruct New value to be copied in member var_MapStruct
+     * @brief This function copies the value in member var_StructMap
+     * @param _var_StructMap New value to be copied in member var_StructMap
      */
-    eProsima_user_DllExport void var_MapStruct(
-            const MapStruct& _var_MapStruct);
+    eProsima_user_DllExport void var_StructMap(
+            const StructMap& _var_StructMap);
 
     /*!
-     * @brief This function moves the value in member var_MapStruct
-     * @param _var_MapStruct New value to be moved in member var_MapStruct
+     * @brief This function moves the value in member var_StructMap
+     * @param _var_StructMap New value to be moved in member var_StructMap
      */
-    eProsima_user_DllExport void var_MapStruct(
-            MapStruct&& _var_MapStruct);
+    eProsima_user_DllExport void var_StructMap(
+            StructMap&& _var_StructMap);
 
     /*!
-     * @brief This function returns a constant reference to member var_MapStruct
-     * @return Constant reference to member var_MapStruct
+     * @brief This function returns a constant reference to member var_StructMap
+     * @return Constant reference to member var_StructMap
      */
-    eProsima_user_DllExport const MapStruct& var_MapStruct() const;
+    eProsima_user_DllExport const StructMap& var_StructMap() const;
 
     /*!
-     * @brief This function returns a reference to member var_MapStruct
-     * @return Reference to member var_MapStruct
+     * @brief This function returns a reference to member var_StructMap
+     * @return Reference to member var_StructMap
      */
-    eProsima_user_DllExport MapStruct& var_MapStruct();
+    eProsima_user_DllExport StructMap& var_StructMap();
     /*!
-     * @brief This function copies the value in member var_UnionStruct
-     * @param _var_UnionStruct New value to be copied in member var_UnionStruct
+     * @brief This function copies the value in member var_StructUnion
+     * @param _var_StructUnion New value to be copied in member var_StructUnion
      */
-    eProsima_user_DllExport void var_UnionStruct(
-            const UnionStruct& _var_UnionStruct);
+    eProsima_user_DllExport void var_StructUnion(
+            const StructUnion& _var_StructUnion);
 
     /*!
-     * @brief This function moves the value in member var_UnionStruct
-     * @param _var_UnionStruct New value to be moved in member var_UnionStruct
+     * @brief This function moves the value in member var_StructUnion
+     * @param _var_StructUnion New value to be moved in member var_StructUnion
      */
-    eProsima_user_DllExport void var_UnionStruct(
-            UnionStruct&& _var_UnionStruct);
+    eProsima_user_DllExport void var_StructUnion(
+            StructUnion&& _var_StructUnion);
 
     /*!
-     * @brief This function returns a constant reference to member var_UnionStruct
-     * @return Constant reference to member var_UnionStruct
+     * @brief This function returns a constant reference to member var_StructUnion
+     * @return Constant reference to member var_StructUnion
      */
-    eProsima_user_DllExport const UnionStruct& var_UnionStruct() const;
+    eProsima_user_DllExport const StructUnion& var_StructUnion() const;
 
     /*!
-     * @brief This function returns a reference to member var_UnionStruct
-     * @return Reference to member var_UnionStruct
+     * @brief This function returns a reference to member var_StructUnion
+     * @return Reference to member var_StructUnion
      */
-    eProsima_user_DllExport UnionStruct& var_UnionStruct();
+    eProsima_user_DllExport StructUnion& var_StructUnion();
     /*!
-     * @brief This function copies the value in member var_StructureStruct
-     * @param _var_StructureStruct New value to be copied in member var_StructureStruct
+     * @brief This function copies the value in member var_StructStructure
+     * @param _var_StructStructure New value to be copied in member var_StructStructure
      */
-    eProsima_user_DllExport void var_StructureStruct(
-            const StructureStruct& _var_StructureStruct);
+    eProsima_user_DllExport void var_StructStructure(
+            const StructStructure& _var_StructStructure);
 
     /*!
-     * @brief This function moves the value in member var_StructureStruct
-     * @param _var_StructureStruct New value to be moved in member var_StructureStruct
+     * @brief This function moves the value in member var_StructStructure
+     * @param _var_StructStructure New value to be moved in member var_StructStructure
      */
-    eProsima_user_DllExport void var_StructureStruct(
-            StructureStruct&& _var_StructureStruct);
+    eProsima_user_DllExport void var_StructStructure(
+            StructStructure&& _var_StructStructure);
 
     /*!
-     * @brief This function returns a constant reference to member var_StructureStruct
-     * @return Constant reference to member var_StructureStruct
+     * @brief This function returns a constant reference to member var_StructStructure
+     * @return Constant reference to member var_StructStructure
      */
-    eProsima_user_DllExport const StructureStruct& var_StructureStruct() const;
+    eProsima_user_DllExport const StructStructure& var_StructStructure() const;
 
     /*!
-     * @brief This function returns a reference to member var_StructureStruct
-     * @return Reference to member var_StructureStruct
+     * @brief This function returns a reference to member var_StructStructure
+     * @return Reference to member var_StructStructure
      */
-    eProsima_user_DllExport StructureStruct& var_StructureStruct();
+    eProsima_user_DllExport StructStructure& var_StructStructure();
     /*!
-     * @brief This function copies the value in member var_BitsetStruct
-     * @param _var_BitsetStruct New value to be copied in member var_BitsetStruct
+     * @brief This function copies the value in member var_StructBitset
+     * @param _var_StructBitset New value to be copied in member var_StructBitset
      */
-    eProsima_user_DllExport void var_BitsetStruct(
-            const BitsetStruct& _var_BitsetStruct);
+    eProsima_user_DllExport void var_StructBitset(
+            const StructBitset& _var_StructBitset);
 
     /*!
-     * @brief This function moves the value in member var_BitsetStruct
-     * @param _var_BitsetStruct New value to be moved in member var_BitsetStruct
+     * @brief This function moves the value in member var_StructBitset
+     * @param _var_StructBitset New value to be moved in member var_StructBitset
      */
-    eProsima_user_DllExport void var_BitsetStruct(
-            BitsetStruct&& _var_BitsetStruct);
+    eProsima_user_DllExport void var_StructBitset(
+            StructBitset&& _var_StructBitset);
 
     /*!
-     * @brief This function returns a constant reference to member var_BitsetStruct
-     * @return Constant reference to member var_BitsetStruct
+     * @brief This function returns a constant reference to member var_StructBitset
+     * @return Constant reference to member var_StructBitset
      */
-    eProsima_user_DllExport const BitsetStruct& var_BitsetStruct() const;
+    eProsima_user_DllExport const StructBitset& var_StructBitset() const;
 
     /*!
-     * @brief This function returns a reference to member var_BitsetStruct
-     * @return Reference to member var_BitsetStruct
+     * @brief This function returns a reference to member var_StructBitset
+     * @return Reference to member var_StructBitset
      */
-    eProsima_user_DllExport BitsetStruct& var_BitsetStruct();
+    eProsima_user_DllExport StructBitset& var_StructBitset();
     /*!
-     * @brief This function copies the value in member var_EmptyStructure
-     * @param _var_EmptyStructure New value to be copied in member var_EmptyStructure
+     * @brief This function copies the value in member var_StructEmpty
+     * @param _var_StructEmpty New value to be copied in member var_StructEmpty
      */
-    eProsima_user_DllExport void var_EmptyStructure(
-            const EmptyStructure& _var_EmptyStructure);
+    eProsima_user_DllExport void var_StructEmpty(
+            const StructEmpty& _var_StructEmpty);
 
     /*!
-     * @brief This function moves the value in member var_EmptyStructure
-     * @param _var_EmptyStructure New value to be moved in member var_EmptyStructure
+     * @brief This function moves the value in member var_StructEmpty
+     * @param _var_StructEmpty New value to be moved in member var_StructEmpty
      */
-    eProsima_user_DllExport void var_EmptyStructure(
-            EmptyStructure&& _var_EmptyStructure);
+    eProsima_user_DllExport void var_StructEmpty(
+            StructEmpty&& _var_StructEmpty);
 
     /*!
-     * @brief This function returns a constant reference to member var_EmptyStructure
-     * @return Constant reference to member var_EmptyStructure
+     * @brief This function returns a constant reference to member var_StructEmpty
+     * @return Constant reference to member var_StructEmpty
      */
-    eProsima_user_DllExport const EmptyStructure& var_EmptyStructure() const;
+    eProsima_user_DllExport const StructEmpty& var_StructEmpty() const;
 
     /*!
-     * @brief This function returns a reference to member var_EmptyStructure
-     * @return Reference to member var_EmptyStructure
+     * @brief This function returns a reference to member var_StructEmpty
+     * @return Reference to member var_StructEmpty
      */
-    eProsima_user_DllExport EmptyStructure& var_EmptyStructure();
+    eProsima_user_DllExport StructEmpty& var_StructEmpty();
 
     /*!
     * @brief This function returns the maximum serialized size of an object
@@ -4689,31 +4683,31 @@ public:
 
 private:
 
-    ShortStruct m_var_ShortStruct;
-    UnsignedShortStruct m_var_UnsignedShortStruct;
-    LongStruct m_var_LongStruct;
-    UnsignedLongStruct m_var_UnsignedLongStruct;
-    LongLongStruct m_var_LongLongStruct;
-    UnsignedLongLongStruct m_var_UnsignedLongLongStruct;
-    FloatStruct m_var_FloatStruct;
-    DoubleStruct m_var_DoubleStruct;
-    LongDoubleStruct m_var_LongDoubleStruct;
-    BooleanStruct m_var_BooleanStruct;
-    OctetStruct m_var_OctetStruct;
-    Char8Struct m_var_Char8Struct;
-    Char16Struct m_var_Char16Struct;
-    StringStruct m_var_StringStruct;
-    WStringStruct m_var_WStringStruct;
-    EnumStruct m_var_EnumStruct;
-    BitMaskStruct m_var_BitMaskStruct;
-    AliasStruct m_var_AliasStruct;
-    ShortArrayStruct m_var_ShortArrayStruct;
-    SequenceStruct m_var_SequenceStruct;
-    MapStruct m_var_MapStruct;
-    UnionStruct m_var_UnionStruct;
-    StructureStruct m_var_StructureStruct;
-    BitsetStruct m_var_BitsetStruct;
-    EmptyStructure m_var_EmptyStructure;
+    StructShort m_var_StructShort;
+    StructUnsignedShort m_var_StructUnsignedShort;
+    StructLong m_var_StructLong;
+    StructUnsignedLong m_var_StructUnsignedLong;
+    StructLongLong m_var_StructLongLong;
+    StructUnsignedLongLong m_var_StructUnsignedLongLong;
+    StructFloat m_var_StructFloat;
+    StructDouble m_var_StructDouble;
+    StructLongDouble m_var_StructLongDouble;
+    StructBoolean m_var_StructBoolean;
+    StructOctet m_var_StructOctet;
+    StructChar8 m_var_StructChar8;
+    StructChar16 m_var_StructChar16;
+    StructString m_var_StructString;
+    StructWString m_var_StructWString;
+    StructEnum m_var_StructEnum;
+    StructBitMask m_var_StructBitMask;
+    StructAlias m_var_StructAlias;
+    StructShortArray m_var_StructShortArray;
+    StructSequence m_var_StructSequence;
+    StructMap m_var_StructMap;
+    StructUnion m_var_StructUnion;
+    StructStructure m_var_StructStructure;
+    StructBitset m_var_StructBitset;
+    StructEmpty m_var_StructEmpty;
 
 };
 

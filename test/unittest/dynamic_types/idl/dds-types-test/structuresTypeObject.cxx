@@ -105,140 +105,140 @@ void registerstructuresTypes()
                 factory->add_type_object("Inner_alias_map_helper", GetInner_alias_map_helperIdentifier(false),
                 GetInner_alias_map_helperObject(false));
 
-                factory->add_type_object("ShortStruct", GetShortStructIdentifier(true),
-                GetShortStructObject(true));
-                factory->add_type_object("ShortStruct", GetShortStructIdentifier(false),
-                GetShortStructObject(false));
+                factory->add_type_object("StructShort", GetStructShortIdentifier(true),
+                GetStructShortObject(true));
+                factory->add_type_object("StructShort", GetStructShortIdentifier(false),
+                GetStructShortObject(false));
 
-                factory->add_type_object("UnsignedShortStruct", GetUnsignedShortStructIdentifier(true),
-                GetUnsignedShortStructObject(true));
-                factory->add_type_object("UnsignedShortStruct", GetUnsignedShortStructIdentifier(false),
-                GetUnsignedShortStructObject(false));
+                factory->add_type_object("StructUnsignedShort", GetStructUnsignedShortIdentifier(true),
+                GetStructUnsignedShortObject(true));
+                factory->add_type_object("StructUnsignedShort", GetStructUnsignedShortIdentifier(false),
+                GetStructUnsignedShortObject(false));
 
-                factory->add_type_object("LongStruct", GetLongStructIdentifier(true),
-                GetLongStructObject(true));
-                factory->add_type_object("LongStruct", GetLongStructIdentifier(false),
-                GetLongStructObject(false));
+                factory->add_type_object("StructLong", GetStructLongIdentifier(true),
+                GetStructLongObject(true));
+                factory->add_type_object("StructLong", GetStructLongIdentifier(false),
+                GetStructLongObject(false));
 
-                factory->add_type_object("UnsignedLongStruct", GetUnsignedLongStructIdentifier(true),
-                GetUnsignedLongStructObject(true));
-                factory->add_type_object("UnsignedLongStruct", GetUnsignedLongStructIdentifier(false),
-                GetUnsignedLongStructObject(false));
+                factory->add_type_object("StructUnsignedLong", GetStructUnsignedLongIdentifier(true),
+                GetStructUnsignedLongObject(true));
+                factory->add_type_object("StructUnsignedLong", GetStructUnsignedLongIdentifier(false),
+                GetStructUnsignedLongObject(false));
 
-                factory->add_type_object("LongLongStruct", GetLongLongStructIdentifier(true),
-                GetLongLongStructObject(true));
-                factory->add_type_object("LongLongStruct", GetLongLongStructIdentifier(false),
-                GetLongLongStructObject(false));
+                factory->add_type_object("StructLongLong", GetStructLongLongIdentifier(true),
+                GetStructLongLongObject(true));
+                factory->add_type_object("StructLongLong", GetStructLongLongIdentifier(false),
+                GetStructLongLongObject(false));
 
-                factory->add_type_object("UnsignedLongLongStruct", GetUnsignedLongLongStructIdentifier(true),
-                GetUnsignedLongLongStructObject(true));
-                factory->add_type_object("UnsignedLongLongStruct", GetUnsignedLongLongStructIdentifier(false),
-                GetUnsignedLongLongStructObject(false));
+                factory->add_type_object("StructUnsignedLongLong", GetStructUnsignedLongLongIdentifier(true),
+                GetStructUnsignedLongLongObject(true));
+                factory->add_type_object("StructUnsignedLongLong", GetStructUnsignedLongLongIdentifier(false),
+                GetStructUnsignedLongLongObject(false));
 
-                factory->add_type_object("FloatStruct", GetFloatStructIdentifier(true),
-                GetFloatStructObject(true));
-                factory->add_type_object("FloatStruct", GetFloatStructIdentifier(false),
-                GetFloatStructObject(false));
+                factory->add_type_object("StructFloat", GetStructFloatIdentifier(true),
+                GetStructFloatObject(true));
+                factory->add_type_object("StructFloat", GetStructFloatIdentifier(false),
+                GetStructFloatObject(false));
 
-                factory->add_type_object("DoubleStruct", GetDoubleStructIdentifier(true),
-                GetDoubleStructObject(true));
-                factory->add_type_object("DoubleStruct", GetDoubleStructIdentifier(false),
-                GetDoubleStructObject(false));
+                factory->add_type_object("StructDouble", GetStructDoubleIdentifier(true),
+                GetStructDoubleObject(true));
+                factory->add_type_object("StructDouble", GetStructDoubleIdentifier(false),
+                GetStructDoubleObject(false));
 
-                factory->add_type_object("LongDoubleStruct", GetLongDoubleStructIdentifier(true),
-                GetLongDoubleStructObject(true));
-                factory->add_type_object("LongDoubleStruct", GetLongDoubleStructIdentifier(false),
-                GetLongDoubleStructObject(false));
+                factory->add_type_object("StructLongDouble", GetStructLongDoubleIdentifier(true),
+                GetStructLongDoubleObject(true));
+                factory->add_type_object("StructLongDouble", GetStructLongDoubleIdentifier(false),
+                GetStructLongDoubleObject(false));
 
-                factory->add_type_object("BooleanStruct", GetBooleanStructIdentifier(true),
-                GetBooleanStructObject(true));
-                factory->add_type_object("BooleanStruct", GetBooleanStructIdentifier(false),
-                GetBooleanStructObject(false));
+                factory->add_type_object("StructBoolean", GetStructBooleanIdentifier(true),
+                GetStructBooleanObject(true));
+                factory->add_type_object("StructBoolean", GetStructBooleanIdentifier(false),
+                GetStructBooleanObject(false));
 
-                factory->add_type_object("OctetStruct", GetOctetStructIdentifier(true),
-                GetOctetStructObject(true));
-                factory->add_type_object("OctetStruct", GetOctetStructIdentifier(false),
-                GetOctetStructObject(false));
+                factory->add_type_object("StructOctet", GetStructOctetIdentifier(true),
+                GetStructOctetObject(true));
+                factory->add_type_object("StructOctet", GetStructOctetIdentifier(false),
+                GetStructOctetObject(false));
 
-                factory->add_type_object("Char8Struct", GetChar8StructIdentifier(true),
-                GetChar8StructObject(true));
-                factory->add_type_object("Char8Struct", GetChar8StructIdentifier(false),
-                GetChar8StructObject(false));
+                factory->add_type_object("StructChar8", GetStructChar8Identifier(true),
+                GetStructChar8Object(true));
+                factory->add_type_object("StructChar8", GetStructChar8Identifier(false),
+                GetStructChar8Object(false));
 
-                factory->add_type_object("Char16Struct", GetChar16StructIdentifier(true),
-                GetChar16StructObject(true));
-                factory->add_type_object("Char16Struct", GetChar16StructIdentifier(false),
-                GetChar16StructObject(false));
+                factory->add_type_object("StructChar16", GetStructChar16Identifier(true),
+                GetStructChar16Object(true));
+                factory->add_type_object("StructChar16", GetStructChar16Identifier(false),
+                GetStructChar16Object(false));
 
-                factory->add_type_object("StringStruct", GetStringStructIdentifier(true),
-                GetStringStructObject(true));
-                factory->add_type_object("StringStruct", GetStringStructIdentifier(false),
-                GetStringStructObject(false));
+                factory->add_type_object("StructString", GetStructStringIdentifier(true),
+                GetStructStringObject(true));
+                factory->add_type_object("StructString", GetStructStringIdentifier(false),
+                GetStructStringObject(false));
 
-                factory->add_type_object("WStringStruct", GetWStringStructIdentifier(true),
-                GetWStringStructObject(true));
-                factory->add_type_object("WStringStruct", GetWStringStructIdentifier(false),
-                GetWStringStructObject(false));
+                factory->add_type_object("StructWString", GetStructWStringIdentifier(true),
+                GetStructWStringObject(true));
+                factory->add_type_object("StructWString", GetStructWStringIdentifier(false),
+                GetStructWStringObject(false));
 
-                factory->add_type_object("BoundedStringStruct", GetBoundedStringStructIdentifier(true),
-                GetBoundedStringStructObject(true));
-                factory->add_type_object("BoundedStringStruct", GetBoundedStringStructIdentifier(false),
-                GetBoundedStringStructObject(false));
+                factory->add_type_object("StructBoundedString", GetStructBoundedStringIdentifier(true),
+                GetStructBoundedStringObject(true));
+                factory->add_type_object("StructBoundedString", GetStructBoundedStringIdentifier(false),
+                GetStructBoundedStringObject(false));
 
-                factory->add_type_object("BoundedWStringStruct", GetBoundedWStringStructIdentifier(true),
-                GetBoundedWStringStructObject(true));
-                factory->add_type_object("BoundedWStringStruct", GetBoundedWStringStructIdentifier(false),
-                GetBoundedWStringStructObject(false));
+                factory->add_type_object("StructBoundedWString", GetStructBoundedWStringIdentifier(true),
+                GetStructBoundedWStringObject(true));
+                factory->add_type_object("StructBoundedWString", GetStructBoundedWStringIdentifier(false),
+                GetStructBoundedWStringObject(false));
 
-                factory->add_type_object("EnumStruct", GetEnumStructIdentifier(true),
-                GetEnumStructObject(true));
-                factory->add_type_object("EnumStruct", GetEnumStructIdentifier(false),
-                GetEnumStructObject(false));
+                factory->add_type_object("StructEnum", GetStructEnumIdentifier(true),
+                GetStructEnumObject(true));
+                factory->add_type_object("StructEnum", GetStructEnumIdentifier(false),
+                GetStructEnumObject(false));
 
-                factory->add_type_object("BitMaskStruct", GetBitMaskStructIdentifier(true),
-                GetBitMaskStructObject(true));
-                factory->add_type_object("BitMaskStruct", GetBitMaskStructIdentifier(false),
-                GetBitMaskStructObject(false));
+                factory->add_type_object("StructBitMask", GetStructBitMaskIdentifier(true),
+                GetStructBitMaskObject(true));
+                factory->add_type_object("StructBitMask", GetStructBitMaskIdentifier(false),
+                GetStructBitMaskObject(false));
 
-                factory->add_type_object("AliasStruct", GetAliasStructIdentifier(true),
-                GetAliasStructObject(true));
-                factory->add_type_object("AliasStruct", GetAliasStructIdentifier(false),
-                GetAliasStructObject(false));
+                factory->add_type_object("StructAlias", GetStructAliasIdentifier(true),
+                GetStructAliasObject(true));
+                factory->add_type_object("StructAlias", GetStructAliasIdentifier(false),
+                GetStructAliasObject(false));
 
-                factory->add_type_object("ShortArrayStruct", GetShortArrayStructIdentifier(true),
-                GetShortArrayStructObject(true));
-                factory->add_type_object("ShortArrayStruct", GetShortArrayStructIdentifier(false),
-                GetShortArrayStructObject(false));
+                factory->add_type_object("StructShortArray", GetStructShortArrayIdentifier(true),
+                GetStructShortArrayObject(true));
+                factory->add_type_object("StructShortArray", GetStructShortArrayIdentifier(false),
+                GetStructShortArrayObject(false));
 
-                factory->add_type_object("SequenceStruct", GetSequenceStructIdentifier(true),
-                GetSequenceStructObject(true));
-                factory->add_type_object("SequenceStruct", GetSequenceStructIdentifier(false),
-                GetSequenceStructObject(false));
+                factory->add_type_object("StructSequence", GetStructSequenceIdentifier(true),
+                GetStructSequenceObject(true));
+                factory->add_type_object("StructSequence", GetStructSequenceIdentifier(false),
+                GetStructSequenceObject(false));
 
-                factory->add_type_object("MapStruct", GetMapStructIdentifier(true),
-                GetMapStructObject(true));
-                factory->add_type_object("MapStruct", GetMapStructIdentifier(false),
-                GetMapStructObject(false));
+                factory->add_type_object("StructMap", GetStructMapIdentifier(true),
+                GetStructMapObject(true));
+                factory->add_type_object("StructMap", GetStructMapIdentifier(false),
+                GetStructMapObject(false));
 
-                factory->add_type_object("UnionStruct", GetUnionStructIdentifier(true),
-                GetUnionStructObject(true));
-                factory->add_type_object("UnionStruct", GetUnionStructIdentifier(false),
-                GetUnionStructObject(false));
+                factory->add_type_object("StructUnion", GetStructUnionIdentifier(true),
+                GetStructUnionObject(true));
+                factory->add_type_object("StructUnion", GetStructUnionIdentifier(false),
+                GetStructUnionObject(false));
 
-                factory->add_type_object("StructureStruct", GetStructureStructIdentifier(true),
-                GetStructureStructObject(true));
-                factory->add_type_object("StructureStruct", GetStructureStructIdentifier(false),
-                GetStructureStructObject(false));
+                factory->add_type_object("StructStructure", GetStructStructureIdentifier(true),
+                GetStructStructureObject(true));
+                factory->add_type_object("StructStructure", GetStructStructureIdentifier(false),
+                GetStructStructureObject(false));
 
-                factory->add_type_object("BitsetStruct", GetBitsetStructIdentifier(true),
-                GetBitsetStructObject(true));
-                factory->add_type_object("BitsetStruct", GetBitsetStructIdentifier(false),
-                GetBitsetStructObject(false));
+                factory->add_type_object("StructBitset", GetStructBitsetIdentifier(true),
+                GetStructBitsetObject(true));
+                factory->add_type_object("StructBitset", GetStructBitsetIdentifier(false),
+                GetStructBitsetObject(false));
 
-                factory->add_type_object("EmptyStructure", GetEmptyStructureIdentifier(true),
-                GetEmptyStructureObject(true));
-                factory->add_type_object("EmptyStructure", GetEmptyStructureIdentifier(false),
-                GetEmptyStructureObject(false));
+                factory->add_type_object("StructEmpty", GetStructEmptyIdentifier(true),
+                GetStructEmptyObject(true));
+                factory->add_type_object("StructEmpty", GetStructEmptyIdentifier(false),
+                GetStructEmptyObject(false));
 
                 factory->add_type_object("Structures", GetStructuresIdentifier(true),
                 GetStructuresObject(true));
@@ -248,1152 +248,36 @@ void registerstructuresTypes()
             });
 }
 
-const TypeIdentifier* GetInnerAliasHelperIdentifier(bool complete)
+const TypeIdentifier* GetStructShortIdentifier(bool complete)
 {
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("InnerAliasHelper", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructShort", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetInnerAliasHelperObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("InnerAliasHelper", complete);
+    GetStructShortObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructShort", complete);
 }
 
-const TypeObject* GetInnerAliasHelperObject(bool complete)
+const TypeObject* GetStructShortObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("InnerAliasHelper", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructShort", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteInnerAliasHelperObject();
-    }
-    else
-    {
-        return GetMinimalInnerAliasHelperObject();
-    }
-}
-
-const TypeObject* GetMinimalInnerAliasHelperObject()
-{
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("InnerAliasHelper", false);
-    if (c_type_object != nullptr)
-    {
-        return c_type_object;
-    }
-
-    TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ALIAS);
-
-    // No flags apply
-    //type_object->minimal().alias_type().alias_flags().IS_FINAL(false);
-    //type_object->minimal().alias_type().alias_flags().IS_APPENDABLE(false);
-    //type_object->minimal().alias_type().alias_flags().IS_MUTABLE(false);
-    //type_object->minimal().alias_type().alias_flags().IS_NESTED(false);
-    //type_object->minimal().alias_type().alias_flags().IS_AUTOID_HASH(false);
-
-    // type_object->minimal().alias_type().header()... Is empty
-
-    // No flags apply
-    //type_object->minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
-    //type_object->minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_EXTERNAL(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_OPTIONAL(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_KEY(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
-
-    // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier("int32_t", false);
-
-
-    if (relatedType != nullptr)
-    {
-        type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
-    }
-    else
-    {
-        // Cannot determine base type
-        delete type_object;
-        return nullptr;
-    }
-
-    TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
-
-    SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
-    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
-    eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
-
-    type_object->serialize(ser);
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    MD5 objectHash;
-    objectHash.update((char*)payload.data, payload.length);
-    objectHash.finalize();
-    for(int i = 0; i < 14; ++i)
-    {
-        identifier.equivalence_hash()[i] = objectHash.digest[i];
-    }
-
-    // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::get_instance()->add_alias("InnerAliasHelper", "int32_t");
-
-    TypeObjectFactory::get_instance()->add_type_object("InnerAliasHelper", &identifier, type_object);
-    delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("InnerAliasHelper", false);
-}
-
-const TypeObject* GetCompleteInnerAliasHelperObject()
-{
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("InnerAliasHelper", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
-    {
-        return c_type_object;
-    }
-
-    TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ALIAS);
-
-    // No flags apply
-    //type_object->complete().alias_type().alias_flags().IS_FINAL(false);
-    //type_object->complete().alias_type().alias_flags().IS_APPENDABLE(false);
-    //type_object->complete().alias_type().alias_flags().IS_MUTABLE(false);
-    //type_object->complete().alias_type().alias_flags().IS_NESTED(false);
-    //type_object->complete().alias_type().alias_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().alias_type().header().detail().ann_builtin().verbatim().placement("placement");
-    //type_object->complete().alias_type().header().detail().ann_builtin().verbatim().language("language");
-    //type_object->complete().alias_type().header().detail().ann_builtin().verbatim().text("text");
-    //type_object->complete().alias_type().header().detail().ann_custom().push_back(...);
-    type_object->complete().alias_type().header().detail().type_name("InnerAliasHelper");
-
-    // No flags apply
-    //type_object->complete().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
-    //type_object->complete().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_EXTERNAL(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_OPTIONAL(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_KEY(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_DEFAULT(false);
-
-    //type_object->complete().alias_type().body().common().ann_builtin()
-    //type_object->complete().alias_type().body().common().ann_custom()
-
-    // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("int32_t");
-
-
-    if (relatedType != nullptr)
-    {
-        type_object->complete().alias_type().body().common().related_type() = *relatedType; // Make a copy
-    }
-    else
-    {
-        // Cannot determine base type
-        delete type_object;
-        return nullptr;
-    }
-
-    TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
-
-    SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
-    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
-    eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
-
-    type_object->serialize(ser);
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    MD5 objectHash;
-    objectHash.update((char*)payload.data, payload.length);
-    objectHash.finalize();
-    for(int i = 0; i < 14; ++i)
-    {
-        identifier.equivalence_hash()[i] = objectHash.digest[i];
-    }
-
-    // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::get_instance()->add_alias("InnerAliasHelper", "int32_t");
-
-    TypeObjectFactory::get_instance()->add_type_object("InnerAliasHelper", &identifier, type_object);
-    delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("InnerAliasHelper", true);
-}
-
-const TypeIdentifier* GetInner_alias_bounded_string_helperIdentifier(bool complete)
-{
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("Inner_alias_bounded_string_helper", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
-    {
-        return c_identifier;
-    }
-
-    GetInner_alias_bounded_string_helperObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("Inner_alias_bounded_string_helper", complete);
-}
-
-const TypeObject* GetInner_alias_bounded_string_helperObject(bool complete)
-{
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Inner_alias_bounded_string_helper", complete);
-    if (c_type_object != nullptr)
-    {
-        return c_type_object;
-    }
-    else if (complete)
-    {
-        return GetCompleteInner_alias_bounded_string_helperObject();
-    }
-    else
-    {
-        return GetMinimalInner_alias_bounded_string_helperObject();
-    }
-}
-
-const TypeObject* GetMinimalInner_alias_bounded_string_helperObject()
-{
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Inner_alias_bounded_string_helper", false);
-    if (c_type_object != nullptr)
-    {
-        return c_type_object;
-    }
-
-    TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ALIAS);
-
-    // No flags apply
-    //type_object->minimal().alias_type().alias_flags().IS_FINAL(false);
-    //type_object->minimal().alias_type().alias_flags().IS_APPENDABLE(false);
-    //type_object->minimal().alias_type().alias_flags().IS_MUTABLE(false);
-    //type_object->minimal().alias_type().alias_flags().IS_NESTED(false);
-    //type_object->minimal().alias_type().alias_flags().IS_AUTOID_HASH(false);
-
-    // type_object->minimal().alias_type().header()... Is empty
-
-    // No flags apply
-    //type_object->minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
-    //type_object->minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_EXTERNAL(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_OPTIONAL(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_KEY(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
-
-    // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier(TypeNamesGenerator::get_string_type_name(10, false), false);
-
-
-    if (relatedType != nullptr)
-    {
-        type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
-    }
-    else
-    {
-        // Cannot determine base type
-        delete type_object;
-        return nullptr;
-    }
-
-    TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
-
-    SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
-    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
-    eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
-
-    type_object->serialize(ser);
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    MD5 objectHash;
-    objectHash.update((char*)payload.data, payload.length);
-    objectHash.finalize();
-    for(int i = 0; i < 14; ++i)
-    {
-        identifier.equivalence_hash()[i] = objectHash.digest[i];
-    }
-
-    // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::get_instance()->add_alias("Inner_alias_bounded_string_helper", TypeNamesGenerator::get_string_type_name(10, false));
-
-    TypeObjectFactory::get_instance()->add_type_object("Inner_alias_bounded_string_helper", &identifier, type_object);
-    delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("Inner_alias_bounded_string_helper", false);
-}
-
-const TypeObject* GetCompleteInner_alias_bounded_string_helperObject()
-{
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Inner_alias_bounded_string_helper", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
-    {
-        return c_type_object;
-    }
-
-    TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ALIAS);
-
-    // No flags apply
-    //type_object->complete().alias_type().alias_flags().IS_FINAL(false);
-    //type_object->complete().alias_type().alias_flags().IS_APPENDABLE(false);
-    //type_object->complete().alias_type().alias_flags().IS_MUTABLE(false);
-    //type_object->complete().alias_type().alias_flags().IS_NESTED(false);
-    //type_object->complete().alias_type().alias_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().alias_type().header().detail().ann_builtin().verbatim().placement("placement");
-    //type_object->complete().alias_type().header().detail().ann_builtin().verbatim().language("language");
-    //type_object->complete().alias_type().header().detail().ann_builtin().verbatim().text("text");
-    //type_object->complete().alias_type().header().detail().ann_custom().push_back(...);
-    type_object->complete().alias_type().header().detail().type_name("Inner_alias_bounded_string_helper");
-
-    // No flags apply
-    //type_object->complete().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
-    //type_object->complete().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_EXTERNAL(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_OPTIONAL(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_KEY(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_DEFAULT(false);
-
-    //type_object->complete().alias_type().body().common().ann_builtin()
-    //type_object->complete().alias_type().body().common().ann_custom()
-
-    // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(TypeNamesGenerator::get_string_type_name(10, false));
-
-
-    if (relatedType != nullptr)
-    {
-        type_object->complete().alias_type().body().common().related_type() = *relatedType; // Make a copy
-    }
-    else
-    {
-        // Cannot determine base type
-        delete type_object;
-        return nullptr;
-    }
-
-    TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
-
-    SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
-    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
-    eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
-
-    type_object->serialize(ser);
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    MD5 objectHash;
-    objectHash.update((char*)payload.data, payload.length);
-    objectHash.finalize();
-    for(int i = 0; i < 14; ++i)
-    {
-        identifier.equivalence_hash()[i] = objectHash.digest[i];
-    }
-
-    // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::get_instance()->add_alias("Inner_alias_bounded_string_helper", TypeNamesGenerator::get_string_type_name(10, false));
-
-    TypeObjectFactory::get_instance()->add_type_object("Inner_alias_bounded_string_helper", &identifier, type_object);
-    delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("Inner_alias_bounded_string_helper", true);
-}
-
-const TypeIdentifier* GetInner_alias_bounded_wstring_helperIdentifier(bool complete)
-{
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("Inner_alias_bounded_wstring_helper", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
-    {
-        return c_identifier;
-    }
-
-    GetInner_alias_bounded_wstring_helperObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("Inner_alias_bounded_wstring_helper", complete);
-}
-
-const TypeObject* GetInner_alias_bounded_wstring_helperObject(bool complete)
-{
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Inner_alias_bounded_wstring_helper", complete);
-    if (c_type_object != nullptr)
-    {
-        return c_type_object;
-    }
-    else if (complete)
-    {
-        return GetCompleteInner_alias_bounded_wstring_helperObject();
-    }
-    else
-    {
-        return GetMinimalInner_alias_bounded_wstring_helperObject();
-    }
-}
-
-const TypeObject* GetMinimalInner_alias_bounded_wstring_helperObject()
-{
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Inner_alias_bounded_wstring_helper", false);
-    if (c_type_object != nullptr)
-    {
-        return c_type_object;
-    }
-
-    TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ALIAS);
-
-    // No flags apply
-    //type_object->minimal().alias_type().alias_flags().IS_FINAL(false);
-    //type_object->minimal().alias_type().alias_flags().IS_APPENDABLE(false);
-    //type_object->minimal().alias_type().alias_flags().IS_MUTABLE(false);
-    //type_object->minimal().alias_type().alias_flags().IS_NESTED(false);
-    //type_object->minimal().alias_type().alias_flags().IS_AUTOID_HASH(false);
-
-    // type_object->minimal().alias_type().header()... Is empty
-
-    // No flags apply
-    //type_object->minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
-    //type_object->minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_EXTERNAL(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_OPTIONAL(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_KEY(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
-
-    // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier(TypeNamesGenerator::get_string_type_name(10, true), false);
-
-
-    if (relatedType != nullptr)
-    {
-        type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
-    }
-    else
-    {
-        // Cannot determine base type
-        delete type_object;
-        return nullptr;
-    }
-
-    TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
-
-    SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
-    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
-    eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
-
-    type_object->serialize(ser);
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    MD5 objectHash;
-    objectHash.update((char*)payload.data, payload.length);
-    objectHash.finalize();
-    for(int i = 0; i < 14; ++i)
-    {
-        identifier.equivalence_hash()[i] = objectHash.digest[i];
-    }
-
-    // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::get_instance()->add_alias("Inner_alias_bounded_wstring_helper", TypeNamesGenerator::get_string_type_name(10, true));
-
-    TypeObjectFactory::get_instance()->add_type_object("Inner_alias_bounded_wstring_helper", &identifier, type_object);
-    delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("Inner_alias_bounded_wstring_helper", false);
-}
-
-const TypeObject* GetCompleteInner_alias_bounded_wstring_helperObject()
-{
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Inner_alias_bounded_wstring_helper", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
-    {
-        return c_type_object;
-    }
-
-    TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ALIAS);
-
-    // No flags apply
-    //type_object->complete().alias_type().alias_flags().IS_FINAL(false);
-    //type_object->complete().alias_type().alias_flags().IS_APPENDABLE(false);
-    //type_object->complete().alias_type().alias_flags().IS_MUTABLE(false);
-    //type_object->complete().alias_type().alias_flags().IS_NESTED(false);
-    //type_object->complete().alias_type().alias_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().alias_type().header().detail().ann_builtin().verbatim().placement("placement");
-    //type_object->complete().alias_type().header().detail().ann_builtin().verbatim().language("language");
-    //type_object->complete().alias_type().header().detail().ann_builtin().verbatim().text("text");
-    //type_object->complete().alias_type().header().detail().ann_custom().push_back(...);
-    type_object->complete().alias_type().header().detail().type_name("Inner_alias_bounded_wstring_helper");
-
-    // No flags apply
-    //type_object->complete().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
-    //type_object->complete().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_EXTERNAL(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_OPTIONAL(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_KEY(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_DEFAULT(false);
-
-    //type_object->complete().alias_type().body().common().ann_builtin()
-    //type_object->complete().alias_type().body().common().ann_custom()
-
-    // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(TypeNamesGenerator::get_string_type_name(10, true));
-
-
-    if (relatedType != nullptr)
-    {
-        type_object->complete().alias_type().body().common().related_type() = *relatedType; // Make a copy
-    }
-    else
-    {
-        // Cannot determine base type
-        delete type_object;
-        return nullptr;
-    }
-
-    TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
-
-    SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
-    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
-    eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
-
-    type_object->serialize(ser);
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    MD5 objectHash;
-    objectHash.update((char*)payload.data, payload.length);
-    objectHash.finalize();
-    for(int i = 0; i < 14; ++i)
-    {
-        identifier.equivalence_hash()[i] = objectHash.digest[i];
-    }
-
-    // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::get_instance()->add_alias("Inner_alias_bounded_wstring_helper", TypeNamesGenerator::get_string_type_name(10, true));
-
-    TypeObjectFactory::get_instance()->add_type_object("Inner_alias_bounded_wstring_helper", &identifier, type_object);
-    delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("Inner_alias_bounded_wstring_helper", true);
-}
-
-const TypeIdentifier* GetInner_alias_array_helperIdentifier(bool complete)
-{
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("Inner_alias_array_helper", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
-    {
-        return c_identifier;
-    }
-
-    GetInner_alias_array_helperObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("Inner_alias_array_helper", complete);
-}
-
-const TypeObject* GetInner_alias_array_helperObject(bool complete)
-{
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Inner_alias_array_helper", complete);
-    if (c_type_object != nullptr)
-    {
-        return c_type_object;
-    }
-    else if (complete)
-    {
-        return GetCompleteInner_alias_array_helperObject();
-    }
-    else
-    {
-        return GetMinimalInner_alias_array_helperObject();
-    }
-}
-
-const TypeObject* GetMinimalInner_alias_array_helperObject()
-{
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Inner_alias_array_helper", false);
-    if (c_type_object != nullptr)
-    {
-        return c_type_object;
-    }
-
-    TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ALIAS);
-
-    // No flags apply
-    //type_object->minimal().alias_type().alias_flags().IS_FINAL(false);
-    //type_object->minimal().alias_type().alias_flags().IS_APPENDABLE(false);
-    //type_object->minimal().alias_type().alias_flags().IS_MUTABLE(false);
-    //type_object->minimal().alias_type().alias_flags().IS_NESTED(false);
-    //type_object->minimal().alias_type().alias_flags().IS_AUTOID_HASH(false);
-
-    // type_object->minimal().alias_type().header()... Is empty
-
-    // No flags apply
-    //type_object->minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
-    //type_object->minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_EXTERNAL(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_OPTIONAL(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_KEY(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
-
-    // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier(TypeNamesGenerator::get_array_type_name("int16_t", {2}), false);
-
-
-    if (relatedType != nullptr)
-    {
-        type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
-    }
-    else
-    {
-        // Cannot determine base type
-        delete type_object;
-        return nullptr;
-    }
-
-    TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
-
-    SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
-    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
-    eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
-
-    type_object->serialize(ser);
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    MD5 objectHash;
-    objectHash.update((char*)payload.data, payload.length);
-    objectHash.finalize();
-    for(int i = 0; i < 14; ++i)
-    {
-        identifier.equivalence_hash()[i] = objectHash.digest[i];
-    }
-
-    // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::get_instance()->add_alias("Inner_alias_array_helper", TypeNamesGenerator::get_array_type_name("int16_t", {2}));
-
-    TypeObjectFactory::get_instance()->add_type_object("Inner_alias_array_helper", &identifier, type_object);
-    delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("Inner_alias_array_helper", false);
-}
-
-const TypeObject* GetCompleteInner_alias_array_helperObject()
-{
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Inner_alias_array_helper", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
-    {
-        return c_type_object;
-    }
-
-    TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ALIAS);
-
-    // No flags apply
-    //type_object->complete().alias_type().alias_flags().IS_FINAL(false);
-    //type_object->complete().alias_type().alias_flags().IS_APPENDABLE(false);
-    //type_object->complete().alias_type().alias_flags().IS_MUTABLE(false);
-    //type_object->complete().alias_type().alias_flags().IS_NESTED(false);
-    //type_object->complete().alias_type().alias_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().alias_type().header().detail().ann_builtin().verbatim().placement("placement");
-    //type_object->complete().alias_type().header().detail().ann_builtin().verbatim().language("language");
-    //type_object->complete().alias_type().header().detail().ann_builtin().verbatim().text("text");
-    //type_object->complete().alias_type().header().detail().ann_custom().push_back(...);
-    type_object->complete().alias_type().header().detail().type_name("Inner_alias_array_helper");
-
-    // No flags apply
-    //type_object->complete().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
-    //type_object->complete().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_EXTERNAL(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_OPTIONAL(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_KEY(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_DEFAULT(false);
-
-    //type_object->complete().alias_type().body().common().ann_builtin()
-    //type_object->complete().alias_type().body().common().ann_custom()
-
-    // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(TypeNamesGenerator::get_array_type_name("int16_t", {2}));
-
-
-    if (relatedType != nullptr)
-    {
-        type_object->complete().alias_type().body().common().related_type() = *relatedType; // Make a copy
-    }
-    else
-    {
-        // Cannot determine base type
-        delete type_object;
-        return nullptr;
-    }
-
-    TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
-
-    SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
-    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
-    eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
-
-    type_object->serialize(ser);
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    MD5 objectHash;
-    objectHash.update((char*)payload.data, payload.length);
-    objectHash.finalize();
-    for(int i = 0; i < 14; ++i)
-    {
-        identifier.equivalence_hash()[i] = objectHash.digest[i];
-    }
-
-    // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::get_instance()->add_alias("Inner_alias_array_helper", TypeNamesGenerator::get_array_type_name("int16_t", {2}));
-
-    TypeObjectFactory::get_instance()->add_type_object("Inner_alias_array_helper", &identifier, type_object);
-    delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("Inner_alias_array_helper", true);
-}
-
-const TypeIdentifier* GetInner_alias_sequence_helperIdentifier(bool complete)
-{
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("Inner_alias_sequence_helper", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
-    {
-        return c_identifier;
-    }
-
-    GetInner_alias_sequence_helperObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("Inner_alias_sequence_helper", complete);
-}
-
-const TypeObject* GetInner_alias_sequence_helperObject(bool complete)
-{
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Inner_alias_sequence_helper", complete);
-    if (c_type_object != nullptr)
-    {
-        return c_type_object;
-    }
-    else if (complete)
-    {
-        return GetCompleteInner_alias_sequence_helperObject();
-    }
-    else
-    {
-        return GetMinimalInner_alias_sequence_helperObject();
-    }
-}
-
-const TypeObject* GetMinimalInner_alias_sequence_helperObject()
-{
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Inner_alias_sequence_helper", false);
-    if (c_type_object != nullptr)
-    {
-        return c_type_object;
-    }
-
-    TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ALIAS);
-
-    // No flags apply
-    //type_object->minimal().alias_type().alias_flags().IS_FINAL(false);
-    //type_object->minimal().alias_type().alias_flags().IS_APPENDABLE(false);
-    //type_object->minimal().alias_type().alias_flags().IS_MUTABLE(false);
-    //type_object->minimal().alias_type().alias_flags().IS_NESTED(false);
-    //type_object->minimal().alias_type().alias_flags().IS_AUTOID_HASH(false);
-
-    // type_object->minimal().alias_type().header()... Is empty
-
-    // No flags apply
-    //type_object->minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
-    //type_object->minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_EXTERNAL(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_OPTIONAL(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_KEY(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
-
-    // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier(TypeNamesGenerator::get_sequence_type_name("int16_t", 100), false);
-
-
-    if (relatedType != nullptr)
-    {
-        type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
-    }
-    else
-    {
-        // Cannot determine base type
-        delete type_object;
-        return nullptr;
-    }
-
-    TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
-
-    SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
-    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
-    eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
-
-    type_object->serialize(ser);
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    MD5 objectHash;
-    objectHash.update((char*)payload.data, payload.length);
-    objectHash.finalize();
-    for(int i = 0; i < 14; ++i)
-    {
-        identifier.equivalence_hash()[i] = objectHash.digest[i];
-    }
-
-    // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::get_instance()->add_alias("Inner_alias_sequence_helper", TypeNamesGenerator::get_sequence_type_name("int16_t", 100));
-
-    TypeObjectFactory::get_instance()->add_type_object("Inner_alias_sequence_helper", &identifier, type_object);
-    delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("Inner_alias_sequence_helper", false);
-}
-
-const TypeObject* GetCompleteInner_alias_sequence_helperObject()
-{
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Inner_alias_sequence_helper", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
-    {
-        return c_type_object;
-    }
-
-    TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ALIAS);
-
-    // No flags apply
-    //type_object->complete().alias_type().alias_flags().IS_FINAL(false);
-    //type_object->complete().alias_type().alias_flags().IS_APPENDABLE(false);
-    //type_object->complete().alias_type().alias_flags().IS_MUTABLE(false);
-    //type_object->complete().alias_type().alias_flags().IS_NESTED(false);
-    //type_object->complete().alias_type().alias_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().alias_type().header().detail().ann_builtin().verbatim().placement("placement");
-    //type_object->complete().alias_type().header().detail().ann_builtin().verbatim().language("language");
-    //type_object->complete().alias_type().header().detail().ann_builtin().verbatim().text("text");
-    //type_object->complete().alias_type().header().detail().ann_custom().push_back(...);
-    type_object->complete().alias_type().header().detail().type_name("Inner_alias_sequence_helper");
-
-    // No flags apply
-    //type_object->complete().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
-    //type_object->complete().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_EXTERNAL(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_OPTIONAL(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_KEY(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_DEFAULT(false);
-
-    //type_object->complete().alias_type().body().common().ann_builtin()
-    //type_object->complete().alias_type().body().common().ann_custom()
-
-    // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(TypeNamesGenerator::get_sequence_type_name("int16_t", 100));
-
-
-    if (relatedType != nullptr)
-    {
-        type_object->complete().alias_type().body().common().related_type() = *relatedType; // Make a copy
-    }
-    else
-    {
-        // Cannot determine base type
-        delete type_object;
-        return nullptr;
-    }
-
-    TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
-
-    SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
-    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
-    eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
-
-    type_object->serialize(ser);
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    MD5 objectHash;
-    objectHash.update((char*)payload.data, payload.length);
-    objectHash.finalize();
-    for(int i = 0; i < 14; ++i)
-    {
-        identifier.equivalence_hash()[i] = objectHash.digest[i];
-    }
-
-    // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::get_instance()->add_alias("Inner_alias_sequence_helper", TypeNamesGenerator::get_sequence_type_name("int16_t", 100));
-
-    TypeObjectFactory::get_instance()->add_type_object("Inner_alias_sequence_helper", &identifier, type_object);
-    delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("Inner_alias_sequence_helper", true);
-}
-
-const TypeIdentifier* GetInner_alias_map_helperIdentifier(bool complete)
-{
-    const TypeIdentifier* c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("Inner_alias_map_helper", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
-    {
-        return c_identifier;
-    }
-
-    GetInner_alias_map_helperObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("Inner_alias_map_helper", complete);
-}
-
-const TypeObject* GetInner_alias_map_helperObject(bool complete)
-{
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Inner_alias_map_helper", complete);
-    if (c_type_object != nullptr)
-    {
-        return c_type_object;
-    }
-    else if (complete)
-    {
-        return GetCompleteInner_alias_map_helperObject();
-    }
-    else
-    {
-        return GetMinimalInner_alias_map_helperObject();
-    }
-}
-
-const TypeObject* GetMinimalInner_alias_map_helperObject()
-{
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Inner_alias_map_helper", false);
-    if (c_type_object != nullptr)
-    {
-        return c_type_object;
-    }
-
-    TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_MINIMAL);
-    type_object->minimal()._d(TK_ALIAS);
-
-    // No flags apply
-    //type_object->minimal().alias_type().alias_flags().IS_FINAL(false);
-    //type_object->minimal().alias_type().alias_flags().IS_APPENDABLE(false);
-    //type_object->minimal().alias_type().alias_flags().IS_MUTABLE(false);
-    //type_object->minimal().alias_type().alias_flags().IS_NESTED(false);
-    //type_object->minimal().alias_type().alias_flags().IS_AUTOID_HASH(false);
-
-    // type_object->minimal().alias_type().header()... Is empty
-
-    // No flags apply
-    //type_object->minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
-    //type_object->minimal().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_EXTERNAL(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_OPTIONAL(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_KEY(false);
-    //type_object->minimal().alias_type().body().common().related_flags().IS_DEFAULT(false);
-
-    // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier(TypeNamesGenerator::get_map_type_name("int32_t", "int32_t", 100), false);
-
-
-    if (relatedType != nullptr)
-    {
-        type_object->minimal().alias_type().body().common().related_type() = *relatedType; // Make a copy
-    }
-    else
-    {
-        // Cannot determine base type
-        delete type_object;
-        return nullptr;
-    }
-
-    TypeIdentifier identifier;
-    identifier._d(EK_MINIMAL);
-
-    SerializedPayload_t payload(static_cast<uint32_t>(
-        MinimalAliasType::getCdrSerializedSize(type_object->minimal().alias_type()) + 4));
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
-    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
-    eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
-
-    type_object->serialize(ser);
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    MD5 objectHash;
-    objectHash.update((char*)payload.data, payload.length);
-    objectHash.finalize();
-    for(int i = 0; i < 14; ++i)
-    {
-        identifier.equivalence_hash()[i] = objectHash.digest[i];
-    }
-
-    // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::get_instance()->add_alias("Inner_alias_map_helper", TypeNamesGenerator::get_map_type_name("int32_t", "int32_t", 100));
-
-    TypeObjectFactory::get_instance()->add_type_object("Inner_alias_map_helper", &identifier, type_object);
-    delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("Inner_alias_map_helper", false);
-}
-
-const TypeObject* GetCompleteInner_alias_map_helperObject()
-{
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Inner_alias_map_helper", true);
-    if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
-    {
-        return c_type_object;
-    }
-
-    TypeObject *type_object = new TypeObject();
-    type_object->_d(EK_COMPLETE);
-    type_object->complete()._d(TK_ALIAS);
-
-    // No flags apply
-    //type_object->complete().alias_type().alias_flags().IS_FINAL(false);
-    //type_object->complete().alias_type().alias_flags().IS_APPENDABLE(false);
-    //type_object->complete().alias_type().alias_flags().IS_MUTABLE(false);
-    //type_object->complete().alias_type().alias_flags().IS_NESTED(false);
-    //type_object->complete().alias_type().alias_flags().IS_AUTOID_HASH(false);
-
-    //type_object->complete().alias_type().header().detail().ann_builtin().verbatim().placement("placement");
-    //type_object->complete().alias_type().header().detail().ann_builtin().verbatim().language("language");
-    //type_object->complete().alias_type().header().detail().ann_builtin().verbatim().text("text");
-    //type_object->complete().alias_type().header().detail().ann_custom().push_back(...);
-    type_object->complete().alias_type().header().detail().type_name("Inner_alias_map_helper");
-
-    // No flags apply
-    //type_object->complete().alias_type().body().common().related_flags().TRY_CONSTRUCT1(false);
-    //type_object->complete().alias_type().body().common().related_flags().TRY_CONSTRUCT2(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_EXTERNAL(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_OPTIONAL(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_MUST_UNDERSTAND(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_KEY(false);
-    //type_object->complete().alias_type().body().common().related_flags().IS_DEFAULT(false);
-
-    //type_object->complete().alias_type().body().common().ann_builtin()
-    //type_object->complete().alias_type().body().common().ann_custom()
-
-    // Must be defined already, if don't, may be an recursive alias
-    const TypeIdentifier *relatedType = TypeObjectFactory::get_instance()->get_type_identifier_trying_complete(TypeNamesGenerator::get_map_type_name("int32_t", "int32_t", 100));
-
-
-    if (relatedType != nullptr)
-    {
-        type_object->complete().alias_type().body().common().related_type() = *relatedType; // Make a copy
-    }
-    else
-    {
-        // Cannot determine base type
-        delete type_object;
-        return nullptr;
-    }
-
-    TypeIdentifier identifier;
-    identifier._d(EK_COMPLETE);
-
-    SerializedPayload_t payload(static_cast<uint32_t>(
-        CompleteAliasType::getCdrSerializedSize(type_object->complete().alias_type()) + 4));
-    eprosima::fastcdr::FastBuffer fastbuffer((char*) payload.data, payload.max_size);
-    // Fixed endian (Page 221, EquivalenceHash definition of Extensible and Dynamic Topic Types for DDS document)
-    eprosima::fastcdr::Cdr ser(
-        fastbuffer, eprosima::fastcdr::Cdr::LITTLE_ENDIANNESS,
-        eprosima::fastcdr::Cdr::DDS_CDR); // Object that serializes the data.
-    payload.encapsulation = CDR_LE;
-
-    type_object->serialize(ser);
-    payload.length = (uint32_t)ser.getSerializedDataLength(); //Get the serialized length
-    MD5 objectHash;
-    objectHash.update((char*)payload.data, payload.length);
-    objectHash.finalize();
-    for(int i = 0; i < 14; ++i)
-    {
-        identifier.equivalence_hash()[i] = objectHash.digest[i];
-    }
-
-    // Don't add our TypeIdentifier but our alias
-    TypeObjectFactory::get_instance()->add_alias("Inner_alias_map_helper", TypeNamesGenerator::get_map_type_name("int32_t", "int32_t", 100));
-
-    TypeObjectFactory::get_instance()->add_type_object("Inner_alias_map_helper", &identifier, type_object);
-    delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("Inner_alias_map_helper", true);
-}
-
-const TypeIdentifier* GetShortStructIdentifier(bool complete)
-{
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ShortStruct", complete);
-    if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
-    {
-        return c_identifier;
-    }
-
-    GetShortStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("ShortStruct", complete);
-}
-
-const TypeObject* GetShortStructObject(bool complete)
-{
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ShortStruct", complete);
-    if (c_type_object != nullptr)
-    {
-        return c_type_object;
-    }
-    else if (complete)
-    {
-        return GetCompleteShortStructObject();
+        return GetCompleteStructShortObject();
     }
     //else
-    return GetMinimalShortStructObject();
+    return GetMinimalStructShortObject();
 }
 
-const TypeObject* GetMinimalShortStructObject()
+const TypeObject* GetMinimalStructShortObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ShortStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructShort", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -1456,14 +340,14 @@ const TypeObject* GetMinimalShortStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("ShortStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructShort", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("ShortStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructShort", false);
 }
 
-const TypeObject* GetCompleteShortStructObject()
+const TypeObject* GetCompleteStructShortObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ShortStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructShort", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -1497,7 +381,7 @@ const TypeObject* GetCompleteShortStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("ShortStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructShort");
     // TODO inheritance
 
 
@@ -1523,41 +407,41 @@ const TypeObject* GetCompleteShortStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("ShortStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructShort", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("ShortStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructShort", true);
 }
 
-const TypeIdentifier* GetUnsignedShortStructIdentifier(bool complete)
+const TypeIdentifier* GetStructUnsignedShortIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("UnsignedShortStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructUnsignedShort", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetUnsignedShortStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("UnsignedShortStruct", complete);
+    GetStructUnsignedShortObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructUnsignedShort", complete);
 }
 
-const TypeObject* GetUnsignedShortStructObject(bool complete)
+const TypeObject* GetStructUnsignedShortObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UnsignedShortStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructUnsignedShort", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteUnsignedShortStructObject();
+        return GetCompleteStructUnsignedShortObject();
     }
     //else
-    return GetMinimalUnsignedShortStructObject();
+    return GetMinimalStructUnsignedShortObject();
 }
 
-const TypeObject* GetMinimalUnsignedShortStructObject()
+const TypeObject* GetMinimalStructUnsignedShortObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UnsignedShortStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructUnsignedShort", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -1620,14 +504,14 @@ const TypeObject* GetMinimalUnsignedShortStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("UnsignedShortStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructUnsignedShort", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("UnsignedShortStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructUnsignedShort", false);
 }
 
-const TypeObject* GetCompleteUnsignedShortStructObject()
+const TypeObject* GetCompleteStructUnsignedShortObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UnsignedShortStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructUnsignedShort", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -1661,7 +545,7 @@ const TypeObject* GetCompleteUnsignedShortStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("UnsignedShortStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructUnsignedShort");
     // TODO inheritance
 
 
@@ -1687,41 +571,41 @@ const TypeObject* GetCompleteUnsignedShortStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("UnsignedShortStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructUnsignedShort", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("UnsignedShortStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructUnsignedShort", true);
 }
 
-const TypeIdentifier* GetLongStructIdentifier(bool complete)
+const TypeIdentifier* GetStructLongIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("LongStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructLong", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetLongStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("LongStruct", complete);
+    GetStructLongObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructLong", complete);
 }
 
-const TypeObject* GetLongStructObject(bool complete)
+const TypeObject* GetStructLongObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructLong", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteLongStructObject();
+        return GetCompleteStructLongObject();
     }
     //else
-    return GetMinimalLongStructObject();
+    return GetMinimalStructLongObject();
 }
 
-const TypeObject* GetMinimalLongStructObject()
+const TypeObject* GetMinimalStructLongObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructLong", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -1784,14 +668,14 @@ const TypeObject* GetMinimalLongStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("LongStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructLong", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("LongStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructLong", false);
 }
 
-const TypeObject* GetCompleteLongStructObject()
+const TypeObject* GetCompleteStructLongObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructLong", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -1825,7 +709,7 @@ const TypeObject* GetCompleteLongStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("LongStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructLong");
     // TODO inheritance
 
 
@@ -1851,41 +735,41 @@ const TypeObject* GetCompleteLongStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("LongStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructLong", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("LongStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructLong", true);
 }
 
-const TypeIdentifier* GetUnsignedLongStructIdentifier(bool complete)
+const TypeIdentifier* GetStructUnsignedLongIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("UnsignedLongStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructUnsignedLong", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetUnsignedLongStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("UnsignedLongStruct", complete);
+    GetStructUnsignedLongObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructUnsignedLong", complete);
 }
 
-const TypeObject* GetUnsignedLongStructObject(bool complete)
+const TypeObject* GetStructUnsignedLongObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UnsignedLongStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructUnsignedLong", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteUnsignedLongStructObject();
+        return GetCompleteStructUnsignedLongObject();
     }
     //else
-    return GetMinimalUnsignedLongStructObject();
+    return GetMinimalStructUnsignedLongObject();
 }
 
-const TypeObject* GetMinimalUnsignedLongStructObject()
+const TypeObject* GetMinimalStructUnsignedLongObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UnsignedLongStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructUnsignedLong", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -1948,14 +832,14 @@ const TypeObject* GetMinimalUnsignedLongStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("UnsignedLongStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructUnsignedLong", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("UnsignedLongStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructUnsignedLong", false);
 }
 
-const TypeObject* GetCompleteUnsignedLongStructObject()
+const TypeObject* GetCompleteStructUnsignedLongObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UnsignedLongStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructUnsignedLong", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -1989,7 +873,7 @@ const TypeObject* GetCompleteUnsignedLongStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("UnsignedLongStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructUnsignedLong");
     // TODO inheritance
 
 
@@ -2015,41 +899,41 @@ const TypeObject* GetCompleteUnsignedLongStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("UnsignedLongStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructUnsignedLong", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("UnsignedLongStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructUnsignedLong", true);
 }
 
-const TypeIdentifier* GetLongLongStructIdentifier(bool complete)
+const TypeIdentifier* GetStructLongLongIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("LongLongStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructLongLong", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetLongLongStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("LongLongStruct", complete);
+    GetStructLongLongObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructLongLong", complete);
 }
 
-const TypeObject* GetLongLongStructObject(bool complete)
+const TypeObject* GetStructLongLongObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongLongStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructLongLong", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteLongLongStructObject();
+        return GetCompleteStructLongLongObject();
     }
     //else
-    return GetMinimalLongLongStructObject();
+    return GetMinimalStructLongLongObject();
 }
 
-const TypeObject* GetMinimalLongLongStructObject()
+const TypeObject* GetMinimalStructLongLongObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongLongStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructLongLong", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -2112,14 +996,14 @@ const TypeObject* GetMinimalLongLongStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("LongLongStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructLongLong", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("LongLongStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructLongLong", false);
 }
 
-const TypeObject* GetCompleteLongLongStructObject()
+const TypeObject* GetCompleteStructLongLongObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongLongStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructLongLong", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -2153,7 +1037,7 @@ const TypeObject* GetCompleteLongLongStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("LongLongStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructLongLong");
     // TODO inheritance
 
 
@@ -2179,41 +1063,41 @@ const TypeObject* GetCompleteLongLongStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("LongLongStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructLongLong", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("LongLongStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructLongLong", true);
 }
 
-const TypeIdentifier* GetUnsignedLongLongStructIdentifier(bool complete)
+const TypeIdentifier* GetStructUnsignedLongLongIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("UnsignedLongLongStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructUnsignedLongLong", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetUnsignedLongLongStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("UnsignedLongLongStruct", complete);
+    GetStructUnsignedLongLongObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructUnsignedLongLong", complete);
 }
 
-const TypeObject* GetUnsignedLongLongStructObject(bool complete)
+const TypeObject* GetStructUnsignedLongLongObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UnsignedLongLongStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructUnsignedLongLong", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteUnsignedLongLongStructObject();
+        return GetCompleteStructUnsignedLongLongObject();
     }
     //else
-    return GetMinimalUnsignedLongLongStructObject();
+    return GetMinimalStructUnsignedLongLongObject();
 }
 
-const TypeObject* GetMinimalUnsignedLongLongStructObject()
+const TypeObject* GetMinimalStructUnsignedLongLongObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UnsignedLongLongStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructUnsignedLongLong", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -2276,14 +1160,14 @@ const TypeObject* GetMinimalUnsignedLongLongStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("UnsignedLongLongStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructUnsignedLongLong", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("UnsignedLongLongStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructUnsignedLongLong", false);
 }
 
-const TypeObject* GetCompleteUnsignedLongLongStructObject()
+const TypeObject* GetCompleteStructUnsignedLongLongObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UnsignedLongLongStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructUnsignedLongLong", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -2317,7 +1201,7 @@ const TypeObject* GetCompleteUnsignedLongLongStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("UnsignedLongLongStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructUnsignedLongLong");
     // TODO inheritance
 
 
@@ -2343,41 +1227,41 @@ const TypeObject* GetCompleteUnsignedLongLongStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("UnsignedLongLongStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructUnsignedLongLong", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("UnsignedLongLongStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructUnsignedLongLong", true);
 }
 
-const TypeIdentifier* GetFloatStructIdentifier(bool complete)
+const TypeIdentifier* GetStructFloatIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("FloatStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructFloat", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetFloatStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("FloatStruct", complete);
+    GetStructFloatObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructFloat", complete);
 }
 
-const TypeObject* GetFloatStructObject(bool complete)
+const TypeObject* GetStructFloatObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("FloatStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructFloat", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteFloatStructObject();
+        return GetCompleteStructFloatObject();
     }
     //else
-    return GetMinimalFloatStructObject();
+    return GetMinimalStructFloatObject();
 }
 
-const TypeObject* GetMinimalFloatStructObject()
+const TypeObject* GetMinimalStructFloatObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("FloatStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructFloat", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -2440,14 +1324,14 @@ const TypeObject* GetMinimalFloatStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("FloatStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructFloat", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("FloatStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructFloat", false);
 }
 
-const TypeObject* GetCompleteFloatStructObject()
+const TypeObject* GetCompleteStructFloatObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("FloatStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructFloat", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -2481,7 +1365,7 @@ const TypeObject* GetCompleteFloatStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("FloatStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructFloat");
     // TODO inheritance
 
 
@@ -2507,41 +1391,41 @@ const TypeObject* GetCompleteFloatStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("FloatStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructFloat", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("FloatStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructFloat", true);
 }
 
-const TypeIdentifier* GetDoubleStructIdentifier(bool complete)
+const TypeIdentifier* GetStructDoubleIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("DoubleStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructDouble", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetDoubleStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("DoubleStruct", complete);
+    GetStructDoubleObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructDouble", complete);
 }
 
-const TypeObject* GetDoubleStructObject(bool complete)
+const TypeObject* GetStructDoubleObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("DoubleStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructDouble", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteDoubleStructObject();
+        return GetCompleteStructDoubleObject();
     }
     //else
-    return GetMinimalDoubleStructObject();
+    return GetMinimalStructDoubleObject();
 }
 
-const TypeObject* GetMinimalDoubleStructObject()
+const TypeObject* GetMinimalStructDoubleObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("DoubleStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructDouble", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -2604,14 +1488,14 @@ const TypeObject* GetMinimalDoubleStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("DoubleStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructDouble", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("DoubleStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructDouble", false);
 }
 
-const TypeObject* GetCompleteDoubleStructObject()
+const TypeObject* GetCompleteStructDoubleObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("DoubleStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructDouble", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -2645,7 +1529,7 @@ const TypeObject* GetCompleteDoubleStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("DoubleStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructDouble");
     // TODO inheritance
 
 
@@ -2671,41 +1555,41 @@ const TypeObject* GetCompleteDoubleStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("DoubleStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructDouble", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("DoubleStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructDouble", true);
 }
 
-const TypeIdentifier* GetLongDoubleStructIdentifier(bool complete)
+const TypeIdentifier* GetStructLongDoubleIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("LongDoubleStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructLongDouble", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetLongDoubleStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("LongDoubleStruct", complete);
+    GetStructLongDoubleObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructLongDouble", complete);
 }
 
-const TypeObject* GetLongDoubleStructObject(bool complete)
+const TypeObject* GetStructLongDoubleObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongDoubleStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructLongDouble", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteLongDoubleStructObject();
+        return GetCompleteStructLongDoubleObject();
     }
     //else
-    return GetMinimalLongDoubleStructObject();
+    return GetMinimalStructLongDoubleObject();
 }
 
-const TypeObject* GetMinimalLongDoubleStructObject()
+const TypeObject* GetMinimalStructLongDoubleObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongDoubleStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructLongDouble", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -2768,14 +1652,14 @@ const TypeObject* GetMinimalLongDoubleStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("LongDoubleStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructLongDouble", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("LongDoubleStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructLongDouble", false);
 }
 
-const TypeObject* GetCompleteLongDoubleStructObject()
+const TypeObject* GetCompleteStructLongDoubleObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("LongDoubleStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructLongDouble", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -2809,7 +1693,7 @@ const TypeObject* GetCompleteLongDoubleStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("LongDoubleStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructLongDouble");
     // TODO inheritance
 
 
@@ -2835,41 +1719,41 @@ const TypeObject* GetCompleteLongDoubleStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("LongDoubleStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructLongDouble", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("LongDoubleStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructLongDouble", true);
 }
 
-const TypeIdentifier* GetBooleanStructIdentifier(bool complete)
+const TypeIdentifier* GetStructBooleanIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("BooleanStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructBoolean", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetBooleanStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("BooleanStruct", complete);
+    GetStructBooleanObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructBoolean", complete);
 }
 
-const TypeObject* GetBooleanStructObject(bool complete)
+const TypeObject* GetStructBooleanObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BooleanStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructBoolean", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteBooleanStructObject();
+        return GetCompleteStructBooleanObject();
     }
     //else
-    return GetMinimalBooleanStructObject();
+    return GetMinimalStructBooleanObject();
 }
 
-const TypeObject* GetMinimalBooleanStructObject()
+const TypeObject* GetMinimalStructBooleanObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BooleanStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructBoolean", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -2932,14 +1816,14 @@ const TypeObject* GetMinimalBooleanStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("BooleanStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructBoolean", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("BooleanStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructBoolean", false);
 }
 
-const TypeObject* GetCompleteBooleanStructObject()
+const TypeObject* GetCompleteStructBooleanObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BooleanStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructBoolean", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -2973,7 +1857,7 @@ const TypeObject* GetCompleteBooleanStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("BooleanStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructBoolean");
     // TODO inheritance
 
 
@@ -2999,41 +1883,41 @@ const TypeObject* GetCompleteBooleanStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("BooleanStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructBoolean", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("BooleanStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructBoolean", true);
 }
 
-const TypeIdentifier* GetOctetStructIdentifier(bool complete)
+const TypeIdentifier* GetStructOctetIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("OctetStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructOctet", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetOctetStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("OctetStruct", complete);
+    GetStructOctetObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructOctet", complete);
 }
 
-const TypeObject* GetOctetStructObject(bool complete)
+const TypeObject* GetStructOctetObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("OctetStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructOctet", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteOctetStructObject();
+        return GetCompleteStructOctetObject();
     }
     //else
-    return GetMinimalOctetStructObject();
+    return GetMinimalStructOctetObject();
 }
 
-const TypeObject* GetMinimalOctetStructObject()
+const TypeObject* GetMinimalStructOctetObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("OctetStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructOctet", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -3096,14 +1980,14 @@ const TypeObject* GetMinimalOctetStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("OctetStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructOctet", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("OctetStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructOctet", false);
 }
 
-const TypeObject* GetCompleteOctetStructObject()
+const TypeObject* GetCompleteStructOctetObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("OctetStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructOctet", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -3137,7 +2021,7 @@ const TypeObject* GetCompleteOctetStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("OctetStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructOctet");
     // TODO inheritance
 
 
@@ -3163,41 +2047,41 @@ const TypeObject* GetCompleteOctetStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("OctetStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructOctet", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("OctetStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructOctet", true);
 }
 
-const TypeIdentifier* GetChar8StructIdentifier(bool complete)
+const TypeIdentifier* GetStructChar8Identifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("Char8Struct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructChar8", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetChar8StructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("Char8Struct", complete);
+    GetStructChar8Object(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructChar8", complete);
 }
 
-const TypeObject* GetChar8StructObject(bool complete)
+const TypeObject* GetStructChar8Object(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Char8Struct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructChar8", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteChar8StructObject();
+        return GetCompleteStructChar8Object();
     }
     //else
-    return GetMinimalChar8StructObject();
+    return GetMinimalStructChar8Object();
 }
 
-const TypeObject* GetMinimalChar8StructObject()
+const TypeObject* GetMinimalStructChar8Object()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Char8Struct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructChar8", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -3260,14 +2144,14 @@ const TypeObject* GetMinimalChar8StructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("Char8Struct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructChar8", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("Char8Struct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructChar8", false);
 }
 
-const TypeObject* GetCompleteChar8StructObject()
+const TypeObject* GetCompleteStructChar8Object()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Char8Struct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructChar8", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -3301,7 +2185,7 @@ const TypeObject* GetCompleteChar8StructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("Char8Struct");
+    type_object->complete().struct_type().header().detail().type_name("StructChar8");
     // TODO inheritance
 
 
@@ -3327,41 +2211,41 @@ const TypeObject* GetCompleteChar8StructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("Char8Struct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructChar8", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("Char8Struct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructChar8", true);
 }
 
-const TypeIdentifier* GetChar16StructIdentifier(bool complete)
+const TypeIdentifier* GetStructChar16Identifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("Char16Struct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructChar16", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetChar16StructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("Char16Struct", complete);
+    GetStructChar16Object(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructChar16", complete);
 }
 
-const TypeObject* GetChar16StructObject(bool complete)
+const TypeObject* GetStructChar16Object(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Char16Struct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructChar16", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteChar16StructObject();
+        return GetCompleteStructChar16Object();
     }
     //else
-    return GetMinimalChar16StructObject();
+    return GetMinimalStructChar16Object();
 }
 
-const TypeObject* GetMinimalChar16StructObject()
+const TypeObject* GetMinimalStructChar16Object()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Char16Struct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructChar16", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -3424,14 +2308,14 @@ const TypeObject* GetMinimalChar16StructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("Char16Struct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructChar16", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("Char16Struct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructChar16", false);
 }
 
-const TypeObject* GetCompleteChar16StructObject()
+const TypeObject* GetCompleteStructChar16Object()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("Char16Struct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructChar16", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -3465,7 +2349,7 @@ const TypeObject* GetCompleteChar16StructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("Char16Struct");
+    type_object->complete().struct_type().header().detail().type_name("StructChar16");
     // TODO inheritance
 
 
@@ -3491,41 +2375,41 @@ const TypeObject* GetCompleteChar16StructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("Char16Struct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructChar16", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("Char16Struct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructChar16", true);
 }
 
-const TypeIdentifier* GetStringStructIdentifier(bool complete)
+const TypeIdentifier* GetStructStringIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StringStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructString", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetStringStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("StringStruct", complete);
+    GetStructStringObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructString", complete);
 }
 
-const TypeObject* GetStringStructObject(bool complete)
+const TypeObject* GetStructStringObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StringStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructString", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteStringStructObject();
+        return GetCompleteStructStringObject();
     }
     //else
-    return GetMinimalStringStructObject();
+    return GetMinimalStructStringObject();
 }
 
-const TypeObject* GetMinimalStringStructObject()
+const TypeObject* GetMinimalStructStringObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StringStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructString", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -3589,14 +2473,14 @@ const TypeObject* GetMinimalStringStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("StringStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructString", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("StringStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructString", false);
 }
 
-const TypeObject* GetCompleteStringStructObject()
+const TypeObject* GetCompleteStructStringObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StringStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructString", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -3631,7 +2515,7 @@ const TypeObject* GetCompleteStringStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("StringStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructString");
     // TODO inheritance
 
 
@@ -3657,41 +2541,41 @@ const TypeObject* GetCompleteStringStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("StringStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructString", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("StringStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructString", true);
 }
 
-const TypeIdentifier* GetWStringStructIdentifier(bool complete)
+const TypeIdentifier* GetStructWStringIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("WStringStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructWString", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetWStringStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("WStringStruct", complete);
+    GetStructWStringObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructWString", complete);
 }
 
-const TypeObject* GetWStringStructObject(bool complete)
+const TypeObject* GetStructWStringObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("WStringStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructWString", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteWStringStructObject();
+        return GetCompleteStructWStringObject();
     }
     //else
-    return GetMinimalWStringStructObject();
+    return GetMinimalStructWStringObject();
 }
 
-const TypeObject* GetMinimalWStringStructObject()
+const TypeObject* GetMinimalStructWStringObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("WStringStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructWString", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -3755,14 +2639,14 @@ const TypeObject* GetMinimalWStringStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("WStringStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructWString", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("WStringStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructWString", false);
 }
 
-const TypeObject* GetCompleteWStringStructObject()
+const TypeObject* GetCompleteStructWStringObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("WStringStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructWString", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -3797,7 +2681,7 @@ const TypeObject* GetCompleteWStringStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("WStringStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructWString");
     // TODO inheritance
 
 
@@ -3823,41 +2707,41 @@ const TypeObject* GetCompleteWStringStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("WStringStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructWString", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("WStringStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructWString", true);
 }
 
-const TypeIdentifier* GetBoundedStringStructIdentifier(bool complete)
+const TypeIdentifier* GetStructBoundedStringIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("BoundedStringStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructBoundedString", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetBoundedStringStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("BoundedStringStruct", complete);
+    GetStructBoundedStringObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructBoundedString", complete);
 }
 
-const TypeObject* GetBoundedStringStructObject(bool complete)
+const TypeObject* GetStructBoundedStringObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BoundedStringStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructBoundedString", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteBoundedStringStructObject();
+        return GetCompleteStructBoundedStringObject();
     }
     //else
-    return GetMinimalBoundedStringStructObject();
+    return GetMinimalStructBoundedStringObject();
 }
 
-const TypeObject* GetMinimalBoundedStringStructObject()
+const TypeObject* GetMinimalStructBoundedStringObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BoundedStringStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructBoundedString", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -3919,14 +2803,14 @@ const TypeObject* GetMinimalBoundedStringStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("BoundedStringStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructBoundedString", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("BoundedStringStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructBoundedString", false);
 }
 
-const TypeObject* GetCompleteBoundedStringStructObject()
+const TypeObject* GetCompleteStructBoundedStringObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BoundedStringStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructBoundedString", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -3959,7 +2843,7 @@ const TypeObject* GetCompleteBoundedStringStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("BoundedStringStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructBoundedString");
     // TODO inheritance
 
 
@@ -3985,41 +2869,41 @@ const TypeObject* GetCompleteBoundedStringStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("BoundedStringStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructBoundedString", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("BoundedStringStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructBoundedString", true);
 }
 
-const TypeIdentifier* GetBoundedWStringStructIdentifier(bool complete)
+const TypeIdentifier* GetStructBoundedWStringIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("BoundedWStringStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructBoundedWString", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetBoundedWStringStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("BoundedWStringStruct", complete);
+    GetStructBoundedWStringObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructBoundedWString", complete);
 }
 
-const TypeObject* GetBoundedWStringStructObject(bool complete)
+const TypeObject* GetStructBoundedWStringObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BoundedWStringStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructBoundedWString", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteBoundedWStringStructObject();
+        return GetCompleteStructBoundedWStringObject();
     }
     //else
-    return GetMinimalBoundedWStringStructObject();
+    return GetMinimalStructBoundedWStringObject();
 }
 
-const TypeObject* GetMinimalBoundedWStringStructObject()
+const TypeObject* GetMinimalStructBoundedWStringObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BoundedWStringStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructBoundedWString", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4081,14 +2965,14 @@ const TypeObject* GetMinimalBoundedWStringStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("BoundedWStringStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructBoundedWString", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("BoundedWStringStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructBoundedWString", false);
 }
 
-const TypeObject* GetCompleteBoundedWStringStructObject()
+const TypeObject* GetCompleteStructBoundedWStringObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BoundedWStringStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructBoundedWString", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -4121,7 +3005,7 @@ const TypeObject* GetCompleteBoundedWStringStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("BoundedWStringStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructBoundedWString");
     // TODO inheritance
 
 
@@ -4147,41 +3031,41 @@ const TypeObject* GetCompleteBoundedWStringStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("BoundedWStringStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructBoundedWString", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("BoundedWStringStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructBoundedWString", true);
 }
 
-const TypeIdentifier* GetEnumStructIdentifier(bool complete)
+const TypeIdentifier* GetStructEnumIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("EnumStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructEnum", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetEnumStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("EnumStruct", complete);
+    GetStructEnumObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructEnum", complete);
 }
 
-const TypeObject* GetEnumStructObject(bool complete)
+const TypeObject* GetStructEnumObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("EnumStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructEnum", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteEnumStructObject();
+        return GetCompleteStructEnumObject();
     }
     //else
-    return GetMinimalEnumStructObject();
+    return GetMinimalStructEnumObject();
 }
 
-const TypeObject* GetMinimalEnumStructObject()
+const TypeObject* GetMinimalStructEnumObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("EnumStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructEnum", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4243,14 +3127,14 @@ const TypeObject* GetMinimalEnumStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("EnumStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructEnum", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("EnumStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructEnum", false);
 }
 
-const TypeObject* GetCompleteEnumStructObject()
+const TypeObject* GetCompleteStructEnumObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("EnumStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructEnum", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -4283,7 +3167,7 @@ const TypeObject* GetCompleteEnumStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("EnumStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructEnum");
     // TODO inheritance
 
 
@@ -4309,41 +3193,41 @@ const TypeObject* GetCompleteEnumStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("EnumStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructEnum", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("EnumStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructEnum", true);
 }
 
-const TypeIdentifier* GetBitMaskStructIdentifier(bool complete)
+const TypeIdentifier* GetStructBitMaskIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("BitMaskStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructBitMask", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetBitMaskStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("BitMaskStruct", complete);
+    GetStructBitMaskObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructBitMask", complete);
 }
 
-const TypeObject* GetBitMaskStructObject(bool complete)
+const TypeObject* GetStructBitMaskObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BitMaskStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructBitMask", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteBitMaskStructObject();
+        return GetCompleteStructBitMaskObject();
     }
     //else
-    return GetMinimalBitMaskStructObject();
+    return GetMinimalStructBitMaskObject();
 }
 
-const TypeObject* GetMinimalBitMaskStructObject()
+const TypeObject* GetMinimalStructBitMaskObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BitMaskStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructBitMask", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4405,14 +3289,14 @@ const TypeObject* GetMinimalBitMaskStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("BitMaskStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructBitMask", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("BitMaskStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructBitMask", false);
 }
 
-const TypeObject* GetCompleteBitMaskStructObject()
+const TypeObject* GetCompleteStructBitMaskObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BitMaskStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructBitMask", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -4445,7 +3329,7 @@ const TypeObject* GetCompleteBitMaskStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("BitMaskStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructBitMask");
     // TODO inheritance
 
 
@@ -4471,41 +3355,41 @@ const TypeObject* GetCompleteBitMaskStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("BitMaskStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructBitMask", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("BitMaskStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructBitMask", true);
 }
 
-const TypeIdentifier* GetAliasStructIdentifier(bool complete)
+const TypeIdentifier* GetStructAliasIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("AliasStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructAlias", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetAliasStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("AliasStruct", complete);
+    GetStructAliasObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructAlias", complete);
 }
 
-const TypeObject* GetAliasStructObject(bool complete)
+const TypeObject* GetStructAliasObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("AliasStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructAlias", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteAliasStructObject();
+        return GetCompleteStructAliasObject();
     }
     //else
-    return GetMinimalAliasStructObject();
+    return GetMinimalStructAliasObject();
 }
 
-const TypeObject* GetMinimalAliasStructObject()
+const TypeObject* GetMinimalStructAliasObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("AliasStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructAlias", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4567,14 +3451,14 @@ const TypeObject* GetMinimalAliasStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("AliasStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructAlias", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("AliasStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructAlias", false);
 }
 
-const TypeObject* GetCompleteAliasStructObject()
+const TypeObject* GetCompleteStructAliasObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("AliasStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructAlias", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -4607,7 +3491,7 @@ const TypeObject* GetCompleteAliasStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("AliasStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructAlias");
     // TODO inheritance
 
 
@@ -4633,41 +3517,41 @@ const TypeObject* GetCompleteAliasStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("AliasStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructAlias", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("AliasStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructAlias", true);
 }
 
-const TypeIdentifier* GetShortArrayStructIdentifier(bool complete)
+const TypeIdentifier* GetStructShortArrayIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ShortArrayStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructShortArray", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetShortArrayStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("ShortArrayStruct", complete);
+    GetStructShortArrayObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructShortArray", complete);
 }
 
-const TypeObject* GetShortArrayStructObject(bool complete)
+const TypeObject* GetStructShortArrayObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ShortArrayStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructShortArray", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteShortArrayStructObject();
+        return GetCompleteStructShortArrayObject();
     }
     //else
-    return GetMinimalShortArrayStructObject();
+    return GetMinimalStructShortArrayObject();
 }
 
-const TypeObject* GetMinimalShortArrayStructObject()
+const TypeObject* GetMinimalStructShortArrayObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ShortArrayStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructShortArray", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4731,14 +3615,14 @@ const TypeObject* GetMinimalShortArrayStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("ShortArrayStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructShortArray", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("ShortArrayStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructShortArray", false);
 }
 
-const TypeObject* GetCompleteShortArrayStructObject()
+const TypeObject* GetCompleteStructShortArrayObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ShortArrayStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructShortArray", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -4773,7 +3657,7 @@ const TypeObject* GetCompleteShortArrayStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("ShortArrayStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructShortArray");
     // TODO inheritance
 
 
@@ -4799,41 +3683,41 @@ const TypeObject* GetCompleteShortArrayStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("ShortArrayStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructShortArray", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("ShortArrayStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructShortArray", true);
 }
 
-const TypeIdentifier* GetSequenceStructIdentifier(bool complete)
+const TypeIdentifier* GetStructSequenceIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("SequenceStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructSequence", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetSequenceStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("SequenceStruct", complete);
+    GetStructSequenceObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructSequence", complete);
 }
 
-const TypeObject* GetSequenceStructObject(bool complete)
+const TypeObject* GetStructSequenceObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SequenceStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructSequence", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteSequenceStructObject();
+        return GetCompleteStructSequenceObject();
     }
     //else
-    return GetMinimalSequenceStructObject();
+    return GetMinimalStructSequenceObject();
 }
 
-const TypeObject* GetMinimalSequenceStructObject()
+const TypeObject* GetMinimalStructSequenceObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SequenceStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructSequence", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -4897,14 +3781,14 @@ const TypeObject* GetMinimalSequenceStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("SequenceStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructSequence", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("SequenceStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructSequence", false);
 }
 
-const TypeObject* GetCompleteSequenceStructObject()
+const TypeObject* GetCompleteStructSequenceObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("SequenceStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructSequence", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -4939,7 +3823,7 @@ const TypeObject* GetCompleteSequenceStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("SequenceStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructSequence");
     // TODO inheritance
 
 
@@ -4965,41 +3849,41 @@ const TypeObject* GetCompleteSequenceStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("SequenceStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructSequence", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("SequenceStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructSequence", true);
 }
 
-const TypeIdentifier* GetMapStructIdentifier(bool complete)
+const TypeIdentifier* GetStructMapIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("MapStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructMap", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetMapStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("MapStruct", complete);
+    GetStructMapObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructMap", complete);
 }
 
-const TypeObject* GetMapStructObject(bool complete)
+const TypeObject* GetStructMapObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MapStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructMap", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteMapStructObject();
+        return GetCompleteStructMapObject();
     }
     //else
-    return GetMinimalMapStructObject();
+    return GetMinimalStructMapObject();
 }
 
-const TypeObject* GetMinimalMapStructObject()
+const TypeObject* GetMinimalStructMapObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MapStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructMap", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -5063,14 +3947,14 @@ const TypeObject* GetMinimalMapStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("MapStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructMap", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("MapStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructMap", false);
 }
 
-const TypeObject* GetCompleteMapStructObject()
+const TypeObject* GetCompleteStructMapObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("MapStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructMap", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -5105,7 +3989,7 @@ const TypeObject* GetCompleteMapStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("MapStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructMap");
     // TODO inheritance
 
 
@@ -5131,41 +4015,41 @@ const TypeObject* GetCompleteMapStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("MapStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructMap", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("MapStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructMap", true);
 }
 
-const TypeIdentifier* GetUnionStructIdentifier(bool complete)
+const TypeIdentifier* GetStructUnionIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("UnionStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructUnion", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetUnionStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("UnionStruct", complete);
+    GetStructUnionObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructUnion", complete);
 }
 
-const TypeObject* GetUnionStructObject(bool complete)
+const TypeObject* GetStructUnionObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UnionStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructUnion", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteUnionStructObject();
+        return GetCompleteStructUnionObject();
     }
     //else
-    return GetMinimalUnionStructObject();
+    return GetMinimalStructUnionObject();
 }
 
-const TypeObject* GetMinimalUnionStructObject()
+const TypeObject* GetMinimalStructUnionObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UnionStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructUnion", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -5227,14 +4111,14 @@ const TypeObject* GetMinimalUnionStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("UnionStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructUnion", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("UnionStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructUnion", false);
 }
 
-const TypeObject* GetCompleteUnionStructObject()
+const TypeObject* GetCompleteStructUnionObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("UnionStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructUnion", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -5267,7 +4151,7 @@ const TypeObject* GetCompleteUnionStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("UnionStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructUnion");
     // TODO inheritance
 
 
@@ -5293,41 +4177,41 @@ const TypeObject* GetCompleteUnionStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("UnionStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructUnion", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("UnionStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructUnion", true);
 }
 
-const TypeIdentifier* GetStructureStructIdentifier(bool complete)
+const TypeIdentifier* GetStructStructureIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructureStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructStructure", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetStructureStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("StructureStruct", complete);
+    GetStructStructureObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructStructure", complete);
 }
 
-const TypeObject* GetStructureStructObject(bool complete)
+const TypeObject* GetStructStructureObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructureStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructStructure", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteStructureStructObject();
+        return GetCompleteStructStructureObject();
     }
     //else
-    return GetMinimalStructureStructObject();
+    return GetMinimalStructStructureObject();
 }
 
-const TypeObject* GetMinimalStructureStructObject()
+const TypeObject* GetMinimalStructStructureObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructureStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructStructure", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -5389,14 +4273,14 @@ const TypeObject* GetMinimalStructureStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("StructureStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructStructure", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("StructureStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructStructure", false);
 }
 
-const TypeObject* GetCompleteStructureStructObject()
+const TypeObject* GetCompleteStructStructureObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructureStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructStructure", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -5429,7 +4313,7 @@ const TypeObject* GetCompleteStructureStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("StructureStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructStructure");
     // TODO inheritance
 
 
@@ -5455,41 +4339,41 @@ const TypeObject* GetCompleteStructureStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("StructureStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructStructure", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("StructureStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructStructure", true);
 }
 
-const TypeIdentifier* GetBitsetStructIdentifier(bool complete)
+const TypeIdentifier* GetStructBitsetIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("BitsetStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructBitset", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetBitsetStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("BitsetStruct", complete);
+    GetStructBitsetObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructBitset", complete);
 }
 
-const TypeObject* GetBitsetStructObject(bool complete)
+const TypeObject* GetStructBitsetObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BitsetStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructBitset", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteBitsetStructObject();
+        return GetCompleteStructBitsetObject();
     }
     //else
-    return GetMinimalBitsetStructObject();
+    return GetMinimalStructBitsetObject();
 }
 
-const TypeObject* GetMinimalBitsetStructObject()
+const TypeObject* GetMinimalStructBitsetObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BitsetStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructBitset", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -5551,14 +4435,14 @@ const TypeObject* GetMinimalBitsetStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("BitsetStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructBitset", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("BitsetStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructBitset", false);
 }
 
-const TypeObject* GetCompleteBitsetStructObject()
+const TypeObject* GetCompleteStructBitsetObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("BitsetStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructBitset", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -5591,7 +4475,7 @@ const TypeObject* GetCompleteBitsetStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("BitsetStruct");
+    type_object->complete().struct_type().header().detail().type_name("StructBitset");
     // TODO inheritance
 
 
@@ -5617,41 +4501,41 @@ const TypeObject* GetCompleteBitsetStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("BitsetStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructBitset", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("BitsetStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructBitset", true);
 }
 
-const TypeIdentifier* GetEmptyStructureIdentifier(bool complete)
+const TypeIdentifier* GetStructEmptyIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("EmptyStructure", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("StructEmpty", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetEmptyStructureObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("EmptyStructure", complete);
+    GetStructEmptyObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("StructEmpty", complete);
 }
 
-const TypeObject* GetEmptyStructureObject(bool complete)
+const TypeObject* GetStructEmptyObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("EmptyStructure", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructEmpty", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteEmptyStructureObject();
+        return GetCompleteStructEmptyObject();
     }
     //else
-    return GetMinimalEmptyStructureObject();
+    return GetMinimalStructEmptyObject();
 }
 
-const TypeObject* GetMinimalEmptyStructureObject()
+const TypeObject* GetMinimalStructEmptyObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("EmptyStructure", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructEmpty", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -5696,14 +4580,14 @@ const TypeObject* GetMinimalEmptyStructureObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("EmptyStructure", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructEmpty", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("EmptyStructure", false);
+    return TypeObjectFactory::get_instance()->get_type_object("StructEmpty", false);
 }
 
-const TypeObject* GetCompleteEmptyStructureObject()
+const TypeObject* GetCompleteStructEmptyObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("EmptyStructure", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("StructEmpty", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -5722,7 +4606,7 @@ const TypeObject* GetCompleteEmptyStructureObject()
     MemberId memberId = 0;
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("EmptyStructure");
+    type_object->complete().struct_type().header().detail().type_name("StructEmpty");
     // TODO inheritance
 
 
@@ -5748,9 +4632,9 @@ const TypeObject* GetCompleteEmptyStructureObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("EmptyStructure", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("StructEmpty", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("EmptyStructure", true);
+    return TypeObjectFactory::get_instance()->get_type_object("StructEmpty", true);
 }
 
 const TypeIdentifier* GetStructuresIdentifier(bool complete)
@@ -5799,430 +4683,430 @@ const TypeObject* GetMinimalStructuresObject()
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
-    MinimalStructMember mst_var_ShortStruct;
-    mst_var_ShortStruct.common().member_id(memberId++);
-    mst_var_ShortStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_ShortStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_ShortStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_ShortStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_ShortStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_ShortStruct.common().member_flags().IS_KEY(false);
-    mst_var_ShortStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_ShortStruct.common().member_type_id(*GetShortStructIdentifier(false));
-    MD5 var_ShortStruct_hash("var_ShortStruct");
+    MinimalStructMember mst_var_StructShort;
+    mst_var_StructShort.common().member_id(memberId++);
+    mst_var_StructShort.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructShort.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructShort.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructShort.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructShort.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructShort.common().member_flags().IS_KEY(false);
+    mst_var_StructShort.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructShort.common().member_type_id(*GetStructShortIdentifier(false));
+    MD5 var_StructShort_hash("var_StructShort");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_ShortStruct.detail().name_hash()[i] = var_ShortStruct_hash.digest[i];
+        mst_var_StructShort.detail().name_hash()[i] = var_StructShort_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_ShortStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructShort);
 
-    MinimalStructMember mst_var_UnsignedShortStruct;
-    mst_var_UnsignedShortStruct.common().member_id(memberId++);
-    mst_var_UnsignedShortStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_UnsignedShortStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_UnsignedShortStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_UnsignedShortStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_UnsignedShortStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_UnsignedShortStruct.common().member_flags().IS_KEY(false);
-    mst_var_UnsignedShortStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_UnsignedShortStruct.common().member_type_id(*GetUnsignedShortStructIdentifier(false));
-    MD5 var_UnsignedShortStruct_hash("var_UnsignedShortStruct");
+    MinimalStructMember mst_var_StructUnsignedShort;
+    mst_var_StructUnsignedShort.common().member_id(memberId++);
+    mst_var_StructUnsignedShort.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructUnsignedShort.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructUnsignedShort.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructUnsignedShort.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructUnsignedShort.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructUnsignedShort.common().member_flags().IS_KEY(false);
+    mst_var_StructUnsignedShort.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructUnsignedShort.common().member_type_id(*GetStructUnsignedShortIdentifier(false));
+    MD5 var_StructUnsignedShort_hash("var_StructUnsignedShort");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_UnsignedShortStruct.detail().name_hash()[i] = var_UnsignedShortStruct_hash.digest[i];
+        mst_var_StructUnsignedShort.detail().name_hash()[i] = var_StructUnsignedShort_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_UnsignedShortStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructUnsignedShort);
 
-    MinimalStructMember mst_var_LongStruct;
-    mst_var_LongStruct.common().member_id(memberId++);
-    mst_var_LongStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_LongStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_LongStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_LongStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_LongStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_LongStruct.common().member_flags().IS_KEY(false);
-    mst_var_LongStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_LongStruct.common().member_type_id(*GetLongStructIdentifier(false));
-    MD5 var_LongStruct_hash("var_LongStruct");
+    MinimalStructMember mst_var_StructLong;
+    mst_var_StructLong.common().member_id(memberId++);
+    mst_var_StructLong.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructLong.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructLong.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructLong.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructLong.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructLong.common().member_flags().IS_KEY(false);
+    mst_var_StructLong.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructLong.common().member_type_id(*GetStructLongIdentifier(false));
+    MD5 var_StructLong_hash("var_StructLong");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_LongStruct.detail().name_hash()[i] = var_LongStruct_hash.digest[i];
+        mst_var_StructLong.detail().name_hash()[i] = var_StructLong_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_LongStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructLong);
 
-    MinimalStructMember mst_var_UnsignedLongStruct;
-    mst_var_UnsignedLongStruct.common().member_id(memberId++);
-    mst_var_UnsignedLongStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_UnsignedLongStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_UnsignedLongStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_UnsignedLongStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_UnsignedLongStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_UnsignedLongStruct.common().member_flags().IS_KEY(false);
-    mst_var_UnsignedLongStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_UnsignedLongStruct.common().member_type_id(*GetUnsignedLongStructIdentifier(false));
-    MD5 var_UnsignedLongStruct_hash("var_UnsignedLongStruct");
+    MinimalStructMember mst_var_StructUnsignedLong;
+    mst_var_StructUnsignedLong.common().member_id(memberId++);
+    mst_var_StructUnsignedLong.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructUnsignedLong.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructUnsignedLong.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructUnsignedLong.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructUnsignedLong.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructUnsignedLong.common().member_flags().IS_KEY(false);
+    mst_var_StructUnsignedLong.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructUnsignedLong.common().member_type_id(*GetStructUnsignedLongIdentifier(false));
+    MD5 var_StructUnsignedLong_hash("var_StructUnsignedLong");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_UnsignedLongStruct.detail().name_hash()[i] = var_UnsignedLongStruct_hash.digest[i];
+        mst_var_StructUnsignedLong.detail().name_hash()[i] = var_StructUnsignedLong_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_UnsignedLongStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructUnsignedLong);
 
-    MinimalStructMember mst_var_LongLongStruct;
-    mst_var_LongLongStruct.common().member_id(memberId++);
-    mst_var_LongLongStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_LongLongStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_LongLongStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_LongLongStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_LongLongStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_LongLongStruct.common().member_flags().IS_KEY(false);
-    mst_var_LongLongStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_LongLongStruct.common().member_type_id(*GetLongLongStructIdentifier(false));
-    MD5 var_LongLongStruct_hash("var_LongLongStruct");
+    MinimalStructMember mst_var_StructLongLong;
+    mst_var_StructLongLong.common().member_id(memberId++);
+    mst_var_StructLongLong.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructLongLong.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructLongLong.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructLongLong.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructLongLong.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructLongLong.common().member_flags().IS_KEY(false);
+    mst_var_StructLongLong.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructLongLong.common().member_type_id(*GetStructLongLongIdentifier(false));
+    MD5 var_StructLongLong_hash("var_StructLongLong");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_LongLongStruct.detail().name_hash()[i] = var_LongLongStruct_hash.digest[i];
+        mst_var_StructLongLong.detail().name_hash()[i] = var_StructLongLong_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_LongLongStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructLongLong);
 
-    MinimalStructMember mst_var_UnsignedLongLongStruct;
-    mst_var_UnsignedLongLongStruct.common().member_id(memberId++);
-    mst_var_UnsignedLongLongStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_UnsignedLongLongStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_UnsignedLongLongStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_UnsignedLongLongStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_UnsignedLongLongStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_UnsignedLongLongStruct.common().member_flags().IS_KEY(false);
-    mst_var_UnsignedLongLongStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_UnsignedLongLongStruct.common().member_type_id(*GetUnsignedLongLongStructIdentifier(false));
-    MD5 var_UnsignedLongLongStruct_hash("var_UnsignedLongLongStruct");
+    MinimalStructMember mst_var_StructUnsignedLongLong;
+    mst_var_StructUnsignedLongLong.common().member_id(memberId++);
+    mst_var_StructUnsignedLongLong.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructUnsignedLongLong.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructUnsignedLongLong.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructUnsignedLongLong.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructUnsignedLongLong.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructUnsignedLongLong.common().member_flags().IS_KEY(false);
+    mst_var_StructUnsignedLongLong.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructUnsignedLongLong.common().member_type_id(*GetStructUnsignedLongLongIdentifier(false));
+    MD5 var_StructUnsignedLongLong_hash("var_StructUnsignedLongLong");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_UnsignedLongLongStruct.detail().name_hash()[i] = var_UnsignedLongLongStruct_hash.digest[i];
+        mst_var_StructUnsignedLongLong.detail().name_hash()[i] = var_StructUnsignedLongLong_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_UnsignedLongLongStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructUnsignedLongLong);
 
-    MinimalStructMember mst_var_FloatStruct;
-    mst_var_FloatStruct.common().member_id(memberId++);
-    mst_var_FloatStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_FloatStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_FloatStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_FloatStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_FloatStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_FloatStruct.common().member_flags().IS_KEY(false);
-    mst_var_FloatStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_FloatStruct.common().member_type_id(*GetFloatStructIdentifier(false));
-    MD5 var_FloatStruct_hash("var_FloatStruct");
+    MinimalStructMember mst_var_StructFloat;
+    mst_var_StructFloat.common().member_id(memberId++);
+    mst_var_StructFloat.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructFloat.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructFloat.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructFloat.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructFloat.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructFloat.common().member_flags().IS_KEY(false);
+    mst_var_StructFloat.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructFloat.common().member_type_id(*GetStructFloatIdentifier(false));
+    MD5 var_StructFloat_hash("var_StructFloat");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_FloatStruct.detail().name_hash()[i] = var_FloatStruct_hash.digest[i];
+        mst_var_StructFloat.detail().name_hash()[i] = var_StructFloat_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_FloatStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructFloat);
 
-    MinimalStructMember mst_var_DoubleStruct;
-    mst_var_DoubleStruct.common().member_id(memberId++);
-    mst_var_DoubleStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_DoubleStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_DoubleStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_DoubleStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_DoubleStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_DoubleStruct.common().member_flags().IS_KEY(false);
-    mst_var_DoubleStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_DoubleStruct.common().member_type_id(*GetDoubleStructIdentifier(false));
-    MD5 var_DoubleStruct_hash("var_DoubleStruct");
+    MinimalStructMember mst_var_StructDouble;
+    mst_var_StructDouble.common().member_id(memberId++);
+    mst_var_StructDouble.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructDouble.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructDouble.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructDouble.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructDouble.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructDouble.common().member_flags().IS_KEY(false);
+    mst_var_StructDouble.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructDouble.common().member_type_id(*GetStructDoubleIdentifier(false));
+    MD5 var_StructDouble_hash("var_StructDouble");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_DoubleStruct.detail().name_hash()[i] = var_DoubleStruct_hash.digest[i];
+        mst_var_StructDouble.detail().name_hash()[i] = var_StructDouble_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_DoubleStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructDouble);
 
-    MinimalStructMember mst_var_LongDoubleStruct;
-    mst_var_LongDoubleStruct.common().member_id(memberId++);
-    mst_var_LongDoubleStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_LongDoubleStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_LongDoubleStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_LongDoubleStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_LongDoubleStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_LongDoubleStruct.common().member_flags().IS_KEY(false);
-    mst_var_LongDoubleStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_LongDoubleStruct.common().member_type_id(*GetLongDoubleStructIdentifier(false));
-    MD5 var_LongDoubleStruct_hash("var_LongDoubleStruct");
+    MinimalStructMember mst_var_StructLongDouble;
+    mst_var_StructLongDouble.common().member_id(memberId++);
+    mst_var_StructLongDouble.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructLongDouble.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructLongDouble.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructLongDouble.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructLongDouble.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructLongDouble.common().member_flags().IS_KEY(false);
+    mst_var_StructLongDouble.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructLongDouble.common().member_type_id(*GetStructLongDoubleIdentifier(false));
+    MD5 var_StructLongDouble_hash("var_StructLongDouble");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_LongDoubleStruct.detail().name_hash()[i] = var_LongDoubleStruct_hash.digest[i];
+        mst_var_StructLongDouble.detail().name_hash()[i] = var_StructLongDouble_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_LongDoubleStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructLongDouble);
 
-    MinimalStructMember mst_var_BooleanStruct;
-    mst_var_BooleanStruct.common().member_id(memberId++);
-    mst_var_BooleanStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_BooleanStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_BooleanStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_BooleanStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_BooleanStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_BooleanStruct.common().member_flags().IS_KEY(false);
-    mst_var_BooleanStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_BooleanStruct.common().member_type_id(*GetBooleanStructIdentifier(false));
-    MD5 var_BooleanStruct_hash("var_BooleanStruct");
+    MinimalStructMember mst_var_StructBoolean;
+    mst_var_StructBoolean.common().member_id(memberId++);
+    mst_var_StructBoolean.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructBoolean.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructBoolean.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructBoolean.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructBoolean.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructBoolean.common().member_flags().IS_KEY(false);
+    mst_var_StructBoolean.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructBoolean.common().member_type_id(*GetStructBooleanIdentifier(false));
+    MD5 var_StructBoolean_hash("var_StructBoolean");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_BooleanStruct.detail().name_hash()[i] = var_BooleanStruct_hash.digest[i];
+        mst_var_StructBoolean.detail().name_hash()[i] = var_StructBoolean_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_BooleanStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructBoolean);
 
-    MinimalStructMember mst_var_OctetStruct;
-    mst_var_OctetStruct.common().member_id(memberId++);
-    mst_var_OctetStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_OctetStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_OctetStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_OctetStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_OctetStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_OctetStruct.common().member_flags().IS_KEY(false);
-    mst_var_OctetStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_OctetStruct.common().member_type_id(*GetOctetStructIdentifier(false));
-    MD5 var_OctetStruct_hash("var_OctetStruct");
+    MinimalStructMember mst_var_StructOctet;
+    mst_var_StructOctet.common().member_id(memberId++);
+    mst_var_StructOctet.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructOctet.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructOctet.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructOctet.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructOctet.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructOctet.common().member_flags().IS_KEY(false);
+    mst_var_StructOctet.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructOctet.common().member_type_id(*GetStructOctetIdentifier(false));
+    MD5 var_StructOctet_hash("var_StructOctet");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_OctetStruct.detail().name_hash()[i] = var_OctetStruct_hash.digest[i];
+        mst_var_StructOctet.detail().name_hash()[i] = var_StructOctet_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_OctetStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructOctet);
 
-    MinimalStructMember mst_var_Char8Struct;
-    mst_var_Char8Struct.common().member_id(memberId++);
-    mst_var_Char8Struct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_Char8Struct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_Char8Struct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_Char8Struct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_Char8Struct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_Char8Struct.common().member_flags().IS_KEY(false);
-    mst_var_Char8Struct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_Char8Struct.common().member_type_id(*GetChar8StructIdentifier(false));
-    MD5 var_Char8Struct_hash("var_Char8Struct");
+    MinimalStructMember mst_var_StructChar8;
+    mst_var_StructChar8.common().member_id(memberId++);
+    mst_var_StructChar8.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructChar8.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructChar8.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructChar8.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructChar8.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructChar8.common().member_flags().IS_KEY(false);
+    mst_var_StructChar8.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructChar8.common().member_type_id(*GetStructChar8Identifier(false));
+    MD5 var_StructChar8_hash("var_StructChar8");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_Char8Struct.detail().name_hash()[i] = var_Char8Struct_hash.digest[i];
+        mst_var_StructChar8.detail().name_hash()[i] = var_StructChar8_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_Char8Struct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructChar8);
 
-    MinimalStructMember mst_var_Char16Struct;
-    mst_var_Char16Struct.common().member_id(memberId++);
-    mst_var_Char16Struct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_Char16Struct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_Char16Struct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_Char16Struct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_Char16Struct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_Char16Struct.common().member_flags().IS_KEY(false);
-    mst_var_Char16Struct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_Char16Struct.common().member_type_id(*GetChar16StructIdentifier(false));
-    MD5 var_Char16Struct_hash("var_Char16Struct");
+    MinimalStructMember mst_var_StructChar16;
+    mst_var_StructChar16.common().member_id(memberId++);
+    mst_var_StructChar16.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructChar16.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructChar16.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructChar16.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructChar16.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructChar16.common().member_flags().IS_KEY(false);
+    mst_var_StructChar16.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructChar16.common().member_type_id(*GetStructChar16Identifier(false));
+    MD5 var_StructChar16_hash("var_StructChar16");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_Char16Struct.detail().name_hash()[i] = var_Char16Struct_hash.digest[i];
+        mst_var_StructChar16.detail().name_hash()[i] = var_StructChar16_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_Char16Struct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructChar16);
 
-    MinimalStructMember mst_var_StringStruct;
-    mst_var_StringStruct.common().member_id(memberId++);
-    mst_var_StringStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_StringStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_StringStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_StringStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_StringStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_StringStruct.common().member_flags().IS_KEY(false);
-    mst_var_StringStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_StringStruct.common().member_type_id(*GetStringStructIdentifier(false));
-    MD5 var_StringStruct_hash("var_StringStruct");
+    MinimalStructMember mst_var_StructString;
+    mst_var_StructString.common().member_id(memberId++);
+    mst_var_StructString.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructString.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructString.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructString.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructString.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructString.common().member_flags().IS_KEY(false);
+    mst_var_StructString.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructString.common().member_type_id(*GetStructStringIdentifier(false));
+    MD5 var_StructString_hash("var_StructString");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_StringStruct.detail().name_hash()[i] = var_StringStruct_hash.digest[i];
+        mst_var_StructString.detail().name_hash()[i] = var_StructString_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StringStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructString);
 
-    MinimalStructMember mst_var_WStringStruct;
-    mst_var_WStringStruct.common().member_id(memberId++);
-    mst_var_WStringStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_WStringStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_WStringStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_WStringStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_WStringStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_WStringStruct.common().member_flags().IS_KEY(false);
-    mst_var_WStringStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_WStringStruct.common().member_type_id(*GetWStringStructIdentifier(false));
-    MD5 var_WStringStruct_hash("var_WStringStruct");
+    MinimalStructMember mst_var_StructWString;
+    mst_var_StructWString.common().member_id(memberId++);
+    mst_var_StructWString.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructWString.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructWString.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructWString.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructWString.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructWString.common().member_flags().IS_KEY(false);
+    mst_var_StructWString.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructWString.common().member_type_id(*GetStructWStringIdentifier(false));
+    MD5 var_StructWString_hash("var_StructWString");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_WStringStruct.detail().name_hash()[i] = var_WStringStruct_hash.digest[i];
+        mst_var_StructWString.detail().name_hash()[i] = var_StructWString_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_WStringStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructWString);
 
-    MinimalStructMember mst_var_EnumStruct;
-    mst_var_EnumStruct.common().member_id(memberId++);
-    mst_var_EnumStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_EnumStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_EnumStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_EnumStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_EnumStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_EnumStruct.common().member_flags().IS_KEY(false);
-    mst_var_EnumStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_EnumStruct.common().member_type_id(*GetEnumStructIdentifier(false));
-    MD5 var_EnumStruct_hash("var_EnumStruct");
+    MinimalStructMember mst_var_StructEnum;
+    mst_var_StructEnum.common().member_id(memberId++);
+    mst_var_StructEnum.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructEnum.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructEnum.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructEnum.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructEnum.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructEnum.common().member_flags().IS_KEY(false);
+    mst_var_StructEnum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructEnum.common().member_type_id(*GetStructEnumIdentifier(false));
+    MD5 var_StructEnum_hash("var_StructEnum");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_EnumStruct.detail().name_hash()[i] = var_EnumStruct_hash.digest[i];
+        mst_var_StructEnum.detail().name_hash()[i] = var_StructEnum_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_EnumStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructEnum);
 
-    MinimalStructMember mst_var_BitMaskStruct;
-    mst_var_BitMaskStruct.common().member_id(memberId++);
-    mst_var_BitMaskStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_BitMaskStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_BitMaskStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_BitMaskStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_BitMaskStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_BitMaskStruct.common().member_flags().IS_KEY(false);
-    mst_var_BitMaskStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_BitMaskStruct.common().member_type_id(*GetBitMaskStructIdentifier(false));
-    MD5 var_BitMaskStruct_hash("var_BitMaskStruct");
+    MinimalStructMember mst_var_StructBitMask;
+    mst_var_StructBitMask.common().member_id(memberId++);
+    mst_var_StructBitMask.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructBitMask.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructBitMask.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructBitMask.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructBitMask.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructBitMask.common().member_flags().IS_KEY(false);
+    mst_var_StructBitMask.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructBitMask.common().member_type_id(*GetStructBitMaskIdentifier(false));
+    MD5 var_StructBitMask_hash("var_StructBitMask");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_BitMaskStruct.detail().name_hash()[i] = var_BitMaskStruct_hash.digest[i];
+        mst_var_StructBitMask.detail().name_hash()[i] = var_StructBitMask_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_BitMaskStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructBitMask);
 
-    MinimalStructMember mst_var_AliasStruct;
-    mst_var_AliasStruct.common().member_id(memberId++);
-    mst_var_AliasStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_AliasStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_AliasStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_AliasStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_AliasStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_AliasStruct.common().member_flags().IS_KEY(false);
-    mst_var_AliasStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_AliasStruct.common().member_type_id(*GetAliasStructIdentifier(false));
-    MD5 var_AliasStruct_hash("var_AliasStruct");
+    MinimalStructMember mst_var_StructAlias;
+    mst_var_StructAlias.common().member_id(memberId++);
+    mst_var_StructAlias.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructAlias.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructAlias.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructAlias.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructAlias.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructAlias.common().member_flags().IS_KEY(false);
+    mst_var_StructAlias.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructAlias.common().member_type_id(*GetStructAliasIdentifier(false));
+    MD5 var_StructAlias_hash("var_StructAlias");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_AliasStruct.detail().name_hash()[i] = var_AliasStruct_hash.digest[i];
+        mst_var_StructAlias.detail().name_hash()[i] = var_StructAlias_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_AliasStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructAlias);
 
-    MinimalStructMember mst_var_ShortArrayStruct;
-    mst_var_ShortArrayStruct.common().member_id(memberId++);
-    mst_var_ShortArrayStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_ShortArrayStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_ShortArrayStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_ShortArrayStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_ShortArrayStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_ShortArrayStruct.common().member_flags().IS_KEY(false);
-    mst_var_ShortArrayStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_ShortArrayStruct.common().member_type_id(*GetShortArrayStructIdentifier(false));
-    MD5 var_ShortArrayStruct_hash("var_ShortArrayStruct");
+    MinimalStructMember mst_var_StructShortArray;
+    mst_var_StructShortArray.common().member_id(memberId++);
+    mst_var_StructShortArray.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructShortArray.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructShortArray.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructShortArray.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructShortArray.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructShortArray.common().member_flags().IS_KEY(false);
+    mst_var_StructShortArray.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructShortArray.common().member_type_id(*GetStructShortArrayIdentifier(false));
+    MD5 var_StructShortArray_hash("var_StructShortArray");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_ShortArrayStruct.detail().name_hash()[i] = var_ShortArrayStruct_hash.digest[i];
+        mst_var_StructShortArray.detail().name_hash()[i] = var_StructShortArray_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_ShortArrayStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructShortArray);
 
-    MinimalStructMember mst_var_SequenceStruct;
-    mst_var_SequenceStruct.common().member_id(memberId++);
-    mst_var_SequenceStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_SequenceStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_SequenceStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_SequenceStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_SequenceStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_SequenceStruct.common().member_flags().IS_KEY(false);
-    mst_var_SequenceStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_SequenceStruct.common().member_type_id(*GetSequenceStructIdentifier(false));
-    MD5 var_SequenceStruct_hash("var_SequenceStruct");
+    MinimalStructMember mst_var_StructSequence;
+    mst_var_StructSequence.common().member_id(memberId++);
+    mst_var_StructSequence.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructSequence.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructSequence.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructSequence.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructSequence.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructSequence.common().member_flags().IS_KEY(false);
+    mst_var_StructSequence.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructSequence.common().member_type_id(*GetStructSequenceIdentifier(false));
+    MD5 var_StructSequence_hash("var_StructSequence");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_SequenceStruct.detail().name_hash()[i] = var_SequenceStruct_hash.digest[i];
+        mst_var_StructSequence.detail().name_hash()[i] = var_StructSequence_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_SequenceStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructSequence);
 
-    MinimalStructMember mst_var_MapStruct;
-    mst_var_MapStruct.common().member_id(memberId++);
-    mst_var_MapStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_MapStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_MapStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_MapStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_MapStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_MapStruct.common().member_flags().IS_KEY(false);
-    mst_var_MapStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_MapStruct.common().member_type_id(*GetMapStructIdentifier(false));
-    MD5 var_MapStruct_hash("var_MapStruct");
+    MinimalStructMember mst_var_StructMap;
+    mst_var_StructMap.common().member_id(memberId++);
+    mst_var_StructMap.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructMap.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructMap.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructMap.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructMap.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructMap.common().member_flags().IS_KEY(false);
+    mst_var_StructMap.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructMap.common().member_type_id(*GetStructMapIdentifier(false));
+    MD5 var_StructMap_hash("var_StructMap");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_MapStruct.detail().name_hash()[i] = var_MapStruct_hash.digest[i];
+        mst_var_StructMap.detail().name_hash()[i] = var_StructMap_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_MapStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructMap);
 
-    MinimalStructMember mst_var_UnionStruct;
-    mst_var_UnionStruct.common().member_id(memberId++);
-    mst_var_UnionStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_UnionStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_UnionStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_UnionStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_UnionStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_UnionStruct.common().member_flags().IS_KEY(false);
-    mst_var_UnionStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_UnionStruct.common().member_type_id(*GetUnionStructIdentifier(false));
-    MD5 var_UnionStruct_hash("var_UnionStruct");
+    MinimalStructMember mst_var_StructUnion;
+    mst_var_StructUnion.common().member_id(memberId++);
+    mst_var_StructUnion.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructUnion.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructUnion.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructUnion.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructUnion.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructUnion.common().member_flags().IS_KEY(false);
+    mst_var_StructUnion.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructUnion.common().member_type_id(*GetStructUnionIdentifier(false));
+    MD5 var_StructUnion_hash("var_StructUnion");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_UnionStruct.detail().name_hash()[i] = var_UnionStruct_hash.digest[i];
+        mst_var_StructUnion.detail().name_hash()[i] = var_StructUnion_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_UnionStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructUnion);
 
-    MinimalStructMember mst_var_StructureStruct;
-    mst_var_StructureStruct.common().member_id(memberId++);
-    mst_var_StructureStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_StructureStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_StructureStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_StructureStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_StructureStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_StructureStruct.common().member_flags().IS_KEY(false);
-    mst_var_StructureStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_StructureStruct.common().member_type_id(*GetStructureStructIdentifier(false));
-    MD5 var_StructureStruct_hash("var_StructureStruct");
+    MinimalStructMember mst_var_StructStructure;
+    mst_var_StructStructure.common().member_id(memberId++);
+    mst_var_StructStructure.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructStructure.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructStructure.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructStructure.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructStructure.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructStructure.common().member_flags().IS_KEY(false);
+    mst_var_StructStructure.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructStructure.common().member_type_id(*GetStructStructureIdentifier(false));
+    MD5 var_StructStructure_hash("var_StructStructure");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_StructureStruct.detail().name_hash()[i] = var_StructureStruct_hash.digest[i];
+        mst_var_StructStructure.detail().name_hash()[i] = var_StructStructure_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructureStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructStructure);
 
-    MinimalStructMember mst_var_BitsetStruct;
-    mst_var_BitsetStruct.common().member_id(memberId++);
-    mst_var_BitsetStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_BitsetStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_BitsetStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_BitsetStruct.common().member_flags().IS_OPTIONAL(false);
-    mst_var_BitsetStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_BitsetStruct.common().member_flags().IS_KEY(false);
-    mst_var_BitsetStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_BitsetStruct.common().member_type_id(*GetBitsetStructIdentifier(false));
-    MD5 var_BitsetStruct_hash("var_BitsetStruct");
+    MinimalStructMember mst_var_StructBitset;
+    mst_var_StructBitset.common().member_id(memberId++);
+    mst_var_StructBitset.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructBitset.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructBitset.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructBitset.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructBitset.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructBitset.common().member_flags().IS_KEY(false);
+    mst_var_StructBitset.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructBitset.common().member_type_id(*GetStructBitsetIdentifier(false));
+    MD5 var_StructBitset_hash("var_StructBitset");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_BitsetStruct.detail().name_hash()[i] = var_BitsetStruct_hash.digest[i];
+        mst_var_StructBitset.detail().name_hash()[i] = var_StructBitset_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_BitsetStruct);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructBitset);
 
-    MinimalStructMember mst_var_EmptyStructure;
-    mst_var_EmptyStructure.common().member_id(memberId++);
-    mst_var_EmptyStructure.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_var_EmptyStructure.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_var_EmptyStructure.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_var_EmptyStructure.common().member_flags().IS_OPTIONAL(false);
-    mst_var_EmptyStructure.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_var_EmptyStructure.common().member_flags().IS_KEY(false);
-    mst_var_EmptyStructure.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_var_EmptyStructure.common().member_type_id(*GetEmptyStructureIdentifier(false));
-    MD5 var_EmptyStructure_hash("var_EmptyStructure");
+    MinimalStructMember mst_var_StructEmpty;
+    mst_var_StructEmpty.common().member_id(memberId++);
+    mst_var_StructEmpty.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    mst_var_StructEmpty.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    mst_var_StructEmpty.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    mst_var_StructEmpty.common().member_flags().IS_OPTIONAL(false);
+    mst_var_StructEmpty.common().member_flags().IS_MUST_UNDERSTAND(false);
+    mst_var_StructEmpty.common().member_flags().IS_KEY(false);
+    mst_var_StructEmpty.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    mst_var_StructEmpty.common().member_type_id(*GetStructEmptyIdentifier(false));
+    MD5 var_StructEmpty_hash("var_StructEmpty");
     for(int i = 0; i < 4; ++i)
     {
-        mst_var_EmptyStructure.detail().name_hash()[i] = var_EmptyStructure_hash.digest[i];
+        mst_var_StructEmpty.detail().name_hash()[i] = var_StructEmpty_hash.digest[i];
     }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_EmptyStructure);
+    type_object->minimal().struct_type().member_seq().emplace_back(mst_var_StructEmpty);
 
 
     // Header
@@ -6276,355 +5160,355 @@ const TypeObject* GetCompleteStructuresObject()
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
-    CompleteStructMember cst_var_ShortStruct;
-    cst_var_ShortStruct.common().member_id(memberId++);
-    cst_var_ShortStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_ShortStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_ShortStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_ShortStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_ShortStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_ShortStruct.common().member_flags().IS_KEY(false);
-    cst_var_ShortStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_ShortStruct.common().member_type_id(*GetShortStructIdentifier(true));
-    cst_var_ShortStruct.detail().name("var_ShortStruct");
+    CompleteStructMember cst_var_StructShort;
+    cst_var_StructShort.common().member_id(memberId++);
+    cst_var_StructShort.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructShort.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructShort.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructShort.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructShort.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructShort.common().member_flags().IS_KEY(false);
+    cst_var_StructShort.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructShort.common().member_type_id(*GetStructShortIdentifier(true));
+    cst_var_StructShort.detail().name("var_StructShort");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_ShortStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructShort);
 
-    CompleteStructMember cst_var_UnsignedShortStruct;
-    cst_var_UnsignedShortStruct.common().member_id(memberId++);
-    cst_var_UnsignedShortStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_UnsignedShortStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_UnsignedShortStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_UnsignedShortStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_UnsignedShortStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_UnsignedShortStruct.common().member_flags().IS_KEY(false);
-    cst_var_UnsignedShortStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_UnsignedShortStruct.common().member_type_id(*GetUnsignedShortStructIdentifier(true));
-    cst_var_UnsignedShortStruct.detail().name("var_UnsignedShortStruct");
+    CompleteStructMember cst_var_StructUnsignedShort;
+    cst_var_StructUnsignedShort.common().member_id(memberId++);
+    cst_var_StructUnsignedShort.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructUnsignedShort.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructUnsignedShort.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructUnsignedShort.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructUnsignedShort.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructUnsignedShort.common().member_flags().IS_KEY(false);
+    cst_var_StructUnsignedShort.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructUnsignedShort.common().member_type_id(*GetStructUnsignedShortIdentifier(true));
+    cst_var_StructUnsignedShort.detail().name("var_StructUnsignedShort");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_UnsignedShortStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructUnsignedShort);
 
-    CompleteStructMember cst_var_LongStruct;
-    cst_var_LongStruct.common().member_id(memberId++);
-    cst_var_LongStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_LongStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_LongStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_LongStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_LongStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_LongStruct.common().member_flags().IS_KEY(false);
-    cst_var_LongStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_LongStruct.common().member_type_id(*GetLongStructIdentifier(true));
-    cst_var_LongStruct.detail().name("var_LongStruct");
+    CompleteStructMember cst_var_StructLong;
+    cst_var_StructLong.common().member_id(memberId++);
+    cst_var_StructLong.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructLong.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructLong.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructLong.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructLong.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructLong.common().member_flags().IS_KEY(false);
+    cst_var_StructLong.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructLong.common().member_type_id(*GetStructLongIdentifier(true));
+    cst_var_StructLong.detail().name("var_StructLong");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_LongStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructLong);
 
-    CompleteStructMember cst_var_UnsignedLongStruct;
-    cst_var_UnsignedLongStruct.common().member_id(memberId++);
-    cst_var_UnsignedLongStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_UnsignedLongStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_UnsignedLongStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_UnsignedLongStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_UnsignedLongStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_UnsignedLongStruct.common().member_flags().IS_KEY(false);
-    cst_var_UnsignedLongStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_UnsignedLongStruct.common().member_type_id(*GetUnsignedLongStructIdentifier(true));
-    cst_var_UnsignedLongStruct.detail().name("var_UnsignedLongStruct");
+    CompleteStructMember cst_var_StructUnsignedLong;
+    cst_var_StructUnsignedLong.common().member_id(memberId++);
+    cst_var_StructUnsignedLong.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructUnsignedLong.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructUnsignedLong.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructUnsignedLong.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructUnsignedLong.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructUnsignedLong.common().member_flags().IS_KEY(false);
+    cst_var_StructUnsignedLong.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructUnsignedLong.common().member_type_id(*GetStructUnsignedLongIdentifier(true));
+    cst_var_StructUnsignedLong.detail().name("var_StructUnsignedLong");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_UnsignedLongStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructUnsignedLong);
 
-    CompleteStructMember cst_var_LongLongStruct;
-    cst_var_LongLongStruct.common().member_id(memberId++);
-    cst_var_LongLongStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_LongLongStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_LongLongStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_LongLongStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_LongLongStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_LongLongStruct.common().member_flags().IS_KEY(false);
-    cst_var_LongLongStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_LongLongStruct.common().member_type_id(*GetLongLongStructIdentifier(true));
-    cst_var_LongLongStruct.detail().name("var_LongLongStruct");
+    CompleteStructMember cst_var_StructLongLong;
+    cst_var_StructLongLong.common().member_id(memberId++);
+    cst_var_StructLongLong.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructLongLong.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructLongLong.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructLongLong.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructLongLong.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructLongLong.common().member_flags().IS_KEY(false);
+    cst_var_StructLongLong.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructLongLong.common().member_type_id(*GetStructLongLongIdentifier(true));
+    cst_var_StructLongLong.detail().name("var_StructLongLong");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_LongLongStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructLongLong);
 
-    CompleteStructMember cst_var_UnsignedLongLongStruct;
-    cst_var_UnsignedLongLongStruct.common().member_id(memberId++);
-    cst_var_UnsignedLongLongStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_UnsignedLongLongStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_UnsignedLongLongStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_UnsignedLongLongStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_UnsignedLongLongStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_UnsignedLongLongStruct.common().member_flags().IS_KEY(false);
-    cst_var_UnsignedLongLongStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_UnsignedLongLongStruct.common().member_type_id(*GetUnsignedLongLongStructIdentifier(true));
-    cst_var_UnsignedLongLongStruct.detail().name("var_UnsignedLongLongStruct");
+    CompleteStructMember cst_var_StructUnsignedLongLong;
+    cst_var_StructUnsignedLongLong.common().member_id(memberId++);
+    cst_var_StructUnsignedLongLong.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructUnsignedLongLong.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructUnsignedLongLong.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructUnsignedLongLong.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructUnsignedLongLong.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructUnsignedLongLong.common().member_flags().IS_KEY(false);
+    cst_var_StructUnsignedLongLong.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructUnsignedLongLong.common().member_type_id(*GetStructUnsignedLongLongIdentifier(true));
+    cst_var_StructUnsignedLongLong.detail().name("var_StructUnsignedLongLong");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_UnsignedLongLongStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructUnsignedLongLong);
 
-    CompleteStructMember cst_var_FloatStruct;
-    cst_var_FloatStruct.common().member_id(memberId++);
-    cst_var_FloatStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_FloatStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_FloatStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_FloatStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_FloatStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_FloatStruct.common().member_flags().IS_KEY(false);
-    cst_var_FloatStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_FloatStruct.common().member_type_id(*GetFloatStructIdentifier(true));
-    cst_var_FloatStruct.detail().name("var_FloatStruct");
+    CompleteStructMember cst_var_StructFloat;
+    cst_var_StructFloat.common().member_id(memberId++);
+    cst_var_StructFloat.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructFloat.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructFloat.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructFloat.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructFloat.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructFloat.common().member_flags().IS_KEY(false);
+    cst_var_StructFloat.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructFloat.common().member_type_id(*GetStructFloatIdentifier(true));
+    cst_var_StructFloat.detail().name("var_StructFloat");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_FloatStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructFloat);
 
-    CompleteStructMember cst_var_DoubleStruct;
-    cst_var_DoubleStruct.common().member_id(memberId++);
-    cst_var_DoubleStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_DoubleStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_DoubleStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_DoubleStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_DoubleStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_DoubleStruct.common().member_flags().IS_KEY(false);
-    cst_var_DoubleStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_DoubleStruct.common().member_type_id(*GetDoubleStructIdentifier(true));
-    cst_var_DoubleStruct.detail().name("var_DoubleStruct");
+    CompleteStructMember cst_var_StructDouble;
+    cst_var_StructDouble.common().member_id(memberId++);
+    cst_var_StructDouble.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructDouble.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructDouble.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructDouble.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructDouble.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructDouble.common().member_flags().IS_KEY(false);
+    cst_var_StructDouble.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructDouble.common().member_type_id(*GetStructDoubleIdentifier(true));
+    cst_var_StructDouble.detail().name("var_StructDouble");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_DoubleStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructDouble);
 
-    CompleteStructMember cst_var_LongDoubleStruct;
-    cst_var_LongDoubleStruct.common().member_id(memberId++);
-    cst_var_LongDoubleStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_LongDoubleStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_LongDoubleStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_LongDoubleStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_LongDoubleStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_LongDoubleStruct.common().member_flags().IS_KEY(false);
-    cst_var_LongDoubleStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_LongDoubleStruct.common().member_type_id(*GetLongDoubleStructIdentifier(true));
-    cst_var_LongDoubleStruct.detail().name("var_LongDoubleStruct");
+    CompleteStructMember cst_var_StructLongDouble;
+    cst_var_StructLongDouble.common().member_id(memberId++);
+    cst_var_StructLongDouble.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructLongDouble.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructLongDouble.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructLongDouble.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructLongDouble.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructLongDouble.common().member_flags().IS_KEY(false);
+    cst_var_StructLongDouble.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructLongDouble.common().member_type_id(*GetStructLongDoubleIdentifier(true));
+    cst_var_StructLongDouble.detail().name("var_StructLongDouble");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_LongDoubleStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructLongDouble);
 
-    CompleteStructMember cst_var_BooleanStruct;
-    cst_var_BooleanStruct.common().member_id(memberId++);
-    cst_var_BooleanStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_BooleanStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_BooleanStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_BooleanStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_BooleanStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_BooleanStruct.common().member_flags().IS_KEY(false);
-    cst_var_BooleanStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_BooleanStruct.common().member_type_id(*GetBooleanStructIdentifier(true));
-    cst_var_BooleanStruct.detail().name("var_BooleanStruct");
+    CompleteStructMember cst_var_StructBoolean;
+    cst_var_StructBoolean.common().member_id(memberId++);
+    cst_var_StructBoolean.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructBoolean.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructBoolean.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructBoolean.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructBoolean.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructBoolean.common().member_flags().IS_KEY(false);
+    cst_var_StructBoolean.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructBoolean.common().member_type_id(*GetStructBooleanIdentifier(true));
+    cst_var_StructBoolean.detail().name("var_StructBoolean");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_BooleanStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructBoolean);
 
-    CompleteStructMember cst_var_OctetStruct;
-    cst_var_OctetStruct.common().member_id(memberId++);
-    cst_var_OctetStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_OctetStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_OctetStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_OctetStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_OctetStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_OctetStruct.common().member_flags().IS_KEY(false);
-    cst_var_OctetStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_OctetStruct.common().member_type_id(*GetOctetStructIdentifier(true));
-    cst_var_OctetStruct.detail().name("var_OctetStruct");
+    CompleteStructMember cst_var_StructOctet;
+    cst_var_StructOctet.common().member_id(memberId++);
+    cst_var_StructOctet.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructOctet.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructOctet.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructOctet.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructOctet.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructOctet.common().member_flags().IS_KEY(false);
+    cst_var_StructOctet.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructOctet.common().member_type_id(*GetStructOctetIdentifier(true));
+    cst_var_StructOctet.detail().name("var_StructOctet");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_OctetStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructOctet);
 
-    CompleteStructMember cst_var_Char8Struct;
-    cst_var_Char8Struct.common().member_id(memberId++);
-    cst_var_Char8Struct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_Char8Struct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_Char8Struct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_Char8Struct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_Char8Struct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_Char8Struct.common().member_flags().IS_KEY(false);
-    cst_var_Char8Struct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_Char8Struct.common().member_type_id(*GetChar8StructIdentifier(true));
-    cst_var_Char8Struct.detail().name("var_Char8Struct");
+    CompleteStructMember cst_var_StructChar8;
+    cst_var_StructChar8.common().member_id(memberId++);
+    cst_var_StructChar8.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructChar8.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructChar8.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructChar8.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructChar8.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructChar8.common().member_flags().IS_KEY(false);
+    cst_var_StructChar8.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructChar8.common().member_type_id(*GetStructChar8Identifier(true));
+    cst_var_StructChar8.detail().name("var_StructChar8");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_Char8Struct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructChar8);
 
-    CompleteStructMember cst_var_Char16Struct;
-    cst_var_Char16Struct.common().member_id(memberId++);
-    cst_var_Char16Struct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_Char16Struct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_Char16Struct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_Char16Struct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_Char16Struct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_Char16Struct.common().member_flags().IS_KEY(false);
-    cst_var_Char16Struct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_Char16Struct.common().member_type_id(*GetChar16StructIdentifier(true));
-    cst_var_Char16Struct.detail().name("var_Char16Struct");
+    CompleteStructMember cst_var_StructChar16;
+    cst_var_StructChar16.common().member_id(memberId++);
+    cst_var_StructChar16.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructChar16.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructChar16.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructChar16.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructChar16.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructChar16.common().member_flags().IS_KEY(false);
+    cst_var_StructChar16.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructChar16.common().member_type_id(*GetStructChar16Identifier(true));
+    cst_var_StructChar16.detail().name("var_StructChar16");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_Char16Struct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructChar16);
 
-    CompleteStructMember cst_var_StringStruct;
-    cst_var_StringStruct.common().member_id(memberId++);
-    cst_var_StringStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_StringStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_StringStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_StringStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_StringStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_StringStruct.common().member_flags().IS_KEY(false);
-    cst_var_StringStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_StringStruct.common().member_type_id(*GetStringStructIdentifier(true));
-    cst_var_StringStruct.detail().name("var_StringStruct");
+    CompleteStructMember cst_var_StructString;
+    cst_var_StructString.common().member_id(memberId++);
+    cst_var_StructString.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructString.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructString.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructString.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructString.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructString.common().member_flags().IS_KEY(false);
+    cst_var_StructString.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructString.common().member_type_id(*GetStructStringIdentifier(true));
+    cst_var_StructString.detail().name("var_StructString");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StringStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructString);
 
-    CompleteStructMember cst_var_WStringStruct;
-    cst_var_WStringStruct.common().member_id(memberId++);
-    cst_var_WStringStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_WStringStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_WStringStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_WStringStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_WStringStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_WStringStruct.common().member_flags().IS_KEY(false);
-    cst_var_WStringStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_WStringStruct.common().member_type_id(*GetWStringStructIdentifier(true));
-    cst_var_WStringStruct.detail().name("var_WStringStruct");
+    CompleteStructMember cst_var_StructWString;
+    cst_var_StructWString.common().member_id(memberId++);
+    cst_var_StructWString.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructWString.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructWString.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructWString.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructWString.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructWString.common().member_flags().IS_KEY(false);
+    cst_var_StructWString.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructWString.common().member_type_id(*GetStructWStringIdentifier(true));
+    cst_var_StructWString.detail().name("var_StructWString");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_WStringStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructWString);
 
-    CompleteStructMember cst_var_EnumStruct;
-    cst_var_EnumStruct.common().member_id(memberId++);
-    cst_var_EnumStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_EnumStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_EnumStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_EnumStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_EnumStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_EnumStruct.common().member_flags().IS_KEY(false);
-    cst_var_EnumStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_EnumStruct.common().member_type_id(*GetEnumStructIdentifier(true));
-    cst_var_EnumStruct.detail().name("var_EnumStruct");
+    CompleteStructMember cst_var_StructEnum;
+    cst_var_StructEnum.common().member_id(memberId++);
+    cst_var_StructEnum.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructEnum.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructEnum.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructEnum.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructEnum.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructEnum.common().member_flags().IS_KEY(false);
+    cst_var_StructEnum.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructEnum.common().member_type_id(*GetStructEnumIdentifier(true));
+    cst_var_StructEnum.detail().name("var_StructEnum");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_EnumStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructEnum);
 
-    CompleteStructMember cst_var_BitMaskStruct;
-    cst_var_BitMaskStruct.common().member_id(memberId++);
-    cst_var_BitMaskStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_BitMaskStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_BitMaskStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_BitMaskStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_BitMaskStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_BitMaskStruct.common().member_flags().IS_KEY(false);
-    cst_var_BitMaskStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_BitMaskStruct.common().member_type_id(*GetBitMaskStructIdentifier(true));
-    cst_var_BitMaskStruct.detail().name("var_BitMaskStruct");
+    CompleteStructMember cst_var_StructBitMask;
+    cst_var_StructBitMask.common().member_id(memberId++);
+    cst_var_StructBitMask.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructBitMask.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructBitMask.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructBitMask.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructBitMask.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructBitMask.common().member_flags().IS_KEY(false);
+    cst_var_StructBitMask.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructBitMask.common().member_type_id(*GetStructBitMaskIdentifier(true));
+    cst_var_StructBitMask.detail().name("var_StructBitMask");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_BitMaskStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructBitMask);
 
-    CompleteStructMember cst_var_AliasStruct;
-    cst_var_AliasStruct.common().member_id(memberId++);
-    cst_var_AliasStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_AliasStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_AliasStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_AliasStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_AliasStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_AliasStruct.common().member_flags().IS_KEY(false);
-    cst_var_AliasStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_AliasStruct.common().member_type_id(*GetAliasStructIdentifier(true));
-    cst_var_AliasStruct.detail().name("var_AliasStruct");
+    CompleteStructMember cst_var_StructAlias;
+    cst_var_StructAlias.common().member_id(memberId++);
+    cst_var_StructAlias.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructAlias.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructAlias.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructAlias.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructAlias.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructAlias.common().member_flags().IS_KEY(false);
+    cst_var_StructAlias.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructAlias.common().member_type_id(*GetStructAliasIdentifier(true));
+    cst_var_StructAlias.detail().name("var_StructAlias");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_AliasStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructAlias);
 
-    CompleteStructMember cst_var_ShortArrayStruct;
-    cst_var_ShortArrayStruct.common().member_id(memberId++);
-    cst_var_ShortArrayStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_ShortArrayStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_ShortArrayStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_ShortArrayStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_ShortArrayStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_ShortArrayStruct.common().member_flags().IS_KEY(false);
-    cst_var_ShortArrayStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_ShortArrayStruct.common().member_type_id(*GetShortArrayStructIdentifier(true));
-    cst_var_ShortArrayStruct.detail().name("var_ShortArrayStruct");
+    CompleteStructMember cst_var_StructShortArray;
+    cst_var_StructShortArray.common().member_id(memberId++);
+    cst_var_StructShortArray.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructShortArray.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructShortArray.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructShortArray.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructShortArray.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructShortArray.common().member_flags().IS_KEY(false);
+    cst_var_StructShortArray.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructShortArray.common().member_type_id(*GetStructShortArrayIdentifier(true));
+    cst_var_StructShortArray.detail().name("var_StructShortArray");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_ShortArrayStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructShortArray);
 
-    CompleteStructMember cst_var_SequenceStruct;
-    cst_var_SequenceStruct.common().member_id(memberId++);
-    cst_var_SequenceStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_SequenceStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_SequenceStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_SequenceStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_SequenceStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_SequenceStruct.common().member_flags().IS_KEY(false);
-    cst_var_SequenceStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_SequenceStruct.common().member_type_id(*GetSequenceStructIdentifier(true));
-    cst_var_SequenceStruct.detail().name("var_SequenceStruct");
+    CompleteStructMember cst_var_StructSequence;
+    cst_var_StructSequence.common().member_id(memberId++);
+    cst_var_StructSequence.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructSequence.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructSequence.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructSequence.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructSequence.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructSequence.common().member_flags().IS_KEY(false);
+    cst_var_StructSequence.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructSequence.common().member_type_id(*GetStructSequenceIdentifier(true));
+    cst_var_StructSequence.detail().name("var_StructSequence");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_SequenceStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructSequence);
 
-    CompleteStructMember cst_var_MapStruct;
-    cst_var_MapStruct.common().member_id(memberId++);
-    cst_var_MapStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_MapStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_MapStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_MapStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_MapStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_MapStruct.common().member_flags().IS_KEY(false);
-    cst_var_MapStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_MapStruct.common().member_type_id(*GetMapStructIdentifier(true));
-    cst_var_MapStruct.detail().name("var_MapStruct");
+    CompleteStructMember cst_var_StructMap;
+    cst_var_StructMap.common().member_id(memberId++);
+    cst_var_StructMap.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructMap.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructMap.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructMap.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructMap.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructMap.common().member_flags().IS_KEY(false);
+    cst_var_StructMap.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructMap.common().member_type_id(*GetStructMapIdentifier(true));
+    cst_var_StructMap.detail().name("var_StructMap");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_MapStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructMap);
 
-    CompleteStructMember cst_var_UnionStruct;
-    cst_var_UnionStruct.common().member_id(memberId++);
-    cst_var_UnionStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_UnionStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_UnionStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_UnionStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_UnionStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_UnionStruct.common().member_flags().IS_KEY(false);
-    cst_var_UnionStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_UnionStruct.common().member_type_id(*GetUnionStructIdentifier(true));
-    cst_var_UnionStruct.detail().name("var_UnionStruct");
+    CompleteStructMember cst_var_StructUnion;
+    cst_var_StructUnion.common().member_id(memberId++);
+    cst_var_StructUnion.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructUnion.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructUnion.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructUnion.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructUnion.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructUnion.common().member_flags().IS_KEY(false);
+    cst_var_StructUnion.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructUnion.common().member_type_id(*GetStructUnionIdentifier(true));
+    cst_var_StructUnion.detail().name("var_StructUnion");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_UnionStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructUnion);
 
-    CompleteStructMember cst_var_StructureStruct;
-    cst_var_StructureStruct.common().member_id(memberId++);
-    cst_var_StructureStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_StructureStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_StructureStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_StructureStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_StructureStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_StructureStruct.common().member_flags().IS_KEY(false);
-    cst_var_StructureStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_StructureStruct.common().member_type_id(*GetStructureStructIdentifier(true));
-    cst_var_StructureStruct.detail().name("var_StructureStruct");
+    CompleteStructMember cst_var_StructStructure;
+    cst_var_StructStructure.common().member_id(memberId++);
+    cst_var_StructStructure.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructStructure.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructStructure.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructStructure.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructStructure.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructStructure.common().member_flags().IS_KEY(false);
+    cst_var_StructStructure.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructStructure.common().member_type_id(*GetStructStructureIdentifier(true));
+    cst_var_StructStructure.detail().name("var_StructStructure");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructureStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructStructure);
 
-    CompleteStructMember cst_var_BitsetStruct;
-    cst_var_BitsetStruct.common().member_id(memberId++);
-    cst_var_BitsetStruct.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_BitsetStruct.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_BitsetStruct.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_BitsetStruct.common().member_flags().IS_OPTIONAL(false);
-    cst_var_BitsetStruct.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_BitsetStruct.common().member_flags().IS_KEY(false);
-    cst_var_BitsetStruct.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_BitsetStruct.common().member_type_id(*GetBitsetStructIdentifier(true));
-    cst_var_BitsetStruct.detail().name("var_BitsetStruct");
+    CompleteStructMember cst_var_StructBitset;
+    cst_var_StructBitset.common().member_id(memberId++);
+    cst_var_StructBitset.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructBitset.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructBitset.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructBitset.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructBitset.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructBitset.common().member_flags().IS_KEY(false);
+    cst_var_StructBitset.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructBitset.common().member_type_id(*GetStructBitsetIdentifier(true));
+    cst_var_StructBitset.detail().name("var_StructBitset");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_BitsetStruct);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructBitset);
 
-    CompleteStructMember cst_var_EmptyStructure;
-    cst_var_EmptyStructure.common().member_id(memberId++);
-    cst_var_EmptyStructure.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_var_EmptyStructure.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_var_EmptyStructure.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_var_EmptyStructure.common().member_flags().IS_OPTIONAL(false);
-    cst_var_EmptyStructure.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_var_EmptyStructure.common().member_flags().IS_KEY(false);
-    cst_var_EmptyStructure.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_var_EmptyStructure.common().member_type_id(*GetEmptyStructureIdentifier(true));
-    cst_var_EmptyStructure.detail().name("var_EmptyStructure");
+    CompleteStructMember cst_var_StructEmpty;
+    cst_var_StructEmpty.common().member_id(memberId++);
+    cst_var_StructEmpty.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
+    cst_var_StructEmpty.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
+    cst_var_StructEmpty.common().member_flags().IS_EXTERNAL(false); // Unsupported
+    cst_var_StructEmpty.common().member_flags().IS_OPTIONAL(false);
+    cst_var_StructEmpty.common().member_flags().IS_MUST_UNDERSTAND(false);
+    cst_var_StructEmpty.common().member_flags().IS_KEY(false);
+    cst_var_StructEmpty.common().member_flags().IS_DEFAULT(false); // Doesn't apply
+    cst_var_StructEmpty.common().member_type_id(*GetStructEmptyIdentifier(true));
+    cst_var_StructEmpty.detail().name("var_StructEmpty");
 
-    type_object->complete().struct_type().member_seq().emplace_back(cst_var_EmptyStructure);
+    type_object->complete().struct_type().member_seq().emplace_back(cst_var_StructEmpty);
 
 
     // Header

@@ -28,12 +28,6 @@
 using SerializedPayload_t = eprosima::fastrtps::rtps::SerializedPayload_t;
 using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
 
-
-
-
-
-
-
 MapShortShortPubSubType::MapShortShortPubSubType()
 {
     setName("MapShortShort");

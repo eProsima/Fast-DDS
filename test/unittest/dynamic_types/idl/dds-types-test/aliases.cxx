@@ -185,12 +185,6 @@ using namespace eprosima::fastcdr::exception;
 
 
 
-
-
-
-
-
-
 AliasInt16::AliasInt16()
 {
     // alias_int16 m_value
