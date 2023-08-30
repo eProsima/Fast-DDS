@@ -531,44 +531,50 @@ bool StatefulWriter::intraprocess_heartbeat(
 }
 
 bool StatefulWriter::change_removed_by_history(
-        CacheChange_t* a_change)
+        CacheChange_t* a_change,
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
+    bool ret_value = false;
     SequenceNumber_t sequence_number = a_change->sequenceNumber;
 
     std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
     EPROSIMA_LOG_INFO(RTPS_WRITER, "Change " << sequence_number << " to be removed.");
 
-    flow_controller_->remove_change(a_change);
-
-    // Take note of biggest removed sequence number to improve sending of gaps
-    if (sequence_number > biggest_removed_sequence_number_)
+    if (flow_controller_->remove_change(a_change, max_blocking_time))
     {
-        biggest_removed_sequence_number_ = sequence_number;
+
+        // Take note of biggest removed sequence number to improve sending of gaps
+        if (sequence_number > biggest_removed_sequence_number_)
+        {
+            biggest_removed_sequence_number_ = sequence_number;
+        }
+
+        // Invalidate CacheChange pointer in ReaderProxies.
+        for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
+                [sequence_number](ReaderProxy* reader)
+                {
+                    reader->change_has_been_removed(sequence_number);
+                    return false;
+                }
+                );
+
+        // remove from datasharing pool history
+        if (is_datasharing_compatible())
+        {
+            auto pool = std::dynamic_pointer_cast<WriterPool>(payload_pool_);
+            assert (pool != nullptr);
+
+            pool->remove_from_shared_history(a_change);
+            EPROSIMA_LOG_INFO(RTPS_WRITER, "Removing shared cache change with SN " << a_change->sequenceNumber);
+        }
+
+        may_remove_change_ = 2;
+        may_remove_change_cond_.notify_one();
+
+        ret_value = true;
     }
 
-    // Invalidate CacheChange pointer in ReaderProxies.
-    for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-            [sequence_number](ReaderProxy* reader)
-            {
-                reader->change_has_been_removed(sequence_number);
-                return false;
-            }
-            );
-
-    // remove from datasharing pool history
-    if (is_datasharing_compatible())
-    {
-        auto pool = std::dynamic_pointer_cast<WriterPool>(payload_pool_);
-        assert (pool != nullptr);
-
-        pool->remove_from_shared_history(a_change);
-        EPROSIMA_LOG_INFO(RTPS_WRITER, "Removing shared cache change with SN " << a_change->sequenceNumber);
-    }
-
-    may_remove_change_ = 2;
-    may_remove_change_cond_.notify_one();
-
-    return true;
+    return ret_value;
 }
 
 void StatefulWriter::send_heartbeat_to_all_readers()

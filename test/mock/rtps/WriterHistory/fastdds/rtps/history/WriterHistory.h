@@ -83,9 +83,15 @@ public:
 
     MOCK_METHOD1(remove_change_mock, bool(CacheChange_t*));
 
+    MOCK_METHOD2(remove_change_mock, bool(CacheChange_t*,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time));
+
     MOCK_METHOD0(getHistorySize, size_t());
 
     MOCK_METHOD0(remove_min_change, bool());
+
+    MOCK_METHOD1(remove_min_change, bool(
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time));
 
     MOCK_METHOD3(add_change_, bool(
             CacheChange_t* a_change,
@@ -121,6 +127,15 @@ public:
             CacheChange_t* change)
     {
         bool ret = remove_change_mock(change);
+        delete change;
+        return ret;
+    }
+
+    bool remove_change(
+            CacheChange_t* change,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
+    {
+        bool ret = remove_change_mock(change, max_blocking_time);
         delete change;
         return ret;
     }

@@ -21,9 +21,18 @@
 #define __TEST_REALTIME_MUTEX_HPP__
 
 #include <bits/pthreadtypes.h>
+#include <bits/types/clockid_t.h>
 
-extern "C" int pthread_mutex_lock(pthread_mutex_t* mutex);
+extern "C" int pthread_mutex_lock(
+        pthread_mutex_t* mutex);
 
-extern "C" int pthread_mutex_timedlock(pthread_mutex_t* mutex, const struct timespec* abs_timeout);
+extern "C" int pthread_mutex_timedlock(
+        pthread_mutex_t* mutex,
+        const struct timespec* abs_timeout);
+
+extern "C" int pthread_mutex_clocklock(
+        pthread_mutex_t* mutex,
+        clockid_t clock,
+        const struct timespec* abs_timeout);
 
 #endif // __TEST_REALTIME_MUTEX_HPP__
