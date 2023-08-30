@@ -1291,15 +1291,19 @@ private:
                         change->writer_info.is_linked.store(false);
                     }
                 }
+#if HAVE_STRICT_REALTIME
                 else
                 {
                     ret_value = !change->writer_info.is_linked.load();
                 }
+#endif // if HAVE_STRICT_REALTIME
             }
+#if HAVE_STRICT_REALTIME
             else
             {
                 ret_value = !change->writer_info.is_linked.load();
             }
+#endif // if HAVE_STRICT_REALTIME
             --async_mode.writers_interested_in_remove;
         }
 
