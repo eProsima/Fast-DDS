@@ -39,7 +39,7 @@
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
-    struct ShortStructStruct_rob
+    struct ShortStruct_rob
     {
         friend constexpr typename Tag::type get(
                 Tag)
@@ -48,35 +48,35 @@ namespace detail {
         }
     };
 
-    struct ShortStructStruct_f
+    struct ShortStruct_f
     {
-        typedef int16_t ShortStructStruct::* type;
+        typedef int16_t ShortStruct::* type;
         friend constexpr type get(
-                ShortStructStruct_f);
+                ShortStruct_f);
     };
 
-    template struct ShortStructStruct_rob<ShortStructStruct_f, &ShortStructStruct::m_var_short>;
+    template struct ShortStruct_rob<ShortStruct_f, &ShortStruct::m_var_short>;
 
     template <typename T, typename Tag>
-    inline size_t constexpr ShortStructStruct_offset_of() {
+    inline size_t constexpr ShortStruct_offset_of() {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
 #endif
 
 /*!
- * @brief This class represents the TopicDataType of the type ShortStructStruct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type ShortStruct defined by the user in the IDL file.
  * @ingroup primitives
  */
-class ShortStructStructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class ShortStructPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef ShortStructStruct type;
+    typedef ShortStruct type;
 
-    eProsima_user_DllExport ShortStructStructPubSubType();
+    eProsima_user_DllExport ShortStructPubSubType();
 
-    eProsima_user_DllExport virtual ~ShortStructStructPubSubType() override;
+    eProsima_user_DllExport virtual ~ShortStructPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -119,7 +119,7 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) ShortStructStruct();
+        new (memory) ShortStruct();
         return true;
     }
 
@@ -132,7 +132,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 2ULL == (detail::ShortStructStruct_offset_of<ShortStructStruct, detail::ShortStructStruct_f>() + sizeof(int16_t));
+        return 2ULL == (detail::ShortStruct_offset_of<ShortStruct, detail::ShortStruct_f>() + sizeof(int16_t));
 
     }};
 

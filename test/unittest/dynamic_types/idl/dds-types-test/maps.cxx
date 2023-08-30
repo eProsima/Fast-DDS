@@ -584,12 +584,6 @@ using namespace eprosima::fastcdr::exception;
 #define MapStringULong_max_key_cdr_typesize 0ULL;
 
 
-
-
-
-
-
-
 MapShortShort::MapShortShort()
 {
     // map<short, short> m_var_map_short_short

@@ -64,12 +64,6 @@ class Cdr;
 } // namespace eprosima
 
 
-typedef int32_t InnerAliasHelper;
-typedef eprosima::fastrtps::fixed_string<10> Inner_alias_bounded_string_helper;
-typedef std::wstring Inner_alias_bounded_wstring_helper;
-typedef std::array<int16_t, 2> Inner_alias_array_helper;
-typedef std::vector<int16_t> Inner_alias_sequence_helper;
-typedef std::map<int32_t, int32_t> Inner_alias_map_helper;
 /*!
  * @brief This class represents the structure EnumStructure defined by the user in the IDL file.
  * @ingroup enumerations

@@ -54,10 +54,10 @@ using namespace eprosima::fastrtps::types;
 
 eProsima_user_DllExport void registerprimitivesTypes();
 
-eProsima_user_DllExport const TypeIdentifier* GetShortStructStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetShortStructStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalShortStructStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteShortStructStructObject();
+eProsima_user_DllExport const TypeIdentifier* GetShortStructIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetShortStructObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalShortStructObject();
+eProsima_user_DllExport const TypeObject* GetCompleteShortStructObject();
 
 eProsima_user_DllExport const TypeIdentifier* GetUShortStructIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetUShortStructObject(bool complete = false);

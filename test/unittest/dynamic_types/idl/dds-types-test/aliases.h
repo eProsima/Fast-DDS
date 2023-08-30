@@ -64,12 +64,6 @@ class Cdr;
 } // namespace eprosima
 
 
-typedef int32_t InnerAliasHelper;
-typedef eprosima::fastrtps::fixed_string<10> Inner_alias_bounded_string_helper;
-typedef std::wstring Inner_alias_bounded_wstring_helper;
-typedef std::array<int16_t, 2> Inner_alias_array_helper;
-typedef std::vector<int16_t> Inner_alias_sequence_helper;
-typedef std::map<int32_t, int32_t> Inner_alias_map_helper;
 typedef int16_t alias_int16;
 typedef uint16_t alias_uint16;
 typedef int32_t alias_int32;

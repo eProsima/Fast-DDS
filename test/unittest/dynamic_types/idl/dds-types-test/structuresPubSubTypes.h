@@ -35,18 +35,12 @@
     Generated structures is not compatible with current installed Fast DDS. Please, regenerate it with fastddsgen.
 #endif  // GEN_API_VER
 
-typedef int32_t InnerAliasHelper;
-typedef eprosima::fastrtps::fixed_string<10> Inner_alias_bounded_string_helper;
-typedef std::wstring Inner_alias_bounded_wstring_helper;
-typedef std::array<int16_t, 2> Inner_alias_array_helper;
-typedef std::vector<int16_t> Inner_alias_sequence_helper;
-typedef std::map<int32_t, int32_t> Inner_alias_map_helper;
 
 #ifndef SWIG
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
-    struct ShortStruct_rob
+    struct StructShort_rob
     {
         friend constexpr typename Tag::type get(
                 Tag)
@@ -55,35 +49,35 @@ namespace detail {
         }
     };
 
-    struct ShortStruct_f
+    struct StructShort_f
     {
-        typedef int16_t ShortStruct::* type;
+        typedef int16_t StructShort::* type;
         friend constexpr type get(
-                ShortStruct_f);
+                StructShort_f);
     };
 
-    template struct ShortStruct_rob<ShortStruct_f, &ShortStruct::m_var_short>;
+    template struct StructShort_rob<StructShort_f, &StructShort::m_var_short>;
 
     template <typename T, typename Tag>
-    inline size_t constexpr ShortStruct_offset_of() {
+    inline size_t constexpr StructShort_offset_of() {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
 #endif
 
 /*!
- * @brief This class represents the TopicDataType of the type ShortStruct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructShort defined by the user in the IDL file.
  * @ingroup structures
  */
-class ShortStructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructShortPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef ShortStruct type;
+    typedef StructShort type;
 
-    eProsima_user_DllExport ShortStructPubSubType();
+    eProsima_user_DllExport StructShortPubSubType();
 
-    eProsima_user_DllExport virtual ~ShortStructPubSubType() override;
+    eProsima_user_DllExport virtual ~StructShortPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -126,7 +120,7 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) ShortStruct();
+        new (memory) StructShort();
         return true;
     }
 
@@ -139,7 +133,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 2ULL == (detail::ShortStruct_offset_of<ShortStruct, detail::ShortStruct_f>() + sizeof(int16_t));
+        return 2ULL == (detail::StructShort_offset_of<StructShort, detail::StructShort_f>() + sizeof(int16_t));
 
     }};
 
@@ -147,7 +141,7 @@ private:
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
-    struct UnsignedShortStruct_rob
+    struct StructUnsignedShort_rob
     {
         friend constexpr typename Tag::type get(
                 Tag)
@@ -156,35 +150,35 @@ namespace detail {
         }
     };
 
-    struct UnsignedShortStruct_f
+    struct StructUnsignedShort_f
     {
-        typedef uint16_t UnsignedShortStruct::* type;
+        typedef uint16_t StructUnsignedShort::* type;
         friend constexpr type get(
-                UnsignedShortStruct_f);
+                StructUnsignedShort_f);
     };
 
-    template struct UnsignedShortStruct_rob<UnsignedShortStruct_f, &UnsignedShortStruct::m_var_ushort>;
+    template struct StructUnsignedShort_rob<StructUnsignedShort_f, &StructUnsignedShort::m_var_ushort>;
 
     template <typename T, typename Tag>
-    inline size_t constexpr UnsignedShortStruct_offset_of() {
+    inline size_t constexpr StructUnsignedShort_offset_of() {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
 #endif
 
 /*!
- * @brief This class represents the TopicDataType of the type UnsignedShortStruct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructUnsignedShort defined by the user in the IDL file.
  * @ingroup structures
  */
-class UnsignedShortStructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructUnsignedShortPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef UnsignedShortStruct type;
+    typedef StructUnsignedShort type;
 
-    eProsima_user_DllExport UnsignedShortStructPubSubType();
+    eProsima_user_DllExport StructUnsignedShortPubSubType();
 
-    eProsima_user_DllExport virtual ~UnsignedShortStructPubSubType() override;
+    eProsima_user_DllExport virtual ~StructUnsignedShortPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -227,7 +221,7 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) UnsignedShortStruct();
+        new (memory) StructUnsignedShort();
         return true;
     }
 
@@ -240,7 +234,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 2ULL == (detail::UnsignedShortStruct_offset_of<UnsignedShortStruct, detail::UnsignedShortStruct_f>() + sizeof(uint16_t));
+        return 2ULL == (detail::StructUnsignedShort_offset_of<StructUnsignedShort, detail::StructUnsignedShort_f>() + sizeof(uint16_t));
 
     }};
 
@@ -248,7 +242,7 @@ private:
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
-    struct LongStruct_rob
+    struct StructLong_rob
     {
         friend constexpr typename Tag::type get(
                 Tag)
@@ -257,35 +251,35 @@ namespace detail {
         }
     };
 
-    struct LongStruct_f
+    struct StructLong_f
     {
-        typedef int32_t LongStruct::* type;
+        typedef int32_t StructLong::* type;
         friend constexpr type get(
-                LongStruct_f);
+                StructLong_f);
     };
 
-    template struct LongStruct_rob<LongStruct_f, &LongStruct::m_var_long>;
+    template struct StructLong_rob<StructLong_f, &StructLong::m_var_long>;
 
     template <typename T, typename Tag>
-    inline size_t constexpr LongStruct_offset_of() {
+    inline size_t constexpr StructLong_offset_of() {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
 #endif
 
 /*!
- * @brief This class represents the TopicDataType of the type LongStruct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructLong defined by the user in the IDL file.
  * @ingroup structures
  */
-class LongStructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructLongPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef LongStruct type;
+    typedef StructLong type;
 
-    eProsima_user_DllExport LongStructPubSubType();
+    eProsima_user_DllExport StructLongPubSubType();
 
-    eProsima_user_DllExport virtual ~LongStructPubSubType() override;
+    eProsima_user_DllExport virtual ~StructLongPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -328,7 +322,7 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) LongStruct();
+        new (memory) StructLong();
         return true;
     }
 
@@ -341,7 +335,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 4ULL == (detail::LongStruct_offset_of<LongStruct, detail::LongStruct_f>() + sizeof(int32_t));
+        return 4ULL == (detail::StructLong_offset_of<StructLong, detail::StructLong_f>() + sizeof(int32_t));
 
     }};
 
@@ -349,7 +343,7 @@ private:
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
-    struct UnsignedLongStruct_rob
+    struct StructUnsignedLong_rob
     {
         friend constexpr typename Tag::type get(
                 Tag)
@@ -358,35 +352,35 @@ namespace detail {
         }
     };
 
-    struct UnsignedLongStruct_f
+    struct StructUnsignedLong_f
     {
-        typedef uint32_t UnsignedLongStruct::* type;
+        typedef uint32_t StructUnsignedLong::* type;
         friend constexpr type get(
-                UnsignedLongStruct_f);
+                StructUnsignedLong_f);
     };
 
-    template struct UnsignedLongStruct_rob<UnsignedLongStruct_f, &UnsignedLongStruct::m_var_ulong>;
+    template struct StructUnsignedLong_rob<StructUnsignedLong_f, &StructUnsignedLong::m_var_ulong>;
 
     template <typename T, typename Tag>
-    inline size_t constexpr UnsignedLongStruct_offset_of() {
+    inline size_t constexpr StructUnsignedLong_offset_of() {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
 #endif
 
 /*!
- * @brief This class represents the TopicDataType of the type UnsignedLongStruct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructUnsignedLong defined by the user in the IDL file.
  * @ingroup structures
  */
-class UnsignedLongStructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructUnsignedLongPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef UnsignedLongStruct type;
+    typedef StructUnsignedLong type;
 
-    eProsima_user_DllExport UnsignedLongStructPubSubType();
+    eProsima_user_DllExport StructUnsignedLongPubSubType();
 
-    eProsima_user_DllExport virtual ~UnsignedLongStructPubSubType() override;
+    eProsima_user_DllExport virtual ~StructUnsignedLongPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -429,7 +423,7 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) UnsignedLongStruct();
+        new (memory) StructUnsignedLong();
         return true;
     }
 
@@ -442,7 +436,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 4ULL == (detail::UnsignedLongStruct_offset_of<UnsignedLongStruct, detail::UnsignedLongStruct_f>() + sizeof(uint32_t));
+        return 4ULL == (detail::StructUnsignedLong_offset_of<StructUnsignedLong, detail::StructUnsignedLong_f>() + sizeof(uint32_t));
 
     }};
 
@@ -450,7 +444,7 @@ private:
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
-    struct LongLongStruct_rob
+    struct StructLongLong_rob
     {
         friend constexpr typename Tag::type get(
                 Tag)
@@ -459,35 +453,35 @@ namespace detail {
         }
     };
 
-    struct LongLongStruct_f
+    struct StructLongLong_f
     {
-        typedef int64_t LongLongStruct::* type;
+        typedef int64_t StructLongLong::* type;
         friend constexpr type get(
-                LongLongStruct_f);
+                StructLongLong_f);
     };
 
-    template struct LongLongStruct_rob<LongLongStruct_f, &LongLongStruct::m_var_longlong>;
+    template struct StructLongLong_rob<StructLongLong_f, &StructLongLong::m_var_longlong>;
 
     template <typename T, typename Tag>
-    inline size_t constexpr LongLongStruct_offset_of() {
+    inline size_t constexpr StructLongLong_offset_of() {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
 #endif
 
 /*!
- * @brief This class represents the TopicDataType of the type LongLongStruct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructLongLong defined by the user in the IDL file.
  * @ingroup structures
  */
-class LongLongStructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructLongLongPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef LongLongStruct type;
+    typedef StructLongLong type;
 
-    eProsima_user_DllExport LongLongStructPubSubType();
+    eProsima_user_DllExport StructLongLongPubSubType();
 
-    eProsima_user_DllExport virtual ~LongLongStructPubSubType() override;
+    eProsima_user_DllExport virtual ~StructLongLongPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -530,7 +524,7 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) LongLongStruct();
+        new (memory) StructLongLong();
         return true;
     }
 
@@ -543,7 +537,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 8ULL == (detail::LongLongStruct_offset_of<LongLongStruct, detail::LongLongStruct_f>() + sizeof(int64_t));
+        return 8ULL == (detail::StructLongLong_offset_of<StructLongLong, detail::StructLongLong_f>() + sizeof(int64_t));
 
     }};
 
@@ -551,7 +545,7 @@ private:
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
-    struct UnsignedLongLongStruct_rob
+    struct StructUnsignedLongLong_rob
     {
         friend constexpr typename Tag::type get(
                 Tag)
@@ -560,35 +554,35 @@ namespace detail {
         }
     };
 
-    struct UnsignedLongLongStruct_f
+    struct StructUnsignedLongLong_f
     {
-        typedef uint64_t UnsignedLongLongStruct::* type;
+        typedef uint64_t StructUnsignedLongLong::* type;
         friend constexpr type get(
-                UnsignedLongLongStruct_f);
+                StructUnsignedLongLong_f);
     };
 
-    template struct UnsignedLongLongStruct_rob<UnsignedLongLongStruct_f, &UnsignedLongLongStruct::m_var_ulonglong>;
+    template struct StructUnsignedLongLong_rob<StructUnsignedLongLong_f, &StructUnsignedLongLong::m_var_ulonglong>;
 
     template <typename T, typename Tag>
-    inline size_t constexpr UnsignedLongLongStruct_offset_of() {
+    inline size_t constexpr StructUnsignedLongLong_offset_of() {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
 #endif
 
 /*!
- * @brief This class represents the TopicDataType of the type UnsignedLongLongStruct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructUnsignedLongLong defined by the user in the IDL file.
  * @ingroup structures
  */
-class UnsignedLongLongStructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructUnsignedLongLongPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef UnsignedLongLongStruct type;
+    typedef StructUnsignedLongLong type;
 
-    eProsima_user_DllExport UnsignedLongLongStructPubSubType();
+    eProsima_user_DllExport StructUnsignedLongLongPubSubType();
 
-    eProsima_user_DllExport virtual ~UnsignedLongLongStructPubSubType() override;
+    eProsima_user_DllExport virtual ~StructUnsignedLongLongPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -631,7 +625,7 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) UnsignedLongLongStruct();
+        new (memory) StructUnsignedLongLong();
         return true;
     }
 
@@ -644,7 +638,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 8ULL == (detail::UnsignedLongLongStruct_offset_of<UnsignedLongLongStruct, detail::UnsignedLongLongStruct_f>() + sizeof(uint64_t));
+        return 8ULL == (detail::StructUnsignedLongLong_offset_of<StructUnsignedLongLong, detail::StructUnsignedLongLong_f>() + sizeof(uint64_t));
 
     }};
 
@@ -652,7 +646,7 @@ private:
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
-    struct FloatStruct_rob
+    struct StructFloat_rob
     {
         friend constexpr typename Tag::type get(
                 Tag)
@@ -661,35 +655,35 @@ namespace detail {
         }
     };
 
-    struct FloatStruct_f
+    struct StructFloat_f
     {
-        typedef float FloatStruct::* type;
+        typedef float StructFloat::* type;
         friend constexpr type get(
-                FloatStruct_f);
+                StructFloat_f);
     };
 
-    template struct FloatStruct_rob<FloatStruct_f, &FloatStruct::m_var_float>;
+    template struct StructFloat_rob<StructFloat_f, &StructFloat::m_var_float>;
 
     template <typename T, typename Tag>
-    inline size_t constexpr FloatStruct_offset_of() {
+    inline size_t constexpr StructFloat_offset_of() {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
 #endif
 
 /*!
- * @brief This class represents the TopicDataType of the type FloatStruct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructFloat defined by the user in the IDL file.
  * @ingroup structures
  */
-class FloatStructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructFloatPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef FloatStruct type;
+    typedef StructFloat type;
 
-    eProsima_user_DllExport FloatStructPubSubType();
+    eProsima_user_DllExport StructFloatPubSubType();
 
-    eProsima_user_DllExport virtual ~FloatStructPubSubType() override;
+    eProsima_user_DllExport virtual ~StructFloatPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -732,7 +726,7 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) FloatStruct();
+        new (memory) StructFloat();
         return true;
     }
 
@@ -745,7 +739,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 4ULL == (detail::FloatStruct_offset_of<FloatStruct, detail::FloatStruct_f>() + sizeof(float));
+        return 4ULL == (detail::StructFloat_offset_of<StructFloat, detail::StructFloat_f>() + sizeof(float));
 
     }};
 
@@ -753,7 +747,7 @@ private:
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
-    struct DoubleStruct_rob
+    struct StructDouble_rob
     {
         friend constexpr typename Tag::type get(
                 Tag)
@@ -762,35 +756,35 @@ namespace detail {
         }
     };
 
-    struct DoubleStruct_f
+    struct StructDouble_f
     {
-        typedef double DoubleStruct::* type;
+        typedef double StructDouble::* type;
         friend constexpr type get(
-                DoubleStruct_f);
+                StructDouble_f);
     };
 
-    template struct DoubleStruct_rob<DoubleStruct_f, &DoubleStruct::m_var_double>;
+    template struct StructDouble_rob<StructDouble_f, &StructDouble::m_var_double>;
 
     template <typename T, typename Tag>
-    inline size_t constexpr DoubleStruct_offset_of() {
+    inline size_t constexpr StructDouble_offset_of() {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
 #endif
 
 /*!
- * @brief This class represents the TopicDataType of the type DoubleStruct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructDouble defined by the user in the IDL file.
  * @ingroup structures
  */
-class DoubleStructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructDoublePubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef DoubleStruct type;
+    typedef StructDouble type;
 
-    eProsima_user_DllExport DoubleStructPubSubType();
+    eProsima_user_DllExport StructDoublePubSubType();
 
-    eProsima_user_DllExport virtual ~DoubleStructPubSubType() override;
+    eProsima_user_DllExport virtual ~StructDoublePubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -833,7 +827,7 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) DoubleStruct();
+        new (memory) StructDouble();
         return true;
     }
 
@@ -846,7 +840,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 8ULL == (detail::DoubleStruct_offset_of<DoubleStruct, detail::DoubleStruct_f>() + sizeof(double));
+        return 8ULL == (detail::StructDouble_offset_of<StructDouble, detail::StructDouble_f>() + sizeof(double));
 
     }};
 
@@ -854,7 +848,7 @@ private:
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
-    struct LongDoubleStruct_rob
+    struct StructLongDouble_rob
     {
         friend constexpr typename Tag::type get(
                 Tag)
@@ -863,35 +857,35 @@ namespace detail {
         }
     };
 
-    struct LongDoubleStruct_f
+    struct StructLongDouble_f
     {
-        typedef long double LongDoubleStruct::* type;
+        typedef long double StructLongDouble::* type;
         friend constexpr type get(
-                LongDoubleStruct_f);
+                StructLongDouble_f);
     };
 
-    template struct LongDoubleStruct_rob<LongDoubleStruct_f, &LongDoubleStruct::m_var_longdouble>;
+    template struct StructLongDouble_rob<StructLongDouble_f, &StructLongDouble::m_var_longdouble>;
 
     template <typename T, typename Tag>
-    inline size_t constexpr LongDoubleStruct_offset_of() {
+    inline size_t constexpr StructLongDouble_offset_of() {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
 #endif
 
 /*!
- * @brief This class represents the TopicDataType of the type LongDoubleStruct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructLongDouble defined by the user in the IDL file.
  * @ingroup structures
  */
-class LongDoubleStructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructLongDoublePubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef LongDoubleStruct type;
+    typedef StructLongDouble type;
 
-    eProsima_user_DllExport LongDoubleStructPubSubType();
+    eProsima_user_DllExport StructLongDoublePubSubType();
 
-    eProsima_user_DllExport virtual ~LongDoubleStructPubSubType() override;
+    eProsima_user_DllExport virtual ~StructLongDoublePubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -934,7 +928,7 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) LongDoubleStruct();
+        new (memory) StructLongDouble();
         return true;
     }
 
@@ -947,7 +941,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 16ULL == (detail::LongDoubleStruct_offset_of<LongDoubleStruct, detail::LongDoubleStruct_f>() + sizeof(long double));
+        return 16ULL == (detail::StructLongDouble_offset_of<StructLongDouble, detail::StructLongDouble_f>() + sizeof(long double));
 
     }};
 
@@ -955,7 +949,7 @@ private:
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
-    struct BooleanStruct_rob
+    struct StructBoolean_rob
     {
         friend constexpr typename Tag::type get(
                 Tag)
@@ -964,35 +958,35 @@ namespace detail {
         }
     };
 
-    struct BooleanStruct_f
+    struct StructBoolean_f
     {
-        typedef bool BooleanStruct::* type;
+        typedef bool StructBoolean::* type;
         friend constexpr type get(
-                BooleanStruct_f);
+                StructBoolean_f);
     };
 
-    template struct BooleanStruct_rob<BooleanStruct_f, &BooleanStruct::m_var_boolean>;
+    template struct StructBoolean_rob<StructBoolean_f, &StructBoolean::m_var_boolean>;
 
     template <typename T, typename Tag>
-    inline size_t constexpr BooleanStruct_offset_of() {
+    inline size_t constexpr StructBoolean_offset_of() {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
 #endif
 
 /*!
- * @brief This class represents the TopicDataType of the type BooleanStruct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructBoolean defined by the user in the IDL file.
  * @ingroup structures
  */
-class BooleanStructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructBooleanPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef BooleanStruct type;
+    typedef StructBoolean type;
 
-    eProsima_user_DllExport BooleanStructPubSubType();
+    eProsima_user_DllExport StructBooleanPubSubType();
 
-    eProsima_user_DllExport virtual ~BooleanStructPubSubType() override;
+    eProsima_user_DllExport virtual ~StructBooleanPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -1035,7 +1029,7 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) BooleanStruct();
+        new (memory) StructBoolean();
         return true;
     }
 
@@ -1048,7 +1042,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 1ULL == (detail::BooleanStruct_offset_of<BooleanStruct, detail::BooleanStruct_f>() + sizeof(bool));
+        return 1ULL == (detail::StructBoolean_offset_of<StructBoolean, detail::StructBoolean_f>() + sizeof(bool));
 
     }};
 
@@ -1056,7 +1050,7 @@ private:
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
-    struct OctetStruct_rob
+    struct StructOctet_rob
     {
         friend constexpr typename Tag::type get(
                 Tag)
@@ -1065,35 +1059,35 @@ namespace detail {
         }
     };
 
-    struct OctetStruct_f
+    struct StructOctet_f
     {
-        typedef uint8_t OctetStruct::* type;
+        typedef uint8_t StructOctet::* type;
         friend constexpr type get(
-                OctetStruct_f);
+                StructOctet_f);
     };
 
-    template struct OctetStruct_rob<OctetStruct_f, &OctetStruct::m_var_octet>;
+    template struct StructOctet_rob<StructOctet_f, &StructOctet::m_var_octet>;
 
     template <typename T, typename Tag>
-    inline size_t constexpr OctetStruct_offset_of() {
+    inline size_t constexpr StructOctet_offset_of() {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
 #endif
 
 /*!
- * @brief This class represents the TopicDataType of the type OctetStruct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructOctet defined by the user in the IDL file.
  * @ingroup structures
  */
-class OctetStructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructOctetPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef OctetStruct type;
+    typedef StructOctet type;
 
-    eProsima_user_DllExport OctetStructPubSubType();
+    eProsima_user_DllExport StructOctetPubSubType();
 
-    eProsima_user_DllExport virtual ~OctetStructPubSubType() override;
+    eProsima_user_DllExport virtual ~StructOctetPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -1136,7 +1130,7 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) OctetStruct();
+        new (memory) StructOctet();
         return true;
     }
 
@@ -1149,7 +1143,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 1ULL == (detail::OctetStruct_offset_of<OctetStruct, detail::OctetStruct_f>() + sizeof(uint8_t));
+        return 1ULL == (detail::StructOctet_offset_of<StructOctet, detail::StructOctet_f>() + sizeof(uint8_t));
 
     }};
 
@@ -1157,7 +1151,7 @@ private:
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
-    struct Char8Struct_rob
+    struct StructChar8_rob
     {
         friend constexpr typename Tag::type get(
                 Tag)
@@ -1166,35 +1160,35 @@ namespace detail {
         }
     };
 
-    struct Char8Struct_f
+    struct StructChar8_f
     {
-        typedef char Char8Struct::* type;
+        typedef char StructChar8::* type;
         friend constexpr type get(
-                Char8Struct_f);
+                StructChar8_f);
     };
 
-    template struct Char8Struct_rob<Char8Struct_f, &Char8Struct::m_var_char8>;
+    template struct StructChar8_rob<StructChar8_f, &StructChar8::m_var_char8>;
 
     template <typename T, typename Tag>
-    inline size_t constexpr Char8Struct_offset_of() {
+    inline size_t constexpr StructChar8_offset_of() {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
 #endif
 
 /*!
- * @brief This class represents the TopicDataType of the type Char8Struct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructChar8 defined by the user in the IDL file.
  * @ingroup structures
  */
-class Char8StructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructChar8PubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef Char8Struct type;
+    typedef StructChar8 type;
 
-    eProsima_user_DllExport Char8StructPubSubType();
+    eProsima_user_DllExport StructChar8PubSubType();
 
-    eProsima_user_DllExport virtual ~Char8StructPubSubType() override;
+    eProsima_user_DllExport virtual ~StructChar8PubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -1237,7 +1231,7 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) Char8Struct();
+        new (memory) StructChar8();
         return true;
     }
 
@@ -1250,7 +1244,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 1ULL == (detail::Char8Struct_offset_of<Char8Struct, detail::Char8Struct_f>() + sizeof(char));
+        return 1ULL == (detail::StructChar8_offset_of<StructChar8, detail::StructChar8_f>() + sizeof(char));
 
     }};
 
@@ -1258,7 +1252,7 @@ private:
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
-    struct Char16Struct_rob
+    struct StructChar16_rob
     {
         friend constexpr typename Tag::type get(
                 Tag)
@@ -1267,35 +1261,35 @@ namespace detail {
         }
     };
 
-    struct Char16Struct_f
+    struct StructChar16_f
     {
-        typedef wchar_t Char16Struct::* type;
+        typedef wchar_t StructChar16::* type;
         friend constexpr type get(
-                Char16Struct_f);
+                StructChar16_f);
     };
 
-    template struct Char16Struct_rob<Char16Struct_f, &Char16Struct::m_var_char16>;
+    template struct StructChar16_rob<StructChar16_f, &StructChar16::m_var_char16>;
 
     template <typename T, typename Tag>
-    inline size_t constexpr Char16Struct_offset_of() {
+    inline size_t constexpr StructChar16_offset_of() {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
 #endif
 
 /*!
- * @brief This class represents the TopicDataType of the type Char16Struct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructChar16 defined by the user in the IDL file.
  * @ingroup structures
  */
-class Char16StructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructChar16PubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef Char16Struct type;
+    typedef StructChar16 type;
 
-    eProsima_user_DllExport Char16StructPubSubType();
+    eProsima_user_DllExport StructChar16PubSubType();
 
-    eProsima_user_DllExport virtual ~Char16StructPubSubType() override;
+    eProsima_user_DllExport virtual ~StructChar16PubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -1338,7 +1332,7 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) Char16Struct();
+        new (memory) StructChar16();
         return true;
     }
 
@@ -1351,23 +1345,23 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 4ULL == (detail::Char16Struct_offset_of<Char16Struct, detail::Char16Struct_f>() + sizeof(wchar_t));
+        return 4ULL == (detail::StructChar16_offset_of<StructChar16, detail::StructChar16_f>() + sizeof(wchar_t));
 
     }};
 
 /*!
- * @brief This class represents the TopicDataType of the type StringStruct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructString defined by the user in the IDL file.
  * @ingroup structures
  */
-class StringStructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructStringPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef StringStruct type;
+    typedef StructString type;
 
-    eProsima_user_DllExport StringStructPubSubType();
+    eProsima_user_DllExport StructStringPubSubType();
 
-    eProsima_user_DllExport virtual ~StringStructPubSubType() override;
+    eProsima_user_DllExport virtual ~StructStringPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -1422,18 +1416,18 @@ public:
 };
 
 /*!
- * @brief This class represents the TopicDataType of the type WStringStruct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructWString defined by the user in the IDL file.
  * @ingroup structures
  */
-class WStringStructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructWStringPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef WStringStruct type;
+    typedef StructWString type;
 
-    eProsima_user_DllExport WStringStructPubSubType();
+    eProsima_user_DllExport StructWStringPubSubType();
 
-    eProsima_user_DllExport virtual ~WStringStructPubSubType() override;
+    eProsima_user_DllExport virtual ~StructWStringPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -1488,18 +1482,18 @@ public:
 };
 
 /*!
- * @brief This class represents the TopicDataType of the type BoundedStringStruct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructBoundedString defined by the user in the IDL file.
  * @ingroup structures
  */
-class BoundedStringStructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructBoundedStringPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef BoundedStringStruct type;
+    typedef StructBoundedString type;
 
-    eProsima_user_DllExport BoundedStringStructPubSubType();
+    eProsima_user_DllExport StructBoundedStringPubSubType();
 
-    eProsima_user_DllExport virtual ~BoundedStringStructPubSubType() override;
+    eProsima_user_DllExport virtual ~StructBoundedStringPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -1554,18 +1548,18 @@ public:
 };
 
 /*!
- * @brief This class represents the TopicDataType of the type BoundedWStringStruct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructBoundedWString defined by the user in the IDL file.
  * @ingroup structures
  */
-class BoundedWStringStructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructBoundedWStringPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef BoundedWStringStruct type;
+    typedef StructBoundedWString type;
 
-    eProsima_user_DllExport BoundedWStringStructPubSubType();
+    eProsima_user_DllExport StructBoundedWStringPubSubType();
 
-    eProsima_user_DllExport virtual ~BoundedWStringStructPubSubType() override;
+    eProsima_user_DllExport virtual ~StructBoundedWStringPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -1620,18 +1614,18 @@ public:
 };
 
 /*!
- * @brief This class represents the TopicDataType of the type EnumStruct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructEnum defined by the user in the IDL file.
  * @ingroup structures
  */
-class EnumStructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructEnumPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef EnumStruct type;
+    typedef StructEnum type;
 
-    eProsima_user_DllExport EnumStructPubSubType();
+    eProsima_user_DllExport StructEnumPubSubType();
 
-    eProsima_user_DllExport virtual ~EnumStructPubSubType() override;
+    eProsima_user_DllExport virtual ~StructEnumPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -1658,507 +1652,6 @@ public:
     eProsima_user_DllExport inline bool is_bounded() const override
     {
         return false;
-    }
-
-#endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
-
-#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
-
-#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-
-#ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
-    eProsima_user_DllExport inline bool construct_sample(
-            void* memory) const override
-    {
-        (void)memory;
-        return false;
-    }
-
-#endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
-
-    MD5 m_md5;
-    unsigned char* m_keyBuffer;
-
-};
-
-#ifndef SWIG
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct BitMaskStruct_rob
-    {
-        friend constexpr typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct BitMaskStruct_f
-    {
-        typedef InnerBitMaskHelper BitMaskStruct::* type;
-        friend constexpr type get(
-                BitMaskStruct_f);
-    };
-
-    template struct BitMaskStruct_rob<BitMaskStruct_f, &BitMaskStruct::m_var_bitmask>;
-
-    template <typename T, typename Tag>
-    inline size_t constexpr BitMaskStruct_offset_of() {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-    }
-}
-#endif
-
-/*!
- * @brief This class represents the TopicDataType of the type BitMaskStruct defined by the user in the IDL file.
- * @ingroup structures
- */
-class BitMaskStructPubSubType : public eprosima::fastdds::dds::TopicDataType
-{
-public:
-
-    typedef BitMaskStruct type;
-
-    eProsima_user_DllExport BitMaskStructPubSubType();
-
-    eProsima_user_DllExport virtual ~BitMaskStructPubSubType() override;
-
-    eProsima_user_DllExport virtual bool serialize(
-            void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
-
-    eProsima_user_DllExport virtual bool deserialize(
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
-            void* data) override;
-
-    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-            void* data) override;
-
-    eProsima_user_DllExport virtual bool getKey(
-            void* data,
-            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
-            bool force_md5 = false) override;
-
-    eProsima_user_DllExport virtual void* createData() override;
-
-    eProsima_user_DllExport virtual void deleteData(
-            void* data) override;
-
-#ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
-    eProsima_user_DllExport inline bool is_bounded() const override
-    {
-        return true;
-    }
-
-#endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
-
-#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return is_plain_impl();
-    }
-
-#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-
-#ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
-    eProsima_user_DllExport inline bool construct_sample(
-            void* memory) const override
-    {
-        new (memory) BitMaskStruct();
-        return true;
-    }
-
-#endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
-
-    MD5 m_md5;
-    unsigned char* m_keyBuffer;
-
-private:
-
-    static constexpr bool is_plain_impl()
-    {
-        return 4ULL == (detail::BitMaskStruct_offset_of<BitMaskStruct, detail::BitMaskStruct_f>() + sizeof(InnerBitMaskHelper));
-
-    }};
-
-#ifndef SWIG
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct AliasStruct_rob
-    {
-        friend constexpr typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct AliasStruct_f
-    {
-        typedef InnerAliasHelper AliasStruct::* type;
-        friend constexpr type get(
-                AliasStruct_f);
-    };
-
-    template struct AliasStruct_rob<AliasStruct_f, &AliasStruct::m_var_alias>;
-
-    template <typename T, typename Tag>
-    inline size_t constexpr AliasStruct_offset_of() {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-    }
-}
-#endif
-
-/*!
- * @brief This class represents the TopicDataType of the type AliasStruct defined by the user in the IDL file.
- * @ingroup structures
- */
-class AliasStructPubSubType : public eprosima::fastdds::dds::TopicDataType
-{
-public:
-
-    typedef AliasStruct type;
-
-    eProsima_user_DllExport AliasStructPubSubType();
-
-    eProsima_user_DllExport virtual ~AliasStructPubSubType() override;
-
-    eProsima_user_DllExport virtual bool serialize(
-            void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
-
-    eProsima_user_DllExport virtual bool deserialize(
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
-            void* data) override;
-
-    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-            void* data) override;
-
-    eProsima_user_DllExport virtual bool getKey(
-            void* data,
-            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
-            bool force_md5 = false) override;
-
-    eProsima_user_DllExport virtual void* createData() override;
-
-    eProsima_user_DllExport virtual void deleteData(
-            void* data) override;
-
-#ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
-    eProsima_user_DllExport inline bool is_bounded() const override
-    {
-        return true;
-    }
-
-#endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
-
-#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return is_plain_impl();
-    }
-
-#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-
-#ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
-    eProsima_user_DllExport inline bool construct_sample(
-            void* memory) const override
-    {
-        new (memory) AliasStruct();
-        return true;
-    }
-
-#endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
-
-    MD5 m_md5;
-    unsigned char* m_keyBuffer;
-
-private:
-
-    static constexpr bool is_plain_impl()
-    {
-        return 4ULL == (detail::AliasStruct_offset_of<AliasStruct, detail::AliasStruct_f>() + sizeof(InnerAliasHelper));
-
-    }};
-
-#ifndef SWIG
-namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct ShortArrayStruct_rob
-    {
-        friend constexpr typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-    };
-
-    struct ShortArrayStruct_f
-    {
-        typedef std::array<int16_t, 10> ShortArrayStruct::* type;
-        friend constexpr type get(
-                ShortArrayStruct_f);
-    };
-
-    template struct ShortArrayStruct_rob<ShortArrayStruct_f, &ShortArrayStruct::m_var_array_short>;
-
-    template <typename T, typename Tag>
-    inline size_t constexpr ShortArrayStruct_offset_of() {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-    }
-}
-#endif
-
-/*!
- * @brief This class represents the TopicDataType of the type ShortArrayStruct defined by the user in the IDL file.
- * @ingroup structures
- */
-class ShortArrayStructPubSubType : public eprosima::fastdds::dds::TopicDataType
-{
-public:
-
-    typedef ShortArrayStruct type;
-
-    eProsima_user_DllExport ShortArrayStructPubSubType();
-
-    eProsima_user_DllExport virtual ~ShortArrayStructPubSubType() override;
-
-    eProsima_user_DllExport virtual bool serialize(
-            void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
-
-    eProsima_user_DllExport virtual bool deserialize(
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
-            void* data) override;
-
-    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-            void* data) override;
-
-    eProsima_user_DllExport virtual bool getKey(
-            void* data,
-            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
-            bool force_md5 = false) override;
-
-    eProsima_user_DllExport virtual void* createData() override;
-
-    eProsima_user_DllExport virtual void deleteData(
-            void* data) override;
-
-#ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
-    eProsima_user_DllExport inline bool is_bounded() const override
-    {
-        return true;
-    }
-
-#endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
-
-#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return is_plain_impl();
-    }
-
-#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-
-#ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
-    eProsima_user_DllExport inline bool construct_sample(
-            void* memory) const override
-    {
-        new (memory) ShortArrayStruct();
-        return true;
-    }
-
-#endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
-
-    MD5 m_md5;
-    unsigned char* m_keyBuffer;
-
-private:
-
-    static constexpr bool is_plain_impl()
-    {
-        return 20ULL == (detail::ShortArrayStruct_offset_of<ShortArrayStruct, detail::ShortArrayStruct_f>() + sizeof(std::array<int16_t, 10>));
-
-    }};
-
-/*!
- * @brief This class represents the TopicDataType of the type SequenceStruct defined by the user in the IDL file.
- * @ingroup structures
- */
-class SequenceStructPubSubType : public eprosima::fastdds::dds::TopicDataType
-{
-public:
-
-    typedef SequenceStruct type;
-
-    eProsima_user_DllExport SequenceStructPubSubType();
-
-    eProsima_user_DllExport virtual ~SequenceStructPubSubType() override;
-
-    eProsima_user_DllExport virtual bool serialize(
-            void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
-
-    eProsima_user_DllExport virtual bool deserialize(
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
-            void* data) override;
-
-    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-            void* data) override;
-
-    eProsima_user_DllExport virtual bool getKey(
-            void* data,
-            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
-            bool force_md5 = false) override;
-
-    eProsima_user_DllExport virtual void* createData() override;
-
-    eProsima_user_DllExport virtual void deleteData(
-            void* data) override;
-
-#ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
-    eProsima_user_DllExport inline bool is_bounded() const override
-    {
-        return false;
-    }
-
-#endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
-
-#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
-
-#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-
-#ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
-    eProsima_user_DllExport inline bool construct_sample(
-            void* memory) const override
-    {
-        (void)memory;
-        return false;
-    }
-
-#endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
-
-    MD5 m_md5;
-    unsigned char* m_keyBuffer;
-
-};
-
-/*!
- * @brief This class represents the TopicDataType of the type MapStruct defined by the user in the IDL file.
- * @ingroup structures
- */
-class MapStructPubSubType : public eprosima::fastdds::dds::TopicDataType
-{
-public:
-
-    typedef MapStruct type;
-
-    eProsima_user_DllExport MapStructPubSubType();
-
-    eProsima_user_DllExport virtual ~MapStructPubSubType() override;
-
-    eProsima_user_DllExport virtual bool serialize(
-            void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
-
-    eProsima_user_DllExport virtual bool deserialize(
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
-            void* data) override;
-
-    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-            void* data) override;
-
-    eProsima_user_DllExport virtual bool getKey(
-            void* data,
-            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
-            bool force_md5 = false) override;
-
-    eProsima_user_DllExport virtual void* createData() override;
-
-    eProsima_user_DllExport virtual void deleteData(
-            void* data) override;
-
-#ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
-    eProsima_user_DllExport inline bool is_bounded() const override
-    {
-        return false;
-    }
-
-#endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
-
-#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-    eProsima_user_DllExport inline bool is_plain() const override
-    {
-        return false;
-    }
-
-#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
-
-#ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
-    eProsima_user_DllExport inline bool construct_sample(
-            void* memory) const override
-    {
-        (void)memory;
-        return false;
-    }
-
-#endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
-
-    MD5 m_md5;
-    unsigned char* m_keyBuffer;
-
-};
-
-/*!
- * @brief This class represents the TopicDataType of the type UnionStruct defined by the user in the IDL file.
- * @ingroup structures
- */
-class UnionStructPubSubType : public eprosima::fastdds::dds::TopicDataType
-{
-public:
-
-    typedef UnionStruct type;
-
-    eProsima_user_DllExport UnionStructPubSubType();
-
-    eProsima_user_DllExport virtual ~UnionStructPubSubType() override;
-
-    eProsima_user_DllExport virtual bool serialize(
-            void* data,
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
-
-    eProsima_user_DllExport virtual bool deserialize(
-            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
-            void* data) override;
-
-    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
-            void* data) override;
-
-    eProsima_user_DllExport virtual bool getKey(
-            void* data,
-            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
-            bool force_md5 = false) override;
-
-    eProsima_user_DllExport virtual void* createData() override;
-
-    eProsima_user_DllExport virtual void deleteData(
-            void* data) override;
-
-#ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
-    eProsima_user_DllExport inline bool is_bounded() const override
-    {
-        return true;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
@@ -2190,7 +1683,7 @@ public:
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
-    struct StructureStruct_rob
+    struct StructBitMask_rob
     {
         friend constexpr typename Tag::type get(
                 Tag)
@@ -2199,35 +1692,35 @@ namespace detail {
         }
     };
 
-    struct StructureStruct_f
+    struct StructBitMask_f
     {
-        typedef InnerStructureHelper StructureStruct::* type;
+        typedef InnerBitMaskHelper StructBitMask::* type;
         friend constexpr type get(
-                StructureStruct_f);
+                StructBitMask_f);
     };
 
-    template struct StructureStruct_rob<StructureStruct_f, &StructureStruct::m_var_structure>;
+    template struct StructBitMask_rob<StructBitMask_f, &StructBitMask::m_var_bitmask>;
 
     template <typename T, typename Tag>
-    inline size_t constexpr StructureStruct_offset_of() {
+    inline size_t constexpr StructBitMask_offset_of() {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
 #endif
 
 /*!
- * @brief This class represents the TopicDataType of the type StructureStruct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructBitMask defined by the user in the IDL file.
  * @ingroup structures
  */
-class StructureStructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructBitMaskPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef StructureStruct type;
+    typedef StructBitMask type;
 
-    eProsima_user_DllExport StructureStructPubSubType();
+    eProsima_user_DllExport StructBitMaskPubSubType();
 
-    eProsima_user_DllExport virtual ~StructureStructPubSubType() override;
+    eProsima_user_DllExport virtual ~StructBitMaskPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -2270,7 +1763,7 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) StructureStruct();
+        new (memory) StructBitMask();
         return true;
     }
 
@@ -2283,7 +1776,7 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 8ULL == (detail::StructureStruct_offset_of<StructureStruct, detail::StructureStruct_f>() + sizeof(InnerStructureHelper));
+        return 4ULL == (detail::StructBitMask_offset_of<StructBitMask, detail::StructBitMask_f>() + sizeof(InnerBitMaskHelper));
 
     }};
 
@@ -2291,7 +1784,7 @@ private:
 namespace detail {
 
     template<typename Tag, typename Tag::type M>
-    struct BitsetStruct_rob
+    struct StructAlias_rob
     {
         friend constexpr typename Tag::type get(
                 Tag)
@@ -2300,35 +1793,35 @@ namespace detail {
         }
     };
 
-    struct BitsetStruct_f
+    struct StructAlias_f
     {
-        typedef InnerBitsetHelper BitsetStruct::* type;
+        typedef InnerAliasHelper StructAlias::* type;
         friend constexpr type get(
-                BitsetStruct_f);
+                StructAlias_f);
     };
 
-    template struct BitsetStruct_rob<BitsetStruct_f, &BitsetStruct::m_var_bitset>;
+    template struct StructAlias_rob<StructAlias_f, &StructAlias::m_var_alias>;
 
     template <typename T, typename Tag>
-    inline size_t constexpr BitsetStruct_offset_of() {
+    inline size_t constexpr StructAlias_offset_of() {
         return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
     }
 }
 #endif
 
 /*!
- * @brief This class represents the TopicDataType of the type BitsetStruct defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructAlias defined by the user in the IDL file.
  * @ingroup structures
  */
-class BitsetStructPubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructAliasPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef BitsetStruct type;
+    typedef StructAlias type;
 
-    eProsima_user_DllExport BitsetStructPubSubType();
+    eProsima_user_DllExport StructAliasPubSubType();
 
-    eProsima_user_DllExport virtual ~BitsetStructPubSubType() override;
+    eProsima_user_DllExport virtual ~StructAliasPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -2371,7 +1864,7 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) BitsetStruct();
+        new (memory) StructAlias();
         return true;
     }
 
@@ -2384,23 +1877,52 @@ private:
 
     static constexpr bool is_plain_impl()
     {
-        return 8ULL == (detail::BitsetStruct_offset_of<BitsetStruct, detail::BitsetStruct_f>() + sizeof(InnerBitsetHelper));
+        return 4ULL == (detail::StructAlias_offset_of<StructAlias, detail::StructAlias_f>() + sizeof(InnerAliasHelper));
 
     }};
 
+#ifndef SWIG
+namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct StructShortArray_rob
+    {
+        friend constexpr typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+    };
+
+    struct StructShortArray_f
+    {
+        typedef std::array<int16_t, 10> StructShortArray::* type;
+        friend constexpr type get(
+                StructShortArray_f);
+    };
+
+    template struct StructShortArray_rob<StructShortArray_f, &StructShortArray::m_var_array_short>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr StructShortArray_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
+}
+#endif
+
 /*!
- * @brief This class represents the TopicDataType of the type EmptyStructure defined by the user in the IDL file.
+ * @brief This class represents the TopicDataType of the type StructShortArray defined by the user in the IDL file.
  * @ingroup structures
  */
-class EmptyStructurePubSubType : public eprosima::fastdds::dds::TopicDataType
+class StructShortArrayPubSubType : public eprosima::fastdds::dds::TopicDataType
 {
 public:
 
-    typedef EmptyStructure type;
+    typedef StructShortArray type;
 
-    eProsima_user_DllExport EmptyStructurePubSubType();
+    eProsima_user_DllExport StructShortArrayPubSubType();
 
-    eProsima_user_DllExport virtual ~EmptyStructurePubSubType() override;
+    eProsima_user_DllExport virtual ~StructShortArrayPubSubType() override;
 
     eProsima_user_DllExport virtual bool serialize(
             void* data,
@@ -2443,7 +1965,479 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) EmptyStructure();
+        new (memory) StructShortArray();
+        return true;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
+
+private:
+
+    static constexpr bool is_plain_impl()
+    {
+        return 20ULL == (detail::StructShortArray_offset_of<StructShortArray, detail::StructShortArray_f>() + sizeof(std::array<int16_t, 10>));
+
+    }};
+
+/*!
+ * @brief This class represents the TopicDataType of the type StructSequence defined by the user in the IDL file.
+ * @ingroup structures
+ */
+class StructSequencePubSubType : public eprosima::fastdds::dds::TopicDataType
+{
+public:
+
+    typedef StructSequence type;
+
+    eProsima_user_DllExport StructSequencePubSubType();
+
+    eProsima_user_DllExport virtual ~StructSequencePubSubType() override;
+
+    eProsima_user_DllExport virtual bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
+
+    eProsima_user_DllExport virtual bool deserialize(
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            void* data) override;
+
+    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
+            void* data) override;
+
+    eProsima_user_DllExport virtual bool getKey(
+            void* data,
+            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
+            bool force_md5 = false) override;
+
+    eProsima_user_DllExport virtual void* createData() override;
+
+    eProsima_user_DllExport virtual void deleteData(
+            void* data) override;
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+    eProsima_user_DllExport inline bool is_bounded() const override
+    {
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+    eProsima_user_DllExport inline bool is_plain() const override
+    {
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+    eProsima_user_DllExport inline bool construct_sample(
+            void* memory) const override
+    {
+        (void)memory;
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
+
+};
+
+/*!
+ * @brief This class represents the TopicDataType of the type StructMap defined by the user in the IDL file.
+ * @ingroup structures
+ */
+class StructMapPubSubType : public eprosima::fastdds::dds::TopicDataType
+{
+public:
+
+    typedef StructMap type;
+
+    eProsima_user_DllExport StructMapPubSubType();
+
+    eProsima_user_DllExport virtual ~StructMapPubSubType() override;
+
+    eProsima_user_DllExport virtual bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
+
+    eProsima_user_DllExport virtual bool deserialize(
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            void* data) override;
+
+    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
+            void* data) override;
+
+    eProsima_user_DllExport virtual bool getKey(
+            void* data,
+            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
+            bool force_md5 = false) override;
+
+    eProsima_user_DllExport virtual void* createData() override;
+
+    eProsima_user_DllExport virtual void deleteData(
+            void* data) override;
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+    eProsima_user_DllExport inline bool is_bounded() const override
+    {
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+    eProsima_user_DllExport inline bool is_plain() const override
+    {
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+    eProsima_user_DllExport inline bool construct_sample(
+            void* memory) const override
+    {
+        (void)memory;
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
+
+};
+
+/*!
+ * @brief This class represents the TopicDataType of the type StructUnion defined by the user in the IDL file.
+ * @ingroup structures
+ */
+class StructUnionPubSubType : public eprosima::fastdds::dds::TopicDataType
+{
+public:
+
+    typedef StructUnion type;
+
+    eProsima_user_DllExport StructUnionPubSubType();
+
+    eProsima_user_DllExport virtual ~StructUnionPubSubType() override;
+
+    eProsima_user_DllExport virtual bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
+
+    eProsima_user_DllExport virtual bool deserialize(
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            void* data) override;
+
+    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
+            void* data) override;
+
+    eProsima_user_DllExport virtual bool getKey(
+            void* data,
+            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
+            bool force_md5 = false) override;
+
+    eProsima_user_DllExport virtual void* createData() override;
+
+    eProsima_user_DllExport virtual void deleteData(
+            void* data) override;
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+    eProsima_user_DllExport inline bool is_bounded() const override
+    {
+        return true;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+    eProsima_user_DllExport inline bool is_plain() const override
+    {
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+    eProsima_user_DllExport inline bool construct_sample(
+            void* memory) const override
+    {
+        (void)memory;
+        return false;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
+
+};
+
+#ifndef SWIG
+namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct StructStructure_rob
+    {
+        friend constexpr typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+    };
+
+    struct StructStructure_f
+    {
+        typedef InnerStructureHelper StructStructure::* type;
+        friend constexpr type get(
+                StructStructure_f);
+    };
+
+    template struct StructStructure_rob<StructStructure_f, &StructStructure::m_var_structure>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr StructStructure_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
+}
+#endif
+
+/*!
+ * @brief This class represents the TopicDataType of the type StructStructure defined by the user in the IDL file.
+ * @ingroup structures
+ */
+class StructStructurePubSubType : public eprosima::fastdds::dds::TopicDataType
+{
+public:
+
+    typedef StructStructure type;
+
+    eProsima_user_DllExport StructStructurePubSubType();
+
+    eProsima_user_DllExport virtual ~StructStructurePubSubType() override;
+
+    eProsima_user_DllExport virtual bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
+
+    eProsima_user_DllExport virtual bool deserialize(
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            void* data) override;
+
+    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
+            void* data) override;
+
+    eProsima_user_DllExport virtual bool getKey(
+            void* data,
+            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
+            bool force_md5 = false) override;
+
+    eProsima_user_DllExport virtual void* createData() override;
+
+    eProsima_user_DllExport virtual void deleteData(
+            void* data) override;
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+    eProsima_user_DllExport inline bool is_bounded() const override
+    {
+        return true;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+    eProsima_user_DllExport inline bool is_plain() const override
+    {
+        return is_plain_impl();
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+    eProsima_user_DllExport inline bool construct_sample(
+            void* memory) const override
+    {
+        new (memory) StructStructure();
+        return true;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
+
+private:
+
+    static constexpr bool is_plain_impl()
+    {
+        return 8ULL == (detail::StructStructure_offset_of<StructStructure, detail::StructStructure_f>() + sizeof(InnerStructureHelper));
+
+    }};
+
+#ifndef SWIG
+namespace detail {
+
+    template<typename Tag, typename Tag::type M>
+    struct StructBitset_rob
+    {
+        friend constexpr typename Tag::type get(
+                Tag)
+        {
+            return M;
+        }
+    };
+
+    struct StructBitset_f
+    {
+        typedef InnerBitsetHelper StructBitset::* type;
+        friend constexpr type get(
+                StructBitset_f);
+    };
+
+    template struct StructBitset_rob<StructBitset_f, &StructBitset::m_var_bitset>;
+
+    template <typename T, typename Tag>
+    inline size_t constexpr StructBitset_offset_of() {
+        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
+    }
+}
+#endif
+
+/*!
+ * @brief This class represents the TopicDataType of the type StructBitset defined by the user in the IDL file.
+ * @ingroup structures
+ */
+class StructBitsetPubSubType : public eprosima::fastdds::dds::TopicDataType
+{
+public:
+
+    typedef StructBitset type;
+
+    eProsima_user_DllExport StructBitsetPubSubType();
+
+    eProsima_user_DllExport virtual ~StructBitsetPubSubType() override;
+
+    eProsima_user_DllExport virtual bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
+
+    eProsima_user_DllExport virtual bool deserialize(
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            void* data) override;
+
+    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
+            void* data) override;
+
+    eProsima_user_DllExport virtual bool getKey(
+            void* data,
+            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
+            bool force_md5 = false) override;
+
+    eProsima_user_DllExport virtual void* createData() override;
+
+    eProsima_user_DllExport virtual void deleteData(
+            void* data) override;
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+    eProsima_user_DllExport inline bool is_bounded() const override
+    {
+        return true;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+    eProsima_user_DllExport inline bool is_plain() const override
+    {
+        return is_plain_impl();
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+    eProsima_user_DllExport inline bool construct_sample(
+            void* memory) const override
+    {
+        new (memory) StructBitset();
+        return true;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
+
+private:
+
+    static constexpr bool is_plain_impl()
+    {
+        return 8ULL == (detail::StructBitset_offset_of<StructBitset, detail::StructBitset_f>() + sizeof(InnerBitsetHelper));
+
+    }};
+
+/*!
+ * @brief This class represents the TopicDataType of the type StructEmpty defined by the user in the IDL file.
+ * @ingroup structures
+ */
+class StructEmptyPubSubType : public eprosima::fastdds::dds::TopicDataType
+{
+public:
+
+    typedef StructEmpty type;
+
+    eProsima_user_DllExport StructEmptyPubSubType();
+
+    eProsima_user_DllExport virtual ~StructEmptyPubSubType() override;
+
+    eProsima_user_DllExport virtual bool serialize(
+            void* data,
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload) override;
+
+    eProsima_user_DllExport virtual bool deserialize(
+            eprosima::fastrtps::rtps::SerializedPayload_t* payload,
+            void* data) override;
+
+    eProsima_user_DllExport virtual std::function<uint32_t()> getSerializedSizeProvider(
+            void* data) override;
+
+    eProsima_user_DllExport virtual bool getKey(
+            void* data,
+            eprosima::fastrtps::rtps::InstanceHandle_t* ihandle,
+            bool force_md5 = false) override;
+
+    eProsima_user_DllExport virtual void* createData() override;
+
+    eProsima_user_DllExport virtual void deleteData(
+            void* data) override;
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+    eProsima_user_DllExport inline bool is_bounded() const override
+    {
+        return true;
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_BOUNDED
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+    eProsima_user_DllExport inline bool is_plain() const override
+    {
+        return is_plain_impl();
+    }
+
+#endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
+
+#ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
+    eProsima_user_DllExport inline bool construct_sample(
+            void* memory) const override
+    {
+        new (memory) StructEmpty();
         return true;
     }
 

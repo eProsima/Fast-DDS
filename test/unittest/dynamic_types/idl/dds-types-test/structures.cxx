@@ -36,93 +36,87 @@ using namespace eprosima::fastcdr::exception;
 #include <utility>
 
 #define InnerStructureHelper_max_cdr_typesize 8ULL;
-#define OctetStruct_max_cdr_typesize 1ULL;
-#define LongStruct_max_cdr_typesize 4ULL;
-#define Char16Struct_max_cdr_typesize 4ULL;
-#define EnumStruct_max_cdr_typesize 4ULL;
-#define BitMaskStruct_max_cdr_typesize 4ULL;
-#define StructureStruct_max_cdr_typesize 8ULL;
-#define BitsetStruct_max_cdr_typesize 8ULL;
-#define Char8Struct_max_cdr_typesize 1ULL;
-#define DoubleStruct_max_cdr_typesize 8ULL;
-#define BooleanStruct_max_cdr_typesize 1ULL;
-#define UnsignedShortStruct_max_cdr_typesize 2ULL;
-#define UnsignedLongStruct_max_cdr_typesize 4ULL;
-#define WStringStruct_max_cdr_typesize 1024ULL;
-#define SequenceStruct_max_cdr_typesize 404ULL;
+#define StructChar8_max_cdr_typesize 1ULL;
+#define StructBoolean_max_cdr_typesize 1ULL;
+#define StructBoundedString_max_cdr_typesize 15ULL;
+#define StructChar16_max_cdr_typesize 4ULL;
+#define StructOctet_max_cdr_typesize 1ULL;
+#define StructShort_max_cdr_typesize 2ULL;
+#define StructAlias_max_cdr_typesize 4ULL;
+#define StructSequence_max_cdr_typesize 404ULL;
+#define StructBoundedWString_max_cdr_typesize 44ULL;
+#define StructStructure_max_cdr_typesize 8ULL;
+#define StructEnum_max_cdr_typesize 4ULL;
+#define StructEmpty_max_cdr_typesize 0ULL;
+#define StructBitMask_max_cdr_typesize 4ULL;
+#define StructLong_max_cdr_typesize 4ULL;
 #define Structures_max_cdr_typesize 2620ULL;
-#define BoundedStringStruct_max_cdr_typesize 15ULL;
-#define ShortArrayStruct_max_cdr_typesize 20ULL;
+#define StructUnsignedLong_max_cdr_typesize 4ULL;
+#define StructDouble_max_cdr_typesize 8ULL;
+#define StructShortArray_max_cdr_typesize 20ULL;
 
-#define FloatStruct_max_cdr_typesize 4ULL;
-#define LongDoubleStruct_max_cdr_typesize 16ULL;
 #define InnerEmptyStructureHelper_max_cdr_typesize 0ULL;
+#define StructLongDouble_max_cdr_typesize 16ULL;
+#define StructWString_max_cdr_typesize 1024ULL;
+#define StructMap_max_cdr_typesize 804ULL;
 
-#define ShortStruct_max_cdr_typesize 2ULL;
-#define MapStruct_max_cdr_typesize 804ULL;
+#define StructUnsignedShort_max_cdr_typesize 2ULL;
 
-#define AliasStruct_max_cdr_typesize 4ULL;
-
-
-#define BoundedWStringStruct_max_cdr_typesize 44ULL;
-#define EmptyStructure_max_cdr_typesize 0ULL;
-
-#define LongLongStruct_max_cdr_typesize 8ULL;
-#define StringStruct_max_cdr_typesize 260ULL;
-#define UnsignedLongLongStruct_max_cdr_typesize 8ULL;
-#define UnionStruct_max_cdr_typesize 8ULL;
+#define StructLongLong_max_cdr_typesize 8ULL;
+#define StructString_max_cdr_typesize 260ULL;
+#define StructBitset_max_cdr_typesize 8ULL;
 
 
+#define StructUnion_max_cdr_typesize 8ULL;
+
+#define StructUnsignedLongLong_max_cdr_typesize 8ULL;
 
 
+
+
+#define StructFloat_max_cdr_typesize 4ULL;
 #define InnerStructureHelper_max_key_cdr_typesize 0ULL;
-#define OctetStruct_max_key_cdr_typesize 0ULL;
-#define LongStruct_max_key_cdr_typesize 0ULL;
-#define Char16Struct_max_key_cdr_typesize 0ULL;
-#define EnumStruct_max_key_cdr_typesize 0ULL;
-#define BitMaskStruct_max_key_cdr_typesize 0ULL;
-#define StructureStruct_max_key_cdr_typesize 0ULL;
-#define BitsetStruct_max_key_cdr_typesize 0ULL;
-#define Char8Struct_max_key_cdr_typesize 0ULL;
-#define DoubleStruct_max_key_cdr_typesize 0ULL;
-#define BooleanStruct_max_key_cdr_typesize 0ULL;
-#define UnsignedShortStruct_max_key_cdr_typesize 0ULL;
-#define UnsignedLongStruct_max_key_cdr_typesize 0ULL;
-#define WStringStruct_max_key_cdr_typesize 0ULL;
-#define SequenceStruct_max_key_cdr_typesize 0ULL;
+#define StructChar8_max_key_cdr_typesize 0ULL;
+#define StructBoolean_max_key_cdr_typesize 0ULL;
+#define StructBoundedString_max_key_cdr_typesize 0ULL;
+#define StructChar16_max_key_cdr_typesize 0ULL;
+#define StructOctet_max_key_cdr_typesize 0ULL;
+#define StructShort_max_key_cdr_typesize 0ULL;
+#define StructAlias_max_key_cdr_typesize 0ULL;
+#define StructSequence_max_key_cdr_typesize 0ULL;
+#define StructBoundedWString_max_key_cdr_typesize 0ULL;
+#define StructStructure_max_key_cdr_typesize 0ULL;
+#define StructEnum_max_key_cdr_typesize 0ULL;
+#define StructEmpty_max_key_cdr_typesize 0ULL;
+#define StructBitMask_max_key_cdr_typesize 0ULL;
+#define StructLong_max_key_cdr_typesize 0ULL;
 #define Structures_max_key_cdr_typesize 0ULL;
-#define BoundedStringStruct_max_key_cdr_typesize 0ULL;
-#define ShortArrayStruct_max_key_cdr_typesize 0ULL;
+#define StructUnsignedLong_max_key_cdr_typesize 0ULL;
+#define StructDouble_max_key_cdr_typesize 0ULL;
+#define StructShortArray_max_key_cdr_typesize 0ULL;
 
-#define FloatStruct_max_key_cdr_typesize 0ULL;
-#define LongDoubleStruct_max_key_cdr_typesize 0ULL;
 #define InnerEmptyStructureHelper_max_key_cdr_typesize 0ULL;
+#define StructLongDouble_max_key_cdr_typesize 0ULL;
+#define StructWString_max_key_cdr_typesize 0ULL;
+#define StructMap_max_key_cdr_typesize 0ULL;
 
-#define ShortStruct_max_key_cdr_typesize 0ULL;
-#define MapStruct_max_key_cdr_typesize 0ULL;
+#define StructUnsignedShort_max_key_cdr_typesize 0ULL;
 
-#define AliasStruct_max_key_cdr_typesize 0ULL;
-
-
-#define BoundedWStringStruct_max_key_cdr_typesize 0ULL;
-#define EmptyStructure_max_key_cdr_typesize 0ULL;
-
-#define LongLongStruct_max_key_cdr_typesize 0ULL;
-#define StringStruct_max_key_cdr_typesize 0ULL;
-#define UnsignedLongLongStruct_max_key_cdr_typesize 0ULL;
-#define UnionStruct_max_key_cdr_typesize 0ULL;
+#define StructLongLong_max_key_cdr_typesize 0ULL;
+#define StructString_max_key_cdr_typesize 0ULL;
+#define StructBitset_max_key_cdr_typesize 0ULL;
 
 
+#define StructUnion_max_key_cdr_typesize 0ULL;
+
+#define StructUnsignedLongLong_max_key_cdr_typesize 0ULL;
 
 
 
 
+#define StructFloat_max_key_cdr_typesize 0ULL;
 
-
-
-
-
-ShortStruct::ShortStruct()
+StructShort::StructShort()
 {
     // short m_var_short
     m_var_short = 0;
@@ -131,33 +125,24 @@ ShortStruct::ShortStruct()
     registerstructuresTypes();
 }
 
-ShortStruct::~ShortStruct()
+StructShort::~StructShort()
 {
 }
 
-ShortStruct::ShortStruct(
-        const ShortStruct& x)
-{
-    m_var_short = x.m_var_short;
-}
-
-ShortStruct::ShortStruct(
-        ShortStruct&& x) noexcept 
+StructShort::StructShort(
+        const StructShort& x)
 {
     m_var_short = x.m_var_short;
 }
 
-ShortStruct& ShortStruct::operator =(
-        const ShortStruct& x)
+StructShort::StructShort(
+        StructShort&& x) noexcept 
 {
-
     m_var_short = x.m_var_short;
-
-    return *this;
 }
 
-ShortStruct& ShortStruct::operator =(
-        ShortStruct&& x) noexcept
+StructShort& StructShort::operator =(
+        const StructShort& x)
 {
 
     m_var_short = x.m_var_short;
@@ -165,28 +150,37 @@ ShortStruct& ShortStruct::operator =(
     return *this;
 }
 
-bool ShortStruct::operator ==(
-        const ShortStruct& x) const
+StructShort& StructShort::operator =(
+        StructShort&& x) noexcept
+{
+
+    m_var_short = x.m_var_short;
+
+    return *this;
+}
+
+bool StructShort::operator ==(
+        const StructShort& x) const
 {
 
     return (m_var_short == x.m_var_short);
 }
 
-bool ShortStruct::operator !=(
-        const ShortStruct& x) const
+bool StructShort::operator !=(
+        const StructShort& x) const
 {
     return !(*this == x);
 }
 
-size_t ShortStruct::getMaxCdrSerializedSize(
+size_t StructShort::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return ShortStruct_max_cdr_typesize;
+    return StructShort_max_cdr_typesize;
 }
 
-size_t ShortStruct::getCdrSerializedSize(
-        const ShortStruct& data,
+size_t StructShort::getCdrSerializedSize(
+        const StructShort& data,
         size_t current_alignment)
 {
     (void)data;
@@ -199,14 +193,14 @@ size_t ShortStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void ShortStruct::serialize(
+void StructShort::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_short;
 }
 
-void ShortStruct::deserialize(
+void StructShort::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -217,7 +211,7 @@ void ShortStruct::deserialize(
  * @brief This function sets a value in member var_short
  * @param _var_short New value for member var_short
  */
-void ShortStruct::var_short(
+void StructShort::var_short(
         int16_t _var_short)
 {
     m_var_short = _var_short;
@@ -227,7 +221,7 @@ void ShortStruct::var_short(
  * @brief This function returns the value of member var_short
  * @return Value of member var_short
  */
-int16_t ShortStruct::var_short() const
+int16_t StructShort::var_short() const
 {
     return m_var_short;
 }
@@ -236,33 +230,33 @@ int16_t ShortStruct::var_short() const
  * @brief This function returns a reference to member var_short
  * @return Reference to member var_short
  */
-int16_t& ShortStruct::var_short()
+int16_t& StructShort::var_short()
 {
     return m_var_short;
 }
 
 
 
-size_t ShortStruct::getKeyMaxCdrSerializedSize(
+size_t StructShort::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return ShortStruct_max_key_cdr_typesize;
+    return StructShort_max_key_cdr_typesize;
 }
 
-bool ShortStruct::isKeyDefined()
+bool StructShort::isKeyDefined()
 {
     return false;
 }
 
-void ShortStruct::serializeKey(
+void StructShort::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-UnsignedShortStruct::UnsignedShortStruct()
+StructUnsignedShort::StructUnsignedShort()
 {
     // unsigned short m_var_ushort
     m_var_ushort = 0;
@@ -271,33 +265,24 @@ UnsignedShortStruct::UnsignedShortStruct()
     registerstructuresTypes();
 }
 
-UnsignedShortStruct::~UnsignedShortStruct()
+StructUnsignedShort::~StructUnsignedShort()
 {
 }
 
-UnsignedShortStruct::UnsignedShortStruct(
-        const UnsignedShortStruct& x)
-{
-    m_var_ushort = x.m_var_ushort;
-}
-
-UnsignedShortStruct::UnsignedShortStruct(
-        UnsignedShortStruct&& x) noexcept 
+StructUnsignedShort::StructUnsignedShort(
+        const StructUnsignedShort& x)
 {
     m_var_ushort = x.m_var_ushort;
 }
 
-UnsignedShortStruct& UnsignedShortStruct::operator =(
-        const UnsignedShortStruct& x)
+StructUnsignedShort::StructUnsignedShort(
+        StructUnsignedShort&& x) noexcept 
 {
-
     m_var_ushort = x.m_var_ushort;
-
-    return *this;
 }
 
-UnsignedShortStruct& UnsignedShortStruct::operator =(
-        UnsignedShortStruct&& x) noexcept
+StructUnsignedShort& StructUnsignedShort::operator =(
+        const StructUnsignedShort& x)
 {
 
     m_var_ushort = x.m_var_ushort;
@@ -305,28 +290,37 @@ UnsignedShortStruct& UnsignedShortStruct::operator =(
     return *this;
 }
 
-bool UnsignedShortStruct::operator ==(
-        const UnsignedShortStruct& x) const
+StructUnsignedShort& StructUnsignedShort::operator =(
+        StructUnsignedShort&& x) noexcept
+{
+
+    m_var_ushort = x.m_var_ushort;
+
+    return *this;
+}
+
+bool StructUnsignedShort::operator ==(
+        const StructUnsignedShort& x) const
 {
 
     return (m_var_ushort == x.m_var_ushort);
 }
 
-bool UnsignedShortStruct::operator !=(
-        const UnsignedShortStruct& x) const
+bool StructUnsignedShort::operator !=(
+        const StructUnsignedShort& x) const
 {
     return !(*this == x);
 }
 
-size_t UnsignedShortStruct::getMaxCdrSerializedSize(
+size_t StructUnsignedShort::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return UnsignedShortStruct_max_cdr_typesize;
+    return StructUnsignedShort_max_cdr_typesize;
 }
 
-size_t UnsignedShortStruct::getCdrSerializedSize(
-        const UnsignedShortStruct& data,
+size_t StructUnsignedShort::getCdrSerializedSize(
+        const StructUnsignedShort& data,
         size_t current_alignment)
 {
     (void)data;
@@ -339,14 +333,14 @@ size_t UnsignedShortStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void UnsignedShortStruct::serialize(
+void StructUnsignedShort::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_ushort;
 }
 
-void UnsignedShortStruct::deserialize(
+void StructUnsignedShort::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -357,7 +351,7 @@ void UnsignedShortStruct::deserialize(
  * @brief This function sets a value in member var_ushort
  * @param _var_ushort New value for member var_ushort
  */
-void UnsignedShortStruct::var_ushort(
+void StructUnsignedShort::var_ushort(
         uint16_t _var_ushort)
 {
     m_var_ushort = _var_ushort;
@@ -367,7 +361,7 @@ void UnsignedShortStruct::var_ushort(
  * @brief This function returns the value of member var_ushort
  * @return Value of member var_ushort
  */
-uint16_t UnsignedShortStruct::var_ushort() const
+uint16_t StructUnsignedShort::var_ushort() const
 {
     return m_var_ushort;
 }
@@ -376,33 +370,33 @@ uint16_t UnsignedShortStruct::var_ushort() const
  * @brief This function returns a reference to member var_ushort
  * @return Reference to member var_ushort
  */
-uint16_t& UnsignedShortStruct::var_ushort()
+uint16_t& StructUnsignedShort::var_ushort()
 {
     return m_var_ushort;
 }
 
 
 
-size_t UnsignedShortStruct::getKeyMaxCdrSerializedSize(
+size_t StructUnsignedShort::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return UnsignedShortStruct_max_key_cdr_typesize;
+    return StructUnsignedShort_max_key_cdr_typesize;
 }
 
-bool UnsignedShortStruct::isKeyDefined()
+bool StructUnsignedShort::isKeyDefined()
 {
     return false;
 }
 
-void UnsignedShortStruct::serializeKey(
+void StructUnsignedShort::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-LongStruct::LongStruct()
+StructLong::StructLong()
 {
     // long m_var_long
     m_var_long = 0;
@@ -411,33 +405,24 @@ LongStruct::LongStruct()
     registerstructuresTypes();
 }
 
-LongStruct::~LongStruct()
+StructLong::~StructLong()
 {
 }
 
-LongStruct::LongStruct(
-        const LongStruct& x)
-{
-    m_var_long = x.m_var_long;
-}
-
-LongStruct::LongStruct(
-        LongStruct&& x) noexcept 
+StructLong::StructLong(
+        const StructLong& x)
 {
     m_var_long = x.m_var_long;
 }
 
-LongStruct& LongStruct::operator =(
-        const LongStruct& x)
+StructLong::StructLong(
+        StructLong&& x) noexcept 
 {
-
     m_var_long = x.m_var_long;
-
-    return *this;
 }
 
-LongStruct& LongStruct::operator =(
-        LongStruct&& x) noexcept
+StructLong& StructLong::operator =(
+        const StructLong& x)
 {
 
     m_var_long = x.m_var_long;
@@ -445,28 +430,37 @@ LongStruct& LongStruct::operator =(
     return *this;
 }
 
-bool LongStruct::operator ==(
-        const LongStruct& x) const
+StructLong& StructLong::operator =(
+        StructLong&& x) noexcept
+{
+
+    m_var_long = x.m_var_long;
+
+    return *this;
+}
+
+bool StructLong::operator ==(
+        const StructLong& x) const
 {
 
     return (m_var_long == x.m_var_long);
 }
 
-bool LongStruct::operator !=(
-        const LongStruct& x) const
+bool StructLong::operator !=(
+        const StructLong& x) const
 {
     return !(*this == x);
 }
 
-size_t LongStruct::getMaxCdrSerializedSize(
+size_t StructLong::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return LongStruct_max_cdr_typesize;
+    return StructLong_max_cdr_typesize;
 }
 
-size_t LongStruct::getCdrSerializedSize(
-        const LongStruct& data,
+size_t StructLong::getCdrSerializedSize(
+        const StructLong& data,
         size_t current_alignment)
 {
     (void)data;
@@ -479,14 +473,14 @@ size_t LongStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void LongStruct::serialize(
+void StructLong::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_long;
 }
 
-void LongStruct::deserialize(
+void StructLong::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -497,7 +491,7 @@ void LongStruct::deserialize(
  * @brief This function sets a value in member var_long
  * @param _var_long New value for member var_long
  */
-void LongStruct::var_long(
+void StructLong::var_long(
         int32_t _var_long)
 {
     m_var_long = _var_long;
@@ -507,7 +501,7 @@ void LongStruct::var_long(
  * @brief This function returns the value of member var_long
  * @return Value of member var_long
  */
-int32_t LongStruct::var_long() const
+int32_t StructLong::var_long() const
 {
     return m_var_long;
 }
@@ -516,33 +510,33 @@ int32_t LongStruct::var_long() const
  * @brief This function returns a reference to member var_long
  * @return Reference to member var_long
  */
-int32_t& LongStruct::var_long()
+int32_t& StructLong::var_long()
 {
     return m_var_long;
 }
 
 
 
-size_t LongStruct::getKeyMaxCdrSerializedSize(
+size_t StructLong::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return LongStruct_max_key_cdr_typesize;
+    return StructLong_max_key_cdr_typesize;
 }
 
-bool LongStruct::isKeyDefined()
+bool StructLong::isKeyDefined()
 {
     return false;
 }
 
-void LongStruct::serializeKey(
+void StructLong::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-UnsignedLongStruct::UnsignedLongStruct()
+StructUnsignedLong::StructUnsignedLong()
 {
     // unsigned long m_var_ulong
     m_var_ulong = 0;
@@ -551,33 +545,24 @@ UnsignedLongStruct::UnsignedLongStruct()
     registerstructuresTypes();
 }
 
-UnsignedLongStruct::~UnsignedLongStruct()
+StructUnsignedLong::~StructUnsignedLong()
 {
 }
 
-UnsignedLongStruct::UnsignedLongStruct(
-        const UnsignedLongStruct& x)
-{
-    m_var_ulong = x.m_var_ulong;
-}
-
-UnsignedLongStruct::UnsignedLongStruct(
-        UnsignedLongStruct&& x) noexcept 
+StructUnsignedLong::StructUnsignedLong(
+        const StructUnsignedLong& x)
 {
     m_var_ulong = x.m_var_ulong;
 }
 
-UnsignedLongStruct& UnsignedLongStruct::operator =(
-        const UnsignedLongStruct& x)
+StructUnsignedLong::StructUnsignedLong(
+        StructUnsignedLong&& x) noexcept 
 {
-
     m_var_ulong = x.m_var_ulong;
-
-    return *this;
 }
 
-UnsignedLongStruct& UnsignedLongStruct::operator =(
-        UnsignedLongStruct&& x) noexcept
+StructUnsignedLong& StructUnsignedLong::operator =(
+        const StructUnsignedLong& x)
 {
 
     m_var_ulong = x.m_var_ulong;
@@ -585,28 +570,37 @@ UnsignedLongStruct& UnsignedLongStruct::operator =(
     return *this;
 }
 
-bool UnsignedLongStruct::operator ==(
-        const UnsignedLongStruct& x) const
+StructUnsignedLong& StructUnsignedLong::operator =(
+        StructUnsignedLong&& x) noexcept
+{
+
+    m_var_ulong = x.m_var_ulong;
+
+    return *this;
+}
+
+bool StructUnsignedLong::operator ==(
+        const StructUnsignedLong& x) const
 {
 
     return (m_var_ulong == x.m_var_ulong);
 }
 
-bool UnsignedLongStruct::operator !=(
-        const UnsignedLongStruct& x) const
+bool StructUnsignedLong::operator !=(
+        const StructUnsignedLong& x) const
 {
     return !(*this == x);
 }
 
-size_t UnsignedLongStruct::getMaxCdrSerializedSize(
+size_t StructUnsignedLong::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return UnsignedLongStruct_max_cdr_typesize;
+    return StructUnsignedLong_max_cdr_typesize;
 }
 
-size_t UnsignedLongStruct::getCdrSerializedSize(
-        const UnsignedLongStruct& data,
+size_t StructUnsignedLong::getCdrSerializedSize(
+        const StructUnsignedLong& data,
         size_t current_alignment)
 {
     (void)data;
@@ -619,14 +613,14 @@ size_t UnsignedLongStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void UnsignedLongStruct::serialize(
+void StructUnsignedLong::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_ulong;
 }
 
-void UnsignedLongStruct::deserialize(
+void StructUnsignedLong::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -637,7 +631,7 @@ void UnsignedLongStruct::deserialize(
  * @brief This function sets a value in member var_ulong
  * @param _var_ulong New value for member var_ulong
  */
-void UnsignedLongStruct::var_ulong(
+void StructUnsignedLong::var_ulong(
         uint32_t _var_ulong)
 {
     m_var_ulong = _var_ulong;
@@ -647,7 +641,7 @@ void UnsignedLongStruct::var_ulong(
  * @brief This function returns the value of member var_ulong
  * @return Value of member var_ulong
  */
-uint32_t UnsignedLongStruct::var_ulong() const
+uint32_t StructUnsignedLong::var_ulong() const
 {
     return m_var_ulong;
 }
@@ -656,33 +650,33 @@ uint32_t UnsignedLongStruct::var_ulong() const
  * @brief This function returns a reference to member var_ulong
  * @return Reference to member var_ulong
  */
-uint32_t& UnsignedLongStruct::var_ulong()
+uint32_t& StructUnsignedLong::var_ulong()
 {
     return m_var_ulong;
 }
 
 
 
-size_t UnsignedLongStruct::getKeyMaxCdrSerializedSize(
+size_t StructUnsignedLong::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return UnsignedLongStruct_max_key_cdr_typesize;
+    return StructUnsignedLong_max_key_cdr_typesize;
 }
 
-bool UnsignedLongStruct::isKeyDefined()
+bool StructUnsignedLong::isKeyDefined()
 {
     return false;
 }
 
-void UnsignedLongStruct::serializeKey(
+void StructUnsignedLong::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-LongLongStruct::LongLongStruct()
+StructLongLong::StructLongLong()
 {
     // long long m_var_longlong
     m_var_longlong = 0;
@@ -691,33 +685,24 @@ LongLongStruct::LongLongStruct()
     registerstructuresTypes();
 }
 
-LongLongStruct::~LongLongStruct()
+StructLongLong::~StructLongLong()
 {
 }
 
-LongLongStruct::LongLongStruct(
-        const LongLongStruct& x)
-{
-    m_var_longlong = x.m_var_longlong;
-}
-
-LongLongStruct::LongLongStruct(
-        LongLongStruct&& x) noexcept 
+StructLongLong::StructLongLong(
+        const StructLongLong& x)
 {
     m_var_longlong = x.m_var_longlong;
 }
 
-LongLongStruct& LongLongStruct::operator =(
-        const LongLongStruct& x)
+StructLongLong::StructLongLong(
+        StructLongLong&& x) noexcept 
 {
-
     m_var_longlong = x.m_var_longlong;
-
-    return *this;
 }
 
-LongLongStruct& LongLongStruct::operator =(
-        LongLongStruct&& x) noexcept
+StructLongLong& StructLongLong::operator =(
+        const StructLongLong& x)
 {
 
     m_var_longlong = x.m_var_longlong;
@@ -725,28 +710,37 @@ LongLongStruct& LongLongStruct::operator =(
     return *this;
 }
 
-bool LongLongStruct::operator ==(
-        const LongLongStruct& x) const
+StructLongLong& StructLongLong::operator =(
+        StructLongLong&& x) noexcept
+{
+
+    m_var_longlong = x.m_var_longlong;
+
+    return *this;
+}
+
+bool StructLongLong::operator ==(
+        const StructLongLong& x) const
 {
 
     return (m_var_longlong == x.m_var_longlong);
 }
 
-bool LongLongStruct::operator !=(
-        const LongLongStruct& x) const
+bool StructLongLong::operator !=(
+        const StructLongLong& x) const
 {
     return !(*this == x);
 }
 
-size_t LongLongStruct::getMaxCdrSerializedSize(
+size_t StructLongLong::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return LongLongStruct_max_cdr_typesize;
+    return StructLongLong_max_cdr_typesize;
 }
 
-size_t LongLongStruct::getCdrSerializedSize(
-        const LongLongStruct& data,
+size_t StructLongLong::getCdrSerializedSize(
+        const StructLongLong& data,
         size_t current_alignment)
 {
     (void)data;
@@ -759,14 +753,14 @@ size_t LongLongStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void LongLongStruct::serialize(
+void StructLongLong::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_longlong;
 }
 
-void LongLongStruct::deserialize(
+void StructLongLong::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -777,7 +771,7 @@ void LongLongStruct::deserialize(
  * @brief This function sets a value in member var_longlong
  * @param _var_longlong New value for member var_longlong
  */
-void LongLongStruct::var_longlong(
+void StructLongLong::var_longlong(
         int64_t _var_longlong)
 {
     m_var_longlong = _var_longlong;
@@ -787,7 +781,7 @@ void LongLongStruct::var_longlong(
  * @brief This function returns the value of member var_longlong
  * @return Value of member var_longlong
  */
-int64_t LongLongStruct::var_longlong() const
+int64_t StructLongLong::var_longlong() const
 {
     return m_var_longlong;
 }
@@ -796,33 +790,33 @@ int64_t LongLongStruct::var_longlong() const
  * @brief This function returns a reference to member var_longlong
  * @return Reference to member var_longlong
  */
-int64_t& LongLongStruct::var_longlong()
+int64_t& StructLongLong::var_longlong()
 {
     return m_var_longlong;
 }
 
 
 
-size_t LongLongStruct::getKeyMaxCdrSerializedSize(
+size_t StructLongLong::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return LongLongStruct_max_key_cdr_typesize;
+    return StructLongLong_max_key_cdr_typesize;
 }
 
-bool LongLongStruct::isKeyDefined()
+bool StructLongLong::isKeyDefined()
 {
     return false;
 }
 
-void LongLongStruct::serializeKey(
+void StructLongLong::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-UnsignedLongLongStruct::UnsignedLongLongStruct()
+StructUnsignedLongLong::StructUnsignedLongLong()
 {
     // unsigned long long m_var_ulonglong
     m_var_ulonglong = 0;
@@ -831,33 +825,24 @@ UnsignedLongLongStruct::UnsignedLongLongStruct()
     registerstructuresTypes();
 }
 
-UnsignedLongLongStruct::~UnsignedLongLongStruct()
+StructUnsignedLongLong::~StructUnsignedLongLong()
 {
 }
 
-UnsignedLongLongStruct::UnsignedLongLongStruct(
-        const UnsignedLongLongStruct& x)
-{
-    m_var_ulonglong = x.m_var_ulonglong;
-}
-
-UnsignedLongLongStruct::UnsignedLongLongStruct(
-        UnsignedLongLongStruct&& x) noexcept 
+StructUnsignedLongLong::StructUnsignedLongLong(
+        const StructUnsignedLongLong& x)
 {
     m_var_ulonglong = x.m_var_ulonglong;
 }
 
-UnsignedLongLongStruct& UnsignedLongLongStruct::operator =(
-        const UnsignedLongLongStruct& x)
+StructUnsignedLongLong::StructUnsignedLongLong(
+        StructUnsignedLongLong&& x) noexcept 
 {
-
     m_var_ulonglong = x.m_var_ulonglong;
-
-    return *this;
 }
 
-UnsignedLongLongStruct& UnsignedLongLongStruct::operator =(
-        UnsignedLongLongStruct&& x) noexcept
+StructUnsignedLongLong& StructUnsignedLongLong::operator =(
+        const StructUnsignedLongLong& x)
 {
 
     m_var_ulonglong = x.m_var_ulonglong;
@@ -865,28 +850,37 @@ UnsignedLongLongStruct& UnsignedLongLongStruct::operator =(
     return *this;
 }
 
-bool UnsignedLongLongStruct::operator ==(
-        const UnsignedLongLongStruct& x) const
+StructUnsignedLongLong& StructUnsignedLongLong::operator =(
+        StructUnsignedLongLong&& x) noexcept
+{
+
+    m_var_ulonglong = x.m_var_ulonglong;
+
+    return *this;
+}
+
+bool StructUnsignedLongLong::operator ==(
+        const StructUnsignedLongLong& x) const
 {
 
     return (m_var_ulonglong == x.m_var_ulonglong);
 }
 
-bool UnsignedLongLongStruct::operator !=(
-        const UnsignedLongLongStruct& x) const
+bool StructUnsignedLongLong::operator !=(
+        const StructUnsignedLongLong& x) const
 {
     return !(*this == x);
 }
 
-size_t UnsignedLongLongStruct::getMaxCdrSerializedSize(
+size_t StructUnsignedLongLong::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return UnsignedLongLongStruct_max_cdr_typesize;
+    return StructUnsignedLongLong_max_cdr_typesize;
 }
 
-size_t UnsignedLongLongStruct::getCdrSerializedSize(
-        const UnsignedLongLongStruct& data,
+size_t StructUnsignedLongLong::getCdrSerializedSize(
+        const StructUnsignedLongLong& data,
         size_t current_alignment)
 {
     (void)data;
@@ -899,14 +893,14 @@ size_t UnsignedLongLongStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void UnsignedLongLongStruct::serialize(
+void StructUnsignedLongLong::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_ulonglong;
 }
 
-void UnsignedLongLongStruct::deserialize(
+void StructUnsignedLongLong::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -917,7 +911,7 @@ void UnsignedLongLongStruct::deserialize(
  * @brief This function sets a value in member var_ulonglong
  * @param _var_ulonglong New value for member var_ulonglong
  */
-void UnsignedLongLongStruct::var_ulonglong(
+void StructUnsignedLongLong::var_ulonglong(
         uint64_t _var_ulonglong)
 {
     m_var_ulonglong = _var_ulonglong;
@@ -927,7 +921,7 @@ void UnsignedLongLongStruct::var_ulonglong(
  * @brief This function returns the value of member var_ulonglong
  * @return Value of member var_ulonglong
  */
-uint64_t UnsignedLongLongStruct::var_ulonglong() const
+uint64_t StructUnsignedLongLong::var_ulonglong() const
 {
     return m_var_ulonglong;
 }
@@ -936,33 +930,33 @@ uint64_t UnsignedLongLongStruct::var_ulonglong() const
  * @brief This function returns a reference to member var_ulonglong
  * @return Reference to member var_ulonglong
  */
-uint64_t& UnsignedLongLongStruct::var_ulonglong()
+uint64_t& StructUnsignedLongLong::var_ulonglong()
 {
     return m_var_ulonglong;
 }
 
 
 
-size_t UnsignedLongLongStruct::getKeyMaxCdrSerializedSize(
+size_t StructUnsignedLongLong::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return UnsignedLongLongStruct_max_key_cdr_typesize;
+    return StructUnsignedLongLong_max_key_cdr_typesize;
 }
 
-bool UnsignedLongLongStruct::isKeyDefined()
+bool StructUnsignedLongLong::isKeyDefined()
 {
     return false;
 }
 
-void UnsignedLongLongStruct::serializeKey(
+void StructUnsignedLongLong::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-FloatStruct::FloatStruct()
+StructFloat::StructFloat()
 {
     // float m_var_float
     m_var_float = 0.0;
@@ -971,33 +965,24 @@ FloatStruct::FloatStruct()
     registerstructuresTypes();
 }
 
-FloatStruct::~FloatStruct()
+StructFloat::~StructFloat()
 {
 }
 
-FloatStruct::FloatStruct(
-        const FloatStruct& x)
-{
-    m_var_float = x.m_var_float;
-}
-
-FloatStruct::FloatStruct(
-        FloatStruct&& x) noexcept 
+StructFloat::StructFloat(
+        const StructFloat& x)
 {
     m_var_float = x.m_var_float;
 }
 
-FloatStruct& FloatStruct::operator =(
-        const FloatStruct& x)
+StructFloat::StructFloat(
+        StructFloat&& x) noexcept 
 {
-
     m_var_float = x.m_var_float;
-
-    return *this;
 }
 
-FloatStruct& FloatStruct::operator =(
-        FloatStruct&& x) noexcept
+StructFloat& StructFloat::operator =(
+        const StructFloat& x)
 {
 
     m_var_float = x.m_var_float;
@@ -1005,28 +990,37 @@ FloatStruct& FloatStruct::operator =(
     return *this;
 }
 
-bool FloatStruct::operator ==(
-        const FloatStruct& x) const
+StructFloat& StructFloat::operator =(
+        StructFloat&& x) noexcept
+{
+
+    m_var_float = x.m_var_float;
+
+    return *this;
+}
+
+bool StructFloat::operator ==(
+        const StructFloat& x) const
 {
 
     return (m_var_float == x.m_var_float);
 }
 
-bool FloatStruct::operator !=(
-        const FloatStruct& x) const
+bool StructFloat::operator !=(
+        const StructFloat& x) const
 {
     return !(*this == x);
 }
 
-size_t FloatStruct::getMaxCdrSerializedSize(
+size_t StructFloat::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return FloatStruct_max_cdr_typesize;
+    return StructFloat_max_cdr_typesize;
 }
 
-size_t FloatStruct::getCdrSerializedSize(
-        const FloatStruct& data,
+size_t StructFloat::getCdrSerializedSize(
+        const StructFloat& data,
         size_t current_alignment)
 {
     (void)data;
@@ -1039,14 +1033,14 @@ size_t FloatStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void FloatStruct::serialize(
+void StructFloat::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_float;
 }
 
-void FloatStruct::deserialize(
+void StructFloat::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -1057,7 +1051,7 @@ void FloatStruct::deserialize(
  * @brief This function sets a value in member var_float
  * @param _var_float New value for member var_float
  */
-void FloatStruct::var_float(
+void StructFloat::var_float(
         float _var_float)
 {
     m_var_float = _var_float;
@@ -1067,7 +1061,7 @@ void FloatStruct::var_float(
  * @brief This function returns the value of member var_float
  * @return Value of member var_float
  */
-float FloatStruct::var_float() const
+float StructFloat::var_float() const
 {
     return m_var_float;
 }
@@ -1076,33 +1070,33 @@ float FloatStruct::var_float() const
  * @brief This function returns a reference to member var_float
  * @return Reference to member var_float
  */
-float& FloatStruct::var_float()
+float& StructFloat::var_float()
 {
     return m_var_float;
 }
 
 
 
-size_t FloatStruct::getKeyMaxCdrSerializedSize(
+size_t StructFloat::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return FloatStruct_max_key_cdr_typesize;
+    return StructFloat_max_key_cdr_typesize;
 }
 
-bool FloatStruct::isKeyDefined()
+bool StructFloat::isKeyDefined()
 {
     return false;
 }
 
-void FloatStruct::serializeKey(
+void StructFloat::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-DoubleStruct::DoubleStruct()
+StructDouble::StructDouble()
 {
     // double m_var_double
     m_var_double = 0.0;
@@ -1111,33 +1105,24 @@ DoubleStruct::DoubleStruct()
     registerstructuresTypes();
 }
 
-DoubleStruct::~DoubleStruct()
+StructDouble::~StructDouble()
 {
 }
 
-DoubleStruct::DoubleStruct(
-        const DoubleStruct& x)
-{
-    m_var_double = x.m_var_double;
-}
-
-DoubleStruct::DoubleStruct(
-        DoubleStruct&& x) noexcept 
+StructDouble::StructDouble(
+        const StructDouble& x)
 {
     m_var_double = x.m_var_double;
 }
 
-DoubleStruct& DoubleStruct::operator =(
-        const DoubleStruct& x)
+StructDouble::StructDouble(
+        StructDouble&& x) noexcept 
 {
-
     m_var_double = x.m_var_double;
-
-    return *this;
 }
 
-DoubleStruct& DoubleStruct::operator =(
-        DoubleStruct&& x) noexcept
+StructDouble& StructDouble::operator =(
+        const StructDouble& x)
 {
 
     m_var_double = x.m_var_double;
@@ -1145,28 +1130,37 @@ DoubleStruct& DoubleStruct::operator =(
     return *this;
 }
 
-bool DoubleStruct::operator ==(
-        const DoubleStruct& x) const
+StructDouble& StructDouble::operator =(
+        StructDouble&& x) noexcept
+{
+
+    m_var_double = x.m_var_double;
+
+    return *this;
+}
+
+bool StructDouble::operator ==(
+        const StructDouble& x) const
 {
 
     return (m_var_double == x.m_var_double);
 }
 
-bool DoubleStruct::operator !=(
-        const DoubleStruct& x) const
+bool StructDouble::operator !=(
+        const StructDouble& x) const
 {
     return !(*this == x);
 }
 
-size_t DoubleStruct::getMaxCdrSerializedSize(
+size_t StructDouble::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return DoubleStruct_max_cdr_typesize;
+    return StructDouble_max_cdr_typesize;
 }
 
-size_t DoubleStruct::getCdrSerializedSize(
-        const DoubleStruct& data,
+size_t StructDouble::getCdrSerializedSize(
+        const StructDouble& data,
         size_t current_alignment)
 {
     (void)data;
@@ -1179,14 +1173,14 @@ size_t DoubleStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void DoubleStruct::serialize(
+void StructDouble::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_double;
 }
 
-void DoubleStruct::deserialize(
+void StructDouble::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -1197,7 +1191,7 @@ void DoubleStruct::deserialize(
  * @brief This function sets a value in member var_double
  * @param _var_double New value for member var_double
  */
-void DoubleStruct::var_double(
+void StructDouble::var_double(
         double _var_double)
 {
     m_var_double = _var_double;
@@ -1207,7 +1201,7 @@ void DoubleStruct::var_double(
  * @brief This function returns the value of member var_double
  * @return Value of member var_double
  */
-double DoubleStruct::var_double() const
+double StructDouble::var_double() const
 {
     return m_var_double;
 }
@@ -1216,33 +1210,33 @@ double DoubleStruct::var_double() const
  * @brief This function returns a reference to member var_double
  * @return Reference to member var_double
  */
-double& DoubleStruct::var_double()
+double& StructDouble::var_double()
 {
     return m_var_double;
 }
 
 
 
-size_t DoubleStruct::getKeyMaxCdrSerializedSize(
+size_t StructDouble::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return DoubleStruct_max_key_cdr_typesize;
+    return StructDouble_max_key_cdr_typesize;
 }
 
-bool DoubleStruct::isKeyDefined()
+bool StructDouble::isKeyDefined()
 {
     return false;
 }
 
-void DoubleStruct::serializeKey(
+void StructDouble::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-LongDoubleStruct::LongDoubleStruct()
+StructLongDouble::StructLongDouble()
 {
     // long double m_var_longdouble
     m_var_longdouble = 0.0;
@@ -1251,33 +1245,24 @@ LongDoubleStruct::LongDoubleStruct()
     registerstructuresTypes();
 }
 
-LongDoubleStruct::~LongDoubleStruct()
+StructLongDouble::~StructLongDouble()
 {
 }
 
-LongDoubleStruct::LongDoubleStruct(
-        const LongDoubleStruct& x)
-{
-    m_var_longdouble = x.m_var_longdouble;
-}
-
-LongDoubleStruct::LongDoubleStruct(
-        LongDoubleStruct&& x) noexcept 
+StructLongDouble::StructLongDouble(
+        const StructLongDouble& x)
 {
     m_var_longdouble = x.m_var_longdouble;
 }
 
-LongDoubleStruct& LongDoubleStruct::operator =(
-        const LongDoubleStruct& x)
+StructLongDouble::StructLongDouble(
+        StructLongDouble&& x) noexcept 
 {
-
     m_var_longdouble = x.m_var_longdouble;
-
-    return *this;
 }
 
-LongDoubleStruct& LongDoubleStruct::operator =(
-        LongDoubleStruct&& x) noexcept
+StructLongDouble& StructLongDouble::operator =(
+        const StructLongDouble& x)
 {
 
     m_var_longdouble = x.m_var_longdouble;
@@ -1285,28 +1270,37 @@ LongDoubleStruct& LongDoubleStruct::operator =(
     return *this;
 }
 
-bool LongDoubleStruct::operator ==(
-        const LongDoubleStruct& x) const
+StructLongDouble& StructLongDouble::operator =(
+        StructLongDouble&& x) noexcept
+{
+
+    m_var_longdouble = x.m_var_longdouble;
+
+    return *this;
+}
+
+bool StructLongDouble::operator ==(
+        const StructLongDouble& x) const
 {
 
     return (m_var_longdouble == x.m_var_longdouble);
 }
 
-bool LongDoubleStruct::operator !=(
-        const LongDoubleStruct& x) const
+bool StructLongDouble::operator !=(
+        const StructLongDouble& x) const
 {
     return !(*this == x);
 }
 
-size_t LongDoubleStruct::getMaxCdrSerializedSize(
+size_t StructLongDouble::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return LongDoubleStruct_max_cdr_typesize;
+    return StructLongDouble_max_cdr_typesize;
 }
 
-size_t LongDoubleStruct::getCdrSerializedSize(
-        const LongDoubleStruct& data,
+size_t StructLongDouble::getCdrSerializedSize(
+        const StructLongDouble& data,
         size_t current_alignment)
 {
     (void)data;
@@ -1319,14 +1313,14 @@ size_t LongDoubleStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void LongDoubleStruct::serialize(
+void StructLongDouble::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_longdouble;
 }
 
-void LongDoubleStruct::deserialize(
+void StructLongDouble::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -1337,7 +1331,7 @@ void LongDoubleStruct::deserialize(
  * @brief This function sets a value in member var_longdouble
  * @param _var_longdouble New value for member var_longdouble
  */
-void LongDoubleStruct::var_longdouble(
+void StructLongDouble::var_longdouble(
         long double _var_longdouble)
 {
     m_var_longdouble = _var_longdouble;
@@ -1347,7 +1341,7 @@ void LongDoubleStruct::var_longdouble(
  * @brief This function returns the value of member var_longdouble
  * @return Value of member var_longdouble
  */
-long double LongDoubleStruct::var_longdouble() const
+long double StructLongDouble::var_longdouble() const
 {
     return m_var_longdouble;
 }
@@ -1356,33 +1350,33 @@ long double LongDoubleStruct::var_longdouble() const
  * @brief This function returns a reference to member var_longdouble
  * @return Reference to member var_longdouble
  */
-long double& LongDoubleStruct::var_longdouble()
+long double& StructLongDouble::var_longdouble()
 {
     return m_var_longdouble;
 }
 
 
 
-size_t LongDoubleStruct::getKeyMaxCdrSerializedSize(
+size_t StructLongDouble::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return LongDoubleStruct_max_key_cdr_typesize;
+    return StructLongDouble_max_key_cdr_typesize;
 }
 
-bool LongDoubleStruct::isKeyDefined()
+bool StructLongDouble::isKeyDefined()
 {
     return false;
 }
 
-void LongDoubleStruct::serializeKey(
+void StructLongDouble::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-BooleanStruct::BooleanStruct()
+StructBoolean::StructBoolean()
 {
     // boolean m_var_boolean
     m_var_boolean = false;
@@ -1391,33 +1385,24 @@ BooleanStruct::BooleanStruct()
     registerstructuresTypes();
 }
 
-BooleanStruct::~BooleanStruct()
+StructBoolean::~StructBoolean()
 {
 }
 
-BooleanStruct::BooleanStruct(
-        const BooleanStruct& x)
-{
-    m_var_boolean = x.m_var_boolean;
-}
-
-BooleanStruct::BooleanStruct(
-        BooleanStruct&& x) noexcept 
+StructBoolean::StructBoolean(
+        const StructBoolean& x)
 {
     m_var_boolean = x.m_var_boolean;
 }
 
-BooleanStruct& BooleanStruct::operator =(
-        const BooleanStruct& x)
+StructBoolean::StructBoolean(
+        StructBoolean&& x) noexcept 
 {
-
     m_var_boolean = x.m_var_boolean;
-
-    return *this;
 }
 
-BooleanStruct& BooleanStruct::operator =(
-        BooleanStruct&& x) noexcept
+StructBoolean& StructBoolean::operator =(
+        const StructBoolean& x)
 {
 
     m_var_boolean = x.m_var_boolean;
@@ -1425,28 +1410,37 @@ BooleanStruct& BooleanStruct::operator =(
     return *this;
 }
 
-bool BooleanStruct::operator ==(
-        const BooleanStruct& x) const
+StructBoolean& StructBoolean::operator =(
+        StructBoolean&& x) noexcept
+{
+
+    m_var_boolean = x.m_var_boolean;
+
+    return *this;
+}
+
+bool StructBoolean::operator ==(
+        const StructBoolean& x) const
 {
 
     return (m_var_boolean == x.m_var_boolean);
 }
 
-bool BooleanStruct::operator !=(
-        const BooleanStruct& x) const
+bool StructBoolean::operator !=(
+        const StructBoolean& x) const
 {
     return !(*this == x);
 }
 
-size_t BooleanStruct::getMaxCdrSerializedSize(
+size_t StructBoolean::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return BooleanStruct_max_cdr_typesize;
+    return StructBoolean_max_cdr_typesize;
 }
 
-size_t BooleanStruct::getCdrSerializedSize(
-        const BooleanStruct& data,
+size_t StructBoolean::getCdrSerializedSize(
+        const StructBoolean& data,
         size_t current_alignment)
 {
     (void)data;
@@ -1459,14 +1453,14 @@ size_t BooleanStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void BooleanStruct::serialize(
+void StructBoolean::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_boolean;
 }
 
-void BooleanStruct::deserialize(
+void StructBoolean::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -1477,7 +1471,7 @@ void BooleanStruct::deserialize(
  * @brief This function sets a value in member var_boolean
  * @param _var_boolean New value for member var_boolean
  */
-void BooleanStruct::var_boolean(
+void StructBoolean::var_boolean(
         bool _var_boolean)
 {
     m_var_boolean = _var_boolean;
@@ -1487,7 +1481,7 @@ void BooleanStruct::var_boolean(
  * @brief This function returns the value of member var_boolean
  * @return Value of member var_boolean
  */
-bool BooleanStruct::var_boolean() const
+bool StructBoolean::var_boolean() const
 {
     return m_var_boolean;
 }
@@ -1496,33 +1490,33 @@ bool BooleanStruct::var_boolean() const
  * @brief This function returns a reference to member var_boolean
  * @return Reference to member var_boolean
  */
-bool& BooleanStruct::var_boolean()
+bool& StructBoolean::var_boolean()
 {
     return m_var_boolean;
 }
 
 
 
-size_t BooleanStruct::getKeyMaxCdrSerializedSize(
+size_t StructBoolean::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return BooleanStruct_max_key_cdr_typesize;
+    return StructBoolean_max_key_cdr_typesize;
 }
 
-bool BooleanStruct::isKeyDefined()
+bool StructBoolean::isKeyDefined()
 {
     return false;
 }
 
-void BooleanStruct::serializeKey(
+void StructBoolean::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-OctetStruct::OctetStruct()
+StructOctet::StructOctet()
 {
     // octet m_var_octet
     m_var_octet = 0;
@@ -1531,33 +1525,24 @@ OctetStruct::OctetStruct()
     registerstructuresTypes();
 }
 
-OctetStruct::~OctetStruct()
+StructOctet::~StructOctet()
 {
 }
 
-OctetStruct::OctetStruct(
-        const OctetStruct& x)
-{
-    m_var_octet = x.m_var_octet;
-}
-
-OctetStruct::OctetStruct(
-        OctetStruct&& x) noexcept 
+StructOctet::StructOctet(
+        const StructOctet& x)
 {
     m_var_octet = x.m_var_octet;
 }
 
-OctetStruct& OctetStruct::operator =(
-        const OctetStruct& x)
+StructOctet::StructOctet(
+        StructOctet&& x) noexcept 
 {
-
     m_var_octet = x.m_var_octet;
-
-    return *this;
 }
 
-OctetStruct& OctetStruct::operator =(
-        OctetStruct&& x) noexcept
+StructOctet& StructOctet::operator =(
+        const StructOctet& x)
 {
 
     m_var_octet = x.m_var_octet;
@@ -1565,28 +1550,37 @@ OctetStruct& OctetStruct::operator =(
     return *this;
 }
 
-bool OctetStruct::operator ==(
-        const OctetStruct& x) const
+StructOctet& StructOctet::operator =(
+        StructOctet&& x) noexcept
+{
+
+    m_var_octet = x.m_var_octet;
+
+    return *this;
+}
+
+bool StructOctet::operator ==(
+        const StructOctet& x) const
 {
 
     return (m_var_octet == x.m_var_octet);
 }
 
-bool OctetStruct::operator !=(
-        const OctetStruct& x) const
+bool StructOctet::operator !=(
+        const StructOctet& x) const
 {
     return !(*this == x);
 }
 
-size_t OctetStruct::getMaxCdrSerializedSize(
+size_t StructOctet::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return OctetStruct_max_cdr_typesize;
+    return StructOctet_max_cdr_typesize;
 }
 
-size_t OctetStruct::getCdrSerializedSize(
-        const OctetStruct& data,
+size_t StructOctet::getCdrSerializedSize(
+        const StructOctet& data,
         size_t current_alignment)
 {
     (void)data;
@@ -1599,14 +1593,14 @@ size_t OctetStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void OctetStruct::serialize(
+void StructOctet::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_octet;
 }
 
-void OctetStruct::deserialize(
+void StructOctet::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -1617,7 +1611,7 @@ void OctetStruct::deserialize(
  * @brief This function sets a value in member var_octet
  * @param _var_octet New value for member var_octet
  */
-void OctetStruct::var_octet(
+void StructOctet::var_octet(
         uint8_t _var_octet)
 {
     m_var_octet = _var_octet;
@@ -1627,7 +1621,7 @@ void OctetStruct::var_octet(
  * @brief This function returns the value of member var_octet
  * @return Value of member var_octet
  */
-uint8_t OctetStruct::var_octet() const
+uint8_t StructOctet::var_octet() const
 {
     return m_var_octet;
 }
@@ -1636,33 +1630,33 @@ uint8_t OctetStruct::var_octet() const
  * @brief This function returns a reference to member var_octet
  * @return Reference to member var_octet
  */
-uint8_t& OctetStruct::var_octet()
+uint8_t& StructOctet::var_octet()
 {
     return m_var_octet;
 }
 
 
 
-size_t OctetStruct::getKeyMaxCdrSerializedSize(
+size_t StructOctet::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return OctetStruct_max_key_cdr_typesize;
+    return StructOctet_max_key_cdr_typesize;
 }
 
-bool OctetStruct::isKeyDefined()
+bool StructOctet::isKeyDefined()
 {
     return false;
 }
 
-void OctetStruct::serializeKey(
+void StructOctet::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-Char8Struct::Char8Struct()
+StructChar8::StructChar8()
 {
     // char m_var_char8
     m_var_char8 = 0;
@@ -1671,33 +1665,24 @@ Char8Struct::Char8Struct()
     registerstructuresTypes();
 }
 
-Char8Struct::~Char8Struct()
+StructChar8::~StructChar8()
 {
 }
 
-Char8Struct::Char8Struct(
-        const Char8Struct& x)
-{
-    m_var_char8 = x.m_var_char8;
-}
-
-Char8Struct::Char8Struct(
-        Char8Struct&& x) noexcept 
+StructChar8::StructChar8(
+        const StructChar8& x)
 {
     m_var_char8 = x.m_var_char8;
 }
 
-Char8Struct& Char8Struct::operator =(
-        const Char8Struct& x)
+StructChar8::StructChar8(
+        StructChar8&& x) noexcept 
 {
-
     m_var_char8 = x.m_var_char8;
-
-    return *this;
 }
 
-Char8Struct& Char8Struct::operator =(
-        Char8Struct&& x) noexcept
+StructChar8& StructChar8::operator =(
+        const StructChar8& x)
 {
 
     m_var_char8 = x.m_var_char8;
@@ -1705,28 +1690,37 @@ Char8Struct& Char8Struct::operator =(
     return *this;
 }
 
-bool Char8Struct::operator ==(
-        const Char8Struct& x) const
+StructChar8& StructChar8::operator =(
+        StructChar8&& x) noexcept
+{
+
+    m_var_char8 = x.m_var_char8;
+
+    return *this;
+}
+
+bool StructChar8::operator ==(
+        const StructChar8& x) const
 {
 
     return (m_var_char8 == x.m_var_char8);
 }
 
-bool Char8Struct::operator !=(
-        const Char8Struct& x) const
+bool StructChar8::operator !=(
+        const StructChar8& x) const
 {
     return !(*this == x);
 }
 
-size_t Char8Struct::getMaxCdrSerializedSize(
+size_t StructChar8::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return Char8Struct_max_cdr_typesize;
+    return StructChar8_max_cdr_typesize;
 }
 
-size_t Char8Struct::getCdrSerializedSize(
-        const Char8Struct& data,
+size_t StructChar8::getCdrSerializedSize(
+        const StructChar8& data,
         size_t current_alignment)
 {
     (void)data;
@@ -1739,14 +1733,14 @@ size_t Char8Struct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void Char8Struct::serialize(
+void StructChar8::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_char8;
 }
 
-void Char8Struct::deserialize(
+void StructChar8::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -1757,7 +1751,7 @@ void Char8Struct::deserialize(
  * @brief This function sets a value in member var_char8
  * @param _var_char8 New value for member var_char8
  */
-void Char8Struct::var_char8(
+void StructChar8::var_char8(
         char _var_char8)
 {
     m_var_char8 = _var_char8;
@@ -1767,7 +1761,7 @@ void Char8Struct::var_char8(
  * @brief This function returns the value of member var_char8
  * @return Value of member var_char8
  */
-char Char8Struct::var_char8() const
+char StructChar8::var_char8() const
 {
     return m_var_char8;
 }
@@ -1776,33 +1770,33 @@ char Char8Struct::var_char8() const
  * @brief This function returns a reference to member var_char8
  * @return Reference to member var_char8
  */
-char& Char8Struct::var_char8()
+char& StructChar8::var_char8()
 {
     return m_var_char8;
 }
 
 
 
-size_t Char8Struct::getKeyMaxCdrSerializedSize(
+size_t StructChar8::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return Char8Struct_max_key_cdr_typesize;
+    return StructChar8_max_key_cdr_typesize;
 }
 
-bool Char8Struct::isKeyDefined()
+bool StructChar8::isKeyDefined()
 {
     return false;
 }
 
-void Char8Struct::serializeKey(
+void StructChar8::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-Char16Struct::Char16Struct()
+StructChar16::StructChar16()
 {
     // wchar m_var_char16
     m_var_char16 = 0;
@@ -1811,33 +1805,24 @@ Char16Struct::Char16Struct()
     registerstructuresTypes();
 }
 
-Char16Struct::~Char16Struct()
+StructChar16::~StructChar16()
 {
 }
 
-Char16Struct::Char16Struct(
-        const Char16Struct& x)
-{
-    m_var_char16 = x.m_var_char16;
-}
-
-Char16Struct::Char16Struct(
-        Char16Struct&& x) noexcept 
+StructChar16::StructChar16(
+        const StructChar16& x)
 {
     m_var_char16 = x.m_var_char16;
 }
 
-Char16Struct& Char16Struct::operator =(
-        const Char16Struct& x)
+StructChar16::StructChar16(
+        StructChar16&& x) noexcept 
 {
-
     m_var_char16 = x.m_var_char16;
-
-    return *this;
 }
 
-Char16Struct& Char16Struct::operator =(
-        Char16Struct&& x) noexcept
+StructChar16& StructChar16::operator =(
+        const StructChar16& x)
 {
 
     m_var_char16 = x.m_var_char16;
@@ -1845,28 +1830,37 @@ Char16Struct& Char16Struct::operator =(
     return *this;
 }
 
-bool Char16Struct::operator ==(
-        const Char16Struct& x) const
+StructChar16& StructChar16::operator =(
+        StructChar16&& x) noexcept
+{
+
+    m_var_char16 = x.m_var_char16;
+
+    return *this;
+}
+
+bool StructChar16::operator ==(
+        const StructChar16& x) const
 {
 
     return (m_var_char16 == x.m_var_char16);
 }
 
-bool Char16Struct::operator !=(
-        const Char16Struct& x) const
+bool StructChar16::operator !=(
+        const StructChar16& x) const
 {
     return !(*this == x);
 }
 
-size_t Char16Struct::getMaxCdrSerializedSize(
+size_t StructChar16::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return Char16Struct_max_cdr_typesize;
+    return StructChar16_max_cdr_typesize;
 }
 
-size_t Char16Struct::getCdrSerializedSize(
-        const Char16Struct& data,
+size_t StructChar16::getCdrSerializedSize(
+        const StructChar16& data,
         size_t current_alignment)
 {
     (void)data;
@@ -1879,14 +1873,14 @@ size_t Char16Struct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void Char16Struct::serialize(
+void StructChar16::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_char16;
 }
 
-void Char16Struct::deserialize(
+void StructChar16::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -1897,7 +1891,7 @@ void Char16Struct::deserialize(
  * @brief This function sets a value in member var_char16
  * @param _var_char16 New value for member var_char16
  */
-void Char16Struct::var_char16(
+void StructChar16::var_char16(
         wchar_t _var_char16)
 {
     m_var_char16 = _var_char16;
@@ -1907,7 +1901,7 @@ void Char16Struct::var_char16(
  * @brief This function returns the value of member var_char16
  * @return Value of member var_char16
  */
-wchar_t Char16Struct::var_char16() const
+wchar_t StructChar16::var_char16() const
 {
     return m_var_char16;
 }
@@ -1916,33 +1910,33 @@ wchar_t Char16Struct::var_char16() const
  * @brief This function returns a reference to member var_char16
  * @return Reference to member var_char16
  */
-wchar_t& Char16Struct::var_char16()
+wchar_t& StructChar16::var_char16()
 {
     return m_var_char16;
 }
 
 
 
-size_t Char16Struct::getKeyMaxCdrSerializedSize(
+size_t StructChar16::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return Char16Struct_max_key_cdr_typesize;
+    return StructChar16_max_key_cdr_typesize;
 }
 
-bool Char16Struct::isKeyDefined()
+bool StructChar16::isKeyDefined()
 {
     return false;
 }
 
-void Char16Struct::serializeKey(
+void StructChar16::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-StringStruct::StringStruct()
+StructString::StructString()
 {
     // string m_var_string
     m_var_string = "";
@@ -1952,24 +1946,24 @@ StringStruct::StringStruct()
     registerstructuresTypes();
 }
 
-StringStruct::~StringStruct()
+StructString::~StructString()
 {
 }
 
-StringStruct::StringStruct(
-        const StringStruct& x)
+StructString::StructString(
+        const StructString& x)
 {
     m_var_string = x.m_var_string;
 }
 
-StringStruct::StringStruct(
-        StringStruct&& x) noexcept 
+StructString::StructString(
+        StructString&& x) noexcept 
 {
     m_var_string = std::move(x.m_var_string);
 }
 
-StringStruct& StringStruct::operator =(
-        const StringStruct& x)
+StructString& StructString::operator =(
+        const StructString& x)
 {
 
     m_var_string = x.m_var_string;
@@ -1977,8 +1971,8 @@ StringStruct& StringStruct::operator =(
     return *this;
 }
 
-StringStruct& StringStruct::operator =(
-        StringStruct&& x) noexcept
+StructString& StructString::operator =(
+        StructString&& x) noexcept
 {
 
     m_var_string = std::move(x.m_var_string);
@@ -1986,28 +1980,28 @@ StringStruct& StringStruct::operator =(
     return *this;
 }
 
-bool StringStruct::operator ==(
-        const StringStruct& x) const
+bool StructString::operator ==(
+        const StructString& x) const
 {
 
     return (m_var_string == x.m_var_string);
 }
 
-bool StringStruct::operator !=(
-        const StringStruct& x) const
+bool StructString::operator !=(
+        const StructString& x) const
 {
     return !(*this == x);
 }
 
-size_t StringStruct::getMaxCdrSerializedSize(
+size_t StructString::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return StringStruct_max_cdr_typesize;
+    return StructString_max_cdr_typesize;
 }
 
-size_t StringStruct::getCdrSerializedSize(
-        const StringStruct& data,
+size_t StructString::getCdrSerializedSize(
+        const StructString& data,
         size_t current_alignment)
 {
     (void)data;
@@ -2019,14 +2013,14 @@ size_t StringStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void StringStruct::serialize(
+void StructString::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_string.c_str();
 }
 
-void StringStruct::deserialize(
+void StructString::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -2036,7 +2030,7 @@ void StringStruct::deserialize(
  * @brief This function copies the value in member var_string
  * @param _var_string New value to be copied in member var_string
  */
-void StringStruct::var_string(
+void StructString::var_string(
         const std::string& _var_string)
 {
     m_var_string = _var_string;
@@ -2046,7 +2040,7 @@ void StringStruct::var_string(
  * @brief This function moves the value in member var_string
  * @param _var_string New value to be moved in member var_string
  */
-void StringStruct::var_string(
+void StructString::var_string(
         std::string&& _var_string)
 {
     m_var_string = std::move(_var_string);
@@ -2056,7 +2050,7 @@ void StringStruct::var_string(
  * @brief This function returns a constant reference to member var_string
  * @return Constant reference to member var_string
  */
-const std::string& StringStruct::var_string() const
+const std::string& StructString::var_string() const
 {
     return m_var_string;
 }
@@ -2065,32 +2059,32 @@ const std::string& StringStruct::var_string() const
  * @brief This function returns a reference to member var_string
  * @return Reference to member var_string
  */
-std::string& StringStruct::var_string()
+std::string& StructString::var_string()
 {
     return m_var_string;
 }
 
 
-size_t StringStruct::getKeyMaxCdrSerializedSize(
+size_t StructString::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return StringStruct_max_key_cdr_typesize;
+    return StructString_max_key_cdr_typesize;
 }
 
-bool StringStruct::isKeyDefined()
+bool StructString::isKeyDefined()
 {
     return false;
 }
 
-void StringStruct::serializeKey(
+void StructString::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-WStringStruct::WStringStruct()
+StructWString::StructWString()
 {
     // wstring m_var_wstring
     m_var_wstring = L"";
@@ -2100,24 +2094,24 @@ WStringStruct::WStringStruct()
     registerstructuresTypes();
 }
 
-WStringStruct::~WStringStruct()
+StructWString::~StructWString()
 {
 }
 
-WStringStruct::WStringStruct(
-        const WStringStruct& x)
+StructWString::StructWString(
+        const StructWString& x)
 {
     m_var_wstring = x.m_var_wstring;
 }
 
-WStringStruct::WStringStruct(
-        WStringStruct&& x) noexcept 
+StructWString::StructWString(
+        StructWString&& x) noexcept 
 {
     m_var_wstring = std::move(x.m_var_wstring);
 }
 
-WStringStruct& WStringStruct::operator =(
-        const WStringStruct& x)
+StructWString& StructWString::operator =(
+        const StructWString& x)
 {
 
     m_var_wstring = x.m_var_wstring;
@@ -2125,8 +2119,8 @@ WStringStruct& WStringStruct::operator =(
     return *this;
 }
 
-WStringStruct& WStringStruct::operator =(
-        WStringStruct&& x) noexcept
+StructWString& StructWString::operator =(
+        StructWString&& x) noexcept
 {
 
     m_var_wstring = std::move(x.m_var_wstring);
@@ -2134,28 +2128,28 @@ WStringStruct& WStringStruct::operator =(
     return *this;
 }
 
-bool WStringStruct::operator ==(
-        const WStringStruct& x) const
+bool StructWString::operator ==(
+        const StructWString& x) const
 {
 
     return (m_var_wstring == x.m_var_wstring);
 }
 
-bool WStringStruct::operator !=(
-        const WStringStruct& x) const
+bool StructWString::operator !=(
+        const StructWString& x) const
 {
     return !(*this == x);
 }
 
-size_t WStringStruct::getMaxCdrSerializedSize(
+size_t StructWString::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return WStringStruct_max_cdr_typesize;
+    return StructWString_max_cdr_typesize;
 }
 
-size_t WStringStruct::getCdrSerializedSize(
-        const WStringStruct& data,
+size_t StructWString::getCdrSerializedSize(
+        const StructWString& data,
         size_t current_alignment)
 {
     (void)data;
@@ -2167,14 +2161,14 @@ size_t WStringStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void WStringStruct::serialize(
+void StructWString::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_wstring;
 }
 
-void WStringStruct::deserialize(
+void StructWString::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -2185,7 +2179,7 @@ void WStringStruct::deserialize(
  * @brief This function copies the value in member var_wstring
  * @param _var_wstring New value to be copied in member var_wstring
  */
-void WStringStruct::var_wstring(
+void StructWString::var_wstring(
         const std::wstring& _var_wstring)
 {
     m_var_wstring = _var_wstring;
@@ -2195,7 +2189,7 @@ void WStringStruct::var_wstring(
  * @brief This function moves the value in member var_wstring
  * @param _var_wstring New value to be moved in member var_wstring
  */
-void WStringStruct::var_wstring(
+void StructWString::var_wstring(
         std::wstring&& _var_wstring)
 {
     m_var_wstring = std::move(_var_wstring);
@@ -2205,7 +2199,7 @@ void WStringStruct::var_wstring(
  * @brief This function returns a constant reference to member var_wstring
  * @return Constant reference to member var_wstring
  */
-const std::wstring& WStringStruct::var_wstring() const
+const std::wstring& StructWString::var_wstring() const
 {
     return m_var_wstring;
 }
@@ -2214,32 +2208,32 @@ const std::wstring& WStringStruct::var_wstring() const
  * @brief This function returns a reference to member var_wstring
  * @return Reference to member var_wstring
  */
-std::wstring& WStringStruct::var_wstring()
+std::wstring& StructWString::var_wstring()
 {
     return m_var_wstring;
 }
 
 
-size_t WStringStruct::getKeyMaxCdrSerializedSize(
+size_t StructWString::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return WStringStruct_max_key_cdr_typesize;
+    return StructWString_max_key_cdr_typesize;
 }
 
-bool WStringStruct::isKeyDefined()
+bool StructWString::isKeyDefined()
 {
     return false;
 }
 
-void WStringStruct::serializeKey(
+void StructWString::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-BoundedStringStruct::BoundedStringStruct()
+StructBoundedString::StructBoundedString()
 {
     // Inner_alias_bounded_string_helper m_var_bounded_string
     m_var_bounded_string = "";
@@ -2249,24 +2243,24 @@ BoundedStringStruct::BoundedStringStruct()
     registerstructuresTypes();
 }
 
-BoundedStringStruct::~BoundedStringStruct()
+StructBoundedString::~StructBoundedString()
 {
 }
 
-BoundedStringStruct::BoundedStringStruct(
-        const BoundedStringStruct& x)
+StructBoundedString::StructBoundedString(
+        const StructBoundedString& x)
 {
     m_var_bounded_string = x.m_var_bounded_string;
 }
 
-BoundedStringStruct::BoundedStringStruct(
-        BoundedStringStruct&& x) noexcept 
+StructBoundedString::StructBoundedString(
+        StructBoundedString&& x) noexcept 
 {
     m_var_bounded_string = std::move(x.m_var_bounded_string);
 }
 
-BoundedStringStruct& BoundedStringStruct::operator =(
-        const BoundedStringStruct& x)
+StructBoundedString& StructBoundedString::operator =(
+        const StructBoundedString& x)
 {
 
     m_var_bounded_string = x.m_var_bounded_string;
@@ -2274,8 +2268,8 @@ BoundedStringStruct& BoundedStringStruct::operator =(
     return *this;
 }
 
-BoundedStringStruct& BoundedStringStruct::operator =(
-        BoundedStringStruct&& x) noexcept
+StructBoundedString& StructBoundedString::operator =(
+        StructBoundedString&& x) noexcept
 {
 
     m_var_bounded_string = std::move(x.m_var_bounded_string);
@@ -2283,28 +2277,28 @@ BoundedStringStruct& BoundedStringStruct::operator =(
     return *this;
 }
 
-bool BoundedStringStruct::operator ==(
-        const BoundedStringStruct& x) const
+bool StructBoundedString::operator ==(
+        const StructBoundedString& x) const
 {
 
     return (m_var_bounded_string == x.m_var_bounded_string);
 }
 
-bool BoundedStringStruct::operator !=(
-        const BoundedStringStruct& x) const
+bool StructBoundedString::operator !=(
+        const StructBoundedString& x) const
 {
     return !(*this == x);
 }
 
-size_t BoundedStringStruct::getMaxCdrSerializedSize(
+size_t StructBoundedString::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return BoundedStringStruct_max_cdr_typesize;
+    return StructBoundedString_max_cdr_typesize;
 }
 
-size_t BoundedStringStruct::getCdrSerializedSize(
-        const BoundedStringStruct& data,
+size_t StructBoundedString::getCdrSerializedSize(
+        const StructBoundedString& data,
         size_t current_alignment)
 {
     (void)data;
@@ -2316,14 +2310,14 @@ size_t BoundedStringStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void BoundedStringStruct::serialize(
+void StructBoundedString::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_bounded_string.c_str();
 }
 
-void BoundedStringStruct::deserialize(
+void StructBoundedString::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -2337,7 +2331,7 @@ void BoundedStringStruct::deserialize(
  * @brief This function copies the value in member var_bounded_string
  * @param _var_bounded_string New value to be copied in member var_bounded_string
  */
-void BoundedStringStruct::var_bounded_string(
+void StructBoundedString::var_bounded_string(
         const Inner_alias_bounded_string_helper& _var_bounded_string)
 {
     m_var_bounded_string = _var_bounded_string;
@@ -2347,7 +2341,7 @@ void BoundedStringStruct::var_bounded_string(
  * @brief This function moves the value in member var_bounded_string
  * @param _var_bounded_string New value to be moved in member var_bounded_string
  */
-void BoundedStringStruct::var_bounded_string(
+void StructBoundedString::var_bounded_string(
         Inner_alias_bounded_string_helper&& _var_bounded_string)
 {
     m_var_bounded_string = std::move(_var_bounded_string);
@@ -2357,7 +2351,7 @@ void BoundedStringStruct::var_bounded_string(
  * @brief This function returns a constant reference to member var_bounded_string
  * @return Constant reference to member var_bounded_string
  */
-const Inner_alias_bounded_string_helper& BoundedStringStruct::var_bounded_string() const
+const Inner_alias_bounded_string_helper& StructBoundedString::var_bounded_string() const
 {
     return m_var_bounded_string;
 }
@@ -2366,32 +2360,32 @@ const Inner_alias_bounded_string_helper& BoundedStringStruct::var_bounded_string
  * @brief This function returns a reference to member var_bounded_string
  * @return Reference to member var_bounded_string
  */
-Inner_alias_bounded_string_helper& BoundedStringStruct::var_bounded_string()
+Inner_alias_bounded_string_helper& StructBoundedString::var_bounded_string()
 {
     return m_var_bounded_string;
 }
 
 
-size_t BoundedStringStruct::getKeyMaxCdrSerializedSize(
+size_t StructBoundedString::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return BoundedStringStruct_max_key_cdr_typesize;
+    return StructBoundedString_max_key_cdr_typesize;
 }
 
-bool BoundedStringStruct::isKeyDefined()
+bool StructBoundedString::isKeyDefined()
 {
     return false;
 }
 
-void BoundedStringStruct::serializeKey(
+void StructBoundedString::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-BoundedWStringStruct::BoundedWStringStruct()
+StructBoundedWString::StructBoundedWString()
 {
     // Inner_alias_bounded_wstring_helper m_var_bounded_wstring
     m_var_bounded_wstring = L"";
@@ -2401,24 +2395,24 @@ BoundedWStringStruct::BoundedWStringStruct()
     registerstructuresTypes();
 }
 
-BoundedWStringStruct::~BoundedWStringStruct()
+StructBoundedWString::~StructBoundedWString()
 {
 }
 
-BoundedWStringStruct::BoundedWStringStruct(
-        const BoundedWStringStruct& x)
+StructBoundedWString::StructBoundedWString(
+        const StructBoundedWString& x)
 {
     m_var_bounded_wstring = x.m_var_bounded_wstring;
 }
 
-BoundedWStringStruct::BoundedWStringStruct(
-        BoundedWStringStruct&& x) noexcept 
+StructBoundedWString::StructBoundedWString(
+        StructBoundedWString&& x) noexcept 
 {
     m_var_bounded_wstring = std::move(x.m_var_bounded_wstring);
 }
 
-BoundedWStringStruct& BoundedWStringStruct::operator =(
-        const BoundedWStringStruct& x)
+StructBoundedWString& StructBoundedWString::operator =(
+        const StructBoundedWString& x)
 {
 
     m_var_bounded_wstring = x.m_var_bounded_wstring;
@@ -2426,8 +2420,8 @@ BoundedWStringStruct& BoundedWStringStruct::operator =(
     return *this;
 }
 
-BoundedWStringStruct& BoundedWStringStruct::operator =(
-        BoundedWStringStruct&& x) noexcept
+StructBoundedWString& StructBoundedWString::operator =(
+        StructBoundedWString&& x) noexcept
 {
 
     m_var_bounded_wstring = std::move(x.m_var_bounded_wstring);
@@ -2435,28 +2429,28 @@ BoundedWStringStruct& BoundedWStringStruct::operator =(
     return *this;
 }
 
-bool BoundedWStringStruct::operator ==(
-        const BoundedWStringStruct& x) const
+bool StructBoundedWString::operator ==(
+        const StructBoundedWString& x) const
 {
 
     return (m_var_bounded_wstring == x.m_var_bounded_wstring);
 }
 
-bool BoundedWStringStruct::operator !=(
-        const BoundedWStringStruct& x) const
+bool StructBoundedWString::operator !=(
+        const StructBoundedWString& x) const
 {
     return !(*this == x);
 }
 
-size_t BoundedWStringStruct::getMaxCdrSerializedSize(
+size_t StructBoundedWString::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return BoundedWStringStruct_max_cdr_typesize;
+    return StructBoundedWString_max_cdr_typesize;
 }
 
-size_t BoundedWStringStruct::getCdrSerializedSize(
-        const BoundedWStringStruct& data,
+size_t StructBoundedWString::getCdrSerializedSize(
+        const StructBoundedWString& data,
         size_t current_alignment)
 {
     (void)data;
@@ -2468,14 +2462,14 @@ size_t BoundedWStringStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void BoundedWStringStruct::serialize(
+void StructBoundedWString::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_bounded_wstring;
 }
 
-void BoundedWStringStruct::deserialize(
+void StructBoundedWString::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -2486,7 +2480,7 @@ void BoundedWStringStruct::deserialize(
  * @brief This function copies the value in member var_bounded_wstring
  * @param _var_bounded_wstring New value to be copied in member var_bounded_wstring
  */
-void BoundedWStringStruct::var_bounded_wstring(
+void StructBoundedWString::var_bounded_wstring(
         const Inner_alias_bounded_wstring_helper& _var_bounded_wstring)
 {
     m_var_bounded_wstring = _var_bounded_wstring;
@@ -2496,7 +2490,7 @@ void BoundedWStringStruct::var_bounded_wstring(
  * @brief This function moves the value in member var_bounded_wstring
  * @param _var_bounded_wstring New value to be moved in member var_bounded_wstring
  */
-void BoundedWStringStruct::var_bounded_wstring(
+void StructBoundedWString::var_bounded_wstring(
         Inner_alias_bounded_wstring_helper&& _var_bounded_wstring)
 {
     m_var_bounded_wstring = std::move(_var_bounded_wstring);
@@ -2506,7 +2500,7 @@ void BoundedWStringStruct::var_bounded_wstring(
  * @brief This function returns a constant reference to member var_bounded_wstring
  * @return Constant reference to member var_bounded_wstring
  */
-const Inner_alias_bounded_wstring_helper& BoundedWStringStruct::var_bounded_wstring() const
+const Inner_alias_bounded_wstring_helper& StructBoundedWString::var_bounded_wstring() const
 {
     return m_var_bounded_wstring;
 }
@@ -2515,32 +2509,32 @@ const Inner_alias_bounded_wstring_helper& BoundedWStringStruct::var_bounded_wstr
  * @brief This function returns a reference to member var_bounded_wstring
  * @return Reference to member var_bounded_wstring
  */
-Inner_alias_bounded_wstring_helper& BoundedWStringStruct::var_bounded_wstring()
+Inner_alias_bounded_wstring_helper& StructBoundedWString::var_bounded_wstring()
 {
     return m_var_bounded_wstring;
 }
 
 
-size_t BoundedWStringStruct::getKeyMaxCdrSerializedSize(
+size_t StructBoundedWString::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return BoundedWStringStruct_max_key_cdr_typesize;
+    return StructBoundedWString_max_key_cdr_typesize;
 }
 
-bool BoundedWStringStruct::isKeyDefined()
+bool StructBoundedWString::isKeyDefined()
 {
     return false;
 }
 
-void BoundedWStringStruct::serializeKey(
+void StructBoundedWString::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-EnumStruct::EnumStruct()
+StructEnum::StructEnum()
 {
     // InnerEnumHelper m_var_enum
     m_var_enum = ::ENUM_VALUE_1;
@@ -2549,33 +2543,24 @@ EnumStruct::EnumStruct()
     registerstructuresTypes();
 }
 
-EnumStruct::~EnumStruct()
+StructEnum::~StructEnum()
 {
 }
 
-EnumStruct::EnumStruct(
-        const EnumStruct& x)
-{
-    m_var_enum = x.m_var_enum;
-}
-
-EnumStruct::EnumStruct(
-        EnumStruct&& x) noexcept 
+StructEnum::StructEnum(
+        const StructEnum& x)
 {
     m_var_enum = x.m_var_enum;
 }
 
-EnumStruct& EnumStruct::operator =(
-        const EnumStruct& x)
+StructEnum::StructEnum(
+        StructEnum&& x) noexcept 
 {
-
     m_var_enum = x.m_var_enum;
-
-    return *this;
 }
 
-EnumStruct& EnumStruct::operator =(
-        EnumStruct&& x) noexcept
+StructEnum& StructEnum::operator =(
+        const StructEnum& x)
 {
 
     m_var_enum = x.m_var_enum;
@@ -2583,28 +2568,37 @@ EnumStruct& EnumStruct::operator =(
     return *this;
 }
 
-bool EnumStruct::operator ==(
-        const EnumStruct& x) const
+StructEnum& StructEnum::operator =(
+        StructEnum&& x) noexcept
+{
+
+    m_var_enum = x.m_var_enum;
+
+    return *this;
+}
+
+bool StructEnum::operator ==(
+        const StructEnum& x) const
 {
 
     return (m_var_enum == x.m_var_enum);
 }
 
-bool EnumStruct::operator !=(
-        const EnumStruct& x) const
+bool StructEnum::operator !=(
+        const StructEnum& x) const
 {
     return !(*this == x);
 }
 
-size_t EnumStruct::getMaxCdrSerializedSize(
+size_t StructEnum::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return EnumStruct_max_cdr_typesize;
+    return StructEnum_max_cdr_typesize;
 }
 
-size_t EnumStruct::getCdrSerializedSize(
-        const EnumStruct& data,
+size_t StructEnum::getCdrSerializedSize(
+        const StructEnum& data,
         size_t current_alignment)
 {
     (void)data;
@@ -2617,14 +2611,14 @@ size_t EnumStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void EnumStruct::serialize(
+void StructEnum::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << (uint32_t)m_var_enum;
 }
 
-void EnumStruct::deserialize(
+void StructEnum::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -2640,7 +2634,7 @@ void EnumStruct::deserialize(
  * @brief This function sets a value in member var_enum
  * @param _var_enum New value for member var_enum
  */
-void EnumStruct::var_enum(
+void StructEnum::var_enum(
         InnerEnumHelper _var_enum)
 {
     m_var_enum = _var_enum;
@@ -2650,7 +2644,7 @@ void EnumStruct::var_enum(
  * @brief This function returns the value of member var_enum
  * @return Value of member var_enum
  */
-InnerEnumHelper EnumStruct::var_enum() const
+InnerEnumHelper StructEnum::var_enum() const
 {
     return m_var_enum;
 }
@@ -2659,33 +2653,33 @@ InnerEnumHelper EnumStruct::var_enum() const
  * @brief This function returns a reference to member var_enum
  * @return Reference to member var_enum
  */
-InnerEnumHelper& EnumStruct::var_enum()
+InnerEnumHelper& StructEnum::var_enum()
 {
     return m_var_enum;
 }
 
 
 
-size_t EnumStruct::getKeyMaxCdrSerializedSize(
+size_t StructEnum::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return EnumStruct_max_key_cdr_typesize;
+    return StructEnum_max_key_cdr_typesize;
 }
 
-bool EnumStruct::isKeyDefined()
+bool StructEnum::isKeyDefined()
 {
     return false;
 }
 
-void EnumStruct::serializeKey(
+void StructEnum::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-BitMaskStruct::BitMaskStruct()
+StructBitMask::StructBitMask()
 {
     // InnerBitMaskHelper m_var_bitmask
     m_var_bitmask = static_cast<InnerBitMaskHelper>(0);
@@ -2694,33 +2688,24 @@ BitMaskStruct::BitMaskStruct()
     registerstructuresTypes();
 }
 
-BitMaskStruct::~BitMaskStruct()
+StructBitMask::~StructBitMask()
 {
 }
 
-BitMaskStruct::BitMaskStruct(
-        const BitMaskStruct& x)
-{
-    m_var_bitmask = x.m_var_bitmask;
-}
-
-BitMaskStruct::BitMaskStruct(
-        BitMaskStruct&& x) noexcept 
+StructBitMask::StructBitMask(
+        const StructBitMask& x)
 {
     m_var_bitmask = x.m_var_bitmask;
 }
 
-BitMaskStruct& BitMaskStruct::operator =(
-        const BitMaskStruct& x)
+StructBitMask::StructBitMask(
+        StructBitMask&& x) noexcept 
 {
-
     m_var_bitmask = x.m_var_bitmask;
-
-    return *this;
 }
 
-BitMaskStruct& BitMaskStruct::operator =(
-        BitMaskStruct&& x) noexcept
+StructBitMask& StructBitMask::operator =(
+        const StructBitMask& x)
 {
 
     m_var_bitmask = x.m_var_bitmask;
@@ -2728,28 +2713,37 @@ BitMaskStruct& BitMaskStruct::operator =(
     return *this;
 }
 
-bool BitMaskStruct::operator ==(
-        const BitMaskStruct& x) const
+StructBitMask& StructBitMask::operator =(
+        StructBitMask&& x) noexcept
+{
+
+    m_var_bitmask = x.m_var_bitmask;
+
+    return *this;
+}
+
+bool StructBitMask::operator ==(
+        const StructBitMask& x) const
 {
 
     return (m_var_bitmask == x.m_var_bitmask);
 }
 
-bool BitMaskStruct::operator !=(
-        const BitMaskStruct& x) const
+bool StructBitMask::operator !=(
+        const StructBitMask& x) const
 {
     return !(*this == x);
 }
 
-size_t BitMaskStruct::getMaxCdrSerializedSize(
+size_t StructBitMask::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return BitMaskStruct_max_cdr_typesize;
+    return StructBitMask_max_cdr_typesize;
 }
 
-size_t BitMaskStruct::getCdrSerializedSize(
-        const BitMaskStruct& data,
+size_t StructBitMask::getCdrSerializedSize(
+        const StructBitMask& data,
         size_t current_alignment)
 {
     (void)data;
@@ -2762,14 +2756,14 @@ size_t BitMaskStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void BitMaskStruct::serialize(
+void StructBitMask::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << (uint32_t)m_var_bitmask;
 }
 
-void BitMaskStruct::deserialize(
+void StructBitMask::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -2785,7 +2779,7 @@ void BitMaskStruct::deserialize(
  * @brief This function sets a value in member var_bitmask
  * @param _var_bitmask New value for member var_bitmask
  */
-void BitMaskStruct::var_bitmask(
+void StructBitMask::var_bitmask(
         InnerBitMaskHelper _var_bitmask)
 {
     m_var_bitmask = _var_bitmask;
@@ -2795,7 +2789,7 @@ void BitMaskStruct::var_bitmask(
  * @brief This function returns the value of member var_bitmask
  * @return Value of member var_bitmask
  */
-InnerBitMaskHelper BitMaskStruct::var_bitmask() const
+InnerBitMaskHelper StructBitMask::var_bitmask() const
 {
     return m_var_bitmask;
 }
@@ -2804,33 +2798,33 @@ InnerBitMaskHelper BitMaskStruct::var_bitmask() const
  * @brief This function returns a reference to member var_bitmask
  * @return Reference to member var_bitmask
  */
-InnerBitMaskHelper& BitMaskStruct::var_bitmask()
+InnerBitMaskHelper& StructBitMask::var_bitmask()
 {
     return m_var_bitmask;
 }
 
 
 
-size_t BitMaskStruct::getKeyMaxCdrSerializedSize(
+size_t StructBitMask::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return BitMaskStruct_max_key_cdr_typesize;
+    return StructBitMask_max_key_cdr_typesize;
 }
 
-bool BitMaskStruct::isKeyDefined()
+bool StructBitMask::isKeyDefined()
 {
     return false;
 }
 
-void BitMaskStruct::serializeKey(
+void StructBitMask::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-AliasStruct::AliasStruct()
+StructAlias::StructAlias()
 {
     // InnerAliasHelper m_var_alias
     m_var_alias = 0;
@@ -2839,33 +2833,24 @@ AliasStruct::AliasStruct()
     registerstructuresTypes();
 }
 
-AliasStruct::~AliasStruct()
+StructAlias::~StructAlias()
 {
 }
 
-AliasStruct::AliasStruct(
-        const AliasStruct& x)
-{
-    m_var_alias = x.m_var_alias;
-}
-
-AliasStruct::AliasStruct(
-        AliasStruct&& x) noexcept 
+StructAlias::StructAlias(
+        const StructAlias& x)
 {
     m_var_alias = x.m_var_alias;
 }
 
-AliasStruct& AliasStruct::operator =(
-        const AliasStruct& x)
+StructAlias::StructAlias(
+        StructAlias&& x) noexcept 
 {
-
     m_var_alias = x.m_var_alias;
-
-    return *this;
 }
 
-AliasStruct& AliasStruct::operator =(
-        AliasStruct&& x) noexcept
+StructAlias& StructAlias::operator =(
+        const StructAlias& x)
 {
 
     m_var_alias = x.m_var_alias;
@@ -2873,28 +2858,37 @@ AliasStruct& AliasStruct::operator =(
     return *this;
 }
 
-bool AliasStruct::operator ==(
-        const AliasStruct& x) const
+StructAlias& StructAlias::operator =(
+        StructAlias&& x) noexcept
+{
+
+    m_var_alias = x.m_var_alias;
+
+    return *this;
+}
+
+bool StructAlias::operator ==(
+        const StructAlias& x) const
 {
 
     return (m_var_alias == x.m_var_alias);
 }
 
-bool AliasStruct::operator !=(
-        const AliasStruct& x) const
+bool StructAlias::operator !=(
+        const StructAlias& x) const
 {
     return !(*this == x);
 }
 
-size_t AliasStruct::getMaxCdrSerializedSize(
+size_t StructAlias::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return AliasStruct_max_cdr_typesize;
+    return StructAlias_max_cdr_typesize;
 }
 
-size_t AliasStruct::getCdrSerializedSize(
-        const AliasStruct& data,
+size_t StructAlias::getCdrSerializedSize(
+        const StructAlias& data,
         size_t current_alignment)
 {
     (void)data;
@@ -2907,14 +2901,14 @@ size_t AliasStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void AliasStruct::serialize(
+void StructAlias::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_alias;
 }
 
-void AliasStruct::deserialize(
+void StructAlias::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -2925,7 +2919,7 @@ void AliasStruct::deserialize(
  * @brief This function sets a value in member var_alias
  * @param _var_alias New value for member var_alias
  */
-void AliasStruct::var_alias(
+void StructAlias::var_alias(
         InnerAliasHelper _var_alias)
 {
     m_var_alias = _var_alias;
@@ -2935,7 +2929,7 @@ void AliasStruct::var_alias(
  * @brief This function returns the value of member var_alias
  * @return Value of member var_alias
  */
-InnerAliasHelper AliasStruct::var_alias() const
+InnerAliasHelper StructAlias::var_alias() const
 {
     return m_var_alias;
 }
@@ -2944,33 +2938,33 @@ InnerAliasHelper AliasStruct::var_alias() const
  * @brief This function returns a reference to member var_alias
  * @return Reference to member var_alias
  */
-InnerAliasHelper& AliasStruct::var_alias()
+InnerAliasHelper& StructAlias::var_alias()
 {
     return m_var_alias;
 }
 
 
 
-size_t AliasStruct::getKeyMaxCdrSerializedSize(
+size_t StructAlias::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return AliasStruct_max_key_cdr_typesize;
+    return StructAlias_max_key_cdr_typesize;
 }
 
-bool AliasStruct::isKeyDefined()
+bool StructAlias::isKeyDefined()
 {
     return false;
 }
 
-void AliasStruct::serializeKey(
+void StructAlias::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-ShortArrayStruct::ShortArrayStruct()
+StructShortArray::StructShortArray()
 {
     // short m_var_array_short
     memset(&m_var_array_short, 0, (10) * 2);
@@ -2980,24 +2974,24 @@ ShortArrayStruct::ShortArrayStruct()
     registerstructuresTypes();
 }
 
-ShortArrayStruct::~ShortArrayStruct()
+StructShortArray::~StructShortArray()
 {
 }
 
-ShortArrayStruct::ShortArrayStruct(
-        const ShortArrayStruct& x)
+StructShortArray::StructShortArray(
+        const StructShortArray& x)
 {
     m_var_array_short = x.m_var_array_short;
 }
 
-ShortArrayStruct::ShortArrayStruct(
-        ShortArrayStruct&& x) noexcept 
+StructShortArray::StructShortArray(
+        StructShortArray&& x) noexcept 
 {
     m_var_array_short = std::move(x.m_var_array_short);
 }
 
-ShortArrayStruct& ShortArrayStruct::operator =(
-        const ShortArrayStruct& x)
+StructShortArray& StructShortArray::operator =(
+        const StructShortArray& x)
 {
 
     m_var_array_short = x.m_var_array_short;
@@ -3005,8 +2999,8 @@ ShortArrayStruct& ShortArrayStruct::operator =(
     return *this;
 }
 
-ShortArrayStruct& ShortArrayStruct::operator =(
-        ShortArrayStruct&& x) noexcept
+StructShortArray& StructShortArray::operator =(
+        StructShortArray&& x) noexcept
 {
 
     m_var_array_short = std::move(x.m_var_array_short);
@@ -3014,28 +3008,28 @@ ShortArrayStruct& ShortArrayStruct::operator =(
     return *this;
 }
 
-bool ShortArrayStruct::operator ==(
-        const ShortArrayStruct& x) const
+bool StructShortArray::operator ==(
+        const StructShortArray& x) const
 {
 
     return (m_var_array_short == x.m_var_array_short);
 }
 
-bool ShortArrayStruct::operator !=(
-        const ShortArrayStruct& x) const
+bool StructShortArray::operator !=(
+        const StructShortArray& x) const
 {
     return !(*this == x);
 }
 
-size_t ShortArrayStruct::getMaxCdrSerializedSize(
+size_t StructShortArray::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return ShortArrayStruct_max_cdr_typesize;
+    return StructShortArray_max_cdr_typesize;
 }
 
-size_t ShortArrayStruct::getCdrSerializedSize(
-        const ShortArrayStruct& data,
+size_t StructShortArray::getCdrSerializedSize(
+        const StructShortArray& data,
         size_t current_alignment)
 {
     (void)data;
@@ -3047,7 +3041,7 @@ size_t ShortArrayStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void ShortArrayStruct::serialize(
+void StructShortArray::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
@@ -3055,7 +3049,7 @@ void ShortArrayStruct::serialize(
 
 }
 
-void ShortArrayStruct::deserialize(
+void StructShortArray::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -3067,7 +3061,7 @@ void ShortArrayStruct::deserialize(
  * @brief This function copies the value in member var_array_short
  * @param _var_array_short New value to be copied in member var_array_short
  */
-void ShortArrayStruct::var_array_short(
+void StructShortArray::var_array_short(
         const std::array<int16_t, 10>& _var_array_short)
 {
     m_var_array_short = _var_array_short;
@@ -3077,7 +3071,7 @@ void ShortArrayStruct::var_array_short(
  * @brief This function moves the value in member var_array_short
  * @param _var_array_short New value to be moved in member var_array_short
  */
-void ShortArrayStruct::var_array_short(
+void StructShortArray::var_array_short(
         std::array<int16_t, 10>&& _var_array_short)
 {
     m_var_array_short = std::move(_var_array_short);
@@ -3087,7 +3081,7 @@ void ShortArrayStruct::var_array_short(
  * @brief This function returns a constant reference to member var_array_short
  * @return Constant reference to member var_array_short
  */
-const std::array<int16_t, 10>& ShortArrayStruct::var_array_short() const
+const std::array<int16_t, 10>& StructShortArray::var_array_short() const
 {
     return m_var_array_short;
 }
@@ -3096,32 +3090,32 @@ const std::array<int16_t, 10>& ShortArrayStruct::var_array_short() const
  * @brief This function returns a reference to member var_array_short
  * @return Reference to member var_array_short
  */
-std::array<int16_t, 10>& ShortArrayStruct::var_array_short()
+std::array<int16_t, 10>& StructShortArray::var_array_short()
 {
     return m_var_array_short;
 }
 
 
-size_t ShortArrayStruct::getKeyMaxCdrSerializedSize(
+size_t StructShortArray::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return ShortArrayStruct_max_key_cdr_typesize;
+    return StructShortArray_max_key_cdr_typesize;
 }
 
-bool ShortArrayStruct::isKeyDefined()
+bool StructShortArray::isKeyDefined()
 {
     return false;
 }
 
-void ShortArrayStruct::serializeKey(
+void StructShortArray::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-SequenceStruct::SequenceStruct()
+StructSequence::StructSequence()
 {
     // sequence<long> m_var_sequence
 
@@ -3130,24 +3124,24 @@ SequenceStruct::SequenceStruct()
     registerstructuresTypes();
 }
 
-SequenceStruct::~SequenceStruct()
+StructSequence::~StructSequence()
 {
 }
 
-SequenceStruct::SequenceStruct(
-        const SequenceStruct& x)
+StructSequence::StructSequence(
+        const StructSequence& x)
 {
     m_var_sequence = x.m_var_sequence;
 }
 
-SequenceStruct::SequenceStruct(
-        SequenceStruct&& x) noexcept 
+StructSequence::StructSequence(
+        StructSequence&& x) noexcept 
 {
     m_var_sequence = std::move(x.m_var_sequence);
 }
 
-SequenceStruct& SequenceStruct::operator =(
-        const SequenceStruct& x)
+StructSequence& StructSequence::operator =(
+        const StructSequence& x)
 {
 
     m_var_sequence = x.m_var_sequence;
@@ -3155,8 +3149,8 @@ SequenceStruct& SequenceStruct::operator =(
     return *this;
 }
 
-SequenceStruct& SequenceStruct::operator =(
-        SequenceStruct&& x) noexcept
+StructSequence& StructSequence::operator =(
+        StructSequence&& x) noexcept
 {
 
     m_var_sequence = std::move(x.m_var_sequence);
@@ -3164,28 +3158,28 @@ SequenceStruct& SequenceStruct::operator =(
     return *this;
 }
 
-bool SequenceStruct::operator ==(
-        const SequenceStruct& x) const
+bool StructSequence::operator ==(
+        const StructSequence& x) const
 {
 
     return (m_var_sequence == x.m_var_sequence);
 }
 
-bool SequenceStruct::operator !=(
-        const SequenceStruct& x) const
+bool StructSequence::operator !=(
+        const StructSequence& x) const
 {
     return !(*this == x);
 }
 
-size_t SequenceStruct::getMaxCdrSerializedSize(
+size_t StructSequence::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return SequenceStruct_max_cdr_typesize;
+    return StructSequence_max_cdr_typesize;
 }
 
-size_t SequenceStruct::getCdrSerializedSize(
-        const SequenceStruct& data,
+size_t StructSequence::getCdrSerializedSize(
+        const StructSequence& data,
         size_t current_alignment)
 {
     (void)data;
@@ -3204,14 +3198,14 @@ size_t SequenceStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void SequenceStruct::serialize(
+void StructSequence::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_sequence;
 }
 
-void SequenceStruct::deserialize(
+void StructSequence::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -3221,7 +3215,7 @@ void SequenceStruct::deserialize(
  * @brief This function copies the value in member var_sequence
  * @param _var_sequence New value to be copied in member var_sequence
  */
-void SequenceStruct::var_sequence(
+void StructSequence::var_sequence(
         const std::vector<int32_t>& _var_sequence)
 {
     m_var_sequence = _var_sequence;
@@ -3231,7 +3225,7 @@ void SequenceStruct::var_sequence(
  * @brief This function moves the value in member var_sequence
  * @param _var_sequence New value to be moved in member var_sequence
  */
-void SequenceStruct::var_sequence(
+void StructSequence::var_sequence(
         std::vector<int32_t>&& _var_sequence)
 {
     m_var_sequence = std::move(_var_sequence);
@@ -3241,7 +3235,7 @@ void SequenceStruct::var_sequence(
  * @brief This function returns a constant reference to member var_sequence
  * @return Constant reference to member var_sequence
  */
-const std::vector<int32_t>& SequenceStruct::var_sequence() const
+const std::vector<int32_t>& StructSequence::var_sequence() const
 {
     return m_var_sequence;
 }
@@ -3250,32 +3244,32 @@ const std::vector<int32_t>& SequenceStruct::var_sequence() const
  * @brief This function returns a reference to member var_sequence
  * @return Reference to member var_sequence
  */
-std::vector<int32_t>& SequenceStruct::var_sequence()
+std::vector<int32_t>& StructSequence::var_sequence()
 {
     return m_var_sequence;
 }
 
 
-size_t SequenceStruct::getKeyMaxCdrSerializedSize(
+size_t StructSequence::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return SequenceStruct_max_key_cdr_typesize;
+    return StructSequence_max_key_cdr_typesize;
 }
 
-bool SequenceStruct::isKeyDefined()
+bool StructSequence::isKeyDefined()
 {
     return false;
 }
 
-void SequenceStruct::serializeKey(
+void StructSequence::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-MapStruct::MapStruct()
+StructMap::StructMap()
 {
     // map<long, long> m_var_map
 
@@ -3284,24 +3278,24 @@ MapStruct::MapStruct()
     registerstructuresTypes();
 }
 
-MapStruct::~MapStruct()
+StructMap::~StructMap()
 {
 }
 
-MapStruct::MapStruct(
-        const MapStruct& x)
+StructMap::StructMap(
+        const StructMap& x)
 {
     m_var_map = x.m_var_map;
 }
 
-MapStruct::MapStruct(
-        MapStruct&& x) noexcept 
+StructMap::StructMap(
+        StructMap&& x) noexcept 
 {
     m_var_map = std::move(x.m_var_map);
 }
 
-MapStruct& MapStruct::operator =(
-        const MapStruct& x)
+StructMap& StructMap::operator =(
+        const StructMap& x)
 {
 
     m_var_map = x.m_var_map;
@@ -3309,8 +3303,8 @@ MapStruct& MapStruct::operator =(
     return *this;
 }
 
-MapStruct& MapStruct::operator =(
-        MapStruct&& x) noexcept
+StructMap& StructMap::operator =(
+        StructMap&& x) noexcept
 {
 
     m_var_map = std::move(x.m_var_map);
@@ -3318,28 +3312,28 @@ MapStruct& MapStruct::operator =(
     return *this;
 }
 
-bool MapStruct::operator ==(
-        const MapStruct& x) const
+bool StructMap::operator ==(
+        const StructMap& x) const
 {
 
     return (m_var_map == x.m_var_map);
 }
 
-bool MapStruct::operator !=(
-        const MapStruct& x) const
+bool StructMap::operator !=(
+        const StructMap& x) const
 {
     return !(*this == x);
 }
 
-size_t MapStruct::getMaxCdrSerializedSize(
+size_t StructMap::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return MapStruct_max_cdr_typesize;
+    return StructMap_max_cdr_typesize;
 }
 
-size_t MapStruct::getCdrSerializedSize(
-        const MapStruct& data,
+size_t StructMap::getCdrSerializedSize(
+        const StructMap& data,
         size_t current_alignment)
 {
     (void)data;
@@ -3359,7 +3353,7 @@ size_t MapStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void MapStruct::serialize(
+void StructMap::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
@@ -3368,7 +3362,7 @@ void MapStruct::serialize(
     {
         scdr << pair.first;    scdr << pair.second;}}
 
-void MapStruct::deserialize(
+void StructMap::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -3380,7 +3374,7 @@ void MapStruct::deserialize(
  * @brief This function copies the value in member var_map
  * @param _var_map New value to be copied in member var_map
  */
-void MapStruct::var_map(
+void StructMap::var_map(
         const std::map<int32_t, int32_t>& _var_map)
 {
     m_var_map = _var_map;
@@ -3390,7 +3384,7 @@ void MapStruct::var_map(
  * @brief This function moves the value in member var_map
  * @param _var_map New value to be moved in member var_map
  */
-void MapStruct::var_map(
+void StructMap::var_map(
         std::map<int32_t, int32_t>&& _var_map)
 {
     m_var_map = std::move(_var_map);
@@ -3400,7 +3394,7 @@ void MapStruct::var_map(
  * @brief This function returns a constant reference to member var_map
  * @return Constant reference to member var_map
  */
-const std::map<int32_t, int32_t>& MapStruct::var_map() const
+const std::map<int32_t, int32_t>& StructMap::var_map() const
 {
     return m_var_map;
 }
@@ -3409,32 +3403,32 @@ const std::map<int32_t, int32_t>& MapStruct::var_map() const
  * @brief This function returns a reference to member var_map
  * @return Reference to member var_map
  */
-std::map<int32_t, int32_t>& MapStruct::var_map()
+std::map<int32_t, int32_t>& StructMap::var_map()
 {
     return m_var_map;
 }
 
 
-size_t MapStruct::getKeyMaxCdrSerializedSize(
+size_t StructMap::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return MapStruct_max_key_cdr_typesize;
+    return StructMap_max_key_cdr_typesize;
 }
 
-bool MapStruct::isKeyDefined()
+bool StructMap::isKeyDefined()
 {
     return false;
 }
 
-void MapStruct::serializeKey(
+void StructMap::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-UnionStruct::UnionStruct()
+StructUnion::StructUnion()
 {
     // InnerUnionHelper m_var_union
 
@@ -3443,24 +3437,24 @@ UnionStruct::UnionStruct()
     registerstructuresTypes();
 }
 
-UnionStruct::~UnionStruct()
+StructUnion::~StructUnion()
 {
 }
 
-UnionStruct::UnionStruct(
-        const UnionStruct& x)
+StructUnion::StructUnion(
+        const StructUnion& x)
 {
     m_var_union = x.m_var_union;
 }
 
-UnionStruct::UnionStruct(
-        UnionStruct&& x) noexcept 
+StructUnion::StructUnion(
+        StructUnion&& x) noexcept 
 {
     m_var_union = std::move(x.m_var_union);
 }
 
-UnionStruct& UnionStruct::operator =(
-        const UnionStruct& x)
+StructUnion& StructUnion::operator =(
+        const StructUnion& x)
 {
 
     m_var_union = x.m_var_union;
@@ -3468,8 +3462,8 @@ UnionStruct& UnionStruct::operator =(
     return *this;
 }
 
-UnionStruct& UnionStruct::operator =(
-        UnionStruct&& x) noexcept
+StructUnion& StructUnion::operator =(
+        StructUnion&& x) noexcept
 {
 
     m_var_union = std::move(x.m_var_union);
@@ -3477,28 +3471,28 @@ UnionStruct& UnionStruct::operator =(
     return *this;
 }
 
-bool UnionStruct::operator ==(
-        const UnionStruct& x) const
+bool StructUnion::operator ==(
+        const StructUnion& x) const
 {
 
     return (m_var_union == x.m_var_union);
 }
 
-bool UnionStruct::operator !=(
-        const UnionStruct& x) const
+bool StructUnion::operator !=(
+        const StructUnion& x) const
 {
     return !(*this == x);
 }
 
-size_t UnionStruct::getMaxCdrSerializedSize(
+size_t StructUnion::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return UnionStruct_max_cdr_typesize;
+    return StructUnion_max_cdr_typesize;
 }
 
-size_t UnionStruct::getCdrSerializedSize(
-        const UnionStruct& data,
+size_t StructUnion::getCdrSerializedSize(
+        const StructUnion& data,
         size_t current_alignment)
 {
     (void)data;
@@ -3510,14 +3504,14 @@ size_t UnionStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void UnionStruct::serialize(
+void StructUnion::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_union;
 }
 
-void UnionStruct::deserialize(
+void StructUnion::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -3528,7 +3522,7 @@ void UnionStruct::deserialize(
  * @brief This function copies the value in member var_union
  * @param _var_union New value to be copied in member var_union
  */
-void UnionStruct::var_union(
+void StructUnion::var_union(
         const InnerUnionHelper& _var_union)
 {
     m_var_union = _var_union;
@@ -3538,7 +3532,7 @@ void UnionStruct::var_union(
  * @brief This function moves the value in member var_union
  * @param _var_union New value to be moved in member var_union
  */
-void UnionStruct::var_union(
+void StructUnion::var_union(
         InnerUnionHelper&& _var_union)
 {
     m_var_union = std::move(_var_union);
@@ -3548,7 +3542,7 @@ void UnionStruct::var_union(
  * @brief This function returns a constant reference to member var_union
  * @return Constant reference to member var_union
  */
-const InnerUnionHelper& UnionStruct::var_union() const
+const InnerUnionHelper& StructUnion::var_union() const
 {
     return m_var_union;
 }
@@ -3557,32 +3551,32 @@ const InnerUnionHelper& UnionStruct::var_union() const
  * @brief This function returns a reference to member var_union
  * @return Reference to member var_union
  */
-InnerUnionHelper& UnionStruct::var_union()
+InnerUnionHelper& StructUnion::var_union()
 {
     return m_var_union;
 }
 
 
-size_t UnionStruct::getKeyMaxCdrSerializedSize(
+size_t StructUnion::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return UnionStruct_max_key_cdr_typesize;
+    return StructUnion_max_key_cdr_typesize;
 }
 
-bool UnionStruct::isKeyDefined()
+bool StructUnion::isKeyDefined()
 {
     return false;
 }
 
-void UnionStruct::serializeKey(
+void StructUnion::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-StructureStruct::StructureStruct()
+StructStructure::StructStructure()
 {
     // InnerStructureHelper m_var_structure
 
@@ -3591,24 +3585,24 @@ StructureStruct::StructureStruct()
     registerstructuresTypes();
 }
 
-StructureStruct::~StructureStruct()
+StructStructure::~StructStructure()
 {
 }
 
-StructureStruct::StructureStruct(
-        const StructureStruct& x)
+StructStructure::StructStructure(
+        const StructStructure& x)
 {
     m_var_structure = x.m_var_structure;
 }
 
-StructureStruct::StructureStruct(
-        StructureStruct&& x) noexcept 
+StructStructure::StructStructure(
+        StructStructure&& x) noexcept 
 {
     m_var_structure = std::move(x.m_var_structure);
 }
 
-StructureStruct& StructureStruct::operator =(
-        const StructureStruct& x)
+StructStructure& StructStructure::operator =(
+        const StructStructure& x)
 {
 
     m_var_structure = x.m_var_structure;
@@ -3616,8 +3610,8 @@ StructureStruct& StructureStruct::operator =(
     return *this;
 }
 
-StructureStruct& StructureStruct::operator =(
-        StructureStruct&& x) noexcept
+StructStructure& StructStructure::operator =(
+        StructStructure&& x) noexcept
 {
 
     m_var_structure = std::move(x.m_var_structure);
@@ -3625,28 +3619,28 @@ StructureStruct& StructureStruct::operator =(
     return *this;
 }
 
-bool StructureStruct::operator ==(
-        const StructureStruct& x) const
+bool StructStructure::operator ==(
+        const StructStructure& x) const
 {
 
     return (m_var_structure == x.m_var_structure);
 }
 
-bool StructureStruct::operator !=(
-        const StructureStruct& x) const
+bool StructStructure::operator !=(
+        const StructStructure& x) const
 {
     return !(*this == x);
 }
 
-size_t StructureStruct::getMaxCdrSerializedSize(
+size_t StructStructure::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return StructureStruct_max_cdr_typesize;
+    return StructStructure_max_cdr_typesize;
 }
 
-size_t StructureStruct::getCdrSerializedSize(
-        const StructureStruct& data,
+size_t StructStructure::getCdrSerializedSize(
+        const StructStructure& data,
         size_t current_alignment)
 {
     (void)data;
@@ -3658,14 +3652,14 @@ size_t StructureStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void StructureStruct::serialize(
+void StructStructure::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_structure;
 }
 
-void StructureStruct::deserialize(
+void StructStructure::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -3676,7 +3670,7 @@ void StructureStruct::deserialize(
  * @brief This function copies the value in member var_structure
  * @param _var_structure New value to be copied in member var_structure
  */
-void StructureStruct::var_structure(
+void StructStructure::var_structure(
         const InnerStructureHelper& _var_structure)
 {
     m_var_structure = _var_structure;
@@ -3686,7 +3680,7 @@ void StructureStruct::var_structure(
  * @brief This function moves the value in member var_structure
  * @param _var_structure New value to be moved in member var_structure
  */
-void StructureStruct::var_structure(
+void StructStructure::var_structure(
         InnerStructureHelper&& _var_structure)
 {
     m_var_structure = std::move(_var_structure);
@@ -3696,7 +3690,7 @@ void StructureStruct::var_structure(
  * @brief This function returns a constant reference to member var_structure
  * @return Constant reference to member var_structure
  */
-const InnerStructureHelper& StructureStruct::var_structure() const
+const InnerStructureHelper& StructStructure::var_structure() const
 {
     return m_var_structure;
 }
@@ -3705,32 +3699,32 @@ const InnerStructureHelper& StructureStruct::var_structure() const
  * @brief This function returns a reference to member var_structure
  * @return Reference to member var_structure
  */
-InnerStructureHelper& StructureStruct::var_structure()
+InnerStructureHelper& StructStructure::var_structure()
 {
     return m_var_structure;
 }
 
 
-size_t StructureStruct::getKeyMaxCdrSerializedSize(
+size_t StructStructure::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return StructureStruct_max_key_cdr_typesize;
+    return StructStructure_max_key_cdr_typesize;
 }
 
-bool StructureStruct::isKeyDefined()
+bool StructStructure::isKeyDefined()
 {
     return false;
 }
 
-void StructureStruct::serializeKey(
+void StructStructure::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-BitsetStruct::BitsetStruct()
+StructBitset::StructBitset()
 {
     // InnerBitsetHelper m_var_bitset
 
@@ -3739,24 +3733,24 @@ BitsetStruct::BitsetStruct()
     registerstructuresTypes();
 }
 
-BitsetStruct::~BitsetStruct()
+StructBitset::~StructBitset()
 {
 }
 
-BitsetStruct::BitsetStruct(
-        const BitsetStruct& x)
+StructBitset::StructBitset(
+        const StructBitset& x)
 {
     m_var_bitset = x.m_var_bitset;
 }
 
-BitsetStruct::BitsetStruct(
-        BitsetStruct&& x) noexcept 
+StructBitset::StructBitset(
+        StructBitset&& x) noexcept 
 {
     m_var_bitset = std::move(x.m_var_bitset);
 }
 
-BitsetStruct& BitsetStruct::operator =(
-        const BitsetStruct& x)
+StructBitset& StructBitset::operator =(
+        const StructBitset& x)
 {
 
     m_var_bitset = x.m_var_bitset;
@@ -3764,8 +3758,8 @@ BitsetStruct& BitsetStruct::operator =(
     return *this;
 }
 
-BitsetStruct& BitsetStruct::operator =(
-        BitsetStruct&& x) noexcept
+StructBitset& StructBitset::operator =(
+        StructBitset&& x) noexcept
 {
 
     m_var_bitset = std::move(x.m_var_bitset);
@@ -3773,28 +3767,28 @@ BitsetStruct& BitsetStruct::operator =(
     return *this;
 }
 
-bool BitsetStruct::operator ==(
-        const BitsetStruct& x) const
+bool StructBitset::operator ==(
+        const StructBitset& x) const
 {
 
     return (m_var_bitset == x.m_var_bitset);
 }
 
-bool BitsetStruct::operator !=(
-        const BitsetStruct& x) const
+bool StructBitset::operator !=(
+        const StructBitset& x) const
 {
     return !(*this == x);
 }
 
-size_t BitsetStruct::getMaxCdrSerializedSize(
+size_t StructBitset::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return BitsetStruct_max_cdr_typesize;
+    return StructBitset_max_cdr_typesize;
 }
 
-size_t BitsetStruct::getCdrSerializedSize(
-        const BitsetStruct& data,
+size_t StructBitset::getCdrSerializedSize(
+        const StructBitset& data,
         size_t current_alignment)
 {
     (void)data;
@@ -3806,14 +3800,14 @@ size_t BitsetStruct::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void BitsetStruct::serialize(
+void StructBitset::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
     scdr << m_var_bitset;
 }
 
-void BitsetStruct::deserialize(
+void StructBitset::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -3824,7 +3818,7 @@ void BitsetStruct::deserialize(
  * @brief This function copies the value in member var_bitset
  * @param _var_bitset New value to be copied in member var_bitset
  */
-void BitsetStruct::var_bitset(
+void StructBitset::var_bitset(
         const InnerBitsetHelper& _var_bitset)
 {
     m_var_bitset = _var_bitset;
@@ -3834,7 +3828,7 @@ void BitsetStruct::var_bitset(
  * @brief This function moves the value in member var_bitset
  * @param _var_bitset New value to be moved in member var_bitset
  */
-void BitsetStruct::var_bitset(
+void StructBitset::var_bitset(
         InnerBitsetHelper&& _var_bitset)
 {
     m_var_bitset = std::move(_var_bitset);
@@ -3844,7 +3838,7 @@ void BitsetStruct::var_bitset(
  * @brief This function returns a constant reference to member var_bitset
  * @return Constant reference to member var_bitset
  */
-const InnerBitsetHelper& BitsetStruct::var_bitset() const
+const InnerBitsetHelper& StructBitset::var_bitset() const
 {
     return m_var_bitset;
 }
@@ -3853,90 +3847,90 @@ const InnerBitsetHelper& BitsetStruct::var_bitset() const
  * @brief This function returns a reference to member var_bitset
  * @return Reference to member var_bitset
  */
-InnerBitsetHelper& BitsetStruct::var_bitset()
+InnerBitsetHelper& StructBitset::var_bitset()
 {
     return m_var_bitset;
 }
 
 
-size_t BitsetStruct::getKeyMaxCdrSerializedSize(
+size_t StructBitset::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return BitsetStruct_max_key_cdr_typesize;
+    return StructBitset_max_key_cdr_typesize;
 }
 
-bool BitsetStruct::isKeyDefined()
+bool StructBitset::isKeyDefined()
 {
     return false;
 }
 
-void BitsetStruct::serializeKey(
+void StructBitset::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
 }
 
 
-EmptyStructure::EmptyStructure()
+StructEmpty::StructEmpty()
 {
 
     // Just to register all known types
     registerstructuresTypes();
 }
 
-EmptyStructure::~EmptyStructure()
+StructEmpty::~StructEmpty()
 {
 }
 
-EmptyStructure::EmptyStructure(
-        const EmptyStructure& x)
+StructEmpty::StructEmpty(
+        const StructEmpty& x)
 {
 }
 
-EmptyStructure::EmptyStructure(
-        EmptyStructure&& x) noexcept 
+StructEmpty::StructEmpty(
+        StructEmpty&& x) noexcept 
 {
 }
 
-EmptyStructure& EmptyStructure::operator =(
-        const EmptyStructure& x)
-{
-
-
-    return *this;
-}
-
-EmptyStructure& EmptyStructure::operator =(
-        EmptyStructure&& x) noexcept
+StructEmpty& StructEmpty::operator =(
+        const StructEmpty& x)
 {
 
 
     return *this;
 }
 
-bool EmptyStructure::operator ==(
-        const EmptyStructure& x) const
+StructEmpty& StructEmpty::operator =(
+        StructEmpty&& x) noexcept
+{
+
+
+    return *this;
+}
+
+bool StructEmpty::operator ==(
+        const StructEmpty& x) const
 {
 
     return true;
 }
 
-bool EmptyStructure::operator !=(
-        const EmptyStructure& x) const
+bool StructEmpty::operator !=(
+        const StructEmpty& x) const
 {
     return !(*this == x);
 }
 
-size_t EmptyStructure::getMaxCdrSerializedSize(
+size_t StructEmpty::getMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return EmptyStructure_max_cdr_typesize;
+    return StructEmpty_max_cdr_typesize;
 }
 
-size_t EmptyStructure::getCdrSerializedSize(
-        const EmptyStructure& data,
+size_t StructEmpty::getCdrSerializedSize(
+        const StructEmpty& data,
         size_t current_alignment)
 {
     (void)data;
@@ -3947,13 +3941,13 @@ size_t EmptyStructure::getCdrSerializedSize(
     return current_alignment - initial_alignment;
 }
 
-void EmptyStructure::serialize(
+void StructEmpty::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
 }
 
-void EmptyStructure::deserialize(
+void StructEmpty::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
@@ -3961,19 +3955,19 @@ void EmptyStructure::deserialize(
 
 
 
-size_t EmptyStructure::getKeyMaxCdrSerializedSize(
+size_t StructEmpty::getKeyMaxCdrSerializedSize(
         size_t current_alignment)
 {
     static_cast<void>(current_alignment);
-    return EmptyStructure_max_key_cdr_typesize;
+    return StructEmpty_max_key_cdr_typesize;
 }
 
-bool EmptyStructure::isKeyDefined()
+bool StructEmpty::isKeyDefined()
 {
     return false;
 }
 
-void EmptyStructure::serializeKey(
+void StructEmpty::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
@@ -3982,55 +3976,55 @@ void EmptyStructure::serializeKey(
 
 Structures::Structures()
 {
-    // ShortStruct m_var_ShortStruct
+    // StructShort m_var_StructShort
 
-    // UnsignedShortStruct m_var_UnsignedShortStruct
+    // StructUnsignedShort m_var_StructUnsignedShort
 
-    // LongStruct m_var_LongStruct
+    // StructLong m_var_StructLong
 
-    // UnsignedLongStruct m_var_UnsignedLongStruct
+    // StructUnsignedLong m_var_StructUnsignedLong
 
-    // LongLongStruct m_var_LongLongStruct
+    // StructLongLong m_var_StructLongLong
 
-    // UnsignedLongLongStruct m_var_UnsignedLongLongStruct
+    // StructUnsignedLongLong m_var_StructUnsignedLongLong
 
-    // FloatStruct m_var_FloatStruct
+    // StructFloat m_var_StructFloat
 
-    // DoubleStruct m_var_DoubleStruct
+    // StructDouble m_var_StructDouble
 
-    // LongDoubleStruct m_var_LongDoubleStruct
+    // StructLongDouble m_var_StructLongDouble
 
-    // BooleanStruct m_var_BooleanStruct
+    // StructBoolean m_var_StructBoolean
 
-    // OctetStruct m_var_OctetStruct
+    // StructOctet m_var_StructOctet
 
-    // Char8Struct m_var_Char8Struct
+    // StructChar8 m_var_StructChar8
 
-    // Char16Struct m_var_Char16Struct
+    // StructChar16 m_var_StructChar16
 
-    // StringStruct m_var_StringStruct
+    // StructString m_var_StructString
 
-    // WStringStruct m_var_WStringStruct
+    // StructWString m_var_StructWString
 
-    // EnumStruct m_var_EnumStruct
+    // StructEnum m_var_StructEnum
 
-    // BitMaskStruct m_var_BitMaskStruct
+    // StructBitMask m_var_StructBitMask
 
-    // AliasStruct m_var_AliasStruct
+    // StructAlias m_var_StructAlias
 
-    // ShortArrayStruct m_var_ShortArrayStruct
+    // StructShortArray m_var_StructShortArray
 
-    // SequenceStruct m_var_SequenceStruct
+    // StructSequence m_var_StructSequence
 
-    // MapStruct m_var_MapStruct
+    // StructMap m_var_StructMap
 
-    // UnionStruct m_var_UnionStruct
+    // StructUnion m_var_StructUnion
 
-    // StructureStruct m_var_StructureStruct
+    // StructStructure m_var_StructStructure
 
-    // BitsetStruct m_var_BitsetStruct
+    // StructBitset m_var_StructBitset
 
-    // EmptyStructure m_var_EmptyStructure
+    // StructEmpty m_var_StructEmpty
 
 
     // Just to register all known types
@@ -4069,92 +4063,92 @@ Structures::~Structures()
 Structures::Structures(
         const Structures& x)
 {
-    m_var_ShortStruct = x.m_var_ShortStruct;
-    m_var_UnsignedShortStruct = x.m_var_UnsignedShortStruct;
-    m_var_LongStruct = x.m_var_LongStruct;
-    m_var_UnsignedLongStruct = x.m_var_UnsignedLongStruct;
-    m_var_LongLongStruct = x.m_var_LongLongStruct;
-    m_var_UnsignedLongLongStruct = x.m_var_UnsignedLongLongStruct;
-    m_var_FloatStruct = x.m_var_FloatStruct;
-    m_var_DoubleStruct = x.m_var_DoubleStruct;
-    m_var_LongDoubleStruct = x.m_var_LongDoubleStruct;
-    m_var_BooleanStruct = x.m_var_BooleanStruct;
-    m_var_OctetStruct = x.m_var_OctetStruct;
-    m_var_Char8Struct = x.m_var_Char8Struct;
-    m_var_Char16Struct = x.m_var_Char16Struct;
-    m_var_StringStruct = x.m_var_StringStruct;
-    m_var_WStringStruct = x.m_var_WStringStruct;
-    m_var_EnumStruct = x.m_var_EnumStruct;
-    m_var_BitMaskStruct = x.m_var_BitMaskStruct;
-    m_var_AliasStruct = x.m_var_AliasStruct;
-    m_var_ShortArrayStruct = x.m_var_ShortArrayStruct;
-    m_var_SequenceStruct = x.m_var_SequenceStruct;
-    m_var_MapStruct = x.m_var_MapStruct;
-    m_var_UnionStruct = x.m_var_UnionStruct;
-    m_var_StructureStruct = x.m_var_StructureStruct;
-    m_var_BitsetStruct = x.m_var_BitsetStruct;
-    m_var_EmptyStructure = x.m_var_EmptyStructure;
+    m_var_StructShort = x.m_var_StructShort;
+    m_var_StructUnsignedShort = x.m_var_StructUnsignedShort;
+    m_var_StructLong = x.m_var_StructLong;
+    m_var_StructUnsignedLong = x.m_var_StructUnsignedLong;
+    m_var_StructLongLong = x.m_var_StructLongLong;
+    m_var_StructUnsignedLongLong = x.m_var_StructUnsignedLongLong;
+    m_var_StructFloat = x.m_var_StructFloat;
+    m_var_StructDouble = x.m_var_StructDouble;
+    m_var_StructLongDouble = x.m_var_StructLongDouble;
+    m_var_StructBoolean = x.m_var_StructBoolean;
+    m_var_StructOctet = x.m_var_StructOctet;
+    m_var_StructChar8 = x.m_var_StructChar8;
+    m_var_StructChar16 = x.m_var_StructChar16;
+    m_var_StructString = x.m_var_StructString;
+    m_var_StructWString = x.m_var_StructWString;
+    m_var_StructEnum = x.m_var_StructEnum;
+    m_var_StructBitMask = x.m_var_StructBitMask;
+    m_var_StructAlias = x.m_var_StructAlias;
+    m_var_StructShortArray = x.m_var_StructShortArray;
+    m_var_StructSequence = x.m_var_StructSequence;
+    m_var_StructMap = x.m_var_StructMap;
+    m_var_StructUnion = x.m_var_StructUnion;
+    m_var_StructStructure = x.m_var_StructStructure;
+    m_var_StructBitset = x.m_var_StructBitset;
+    m_var_StructEmpty = x.m_var_StructEmpty;
 }
 
 Structures::Structures(
         Structures&& x) noexcept 
 {
-    m_var_ShortStruct = std::move(x.m_var_ShortStruct);
-    m_var_UnsignedShortStruct = std::move(x.m_var_UnsignedShortStruct);
-    m_var_LongStruct = std::move(x.m_var_LongStruct);
-    m_var_UnsignedLongStruct = std::move(x.m_var_UnsignedLongStruct);
-    m_var_LongLongStruct = std::move(x.m_var_LongLongStruct);
-    m_var_UnsignedLongLongStruct = std::move(x.m_var_UnsignedLongLongStruct);
-    m_var_FloatStruct = std::move(x.m_var_FloatStruct);
-    m_var_DoubleStruct = std::move(x.m_var_DoubleStruct);
-    m_var_LongDoubleStruct = std::move(x.m_var_LongDoubleStruct);
-    m_var_BooleanStruct = std::move(x.m_var_BooleanStruct);
-    m_var_OctetStruct = std::move(x.m_var_OctetStruct);
-    m_var_Char8Struct = std::move(x.m_var_Char8Struct);
-    m_var_Char16Struct = std::move(x.m_var_Char16Struct);
-    m_var_StringStruct = std::move(x.m_var_StringStruct);
-    m_var_WStringStruct = std::move(x.m_var_WStringStruct);
-    m_var_EnumStruct = std::move(x.m_var_EnumStruct);
-    m_var_BitMaskStruct = std::move(x.m_var_BitMaskStruct);
-    m_var_AliasStruct = std::move(x.m_var_AliasStruct);
-    m_var_ShortArrayStruct = std::move(x.m_var_ShortArrayStruct);
-    m_var_SequenceStruct = std::move(x.m_var_SequenceStruct);
-    m_var_MapStruct = std::move(x.m_var_MapStruct);
-    m_var_UnionStruct = std::move(x.m_var_UnionStruct);
-    m_var_StructureStruct = std::move(x.m_var_StructureStruct);
-    m_var_BitsetStruct = std::move(x.m_var_BitsetStruct);
-    m_var_EmptyStructure = std::move(x.m_var_EmptyStructure);
+    m_var_StructShort = std::move(x.m_var_StructShort);
+    m_var_StructUnsignedShort = std::move(x.m_var_StructUnsignedShort);
+    m_var_StructLong = std::move(x.m_var_StructLong);
+    m_var_StructUnsignedLong = std::move(x.m_var_StructUnsignedLong);
+    m_var_StructLongLong = std::move(x.m_var_StructLongLong);
+    m_var_StructUnsignedLongLong = std::move(x.m_var_StructUnsignedLongLong);
+    m_var_StructFloat = std::move(x.m_var_StructFloat);
+    m_var_StructDouble = std::move(x.m_var_StructDouble);
+    m_var_StructLongDouble = std::move(x.m_var_StructLongDouble);
+    m_var_StructBoolean = std::move(x.m_var_StructBoolean);
+    m_var_StructOctet = std::move(x.m_var_StructOctet);
+    m_var_StructChar8 = std::move(x.m_var_StructChar8);
+    m_var_StructChar16 = std::move(x.m_var_StructChar16);
+    m_var_StructString = std::move(x.m_var_StructString);
+    m_var_StructWString = std::move(x.m_var_StructWString);
+    m_var_StructEnum = std::move(x.m_var_StructEnum);
+    m_var_StructBitMask = std::move(x.m_var_StructBitMask);
+    m_var_StructAlias = std::move(x.m_var_StructAlias);
+    m_var_StructShortArray = std::move(x.m_var_StructShortArray);
+    m_var_StructSequence = std::move(x.m_var_StructSequence);
+    m_var_StructMap = std::move(x.m_var_StructMap);
+    m_var_StructUnion = std::move(x.m_var_StructUnion);
+    m_var_StructStructure = std::move(x.m_var_StructStructure);
+    m_var_StructBitset = std::move(x.m_var_StructBitset);
+    m_var_StructEmpty = std::move(x.m_var_StructEmpty);
 }
 
 Structures& Structures::operator =(
         const Structures& x)
 {
 
-    m_var_ShortStruct = x.m_var_ShortStruct;
-    m_var_UnsignedShortStruct = x.m_var_UnsignedShortStruct;
-    m_var_LongStruct = x.m_var_LongStruct;
-    m_var_UnsignedLongStruct = x.m_var_UnsignedLongStruct;
-    m_var_LongLongStruct = x.m_var_LongLongStruct;
-    m_var_UnsignedLongLongStruct = x.m_var_UnsignedLongLongStruct;
-    m_var_FloatStruct = x.m_var_FloatStruct;
-    m_var_DoubleStruct = x.m_var_DoubleStruct;
-    m_var_LongDoubleStruct = x.m_var_LongDoubleStruct;
-    m_var_BooleanStruct = x.m_var_BooleanStruct;
-    m_var_OctetStruct = x.m_var_OctetStruct;
-    m_var_Char8Struct = x.m_var_Char8Struct;
-    m_var_Char16Struct = x.m_var_Char16Struct;
-    m_var_StringStruct = x.m_var_StringStruct;
-    m_var_WStringStruct = x.m_var_WStringStruct;
-    m_var_EnumStruct = x.m_var_EnumStruct;
-    m_var_BitMaskStruct = x.m_var_BitMaskStruct;
-    m_var_AliasStruct = x.m_var_AliasStruct;
-    m_var_ShortArrayStruct = x.m_var_ShortArrayStruct;
-    m_var_SequenceStruct = x.m_var_SequenceStruct;
-    m_var_MapStruct = x.m_var_MapStruct;
-    m_var_UnionStruct = x.m_var_UnionStruct;
-    m_var_StructureStruct = x.m_var_StructureStruct;
-    m_var_BitsetStruct = x.m_var_BitsetStruct;
-    m_var_EmptyStructure = x.m_var_EmptyStructure;
+    m_var_StructShort = x.m_var_StructShort;
+    m_var_StructUnsignedShort = x.m_var_StructUnsignedShort;
+    m_var_StructLong = x.m_var_StructLong;
+    m_var_StructUnsignedLong = x.m_var_StructUnsignedLong;
+    m_var_StructLongLong = x.m_var_StructLongLong;
+    m_var_StructUnsignedLongLong = x.m_var_StructUnsignedLongLong;
+    m_var_StructFloat = x.m_var_StructFloat;
+    m_var_StructDouble = x.m_var_StructDouble;
+    m_var_StructLongDouble = x.m_var_StructLongDouble;
+    m_var_StructBoolean = x.m_var_StructBoolean;
+    m_var_StructOctet = x.m_var_StructOctet;
+    m_var_StructChar8 = x.m_var_StructChar8;
+    m_var_StructChar16 = x.m_var_StructChar16;
+    m_var_StructString = x.m_var_StructString;
+    m_var_StructWString = x.m_var_StructWString;
+    m_var_StructEnum = x.m_var_StructEnum;
+    m_var_StructBitMask = x.m_var_StructBitMask;
+    m_var_StructAlias = x.m_var_StructAlias;
+    m_var_StructShortArray = x.m_var_StructShortArray;
+    m_var_StructSequence = x.m_var_StructSequence;
+    m_var_StructMap = x.m_var_StructMap;
+    m_var_StructUnion = x.m_var_StructUnion;
+    m_var_StructStructure = x.m_var_StructStructure;
+    m_var_StructBitset = x.m_var_StructBitset;
+    m_var_StructEmpty = x.m_var_StructEmpty;
 
     return *this;
 }
@@ -4163,31 +4157,31 @@ Structures& Structures::operator =(
         Structures&& x) noexcept
 {
 
-    m_var_ShortStruct = std::move(x.m_var_ShortStruct);
-    m_var_UnsignedShortStruct = std::move(x.m_var_UnsignedShortStruct);
-    m_var_LongStruct = std::move(x.m_var_LongStruct);
-    m_var_UnsignedLongStruct = std::move(x.m_var_UnsignedLongStruct);
-    m_var_LongLongStruct = std::move(x.m_var_LongLongStruct);
-    m_var_UnsignedLongLongStruct = std::move(x.m_var_UnsignedLongLongStruct);
-    m_var_FloatStruct = std::move(x.m_var_FloatStruct);
-    m_var_DoubleStruct = std::move(x.m_var_DoubleStruct);
-    m_var_LongDoubleStruct = std::move(x.m_var_LongDoubleStruct);
-    m_var_BooleanStruct = std::move(x.m_var_BooleanStruct);
-    m_var_OctetStruct = std::move(x.m_var_OctetStruct);
-    m_var_Char8Struct = std::move(x.m_var_Char8Struct);
-    m_var_Char16Struct = std::move(x.m_var_Char16Struct);
-    m_var_StringStruct = std::move(x.m_var_StringStruct);
-    m_var_WStringStruct = std::move(x.m_var_WStringStruct);
-    m_var_EnumStruct = std::move(x.m_var_EnumStruct);
-    m_var_BitMaskStruct = std::move(x.m_var_BitMaskStruct);
-    m_var_AliasStruct = std::move(x.m_var_AliasStruct);
-    m_var_ShortArrayStruct = std::move(x.m_var_ShortArrayStruct);
-    m_var_SequenceStruct = std::move(x.m_var_SequenceStruct);
-    m_var_MapStruct = std::move(x.m_var_MapStruct);
-    m_var_UnionStruct = std::move(x.m_var_UnionStruct);
-    m_var_StructureStruct = std::move(x.m_var_StructureStruct);
-    m_var_BitsetStruct = std::move(x.m_var_BitsetStruct);
-    m_var_EmptyStructure = std::move(x.m_var_EmptyStructure);
+    m_var_StructShort = std::move(x.m_var_StructShort);
+    m_var_StructUnsignedShort = std::move(x.m_var_StructUnsignedShort);
+    m_var_StructLong = std::move(x.m_var_StructLong);
+    m_var_StructUnsignedLong = std::move(x.m_var_StructUnsignedLong);
+    m_var_StructLongLong = std::move(x.m_var_StructLongLong);
+    m_var_StructUnsignedLongLong = std::move(x.m_var_StructUnsignedLongLong);
+    m_var_StructFloat = std::move(x.m_var_StructFloat);
+    m_var_StructDouble = std::move(x.m_var_StructDouble);
+    m_var_StructLongDouble = std::move(x.m_var_StructLongDouble);
+    m_var_StructBoolean = std::move(x.m_var_StructBoolean);
+    m_var_StructOctet = std::move(x.m_var_StructOctet);
+    m_var_StructChar8 = std::move(x.m_var_StructChar8);
+    m_var_StructChar16 = std::move(x.m_var_StructChar16);
+    m_var_StructString = std::move(x.m_var_StructString);
+    m_var_StructWString = std::move(x.m_var_StructWString);
+    m_var_StructEnum = std::move(x.m_var_StructEnum);
+    m_var_StructBitMask = std::move(x.m_var_StructBitMask);
+    m_var_StructAlias = std::move(x.m_var_StructAlias);
+    m_var_StructShortArray = std::move(x.m_var_StructShortArray);
+    m_var_StructSequence = std::move(x.m_var_StructSequence);
+    m_var_StructMap = std::move(x.m_var_StructMap);
+    m_var_StructUnion = std::move(x.m_var_StructUnion);
+    m_var_StructStructure = std::move(x.m_var_StructStructure);
+    m_var_StructBitset = std::move(x.m_var_StructBitset);
+    m_var_StructEmpty = std::move(x.m_var_StructEmpty);
 
     return *this;
 }
@@ -4196,7 +4190,7 @@ bool Structures::operator ==(
         const Structures& x) const
 {
 
-    return (m_var_ShortStruct == x.m_var_ShortStruct && m_var_UnsignedShortStruct == x.m_var_UnsignedShortStruct && m_var_LongStruct == x.m_var_LongStruct && m_var_UnsignedLongStruct == x.m_var_UnsignedLongStruct && m_var_LongLongStruct == x.m_var_LongLongStruct && m_var_UnsignedLongLongStruct == x.m_var_UnsignedLongLongStruct && m_var_FloatStruct == x.m_var_FloatStruct && m_var_DoubleStruct == x.m_var_DoubleStruct && m_var_LongDoubleStruct == x.m_var_LongDoubleStruct && m_var_BooleanStruct == x.m_var_BooleanStruct && m_var_OctetStruct == x.m_var_OctetStruct && m_var_Char8Struct == x.m_var_Char8Struct && m_var_Char16Struct == x.m_var_Char16Struct && m_var_StringStruct == x.m_var_StringStruct && m_var_WStringStruct == x.m_var_WStringStruct && m_var_EnumStruct == x.m_var_EnumStruct && m_var_BitMaskStruct == x.m_var_BitMaskStruct && m_var_AliasStruct == x.m_var_AliasStruct && m_var_ShortArrayStruct == x.m_var_ShortArrayStruct && m_var_SequenceStruct == x.m_var_SequenceStruct && m_var_MapStruct == x.m_var_MapStruct && m_var_UnionStruct == x.m_var_UnionStruct && m_var_StructureStruct == x.m_var_StructureStruct && m_var_BitsetStruct == x.m_var_BitsetStruct && m_var_EmptyStructure == x.m_var_EmptyStructure);
+    return (m_var_StructShort == x.m_var_StructShort && m_var_StructUnsignedShort == x.m_var_StructUnsignedShort && m_var_StructLong == x.m_var_StructLong && m_var_StructUnsignedLong == x.m_var_StructUnsignedLong && m_var_StructLongLong == x.m_var_StructLongLong && m_var_StructUnsignedLongLong == x.m_var_StructUnsignedLongLong && m_var_StructFloat == x.m_var_StructFloat && m_var_StructDouble == x.m_var_StructDouble && m_var_StructLongDouble == x.m_var_StructLongDouble && m_var_StructBoolean == x.m_var_StructBoolean && m_var_StructOctet == x.m_var_StructOctet && m_var_StructChar8 == x.m_var_StructChar8 && m_var_StructChar16 == x.m_var_StructChar16 && m_var_StructString == x.m_var_StructString && m_var_StructWString == x.m_var_StructWString && m_var_StructEnum == x.m_var_StructEnum && m_var_StructBitMask == x.m_var_StructBitMask && m_var_StructAlias == x.m_var_StructAlias && m_var_StructShortArray == x.m_var_StructShortArray && m_var_StructSequence == x.m_var_StructSequence && m_var_StructMap == x.m_var_StructMap && m_var_StructUnion == x.m_var_StructUnion && m_var_StructStructure == x.m_var_StructStructure && m_var_StructBitset == x.m_var_StructBitset && m_var_StructEmpty == x.m_var_StructEmpty);
 }
 
 bool Structures::operator !=(
@@ -4220,31 +4214,31 @@ size_t Structures::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
 
-    current_alignment += ShortStruct::getCdrSerializedSize(data.var_ShortStruct(), current_alignment);
-    current_alignment += UnsignedShortStruct::getCdrSerializedSize(data.var_UnsignedShortStruct(), current_alignment);
-    current_alignment += LongStruct::getCdrSerializedSize(data.var_LongStruct(), current_alignment);
-    current_alignment += UnsignedLongStruct::getCdrSerializedSize(data.var_UnsignedLongStruct(), current_alignment);
-    current_alignment += LongLongStruct::getCdrSerializedSize(data.var_LongLongStruct(), current_alignment);
-    current_alignment += UnsignedLongLongStruct::getCdrSerializedSize(data.var_UnsignedLongLongStruct(), current_alignment);
-    current_alignment += FloatStruct::getCdrSerializedSize(data.var_FloatStruct(), current_alignment);
-    current_alignment += DoubleStruct::getCdrSerializedSize(data.var_DoubleStruct(), current_alignment);
-    current_alignment += LongDoubleStruct::getCdrSerializedSize(data.var_LongDoubleStruct(), current_alignment);
-    current_alignment += BooleanStruct::getCdrSerializedSize(data.var_BooleanStruct(), current_alignment);
-    current_alignment += OctetStruct::getCdrSerializedSize(data.var_OctetStruct(), current_alignment);
-    current_alignment += Char8Struct::getCdrSerializedSize(data.var_Char8Struct(), current_alignment);
-    current_alignment += Char16Struct::getCdrSerializedSize(data.var_Char16Struct(), current_alignment);
-    current_alignment += StringStruct::getCdrSerializedSize(data.var_StringStruct(), current_alignment);
-    current_alignment += WStringStruct::getCdrSerializedSize(data.var_WStringStruct(), current_alignment);
-    current_alignment += EnumStruct::getCdrSerializedSize(data.var_EnumStruct(), current_alignment);
-    current_alignment += BitMaskStruct::getCdrSerializedSize(data.var_BitMaskStruct(), current_alignment);
-    current_alignment += AliasStruct::getCdrSerializedSize(data.var_AliasStruct(), current_alignment);
-    current_alignment += ShortArrayStruct::getCdrSerializedSize(data.var_ShortArrayStruct(), current_alignment);
-    current_alignment += SequenceStruct::getCdrSerializedSize(data.var_SequenceStruct(), current_alignment);
-    current_alignment += MapStruct::getCdrSerializedSize(data.var_MapStruct(), current_alignment);
-    current_alignment += UnionStruct::getCdrSerializedSize(data.var_UnionStruct(), current_alignment);
-    current_alignment += StructureStruct::getCdrSerializedSize(data.var_StructureStruct(), current_alignment);
-    current_alignment += BitsetStruct::getCdrSerializedSize(data.var_BitsetStruct(), current_alignment);
-    current_alignment += EmptyStructure::getCdrSerializedSize(data.var_EmptyStructure(), current_alignment);
+    current_alignment += StructShort::getCdrSerializedSize(data.var_StructShort(), current_alignment);
+    current_alignment += StructUnsignedShort::getCdrSerializedSize(data.var_StructUnsignedShort(), current_alignment);
+    current_alignment += StructLong::getCdrSerializedSize(data.var_StructLong(), current_alignment);
+    current_alignment += StructUnsignedLong::getCdrSerializedSize(data.var_StructUnsignedLong(), current_alignment);
+    current_alignment += StructLongLong::getCdrSerializedSize(data.var_StructLongLong(), current_alignment);
+    current_alignment += StructUnsignedLongLong::getCdrSerializedSize(data.var_StructUnsignedLongLong(), current_alignment);
+    current_alignment += StructFloat::getCdrSerializedSize(data.var_StructFloat(), current_alignment);
+    current_alignment += StructDouble::getCdrSerializedSize(data.var_StructDouble(), current_alignment);
+    current_alignment += StructLongDouble::getCdrSerializedSize(data.var_StructLongDouble(), current_alignment);
+    current_alignment += StructBoolean::getCdrSerializedSize(data.var_StructBoolean(), current_alignment);
+    current_alignment += StructOctet::getCdrSerializedSize(data.var_StructOctet(), current_alignment);
+    current_alignment += StructChar8::getCdrSerializedSize(data.var_StructChar8(), current_alignment);
+    current_alignment += StructChar16::getCdrSerializedSize(data.var_StructChar16(), current_alignment);
+    current_alignment += StructString::getCdrSerializedSize(data.var_StructString(), current_alignment);
+    current_alignment += StructWString::getCdrSerializedSize(data.var_StructWString(), current_alignment);
+    current_alignment += StructEnum::getCdrSerializedSize(data.var_StructEnum(), current_alignment);
+    current_alignment += StructBitMask::getCdrSerializedSize(data.var_StructBitMask(), current_alignment);
+    current_alignment += StructAlias::getCdrSerializedSize(data.var_StructAlias(), current_alignment);
+    current_alignment += StructShortArray::getCdrSerializedSize(data.var_StructShortArray(), current_alignment);
+    current_alignment += StructSequence::getCdrSerializedSize(data.var_StructSequence(), current_alignment);
+    current_alignment += StructMap::getCdrSerializedSize(data.var_StructMap(), current_alignment);
+    current_alignment += StructUnion::getCdrSerializedSize(data.var_StructUnion(), current_alignment);
+    current_alignment += StructStructure::getCdrSerializedSize(data.var_StructStructure(), current_alignment);
+    current_alignment += StructBitset::getCdrSerializedSize(data.var_StructBitset(), current_alignment);
+    current_alignment += StructEmpty::getCdrSerializedSize(data.var_StructEmpty(), current_alignment);
 
     return current_alignment - initial_alignment;
 }
@@ -4253,964 +4247,964 @@ void Structures::serialize(
         eprosima::fastcdr::Cdr& scdr) const
 {
 
-    scdr << m_var_ShortStruct;scdr << m_var_UnsignedShortStruct;scdr << m_var_LongStruct;scdr << m_var_UnsignedLongStruct;scdr << m_var_LongLongStruct;scdr << m_var_UnsignedLongLongStruct;scdr << m_var_FloatStruct;scdr << m_var_DoubleStruct;scdr << m_var_LongDoubleStruct;scdr << m_var_BooleanStruct;scdr << m_var_OctetStruct;scdr << m_var_Char8Struct;scdr << m_var_Char16Struct;scdr << m_var_StringStruct;scdr << m_var_WStringStruct;scdr << m_var_EnumStruct;scdr << m_var_BitMaskStruct;scdr << m_var_AliasStruct;scdr << m_var_ShortArrayStruct;scdr << m_var_SequenceStruct;scdr << m_var_MapStruct;scdr << m_var_UnionStruct;scdr << m_var_StructureStruct;scdr << m_var_BitsetStruct;scdr << m_var_EmptyStructure;
+    scdr << m_var_StructShort;scdr << m_var_StructUnsignedShort;scdr << m_var_StructLong;scdr << m_var_StructUnsignedLong;scdr << m_var_StructLongLong;scdr << m_var_StructUnsignedLongLong;scdr << m_var_StructFloat;scdr << m_var_StructDouble;scdr << m_var_StructLongDouble;scdr << m_var_StructBoolean;scdr << m_var_StructOctet;scdr << m_var_StructChar8;scdr << m_var_StructChar16;scdr << m_var_StructString;scdr << m_var_StructWString;scdr << m_var_StructEnum;scdr << m_var_StructBitMask;scdr << m_var_StructAlias;scdr << m_var_StructShortArray;scdr << m_var_StructSequence;scdr << m_var_StructMap;scdr << m_var_StructUnion;scdr << m_var_StructStructure;scdr << m_var_StructBitset;scdr << m_var_StructEmpty;
 }
 
 void Structures::deserialize(
         eprosima::fastcdr::Cdr& dcdr)
 {
 
-    dcdr >> m_var_ShortStruct;
-    dcdr >> m_var_UnsignedShortStruct;
-    dcdr >> m_var_LongStruct;
-    dcdr >> m_var_UnsignedLongStruct;
-    dcdr >> m_var_LongLongStruct;
-    dcdr >> m_var_UnsignedLongLongStruct;
-    dcdr >> m_var_FloatStruct;
-    dcdr >> m_var_DoubleStruct;
-    dcdr >> m_var_LongDoubleStruct;
-    dcdr >> m_var_BooleanStruct;
-    dcdr >> m_var_OctetStruct;
-    dcdr >> m_var_Char8Struct;
-    dcdr >> m_var_Char16Struct;
-    dcdr >> m_var_StringStruct;
-    dcdr >> m_var_WStringStruct;
-    dcdr >> m_var_EnumStruct;
-    dcdr >> m_var_BitMaskStruct;
-    dcdr >> m_var_AliasStruct;
-    dcdr >> m_var_ShortArrayStruct;
-    dcdr >> m_var_SequenceStruct;
-    dcdr >> m_var_MapStruct;
-    dcdr >> m_var_UnionStruct;
-    dcdr >> m_var_StructureStruct;
-    dcdr >> m_var_BitsetStruct;
-    dcdr >> m_var_EmptyStructure;
+    dcdr >> m_var_StructShort;
+    dcdr >> m_var_StructUnsignedShort;
+    dcdr >> m_var_StructLong;
+    dcdr >> m_var_StructUnsignedLong;
+    dcdr >> m_var_StructLongLong;
+    dcdr >> m_var_StructUnsignedLongLong;
+    dcdr >> m_var_StructFloat;
+    dcdr >> m_var_StructDouble;
+    dcdr >> m_var_StructLongDouble;
+    dcdr >> m_var_StructBoolean;
+    dcdr >> m_var_StructOctet;
+    dcdr >> m_var_StructChar8;
+    dcdr >> m_var_StructChar16;
+    dcdr >> m_var_StructString;
+    dcdr >> m_var_StructWString;
+    dcdr >> m_var_StructEnum;
+    dcdr >> m_var_StructBitMask;
+    dcdr >> m_var_StructAlias;
+    dcdr >> m_var_StructShortArray;
+    dcdr >> m_var_StructSequence;
+    dcdr >> m_var_StructMap;
+    dcdr >> m_var_StructUnion;
+    dcdr >> m_var_StructStructure;
+    dcdr >> m_var_StructBitset;
+    dcdr >> m_var_StructEmpty;
 }
 
 /*!
- * @brief This function copies the value in member var_ShortStruct
- * @param _var_ShortStruct New value to be copied in member var_ShortStruct
+ * @brief This function copies the value in member var_StructShort
+ * @param _var_StructShort New value to be copied in member var_StructShort
  */
-void Structures::var_ShortStruct(
-        const ShortStruct& _var_ShortStruct)
+void Structures::var_StructShort(
+        const StructShort& _var_StructShort)
 {
-    m_var_ShortStruct = _var_ShortStruct;
+    m_var_StructShort = _var_StructShort;
 }
 
 /*!
- * @brief This function moves the value in member var_ShortStruct
- * @param _var_ShortStruct New value to be moved in member var_ShortStruct
+ * @brief This function moves the value in member var_StructShort
+ * @param _var_StructShort New value to be moved in member var_StructShort
  */
-void Structures::var_ShortStruct(
-        ShortStruct&& _var_ShortStruct)
+void Structures::var_StructShort(
+        StructShort&& _var_StructShort)
 {
-    m_var_ShortStruct = std::move(_var_ShortStruct);
+    m_var_StructShort = std::move(_var_StructShort);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_ShortStruct
- * @return Constant reference to member var_ShortStruct
+ * @brief This function returns a constant reference to member var_StructShort
+ * @return Constant reference to member var_StructShort
  */
-const ShortStruct& Structures::var_ShortStruct() const
+const StructShort& Structures::var_StructShort() const
 {
-    return m_var_ShortStruct;
+    return m_var_StructShort;
 }
 
 /*!
- * @brief This function returns a reference to member var_ShortStruct
- * @return Reference to member var_ShortStruct
+ * @brief This function returns a reference to member var_StructShort
+ * @return Reference to member var_StructShort
  */
-ShortStruct& Structures::var_ShortStruct()
+StructShort& Structures::var_StructShort()
 {
-    return m_var_ShortStruct;
+    return m_var_StructShort;
 }
 /*!
- * @brief This function copies the value in member var_UnsignedShortStruct
- * @param _var_UnsignedShortStruct New value to be copied in member var_UnsignedShortStruct
+ * @brief This function copies the value in member var_StructUnsignedShort
+ * @param _var_StructUnsignedShort New value to be copied in member var_StructUnsignedShort
  */
-void Structures::var_UnsignedShortStruct(
-        const UnsignedShortStruct& _var_UnsignedShortStruct)
+void Structures::var_StructUnsignedShort(
+        const StructUnsignedShort& _var_StructUnsignedShort)
 {
-    m_var_UnsignedShortStruct = _var_UnsignedShortStruct;
+    m_var_StructUnsignedShort = _var_StructUnsignedShort;
 }
 
 /*!
- * @brief This function moves the value in member var_UnsignedShortStruct
- * @param _var_UnsignedShortStruct New value to be moved in member var_UnsignedShortStruct
+ * @brief This function moves the value in member var_StructUnsignedShort
+ * @param _var_StructUnsignedShort New value to be moved in member var_StructUnsignedShort
  */
-void Structures::var_UnsignedShortStruct(
-        UnsignedShortStruct&& _var_UnsignedShortStruct)
+void Structures::var_StructUnsignedShort(
+        StructUnsignedShort&& _var_StructUnsignedShort)
 {
-    m_var_UnsignedShortStruct = std::move(_var_UnsignedShortStruct);
+    m_var_StructUnsignedShort = std::move(_var_StructUnsignedShort);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_UnsignedShortStruct
- * @return Constant reference to member var_UnsignedShortStruct
+ * @brief This function returns a constant reference to member var_StructUnsignedShort
+ * @return Constant reference to member var_StructUnsignedShort
  */
-const UnsignedShortStruct& Structures::var_UnsignedShortStruct() const
+const StructUnsignedShort& Structures::var_StructUnsignedShort() const
 {
-    return m_var_UnsignedShortStruct;
+    return m_var_StructUnsignedShort;
 }
 
 /*!
- * @brief This function returns a reference to member var_UnsignedShortStruct
- * @return Reference to member var_UnsignedShortStruct
+ * @brief This function returns a reference to member var_StructUnsignedShort
+ * @return Reference to member var_StructUnsignedShort
  */
-UnsignedShortStruct& Structures::var_UnsignedShortStruct()
+StructUnsignedShort& Structures::var_StructUnsignedShort()
 {
-    return m_var_UnsignedShortStruct;
+    return m_var_StructUnsignedShort;
 }
 /*!
- * @brief This function copies the value in member var_LongStruct
- * @param _var_LongStruct New value to be copied in member var_LongStruct
+ * @brief This function copies the value in member var_StructLong
+ * @param _var_StructLong New value to be copied in member var_StructLong
  */
-void Structures::var_LongStruct(
-        const LongStruct& _var_LongStruct)
+void Structures::var_StructLong(
+        const StructLong& _var_StructLong)
 {
-    m_var_LongStruct = _var_LongStruct;
+    m_var_StructLong = _var_StructLong;
 }
 
 /*!
- * @brief This function moves the value in member var_LongStruct
- * @param _var_LongStruct New value to be moved in member var_LongStruct
+ * @brief This function moves the value in member var_StructLong
+ * @param _var_StructLong New value to be moved in member var_StructLong
  */
-void Structures::var_LongStruct(
-        LongStruct&& _var_LongStruct)
+void Structures::var_StructLong(
+        StructLong&& _var_StructLong)
 {
-    m_var_LongStruct = std::move(_var_LongStruct);
+    m_var_StructLong = std::move(_var_StructLong);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_LongStruct
- * @return Constant reference to member var_LongStruct
+ * @brief This function returns a constant reference to member var_StructLong
+ * @return Constant reference to member var_StructLong
  */
-const LongStruct& Structures::var_LongStruct() const
+const StructLong& Structures::var_StructLong() const
 {
-    return m_var_LongStruct;
+    return m_var_StructLong;
 }
 
 /*!
- * @brief This function returns a reference to member var_LongStruct
- * @return Reference to member var_LongStruct
+ * @brief This function returns a reference to member var_StructLong
+ * @return Reference to member var_StructLong
  */
-LongStruct& Structures::var_LongStruct()
+StructLong& Structures::var_StructLong()
 {
-    return m_var_LongStruct;
+    return m_var_StructLong;
 }
 /*!
- * @brief This function copies the value in member var_UnsignedLongStruct
- * @param _var_UnsignedLongStruct New value to be copied in member var_UnsignedLongStruct
+ * @brief This function copies the value in member var_StructUnsignedLong
+ * @param _var_StructUnsignedLong New value to be copied in member var_StructUnsignedLong
  */
-void Structures::var_UnsignedLongStruct(
-        const UnsignedLongStruct& _var_UnsignedLongStruct)
+void Structures::var_StructUnsignedLong(
+        const StructUnsignedLong& _var_StructUnsignedLong)
 {
-    m_var_UnsignedLongStruct = _var_UnsignedLongStruct;
+    m_var_StructUnsignedLong = _var_StructUnsignedLong;
 }
 
 /*!
- * @brief This function moves the value in member var_UnsignedLongStruct
- * @param _var_UnsignedLongStruct New value to be moved in member var_UnsignedLongStruct
+ * @brief This function moves the value in member var_StructUnsignedLong
+ * @param _var_StructUnsignedLong New value to be moved in member var_StructUnsignedLong
  */
-void Structures::var_UnsignedLongStruct(
-        UnsignedLongStruct&& _var_UnsignedLongStruct)
+void Structures::var_StructUnsignedLong(
+        StructUnsignedLong&& _var_StructUnsignedLong)
 {
-    m_var_UnsignedLongStruct = std::move(_var_UnsignedLongStruct);
+    m_var_StructUnsignedLong = std::move(_var_StructUnsignedLong);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_UnsignedLongStruct
- * @return Constant reference to member var_UnsignedLongStruct
+ * @brief This function returns a constant reference to member var_StructUnsignedLong
+ * @return Constant reference to member var_StructUnsignedLong
  */
-const UnsignedLongStruct& Structures::var_UnsignedLongStruct() const
+const StructUnsignedLong& Structures::var_StructUnsignedLong() const
 {
-    return m_var_UnsignedLongStruct;
+    return m_var_StructUnsignedLong;
 }
 
 /*!
- * @brief This function returns a reference to member var_UnsignedLongStruct
- * @return Reference to member var_UnsignedLongStruct
+ * @brief This function returns a reference to member var_StructUnsignedLong
+ * @return Reference to member var_StructUnsignedLong
  */
-UnsignedLongStruct& Structures::var_UnsignedLongStruct()
+StructUnsignedLong& Structures::var_StructUnsignedLong()
 {
-    return m_var_UnsignedLongStruct;
+    return m_var_StructUnsignedLong;
 }
 /*!
- * @brief This function copies the value in member var_LongLongStruct
- * @param _var_LongLongStruct New value to be copied in member var_LongLongStruct
+ * @brief This function copies the value in member var_StructLongLong
+ * @param _var_StructLongLong New value to be copied in member var_StructLongLong
  */
-void Structures::var_LongLongStruct(
-        const LongLongStruct& _var_LongLongStruct)
+void Structures::var_StructLongLong(
+        const StructLongLong& _var_StructLongLong)
 {
-    m_var_LongLongStruct = _var_LongLongStruct;
+    m_var_StructLongLong = _var_StructLongLong;
 }
 
 /*!
- * @brief This function moves the value in member var_LongLongStruct
- * @param _var_LongLongStruct New value to be moved in member var_LongLongStruct
+ * @brief This function moves the value in member var_StructLongLong
+ * @param _var_StructLongLong New value to be moved in member var_StructLongLong
  */
-void Structures::var_LongLongStruct(
-        LongLongStruct&& _var_LongLongStruct)
+void Structures::var_StructLongLong(
+        StructLongLong&& _var_StructLongLong)
 {
-    m_var_LongLongStruct = std::move(_var_LongLongStruct);
+    m_var_StructLongLong = std::move(_var_StructLongLong);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_LongLongStruct
- * @return Constant reference to member var_LongLongStruct
+ * @brief This function returns a constant reference to member var_StructLongLong
+ * @return Constant reference to member var_StructLongLong
  */
-const LongLongStruct& Structures::var_LongLongStruct() const
+const StructLongLong& Structures::var_StructLongLong() const
 {
-    return m_var_LongLongStruct;
+    return m_var_StructLongLong;
 }
 
 /*!
- * @brief This function returns a reference to member var_LongLongStruct
- * @return Reference to member var_LongLongStruct
+ * @brief This function returns a reference to member var_StructLongLong
+ * @return Reference to member var_StructLongLong
  */
-LongLongStruct& Structures::var_LongLongStruct()
+StructLongLong& Structures::var_StructLongLong()
 {
-    return m_var_LongLongStruct;
+    return m_var_StructLongLong;
 }
 /*!
- * @brief This function copies the value in member var_UnsignedLongLongStruct
- * @param _var_UnsignedLongLongStruct New value to be copied in member var_UnsignedLongLongStruct
+ * @brief This function copies the value in member var_StructUnsignedLongLong
+ * @param _var_StructUnsignedLongLong New value to be copied in member var_StructUnsignedLongLong
  */
-void Structures::var_UnsignedLongLongStruct(
-        const UnsignedLongLongStruct& _var_UnsignedLongLongStruct)
+void Structures::var_StructUnsignedLongLong(
+        const StructUnsignedLongLong& _var_StructUnsignedLongLong)
 {
-    m_var_UnsignedLongLongStruct = _var_UnsignedLongLongStruct;
+    m_var_StructUnsignedLongLong = _var_StructUnsignedLongLong;
 }
 
 /*!
- * @brief This function moves the value in member var_UnsignedLongLongStruct
- * @param _var_UnsignedLongLongStruct New value to be moved in member var_UnsignedLongLongStruct
+ * @brief This function moves the value in member var_StructUnsignedLongLong
+ * @param _var_StructUnsignedLongLong New value to be moved in member var_StructUnsignedLongLong
  */
-void Structures::var_UnsignedLongLongStruct(
-        UnsignedLongLongStruct&& _var_UnsignedLongLongStruct)
+void Structures::var_StructUnsignedLongLong(
+        StructUnsignedLongLong&& _var_StructUnsignedLongLong)
 {
-    m_var_UnsignedLongLongStruct = std::move(_var_UnsignedLongLongStruct);
+    m_var_StructUnsignedLongLong = std::move(_var_StructUnsignedLongLong);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_UnsignedLongLongStruct
- * @return Constant reference to member var_UnsignedLongLongStruct
+ * @brief This function returns a constant reference to member var_StructUnsignedLongLong
+ * @return Constant reference to member var_StructUnsignedLongLong
  */
-const UnsignedLongLongStruct& Structures::var_UnsignedLongLongStruct() const
+const StructUnsignedLongLong& Structures::var_StructUnsignedLongLong() const
 {
-    return m_var_UnsignedLongLongStruct;
+    return m_var_StructUnsignedLongLong;
 }
 
 /*!
- * @brief This function returns a reference to member var_UnsignedLongLongStruct
- * @return Reference to member var_UnsignedLongLongStruct
+ * @brief This function returns a reference to member var_StructUnsignedLongLong
+ * @return Reference to member var_StructUnsignedLongLong
  */
-UnsignedLongLongStruct& Structures::var_UnsignedLongLongStruct()
+StructUnsignedLongLong& Structures::var_StructUnsignedLongLong()
 {
-    return m_var_UnsignedLongLongStruct;
+    return m_var_StructUnsignedLongLong;
 }
 /*!
- * @brief This function copies the value in member var_FloatStruct
- * @param _var_FloatStruct New value to be copied in member var_FloatStruct
+ * @brief This function copies the value in member var_StructFloat
+ * @param _var_StructFloat New value to be copied in member var_StructFloat
  */
-void Structures::var_FloatStruct(
-        const FloatStruct& _var_FloatStruct)
+void Structures::var_StructFloat(
+        const StructFloat& _var_StructFloat)
 {
-    m_var_FloatStruct = _var_FloatStruct;
+    m_var_StructFloat = _var_StructFloat;
 }
 
 /*!
- * @brief This function moves the value in member var_FloatStruct
- * @param _var_FloatStruct New value to be moved in member var_FloatStruct
+ * @brief This function moves the value in member var_StructFloat
+ * @param _var_StructFloat New value to be moved in member var_StructFloat
  */
-void Structures::var_FloatStruct(
-        FloatStruct&& _var_FloatStruct)
+void Structures::var_StructFloat(
+        StructFloat&& _var_StructFloat)
 {
-    m_var_FloatStruct = std::move(_var_FloatStruct);
+    m_var_StructFloat = std::move(_var_StructFloat);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_FloatStruct
- * @return Constant reference to member var_FloatStruct
+ * @brief This function returns a constant reference to member var_StructFloat
+ * @return Constant reference to member var_StructFloat
  */
-const FloatStruct& Structures::var_FloatStruct() const
+const StructFloat& Structures::var_StructFloat() const
 {
-    return m_var_FloatStruct;
+    return m_var_StructFloat;
 }
 
 /*!
- * @brief This function returns a reference to member var_FloatStruct
- * @return Reference to member var_FloatStruct
+ * @brief This function returns a reference to member var_StructFloat
+ * @return Reference to member var_StructFloat
  */
-FloatStruct& Structures::var_FloatStruct()
+StructFloat& Structures::var_StructFloat()
 {
-    return m_var_FloatStruct;
+    return m_var_StructFloat;
 }
 /*!
- * @brief This function copies the value in member var_DoubleStruct
- * @param _var_DoubleStruct New value to be copied in member var_DoubleStruct
+ * @brief This function copies the value in member var_StructDouble
+ * @param _var_StructDouble New value to be copied in member var_StructDouble
  */
-void Structures::var_DoubleStruct(
-        const DoubleStruct& _var_DoubleStruct)
+void Structures::var_StructDouble(
+        const StructDouble& _var_StructDouble)
 {
-    m_var_DoubleStruct = _var_DoubleStruct;
+    m_var_StructDouble = _var_StructDouble;
 }
 
 /*!
- * @brief This function moves the value in member var_DoubleStruct
- * @param _var_DoubleStruct New value to be moved in member var_DoubleStruct
+ * @brief This function moves the value in member var_StructDouble
+ * @param _var_StructDouble New value to be moved in member var_StructDouble
  */
-void Structures::var_DoubleStruct(
-        DoubleStruct&& _var_DoubleStruct)
+void Structures::var_StructDouble(
+        StructDouble&& _var_StructDouble)
 {
-    m_var_DoubleStruct = std::move(_var_DoubleStruct);
+    m_var_StructDouble = std::move(_var_StructDouble);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_DoubleStruct
- * @return Constant reference to member var_DoubleStruct
+ * @brief This function returns a constant reference to member var_StructDouble
+ * @return Constant reference to member var_StructDouble
  */
-const DoubleStruct& Structures::var_DoubleStruct() const
+const StructDouble& Structures::var_StructDouble() const
 {
-    return m_var_DoubleStruct;
+    return m_var_StructDouble;
 }
 
 /*!
- * @brief This function returns a reference to member var_DoubleStruct
- * @return Reference to member var_DoubleStruct
+ * @brief This function returns a reference to member var_StructDouble
+ * @return Reference to member var_StructDouble
  */
-DoubleStruct& Structures::var_DoubleStruct()
+StructDouble& Structures::var_StructDouble()
 {
-    return m_var_DoubleStruct;
+    return m_var_StructDouble;
 }
 /*!
- * @brief This function copies the value in member var_LongDoubleStruct
- * @param _var_LongDoubleStruct New value to be copied in member var_LongDoubleStruct
+ * @brief This function copies the value in member var_StructLongDouble
+ * @param _var_StructLongDouble New value to be copied in member var_StructLongDouble
  */
-void Structures::var_LongDoubleStruct(
-        const LongDoubleStruct& _var_LongDoubleStruct)
+void Structures::var_StructLongDouble(
+        const StructLongDouble& _var_StructLongDouble)
 {
-    m_var_LongDoubleStruct = _var_LongDoubleStruct;
+    m_var_StructLongDouble = _var_StructLongDouble;
 }
 
 /*!
- * @brief This function moves the value in member var_LongDoubleStruct
- * @param _var_LongDoubleStruct New value to be moved in member var_LongDoubleStruct
+ * @brief This function moves the value in member var_StructLongDouble
+ * @param _var_StructLongDouble New value to be moved in member var_StructLongDouble
  */
-void Structures::var_LongDoubleStruct(
-        LongDoubleStruct&& _var_LongDoubleStruct)
+void Structures::var_StructLongDouble(
+        StructLongDouble&& _var_StructLongDouble)
 {
-    m_var_LongDoubleStruct = std::move(_var_LongDoubleStruct);
+    m_var_StructLongDouble = std::move(_var_StructLongDouble);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_LongDoubleStruct
- * @return Constant reference to member var_LongDoubleStruct
+ * @brief This function returns a constant reference to member var_StructLongDouble
+ * @return Constant reference to member var_StructLongDouble
  */
-const LongDoubleStruct& Structures::var_LongDoubleStruct() const
+const StructLongDouble& Structures::var_StructLongDouble() const
 {
-    return m_var_LongDoubleStruct;
+    return m_var_StructLongDouble;
 }
 
 /*!
- * @brief This function returns a reference to member var_LongDoubleStruct
- * @return Reference to member var_LongDoubleStruct
+ * @brief This function returns a reference to member var_StructLongDouble
+ * @return Reference to member var_StructLongDouble
  */
-LongDoubleStruct& Structures::var_LongDoubleStruct()
+StructLongDouble& Structures::var_StructLongDouble()
 {
-    return m_var_LongDoubleStruct;
+    return m_var_StructLongDouble;
 }
 /*!
- * @brief This function copies the value in member var_BooleanStruct
- * @param _var_BooleanStruct New value to be copied in member var_BooleanStruct
+ * @brief This function copies the value in member var_StructBoolean
+ * @param _var_StructBoolean New value to be copied in member var_StructBoolean
  */
-void Structures::var_BooleanStruct(
-        const BooleanStruct& _var_BooleanStruct)
+void Structures::var_StructBoolean(
+        const StructBoolean& _var_StructBoolean)
 {
-    m_var_BooleanStruct = _var_BooleanStruct;
+    m_var_StructBoolean = _var_StructBoolean;
 }
 
 /*!
- * @brief This function moves the value in member var_BooleanStruct
- * @param _var_BooleanStruct New value to be moved in member var_BooleanStruct
+ * @brief This function moves the value in member var_StructBoolean
+ * @param _var_StructBoolean New value to be moved in member var_StructBoolean
  */
-void Structures::var_BooleanStruct(
-        BooleanStruct&& _var_BooleanStruct)
+void Structures::var_StructBoolean(
+        StructBoolean&& _var_StructBoolean)
 {
-    m_var_BooleanStruct = std::move(_var_BooleanStruct);
+    m_var_StructBoolean = std::move(_var_StructBoolean);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_BooleanStruct
- * @return Constant reference to member var_BooleanStruct
+ * @brief This function returns a constant reference to member var_StructBoolean
+ * @return Constant reference to member var_StructBoolean
  */
-const BooleanStruct& Structures::var_BooleanStruct() const
+const StructBoolean& Structures::var_StructBoolean() const
 {
-    return m_var_BooleanStruct;
+    return m_var_StructBoolean;
 }
 
 /*!
- * @brief This function returns a reference to member var_BooleanStruct
- * @return Reference to member var_BooleanStruct
+ * @brief This function returns a reference to member var_StructBoolean
+ * @return Reference to member var_StructBoolean
  */
-BooleanStruct& Structures::var_BooleanStruct()
+StructBoolean& Structures::var_StructBoolean()
 {
-    return m_var_BooleanStruct;
+    return m_var_StructBoolean;
 }
 /*!
- * @brief This function copies the value in member var_OctetStruct
- * @param _var_OctetStruct New value to be copied in member var_OctetStruct
+ * @brief This function copies the value in member var_StructOctet
+ * @param _var_StructOctet New value to be copied in member var_StructOctet
  */
-void Structures::var_OctetStruct(
-        const OctetStruct& _var_OctetStruct)
+void Structures::var_StructOctet(
+        const StructOctet& _var_StructOctet)
 {
-    m_var_OctetStruct = _var_OctetStruct;
+    m_var_StructOctet = _var_StructOctet;
 }
 
 /*!
- * @brief This function moves the value in member var_OctetStruct
- * @param _var_OctetStruct New value to be moved in member var_OctetStruct
+ * @brief This function moves the value in member var_StructOctet
+ * @param _var_StructOctet New value to be moved in member var_StructOctet
  */
-void Structures::var_OctetStruct(
-        OctetStruct&& _var_OctetStruct)
+void Structures::var_StructOctet(
+        StructOctet&& _var_StructOctet)
 {
-    m_var_OctetStruct = std::move(_var_OctetStruct);
+    m_var_StructOctet = std::move(_var_StructOctet);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_OctetStruct
- * @return Constant reference to member var_OctetStruct
+ * @brief This function returns a constant reference to member var_StructOctet
+ * @return Constant reference to member var_StructOctet
  */
-const OctetStruct& Structures::var_OctetStruct() const
+const StructOctet& Structures::var_StructOctet() const
 {
-    return m_var_OctetStruct;
+    return m_var_StructOctet;
 }
 
 /*!
- * @brief This function returns a reference to member var_OctetStruct
- * @return Reference to member var_OctetStruct
+ * @brief This function returns a reference to member var_StructOctet
+ * @return Reference to member var_StructOctet
  */
-OctetStruct& Structures::var_OctetStruct()
+StructOctet& Structures::var_StructOctet()
 {
-    return m_var_OctetStruct;
+    return m_var_StructOctet;
 }
 /*!
- * @brief This function copies the value in member var_Char8Struct
- * @param _var_Char8Struct New value to be copied in member var_Char8Struct
+ * @brief This function copies the value in member var_StructChar8
+ * @param _var_StructChar8 New value to be copied in member var_StructChar8
  */
-void Structures::var_Char8Struct(
-        const Char8Struct& _var_Char8Struct)
+void Structures::var_StructChar8(
+        const StructChar8& _var_StructChar8)
 {
-    m_var_Char8Struct = _var_Char8Struct;
+    m_var_StructChar8 = _var_StructChar8;
 }
 
 /*!
- * @brief This function moves the value in member var_Char8Struct
- * @param _var_Char8Struct New value to be moved in member var_Char8Struct
+ * @brief This function moves the value in member var_StructChar8
+ * @param _var_StructChar8 New value to be moved in member var_StructChar8
  */
-void Structures::var_Char8Struct(
-        Char8Struct&& _var_Char8Struct)
+void Structures::var_StructChar8(
+        StructChar8&& _var_StructChar8)
 {
-    m_var_Char8Struct = std::move(_var_Char8Struct);
+    m_var_StructChar8 = std::move(_var_StructChar8);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_Char8Struct
- * @return Constant reference to member var_Char8Struct
+ * @brief This function returns a constant reference to member var_StructChar8
+ * @return Constant reference to member var_StructChar8
  */
-const Char8Struct& Structures::var_Char8Struct() const
+const StructChar8& Structures::var_StructChar8() const
 {
-    return m_var_Char8Struct;
+    return m_var_StructChar8;
 }
 
 /*!
- * @brief This function returns a reference to member var_Char8Struct
- * @return Reference to member var_Char8Struct
+ * @brief This function returns a reference to member var_StructChar8
+ * @return Reference to member var_StructChar8
  */
-Char8Struct& Structures::var_Char8Struct()
+StructChar8& Structures::var_StructChar8()
 {
-    return m_var_Char8Struct;
+    return m_var_StructChar8;
 }
 /*!
- * @brief This function copies the value in member var_Char16Struct
- * @param _var_Char16Struct New value to be copied in member var_Char16Struct
+ * @brief This function copies the value in member var_StructChar16
+ * @param _var_StructChar16 New value to be copied in member var_StructChar16
  */
-void Structures::var_Char16Struct(
-        const Char16Struct& _var_Char16Struct)
+void Structures::var_StructChar16(
+        const StructChar16& _var_StructChar16)
 {
-    m_var_Char16Struct = _var_Char16Struct;
+    m_var_StructChar16 = _var_StructChar16;
 }
 
 /*!
- * @brief This function moves the value in member var_Char16Struct
- * @param _var_Char16Struct New value to be moved in member var_Char16Struct
+ * @brief This function moves the value in member var_StructChar16
+ * @param _var_StructChar16 New value to be moved in member var_StructChar16
  */
-void Structures::var_Char16Struct(
-        Char16Struct&& _var_Char16Struct)
+void Structures::var_StructChar16(
+        StructChar16&& _var_StructChar16)
 {
-    m_var_Char16Struct = std::move(_var_Char16Struct);
+    m_var_StructChar16 = std::move(_var_StructChar16);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_Char16Struct
- * @return Constant reference to member var_Char16Struct
+ * @brief This function returns a constant reference to member var_StructChar16
+ * @return Constant reference to member var_StructChar16
  */
-const Char16Struct& Structures::var_Char16Struct() const
+const StructChar16& Structures::var_StructChar16() const
 {
-    return m_var_Char16Struct;
+    return m_var_StructChar16;
 }
 
 /*!
- * @brief This function returns a reference to member var_Char16Struct
- * @return Reference to member var_Char16Struct
+ * @brief This function returns a reference to member var_StructChar16
+ * @return Reference to member var_StructChar16
  */
-Char16Struct& Structures::var_Char16Struct()
+StructChar16& Structures::var_StructChar16()
 {
-    return m_var_Char16Struct;
+    return m_var_StructChar16;
 }
 /*!
- * @brief This function copies the value in member var_StringStruct
- * @param _var_StringStruct New value to be copied in member var_StringStruct
+ * @brief This function copies the value in member var_StructString
+ * @param _var_StructString New value to be copied in member var_StructString
  */
-void Structures::var_StringStruct(
-        const StringStruct& _var_StringStruct)
+void Structures::var_StructString(
+        const StructString& _var_StructString)
 {
-    m_var_StringStruct = _var_StringStruct;
+    m_var_StructString = _var_StructString;
 }
 
 /*!
- * @brief This function moves the value in member var_StringStruct
- * @param _var_StringStruct New value to be moved in member var_StringStruct
+ * @brief This function moves the value in member var_StructString
+ * @param _var_StructString New value to be moved in member var_StructString
  */
-void Structures::var_StringStruct(
-        StringStruct&& _var_StringStruct)
+void Structures::var_StructString(
+        StructString&& _var_StructString)
 {
-    m_var_StringStruct = std::move(_var_StringStruct);
+    m_var_StructString = std::move(_var_StructString);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_StringStruct
- * @return Constant reference to member var_StringStruct
+ * @brief This function returns a constant reference to member var_StructString
+ * @return Constant reference to member var_StructString
  */
-const StringStruct& Structures::var_StringStruct() const
+const StructString& Structures::var_StructString() const
 {
-    return m_var_StringStruct;
+    return m_var_StructString;
 }
 
 /*!
- * @brief This function returns a reference to member var_StringStruct
- * @return Reference to member var_StringStruct
+ * @brief This function returns a reference to member var_StructString
+ * @return Reference to member var_StructString
  */
-StringStruct& Structures::var_StringStruct()
+StructString& Structures::var_StructString()
 {
-    return m_var_StringStruct;
+    return m_var_StructString;
 }
 /*!
- * @brief This function copies the value in member var_WStringStruct
- * @param _var_WStringStruct New value to be copied in member var_WStringStruct
+ * @brief This function copies the value in member var_StructWString
+ * @param _var_StructWString New value to be copied in member var_StructWString
  */
-void Structures::var_WStringStruct(
-        const WStringStruct& _var_WStringStruct)
+void Structures::var_StructWString(
+        const StructWString& _var_StructWString)
 {
-    m_var_WStringStruct = _var_WStringStruct;
+    m_var_StructWString = _var_StructWString;
 }
 
 /*!
- * @brief This function moves the value in member var_WStringStruct
- * @param _var_WStringStruct New value to be moved in member var_WStringStruct
+ * @brief This function moves the value in member var_StructWString
+ * @param _var_StructWString New value to be moved in member var_StructWString
  */
-void Structures::var_WStringStruct(
-        WStringStruct&& _var_WStringStruct)
+void Structures::var_StructWString(
+        StructWString&& _var_StructWString)
 {
-    m_var_WStringStruct = std::move(_var_WStringStruct);
+    m_var_StructWString = std::move(_var_StructWString);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_WStringStruct
- * @return Constant reference to member var_WStringStruct
+ * @brief This function returns a constant reference to member var_StructWString
+ * @return Constant reference to member var_StructWString
  */
-const WStringStruct& Structures::var_WStringStruct() const
+const StructWString& Structures::var_StructWString() const
 {
-    return m_var_WStringStruct;
+    return m_var_StructWString;
 }
 
 /*!
- * @brief This function returns a reference to member var_WStringStruct
- * @return Reference to member var_WStringStruct
+ * @brief This function returns a reference to member var_StructWString
+ * @return Reference to member var_StructWString
  */
-WStringStruct& Structures::var_WStringStruct()
+StructWString& Structures::var_StructWString()
 {
-    return m_var_WStringStruct;
+    return m_var_StructWString;
 }
 /*!
- * @brief This function copies the value in member var_EnumStruct
- * @param _var_EnumStruct New value to be copied in member var_EnumStruct
+ * @brief This function copies the value in member var_StructEnum
+ * @param _var_StructEnum New value to be copied in member var_StructEnum
  */
-void Structures::var_EnumStruct(
-        const EnumStruct& _var_EnumStruct)
+void Structures::var_StructEnum(
+        const StructEnum& _var_StructEnum)
 {
-    m_var_EnumStruct = _var_EnumStruct;
+    m_var_StructEnum = _var_StructEnum;
 }
 
 /*!
- * @brief This function moves the value in member var_EnumStruct
- * @param _var_EnumStruct New value to be moved in member var_EnumStruct
+ * @brief This function moves the value in member var_StructEnum
+ * @param _var_StructEnum New value to be moved in member var_StructEnum
  */
-void Structures::var_EnumStruct(
-        EnumStruct&& _var_EnumStruct)
+void Structures::var_StructEnum(
+        StructEnum&& _var_StructEnum)
 {
-    m_var_EnumStruct = std::move(_var_EnumStruct);
+    m_var_StructEnum = std::move(_var_StructEnum);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_EnumStruct
- * @return Constant reference to member var_EnumStruct
+ * @brief This function returns a constant reference to member var_StructEnum
+ * @return Constant reference to member var_StructEnum
  */
-const EnumStruct& Structures::var_EnumStruct() const
+const StructEnum& Structures::var_StructEnum() const
 {
-    return m_var_EnumStruct;
+    return m_var_StructEnum;
 }
 
 /*!
- * @brief This function returns a reference to member var_EnumStruct
- * @return Reference to member var_EnumStruct
+ * @brief This function returns a reference to member var_StructEnum
+ * @return Reference to member var_StructEnum
  */
-EnumStruct& Structures::var_EnumStruct()
+StructEnum& Structures::var_StructEnum()
 {
-    return m_var_EnumStruct;
+    return m_var_StructEnum;
 }
 /*!
- * @brief This function copies the value in member var_BitMaskStruct
- * @param _var_BitMaskStruct New value to be copied in member var_BitMaskStruct
+ * @brief This function copies the value in member var_StructBitMask
+ * @param _var_StructBitMask New value to be copied in member var_StructBitMask
  */
-void Structures::var_BitMaskStruct(
-        const BitMaskStruct& _var_BitMaskStruct)
+void Structures::var_StructBitMask(
+        const StructBitMask& _var_StructBitMask)
 {
-    m_var_BitMaskStruct = _var_BitMaskStruct;
+    m_var_StructBitMask = _var_StructBitMask;
 }
 
 /*!
- * @brief This function moves the value in member var_BitMaskStruct
- * @param _var_BitMaskStruct New value to be moved in member var_BitMaskStruct
+ * @brief This function moves the value in member var_StructBitMask
+ * @param _var_StructBitMask New value to be moved in member var_StructBitMask
  */
-void Structures::var_BitMaskStruct(
-        BitMaskStruct&& _var_BitMaskStruct)
+void Structures::var_StructBitMask(
+        StructBitMask&& _var_StructBitMask)
 {
-    m_var_BitMaskStruct = std::move(_var_BitMaskStruct);
+    m_var_StructBitMask = std::move(_var_StructBitMask);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_BitMaskStruct
- * @return Constant reference to member var_BitMaskStruct
+ * @brief This function returns a constant reference to member var_StructBitMask
+ * @return Constant reference to member var_StructBitMask
  */
-const BitMaskStruct& Structures::var_BitMaskStruct() const
+const StructBitMask& Structures::var_StructBitMask() const
 {
-    return m_var_BitMaskStruct;
+    return m_var_StructBitMask;
 }
 
 /*!
- * @brief This function returns a reference to member var_BitMaskStruct
- * @return Reference to member var_BitMaskStruct
+ * @brief This function returns a reference to member var_StructBitMask
+ * @return Reference to member var_StructBitMask
  */
-BitMaskStruct& Structures::var_BitMaskStruct()
+StructBitMask& Structures::var_StructBitMask()
 {
-    return m_var_BitMaskStruct;
+    return m_var_StructBitMask;
 }
 /*!
- * @brief This function copies the value in member var_AliasStruct
- * @param _var_AliasStruct New value to be copied in member var_AliasStruct
+ * @brief This function copies the value in member var_StructAlias
+ * @param _var_StructAlias New value to be copied in member var_StructAlias
  */
-void Structures::var_AliasStruct(
-        const AliasStruct& _var_AliasStruct)
+void Structures::var_StructAlias(
+        const StructAlias& _var_StructAlias)
 {
-    m_var_AliasStruct = _var_AliasStruct;
+    m_var_StructAlias = _var_StructAlias;
 }
 
 /*!
- * @brief This function moves the value in member var_AliasStruct
- * @param _var_AliasStruct New value to be moved in member var_AliasStruct
+ * @brief This function moves the value in member var_StructAlias
+ * @param _var_StructAlias New value to be moved in member var_StructAlias
  */
-void Structures::var_AliasStruct(
-        AliasStruct&& _var_AliasStruct)
+void Structures::var_StructAlias(
+        StructAlias&& _var_StructAlias)
 {
-    m_var_AliasStruct = std::move(_var_AliasStruct);
+    m_var_StructAlias = std::move(_var_StructAlias);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_AliasStruct
- * @return Constant reference to member var_AliasStruct
+ * @brief This function returns a constant reference to member var_StructAlias
+ * @return Constant reference to member var_StructAlias
  */
-const AliasStruct& Structures::var_AliasStruct() const
+const StructAlias& Structures::var_StructAlias() const
 {
-    return m_var_AliasStruct;
+    return m_var_StructAlias;
 }
 
 /*!
- * @brief This function returns a reference to member var_AliasStruct
- * @return Reference to member var_AliasStruct
+ * @brief This function returns a reference to member var_StructAlias
+ * @return Reference to member var_StructAlias
  */
-AliasStruct& Structures::var_AliasStruct()
+StructAlias& Structures::var_StructAlias()
 {
-    return m_var_AliasStruct;
+    return m_var_StructAlias;
 }
 /*!
- * @brief This function copies the value in member var_ShortArrayStruct
- * @param _var_ShortArrayStruct New value to be copied in member var_ShortArrayStruct
+ * @brief This function copies the value in member var_StructShortArray
+ * @param _var_StructShortArray New value to be copied in member var_StructShortArray
  */
-void Structures::var_ShortArrayStruct(
-        const ShortArrayStruct& _var_ShortArrayStruct)
+void Structures::var_StructShortArray(
+        const StructShortArray& _var_StructShortArray)
 {
-    m_var_ShortArrayStruct = _var_ShortArrayStruct;
+    m_var_StructShortArray = _var_StructShortArray;
 }
 
 /*!
- * @brief This function moves the value in member var_ShortArrayStruct
- * @param _var_ShortArrayStruct New value to be moved in member var_ShortArrayStruct
+ * @brief This function moves the value in member var_StructShortArray
+ * @param _var_StructShortArray New value to be moved in member var_StructShortArray
  */
-void Structures::var_ShortArrayStruct(
-        ShortArrayStruct&& _var_ShortArrayStruct)
+void Structures::var_StructShortArray(
+        StructShortArray&& _var_StructShortArray)
 {
-    m_var_ShortArrayStruct = std::move(_var_ShortArrayStruct);
+    m_var_StructShortArray = std::move(_var_StructShortArray);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_ShortArrayStruct
- * @return Constant reference to member var_ShortArrayStruct
+ * @brief This function returns a constant reference to member var_StructShortArray
+ * @return Constant reference to member var_StructShortArray
  */
-const ShortArrayStruct& Structures::var_ShortArrayStruct() const
+const StructShortArray& Structures::var_StructShortArray() const
 {
-    return m_var_ShortArrayStruct;
+    return m_var_StructShortArray;
 }
 
 /*!
- * @brief This function returns a reference to member var_ShortArrayStruct
- * @return Reference to member var_ShortArrayStruct
+ * @brief This function returns a reference to member var_StructShortArray
+ * @return Reference to member var_StructShortArray
  */
-ShortArrayStruct& Structures::var_ShortArrayStruct()
+StructShortArray& Structures::var_StructShortArray()
 {
-    return m_var_ShortArrayStruct;
+    return m_var_StructShortArray;
 }
 /*!
- * @brief This function copies the value in member var_SequenceStruct
- * @param _var_SequenceStruct New value to be copied in member var_SequenceStruct
+ * @brief This function copies the value in member var_StructSequence
+ * @param _var_StructSequence New value to be copied in member var_StructSequence
  */
-void Structures::var_SequenceStruct(
-        const SequenceStruct& _var_SequenceStruct)
+void Structures::var_StructSequence(
+        const StructSequence& _var_StructSequence)
 {
-    m_var_SequenceStruct = _var_SequenceStruct;
+    m_var_StructSequence = _var_StructSequence;
 }
 
 /*!
- * @brief This function moves the value in member var_SequenceStruct
- * @param _var_SequenceStruct New value to be moved in member var_SequenceStruct
+ * @brief This function moves the value in member var_StructSequence
+ * @param _var_StructSequence New value to be moved in member var_StructSequence
  */
-void Structures::var_SequenceStruct(
-        SequenceStruct&& _var_SequenceStruct)
+void Structures::var_StructSequence(
+        StructSequence&& _var_StructSequence)
 {
-    m_var_SequenceStruct = std::move(_var_SequenceStruct);
+    m_var_StructSequence = std::move(_var_StructSequence);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_SequenceStruct
- * @return Constant reference to member var_SequenceStruct
+ * @brief This function returns a constant reference to member var_StructSequence
+ * @return Constant reference to member var_StructSequence
  */
-const SequenceStruct& Structures::var_SequenceStruct() const
+const StructSequence& Structures::var_StructSequence() const
 {
-    return m_var_SequenceStruct;
+    return m_var_StructSequence;
 }
 
 /*!
- * @brief This function returns a reference to member var_SequenceStruct
- * @return Reference to member var_SequenceStruct
+ * @brief This function returns a reference to member var_StructSequence
+ * @return Reference to member var_StructSequence
  */
-SequenceStruct& Structures::var_SequenceStruct()
+StructSequence& Structures::var_StructSequence()
 {
-    return m_var_SequenceStruct;
+    return m_var_StructSequence;
 }
 /*!
- * @brief This function copies the value in member var_MapStruct
- * @param _var_MapStruct New value to be copied in member var_MapStruct
+ * @brief This function copies the value in member var_StructMap
+ * @param _var_StructMap New value to be copied in member var_StructMap
  */
-void Structures::var_MapStruct(
-        const MapStruct& _var_MapStruct)
+void Structures::var_StructMap(
+        const StructMap& _var_StructMap)
 {
-    m_var_MapStruct = _var_MapStruct;
+    m_var_StructMap = _var_StructMap;
 }
 
 /*!
- * @brief This function moves the value in member var_MapStruct
- * @param _var_MapStruct New value to be moved in member var_MapStruct
+ * @brief This function moves the value in member var_StructMap
+ * @param _var_StructMap New value to be moved in member var_StructMap
  */
-void Structures::var_MapStruct(
-        MapStruct&& _var_MapStruct)
+void Structures::var_StructMap(
+        StructMap&& _var_StructMap)
 {
-    m_var_MapStruct = std::move(_var_MapStruct);
+    m_var_StructMap = std::move(_var_StructMap);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_MapStruct
- * @return Constant reference to member var_MapStruct
+ * @brief This function returns a constant reference to member var_StructMap
+ * @return Constant reference to member var_StructMap
  */
-const MapStruct& Structures::var_MapStruct() const
+const StructMap& Structures::var_StructMap() const
 {
-    return m_var_MapStruct;
+    return m_var_StructMap;
 }
 
 /*!
- * @brief This function returns a reference to member var_MapStruct
- * @return Reference to member var_MapStruct
+ * @brief This function returns a reference to member var_StructMap
+ * @return Reference to member var_StructMap
  */
-MapStruct& Structures::var_MapStruct()
+StructMap& Structures::var_StructMap()
 {
-    return m_var_MapStruct;
+    return m_var_StructMap;
 }
 /*!
- * @brief This function copies the value in member var_UnionStruct
- * @param _var_UnionStruct New value to be copied in member var_UnionStruct
+ * @brief This function copies the value in member var_StructUnion
+ * @param _var_StructUnion New value to be copied in member var_StructUnion
  */
-void Structures::var_UnionStruct(
-        const UnionStruct& _var_UnionStruct)
+void Structures::var_StructUnion(
+        const StructUnion& _var_StructUnion)
 {
-    m_var_UnionStruct = _var_UnionStruct;
+    m_var_StructUnion = _var_StructUnion;
 }
 
 /*!
- * @brief This function moves the value in member var_UnionStruct
- * @param _var_UnionStruct New value to be moved in member var_UnionStruct
+ * @brief This function moves the value in member var_StructUnion
+ * @param _var_StructUnion New value to be moved in member var_StructUnion
  */
-void Structures::var_UnionStruct(
-        UnionStruct&& _var_UnionStruct)
+void Structures::var_StructUnion(
+        StructUnion&& _var_StructUnion)
 {
-    m_var_UnionStruct = std::move(_var_UnionStruct);
+    m_var_StructUnion = std::move(_var_StructUnion);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_UnionStruct
- * @return Constant reference to member var_UnionStruct
+ * @brief This function returns a constant reference to member var_StructUnion
+ * @return Constant reference to member var_StructUnion
  */
-const UnionStruct& Structures::var_UnionStruct() const
+const StructUnion& Structures::var_StructUnion() const
 {
-    return m_var_UnionStruct;
+    return m_var_StructUnion;
 }
 
 /*!
- * @brief This function returns a reference to member var_UnionStruct
- * @return Reference to member var_UnionStruct
+ * @brief This function returns a reference to member var_StructUnion
+ * @return Reference to member var_StructUnion
  */
-UnionStruct& Structures::var_UnionStruct()
+StructUnion& Structures::var_StructUnion()
 {
-    return m_var_UnionStruct;
+    return m_var_StructUnion;
 }
 /*!
- * @brief This function copies the value in member var_StructureStruct
- * @param _var_StructureStruct New value to be copied in member var_StructureStruct
+ * @brief This function copies the value in member var_StructStructure
+ * @param _var_StructStructure New value to be copied in member var_StructStructure
  */
-void Structures::var_StructureStruct(
-        const StructureStruct& _var_StructureStruct)
+void Structures::var_StructStructure(
+        const StructStructure& _var_StructStructure)
 {
-    m_var_StructureStruct = _var_StructureStruct;
+    m_var_StructStructure = _var_StructStructure;
 }
 
 /*!
- * @brief This function moves the value in member var_StructureStruct
- * @param _var_StructureStruct New value to be moved in member var_StructureStruct
+ * @brief This function moves the value in member var_StructStructure
+ * @param _var_StructStructure New value to be moved in member var_StructStructure
  */
-void Structures::var_StructureStruct(
-        StructureStruct&& _var_StructureStruct)
+void Structures::var_StructStructure(
+        StructStructure&& _var_StructStructure)
 {
-    m_var_StructureStruct = std::move(_var_StructureStruct);
+    m_var_StructStructure = std::move(_var_StructStructure);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_StructureStruct
- * @return Constant reference to member var_StructureStruct
+ * @brief This function returns a constant reference to member var_StructStructure
+ * @return Constant reference to member var_StructStructure
  */
-const StructureStruct& Structures::var_StructureStruct() const
+const StructStructure& Structures::var_StructStructure() const
 {
-    return m_var_StructureStruct;
+    return m_var_StructStructure;
 }
 
 /*!
- * @brief This function returns a reference to member var_StructureStruct
- * @return Reference to member var_StructureStruct
+ * @brief This function returns a reference to member var_StructStructure
+ * @return Reference to member var_StructStructure
  */
-StructureStruct& Structures::var_StructureStruct()
+StructStructure& Structures::var_StructStructure()
 {
-    return m_var_StructureStruct;
+    return m_var_StructStructure;
 }
 /*!
- * @brief This function copies the value in member var_BitsetStruct
- * @param _var_BitsetStruct New value to be copied in member var_BitsetStruct
+ * @brief This function copies the value in member var_StructBitset
+ * @param _var_StructBitset New value to be copied in member var_StructBitset
  */
-void Structures::var_BitsetStruct(
-        const BitsetStruct& _var_BitsetStruct)
+void Structures::var_StructBitset(
+        const StructBitset& _var_StructBitset)
 {
-    m_var_BitsetStruct = _var_BitsetStruct;
+    m_var_StructBitset = _var_StructBitset;
 }
 
 /*!
- * @brief This function moves the value in member var_BitsetStruct
- * @param _var_BitsetStruct New value to be moved in member var_BitsetStruct
+ * @brief This function moves the value in member var_StructBitset
+ * @param _var_StructBitset New value to be moved in member var_StructBitset
  */
-void Structures::var_BitsetStruct(
-        BitsetStruct&& _var_BitsetStruct)
+void Structures::var_StructBitset(
+        StructBitset&& _var_StructBitset)
 {
-    m_var_BitsetStruct = std::move(_var_BitsetStruct);
+    m_var_StructBitset = std::move(_var_StructBitset);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_BitsetStruct
- * @return Constant reference to member var_BitsetStruct
+ * @brief This function returns a constant reference to member var_StructBitset
+ * @return Constant reference to member var_StructBitset
  */
-const BitsetStruct& Structures::var_BitsetStruct() const
+const StructBitset& Structures::var_StructBitset() const
 {
-    return m_var_BitsetStruct;
+    return m_var_StructBitset;
 }
 
 /*!
- * @brief This function returns a reference to member var_BitsetStruct
- * @return Reference to member var_BitsetStruct
+ * @brief This function returns a reference to member var_StructBitset
+ * @return Reference to member var_StructBitset
  */
-BitsetStruct& Structures::var_BitsetStruct()
+StructBitset& Structures::var_StructBitset()
 {
-    return m_var_BitsetStruct;
+    return m_var_StructBitset;
 }
 /*!
- * @brief This function copies the value in member var_EmptyStructure
- * @param _var_EmptyStructure New value to be copied in member var_EmptyStructure
+ * @brief This function copies the value in member var_StructEmpty
+ * @param _var_StructEmpty New value to be copied in member var_StructEmpty
  */
-void Structures::var_EmptyStructure(
-        const EmptyStructure& _var_EmptyStructure)
+void Structures::var_StructEmpty(
+        const StructEmpty& _var_StructEmpty)
 {
-    m_var_EmptyStructure = _var_EmptyStructure;
+    m_var_StructEmpty = _var_StructEmpty;
 }
 
 /*!
- * @brief This function moves the value in member var_EmptyStructure
- * @param _var_EmptyStructure New value to be moved in member var_EmptyStructure
+ * @brief This function moves the value in member var_StructEmpty
+ * @param _var_StructEmpty New value to be moved in member var_StructEmpty
  */
-void Structures::var_EmptyStructure(
-        EmptyStructure&& _var_EmptyStructure)
+void Structures::var_StructEmpty(
+        StructEmpty&& _var_StructEmpty)
 {
-    m_var_EmptyStructure = std::move(_var_EmptyStructure);
+    m_var_StructEmpty = std::move(_var_StructEmpty);
 }
 
 /*!
- * @brief This function returns a constant reference to member var_EmptyStructure
- * @return Constant reference to member var_EmptyStructure
+ * @brief This function returns a constant reference to member var_StructEmpty
+ * @return Constant reference to member var_StructEmpty
  */
-const EmptyStructure& Structures::var_EmptyStructure() const
+const StructEmpty& Structures::var_StructEmpty() const
 {
-    return m_var_EmptyStructure;
+    return m_var_StructEmpty;
 }
 
 /*!
- * @brief This function returns a reference to member var_EmptyStructure
- * @return Reference to member var_EmptyStructure
+ * @brief This function returns a reference to member var_StructEmpty
+ * @return Reference to member var_StructEmpty
  */
-EmptyStructure& Structures::var_EmptyStructure()
+StructEmpty& Structures::var_StructEmpty()
 {
-    return m_var_EmptyStructure;
+    return m_var_StructEmpty;
 }
 
 

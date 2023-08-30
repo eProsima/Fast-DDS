@@ -55,170 +55,140 @@ using namespace eprosima::fastrtps::types;
 
 eProsima_user_DllExport void registerstructuresTypes();
 
-eProsima_user_DllExport const TypeIdentifier* GetInnerAliasHelperIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInnerAliasHelperObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalInnerAliasHelperObject();
-eProsima_user_DllExport const TypeObject* GetCompleteInnerAliasHelperObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructShortIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructShortObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructShortObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructShortObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetInner_alias_bounded_string_helperIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInner_alias_bounded_string_helperObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalInner_alias_bounded_string_helperObject();
-eProsima_user_DllExport const TypeObject* GetCompleteInner_alias_bounded_string_helperObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructUnsignedShortIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructUnsignedShortObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructUnsignedShortObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructUnsignedShortObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetInner_alias_bounded_wstring_helperIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInner_alias_bounded_wstring_helperObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalInner_alias_bounded_wstring_helperObject();
-eProsima_user_DllExport const TypeObject* GetCompleteInner_alias_bounded_wstring_helperObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructLongIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructLongObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructLongObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructLongObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetInner_alias_array_helperIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInner_alias_array_helperObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalInner_alias_array_helperObject();
-eProsima_user_DllExport const TypeObject* GetCompleteInner_alias_array_helperObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructUnsignedLongIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructUnsignedLongObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructUnsignedLongObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructUnsignedLongObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetInner_alias_sequence_helperIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInner_alias_sequence_helperObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalInner_alias_sequence_helperObject();
-eProsima_user_DllExport const TypeObject* GetCompleteInner_alias_sequence_helperObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructLongLongIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructLongLongObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructLongLongObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructLongLongObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetInner_alias_map_helperIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInner_alias_map_helperObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalInner_alias_map_helperObject();
-eProsima_user_DllExport const TypeObject* GetCompleteInner_alias_map_helperObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructUnsignedLongLongIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructUnsignedLongLongObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructUnsignedLongLongObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructUnsignedLongLongObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetShortStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetShortStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalShortStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteShortStructObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructFloatIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructFloatObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructFloatObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructFloatObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetUnsignedShortStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetUnsignedShortStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalUnsignedShortStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteUnsignedShortStructObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructDoubleIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructDoubleObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructDoubleObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructDoubleObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetLongStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetLongStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalLongStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteLongStructObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructLongDoubleIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructLongDoubleObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructLongDoubleObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructLongDoubleObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetUnsignedLongStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetUnsignedLongStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalUnsignedLongStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteUnsignedLongStructObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructBooleanIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructBooleanObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructBooleanObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructBooleanObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetLongLongStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetLongLongStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalLongLongStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteLongLongStructObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructOctetIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructOctetObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructOctetObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructOctetObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetUnsignedLongLongStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetUnsignedLongLongStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalUnsignedLongLongStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteUnsignedLongLongStructObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructChar8Identifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructChar8Object(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructChar8Object();
+eProsima_user_DllExport const TypeObject* GetCompleteStructChar8Object();
 
-eProsima_user_DllExport const TypeIdentifier* GetFloatStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetFloatStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalFloatStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteFloatStructObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructChar16Identifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructChar16Object(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructChar16Object();
+eProsima_user_DllExport const TypeObject* GetCompleteStructChar16Object();
 
-eProsima_user_DllExport const TypeIdentifier* GetDoubleStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetDoubleStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalDoubleStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteDoubleStructObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructStringIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructStringObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructStringObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructStringObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetLongDoubleStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetLongDoubleStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalLongDoubleStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteLongDoubleStructObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructWStringIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructWStringObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructWStringObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructWStringObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetBooleanStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetBooleanStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalBooleanStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteBooleanStructObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructBoundedStringIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructBoundedStringObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructBoundedStringObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructBoundedStringObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetOctetStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetOctetStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalOctetStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteOctetStructObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructBoundedWStringIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructBoundedWStringObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructBoundedWStringObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructBoundedWStringObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetChar8StructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetChar8StructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalChar8StructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteChar8StructObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructEnumIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructEnumObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructEnumObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructEnumObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetChar16StructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetChar16StructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalChar16StructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteChar16StructObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructBitMaskIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructBitMaskObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructBitMaskObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructBitMaskObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetStringStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetStringStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalStringStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteStringStructObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructAliasIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructAliasObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructAliasObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructAliasObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetWStringStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetWStringStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalWStringStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteWStringStructObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructShortArrayIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructShortArrayObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructShortArrayObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructShortArrayObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetBoundedStringStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetBoundedStringStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalBoundedStringStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteBoundedStringStructObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructSequenceIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructSequenceObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructSequenceObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructSequenceObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetBoundedWStringStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetBoundedWStringStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalBoundedWStringStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteBoundedWStringStructObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructMapIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructMapObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructMapObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructMapObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetEnumStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetEnumStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalEnumStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteEnumStructObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructUnionIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructUnionObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructUnionObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructUnionObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetBitMaskStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetBitMaskStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalBitMaskStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteBitMaskStructObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructStructureIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructStructureObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructStructureObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructStructureObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetAliasStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetAliasStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalAliasStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteAliasStructObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructBitsetIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructBitsetObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructBitsetObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructBitsetObject();
 
-eProsima_user_DllExport const TypeIdentifier* GetShortArrayStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetShortArrayStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalShortArrayStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteShortArrayStructObject();
-
-eProsima_user_DllExport const TypeIdentifier* GetSequenceStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetSequenceStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalSequenceStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteSequenceStructObject();
-
-eProsima_user_DllExport const TypeIdentifier* GetMapStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMapStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalMapStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteMapStructObject();
-
-eProsima_user_DllExport const TypeIdentifier* GetUnionStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetUnionStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalUnionStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteUnionStructObject();
-
-eProsima_user_DllExport const TypeIdentifier* GetStructureStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetStructureStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalStructureStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteStructureStructObject();
-
-eProsima_user_DllExport const TypeIdentifier* GetBitsetStructIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetBitsetStructObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalBitsetStructObject();
-eProsima_user_DllExport const TypeObject* GetCompleteBitsetStructObject();
-
-eProsima_user_DllExport const TypeIdentifier* GetEmptyStructureIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetEmptyStructureObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalEmptyStructureObject();
-eProsima_user_DllExport const TypeObject* GetCompleteEmptyStructureObject();
+eProsima_user_DllExport const TypeIdentifier* GetStructEmptyIdentifier(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetStructEmptyObject(bool complete = false);
+eProsima_user_DllExport const TypeObject* GetMinimalStructEmptyObject();
+eProsima_user_DllExport const TypeObject* GetCompleteStructEmptyObject();
 
 eProsima_user_DllExport const TypeIdentifier* GetStructuresIdentifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetStructuresObject(bool complete = false);

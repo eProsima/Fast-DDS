@@ -116,12 +116,6 @@ using namespace eprosima::fastcdr::exception;
 
 #define SequenceChar_max_key_cdr_typesize 0ULL;
 
-
-
-
-
-
-
 SequenceShort::SequenceShort()
 {
     // sequence<short> m_var_sequence_short

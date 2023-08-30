@@ -62,12 +62,6 @@ using namespace eprosima::fastcdr::exception;
 
 
 
-
-
-
-
-
-
 BitsetStruct::BitsetStruct()
 {
     // InnerBitsetHelper m_var_InnerBitsetHelper

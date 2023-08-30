@@ -33,6 +33,8 @@
 
 #include "idl/dds-types-test/aliasesPubSubTypes.h"
 #include "idl/dds-types-test/aliasesTypeObject.h"
+#include "idl/dds-types-test/appendablePubSubTypes.h"
+#include "idl/dds-types-test/appendableTypeObject.h"
 #include "idl/dds-types-test/arraysPubSubTypes.h"
 #include "idl/dds-types-test/arraysTypeObject.h"
 #include "idl/dds-types-test/bitsetsPubSubTypes.h"
@@ -41,6 +43,8 @@
 #include "idl/dds-types-test/declarationsTypeObject.h"
 #include "idl/dds-types-test/enumerationsPubSubTypes.h"
 #include "idl/dds-types-test/enumerationsTypeObject.h"
+#include "idl/dds-types-test/finalPubSubTypes.h"
+#include "idl/dds-types-test/finalTypeObject.h"
 #include "idl/dds-types-test/inheritancePubSubTypes.h"
 #include "idl/dds-types-test/inheritanceTypeObject.h"
 #include "idl/dds-types-test/mapsPubSubTypes.h"
@@ -268,7 +272,7 @@ void check_get_values(DynamicData* data, const std::vector<ExpectedType>& expect
 
 
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Short)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ShortStruct)
 {        
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
@@ -298,8 +302,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Short)
         ASSERT_TRUE(data2->equals(data));
 
         // SERIALIZATION TEST
-        ShortStructStruct wshort;
-        ShortStructStructPubSubType wshortpb;
+        ShortStruct wshort;
+        ShortStructPubSubType wshortpb;
 
         SerializedPayload_t dynamic_payload(payloadSize);
         ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
@@ -321,7 +325,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Short)
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UShort)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UShortStruct)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::get_instance()->create_uint16_builder();
@@ -374,7 +378,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UShort)
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Long)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_LongStruct)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
@@ -427,7 +431,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Long)
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ULong)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ULongStruct)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
@@ -480,7 +484,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ULong)
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_LongLong)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_LongLongStruct)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
@@ -533,7 +537,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_LongLong)
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ULongLong)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ULongLongStruct)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::get_instance()->create_uint64_builder();
@@ -586,7 +590,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ULongLong)
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Float)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_FloatStruct)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::get_instance()->create_float32_builder();
@@ -640,7 +644,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Float)
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Double)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_DoubleStruct)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::get_instance()->create_float64_builder();
@@ -694,7 +698,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Double)
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_LongDouble)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_LongDoubleStruct)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::get_instance()->create_float128_builder();
@@ -747,7 +751,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_LongDouble)
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Boolean)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BooleanStruct)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::get_instance()->create_bool_builder();
@@ -800,7 +804,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Boolean)
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Octet)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_OctetStruct)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::get_instance()->create_byte_builder();
@@ -853,7 +857,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Octet)
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Char)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_CharStruct)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::get_instance()->create_char8_builder();
@@ -908,7 +912,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Char)
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_WChar)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_WCharStruct)
 {
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::get_instance()->create_char16_builder();
@@ -1780,7 +1784,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Sequence)
 }
 
 
-TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_LongStruct)
+TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_StructLong)
 {
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
@@ -1821,8 +1825,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_LongStruct)
         ASSERT_TRUE(data2->equals(struct_data));
 
         // SERIALIZATION TEST
-        LongStruct seq;
-        LongStructPubSubType seqpb;
+        StructLong seq;
+        StructLongPubSubType seqpb;
 
         uint32_t payloadSize3 = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(struct_data)());
         SerializedPayload_t dynamic_payload(payloadSize3);

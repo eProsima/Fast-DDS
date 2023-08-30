@@ -268,12 +268,6 @@ using namespace eprosima::fastcdr::exception;
 #define ArrayMultiDimensionLiteralsWString_max_key_cdr_typesize 0ULL;
 
 
-
-
-
-
-
-
 ArrayShort::ArrayShort()
 {
     // short m_var_array_short

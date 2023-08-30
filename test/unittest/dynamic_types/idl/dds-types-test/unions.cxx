@@ -212,12 +212,6 @@ using namespace eprosima::fastcdr::exception;
 
 #define UnionDiscriminatorBoolean_max_key_cdr_typesize 0ULL;
 
-
-
-
-
-
-
 Union_Short::Union_Short()
 {
     m__d = 0;
