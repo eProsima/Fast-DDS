@@ -960,7 +960,7 @@ public:
     void register_writer(
             fastrtps::rtps::RTPSWriter* writer) override
     {
-        std::unique_lock<std::mutex> lock(mutex_);
+        std::unique_lock<fastrtps::TimedMutex> lock(mutex_);
         auto ret = writers_.insert({ writer->getGuid(), writer});
         (void)ret;
         assert(ret.second);
@@ -975,7 +975,7 @@ public:
     void unregister_writer(
             fastrtps::rtps::RTPSWriter* writer) override
     {
-        std::unique_lock<std::mutex> lock(mutex_);
+        std::unique_lock<fastrtps::TimedMutex> lock(mutex_);
         writers_.erase(writer->getGuid());
         unregister_writer_impl(writer);
     }
@@ -1019,13 +1019,16 @@ public:
      * If currently the CacheChange_t is managed by this object, remove it.
      * This funcion should be called when a CacheChange_t is removed from the writer's history.
      *
-     * @param Pointer to the change which should be removed if it is currently managed by this object.
+     * @param[in] change Pointer to the change which should be removed if it is currently managed by this object.
+     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @return true if the sample could be removed. false otherwise.
      */
-    void remove_change(
-            fastrtps::rtps::CacheChange_t* change) override
+    bool remove_change(
+            fastrtps::rtps::CacheChange_t* change,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override
     {
         assert(nullptr != change);
-        remove_change_impl(change);
+        return remove_change_impl(change, max_blocking_time);
     }
 
     uint32_t get_max_payload() override
@@ -1246,44 +1249,74 @@ private:
      * @note Before calling this function, the change's writer mutex have to be locked.
      */
     template<typename PubMode = PublishMode>
-    typename std::enable_if<!std::is_same<FlowControllerPureSyncPublishMode, PubMode>::value, void>::type
+    typename std::enable_if<!std::is_same<FlowControllerPureSyncPublishMode, PubMode>::value, bool>::type
     remove_change_impl(
-            fastrtps::rtps::CacheChange_t* change)
+            fastrtps::rtps::CacheChange_t* change,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
     {
+        bool ret_value = true;
         if (change->writer_info.is_linked.load())
         {
             ++async_mode.writers_interested_in_remove;
-            std::unique_lock<std::mutex> lock(mutex_);
-            std::unique_lock<fastrtps::TimedMutex> interested_lock(async_mode.changes_interested_mutex);
-
-            // When blocked, both pointer are different than nullptr or equal.
-            assert((nullptr != change->writer_info.previous &&
-                    nullptr != change->writer_info.next) ||
-                    (nullptr == change->writer_info.previous &&
-                    nullptr == change->writer_info.next));
-            if (change->writer_info.is_linked.load())
+#if HAVE_STRICT_REALTIME
+            std::unique_lock<fastrtps::TimedMutex> lock(mutex_, std::defer_lock);
+            if (lock.try_lock_until(max_blocking_time))
+#else
+            static_cast<void>(max_blocking_time);
+            std::unique_lock<fastrtps::TimedMutex> lock(mutex_);
+#endif // if HAVE_STRICT_REALTIME
             {
+#if HAVE_STRICT_REALTIME
+                std::unique_lock<fastrtps::TimedMutex> interested_lock(async_mode.changes_interested_mutex,
+                        std::defer_lock);
+                if (interested_lock.try_lock_until(max_blocking_time))
+#else
+                std::unique_lock<fastrtps::TimedMutex> interested_lock(async_mode.changes_interested_mutex);
+#endif // if HAVE_STRICT_REALTIME
+                {
 
-                // Try to join previous node and next node.
-                change->writer_info.previous->writer_info.next = change->writer_info.next;
-                change->writer_info.next->writer_info.previous = change->writer_info.previous;
-                change->writer_info.previous = nullptr;
-                change->writer_info.next = nullptr;
-                change->writer_info.is_linked.store(false);
+                    // When blocked, both pointer are different than nullptr or equal.
+                    assert((nullptr != change->writer_info.previous &&
+                            nullptr != change->writer_info.next) ||
+                            (nullptr == change->writer_info.previous &&
+                            nullptr == change->writer_info.next));
+                    if (change->writer_info.is_linked.load())
+                    {
+
+                        // Try to join previous node and next node.
+                        change->writer_info.previous->writer_info.next = change->writer_info.next;
+                        change->writer_info.next->writer_info.previous = change->writer_info.previous;
+                        change->writer_info.previous = nullptr;
+                        change->writer_info.next = nullptr;
+                        change->writer_info.is_linked.store(false);
+                    }
+                }
+                else
+                {
+                    ret_value = !change->writer_info.is_linked.load();
+                }
+            }
+            else
+            {
+                ret_value = !change->writer_info.is_linked.load();
             }
             --async_mode.writers_interested_in_remove;
         }
+
+        return ret_value;
     }
 
     /*! This function is used when PublishMode = FlowControllerPureSyncPublishMode.
      *  In this case there is no async mechanism.
      */
     template<typename PubMode = PublishMode>
-    typename std::enable_if<std::is_same<FlowControllerPureSyncPublishMode, PubMode>::value, void>::type
+    typename std::enable_if<std::is_same<FlowControllerPureSyncPublishMode, PubMode>::value, bool>::type
     remove_change_impl(
-            fastrtps::rtps::CacheChange_t*) const
+            fastrtps::rtps::CacheChange_t*,
+            const std::chrono::time_point<std::chrono::steady_clock>&)
     {
         // Do nothing.
+        return true;
     }
 
     /*!
@@ -1299,7 +1332,7 @@ private:
                 continue;
             }
 
-            std::unique_lock<std::mutex> lock(mutex_);
+            std::unique_lock<fastrtps::TimedMutex> lock(mutex_);
             fastrtps::rtps::CacheChange_t* change_to_process = nullptr;
 
             //Check if we have to sleep.
@@ -1423,7 +1456,7 @@ private:
         return std::numeric_limits<uint32_t>::max();
     }
 
-    std::mutex mutex_;
+    fastrtps::TimedMutex mutex_;
 
     fastrtps::rtps::RTPSParticipantImpl* participant_ = nullptr;
 

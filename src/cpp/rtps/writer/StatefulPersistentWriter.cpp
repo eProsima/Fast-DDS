@@ -88,10 +88,11 @@ void StatefulPersistentWriter::unsent_change_added_to_history(
 }
 
 bool StatefulPersistentWriter::change_removed_by_history(
-        CacheChange_t* change)
+        CacheChange_t* change,
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
     remove_persistent_change(change);
-    return StatefulWriter::change_removed_by_history(change);
+    return StatefulWriter::change_removed_by_history(change, max_blocking_time);
 }
 
 void StatefulPersistentWriter::print_inconsistent_acknack(

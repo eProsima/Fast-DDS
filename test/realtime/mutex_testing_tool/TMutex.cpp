@@ -36,6 +36,7 @@ std::atomic<pid_t> g_tmutex_thread_pid(0);
 // *INDENT-OFF* Uncrustify parse this as a function declaration instead of a function pointer.
 int (*g_origin_lock_func)(pthread_mutex_t*){nullptr};
 int (*g_origin_timedlock_func)(pthread_mutex_t*, const struct timespec*){nullptr};
+int (*g_origin_clocklock_func)(pthread_mutex_t*, clockid_t, const struct timespec*){nullptr};
 // *INDENT-ON*
 
 typedef struct
@@ -154,15 +155,22 @@ pthread_mutex_t* eprosima::fastrtps::tmutex_get_mutex(
     return g_tmutex_records[index].mutex;
 }
 
-void eprosima::fastrtps::tmutex_lock_mutex(
+bool eprosima::fastrtps::tmutex_lock_mutex(
         const size_t index)
 {
     assert(index <= size_t(g_tmutex_records_end));
-
-    if (g_origin_lock_func != nullptr)
+    if (LockType::TIMED_LOCK == g_tmutex_records[index].type)
     {
-        (*g_origin_lock_func)(g_tmutex_records[index].mutex);
+
+        if (g_origin_lock_func != nullptr)
+        {
+            (*g_origin_lock_func)(g_tmutex_records[index].mutex);
+        }
+
+        return true;
     }
+
+    return false;
 }
 
 void eprosima::fastrtps::tmutex_unlock_mutex(

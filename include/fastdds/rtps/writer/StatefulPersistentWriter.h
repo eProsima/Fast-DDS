@@ -95,7 +95,8 @@ public:
      * @return True if removed correctly.
      */
     bool change_removed_by_history(
-            CacheChange_t* a_change) override;
+            CacheChange_t* a_change,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override;
 };
 
 } // namespace rtps
