@@ -46,6 +46,16 @@ public:
 
     Logging* create_logging_plugin(
             const PropertyPolicy& property_policy) override;
+
+protected:
+
+    virtual Authentication* create_builtin_authentication_plugin();
+
+    virtual AccessControl* create_builtin_access_control_plugin();
+
+    virtual Cryptography* create_builtin_cryptography_plugin();
+
+    virtual Logging* create_builtin_logging_plugin();
 };
 
 } //namespace security

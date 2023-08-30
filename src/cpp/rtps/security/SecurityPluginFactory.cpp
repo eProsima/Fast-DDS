@@ -35,7 +35,7 @@ Authentication* SecurityPluginFactory::create_authentication_plugin(const Proper
     {
         if(auth_plugin_property->compare("builtin.PKI-DH") == 0)
         {
-            plugin = new PKIDH();
+            plugin = create_builtin_authentication_plugin();
         }
     }
 
@@ -52,7 +52,7 @@ AccessControl* SecurityPluginFactory::create_access_control_plugin(const Propert
     {
         if(access_plugin_property->compare("builtin.Access-Permissions") == 0)
         {
-            plugin = new Permissions();
+            plugin = create_builtin_access_control_plugin();
         }
     }
 
@@ -70,7 +70,7 @@ Cryptography* SecurityPluginFactory::create_cryptography_plugin(const PropertyPo
         // Check it is builtin DDS:Auth:PKI-DH.
         if(crypto_plugin_property->compare("builtin.AES-GCM-GMAC") == 0)
         {
-            plugin = new AESGCMGMAC();
+            plugin = create_builtin_cryptography_plugin();
         }
     }
 
@@ -87,9 +87,29 @@ Logging* SecurityPluginFactory::create_logging_plugin(const PropertyPolicy& prop
     {
         if(logging_plugin_property->compare("builtin.DDS_LogTopic") == 0)
         {
-            plugin = new LogTopic();
+            plugin = create_builtin_logging_plugin();
         }
     }
 
     return plugin;
+}
+
+Authentication* SecurityPluginFactory::create_builtin_authentication_plugin()
+{
+    return new PKIDH();
+}
+
+AccessControl* SecurityPluginFactory::create_builtin_access_control_plugin()
+{
+    return new Permissions();
+}
+
+Cryptography* SecurityPluginFactory::create_builtin_cryptography_plugin()
+{
+    return new AESGCMGMAC();
+}
+
+Logging* SecurityPluginFactory::create_builtin_logging_plugin()
+{
+    return new LogTopic();
 }
