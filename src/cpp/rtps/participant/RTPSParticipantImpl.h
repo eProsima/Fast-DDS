@@ -402,6 +402,8 @@ public:
     bool is_security_enabled_for_reader(
             const ReaderAttributes& reader_attributes);
 
+    security::Logging* create_builtin_logging_plugin() override;
+
 #endif // if HAVE_SECURITY
 
     PDPSimple* pdpsimple();

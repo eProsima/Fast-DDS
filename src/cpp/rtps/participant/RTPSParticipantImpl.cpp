@@ -63,6 +63,10 @@
 #include <statistics/rtps/GuidUtils.hpp>
 #include <utils/threading.hpp>
 
+#if HAVE_SECURITY
+#include <security/logging/LogTopic.h>
+#endif  // HAVE_SECURITY
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -2189,6 +2193,15 @@ bool RTPSParticipantImpl::is_security_enabled_for_reader(
     }
 
     return false;
+}
+
+security::Logging* RTPSParticipantImpl::create_builtin_logging_plugin()
+{
+    return new security::LogTopic([this]()
+                   {
+                       uint32_t participant_id = static_cast<uint32_t>(m_att.participantID);
+                       set_name_to_current_thread("dds.slog.%u", participant_id);
+                   });
 }
 
 #endif // if HAVE_SECURITY
