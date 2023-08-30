@@ -64,12 +64,6 @@ using namespace eprosima::fastcdr::exception;
 
 
 
-
-
-
-
-
-
 EnumStructure::EnumStructure()
 {
     // InnerEnumHelper m_var_InnerEnumHelper

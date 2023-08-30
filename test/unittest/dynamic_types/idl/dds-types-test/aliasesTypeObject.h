@@ -55,36 +55,6 @@ using namespace eprosima::fastrtps::types;
 
 eProsima_user_DllExport void registeraliasesTypes();
 
-eProsima_user_DllExport const TypeIdentifier* GetInnerAliasHelperIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInnerAliasHelperObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalInnerAliasHelperObject();
-eProsima_user_DllExport const TypeObject* GetCompleteInnerAliasHelperObject();
-
-eProsima_user_DllExport const TypeIdentifier* GetInner_alias_bounded_string_helperIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInner_alias_bounded_string_helperObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalInner_alias_bounded_string_helperObject();
-eProsima_user_DllExport const TypeObject* GetCompleteInner_alias_bounded_string_helperObject();
-
-eProsima_user_DllExport const TypeIdentifier* GetInner_alias_bounded_wstring_helperIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInner_alias_bounded_wstring_helperObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalInner_alias_bounded_wstring_helperObject();
-eProsima_user_DllExport const TypeObject* GetCompleteInner_alias_bounded_wstring_helperObject();
-
-eProsima_user_DllExport const TypeIdentifier* GetInner_alias_array_helperIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInner_alias_array_helperObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalInner_alias_array_helperObject();
-eProsima_user_DllExport const TypeObject* GetCompleteInner_alias_array_helperObject();
-
-eProsima_user_DllExport const TypeIdentifier* GetInner_alias_sequence_helperIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInner_alias_sequence_helperObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalInner_alias_sequence_helperObject();
-eProsima_user_DllExport const TypeObject* GetCompleteInner_alias_sequence_helperObject();
-
-eProsima_user_DllExport const TypeIdentifier* GetInner_alias_map_helperIdentifier(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetInner_alias_map_helperObject(bool complete = false);
-eProsima_user_DllExport const TypeObject* GetMinimalInner_alias_map_helperObject();
-eProsima_user_DllExport const TypeObject* GetCompleteInner_alias_map_helperObject();
-
 eProsima_user_DllExport const TypeIdentifier* Getalias_int16Identifier(bool complete = false);
 eProsima_user_DllExport const TypeObject* Getalias_int16Object(bool complete = false);
 eProsima_user_DllExport const TypeObject* GetMinimalalias_int16Object();

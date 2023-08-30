@@ -76,12 +76,6 @@ using namespace eprosima::fastcdr::exception;
 
 
 
-
-
-
-
-
-
 InnerStructureHelperChild::InnerStructureHelperChild()    : InnerStructureHelper() 
 {
     // long long m_var_child_longlong
@@ -1254,7 +1248,7 @@ void InnerBitsetHelperChildChild::childchild_z(
         uint32_t _childchild_z)
 {
     int base = 0;
-    int size = 18;
+    int size = 17;
     for (int i = base; i < base + size; ++i)
     {
         m_bitset.set(i, !!(_childchild_z & 0x01));
@@ -1265,8 +1259,8 @@ void InnerBitsetHelperChildChild::childchild_z(
 uint32_t InnerBitsetHelperChildChild::childchild_z() const
 {
     int base = 0;
-    int size = 18;
-    std::bitset<18> aux;
+    int size = 17;
+    std::bitset<17> aux;
     for (int i = 0; i < size; ++i)
     {
         aux.set(i, m_bitset.test(i + base));

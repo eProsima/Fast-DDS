@@ -53,12 +53,6 @@ using InstanceHandle_t = eprosima::fastrtps::rtps::InstanceHandle_t;
 
 
 
-
-
-
-
-
-
 AliasInt16PubSubType::AliasInt16PubSubType()
 {
     setName("AliasInt16");

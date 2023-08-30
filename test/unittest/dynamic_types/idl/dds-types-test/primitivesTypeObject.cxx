@@ -45,10 +45,10 @@ void registerprimitivesTypes()
     std::call_once(once_flag, []()
             {
                 TypeObjectFactory *factory = TypeObjectFactory::get_instance();
-                factory->add_type_object("ShortStructStruct", GetShortStructStructIdentifier(true),
-                GetShortStructStructObject(true));
-                factory->add_type_object("ShortStructStruct", GetShortStructStructIdentifier(false),
-                GetShortStructStructObject(false));
+                factory->add_type_object("ShortStruct", GetShortStructIdentifier(true),
+                GetShortStructObject(true));
+                factory->add_type_object("ShortStruct", GetShortStructIdentifier(false),
+                GetShortStructObject(false));
 
                 factory->add_type_object("UShortStruct", GetUShortStructIdentifier(true),
                 GetUShortStructObject(true));
@@ -113,36 +113,36 @@ void registerprimitivesTypes()
             });
 }
 
-const TypeIdentifier* GetShortStructStructIdentifier(bool complete)
+const TypeIdentifier* GetShortStructIdentifier(bool complete)
 {
-    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ShortStructStruct", complete);
+    const TypeIdentifier * c_identifier = TypeObjectFactory::get_instance()->get_type_identifier("ShortStruct", complete);
     if (c_identifier != nullptr && (!complete || c_identifier->_d() == EK_COMPLETE))
     {
         return c_identifier;
     }
 
-    GetShortStructStructObject(complete); // Generated inside
-    return TypeObjectFactory::get_instance()->get_type_identifier("ShortStructStruct", complete);
+    GetShortStructObject(complete); // Generated inside
+    return TypeObjectFactory::get_instance()->get_type_identifier("ShortStruct", complete);
 }
 
-const TypeObject* GetShortStructStructObject(bool complete)
+const TypeObject* GetShortStructObject(bool complete)
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ShortStructStruct", complete);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ShortStruct", complete);
     if (c_type_object != nullptr)
     {
         return c_type_object;
     }
     else if (complete)
     {
-        return GetCompleteShortStructStructObject();
+        return GetCompleteShortStructObject();
     }
     //else
-    return GetMinimalShortStructStructObject();
+    return GetMinimalShortStructObject();
 }
 
-const TypeObject* GetMinimalShortStructStructObject()
+const TypeObject* GetMinimalShortStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ShortStructStruct", false);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ShortStruct", false);
     if (c_type_object != nullptr)
     {
         return c_type_object;
@@ -205,14 +205,14 @@ const TypeObject* GetMinimalShortStructStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("ShortStructStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("ShortStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("ShortStructStruct", false);
+    return TypeObjectFactory::get_instance()->get_type_object("ShortStruct", false);
 }
 
-const TypeObject* GetCompleteShortStructStructObject()
+const TypeObject* GetCompleteShortStructObject()
 {
-    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ShortStructStruct", true);
+    const TypeObject* c_type_object = TypeObjectFactory::get_instance()->get_type_object("ShortStruct", true);
     if (c_type_object != nullptr && c_type_object->_d() == EK_COMPLETE)
     {
         return c_type_object;
@@ -246,7 +246,7 @@ const TypeObject* GetCompleteShortStructStructObject()
 
 
     // Header
-    type_object->complete().struct_type().header().detail().type_name("ShortStructStruct");
+    type_object->complete().struct_type().header().detail().type_name("ShortStruct");
     // TODO inheritance
 
 
@@ -272,9 +272,9 @@ const TypeObject* GetCompleteShortStructStructObject()
         identifier.equivalence_hash()[i] = objectHash.digest[i];
     }
 
-    TypeObjectFactory::get_instance()->add_type_object("ShortStructStruct", &identifier, type_object);
+    TypeObjectFactory::get_instance()->add_type_object("ShortStruct", &identifier, type_object);
     delete type_object;
-    return TypeObjectFactory::get_instance()->get_type_object("ShortStructStruct", true);
+    return TypeObjectFactory::get_instance()->get_type_object("ShortStruct", true);
 }
 
 const TypeIdentifier* GetUShortStructIdentifier(bool complete)
