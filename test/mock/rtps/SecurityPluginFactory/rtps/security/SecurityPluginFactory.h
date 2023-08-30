@@ -24,34 +24,24 @@
 #include <fastdds/rtps/security/logging/Logging.h>
 #include <fastrtps/rtps/attributes/PropertyPolicy.h>
 
+#include <rtps/security/ISecurityPluginFactory.h>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 namespace security {
 
-class SecurityPluginFactory
+class SecurityPluginFactory : public ISecurityPluginFactory
 {
     public:
 
-        /*!
-         * @brief Create an Authentication plugin  described in the PropertyPolicy.
-         * @param property_policy PropertyPolicy containing the definition of the Authentication
-         * plugin that has to be created.
-         * @param Pointer to the new Authentication plugin. In case of error nullptr will be returned.
-         */
-        Authentication* create_authentication_plugin(const PropertyPolicy& property_policy);
+        Authentication* create_authentication_plugin(const PropertyPolicy& property_policy) override;
 
-        AccessControl* create_access_control_plugin(const PropertyPolicy& property_policy);
+        AccessControl* create_access_control_plugin(const PropertyPolicy& property_policy) override;
 
-        /*!
-         * @brief Create an Cryptography plugin  described in the PropertyPolicy.
-         * @param property_policy PropertyPolicy containing the definition of the Cryptography
-         * plugin that has to be created.
-         * @param Pointer to the new Cryptography plugin. In case of error nullptr will be returned.
-         */
-        Cryptography* create_cryptography_plugin(const PropertyPolicy& property_policy);
+        Cryptography* create_cryptography_plugin(const PropertyPolicy& property_policy) override;
 
-        Logging* create_logging_plugin(const PropertyPolicy& property_policy);
+        Logging* create_logging_plugin(const PropertyPolicy& property_policy) override;
 
         static void set_auth_plugin(Authentication* plugin);
 
