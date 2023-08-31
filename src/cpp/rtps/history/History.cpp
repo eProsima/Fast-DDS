@@ -72,7 +72,7 @@ History::iterator History::remove_change_nts(
         const_iterator removal,
         bool release)
 {
-    return remove_change_nts(removal, std::chrono::steady_clock::now() + std::chrono::hours(24), release);
+    return History::remove_change_nts(removal, std::chrono::steady_clock::now() + std::chrono::hours(24), release);
 }
 
 History::iterator History::remove_change_nts(
@@ -105,7 +105,7 @@ History::iterator History::remove_change_nts(
 bool History::remove_change(
         CacheChange_t* ch)
 {
-    return remove_change(ch, std::chrono::steady_clock::now() + std::chrono::hours(24));
+    return History::remove_change(ch, std::chrono::steady_clock::now() + std::chrono::hours(24));
 }
 
 bool History::remove_change(

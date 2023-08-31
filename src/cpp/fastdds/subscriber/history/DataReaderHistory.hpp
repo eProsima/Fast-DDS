@@ -98,6 +98,21 @@ public:
             bool release = true) override;
 
     /**
+     * Remove a specific change from the history.
+     * No Thread Safe.
+     *
+     * @param removal iterator to the CacheChange_t to remove.
+     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @param release defaults to true and hints if the CacheChange_t should return to the pool
+     *
+     * @return iterator to the next CacheChange_t or end iterator.
+     */
+    iterator remove_change_nts(
+            const_iterator removal,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time,
+            bool release = true) override;
+
+    /**
      * Check if a new change can be added to this history.
      *
      * @param [in]  writer_guid                    GUID of the writer where the change came from.

@@ -155,6 +155,14 @@ public:
         return m_changes.erase(removal);
     }
 
+    virtual iterator remove_change_nts(
+            const_iterator removal,
+            const std::chrono::time_point<std::chrono::steady_clock>&,
+            bool release = true)
+    {
+        return remove_change_nts(removal, release);
+    }
+
     virtual void writer_unmatched(
             const GUID_t& /*writer_guid*/,
             const SequenceNumber_t& /*last_notified_seq*/)

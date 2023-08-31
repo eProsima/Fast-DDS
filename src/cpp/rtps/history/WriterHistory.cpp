@@ -172,7 +172,8 @@ History::iterator WriterHistory::remove_change_nts(
         const_iterator removal,
         bool release)
 {
-    return remove_change_nts(removal, std::chrono::steady_clock::now() + std::chrono::hours(24), release);
+    return WriterHistory::remove_change_nts(removal, std::chrono::steady_clock::now() + std::chrono::hours(24),
+                   release);
 }
 
 History::iterator WriterHistory::remove_change_nts(

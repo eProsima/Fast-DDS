@@ -348,7 +348,7 @@ bool DataWriterHistory::removeMinChange()
 bool DataWriterHistory::remove_change_pub(
         CacheChange_t* change)
 {
-    return remove_change_pub(change, std::chrono::steady_clock::now() + std::chrono::hours(24));
+    return DataWriterHistory::remove_change_pub(change, std::chrono::steady_clock::now() + std::chrono::hours(24));
 }
 
 bool DataWriterHistory::remove_change_pub(
