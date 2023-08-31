@@ -184,12 +184,12 @@ public:
             fastrtps::rtps::CacheChange_t* change,
             const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
 
-    virtual bool remove_change_g(
-            fastrtps::rtps::CacheChange_t* a_change);
+    bool remove_change_g(
+            fastrtps::rtps::CacheChange_t* a_change) override;
 
-    virtual bool remove_change_g(
+    bool remove_change_g(
             fastrtps::rtps::CacheChange_t* a_change,
-            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override;
 
     bool remove_instance_changes(
             const fastrtps::rtps::InstanceHandle_t& handle,
