@@ -88,7 +88,7 @@ public:
      * No Thread Safe
      * @param removal iterator to the change for removal
      * @param release specifies if the change should be return to the pool
-     * @param max_blocking_time
+     * @param[in] max_blocking_time Maximum time this method has to complete the task.
      * @return iterator to the next change if any
      */
     RTPS_DllAPI iterator remove_change_nts(

@@ -160,7 +160,7 @@ public:
      * Remove a specific change from the history.
      * No Thread Safe
      * @param removal iterator to the change for removal
-     * @param max_blocking_time
+     * @param[in] max_blocking_time Maximum time this method has to complete the task.
      * @param release specifies if the change must be returned to the pool
      * @return iterator to the next change if any
      */
