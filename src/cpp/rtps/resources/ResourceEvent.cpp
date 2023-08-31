@@ -314,7 +314,10 @@ void ResourceEvent::init_thread(
 
     thread_ = std::thread([this, configure_cb]()
                     {
-                        if (configure_cb) configure_cb();
+                        if (configure_cb)
+                        {
+                            configure_cb();
+                        }
                         event_service();
                     });
 }
