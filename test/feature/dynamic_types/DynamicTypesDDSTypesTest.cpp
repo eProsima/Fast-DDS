@@ -242,7 +242,7 @@ void check_set_values(DynamicData* data, const std::vector<ExpectedType>& expect
         SetMethod setMethod = typeMethodPair.second;
 
         if (std::find(expected_types.begin(), expected_types.end(), currentType) != expected_types.end()) {
-            //ASSERT_FALSE(setMethod(data, type_value, 0) == ReturnCode_t::RETCODE_OK);
+            ASSERT_FALSE(setMethod(data, type_value, 0) == ReturnCode_t::RETCODE_OK);
             ASSERT_TRUE(setMethod(data, type_value, member_id) == ReturnCode_t::RETCODE_OK);
         } else {
             if ((std::find(expected_types.begin(), expected_types.end(), ExpectedType::Bitmask) != expected_types.end()) &&
@@ -262,7 +262,7 @@ void check_get_values(DynamicData* data, const std::vector<ExpectedType>& expect
         GetMethod getMethod = typeMethodPair.second;
 
         if (std::find(expected_types.begin(), expected_types.end(), currentType) != expected_types.end()) {
-            //ASSERT_FALSE(getMethod(data, type_value, 0) == ReturnCode_t::RETCODE_OK);
+            ASSERT_FALSE(getMethod(data, type_value, 0) == ReturnCode_t::RETCODE_OK);
             ASSERT_TRUE(getMethod(data, type_value, member_id) == ReturnCode_t::RETCODE_OK);
         } else {
             ASSERT_FALSE(getMethod(data, type_value, member_id) == ReturnCode_t::RETCODE_OK);
@@ -1446,13 +1446,11 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Bitmask)
         ASSERT_TRUE(test_value_1 == test_value_2);
 
         // Serialize <-> Deserialize Test
-        ASSERT_TRUE(data->set_bool_value(true, 0) == ReturnCode_t::RETCODE_OK);
         DynamicPubSubType pubsubType(created_type);
         uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
         SerializedPayload_t payload(payloadSize);
         ASSERT_TRUE(pubsubType.serialize(data, &payload));
         ASSERT_TRUE(payload.length == payloadSize);
-
         types::DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(created_type);
         ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
         ASSERT_TRUE(data2->equals(data));
@@ -1475,7 +1473,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Bitmask)
 
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
-        //ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
     }
     ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
@@ -1543,14 +1541,14 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_AliasUInt32)
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MultidimensionalArray)
 {
-    std::vector<uint32_t> sequence_lengths = { 2, 2, 2 };
+    std::vector<uint32_t> arrays_lengths = { 2, 2, 2 };
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
         DynamicType_ptr base_type = base_type_builder->build();
         ASSERT_TRUE(base_type_builder != nullptr);
         ASSERT_TRUE(base_type != nullptr);
 
-        DynamicTypeBuilder_ptr array_type_builder = DynamicTypeBuilderFactory::get_instance()->create_array_builder(base_type_builder.get(), sequence_lengths);
+        DynamicTypeBuilder_ptr array_type_builder = DynamicTypeBuilderFactory::get_instance()->create_array_builder(base_type_builder.get(), arrays_lengths);
         DynamicType_ptr array_type = array_type_builder->build();
         ASSERT_TRUE(array_type_builder != nullptr);
         ASSERT_TRUE(array_type != nullptr);
@@ -1611,16 +1609,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MultidimensionalArray)
         ASSERT_TRUE(data2->equals(data));
 
         // SERIALIZATION TEST
-        ArrayLong seq;
-        ArrayLongPubSubType seqpb;
+        ArrayLong warray;
+        ArrayLongPubSubType warraypb;
 
         SerializedPayload_t dynamic_payload(payloadSize);
-        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
-        ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));        
+        ASSERT_TRUE(warraypb.deserialize(&dynamic_payload, &warray));
 
-        uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
+        uint32_t static_payloadSize = static_cast<uint32_t>(warraypb.getSerializedSizeProvider(&warray)());
         SerializedPayload_t static_payload(static_payloadSize);
-        ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
+        ASSERT_TRUE(warraypb.serialize(&warray, &static_payload));
         ASSERT_TRUE(static_payload.length == static_payloadSize);
         types::DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(array_type);
         ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
