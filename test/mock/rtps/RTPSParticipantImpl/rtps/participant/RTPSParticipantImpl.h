@@ -133,7 +133,8 @@ public:
 
     MOCK_METHOD1(check_type, bool(std::string));
 
-    MOCK_METHOD2(on_entity_discovery, void(const fastrtps::rtps::GUID_t&, const fastdds::dds::ParameterPropertyList_t&));
+    MOCK_METHOD2(on_entity_discovery,
+            void(const fastrtps::rtps::GUID_t&, const fastdds::dds::ParameterPropertyList_t&));
 
     // *INDENT-OFF* Uncrustify makes a mess with MOCK_METHOD macros
     MOCK_METHOD6(createWriter_mock,

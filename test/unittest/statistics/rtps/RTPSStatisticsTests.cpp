@@ -68,6 +68,7 @@ public:
     }
 
 private:
+
     ~RTPSParticipantMock();
 };
 
@@ -1417,10 +1418,10 @@ TEST_F(RTPSStatisticsTests, iconnections_queryable_get_entity_connections)
     ASSERT_EQ(conns_reader[0].guid(), statistics::to_statistics_type(writer_->getGuid()));
     ASSERT_EQ(conns_writer[0].guid(), statistics::to_statistics_type(reader_->getGuid()));
 
-    for (auto &locator : conns_reader[0].announced_locators())
+    for (auto& locator : conns_reader[0].announced_locators())
     {
         bool found = false;
-        for (auto &writer_loc : writer_->get_general_locator_selector().locator_selector)
+        for (auto& writer_loc : writer_->get_general_locator_selector().locator_selector)
         {
             if (statistics::to_statistics_type(writer_loc) == locator)
             {

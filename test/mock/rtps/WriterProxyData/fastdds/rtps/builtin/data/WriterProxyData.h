@@ -339,7 +339,8 @@ public:
         return m_userDefinedId;
     }
 
-    void copy(WriterProxyData* /*wdat*/)
+    void copy(
+            WriterProxyData* /*wdat*/)
     {
 
     }

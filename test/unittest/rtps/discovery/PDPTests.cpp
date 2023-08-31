@@ -99,6 +99,7 @@ class TesterPDPEndpoints : public fastdds::rtps::PDPEndpoints
     {
 
     }
+
 };
 
 class PDPTester : public PDP
@@ -119,7 +120,8 @@ public:
 
     }
 
-    bool init(RTPSParticipantImpl *part) override
+    bool init(
+            RTPSParticipantImpl* part) override
     {
         mp_RTPSParticipant = part;
         return true;
@@ -132,7 +134,8 @@ public:
         return nullptr;
     }
 
-    void create_and_add_participant_proxy_data(const GUID_t &part_guid)
+    void create_and_add_participant_proxy_data(
+            const GUID_t& part_guid)
     {
         RTPSParticipantAllocationAttributes attrs;
         ParticipantProxyData* pdata = new ParticipantProxyData(attrs);
@@ -307,7 +310,7 @@ TEST_F(PDPTests, iproxy_queryable_get_all_local_proxies)
     size_t n_entities = 9;
     local_guids.reserve(n_entities);
 
-    GUID_t part_guid(GuidPrefix_t::unknown(),ENTITYID_RTPSParticipant);
+    GUID_t part_guid(GuidPrefix_t::unknown(), ENTITYID_RTPSParticipant);
     EXPECT_CALL(participant_, getGuid()).WillRepeatedly(testing::ReturnRef(part_guid));
     pdp_->create_and_add_participant_proxy_data(part_guid);
 
@@ -315,17 +318,25 @@ TEST_F(PDPTests, iproxy_queryable_get_all_local_proxies)
     for (size_t i = 1; i < 10; i++)
     {
         EntityId_t entity;
-        entity.value[3] = i;
+        entity.value[3] = (octet)i;
 
         GUID_t entity_guid = {part_guid.guidPrefix, entity};
 
-        if (i%2)
+        if (i % 2)
         {
-            pdp_->addReaderProxyData(entity_guid, part_guid, [&entity_guid](ReaderProxyData *rdata, bool, const ParticipantProxyData &){rdata->guid(entity_guid);return true;});
+            pdp_->addReaderProxyData(entity_guid, part_guid,
+                    [&entity_guid](ReaderProxyData* rdata, bool, const ParticipantProxyData&)
+                    {
+                        rdata->guid(entity_guid); return true;
+                    });
         }
         else
         {
-            pdp_->addWriterProxyData(entity_guid, part_guid, [&entity_guid](WriterProxyData *wdata, bool, const ParticipantProxyData &){wdata->guid(entity_guid);return true;});
+            pdp_->addWriterProxyData(entity_guid, part_guid,
+                    [&entity_guid](WriterProxyData* wdata, bool, const ParticipantProxyData&)
+                    {
+                        wdata->guid(entity_guid); return true;
+                    });
         }
 
         local_guids.push_back(entity_guid);
@@ -342,19 +353,27 @@ TEST_F(PDPTests, iproxy_queryable_get_all_local_proxies)
         prefix.value[7] = std::rand() % 100;
 
         EntityId_t entity;
-        entity.value[3] = i;
+        entity.value[3] = (octet)i;
 
         GUID_t entity_guid = {prefix, entity};
-        GUID_t part_guid = {prefix, ENTITYID_RTPSParticipant};
-        pdp_->create_and_add_participant_proxy_data(part_guid);
+        GUID_t other_part_guid = {prefix, ENTITYID_RTPSParticipant};
+        pdp_->create_and_add_participant_proxy_data(other_part_guid);
 
-        if (i%2)
+        if (i % 2)
         {
-            pdp_->addReaderProxyData(entity_guid, part_guid, [&entity_guid](ReaderProxyData *rdata, bool, const ParticipantProxyData &){rdata->guid(entity_guid);return true;});
+            pdp_->addReaderProxyData(entity_guid, other_part_guid,
+                    [&entity_guid](ReaderProxyData* rdata, bool, const ParticipantProxyData&)
+                    {
+                        rdata->guid(entity_guid); return true;
+                    });
         }
         else
         {
-            pdp_->addWriterProxyData(entity_guid, part_guid, [&entity_guid](WriterProxyData *wdata, bool, const ParticipantProxyData &){wdata->guid(entity_guid);return true;});
+            pdp_->addWriterProxyData(entity_guid, other_part_guid,
+                    [&entity_guid](WriterProxyData* wdata, bool, const ParticipantProxyData&)
+                    {
+                        wdata->guid(entity_guid); return true;
+                    });
         }
     }
 
@@ -375,26 +394,31 @@ TEST_F(PDPTests, iproxy_queryable_get_serialized_proxy)
 {
 #ifdef FASTDDS_STATISTICS
 
-    GUID_t part_guid(GuidPrefix_t::unknown(),ENTITYID_RTPSParticipant);
+    GUID_t part_guid(GuidPrefix_t::unknown(), ENTITYID_RTPSParticipant);
     pdp_->create_and_add_participant_proxy_data(part_guid);
 
     CDRMessage_t part_proxy_serialized;
     ASSERT_FALSE(pdp_->get_serialized_proxy(part_guid, &part_proxy_serialized));
 
     GUID_t expected_participant_guid;
-    ASSERT_TRUE(fastdds::dds::ParameterList::read_guid_from_cdr_msg(part_proxy_serialized, fastdds::dds::PID_PARTICIPANT_GUID, expected_participant_guid));
+    ASSERT_TRUE(fastdds::dds::ParameterList::read_guid_from_cdr_msg(part_proxy_serialized,
+            fastdds::dds::PID_PARTICIPANT_GUID, expected_participant_guid));
     ASSERT_EQ(part_guid, expected_participant_guid);
 
     EntityId_t entity;
     entity.value[3] = 1;
     GUID_t reader_guid = {GuidPrefix_t::unknown(), entity};
-    pdp_->addReaderProxyData(reader_guid, part_guid, [](ReaderProxyData *, bool, const ParticipantProxyData &){return true;});
+    pdp_->addReaderProxyData(reader_guid, part_guid, [](ReaderProxyData*, bool, const ParticipantProxyData&)
+            {
+                return true;
+            });
 
     CDRMessage_t reader_proxy_serialized;
     ASSERT_TRUE(pdp_->get_serialized_proxy(part_guid, &reader_proxy_serialized));
 
     GUID_t expected_reader_guid;
-    ASSERT_TRUE(fastdds::dds::ParameterList::read_guid_from_cdr_msg(reader_proxy_serialized, fastdds::dds::PID_ENDPOINT_GUID, expected_reader_guid));
+    ASSERT_TRUE(fastdds::dds::ParameterList::read_guid_from_cdr_msg(reader_proxy_serialized,
+            fastdds::dds::PID_ENDPOINT_GUID, expected_reader_guid));
     ASSERT_EQ(reader_guid, expected_reader_guid);
 
 #endif // FASTDDS_STATISTICS

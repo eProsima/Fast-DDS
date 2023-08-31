@@ -44,7 +44,8 @@ namespace efd = eprosima::fastdds::dds;
 
 struct DataWriterMock : public DataWriterImpl
 {
-    void insert_policy_violation(const fastdds::dds::PolicyMask &policy)
+    void insert_policy_violation(
+            const fastdds::dds::PolicyMask& policy)
     {
         ++offered_incompatible_qos_status_.total_count;
         ++offered_incompatible_qos_status_.total_count_change;
@@ -58,6 +59,7 @@ struct DataWriterMock : public DataWriterImpl
             }
         }
     }
+
 };
 
 class PublisherImpl : public efd::PublisherImpl
@@ -110,14 +112,16 @@ public:
         return BaseType::create_datawriter(topic, impl, mask);
     }
 
-    bool insert_policy_violation(const fastrtps::rtps::GUID_t &guid, const fastdds::dds::QosPolicyId_t &policy_id)
+    bool insert_policy_violation(
+            const fastrtps::rtps::GUID_t& guid,
+            const fastdds::dds::QosPolicyId_t& policy_id)
     {
         bool retcode = false;
 
-        for(auto &writer_pair : writers_)
+        for (auto& writer_pair : writers_)
         {
             auto writers_in_topic = writer_pair.second;
-            for(auto &writer_in_topic : writers_in_topic)
+            for (auto& writer_in_topic : writers_in_topic)
             {
                 if (writer_in_topic->guid() == guid)
                 {

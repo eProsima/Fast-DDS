@@ -364,7 +364,8 @@ public:
         return content_filter_;
     }
 
-    void copy(ReaderProxyData* /*rdat*/)
+    void copy(
+            ReaderProxyData* /*rdat*/)
     {
 
     }

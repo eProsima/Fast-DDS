@@ -29,9 +29,9 @@ namespace builtin {
 
 class TypeLookupManager;
 
-}
-}
-}
+} // namespace builtin
+} // namespace dds
+} // namespace fastdds
 namespace fastrtps {
 namespace rtps {
 
@@ -42,12 +42,17 @@ class BuiltinProtocols
 {
 public:
 
-    BuiltinProtocols() : mp_participantImpl(nullptr)
-    , mp_PDP(nullptr)
-    , mp_WLP(nullptr)
-    , tlm_(nullptr){}
+    BuiltinProtocols()
+        : mp_participantImpl(nullptr)
+        , mp_PDP(nullptr)
+        , mp_WLP(nullptr)
+        , tlm_(nullptr)
+    {
+    }
 
-    virtual ~BuiltinProtocols(){}
+    virtual ~BuiltinProtocols()
+    {
+    }
 
     //!Locator list for metatraffic
     LocatorList_t m_metatrafficMulticastLocatorList;

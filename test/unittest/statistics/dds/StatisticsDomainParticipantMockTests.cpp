@@ -125,32 +125,44 @@ public:
         return builtin_publisher_impl_;
     }
 
-    bool incompatible_qos_status(fastrtps::rtps::GUID_t guid, fastdds::dds::IncompatibleQosStatus status)
+    bool incompatible_qos_status(
+            fastrtps::rtps::GUID_t guid,
+            fastdds::dds::IncompatibleQosStatus status)
     {
         return get_incompatible_qos_status(guid, status);
     }
 
-    bool inconsistent_topic_status(fastrtps::rtps::GUID_t guid, fastdds::dds::InconsistentTopicStatus status)
+    bool inconsistent_topic_status(
+            fastrtps::rtps::GUID_t guid,
+            fastdds::dds::InconsistentTopicStatus status)
     {
         return get_inconsistent_topic_status(guid, status);
     }
 
-    bool liveliness_lost_status(fastrtps::rtps::GUID_t guid, fastdds::dds::LivelinessLostStatus status)
+    bool liveliness_lost_status(
+            fastrtps::rtps::GUID_t guid,
+            fastdds::dds::LivelinessLostStatus status)
     {
         return get_liveliness_lost_status(guid, status);
     }
 
-    bool liveliness_changed_status(fastrtps::rtps::GUID_t guid, fastdds::dds::LivelinessChangedStatus status)
+    bool liveliness_changed_status(
+            fastrtps::rtps::GUID_t guid,
+            fastdds::dds::LivelinessChangedStatus status)
     {
         return get_liveliness_changed_status(guid, status);
     }
 
-    bool deadline_missed_status(fastrtps::rtps::GUID_t guid, fastdds::dds::DeadlineMissedStatus status)
+    bool deadline_missed_status(
+            fastrtps::rtps::GUID_t guid,
+            fastdds::dds::DeadlineMissedStatus status)
     {
         return get_deadline_missed_status(guid, status);
     }
 
-    bool sample_lost_status(fastrtps::rtps::GUID_t guid, fastdds::dds::SampleLostStatus status)
+    bool sample_lost_status(
+            fastrtps::rtps::GUID_t guid,
+            fastdds::dds::SampleLostStatus status)
     {
         return get_sample_lost_status(guid, status);
     }
