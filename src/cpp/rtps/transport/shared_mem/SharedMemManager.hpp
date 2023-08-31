@@ -708,24 +708,34 @@ public:
 
             try
             {
-                std::cout << "SHM-DBG - POPPING..." << std::endl;
                 while (!is_buffer_valid)
                 {
-                    std::cout << "SHM-DBG - WITHIN POP ITERATION..." << std::endl;
-
                     bool was_cell_freed;
 
                     SharedMemGlobal::PortCell* head_cell = nullptr;
-                    buffer_ref.reset();
+                    try
+                    {
+                        buffer_ref.reset();
+                    }
+                    catch (const std::exception& e)
+                    {
+                        EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "Buffer reset failure: " << e.what());
+                        throw;
+                    }
 
                     while ( !is_closed_.load() && nullptr == (head_cell = global_listener_->head()))
                     {
-                        std::cout << "SHM-DBG - WAIT POP..." << std::endl;
-                        // Wait until there's data to pop
-                        global_port_->wait_pop(*global_listener_, is_closed_, listener_index_);
+                        try
+                        {
+                            // Wait until there's data to pop
+                            global_port_->wait_pop(*global_listener_, is_closed_, listener_index_);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "wait_pop failure with is_closed_ (" << is_closed_ << ") and listener_index_ (" << listener_index_ << ") : " << e.what());
+                            throw;
+                        }
                     }
-
-                    std::cout << "SHM-DBG - POPPED" << std::endl;
 
                     if (!head_cell)
                     {
@@ -734,61 +744,116 @@ public:
 
                     if (!global_port_->is_port_ok())
                     {
-                        std::cout << "SHM-DBG - PORT NOT OK" << std::endl;
+                        EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "pop failure due to port not ok.");
                         throw std::runtime_error("");
                     }
 
                     // Read and pop descriptor
                     SharedMemGlobal::BufferDescriptor buffer_descriptor = head_cell->data();
-                    global_port_->pop(*global_listener_, was_cell_freed);
-
-                    std::cout << "SHM-DBG - BEFORE find_segment" << std::endl;
-                    auto segment = shared_mem_manager_->find_segment(buffer_descriptor.source_segment_id);
-                    if (!segment)
+                    try
                     {
-                        // Descriptor points to non-existing segment: discard
-                        continue;
+                        global_port_->pop(*global_listener_, was_cell_freed);
                     }
-                    std::cout << "SHM-DBG - AFTER find_segment" << std::endl;
+                    catch (const std::exception& e)
+                    {
+                        EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "find_segment failure : " << e.what());
+                        throw;
+                    }
 
-                    std::cout << "SHM-DBG - BEFORE get_address_from_offset" << std::endl;
-                    auto buffer_node =
-                            static_cast<BufferNode*>(segment->get_address_from_offset(buffer_descriptor.
-                                    buffer_node_offset));
-                    std::cout << "SHM-DBG - AFTER get_address_from_offset" << std::endl;
+                    std::shared_ptr<SharedMemSegment> segment;
+                    try
+                    {
+                        segment = shared_mem_manager_->find_segment(buffer_descriptor.source_segment_id);
+                        if (!segment)
+                        {
+                            // Descriptor points to non-existing segment: discard
+                            continue;
+                        }
+                    }
+                    catch (const std::exception& e)
+                    {
+                        EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "find_segment failure : " << e.what());
+                        throw;
+                    }
 
-                    // TODO(Adolfo) : Dynamic allocation. Use foonathan to convert it to static allocation
-                    std::cout << "SHM-DBG - BEFORE SharedMemBuffer creation" << std::endl;
-                    buffer_ref = std::make_shared<SharedMemBuffer>(segment, buffer_descriptor.source_segment_id,
-                                    buffer_node,
-                                    buffer_descriptor.validity_id);
-                    std::cout << "SHM-DBG - AFTER SharedMemBuffer creation" << std::endl;
+                    BufferNode* buffer_node;
+                    try
+                    {
+                        buffer_node =
+                                static_cast<BufferNode*>(segment->get_address_from_offset(buffer_descriptor.
+                                        buffer_node_offset));
+                    }
+                    catch (const std::exception& e)
+                    {
+                        EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "get_address_from_offset failure : " << e.what());
+                        throw;
+                    }
+
+                    try
+                    {
+                        // TODO(Adolfo) : Dynamic allocation. Use foonathan to convert it to static allocation
+                        buffer_ref = std::make_shared<SharedMemBuffer>(segment, buffer_descriptor.source_segment_id,
+                                        buffer_node,
+                                        buffer_descriptor.validity_id);
+                    }
+                    catch (const std::exception& e)
+                    {
+                        EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "SharedMemBuffer creation failure : " << e.what());
+                        throw;
+                    }
 
                     if (buffer_ref)
                     {
-                        std::cout << "SHM-DBG - BEFORE listener_processing_start" << std::endl;
-                        global_port_->listener_processing_start(listener_index_, buffer_descriptor);
-                        std::cout << "SHM-DBG - AFTER listener_processing_start" << std::endl;
+                        try
+                        {
+                            global_port_->listener_processing_start(listener_index_, buffer_descriptor);
+                        }
+                        catch (const std::exception& e)
+                        {
+                            EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "global_port listener_processing_start failure : " << e.what());
+                            throw;
+                        }
+
                         if (was_cell_freed)
                         {
-                            // Atomically increase processing & decrease enqueued
-                            std::cout << "SHM-DBG - BEFORE dec_enqueued_inc_processing_counts" << std::endl;
-                            is_buffer_valid = buffer_node->dec_enqueued_inc_processing_counts(
-                                buffer_descriptor.validity_id);
-                            std::cout << "SHM-DBG - AFTER dec_enqueued_inc_processing_counts" << std::endl;
+                            try
+                            {
+                                // Atomically increase processing & decrease enqueued
+                                is_buffer_valid = buffer_node->dec_enqueued_inc_processing_counts(
+                                    buffer_descriptor.validity_id);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "dec_enqueued_inc_processing_counts failure : " << e.what());
+                                throw;
+                            }
                         }
                         else
                         {
-                            std::cout << "SHM-DBG - BEFORE inc_processing_count" << std::endl;
-                            is_buffer_valid = buffer_node->inc_processing_count(buffer_descriptor.validity_id);
-                            std::cout << "SHM-DBG - AFTER inc_processing_count" << std::endl;
+                            try
+                            {
+                                is_buffer_valid = buffer_node->inc_processing_count(buffer_descriptor.validity_id);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "inc_processing_count failure : " << e.what());
+                                throw;
+                            }
                         }
                     }
                     else
                     {
                         if (was_cell_freed)
                         {
-                            buffer_node->dec_enqueued_count(buffer_descriptor.validity_id);
+                            try
+                            {
+                                buffer_node->dec_enqueued_count(buffer_descriptor.validity_id);
+                            }
+                            catch (const std::exception& e)
+                            {
+                                EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "dec_enqueued_count failure : " << e.what());
+                                throw;
+                            }
                         }
 
                         throw std::runtime_error("pop() : out of memory");
@@ -799,7 +864,7 @@ public:
             {
                 if (global_port_->is_port_ok())
                 {
-                    std::cout << "SHM-DBG - PORT NOT OK IN EXCEPTION" << std::endl;
+                    EPROSIMA_LOG_WARNING(RTPS_TRANSPORT_SHM, "pop failure due to port not ok (within catch).");
                     throw;
                 }
                 else
