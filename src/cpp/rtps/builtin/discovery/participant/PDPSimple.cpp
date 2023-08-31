@@ -16,39 +16,34 @@
  * @file PDPSimple.cpp
  *
  */
-
 #include <fastdds/rtps/builtin/discovery/participant/PDPSimple.h>
-#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
-#include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
-#include <fastdds/rtps/builtin/discovery/endpoint/EDPStatic.h>
-#include <fastdds/rtps/resources/TimedEvent.h>
+
+#include <mutex>
+
+#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
+#include <fastdds/dds/log/Log.hpp>
 #include <fastdds/rtps/builtin/BuiltinProtocols.h>
-#include <fastdds/rtps/builtin/liveliness/WLP.h>
+#include <fastdds/rtps/builtin/data/NetworkConfiguration.hpp>
 #include <fastdds/rtps/builtin/data/ParticipantProxyData.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
 #include <fastdds/rtps/builtin/data/WriterProxyData.h>
-
-#include <fastdds/rtps/participant/RTPSParticipantListener.h>
-#include <fastdds/rtps/writer/StatelessWriter.h>
-
-#include <fastdds/rtps/reader/StatelessReader.h>
-#include <fastdds/rtps/reader/StatefulReader.h>
-
-#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDPSimple.h>
+#include <fastdds/rtps/builtin/discovery/endpoint/EDPStatic.h>
+#include <fastdds/rtps/builtin/discovery/participant/PDPListener.h>
+#include <fastdds/rtps/builtin/liveliness/WLP.h>
 #include <fastdds/rtps/history/ReaderHistory.h>
-
-#include <fastdds/dds/builtin/typelookup/TypeLookupManager.hpp>
-
-#include <fastrtps/utils/TimeConversion.h>
+#include <fastdds/rtps/history/WriterHistory.h>
+#include <fastdds/rtps/participant/RTPSParticipantListener.h>
+#include <fastdds/rtps/reader/StatefulReader.h>
+#include <fastdds/rtps/reader/StatelessReader.h>
+#include <fastdds/rtps/resources/TimedEvent.h>
+#include <fastdds/rtps/writer/StatelessWriter.h>
 #include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/utils/TimeConversion.h>
 
 #include <rtps/builtin/discovery/participant/simple/SimplePDPEndpoints.hpp>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 #include <rtps/participant/RTPSParticipantImpl.h>
-
-#include <fastdds/dds/log/Log.hpp>
-
-#include <mutex>
 
 using namespace eprosima::fastrtps;
 
@@ -342,12 +337,47 @@ bool PDPSimple::createPDPEndpoints()
         {
             const NetworkFactory& network = mp_RTPSParticipant->network_factory();
             LocatorList_t fixed_locators;
-            Locator_t local_locator;
             for (const Locator_t& loc : mp_builtin->m_initialPeersList)
             {
-                if (network.transform_remote_locator(loc, local_locator))
+                if (network.is_locator_allowed(loc))
                 {
-                    fixed_locators.push_back(local_locator);
+                    // Add initial peers locator without transformation as we don't know whether the
+                    // remote transport will allow localhost
+                    fixed_locators.push_back(loc);
+
+                    /**
+                     * TCP special case:
+                     *
+                     * In TCP, it is not possible to open a socket with 'any' (0.0.0.0) address as it's done
+                     * in UDP, so when the TCP transports receive a locator with 'any', they open an input
+                     * channel for the specified port in each of the machine interfaces (with the exception
+                     * of localhost). In fact, a participant with a TCP transport will only listen on localhost
+                     * if localhost is the address of any of the initial peers.
+                     *
+                     * However, when the TCP enabled participant does not have a whitelist (or localhost is in
+                     * it), it allows for transformation of its locators to localhost for performance optimizations.
+                     * In this case, the remote TCP participant it will send data using a socket in localhost,
+                     * and for that the participant with the initial peers list needs to be listening there
+                     * to receive it.
+                     *
+                     * That means:
+                     *   1. Checking that the initial peer is not already localhost
+                     *   2. Checking that the initial peer locator is of TCP kind
+                     *   3. Checking that the network configuration allows for localhost locators
+                     */
+                    Locator_t local_locator;
+                    network.transform_remote_locator(loc, local_locator,
+                            DISC_NETWORK_CONFIGURATION_LISTENING_LOCALHOST_ALL);
+                    if (loc != local_locator
+                            && (loc.kind == LOCATOR_KIND_TCPv4 || loc.kind == LOCATOR_KIND_TCPv6)
+                            && network.is_locator_allowed(local_locator))
+                    {
+                        fixed_locators.push_back(local_locator);
+                    }
+                }
+                else
+                {
+                    EPROSIMA_LOG_WARNING(RTPS_PDP, "Ignoring initial peers locator " << loc << " : not allowed.");
                 }
             }
             endpoints->writer.writer_->set_fixed_locators(fixed_locators);

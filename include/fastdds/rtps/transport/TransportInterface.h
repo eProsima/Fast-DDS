@@ -20,9 +20,9 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/common/PortParameters.h>
+#include <fastdds/rtps/network/SenderResource.h>
 #include <fastdds/rtps/transport/TransportDescriptorInterface.h>
 #include <fastdds/rtps/transport/TransportReceiverInterface.h>
-#include <fastdds/rtps/network/SenderResource.h>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 
 namespace eprosima {
@@ -243,6 +243,36 @@ public:
     int32_t kind() const
     {
         return transport_kind_;
+    }
+
+    /**
+     * Transforms a remote locator into a locator optimized for local communications.
+     *
+     * If the remote locator corresponds to one of the local interfaces, it is converted
+     * to the corresponding local address if allowed by both local and remote transports.
+     *
+     * @param [in]  remote_locator Locator to be converted.
+     * @param [out] result_locator Converted locator.
+     * @param [in]  allowed_remote_localhost Whether localhost is allowed (and hence used) in the remote transport.
+     * @param [in]  allowed_local_localhost Whether localhost is allowed locally (by this or other transport).
+     *
+     * @return false if the input locator is not supported/allowed by this transport, true otherwise.
+     */
+    virtual bool transform_remote_locator(
+            const Locator& remote_locator,
+            Locator& result_locator,
+            bool allowed_remote_localhost,
+            bool allowed_local_localhost) const
+    {
+        static_cast<void>(allowed_remote_localhost);
+        static_cast<void>(allowed_local_localhost);
+        return transform_remote_locator(remote_locator, result_locator);
+    }
+
+    //! Must report whether localhost locator is allowed
+    virtual bool is_localhost_allowed() const
+    {
+        return true;
     }
 
 protected:

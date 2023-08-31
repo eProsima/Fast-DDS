@@ -37,6 +37,7 @@ using SendResourceList = fastdds::rtps::SendResourceList;
 NetworkFactory::NetworkFactory()
     : maxMessageSizeBetweenTransports_(std::numeric_limits<uint32_t>::max())
     , minSendBufferSize_(std::numeric_limits<uint32_t>::max())
+    , network_configuration_(0)
 {
 }
 
@@ -100,6 +101,9 @@ bool NetworkFactory::RegisterTransport(
 
     if (transport)
     {
+        int32_t kind = transport->kind();
+        bool is_localhost_allowed = transport->is_localhost_allowed();
+
         if (transport->init(properties))
         {
             minSendBufferSize = transport->get_configuration()->min_send_buffer_size();
@@ -117,6 +121,11 @@ bool NetworkFactory::RegisterTransport(
             if (minSendBufferSize < minSendBufferSize_)
             {
                 minSendBufferSize_ = minSendBufferSize;
+            }
+
+            if (is_localhost_allowed)
+            {
+                network_configuration_ |= kind;
             }
         }
     }
@@ -156,11 +165,27 @@ void NetworkFactory::NormalizeLocators(
 
 bool NetworkFactory::transform_remote_locator(
         const Locator_t& remote_locator,
-        Locator_t& result_locator) const
+        Locator_t& result_locator,
+        const NetworkConfigSet_t& remote_network_config) const
 {
     for (auto& transport : mRegisteredTransports)
     {
-        if (transport->transform_remote_locator(remote_locator, result_locator))
+        if (transport->transform_remote_locator(remote_locator, result_locator,
+                remote_network_config & remote_locator.kind, network_configuration_ & remote_locator.kind))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool NetworkFactory::is_locator_allowed(
+        const Locator_t& locator) const
+{
+    for (auto& transport : mRegisteredTransports)
+    {
+        if (transport->is_locator_allowed(locator))
         {
             return true;
         }

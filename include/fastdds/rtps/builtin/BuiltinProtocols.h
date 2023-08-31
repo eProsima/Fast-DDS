@@ -102,11 +102,10 @@ public:
             LocatorList_t& loclist);
 
     /**
-     * Traverses the list of discover servers translating from remote to local locators
-     * if possible
-     * @param nf NetworkFactory used to make the translation
+     * Traverses the list of discover servers filtering out unsupported or not allowed remote locators
+     * @param nf NetworkFactory used to make the filtering
      */
-    void transform_server_remote_locators(
+    void filter_server_remote_locators(
             NetworkFactory& nf);
 
     //!BuiltinAttributes of the builtin protocols.

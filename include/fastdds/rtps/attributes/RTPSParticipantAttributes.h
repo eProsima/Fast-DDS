@@ -26,6 +26,7 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/PortParameters.h>
 #include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Types.h>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
 #include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
@@ -381,6 +382,9 @@ public:
     //! TypeLookup Service settings
     TypeLookupSettings typelookup_config;
 
+    //! Network Configuration
+    NetworkConfigSet_t network_configuration;
+
     //! Metatraffic Unicast Locator List
     LocatorList_t metatrafficUnicastLocatorList;
 
@@ -424,6 +428,7 @@ public:
                (this->use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
                (typelookup_config.use_client == b.typelookup_config.use_client) &&
                (typelookup_config.use_server == b.typelookup_config.use_server) &&
+               (this->network_configuration == b.network_configuration) &&
                (this->metatrafficUnicastLocatorList == b.metatrafficUnicastLocatorList) &&
                (this->metatrafficMulticastLocatorList == b.metatrafficMulticastLocatorList) &&
                (this->metatraffic_external_unicast_locators == b.metatraffic_external_unicast_locators) &&
