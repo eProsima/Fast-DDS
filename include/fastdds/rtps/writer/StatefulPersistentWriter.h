@@ -83,7 +83,7 @@ public:
     /**
      * Add a specific change to all ReaderLocators.
      * @param p Pointer to the change.
-     * @param max_blocking_time
+     * @param[in] max_blocking_time Maximum time this method has to complete the task.
      */
     void unsent_change_added_to_history(
             CacheChange_t* p,
@@ -92,6 +92,7 @@ public:
     /**
      * Indicate the writer that a change has been removed by the history due to some HistoryQos requirement.
      * @param a_change Pointer to the change that is going to be removed.
+     * @param[in] max_blocking_time Maximum time this method has to complete the task.
      * @return True if removed correctly.
      */
     bool change_removed_by_history(

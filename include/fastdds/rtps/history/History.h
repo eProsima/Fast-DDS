@@ -149,7 +149,7 @@ public:
      * Remove a specific change from the history.
      * No Thread Safe
      * @param removal iterator to the CacheChange_t to remove.
-     * @param max_blocking_time
+     * @param[in] max_blocking_time Maximum time this method has to complete the task.
      * @param release defaults to true and hints if the CacheChange_t should return to the pool
      * @return iterator to the next CacheChange_t or end iterator.
      */
@@ -175,7 +175,7 @@ public:
     /**
      * Remove a specific change from the history.
      * @param ch Pointer to the CacheChange_t.
-     * @param max_blocking_time
+     * @param[in] max_blocking_time Maximum time this method has to complete the task.
      * @return True if removed.
      */
     RTPS_DllAPI bool remove_change(
