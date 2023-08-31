@@ -390,10 +390,10 @@ TEST_F(StatisticsDomainParticipantMockTests, istatus_queryable_get_incompatible_
     ASSERT_TRUE(statistics_participant_impl_test->incompatible_qos_status(dw2->guid(), incomp_qos_status_dw_2));
 
     //! Expect incompatibilities
-    ASSERT_EQ(1, incomp_qos_status_dw_1.total_count);
-    ASSERT_EQ(1, incomp_qos_status_dw_2.total_count);
-    ASSERT_EQ(1, incomp_qos_status_dw_1.policies[fastdds::dds::RELIABILITY_QOS_POLICY_ID].count);
-    ASSERT_EQ(1, incomp_qos_status_dw_2.policies[fastdds::dds::RELIABILITY_QOS_POLICY_ID].count);
+    ASSERT_EQ(1u, incomp_qos_status_dw_1.total_count);
+    ASSERT_EQ(1u, incomp_qos_status_dw_2.total_count);
+    ASSERT_EQ(1u, incomp_qos_status_dw_1.policies[fastdds::dds::RELIABILITY_QOS_POLICY_ID].count);
+    ASSERT_EQ(1u, incomp_qos_status_dw_2.policies[fastdds::dds::RELIABILITY_QOS_POLICY_ID].count);
 
 #endif // FASTDDS_STATISTICS
 }
@@ -488,8 +488,8 @@ TEST_F(StatisticsDomainParticipantMockTests, istatus_queryable_get_deadline_miss
     ASSERT_TRUE(statistics_participant_impl_test->deadline_missed_status(dw2->guid(), deadline_missed_status_dw_2));
 
     //! Expect incompatibilities
-    ASSERT_EQ(1, deadline_missed_status_dw_1.total_count);
-    ASSERT_EQ(1, deadline_missed_status_dw_2.total_count);
+    ASSERT_EQ(1u, deadline_missed_status_dw_1.total_count);
+    ASSERT_EQ(1u, deadline_missed_status_dw_2.total_count);
 
 #endif // FASTDDS_STATISTICS
 }
