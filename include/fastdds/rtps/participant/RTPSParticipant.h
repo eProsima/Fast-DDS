@@ -42,8 +42,8 @@ namespace statistics {
 class MonitorServiceStatusData;
 namespace rtps {
 
-class IStatusQueryable;
-class IStatusListener;
+struct IStatusQueryable;
+struct IStatusListener;
 
 } // namespace rtps
 } // namespace statistics

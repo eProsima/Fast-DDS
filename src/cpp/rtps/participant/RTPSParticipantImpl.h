@@ -72,8 +72,8 @@ namespace fastdds {
 namespace statistics {
 namespace rtps {
 
-class IStatusQueryable;
-class IStatusListener;
+struct IStatusQueryable;
+struct IStatusListener;
 
 } // namespace rtps
 } // namespace statistics
