@@ -30,7 +30,7 @@ static void set_name_to_current_thread_impl(
 void set_name_to_current_thread(
         const char* name)
 {
-    set_name_to_current_thread_impl(name);
+    set_name_to_current_thread_impl("%s", name);
 }
 
 void set_name_to_current_thread(

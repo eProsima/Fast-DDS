@@ -21,10 +21,8 @@ namespace eprosima {
  * @brief Give a name to the thread calling this function.
  *
  * @param[in]  name  A null-terminated string with the name to give to the calling thread.
- *                   Please note that the implementation may use as the format argument of
- *                   a `snprintf` like function, in order to accomodate the restrictions of
- *                   the OS. Those restrictions may truncate the final thread name if there
- *                   is a limit on the length of the name of a thread.
+ *                   The implementation for certain platforms may truncate the final thread
+ *                   name if there is a limit on the length of the name of a thread.
  */
 void set_name_to_current_thread(
         const char* name);
