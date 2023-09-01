@@ -62,6 +62,10 @@
 #include <rtps/persistence/PersistenceService.h>
 #include <statistics/rtps/GuidUtils.hpp>
 
+#ifdef FASTDDS_STATISTICS
+#include <statistics/types/monitorservice_types.h>
+#endif // ifdef FASTDDS_STATISTICS
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
@@ -2780,6 +2784,14 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
         false);
 
     return ret && (data.guid().entityId.is_reader());
+}
+
+std::vector<fastdds::statistics::Connection>
+RTPSParticipantImpl::get_entity_connections(
+        const GUID_t& guid)
+{
+    static_cast<void>(guid);
+    return std::vector<fastdds::statistics::Connection>();
 }
 
 #endif // FASTDDS_STATISTICS

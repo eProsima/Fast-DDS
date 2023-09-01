@@ -58,6 +58,8 @@ public:
     MOCK_METHOD1(add_change_mock, bool(CacheChange_t*));
     // *INDENT-ON*
 
+    MOCK_METHOD2(add_change, bool(CacheChange_t * a_change, WriteParams & wparams));
+
     bool add_change(
             CacheChange_t* change)
     {

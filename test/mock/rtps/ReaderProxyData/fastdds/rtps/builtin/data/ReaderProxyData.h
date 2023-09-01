@@ -364,6 +364,12 @@ public:
         return content_filter_;
     }
 
+    void copy(
+            ReaderProxyData* /*rdat*/)
+    {
+
+    }
+
 #if HAVE_SECURITY
     security::EndpointSecurityAttributesMask security_attributes_ = 0UL;
     security::PluginEndpointSecurityAttributesMask plugin_security_attributes_ = 0UL;
