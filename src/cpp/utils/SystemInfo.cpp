@@ -279,6 +279,8 @@ std::string SystemInfo::environment_file_;
 // threading.hpp implementations
 #ifdef _WIN32
 #include "threading/threading_win32.ipp"
+#elif defined(__APPLE__)
+#include "threading/threading_osx.ipp"
 #elif defined(_POSIX_SOURCE) || defined(__QNXNTO__)
 #include "threading/threading_pthread.ipp"
 #else
