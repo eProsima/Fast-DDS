@@ -45,7 +45,6 @@ MonitorService::MonitorService(
     static_cast<void>(status_queryable_);
     static_cast<void>(status_writer_);
     static_cast<void>(status_writer_history_);
-
 }
 
 MonitorService::~MonitorService()
