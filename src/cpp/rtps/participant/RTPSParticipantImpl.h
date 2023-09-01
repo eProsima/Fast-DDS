@@ -59,6 +59,7 @@
 #include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <rtps/security/SecurityManager.h>
+#include <rtps/security/SecurityPluginFactory.h>
 #endif // if HAVE_SECURITY
 
 namespace eprosima {
@@ -106,6 +107,9 @@ class WLP;
  */
 class RTPSParticipantImpl
     : public fastdds::statistics::StatisticsParticipantImpl
+#if HAVE_SECURITY
+    , private security::SecurityPluginFactory
+#endif // if HAVE_SECURITY
 {
     /*
        Receiver Control block is a struct we use to encapsulate the resources that take part in message reception.
@@ -397,6 +401,8 @@ public:
      */
     bool is_security_enabled_for_reader(
             const ReaderAttributes& reader_attributes);
+
+    security::Logging* create_builtin_logging_plugin() override;
 
 #endif // if HAVE_SECURITY
 

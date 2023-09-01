@@ -90,7 +90,7 @@ TEST_F(FlowControllerSchedulers, Fifo)
     flow_controller_descr.max_bytes_per_period = 10200;
     flow_controller_descr.period_ms = 10;
     FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock, FlowControllerFifoSchedule> async(nullptr,
-            &flow_controller_descr);
+            &flow_controller_descr, 0);
     async.init();
 
     // Instantiate writers.
@@ -691,7 +691,7 @@ TEST_F(FlowControllerSchedulers, RoundRobin)
     flow_controller_descr.max_bytes_per_period = 10200;
     flow_controller_descr.period_ms = 10;
     FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock, FlowControllerRoundRobinSchedule> async(nullptr,
-            &flow_controller_descr);
+            &flow_controller_descr, 0);
     async.init();
 
     // Instantiate writers.
@@ -1292,7 +1292,7 @@ TEST_F(FlowControllerSchedulers, HighPriority)
     flow_controller_descr.max_bytes_per_period = 10200;
     flow_controller_descr.period_ms = 10;
     FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock, FlowControllerHighPrioritySchedule> async(nullptr,
-            &flow_controller_descr);
+            &flow_controller_descr, 0);
     async.init();
 
     // Instantiate writers.
@@ -1916,7 +1916,7 @@ TEST_F(FlowControllerSchedulers, PriorityWithReservation)
     flow_controller_descr.period_ms = 10;
     FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock,
             FlowControllerPriorityWithReservationSchedule> async(nullptr,
-            &flow_controller_descr);
+            &flow_controller_descr, 0);
     async.init();
 
     // Instantiate writers.

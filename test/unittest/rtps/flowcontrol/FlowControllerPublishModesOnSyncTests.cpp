@@ -7,7 +7,7 @@ TYPED_TEST(FlowControllerPublishModes, sync_publish_mode)
 {
     FlowControllerDescriptor flow_controller_descr;
     FlowControllerImpl<FlowControllerSyncPublishMode, TypeParam> sync(nullptr,
-            &flow_controller_descr);
+            &flow_controller_descr, 0);
     sync.init();
 
     // Instantiate writers.

@@ -22,6 +22,8 @@
 #include <thread>
 #include <unordered_set>
 
+#include <utils/threading.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -121,6 +123,8 @@ private:
 
     void run()
     {
+        set_name_to_current_thread("dds.shm.wdog");
+
         while (!exit_thread_)
         {
             {
