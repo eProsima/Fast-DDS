@@ -46,6 +46,10 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 
+#include <statistics/types/monitorservice_types.h>
+#include <statistics/types/types.h>
+
+#include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/transport/test_UDPv4Transport.h>
 #include <statistics/types/types.h>
 #include <utils/SystemInfo.hpp>
@@ -54,6 +58,21 @@ namespace eprosima {
 namespace fastdds {
 namespace statistics {
 namespace rtps {
+
+class RTPSParticipantMock : public fastrtps::rtps::RTPSParticipant
+{
+
+public:
+
+    fastrtps::rtps::RTPSParticipantImpl* get_impl()
+    {
+        return mp_impl;
+    }
+
+private:
+
+    ~RTPSParticipantMock();
+};
 
 struct MockListener : IListener
 {
@@ -1380,6 +1399,40 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_unordered_datagrams)
     EXPECT_EQ(0u, last_lost_data.packet_count());
     EXPECT_EQ(0u, last_lost_data.byte_count());
     EXPECT_EQ(0, last_lost_data.byte_magnitude_order());
+}
+
+TEST_F(RTPSStatisticsTests, iconnections_queryable_get_entity_connections)
+{
+    std::vector<Connection> conns_reader, conns_writer;
+    create_endpoints(1024);
+
+    // match writer and reader on a dummy topic
+    match_endpoints(false, "string", "test_topic_name");
+
+    auto participant_mock = static_cast<RTPSParticipantMock*>(participant_);
+    auto part_impl = participant_mock->get_impl();
+
+    conns_reader = part_impl->get_entity_connections(reader_->getGuid());
+    conns_writer = part_impl->get_entity_connections(writer_->getGuid());
+
+    ASSERT_EQ(1, conns_writer.size());
+    ASSERT_EQ(1, conns_writer.size());
+    ASSERT_EQ(conns_reader[0].guid(), statistics::to_statistics_type(writer_->getGuid()));
+    ASSERT_EQ(conns_writer[0].guid(), statistics::to_statistics_type(reader_->getGuid()));
+
+    for (auto& locator : conns_reader[0].announced_locators())
+    {
+        bool found = false;
+        for (auto& writer_loc : writer_->get_general_locator_selector().locator_selector)
+        {
+            if (statistics::to_statistics_type(writer_loc) == locator)
+            {
+                found = true;
+            }
+        }
+
+        ASSERT_TRUE(found);
+    }
 }
 
 } // namespace rtps

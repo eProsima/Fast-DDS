@@ -54,6 +54,27 @@ public:
                 const GUID_t& reader_guid,
                 const GUID_t& remote_participant,
                 const GUID_t& remote_writer_guid));
+
+    MOCK_METHOD2(check_guid_comes_from, bool(
+                const GUID_t& reader_guid,
+                const GUID_t& remote_participant));
+
+    MOCK_CONST_METHOD1(get_identity_token, bool(
+                IdentityToken** identity_token));
+
+    MOCK_CONST_METHOD1(return_identity_token, bool(
+                IdentityToken* identity_token));
+
+    MOCK_CONST_METHOD1(get_permissions_token, bool(
+                PermissionsToken** permissions_token));
+
+    MOCK_CONST_METHOD1(return_permissions_token, bool(
+                PermissionsToken* permissions_token));
+
+    MOCK_METHOD1(remove_participant, void(const ParticipantProxyData& participant_data));
+
+    MOCK_CONST_METHOD0(builtin_endpoints, fastrtps::rtps::BuiltinEndpointSet_t());
+
     // *INDENT-ON*
 };
 

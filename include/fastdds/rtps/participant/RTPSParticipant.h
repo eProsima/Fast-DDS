@@ -42,8 +42,8 @@ namespace statistics {
 class MonitorServiceStatusData;
 namespace rtps {
 
-class IStatusQueryable;
-class IStatusListener;
+struct IStatusQueryable;
+struct IStatusListener;
 
 } // namespace rtps
 } // namespace statistics
@@ -439,7 +439,7 @@ public:
 
 #endif // FASTDDS_STATISTICS
 
-private:
+protected:
 
     //!Pointer to the implementation.
     RTPSParticipantImpl* mp_impl;

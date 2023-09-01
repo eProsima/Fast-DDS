@@ -57,6 +57,8 @@ public:
 
     MOCK_METHOD0(assert_liveliness_manual_by_participant, bool());
 
+    MOCK_METHOD1(removeRemoteEndpoints, void(ParticipantProxyData * pdata));
+
     MOCK_METHOD3(assert_liveliness, bool(
                 GUID_t writer,
                 LivelinessQosPolicyKind kind,
