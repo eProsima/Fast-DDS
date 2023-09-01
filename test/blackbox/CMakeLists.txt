@@ -302,6 +302,7 @@ set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
     utils/lambda_functions.cpp
     utils/print_functions.cpp
 
+    common/DatagramInjectionTransport.cpp
     common/TCPReqRepHelloWorldRequester.cpp
     common/TCPReqRepHelloWorldReplier.cpp
     )

@@ -16,6 +16,7 @@
 
 #include "PubSubReader.hpp"
 #include "PubSubWriter.hpp"
+#include "DatagramInjectionTransport.hpp"
 
 #include <gtest/gtest.h>
 
@@ -30,8 +31,6 @@
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
-
-#include "DatagramIntectionTransport.hpp"
 
 enum communication_type
 {
@@ -514,26 +513,31 @@ TEST_P(TransportUDP, whitelisting_udp_localhost_alone)
 }
 
 void deliver_datagram_from_file(
-    const std::set<eprosima::fastdds::rtps::TransportReceiverInterface*>& receivers,
-    const char* filename)
+        const std::set<eprosima::fastdds::rtps::TransportReceiverInterface*>& receivers,
+        const char* filename)
 {
     std::basic_ifstream<uint8_t> file(filename, std::ios::binary | std::ios::in);
 
     file.seekg(0, file.end);
     size_t file_size = file.tellg();
     file.seekg(0, file.beg);
-    
+
     std::vector<uint8_t> buf(file_size);
     file.read(buf.data(), file_size);
 
     eprosima::fastdds::rtps::Locator loc;
     for (const auto& rec : receivers)
+    {
         rec->OnDataReceived(buf.data(), static_cast<uint32_t>(file_size), loc, loc);
+    }
 }
 
 TEST(TransportUDP, DatagramInjection)
 {
-    auto transport = std::make_shared<DatagramInjectionTransportDescriptor>();
+    using eprosima::fastdds::rtps::DatagramInjectionTransportDescriptor;
+
+    auto low_level_transport = std::make_shared<UDPv4TransportDescriptor>();
+    auto transport = std::make_shared<DatagramInjectionTransportDescriptor>(low_level_transport);
 
     PubSubWriter<HelloWorldPubSubType> writer(TEST_TOPIC_NAME);
     writer.disable_builtin_transport().add_user_transport_to_pparams(transport).init();
