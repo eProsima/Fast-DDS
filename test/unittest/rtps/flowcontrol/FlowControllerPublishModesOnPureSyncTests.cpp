@@ -7,7 +7,7 @@ TYPED_TEST(FlowControllerPublishModes, pure_sync_publish_mode)
 {
     FlowControllerDescriptor flow_controller_descr;
     FlowControllerImpl<FlowControllerPureSyncPublishMode, TypeParam> pure_sync(nullptr,
-            &flow_controller_descr);
+            &flow_controller_descr, 0);
     pure_sync.init();
 
     // Initialize callback to get info.

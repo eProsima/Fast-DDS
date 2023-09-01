@@ -25,71 +25,95 @@
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastrtps::rtps::security;
 
-Authentication* SecurityPluginFactory::create_authentication_plugin(const PropertyPolicy& property_policy)
+Authentication* SecurityPluginFactory::create_authentication_plugin(
+        const PropertyPolicy& property_policy)
 {
     Authentication* plugin = nullptr;
     const std::string* auth_plugin_property = PropertyPolicyHelper::find_property(property_policy,
-            "dds.sec.auth.plugin");
+                    "dds.sec.auth.plugin");
 
-    if(auth_plugin_property != nullptr)
+    if (auth_plugin_property != nullptr)
     {
-        if(auth_plugin_property->compare("builtin.PKI-DH") == 0)
+        if (auth_plugin_property->compare("builtin.PKI-DH") == 0)
         {
-            plugin = new PKIDH();
+            plugin = create_builtin_authentication_plugin();
         }
     }
 
     return plugin;
 }
 
-AccessControl* SecurityPluginFactory::create_access_control_plugin(const PropertyPolicy& property_policy)
+AccessControl* SecurityPluginFactory::create_access_control_plugin(
+        const PropertyPolicy& property_policy)
 {
     AccessControl* plugin = nullptr;
     const std::string* access_plugin_property = PropertyPolicyHelper::find_property(property_policy,
-            "dds.sec.access.plugin");
+                    "dds.sec.access.plugin");
 
-    if(access_plugin_property != nullptr)
+    if (access_plugin_property != nullptr)
     {
-        if(access_plugin_property->compare("builtin.Access-Permissions") == 0)
+        if (access_plugin_property->compare("builtin.Access-Permissions") == 0)
         {
-            plugin = new Permissions();
+            plugin = create_builtin_access_control_plugin();
         }
     }
 
     return plugin;
 }
 
-Cryptography* SecurityPluginFactory::create_cryptography_plugin(const PropertyPolicy& property_policy)
+Cryptography* SecurityPluginFactory::create_cryptography_plugin(
+        const PropertyPolicy& property_policy)
 {
     Cryptography* plugin = nullptr;
     const std::string* crypto_plugin_property = PropertyPolicyHelper::find_property(property_policy,
-            "dds.sec.crypto.plugin");
+                    "dds.sec.crypto.plugin");
 
-    if(crypto_plugin_property != nullptr)
+    if (crypto_plugin_property != nullptr)
     {
         // Check it is builtin DDS:Auth:PKI-DH.
-        if(crypto_plugin_property->compare("builtin.AES-GCM-GMAC") == 0)
+        if (crypto_plugin_property->compare("builtin.AES-GCM-GMAC") == 0)
         {
-            plugin = new AESGCMGMAC();
+            plugin = create_builtin_cryptography_plugin();
         }
     }
 
     return plugin;
 }
 
-Logging* SecurityPluginFactory::create_logging_plugin(const PropertyPolicy& property_policy)
+Logging* SecurityPluginFactory::create_logging_plugin(
+        const PropertyPolicy& property_policy)
 {
     Logging* plugin = nullptr;
     const std::string* logging_plugin_property = PropertyPolicyHelper::find_property(property_policy,
                     "dds.sec.log.plugin");
 
-    if(logging_plugin_property != nullptr)
+    if (logging_plugin_property != nullptr)
     {
-        if(logging_plugin_property->compare("builtin.DDS_LogTopic") == 0)
+        if (logging_plugin_property->compare("builtin.DDS_LogTopic") == 0)
         {
-            plugin = new LogTopic();
+            plugin = create_builtin_logging_plugin();
         }
     }
 
     return plugin;
+}
+
+Authentication* SecurityPluginFactory::create_builtin_authentication_plugin()
+{
+    return new PKIDH();
+}
+
+AccessControl* SecurityPluginFactory::create_builtin_access_control_plugin()
+{
+    return new Permissions();
+}
+
+Cryptography* SecurityPluginFactory::create_builtin_cryptography_plugin()
+{
+    return new AESGCMGMAC();
+}
+
+Logging* SecurityPluginFactory::create_builtin_logging_plugin()
+{
+    return new LogTopic();
 }

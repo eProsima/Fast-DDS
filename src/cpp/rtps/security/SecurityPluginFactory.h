@@ -24,40 +24,38 @@
 #include <fastdds/rtps/security/logging/Logging.h>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
 
+#include <rtps/security/ISecurityPluginFactory.h>
+
 namespace eprosima {
 namespace fastrtps {
 namespace rtps {
 namespace security {
 
-class SecurityPluginFactory
+class SecurityPluginFactory : public ISecurityPluginFactory
 {
-    public:
+public:
 
-        /*!
-         * @brief Create an Authentication plugin  described in the PropertyPolicy.
-         * @param property_policy PropertyPolicy containing the definition of the Authentication
-         * plugin that has to be created.
-         * @param Pointer to the new Authentication plugin. In case of error nullptr will be returned.
-         */
-        Authentication* create_authentication_plugin(const PropertyPolicy& property_policy);
+    Authentication* create_authentication_plugin(
+            const PropertyPolicy& property_policy) override;
 
-        AccessControl* create_access_control_plugin(const PropertyPolicy& property_policy);
+    AccessControl* create_access_control_plugin(
+            const PropertyPolicy& property_policy) override;
 
-        /*!
-         * @brief Create an Cryptographic plugin  described in the PropertyPolicy.
-         * @param property_policy PropertyPolicy containing the definition of the Cryptographic
-         * plugin that has to be created.
-         * @param Pointer to the new Cryptographic plugin. In case of error nullptr will be returned.
-         */
-        Cryptography* create_cryptography_plugin(const PropertyPolicy& property_policy);
+    Cryptography* create_cryptography_plugin(
+            const PropertyPolicy& property_policy) override;
 
-        /**
-         * @brief Create a loggin plugin described in the PropertyPolicy.
-         * @param property_policy PropertyPolicy containing the definition of the Logging
-         * plugin that has to be created.
-         * @return Pointer to the new Logging plugin. In case of error nullptr will be returned.
-         */
-        Logging* create_logging_plugin(const PropertyPolicy& property_policy);
+    Logging* create_logging_plugin(
+            const PropertyPolicy& property_policy) override;
+
+protected:
+
+    virtual Authentication* create_builtin_authentication_plugin();
+
+    virtual AccessControl* create_builtin_access_control_plugin();
+
+    virtual Cryptography* create_builtin_cryptography_plugin();
+
+    virtual Logging* create_builtin_logging_plugin();
 };
 
 } //namespace security
