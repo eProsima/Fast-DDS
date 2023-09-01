@@ -71,6 +71,9 @@ public:
     MOCK_CONST_METHOD1(get_types, fastrtps::rtps::SampleIdentity(
                 const fastrtps::types::TypeIdentifierSeq&));
 
+    MOCK_METHOD1(remove_remote_endpoints, void(
+                fastrtps::rtps::ParticipantProxyData* pdata));
+
 };
 
 } /* namespace builtin */

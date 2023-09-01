@@ -18,6 +18,7 @@ endif()
 
 set(STATISTICS_RTPS_TESTS_SOURCE
     RTPSStatisticsTests.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/monitorservice_types.cxx
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx
     )
 
