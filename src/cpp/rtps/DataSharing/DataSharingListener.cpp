@@ -18,6 +18,7 @@
 
 #include <rtps/DataSharing/DataSharingListener.hpp>
 #include <fastdds/rtps/reader/RTPSReader.h>
+#include <utils/threading.hpp>
 
 #include <memory>
 #include <mutex>
@@ -49,6 +50,8 @@ DataSharingListener::~DataSharingListener()
 
 void DataSharingListener::run()
 {
+    set_name_to_current_thread("dds.dsha.%u", reader_->getGuid().entityId.to_uint32() & 0x0000FFFF);
+
     std::unique_lock<Segment::mutex> lock(notification_->notification_->notification_mutex, std::defer_lock);
     while (is_running_.load())
     {

@@ -74,25 +74,13 @@ inline bool usleep_bool()
 }
 
 SecurityManager::SecurityManager(
-        RTPSParticipantImpl* participant)
+        RTPSParticipantImpl* participant,
+        ISecurityPluginFactory& plugin_factory)
     : participant_stateless_message_listener_(*this)
     , participant_volatile_message_secure_listener_(*this)
     , participant_(participant)
-    , participant_stateless_message_writer_(nullptr)
-    , participant_stateless_message_writer_history_(nullptr)
-    , participant_stateless_message_reader_(nullptr)
-    , participant_stateless_message_reader_history_(nullptr)
-    , participant_volatile_message_secure_writer_(nullptr)
-    , participant_volatile_message_secure_writer_history_(nullptr)
-    , participant_volatile_message_secure_reader_(nullptr)
-    , participant_volatile_message_secure_reader_history_(nullptr)
-    , logging_plugin_(nullptr)
-    , authentication_plugin_(nullptr)
-    , access_plugin_(nullptr)
-    , crypto_plugin_(nullptr)
+    , factory_(plugin_factory)
     , domain_id_(0)
-    , local_identity_handle_(nullptr)
-    , local_permissions_handle_(nullptr)
     , auth_last_sequence_number_(1)
     , crypto_last_sequence_number_(1)
     , temp_reader_proxies_({

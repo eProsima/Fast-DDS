@@ -7,7 +7,7 @@ TYPED_TEST(FlowControllerPublishModes, async_publish_mode)
 {
     FlowControllerDescriptor flow_controller_descr;
     FlowControllerImpl<FlowControllerAsyncPublishMode, TypeParam> async(nullptr,
-            &flow_controller_descr);
+            &flow_controller_descr, 0);
     async.init();
 
     // Instantiate writers.

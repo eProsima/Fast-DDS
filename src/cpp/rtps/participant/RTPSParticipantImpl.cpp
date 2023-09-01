@@ -61,6 +61,11 @@
 #include <rtps/participant/RTPSParticipantImpl.h>
 #include <rtps/persistence/PersistenceService.h>
 #include <statistics/rtps/GuidUtils.hpp>
+#include <utils/threading.hpp>
+
+#if HAVE_SECURITY
+#include <security/logging/LogTopic.h>
+#endif  // HAVE_SECURITY
 
 namespace eprosima {
 namespace fastrtps {
@@ -137,7 +142,7 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , internal_metatraffic_locators_(false)
     , internal_default_locators_(false)
 #if HAVE_SECURITY
-    , m_security_manager(this)
+    , m_security_manager(this, *this)
 #endif // if HAVE_SECURITY
     , mp_participantListener(plisten)
     , mp_userParticipant(par)
@@ -239,7 +244,11 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     }
 
     mp_userParticipant->mp_impl = this;
-    mp_event_thr.init_thread();
+    uint32_t id_for_thread = static_cast<uint32_t>(m_att.participantID);
+    mp_event_thr.init_thread([id_for_thread]()
+            {
+                set_name_to_current_thread("dds.ev.%u", id_for_thread);
+            });
 
     if (!networkFactoryHasRegisteredTransports())
     {
@@ -2193,6 +2202,15 @@ bool RTPSParticipantImpl::is_security_enabled_for_reader(
     }
 
     return false;
+}
+
+security::Logging* RTPSParticipantImpl::create_builtin_logging_plugin()
+{
+    return new security::LogTopic([this]()
+                   {
+                       uint32_t participant_id = static_cast<uint32_t>(m_att.participantID);
+                       set_name_to_current_thread("dds.slog.%u", participant_id);
+                   });
 }
 
 #endif // if HAVE_SECURITY
