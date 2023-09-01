@@ -200,7 +200,6 @@ History::iterator WriterHistory::remove_change_nts(
     if (mp_writer->change_removed_by_history(change, max_blocking_time))
     {
         // Remove from history
-        CacheChange_t* change = *removal;
         auto ret_val = m_changes.erase(removal);
         m_isHistoryFull = false;
 
