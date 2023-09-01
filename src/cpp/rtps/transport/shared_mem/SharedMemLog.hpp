@@ -199,6 +199,12 @@ class PacketsLog
 {
 public:
 
+    PacketsLog(
+            uint32_t thread_id)
+        : thread_id_(thread_id)
+    {
+    }
+
     ~PacketsLog()
     {
         Flush();
@@ -349,9 +355,11 @@ private:
     };
 
     Resources resources_;
+    uint32_t thread_id_;
 
     void run()
     {
+        set_name_to_current_thread("dds.shmd.%u", thread_id_);
         std::unique_lock<std::mutex> guard(resources_.cv_mutex);
 
         while (resources_.logging)

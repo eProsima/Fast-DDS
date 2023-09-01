@@ -22,6 +22,8 @@
 #include <rtps/transport/shared_mem/SharedMemTransport.h>
 #include <rtps/transport/ChannelResource.h>
 
+#include <utils/threading.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -49,7 +51,7 @@ public:
             auto packets_file_consumer = std::unique_ptr<SHMPacketFileConsumer>(
                 new SHMPacketFileConsumer(dump_file));
 
-            packet_logger_ = std::make_shared<PacketsLog<SHMPacketFileConsumer>>();
+            packet_logger_ = std::make_shared<PacketsLog<SHMPacketFileConsumer>>(locator.port);
             packet_logger_->RegisterConsumer(std::move(packets_file_consumer));
         }
 
@@ -123,6 +125,8 @@ private:
     void perform_listen_operation(
             Locator input_locator)
     {
+        set_name_to_current_thread("dds.shm.%u", input_locator.port);
+
         Locator remote_locator;
 
         while (alive())

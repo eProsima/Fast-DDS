@@ -137,7 +137,7 @@ public:
         , stateless_reader_(nullptr)
         , volatile_writer_(nullptr)
         , volatile_reader_(nullptr)
-        , manager_(&participant_)
+        , manager_(&participant_, plugin_factory_)
         , participant_data_(c_default_RTPSParticipantAllocationAttributes)
         , default_cdr_message(RTPSMESSAGE_DEFAULT_SIZE)
     {
@@ -162,6 +162,7 @@ public:
     ::testing::NiceMock<StatefulWriter>* volatile_writer_;
     ::testing::NiceMock<StatefulReader>* volatile_reader_;
     PDP pdp_;
+    SecurityPluginFactory plugin_factory_;
     SecurityManager manager_;
 
     // handles
