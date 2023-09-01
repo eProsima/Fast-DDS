@@ -42,6 +42,26 @@ namespace dds {
 
 namespace efd = eprosima::fastdds::dds;
 
+struct DataWriterMock : public DataWriterImpl
+{
+    void insert_policy_violation(
+            const fastdds::dds::PolicyMask& policy)
+    {
+        ++offered_incompatible_qos_status_.total_count;
+        ++offered_incompatible_qos_status_.total_count_change;
+
+        for (uint32_t id = 1; id < ::eprosima::fastdds::dds::NEXT_QOS_POLICY_ID; ++id)
+        {
+            if (policy.test(id))
+            {
+                ++offered_incompatible_qos_status_.policies[static_cast<fastdds::dds::QosPolicyId_t>(id)].count;
+                offered_incompatible_qos_status_.last_policy_id = static_cast<fastdds::dds::QosPolicyId_t>(id);
+            }
+        }
+    }
+
+};
+
 class PublisherImpl : public efd::PublisherImpl
 {
     using BaseType = efd::PublisherImpl;
@@ -90,6 +110,30 @@ public:
             return nullptr;
         }
         return BaseType::create_datawriter(topic, impl, mask);
+    }
+
+    bool insert_policy_violation(
+            const fastrtps::rtps::GUID_t& guid,
+            const fastdds::dds::QosPolicyId_t& policy_id)
+    {
+        bool retcode = false;
+
+        for (auto& writer_pair : writers_)
+        {
+            auto writers_in_topic = writer_pair.second;
+            for (auto& writer_in_topic : writers_in_topic)
+            {
+                if (writer_in_topic->guid() == guid)
+                {
+                    fastdds::dds::PolicyMask policy_mask;
+                    policy_mask.set(policy_id);
+                    auto mock_writer = static_cast<DataWriterMock*>(writer_in_topic);
+                    mock_writer->insert_policy_violation(policy_mask);
+                }
+            }
+        }
+
+        return retcode;
     }
 
 private:
