@@ -25,6 +25,7 @@
 
 #include <atomic>
 #include <fstream>
+#include <functional>
 #include <thread>
 
 namespace eprosima {
@@ -41,7 +42,8 @@ class LogTopic final : public Logging
 
 public:
 
-    LogTopic();
+    LogTopic(
+            std::function<void()> thread_init_cb = {});
     ~LogTopic();
 
 private:

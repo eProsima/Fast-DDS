@@ -303,7 +303,8 @@ void ResourceEvent::do_timer_actions()
     }
 }
 
-void ResourceEvent::init_thread()
+void ResourceEvent::init_thread(
+        std::function<void()> configure_cb)
 {
     std::lock_guard<TimedMutex> lock(mutex_);
 
@@ -311,7 +312,14 @@ void ResourceEvent::init_thread()
     stop_.store(false);
     resize_collections();
 
-    thread_ = std::thread(&ResourceEvent::event_service, this);
+    thread_ = std::thread([this, configure_cb]()
+                    {
+                        if (configure_cb)
+                        {
+                            configure_cb();
+                        }
+                        event_service();
+                    });
 }
 
 } /* namespace rtps */

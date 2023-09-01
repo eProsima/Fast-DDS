@@ -34,6 +34,7 @@
 
 #include <nlohmann/json.hpp>
 #include <fastrtps/types/TypesBase.h>
+#include <utils/threading.hpp>
 
 namespace eprosima {
 
@@ -274,3 +275,6 @@ std::string SystemInfo::get_timestamp(
 std::string SystemInfo::environment_file_;
 
 } // eprosima
+
+// threading.hpp implementations
+#include "threading/threading_empty.ipp"
