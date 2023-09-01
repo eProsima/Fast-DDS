@@ -25,8 +25,9 @@
 #include <fastrtps/utils/TimedMutex.hpp>
 #include <fastrtps/utils/TimedConditionVariable.hpp>
 
-#include <thread>
 #include <atomic>
+#include <functional>
+#include <thread>
 #include <vector>
 
 namespace eprosima {
@@ -49,8 +50,12 @@ public:
 
     /*!
      * @brief Method to initialize the internal thread.
+     *
+     * @param[in]  configure_cb  Function to be called in the context of the started thread
+     *                           before calling the internal service routine.
      */
-    void init_thread();
+    void init_thread(
+            std::function<void()> configure_cb = {});
 
     void stop_thread();
 

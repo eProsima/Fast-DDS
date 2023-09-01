@@ -1,18 +1,21 @@
 #ifndef _RTPS_FLOWCONTROL_FLOWCONTROLLERIMPL_HPP_
 #define _RTPS_FLOWCONTROL_FLOWCONTROLLERIMPL_HPP_
 
-#include "FlowController.hpp"
-#include <fastdds/rtps/common/Guid.h>
-#include <fastdds/rtps/writer/RTPSWriter.h>
-#include <fastrtps/utils/TimedMutex.hpp>
-#include <fastrtps/utils/TimedConditionVariable.hpp>
-
 #include <atomic>
 #include <cassert>
 #include <chrono>
 #include <map>
 #include <thread>
 #include <unordered_map>
+
+#include "FlowController.hpp"
+#include <fastdds/rtps/common/Guid.h>
+#include <fastdds/rtps/writer/RTPSWriter.h>
+#include <fastrtps/utils/TimedConditionVariable.hpp>
+#include <fastrtps/utils/TimedMutex.hpp>
+
+#include <rtps/participant/RTPSParticipantImpl.h>
+#include <utils/threading.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -926,11 +929,19 @@ public:
 
     FlowControllerImpl(
             fastrtps::rtps::RTPSParticipantImpl* participant,
-            const FlowControllerDescriptor* descriptor
+            const FlowControllerDescriptor* descriptor,
+            uint32_t async_index
             )
         : participant_(participant)
         , async_mode(participant, descriptor)
+        , participant_id_(0)
+        , async_index_(async_index)
     {
+        if (nullptr != participant)
+        {
+            participant_id_ = static_cast<uint32_t>(participant->getRTPSParticipantAttributes().participantID);
+        }
+
         uint32_t limitation = get_max_payload();
 
         if (std::numeric_limits<uint32_t>::max() != limitation)
@@ -1328,6 +1339,8 @@ private:
      */
     void run()
     {
+        set_name_to_current_thread("dds.asyn.%u.%u", participant_id_, async_index_);
+
         while (async_mode.running)
         {
             // There are writers interested in removing a sample.
@@ -1470,6 +1483,9 @@ private:
 
     // async_mode must be destroyed before sched.
     publish_mode async_mode;
+
+    uint32_t participant_id_ = 0;
+    uint32_t async_index_ = 0;
 };
 
 } // namespace rtps

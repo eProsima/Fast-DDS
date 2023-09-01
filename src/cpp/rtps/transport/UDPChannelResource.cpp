@@ -17,6 +17,7 @@
 #include <asio.hpp>
 #include <fastdds/rtps/messages/MessageReceiver.h>
 #include <rtps/transport/UDPTransportInterface.h>
+#include <utils/threading.hpp>
 
 namespace eprosima {
 namespace fastdds {
@@ -53,6 +54,8 @@ UDPChannelResource::~UDPChannelResource()
 void UDPChannelResource::perform_listen_operation(
         Locator input_locator)
 {
+    set_name_to_current_thread("dds.udp.%u", input_locator.port);
+
     Locator remote_locator;
 
     while (alive())

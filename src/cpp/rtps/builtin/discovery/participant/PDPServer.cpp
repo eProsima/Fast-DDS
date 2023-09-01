@@ -54,6 +54,8 @@
 
 #include <rtps/builtin/discovery/database/backup/SharedBackupFunctions.hpp>
 
+#include <utils/threading.hpp>
+
 namespace eprosima {
 namespace fastdds {
 namespace rtps {
@@ -160,7 +162,11 @@ bool PDPServer::init(
     getRTPSParticipant()->enableReader(edp->publications_reader_.first);
 
     // Initialize server dedicated thread.
-    resource_event_thread_.init_thread();
+    uint32_t id_for_thread = static_cast<uint32_t>(getRTPSParticipant()->getRTPSParticipantAttributes().participantID);
+    resource_event_thread_.init_thread([id_for_thread]()
+            {
+                set_name_to_current_thread("dds.ds_ev.%u", id_for_thread);
+            });
 
     /*
         Given the fact that a participant is either a client or a server the
