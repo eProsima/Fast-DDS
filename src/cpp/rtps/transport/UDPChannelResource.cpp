@@ -39,7 +39,8 @@ UDPChannelResource::UDPChannelResource(
     , interface_(sInterface)
     , transport_(transport)
 {
-    thread(std::thread(&UDPChannelResource::perform_listen_operation, this, locator));
+    listening_thread_ = std::thread(&UDPChannelResource::perform_listen_operation, this, locator);
+
 }
 
 UDPChannelResource::~UDPChannelResource()
@@ -48,6 +49,12 @@ UDPChannelResource::~UDPChannelResource()
 
     asio::error_code ec;
     socket()->close(ec);
+    if(listening_thread_.joinable())
+    {
+        // It may be necessary to set a flag or other mechanism to ensure that the loop in the `perform_listen_operation` function ends.
+        listening_thread_.join();
+    }
+
 }
 
 void UDPChannelResource::perform_listen_operation(

@@ -206,6 +206,7 @@ private:
     bool only_multicast_purpose_;
     std::string interface_;
     UDPTransportInterface* transport_;
+    std::thread listening_thread_;
 
     UDPChannelResource(
             const UDPChannelResource&) = delete;
