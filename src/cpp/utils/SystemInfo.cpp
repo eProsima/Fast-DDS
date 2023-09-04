@@ -278,4 +278,12 @@ std::string SystemInfo::environment_file_;
 } // eprosima
 
 // threading.hpp implementations
+#ifdef _WIN32
+#include "threading/threading_win32.ipp"
+#elif defined(__APPLE__)
+#include "threading/threading_osx.ipp"
+#elif defined(_POSIX_SOURCE) || defined(__QNXNTO__) || defined(__ANDROID__)
+#include "threading/threading_pthread.ipp"
+#else
 #include "threading/threading_empty.ipp"
+#endif // Platform selection
