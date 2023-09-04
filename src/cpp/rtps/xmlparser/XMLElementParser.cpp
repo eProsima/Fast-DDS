@@ -12,22 +12,54 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-#include <cstring>
-#include <regex>
-#include <string>
-#include <unordered_map>
 
-#include <tinyxml2.h>
+#include <fastdds/dds/log/Log.hpp>
 
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/xmlparser/XMLParser.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/utils/IPLocator.h>
-#include <fastdds/dds/log/Log.hpp>
 
-using namespace eprosima::fastrtps;
+#include <rtps/xmlparser/XMLParserUtils.hpp>
+
+#include <tinyxml2.h>
+
+#include <cstring>
+#include <regex>
+#include <string>
+#include <unordered_map>
+
+namespace eprosima {
+namespace fastdds {
+namespace xml {
+namespace detail {
+
+std::string get_element_text(
+        tinyxml2::XMLElement* element)
+{
+    std::string ret_val{};
+
+    assert(nullptr != element);
+    const char* text = element->GetText();
+    if (nullptr != text)
+    {
+        ret_val = text;
+    }
+
+    return ret_val;
+}
+
+}  // namespace detail
+}  // namespace xml
+}  // namespace fastdds
+}  // namespace eprosima
+
+
+namespace eprosima {
+namespace fastrtps {
+namespace xmlparser {
+
 using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::xmlparser;
 
 XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
         tinyxml2::XMLElement* elem,
@@ -4341,3 +4373,7 @@ XMLP_ret XMLParser::getXMLSubscriberAttributes(
 
     return XMLP_ret::XML_OK;
 }
+
+}  // namespace xmlparser
+}  // namespace fastrtps
+}  // namespace eprosima
