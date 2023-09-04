@@ -25,9 +25,11 @@
 #include <fastrtps/utils/IPFinder.h>
 #include <fastrtps/log/Log.h>
 
+#include <cstdint>
 #include <fstream>
 #include <mutex>
 #include <set>
+#include <vector>
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
@@ -516,14 +518,14 @@ void deliver_datagram_from_file(
         const std::set<eprosima::fastdds::rtps::TransportReceiverInterface*>& receivers,
         const char* filename)
 {
-    std::basic_ifstream<uint8_t> file(filename, std::ios::binary | std::ios::in);
+    std::basic_ifstream<char> file(filename, std::ios::binary | std::ios::in);
 
     file.seekg(0, file.end);
     size_t file_size = file.tellg();
     file.seekg(0, file.beg);
 
     std::vector<uint8_t> buf(file_size);
-    file.read(buf.data(), file_size);
+    file.read(reinterpret_cast<char*>(buf.data()), file_size);
 
     eprosima::fastdds::rtps::Locator loc;
     for (const auto& rec : receivers)
