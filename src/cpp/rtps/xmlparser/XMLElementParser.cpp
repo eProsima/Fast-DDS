@@ -29,6 +29,39 @@
 #include <string>
 #include <unordered_map>
 
+template<typename _Enum>
+static bool get_element_enum_value(
+        const char* input,
+        _Enum& output,
+        const char* name,
+        _Enum value)
+{
+    if (0 == strcmp(input, name))
+    {
+        output = value;
+        return true;
+    }
+
+    return false;
+}
+
+template<typename _Enum, typename ... Targs>
+static bool get_element_enum_value(
+        const char* input,
+        _Enum& output,
+        const char* name,
+        _Enum value,
+        Targs... args)
+{
+    if (0 == strcmp(input, name))
+    {
+        output = value;
+        return true;
+    }
+
+    return get_element_enum_value(input, output, args ...);
+}
+
 namespace eprosima {
 namespace fastdds {
 namespace xml {
@@ -60,6 +93,7 @@ namespace fastrtps {
 namespace xmlparser {
 
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::fastdds::xml::detail;
 
 XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
         tinyxml2::XMLElement* elem,
@@ -317,18 +351,18 @@ XMLP_ret XMLParser::getXMLDiscoverySettings(
                     </xs:restriction>
                 </xs:simpleType>
              */
-            const char* text = p_aux0->GetText();
-            if (nullptr == text)
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << _EDP << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            else if (strcmp(text, SIMPLE) == 0)
+            else if (strcmp(text.c_str(), SIMPLE) == 0)
             {
                 settings.use_SIMPLE_EndpointDiscoveryProtocol = true;
                 settings.use_STATIC_EndpointDiscoveryProtocol = false;
             }
-            else if (strcmp(text, STATIC) == 0)
+            else if (strcmp(text.c_str(), STATIC) == 0)
             {
                 settings.use_SIMPLE_EndpointDiscoveryProtocol = false;
                 settings.use_STATIC_EndpointDiscoveryProtocol = true;
@@ -796,8 +830,8 @@ XMLP_ret XMLParser::getXMLTransports(
 
     while (nullptr != p_aux0)
     {
-        const char* text = p_aux0->GetText();
-        if (nullptr == text)
+        std::string text = get_element_text(p_aux0);
+        if (text.empty())
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << TRANSPORT_ID << "' without content");
             return XMLP_ret::XML_ERROR;
@@ -897,21 +931,16 @@ XMLP_ret XMLParser::getXMLTopicAttributes(
                     </xs:restriction>
                 </xs:simpleType>
              */
-            const char* text = p_aux0->GetText();
-            if (nullptr == text)
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            if (strcmp(text, _NO_KEY) == 0)
-            {
-                topic.topicKind = TopicKind_t::NO_KEY;
-            }
-            else if (strcmp(text, _WITH_KEY) == 0)
-            {
-                topic.topicKind = TopicKind_t::WITH_KEY;
-            }
-            else
+
+            if (!get_element_enum_value(text.c_str(), topic.topicKind,
+                    _NO_KEY, TopicKind_t::NO_KEY,
+                    _WITH_KEY, TopicKind_t::WITH_KEY))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
@@ -920,8 +949,8 @@ XMLP_ret XMLParser::getXMLTopicAttributes(
         else if (strcmp(name, NAME) == 0)
         {
             // name - stringType
-            const char* text;
-            if (nullptr == (text = p_aux0->GetText()))
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "<" << p_aux0->Value() << "> getXMLString XML_ERROR!");
                 return XMLP_ret::XML_ERROR;
@@ -931,8 +960,8 @@ XMLP_ret XMLParser::getXMLTopicAttributes(
         else if (strcmp(name, DATA_TYPE) == 0)
         {
             // dataType - stringType
-            const char* text;
-            if (nullptr == (text = p_aux0->GetText()))
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "<" << p_aux0->Value() << "> getXMLString XML_ERROR!");
                 return XMLP_ret::XML_ERROR;
@@ -1142,21 +1171,16 @@ XMLP_ret XMLParser::getXMLHistoryQosPolicy(
                     </xs:restriction>
                 </xs:simpleType>
              */
-            const char* text = p_aux0->GetText();
-            if (nullptr == text)
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            if (strcmp(text, KEEP_LAST) == 0)
-            {
-                historyQos.kind = HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS;
-            }
-            else if (strcmp(text, KEEP_ALL) == 0)
-            {
-                historyQos.kind = HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS;
-            }
-            else
+
+            if (!get_element_enum_value(text.c_str(), historyQos.kind,
+                    KEEP_LAST, HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS,
+                    KEEP_ALL, HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
@@ -1554,30 +1578,19 @@ XMLP_ret XMLParser::getXMLDurabilityQos(
                     </xs:restriction>
                 </xs:simpleType>
              */
-            const char* text = p_aux0->GetText();
-            if (nullptr == text)
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
             bKindDefined = true;
-            if (strcmp(text, _VOLATILE) == 0)
-            {
-                durability.kind = DurabilityQosPolicyKind::VOLATILE_DURABILITY_QOS;
-            }
-            else if (strcmp(text, _TRANSIENT_LOCAL) == 0)
-            {
-                durability.kind = DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS;
-            }
-            else if (strcmp(text, _TRANSIENT) == 0)
-            {
-                durability.kind = DurabilityQosPolicyKind::TRANSIENT_DURABILITY_QOS;
-            }
-            else if (strcmp(text, _PERSISTENT) == 0)
-            {
-                durability.kind = DurabilityQosPolicyKind::PERSISTENT_DURABILITY_QOS;
-            }
-            else
+
+            if (!get_element_enum_value(text.c_str(), durability.kind,
+                    _VOLATILE, DurabilityQosPolicyKind::VOLATILE_DURABILITY_QOS,
+                    _TRANSIENT_LOCAL, DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS,
+                    _TRANSIENT, DurabilityQosPolicyKind::TRANSIENT_DURABILITY_QOS,
+                    _PERSISTENT, DurabilityQosPolicyKind::PERSISTENT_DURABILITY_QOS))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
@@ -1642,17 +1655,17 @@ XMLP_ret XMLParser::getXMLDurabilityQos(
             //        </xs:restriction>
             //    </xs:simpleType>
             //
-            const char* text = p_aux0->GetText();
-            if (nullptr == text)
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << HISTORY_KIND << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            if (strcmp(text, KEEP_LAST) == 0)
+            if (strcmp(text.c_str(), KEEP_LAST) == 0)
             {
                 durabilityService.history_kind = HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS;
             }
-            else if (strcmp(text, KEEP_ALL) == 0)
+            else if (strcmp(text.c_str(), KEEP_ALL) == 0)
             {
                 durabilityService.history_kind = HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS;
             }
@@ -1820,25 +1833,17 @@ XMLP_ret XMLParser::getXMLLivelinessQos(
                     </xs:restriction>
                 </xs:simpleType>
              */
-            const char* text = p_aux0->GetText();
-            if (nullptr == text)
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            if (strcmp(text, AUTOMATIC) == 0)
-            {
-                liveliness.kind = LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
-            }
-            else if (strcmp(text, MANUAL_BY_PARTICIPANT) == 0)
-            {
-                liveliness.kind = LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
-            }
-            else if (strcmp(text, MANUAL_BY_TOPIC) == 0)
-            {
-                liveliness.kind = LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS;
-            }
-            else
+
+            if (!get_element_enum_value(text.c_str(), liveliness.kind,
+                    AUTOMATIC, LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS,
+                    MANUAL_BY_PARTICIPANT, LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS,
+                    MANUAL_BY_TOPIC, LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
@@ -1900,21 +1905,16 @@ XMLP_ret XMLParser::getXMLReliabilityQos(
                     </xs:restriction>
                 </xs:simpleType>
              */
-            const char* text = p_aux0->GetText();
-            if (nullptr == text)
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            if (strcmp(text, _BEST_EFFORT) == 0)
-            {
-                reliability.kind = ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
-            }
-            else if (strcmp(text, _RELIABLE) == 0)
-            {
-                reliability.kind = ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
-            }
-            else
+
+            if (!get_element_enum_value(text.c_str(), reliability.kind,
+                    _BEST_EFFORT, ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS,
+                    _RELIABLE, ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
@@ -2060,25 +2060,17 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
                     </xs:restriction>
                 </xs:simpleType>
              */
-            const char* text = p_aux0->GetText();
-            if (nullptr == text)
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            if (strcmp(text, ON) == 0)
-            {
-                kind = DataSharingKind::ON;
-            }
-            else if (strcmp(text, OFF) == 0)
-            {
-                kind = DataSharingKind::OFF;
-            }
-            else if (strcmp(text, AUTOMATIC) == 0)
-            {
-                kind = DataSharingKind::AUTO;
-            }
-            else
+
+            if (!get_element_enum_value(text.c_str(), kind,
+                    ON, DataSharingKind::ON,
+                    OFF, DataSharingKind::OFF,
+                    AUTOMATIC, DataSharingKind::AUTO))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
@@ -2264,21 +2256,16 @@ XMLP_ret XMLParser::getXMLOwnershipQos(
             //    </xs:simpleType>
 
             bKindDefined = true;
-            const char* text = p_aux0->GetText();
-            if (nullptr == text)
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            if (strcmp(text, SHARED) == 0)
-            {
-                ownership.kind = OwnershipQosPolicyKind::SHARED_OWNERSHIP_QOS;
-            }
-            else if (strcmp(text, EXCLUSIVE) == 0)
-            {
-                ownership.kind = OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS;
-            }
-            else
+
+            if (!get_element_enum_value(text.c_str(), ownership.kind,
+                    SHARED, OwnershipQosPolicyKind::SHARED_OWNERSHIP_QOS,
+                    EXCLUSIVE, OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
@@ -2297,8 +2284,7 @@ XMLP_ret XMLParser::getXMLOwnershipQos(
         return XMLP_ret::XML_ERROR;
     }
 
-    return XMLP_ret::
-                   XML_OK;
+    return XMLP_ret::XML_OK;
 }
 
 XMLP_ret XMLParser::getXMLOwnershipStrengthQos(
@@ -2376,7 +2362,7 @@ XMLP_ret XMLParser::getXMLOwnershipStrengthQos(
             //    </xs:simpleType>
 
             bKindDefined = true;
-            const char* text = p_aux0->GetText();
+            const char* text = get_element_text(p_aux0);
             if (nullptr == text)
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
@@ -2447,7 +2433,7 @@ XMLP_ret XMLParser::getXMLOwnershipStrengthQos(
             //        </xs:restriction>
             //    </xs:simpleType>
 
-            const char* text = p_aux0->GetText();
+            const char* text = get_element_text(p_aux0);
             if (nullptr == text)
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << ACCESS_SCOPE << "' without content");
@@ -2585,21 +2571,16 @@ XMLP_ret XMLParser::getXMLPublishModeQos(
                 </xs:simpleType>
              */
             bKindDefined = true;
-            const char* text = p_aux0->GetText();
-            if (nullptr == text)
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            if (strcmp(text, SYNCHRONOUS) == 0)
-            {
-                publishMode.kind = PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE;
-            }
-            else if (strcmp(text, ASYNCHRONOUS) == 0)
-            {
-                publishMode.kind = PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE;
-            }
-            else
+
+            if (!get_element_enum_value(text.c_str(), publishMode.kind,
+                    SYNCHRONOUS, PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE,
+                    ASYNCHRONOUS, PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' bad content");
                 return XMLP_ret::XML_ERROR;
@@ -2654,9 +2635,9 @@ XMLP_ret XMLParser::getXMLDuration(
     std::regex infinite(DURATION_INFINITY);
     std::regex infinite_sec(DURATION_INFINITE_SEC);
     std::regex infinite_nsec(DURATION_INFINITE_NSEC);
-    const char* text = elem->GetText();
+    std::string text = get_element_text(elem);
 
-    if (text != nullptr && std::regex_match(text, infinite))
+    if (!text.empty() && std::regex_match(text, infinite))
     {
         empty = false;
         duration = c_TimeInfinite;
@@ -2693,8 +2674,8 @@ XMLP_ret XMLParser::getXMLDuration(
                     </xs:union>
                 </xs:simpleType>
              */
-            text = p_aux0->GetText();
-            if (nullptr == text)
+            text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node 'SECONDS' without content");
                 return XMLP_ret::XML_ERROR;
@@ -2727,8 +2708,8 @@ XMLP_ret XMLParser::getXMLDuration(
                     </xs:union>
                 </xs:simpleType>
              */
-            text = p_aux0->GetText();
-            if (nullptr == text)
+            text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node 'NANOSECONDS' without content");
                 return XMLP_ret::XML_ERROR;
@@ -3392,29 +3373,18 @@ XMLP_ret XMLParser::getXMLHistoryMemoryPolicy(
             </xs:restriction>
         </xs:simpleType>
      */
-    const char* text = elem->GetText();
-    if (nullptr == text)
+    std::string text = get_element_text(elem);
+    if (text.empty())
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
         return XMLP_ret::XML_ERROR;
     }
-    if (strcmp(text, PREALLOCATED) == 0)
-    {
-        historyMemoryPolicy = MemoryManagementPolicy::PREALLOCATED_MEMORY_MODE;
-    }
-    else if (strcmp(text, PREALLOCATED_WITH_REALLOC) == 0)
-    {
-        historyMemoryPolicy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-    }
-    else if (strcmp(text, DYNAMIC) == 0)
-    {
-        historyMemoryPolicy = MemoryManagementPolicy::DYNAMIC_RESERVE_MEMORY_MODE;
-    }
-    else if (strcmp(text, DYNAMIC_REUSABLE) == 0)
-    {
-        historyMemoryPolicy = MemoryManagementPolicy::DYNAMIC_REUSABLE_MEMORY_MODE;
-    }
-    else
+
+    if (!get_element_enum_value(text.c_str(), historyMemoryPolicy,
+            PREALLOCATED, MemoryManagementPolicy::PREALLOCATED_MEMORY_MODE,
+            PREALLOCATED_WITH_REALLOC, MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
+            DYNAMIC, MemoryManagementPolicy::DYNAMIC_RESERVE_MEMORY_MODE,
+            DYNAMIC_REUSABLE, MemoryManagementPolicy::DYNAMIC_REUSABLE_MEMORY_MODE))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' bad content");
         return XMLP_ret::XML_ERROR;
@@ -3596,7 +3566,7 @@ XMLP_ret XMLParser::getXMLOctetVector(
         }
         if (0 == strcmp(p_aux0->Name(), VALUE))
         {
-            std::string text = p_aux0->GetText();
+            std::string text = get_element_text(p_aux0);
             std::istringstream ss(text);
 
             ss >> std::hex;
@@ -3729,31 +3699,23 @@ XMLP_ret XMLParser::getXMLEnum(
     //    </xs:restriction>
     //</xs:simpleType>
 
-    const char* text = nullptr;
-
     if (nullptr == elem || nullptr == e)
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLEnum XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (nullptr == (text = elem->GetText()))
+
+    std::string text = get_element_text(elem);
+    if (text.empty())
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLEnum XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (strcmp(text, OFF) == 0)
-    {
-        *e = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-    }
-    else if (strcmp(text, USER_DATA_ONLY) == 0)
-    {
-        *e = IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY;
-    }
-    else if (strcmp(text, FULL) == 0)
-    {
-        *e = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-    }
-    else
+
+    if (!get_element_enum_value(text.c_str(), *e,
+            OFF, IntraprocessDeliveryType::INTRAPROCESS_OFF,
+            USER_DATA_ONLY, IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY,
+            FULL, IntraprocessDeliveryType::INTRAPROCESS_FULL))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << INTRAPROCESS_DELIVERY << "' with bad content");
         return XMLP_ret::XML_ERROR;
@@ -3780,43 +3742,27 @@ XMLP_ret XMLParser::getXMLEnum(
         </xs:simpleType>
      */
 
-    const char* text = nullptr;
 
     if (nullptr == elem || nullptr == e)
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLEnum XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (nullptr == (text = elem->GetText()))
+
+    std::string text = get_element_text(elem);
+    if (text.empty())
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLEnum XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (strcmp(text, NONE) == 0)
-    {
-        *e = DiscoveryProtocol_t::NONE;
-    }
-    else if (strcmp(text, SIMPLE) == 0)
-    {
-        *e = DiscoveryProtocol_t::SIMPLE;
-    }
-    else if (strcmp(text, CLIENT) == 0)
-    {
-        *e = DiscoveryProtocol_t::CLIENT;
-    }
-    else if (strcmp(text, SERVER) == 0)
-    {
-        *e = DiscoveryProtocol_t::SERVER;
-    }
-    else if (strcmp(text, BACKUP) == 0)
-    {
-        *e = DiscoveryProtocol_t::BACKUP;
-    }
-    else if (strcmp(text, SUPER_CLIENT) == 0)
-    {
-        *e = DiscoveryProtocol_t::SUPER_CLIENT;
-    }
-    else
+
+    if (!get_element_enum_value(text.c_str(), *e,
+            NONE, DiscoveryProtocol_t::NONE,
+            SIMPLE, DiscoveryProtocol_t::SIMPLE,
+            CLIENT, DiscoveryProtocol_t::CLIENT,
+            SERVER, DiscoveryProtocol_t::SERVER,
+            BACKUP, DiscoveryProtocol_t::BACKUP,
+            SUPER_CLIENT, DiscoveryProtocol_t::SUPER_CLIENT))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << RTPS_PDP_TYPE << "' with bad content");
         return XMLP_ret::XML_ERROR;
@@ -3838,14 +3784,14 @@ XMLP_ret XMLParser::getXMLEnum(
         </xs:simpleType>
      */
 
-    const char* text = nullptr;
-
     if (nullptr == elem || nullptr == e)
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLEnum XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (nullptr == (text = elem->GetText()))
+
+    std::string text = get_element_text(elem);
+    if (text.empty())
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLEnum XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -3862,7 +3808,7 @@ XMLP_ret XMLParser::getXMLEnum(
 
     // Lets parse the flags, we assume the flags argument has been already flushed
     std::regex flags("FILTER_DIFFERENT_HOST|FILTER_DIFFERENT_PROCESS|FILTER_SAME_PROCESS");
-    std::cregex_iterator it(text, text + strlen(text), flags);
+    std::cregex_iterator it(text.c_str(), text.c_str() + strlen(text.c_str()), flags);
     uint32_t newflags = *e;
 
     while (it != std::cregex_iterator())
@@ -3996,14 +3942,14 @@ XMLP_ret XMLParser::getXMLString(
         std::string* s,
         uint8_t /*ident*/)
 {
-    const char* text = nullptr;
-
     if (nullptr == elem || nullptr == s)
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (nullptr == (text = elem->GetText()))
+
+    std::string text = get_element_text(elem);
+    if (text.empty())
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLString XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -4017,14 +3963,14 @@ XMLP_ret XMLParser::getXMLguidPrefix(
         GuidPrefix_t& prefix,
         uint8_t /*ident*/)
 {
-    const char* text = nullptr;
-
     if (nullptr == elem )
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLguidPrefix XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (nullptr == (text = elem->GetText()))
+
+    std::string text = get_element_text(elem);
+    if (text.empty())
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLguidPrefix XML_ERROR!");
         return XMLP_ret::XML_ERROR;
