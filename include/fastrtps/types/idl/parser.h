@@ -383,8 +383,24 @@ struct action<identifier>
             std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
-        // Keep the identifier for super-expression use
-        state["identifier"] = in.string();
+        // state["enum"] being empty string indicates that the identifier is the enum;
+        // being non-empty means the identifiers are enum's members.
+        if (state.count("enum"))
+        {
+            if (state["enum"].empty())
+            {
+                state["enum"] = in.string();
+            }
+            else
+            {
+                evaluated += evaluated.empty() ? in.string() : "," + in.string();
+            }
+        }
+        else
+        {
+            // Keep the identifier for super-expression use
+            state["identifier"] = in.string();
+        }
     }
 
 };
@@ -1004,6 +1020,68 @@ struct action<const_dcl>
         EPROSIMA_LOG_INFO(IDLPARSER, "Found const: " << name);
         module.create_constant(name, operands.back());
         operands.pop_back();
+    }
+
+};
+
+template<>
+struct action<kw_enum>
+{
+    template<typename Input>
+    static void apply(
+        const Input& in,
+        Context* ctx,
+        std::map<std::string, std::string>& state,
+        std::string& evaluated,
+        std::vector<v1_3::DynamicData_ptr>& operands)
+    {
+        // Set state["enum"] to empty string to indicate that next identifier is enum
+        state["enum"] = "";
+    }
+
+};
+
+template<>
+struct action<enum_dcl>
+{
+    template<typename Input>
+    static void apply(
+        const Input& in,
+        Context* ctx,
+        std::map<std::string, std::string>& state,
+        std::string& evaluated,
+        std::vector<v1_3::DynamicData_ptr>& operands)
+    {
+        const std::string& name = state["enum"];
+        Module& module = ctx->module();
+
+        std::istringstream ss(evaluated);
+        std::string token;
+        std::vector<std::string> tokens;
+
+        while (std::getline(ss, token, ','))
+        {
+            tokens.push_back(token);
+        }
+
+        v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance();
+        v1_3::DynamicTypeBuilder_ptr builder = factory.create_enum_type();
+
+        for (int i = 0; i < tokens.size(); i++)
+        {
+            v1_3::DynamicTypeBuilder_cptr member_builder = factory.create_uint32_type();
+            auto member_type = member_builder->build();
+            v1_3::DynamicData_ptr data(v1_3::DynamicDataFactory::get_instance()->create_data(member_type));
+
+            builder->add_member(i, tokens[i]);
+            module.create_constant(tokens[i], data, false, true); // Mark it as "from_enum"
+        }
+        builder->set_name(name);
+        auto enum_type = builder->build();
+        EPROSIMA_LOG_INFO(IDLPARSER, "Found enum: " << name);
+        module.enum_32(name, enum_type);
+
+        state.erase("enum");
     }
 
 };

@@ -73,6 +73,12 @@ int main(
     std::cout << "Processing IDL file:" << std::endl;
     idl::Context context03 = idl::parse_file("idl/test02.idl");
 
+    std::string test04 =
+        R"(
+        enum e_test { a, b, c };
+    )";
+    idl::Context context04 = idl::parse(test04);
+
     Log::Flush();
     Log::Reset();
 

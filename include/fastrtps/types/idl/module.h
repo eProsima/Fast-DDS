@@ -136,6 +136,12 @@ public:
         return result.second;
     }
 
+    bool is_const_from_enum(
+            const std::string& name) const
+    {
+        return std::find(from_enum_.begin(), from_enum_.end(), name) != from_enum_.end();
+    }
+
     bool create_constant(
             const std::string& name,
             v1_3::DynamicData_ptr value,
@@ -168,6 +174,34 @@ public:
             return result.second;
         }
         return false;
+    }
+
+    bool enum_32(
+            const std::string& name,
+            v1_3::DynamicType_ptr enum_type,
+            bool replace = false)
+    {
+        if (name.find("::") != std::string::npos)
+        {
+            return false; // Cannot add a symbol with scoped name.
+        }
+
+        if (replace)
+        {
+            auto it = enumerations_32_.find(name);
+            if (it != enumerations_32_.end())
+            {
+                enumerations_32_.erase(it);
+            }
+        }
+
+        std::string name_space = scope();
+        // TODO set name of enum type?
+        //enum_type.set_name(name_space + (name_space.empty() ? "" : "::") + name);
+        auto result = enumerations_32_.emplace(
+            name,
+            Type(*this, *enum_type));
+        return result.second;
     }
 
 protected:
