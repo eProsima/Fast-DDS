@@ -38,6 +38,27 @@ namespace detail {
 std::string get_element_text(
         tinyxml2::XMLElement* element);
 
+/**
+ * @brief Get text from XML element.
+ *
+ * This method is equivalent to calling element->GetText() and constructing an std::string with the returned value.
+ * It will perform processing of environmental variables.
+ * This method will return an empty string in case of error.
+ *
+ * @param[in]  element  XMLElement from where to extract its text.
+ * @param[out] text     String where to store the resulting text.
+ * 
+ * @return true on success.
+ * @return false on error.
+ */
+inline bool get_element_text(
+        tinyxml2::XMLElement* element,
+        std::string& text)
+{
+    text = get_element_text(element);
+    return !text.empty();
+}
+
 } // namespace detail
 } // namespace xml
 } // namespace fastdds
