@@ -21,6 +21,7 @@
 #include <fastrtps/utils/IPLocator.h>
 
 #include <rtps/xmlparser/XMLParserUtils.hpp>
+#include <utils/SystemInfo.hpp>
 
 #include <tinyxml2.h>
 
@@ -67,6 +68,33 @@ namespace fastdds {
 namespace xml {
 namespace detail {
 
+static std::string process_environment(
+        const std::string& input)
+{
+    std::string ret_val = input;
+    std::regex expression("\\$\\{([A-Z0-9_]+)\\}");
+    std::smatch match;
+
+    do
+    {
+        std::regex_search(ret_val, match, expression);
+        if (!match.empty())
+        {
+            std::string value;
+            if (ReturnCode_t::RETCODE_OK == SystemInfo::get_env(match[1], value))
+            {
+                ret_val = match.prefix().str() + value + match.suffix().str();
+            }
+            else
+            {
+                ret_val = match.prefix().str() + match.suffix().str();
+            }
+        }
+    } while (!match.empty());
+
+    return ret_val;
+}
+
 std::string get_element_text(
         tinyxml2::XMLElement* element)
 {
@@ -76,7 +104,7 @@ std::string get_element_text(
     const char* text = element->GetText();
     if (nullptr != text)
     {
-        ret_val = text;
+        ret_val = process_environment(text);
     }
 
     return ret_val;
