@@ -88,6 +88,7 @@ static std::string process_environment(
             else
             {
                 ret_val = match.prefix().str() + match.suffix().str();
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Could not find a value for environment variable " << match[1]);
             }
         }
     } while (!match.empty());
