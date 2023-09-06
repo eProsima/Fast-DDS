@@ -3649,7 +3649,9 @@ XMLP_ret XMLParser::getXMLInt(
         EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (tinyxml2::XMLError::XML_SUCCESS != elem->QueryIntText(in))
+
+    std::string text = get_element_text(elem);
+    if (text.empty() || !tinyxml2::XMLUtil::ToInt(text.c_str(), in))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLInt XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -3667,7 +3669,9 @@ XMLP_ret XMLParser::getXMLUint(
         EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (tinyxml2::XMLError::XML_SUCCESS != elem->QueryUnsignedText(ui))
+
+    std::string text = get_element_text(elem);
+    if (text.empty() || !tinyxml2::XMLUtil::ToUnsigned(text.c_str(), ui))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -3686,8 +3690,9 @@ XMLP_ret XMLParser::getXMLUint(
         EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (tinyxml2::XMLError::XML_SUCCESS != elem->QueryUnsignedText(&ui) ||
-            ui >= 65536)
+
+    std::string text = get_element_text(elem);
+    if (text.empty() || !tinyxml2::XMLUtil::ToUnsigned(text.c_str(), &ui) || ui >= 65536)
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -3706,7 +3711,9 @@ XMLP_ret XMLParser::getXMLBool(
         EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (tinyxml2::XMLError::XML_SUCCESS != elem->QueryBoolText(b))
+
+    std::string text = get_element_text(elem);
+    if (text.empty() || !tinyxml2::XMLUtil::ToBool(text.c_str(), b))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLBool XML_ERROR!");
         return XMLP_ret::XML_ERROR;
