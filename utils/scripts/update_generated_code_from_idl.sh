@@ -7,6 +7,8 @@ files_to_exclude=(
 files_needing_typeobject=(
     './examples/cpp/dds/ContentFilteredTopicExample/HelloWorld.idl'
     './test/blackbox/types/HelloWorld.idl'
+    './test/blackbox/types/TestIncludeRegression3361.idl'
+    './test/blackbox/types/TestRegression3361.idl'
     './test/unittest/dds/topic/DDSSQLFilter/data_types/ContentFilterTestType.idl'
     './test/unittest/dynamic_types/idl/Basic.idl'
     './test/unittest/dynamic_types/idl/new_features_4_2.idl'

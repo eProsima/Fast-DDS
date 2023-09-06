@@ -27,6 +27,8 @@ char dummy;
 #endif  // _WIN32
 
 #include "TestIncludeRegression3361.h"
+#include "TestIncludeRegression3361TypeObject.h"
+
 #include <fastcdr/Cdr.h>
 
 

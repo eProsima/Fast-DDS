@@ -27,6 +27,8 @@ char dummy;
 #endif  // _WIN32
 
 #include "TestRegression3361.h"
+#include "TestRegression3361TypeObject.h"
+
 #include <fastcdr/Cdr.h>
 
 
@@ -39,6 +41,8 @@ using namespace eprosima::fastcdr::exception;
 TestRegression3361::TestRegression3361()
 {
 
+    // Just to register all known types
+    registerTestRegression3361Types();
 }
 
 TestRegression3361::~TestRegression3361()
