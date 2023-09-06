@@ -615,7 +615,15 @@ TEST_F(XMLParserTests, getXMLPropertiesPolicy)
         "Property1Value",
         "false",
         "BinProperty1Name",
+        "01.02.CA.FE",
         "false"};
+    const std::vector<std::string> wrong_parameters {
+        "",
+        "",
+        "",
+        "",
+        "ZZ",
+        ""};
     std::vector<std::string> parameters(valid_parameters);
 
     // Template xml
@@ -632,7 +640,7 @@ TEST_F(XMLParserTests, getXMLPropertiesPolicy)
                 <binary_properties>\
                     <property>\
                         <name>%s</name>\
-                        <value></value>\
+                        <value>%s</value>\
                         <propagate>%s</propagate>\
                     </property>\
                 </binary_properties>\
@@ -645,7 +653,8 @@ TEST_F(XMLParserTests, getXMLPropertiesPolicy)
             valid_parameters[1].c_str(),
             valid_parameters[2].c_str(),
             valid_parameters[3].c_str(),
-            valid_parameters[4].c_str());
+            valid_parameters[4].c_str(),
+            valid_parameters[5].c_str());
 
     ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
     titleElement = xml_doc.RootElement();
@@ -654,21 +663,21 @@ TEST_F(XMLParserTests, getXMLPropertiesPolicy)
     EXPECT_EQ(property_policy.properties()[0].value(), valid_parameters[1]);
     EXPECT_EQ(property_policy.properties()[0].propagate(), false);
     EXPECT_EQ(property_policy.binary_properties()[0].name(), valid_parameters[3]);
-    // TODO check when binary property values are suported
-    // EXPECT_EQ(property_policy.binary_properties()[0].name(), valid_parameters[4]);
+    EXPECT_EQ(property_policy.binary_properties()[0].value(), std::vector<uint8_t>({0x01, 0x02, 0xCA, 0xFE}));
     EXPECT_EQ(property_policy.binary_properties()[0].propagate(), false);
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < valid_parameters.size(); i++)
     {
         parameters = valid_parameters;
-        parameters[i] = "";
+        parameters[i] = wrong_parameters[i];
 
         sprintf(xml, xml_p,
                 parameters[0].c_str(),
                 parameters[1].c_str(),
                 parameters[2].c_str(),
                 parameters[3].c_str(),
-                parameters[4].c_str());
+                parameters[4].c_str(),
+                parameters[5].c_str());
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml));
         titleElement = xml_doc.RootElement();
         EXPECT_EQ(XMLP_ret::XML_ERROR, XMLParserTest::propertiesPolicy_wrapper(titleElement, property_policy, ident));

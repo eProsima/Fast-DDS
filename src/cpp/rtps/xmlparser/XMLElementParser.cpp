@@ -124,6 +124,50 @@ namespace xmlparser {
 using namespace eprosima::fastrtps::rtps;
 using namespace eprosima::fastdds::xml::detail;
 
+static XMLP_ret parseXMLOctetVector(
+        tinyxml2::XMLElement* elem,
+        std::vector<octet>& octet_vector,
+        bool allow_empty)
+{
+    std::string text = get_element_text(elem);
+    if (text.empty() && allow_empty)
+    {
+        return XMLP_ret::XML_OK;
+    }
+
+    std::istringstream ss(text);
+    ss >> std::hex;
+
+    while (!ss.eof())
+    {
+        uint16_t o = 0;
+        ss >> o;
+
+        if (!ss || std::numeric_limits<octet>::max() < o)
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Expected an octet value on line " << elem->GetLineNum());
+            return XMLP_ret::XML_ERROR;
+        }
+
+        // Add octet in vector.
+        octet_vector.push_back(static_cast<octet>(o));
+
+        if (!ss.eof())
+        {
+            char c = 0;
+            ss >> c;
+
+            if (!ss || '.' != c)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Expected a '.' separator on line " << elem->GetLineNum());
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+    }
+
+    return XMLP_ret::XML_OK;
+}
+
 XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
         tinyxml2::XMLElement* elem,
         rtps::RTPSParticipantAllocationAttributes& allocation,
@@ -3540,12 +3584,10 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(
                     }
                     else if (strcmp(sub_name, VALUE) == 0)
                     {
-                        // TODO:
-                        // value - stringType
-                        EPROSIMA_LOG_ERROR(XMLPARSER, "Tag '" << p_aux2->Value() << "' do not supported for now");
-                        /*std::string s = "";
-                           if (XMLP_ret::XML_OK != getXMLString(p_aux2, &s, ident + 2)) return XMLP_ret::XML_ERROR;
-                           bin_prop.value(s);*/
+                        if (XMLP_ret::XML_OK != parseXMLOctetVector(p_aux2, bin_prop.value(), true))
+                        {
+                            return XMLP_ret::XML_ERROR;
+                        }
                     }
                     else if (strcmp(sub_name, PROPAGATE) == 0)
                     {
@@ -3583,61 +3625,29 @@ XMLP_ret XMLParser::getXMLOctetVector(
     }
 
     tinyxml2::XMLElement* p_aux0 = nullptr;
-    XMLP_ret ret_value = XMLP_ret::XML_OK;
     size_t num_elems = 0;
+    XMLP_ret ret_val = XMLP_ret::XML_OK;
 
     for (p_aux0 = elem->FirstChildElement(); nullptr != p_aux0; p_aux0 = p_aux0->NextSiblingElement())
     {
         if (1 < ++num_elems)
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "More than one tag on " << p_aux0->GetLineNum());
-            ret_value = XMLP_ret::XML_ERROR;
+            return XMLP_ret::XML_ERROR;
         }
         if (0 == strcmp(p_aux0->Name(), VALUE))
         {
-            std::string text = get_element_text(p_aux0);
-            std::istringstream ss(text);
-
-            ss >> std::hex;
-
-            while (!ss.eof())
-            {
-                uint16_t o = 0;
-                ss >> o;
-
-                if (!ss || std::numeric_limits<octet>::max() < o)
-                {
-                    EPROSIMA_LOG_ERROR(XMLPARSER, "Expected an octet value on line " << p_aux0->GetLineNum());
-                    ret_value = XMLP_ret::XML_ERROR;
-                    break;
-                }
-
-                // Add octet in vector.
-                octet_vector.push_back(static_cast<octet>(o));
-
-                if (!ss.eof())
-                {
-                    char c = 0;
-                    ss >> c;
-
-                    if (!ss || '.' != c)
-                    {
-                        EPROSIMA_LOG_ERROR(XMLPARSER, "Expected a '.' separator on line " << p_aux0->GetLineNum());
-                        ret_value = XMLP_ret::XML_ERROR;
-                        break;
-                    }
-                }
-            }
+            ret_val = parseXMLOctetVector(p_aux0, octet_vector, false);
         }
         else
         {
             EPROSIMA_LOG_ERROR(XMLPARSER,
                     "Invalid tag with name of " << p_aux0->Name() << " on line " << p_aux0->GetLineNum());
-            ret_value = XMLP_ret::XML_ERROR;
+            return XMLP_ret::XML_ERROR;
         }
     }
 
-    return ret_value;
+    return ret_val;
 }
 
 XMLP_ret XMLParser::getXMLInt(
