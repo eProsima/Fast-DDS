@@ -12,21 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <thread>
+#include <fstream>
 #include <mutex>
+#include <sstream>
+#include <thread>
 
-#include <fastrtps/xmlparser/XMLParser.h>
-#include <fastrtps/xmlparser/XMLTree.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <gtest/gtest.h>
+#include <tinyxml2.h>
+
 #include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/xmlparser/XMLParser.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+#include <fastrtps/xmlparser/XMLTree.h>
+
 #include "../logging/mock/MockConsumer.h"
 #include "wrapper/XMLParserTest.hpp"
-
-#include <tinyxml2.h>
-#include <gtest/gtest.h>
-
-#include <fstream>
-#include <sstream>
 
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;

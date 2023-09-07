@@ -19,18 +19,18 @@
 
 #include <fastrtps/xmlparser/XMLEndpointParser.h>
 
-#include <fastdds/dds/log/Log.hpp>
-#include <fastdds/rtps/builtin/data/WriterProxyData.h>
-#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
-#include <fastrtps/utils/TimeConversion.h>
-#include <fastrtps/utils/IPLocator.h>
-
-#include <rtps/xmlparser/XMLParserUtils.hpp>
+#include <cstdlib>
+#include <string>
 
 #include <tinyxml2.h>
 
-#include <string>
-#include <cstdlib>
+#include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/builtin/data/WriterProxyData.h>
+#include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/utils/TimeConversion.h>
+
+#include <rtps/xmlparser/XMLParserUtils.hpp>
 
 namespace eprosima {
 namespace fastrtps {

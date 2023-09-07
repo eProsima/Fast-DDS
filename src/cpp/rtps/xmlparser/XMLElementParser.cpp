@@ -13,22 +13,21 @@
 // limitations under the License.
 //
 
-#include <fastdds/dds/log/Log.hpp>
-
-#include <fastrtps/xmlparser/XMLParserCommon.h>
-#include <fastrtps/xmlparser/XMLParser.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastrtps/utils/IPLocator.h>
-
-#include <rtps/xmlparser/XMLParserUtils.hpp>
-#include <utils/SystemInfo.hpp>
-
-#include <tinyxml2.h>
-
 #include <cstring>
 #include <regex>
 #include <string>
 #include <unordered_map>
+
+#include <tinyxml2.h>
+
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/xmlparser/XMLParser.h>
+#include <fastrtps/xmlparser/XMLParserCommon.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include <rtps/xmlparser/XMLParserUtils.hpp>
+#include <utils/SystemInfo.hpp>
 
 template<typename _Enum>
 static bool get_element_enum_value(

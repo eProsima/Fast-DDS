@@ -14,28 +14,26 @@
 //
 #include <fastrtps/xmlparser/XMLParser.h>
 
+#include <cstdlib>
+#include <iostream>
+#include <string>
+#include <unordered_map>
+
+#include <tinyxml2.h>
+
 #include <fastdds/dds/log/FileConsumer.hpp>
 #include <fastdds/dds/log/StdoutConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
-
 #include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
-#include <fastrtps/transport/UDPv4TransportDescriptor.h>
-#include <fastrtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
-
+#include <fastrtps/transport/UDPv4TransportDescriptor.h>
+#include <fastrtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/xmlparser/XMLParserCommon.h>
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 
 #include <rtps/xmlparser/XMLParserUtils.hpp>
-
-#include <tinyxml2.h>
-
-#include <cstdlib>
-#include <iostream>
-#include <string>
-#include <unordered_map>
 
 namespace eprosima {
 namespace fastrtps {
