@@ -408,7 +408,8 @@ TEST_F(PDPTests, iproxy_queryable_get_serialized_proxy)
     EntityId_t entity;
     entity.value[3] = 4;//! valid reader EntityId
     GUID_t reader_guid = {GuidPrefix_t::unknown(), entity};
-    pdp_->addReaderProxyData(reader_guid, part_guid, [&reader_guid](ReaderProxyData* rdata, bool, const ParticipantProxyData&)
+    pdp_->addReaderProxyData(reader_guid, part_guid,
+            [&reader_guid](ReaderProxyData* rdata, bool, const ParticipantProxyData&)
             {
                 rdata->guid(reader_guid);
                 rdata->topicName("test");

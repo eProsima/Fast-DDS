@@ -106,7 +106,7 @@ PDP::PDP (
     , mp_mutex(new std::recursive_mutex())
 #ifdef FASTDDS_STATISTICS
     , proxy_observer_(nullptr)
-#endif
+#endif // ifdef FASTDDS_STATISTICS
     , resend_participant_info_event_(nullptr)
 {
     size_t max_unicast_locators = allocation.locators.max_unicast_locators;

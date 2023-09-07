@@ -440,7 +440,8 @@ public:
             const GUID_t& guid,
             CDRMessage_t* msg) override;
 
-    void set_proxy_observer(const fastdds::statistics::rtps::IProxyObserver* proxy_observer);
+    void set_proxy_observer(
+            const fastdds::statistics::rtps::IProxyObserver* proxy_observer);
 #else
     bool get_all_local_proxies(
             std::vector<GUID_t>&) override
