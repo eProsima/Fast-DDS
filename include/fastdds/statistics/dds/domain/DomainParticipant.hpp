@@ -148,7 +148,7 @@ public:
      */
     RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::ParticipantProxyData& data,
-            const statistics::MonitorServiceStatusData& msg);
+            statistics::MonitorServiceStatusData& msg);
 
     /**
      * fills in the WriterProxyData from a MonitorService Message
@@ -161,7 +161,7 @@ public:
      */
     RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::WriterProxyData& data,
-            const statistics::MonitorServiceStatusData& msg);
+            statistics::MonitorServiceStatusData& msg);
 
     /**
      * fills in the ReaderProxyData from a MonitorService Message
@@ -174,7 +174,7 @@ public:
      */
     RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::ReaderProxyData& data,
-            const statistics::MonitorServiceStatusData& msg);
+            statistics::MonitorServiceStatusData& msg);
 
 };
 

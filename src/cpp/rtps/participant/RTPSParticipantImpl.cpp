@@ -2713,14 +2713,14 @@ bool RTPSParticipantImpl::disable_monitor_service() const
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
         fastrtps::rtps::ParticipantProxyData& data,
-        const fastdds::statistics::MonitorServiceStatusData& msg)
+        fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
-    auto serialized_proxy = msg.value();
     CDRMessage_t serialized_msg;
+    serialized_msg.wraps = true;
 
-    serialized_msg.init(serialized_proxy.entity_proxy().data(),
-            static_cast<uint32_t>(serialized_proxy.getCdrSerializedSize(msg.value())));
+    serialized_msg.buffer = msg.value().entity_proxy().data();
+    serialized_msg.length = msg.value().entity_proxy().size();
 
     ret = data.readFromCDRMessage(
         &serialized_msg,
@@ -2734,14 +2734,14 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
         fastrtps::rtps::WriterProxyData& data,
-        const fastdds::statistics::MonitorServiceStatusData& msg)
+        fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
-    auto serialized_proxy = msg.value();
     CDRMessage_t serialized_msg;
+    serialized_msg.wraps = true;
 
-    serialized_msg.init(serialized_proxy.entity_proxy().data(),
-            static_cast<uint32_t>(serialized_proxy.getCdrSerializedSize(msg.value())));
+    serialized_msg.buffer = msg.value().entity_proxy().data();
+    serialized_msg.length = msg.value().entity_proxy().size();
 
     ret = data.readFromCDRMessage(
         &serialized_msg,
@@ -2754,14 +2754,14 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
         fastrtps::rtps::ReaderProxyData& data,
-        const fastdds::statistics::MonitorServiceStatusData& msg)
+        fastdds::statistics::MonitorServiceStatusData& msg)
 {
     bool ret = true;
-    auto serialized_proxy = msg.value();
     CDRMessage_t serialized_msg;
+    serialized_msg.wraps = true;
 
-    serialized_msg.init(serialized_proxy.entity_proxy().data(),
-            static_cast<uint32_t>(serialized_proxy.getCdrSerializedSize(msg.value())));
+    serialized_msg.buffer = msg.value().entity_proxy().data();
+    serialized_msg.length = msg.value().entity_proxy().size();
 
     ret = data.readFromCDRMessage(
         &serialized_msg,
