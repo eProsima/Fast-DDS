@@ -16,6 +16,7 @@
 #include <gtest/gtest.h>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/resources/ResourceEvent.h>
 #include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
 
 #include <statistics/rtps/monitor-service/MonitorService.hpp>
@@ -59,7 +60,9 @@ class MonitorServiceTests : public ::testing::Test
 public:
 
     MonitorServiceTests()
-        : monitor_srv_(
+        : listener_(&monitor_srv_)
+        , n_local_entities(5)
+        , monitor_srv_(
             fastrtps::rtps::GUID_t(),
             &mock_proxy_q_,
             &mock_conns_q_,
