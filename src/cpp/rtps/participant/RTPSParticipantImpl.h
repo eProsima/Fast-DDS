@@ -73,7 +73,9 @@ namespace statistics {
 namespace rtps {
 
 struct IStatusQueryable;
-struct IStatusListener;
+struct IStatusObserver;
+struct IConnectionsObserver;
+class SimpleQueryable;
 
 } // namespace rtps
 } // namespace statistics
@@ -1143,7 +1145,7 @@ public:
      *
      * @note Not supported yet. Currently always returns nullptr
      */
-    const fastdds::statistics::rtps::IStatusListener* create_monitor_service(
+    const fastdds::statistics::rtps::IStatusObserver* create_monitor_service(
             fastdds::statistics::rtps::IStatusQueryable& status_queryable);
 
     /**
@@ -1223,6 +1225,9 @@ public:
 
     std::vector<fastdds::statistics::Connection> get_entity_connections(
             const GUID_t&) override;
+    std::unique_ptr<fastdds::statistics::rtps::SimpleQueryable> simple_queryable_;
+    const fastdds::statistics::rtps::IConnectionsObserver* conns_observer_;
+
 #else
     std::vector<fastdds::statistics::Connection> get_entity_connections(
             const GUID_t&) override

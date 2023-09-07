@@ -278,6 +278,9 @@ protected:
     bool delete_topic_and_type(
             const std::string& topic_name) noexcept;
 
+    bool get_status_observer(
+            const rtps::IStatusObserver*& status_obs);
+
     bool get_incompatible_qos_status(
             const fastrtps::rtps::GUID_t&,
             fastdds::dds::IncompatibleQosStatus&) override;
@@ -305,6 +308,7 @@ protected:
     efd::Publisher* builtin_publisher_ = nullptr;
     PublisherImpl* builtin_publisher_impl_ = nullptr;
     std::shared_ptr<DomainParticipantStatisticsListener> statistics_listener_;
+    const rtps::IStatusObserver *status_observer_ = nullptr;
 
     friend class efd::DomainParticipantFactory;
 };

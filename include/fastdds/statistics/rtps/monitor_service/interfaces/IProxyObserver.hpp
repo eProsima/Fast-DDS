@@ -13,12 +13,12 @@
 // limitations under the License.
 
 /**
- * @file IStatusListener.hpp
+ * @file IProxyObserver.hpp
  *
  */
 
-#ifndef _FASTDDS_STATISTICS_MONITOR_SERVICE_INTERFACES_ISTATUSLISTENER_HPP_
-#define _FASTDDS_STATISTICS_MONITOR_SERVICE_INTERFACES_ISTATUSLISTENER_HPP_
+#ifndef _FASTDDS_STATISTICS_MONITOR_SERVICE_INTERFACES_IPROXYOBSERVER_HPP_
+#define _FASTDDS_STATISTICS_MONITOR_SERVICE_INTERFACES_IPROXYOBSERVER_HPP_
 
 #include <fastdds/rtps/common/Guid.h>
 
@@ -27,19 +27,20 @@ namespace fastdds {
 namespace statistics {
 namespace rtps {
 
-struct IStatusListener
+struct IProxyObserver
 {
     /**
-     * @brief Interface used to notify about any change in the statuses
-     * (IncompatibleQoS, InconsistenTopic,...) of a local entity
+     * @brief Interface use to notify about any updates
+     * on the local entities (updates in the proxy,
+     * new matches, unpairs,...)
      *
      * @param guid The GUID_t identifying the target entity
-     * @param id The id of the status changing
+     * @param guid Whether this entity is alive
      * @return Whether the implementor has been properly notified
      */
-    virtual bool on_local_entity_status_change(
+    virtual bool on_local_entity_change(
             const fastrtps::rtps::GUID_t& guid,
-            const uint32_t& id) = 0;
+            bool is_alive) const = 0;
 };
 
 } // rtps
@@ -47,5 +48,5 @@ struct IStatusListener
 } // fastdds
 } // eprosima
 
-#endif // _FASTDDS_STATISTICS_MONITOR_SERVICE_INTERFACES_ISTATUSLISTENER_HPP_
+#endif // _FASTDDS_STATISTICS_MONITOR_SERVICE_INTERFACES_IPROXYOBSERVER_HPP_
 

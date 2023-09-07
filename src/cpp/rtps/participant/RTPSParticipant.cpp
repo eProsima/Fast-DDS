@@ -234,7 +234,7 @@ void RTPSParticipant::set_enabled_statistics_writers_mask(
     mp_impl->set_enabled_statistics_writers_mask(enabled_writers);
 }
 
-const fastdds::statistics::rtps::IStatusListener* RTPSParticipant::create_monitor_service(
+const fastdds::statistics::rtps::IStatusObserver* RTPSParticipant::create_monitor_service(
         fastdds::statistics::rtps::IStatusQueryable& sq)
 {
     return mp_impl->create_monitor_service(sq);

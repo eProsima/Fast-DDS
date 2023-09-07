@@ -2685,8 +2685,8 @@ void RTPSParticipantImpl::set_enabled_statistics_writers_mask(
     }
 }
 
-const fastdds::statistics::rtps::IStatusListener* RTPSParticipantImpl::create_monitor_service(
-        fastdds::statistics::rtps::IStatusQueryable& /*status_queryable*/)
+const fastdds::statistics::rtps::IStatusObserver* RTPSParticipantImpl::create_monitor_service(
+        fastdds::statistics::rtps::IStatusQueryable& status_queryable)
 {
     return nullptr;
 }

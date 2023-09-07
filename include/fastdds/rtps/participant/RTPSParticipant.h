@@ -43,7 +43,7 @@ class MonitorServiceStatusData;
 namespace rtps {
 
 struct IStatusQueryable;
-struct IStatusListener;
+struct IStatusObserver;
 
 } // namespace rtps
 } // namespace statistics
@@ -359,7 +359,7 @@ public:
      *
      * @note Not supported yet. Currently always returns nullptr
      */
-    const fastdds::statistics::rtps::IStatusListener* create_monitor_service(
+    const fastdds::statistics::rtps::IStatusObserver* create_monitor_service(
             fastdds::statistics::rtps::IStatusQueryable& status_queryable);
 
     /**

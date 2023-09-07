@@ -33,6 +33,7 @@
 #include <fastdds/rtps/participant/ParticipantDiscoveryInfo.h>
 #include <fastdds/rtps/reader/ReaderDiscoveryInfo.h>
 #include <fastdds/rtps/writer/WriterDiscoveryInfo.h>
+#include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyObserver.hpp>
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyQueryable.hpp>
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/utils/collections/ResourceLimitedVector.hpp>
@@ -438,6 +439,8 @@ public:
     bool get_serialized_proxy(
             const GUID_t& guid,
             CDRMessage_t* msg) override;
+
+    void set_proxy_observer(const fastdds::statistics::rtps::IProxyObserver* proxy_observer);
 #else
     bool get_all_local_proxies(
             std::vector<GUID_t>&) override
@@ -554,6 +557,12 @@ protected:
      * Called after creating the builtin endpoints to update the metatraffic unicast locators of BuiltinProtocols
      */
     virtual void update_builtin_locators() = 0;
+
+#ifdef FASTDDS_STATISTICS
+
+    const fastdds::statistics::rtps::IProxyObserver* proxy_observer_;
+
+#endif // FASTDDS_STATISTICS
 
 private:
 
