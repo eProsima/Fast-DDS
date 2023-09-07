@@ -152,8 +152,10 @@ public:
 
     void setup()
     {
+        DomainParticipantQos pqos;
+        pqos.name() = "Monitor_Service_Participant";
         auto participant = DomainParticipantFactory::get_instance()->
-                        create_participant((uint32_t)GET_PID() % 230, PARTICIPANT_QOS_DEFAULT);
+                        create_participant((uint32_t)GET_PID() % 230, pqos);
 
         setup(participant);
     }
@@ -513,7 +515,7 @@ public:
         : PubSubReader<MonitorServiceType>("fastdds_monitor_service_status", true, true)
         , sample_validator_( new SampleValidator())
     {
-        statistics_part_ = statistics::dds::DomainParticipant::narrow(get_participant());
+
     }
 
     virtual ~MonitorServiceConsumer()
@@ -527,6 +529,8 @@ public:
         history_kind(eprosima::fastdds::dds::KEEP_LAST_HISTORY_QOS);
         history_depth(1);
         init();
+
+        statistics_part_ = statistics::dds::DomainParticipant::narrow(get_participant());
     }
 
     SequenceNumber_t start_reception(
@@ -603,16 +607,10 @@ struct ProxySampleValidator : public SampleValidator
 
             ASSERT_NE(it, total_msgs.end());
 
+            GUID_t guid = statistics::to_fastdds_type(data.local_entity());
+
             std::cout << "Received Proxy on local_entity "
                       << statistics::to_fastdds_type(data.local_entity()) << std::endl;
-
-            //! Analyze the discriminant
-            auto serialized_proxy(std::move(data.value().entity_proxy()));
-
-            CDRMessage_t serialized_msg;
-            serialized_msg.init(serialized_proxy.data(), (uint32_t) data.value().getCdrSerializedSize(data.value()));
-
-            GUID_t guid = statistics::to_fastdds_type(data.local_entity());
 
             bool valid_entity = true;
 
@@ -621,9 +619,11 @@ struct ProxySampleValidator : public SampleValidator
                 RTPSParticipantAllocationAttributes att;
                 ParticipantProxyData pdata(att);
 
-                serialized_msg.init(serialized_proxy.data(),
-                        (uint32_t) data.value().getCdrSerializedSize(data.value()));
-                ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(pdata, data), ReturnCode_t::RETCODE_ERROR);
+                ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(pdata, data), ReturnCode_t::RETCODE_OK);
+
+                auto part_names = participant->get_participant_names();
+                auto it = std::find(part_names.begin(), part_names.end(), pdata.m_participantName.to_string());
+                ASSERT_TRUE(it != part_names.end());
             }
             else
             {

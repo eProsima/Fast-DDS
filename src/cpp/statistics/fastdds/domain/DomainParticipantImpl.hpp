@@ -133,7 +133,7 @@ public:
      *
      * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    ReturnCode_t enable_monitor_service() const;
+    ReturnCode_t enable_monitor_service();
 
     /**
      * Disables the monitor service in this DomainParticipant. Does nothing if the service was not enabled before.
@@ -145,7 +145,7 @@ public:
      *
      * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    ReturnCode_t disable_monitor_service() const;
+    ReturnCode_t disable_monitor_service();
 
     /**
      * fills in the ParticipantProxyData from a MonitorService Message
@@ -158,7 +158,7 @@ public:
      */
     ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::ParticipantProxyData& data,
-            const fastdds::statistics::MonitorServiceStatusData& msg);
+            fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
      * fills in the WriterProxyData from a MonitorService Message
@@ -171,7 +171,7 @@ public:
      */
     ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::WriterProxyData& data,
-            const fastdds::statistics::MonitorServiceStatusData& msg);
+            fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
      * fills in the ReaderProxyData from a MonitorService Message
@@ -184,7 +184,7 @@ public:
      */
     ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::ReaderProxyData& data,
-            const fastdds::statistics::MonitorServiceStatusData& msg);
+            fastdds::statistics::MonitorServiceStatusData& msg);
 
 protected:
 
@@ -276,6 +276,9 @@ protected:
     bool delete_topic_and_type(
             const std::string& topic_name) noexcept;
 
+    bool get_status_observer(
+            const rtps::IStatusObserver*& status_obs);
+
     bool get_incompatible_qos_status(
             const fastrtps::rtps::GUID_t&,
             fastdds::dds::IncompatibleQosStatus&) override;
@@ -303,6 +306,7 @@ protected:
     efd::Publisher* builtin_publisher_ = nullptr;
     PublisherImpl* builtin_publisher_impl_ = nullptr;
     std::shared_ptr<DomainParticipantStatisticsListener> statistics_listener_;
+    const rtps::IStatusObserver* status_observer_ = nullptr;
 
     friend class efd::DomainParticipantFactory;
 };
