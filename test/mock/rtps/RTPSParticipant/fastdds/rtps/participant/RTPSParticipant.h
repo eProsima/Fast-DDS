@@ -122,21 +122,21 @@ public:
 
     bool fill_discovery_data_from_cdr_message(
             fastrtps::rtps::ParticipantProxyData& /*data*/,
-            const fastdds::statistics::MonitorServiceStatusData& /*msg*/)
+            fastdds::statistics::MonitorServiceStatusData& /*msg*/)
     {
         return true;
     }
 
     bool fill_discovery_data_from_cdr_message(
             fastrtps::rtps::WriterProxyData& /*data*/,
-            const fastdds::statistics::MonitorServiceStatusData& /*msg*/)
+            fastdds::statistics::MonitorServiceStatusData& /*msg*/)
     {
         return true;
     }
 
     bool fill_discovery_data_from_cdr_message(
             fastrtps::rtps::ReaderProxyData& /*data*/,
-            const fastdds::statistics::MonitorServiceStatusData& /*msg*/)
+            fastdds::statistics::MonitorServiceStatusData& /*msg*/)
     {
         return true;
     }
