@@ -64,6 +64,7 @@
 
 #ifdef FASTDDS_STATISTICS
 #include <statistics/types/monitorservice_types.h>
+#include <statistics/rtps/monitor-service/MonitorService.hpp>
 #endif // ifdef FASTDDS_STATISTICS
 
 namespace eprosima {
@@ -149,6 +150,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , is_intraprocess_only_(should_be_intraprocess_only(PParam))
     , has_shm_transport_(false)
     , match_local_endpoints_(should_match_local_endpoints(PParam))
+#ifdef FASTDDS_STATISTICS
+    , monitor_server_(nullptr)
+    , conns_observer_(nullptr)
+#endif // if FASTDDS_STATISTICS
 {
     if (c_GuidPrefix_Unknown != persistence_guid)
     {
@@ -2702,27 +2707,83 @@ void RTPSParticipantImpl::set_enabled_statistics_writers_mask(
 const fastdds::statistics::rtps::IStatusObserver* RTPSParticipantImpl::create_monitor_service(
         fastdds::statistics::rtps::IStatusQueryable& status_queryable)
 {
-    return nullptr;
+    monitor_server_.reset(new fastdds::statistics::rtps::MonitorService(
+                m_guid,
+                pdp(),
+                this,
+                status_queryable,
+                [&](RTPSWriter** WriterOut,
+                WriterAttributes& param,
+                const std::shared_ptr<IPayloadPool>& payload_pool,
+                WriterHistory* hist,
+                WriterListener* listen,
+                const EntityId_t& entityId,
+                bool isBuiltin)-> bool
+                {
+                    return this->createWriter(WriterOut, param, payload_pool, hist, listen, entityId, isBuiltin);
+                },
+                [&](RTPSWriter* w,
+                const fastrtps::TopicAttributes& topicAtt,
+                const fastrtps::WriterQos& wqos) -> bool
+                {
+                    return this->registerWriter(w, topicAtt, wqos);
+                },
+                getEventResource()
+                ));
+
+    if (nullptr != monitor_server_)
+    {
+        auto monitor_listener = monitor_server_->get_listener();
+        conns_observer_ = monitor_listener;
+        pdp()->set_proxy_observer(monitor_listener);
+
+        return monitor_listener;
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Could not create monitor service");
+        return nullptr;
+    }
 }
 
 bool RTPSParticipantImpl::create_monitor_service()
 {
-    return false;
+    bool ret = false;
+
+    simple_queryable_.reset(new fastdds::statistics::rtps::SimpleQueryable);
+    create_monitor_service(*simple_queryable_);
+
+    if (nullptr != monitor_server_)
+    {
+        ret = true;
+    }
+
+    return ret;
 }
 
 bool RTPSParticipantImpl::is_monitor_service_created() const
 {
-    return false;
+    return (nullptr != monitor_server_);
 }
 
 bool RTPSParticipantImpl::enable_monitor_service() const
 {
-    return false;
+    bool ret = false;
+    if (nullptr != monitor_server_)
+    {
+        ret = monitor_server_->enable_monitor_service();
+    }
+    return ret;
 }
 
 bool RTPSParticipantImpl::disable_monitor_service() const
 {
-    return false;
+    bool ret = false;
+    if (nullptr != monitor_server_ && monitor_server_->is_enabled())
+    {
+        ret = monitor_server_->disable_monitor_service();
+    }
+    return ret;
 }
 
 bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
