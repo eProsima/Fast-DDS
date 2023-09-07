@@ -76,6 +76,7 @@ struct IStatusQueryable;
 struct IStatusObserver;
 struct IConnectionsObserver;
 class SimpleQueryable;
+class MonitorService;
 
 } // namespace rtps
 } // namespace statistics
@@ -1224,6 +1225,8 @@ public:
 
     std::vector<fastdds::statistics::Connection> get_entity_connections(
             const GUID_t&) override;
+
+    std::unique_ptr<fastdds::statistics::rtps::MonitorService> monitor_server_;
     std::unique_ptr<fastdds::statistics::rtps::SimpleQueryable> simple_queryable_;
     const fastdds::statistics::rtps::IConnectionsObserver* conns_observer_;
 

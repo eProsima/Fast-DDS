@@ -285,12 +285,33 @@ ReturnCode_t DomainParticipantImpl::delete_contained_entities()
 
 ReturnCode_t DomainParticipantImpl::enable_monitor_service()
 {
-    return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
+    fastrtps::types::ReturnCode_t ret = fastrtps::types::ReturnCode_t::RETCODE_OK;
+
+    if (!rtps_participant_->is_monitor_service_created())
+    {
+        status_observer_ = rtps_participant_->create_monitor_service(*this);
+    }
+
+    if (!rtps_participant_->enable_monitor_service() ||
+        nullptr == status_observer_)
+    {
+        ret = fastrtps::types::ReturnCode_t::RETCODE_ERROR;
+    }
+
+    return ret;
 }
 
 ReturnCode_t DomainParticipantImpl::disable_monitor_service()
 {
-    return fastrtps::types::ReturnCode_t::RETCODE_UNSUPPORTED;
+    fastrtps::types::ReturnCode_t ret = fastrtps::types::ReturnCode_t::RETCODE_OK;
+
+    if (!rtps_participant_->is_monitor_service_created() ||
+        !rtps_participant_->disable_monitor_service())
+    {
+        ret = fastrtps::types::ReturnCode_t::RETCODE_NOT_ENABLED;
+    }
+
+    return ret;
 }
 
 ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
