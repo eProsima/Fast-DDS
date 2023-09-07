@@ -135,7 +135,7 @@ public:
      *
      * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    ReturnCode_t enable_monitor_service() const;
+    ReturnCode_t enable_monitor_service();
 
     /**
      * Disables the monitor service in this DomainParticipant. Does nothing if the service was not enabled before.
@@ -147,7 +147,7 @@ public:
      *
      * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    ReturnCode_t disable_monitor_service() const;
+    ReturnCode_t disable_monitor_service();
 
     /**
      * fills in the ParticipantProxyData from a MonitorService Message
