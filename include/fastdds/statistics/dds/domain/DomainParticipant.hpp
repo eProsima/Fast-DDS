@@ -123,7 +123,7 @@ public:
      *
      * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t enable_monitor_service() const;
+    RTPS_DllAPI ReturnCode_t enable_monitor_service();
 
     /**
      * Disables the monitor service in this DomainParticipant. Does nothing if the service was not enabled before.
@@ -135,7 +135,7 @@ public:
      *
      * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
-    RTPS_DllAPI ReturnCode_t disable_monitor_service() const;
+    RTPS_DllAPI ReturnCode_t disable_monitor_service();
 
     /**
      * fills in the ParticipantProxyData from a MonitorService Message
@@ -148,7 +148,7 @@ public:
      */
     RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::ParticipantProxyData& data,
-            const statistics::MonitorServiceStatusData& msg);
+            statistics::MonitorServiceStatusData& msg);
 
     /**
      * fills in the WriterProxyData from a MonitorService Message
@@ -161,7 +161,7 @@ public:
      */
     RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::WriterProxyData& data,
-            const statistics::MonitorServiceStatusData& msg);
+            statistics::MonitorServiceStatusData& msg);
 
     /**
      * fills in the ReaderProxyData from a MonitorService Message
@@ -174,7 +174,7 @@ public:
      */
     RTPS_DllAPI ReturnCode_t fill_discovery_data_from_cdr_message(
             fastrtps::rtps::ReaderProxyData& data,
-            const statistics::MonitorServiceStatusData& msg);
+            statistics::MonitorServiceStatusData& msg);
 
 };
 

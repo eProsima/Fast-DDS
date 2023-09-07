@@ -94,7 +94,7 @@ const DomainParticipant* DomainParticipant::narrow(
 #endif // FASTDDS_STATISTICS
 }
 
-ReturnCode_t DomainParticipant::enable_monitor_service() const
+ReturnCode_t DomainParticipant::enable_monitor_service()
 {
 #ifdef FASTDDS_STATISTICS
     return static_cast<DomainParticipantImpl*>(impl_)->enable_monitor_service();
@@ -103,7 +103,7 @@ ReturnCode_t DomainParticipant::enable_monitor_service() const
 #endif // FASTDDS_STATISTICS
 }
 
-ReturnCode_t DomainParticipant::disable_monitor_service() const
+ReturnCode_t DomainParticipant::disable_monitor_service()
 {
 #ifdef FASTDDS_STATISTICS
     return static_cast<DomainParticipantImpl*>(impl_)->disable_monitor_service();
@@ -114,7 +114,7 @@ ReturnCode_t DomainParticipant::disable_monitor_service() const
 
 ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
         fastrtps::rtps::ParticipantProxyData& data,
-        const fastdds::statistics::MonitorServiceStatusData& msg)
+        fastdds::statistics::MonitorServiceStatusData& msg)
 {
 #ifdef FASTDDS_STATISTICS
     return static_cast<DomainParticipantImpl*>(impl_)->fill_discovery_data_from_cdr_message(data, msg);
@@ -125,7 +125,7 @@ ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
 
 ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
         fastrtps::rtps::WriterProxyData& data,
-        const fastdds::statistics::MonitorServiceStatusData& msg)
+        fastdds::statistics::MonitorServiceStatusData& msg)
 {
 #ifdef FASTDDS_STATISTICS
     return static_cast<DomainParticipantImpl*>(impl_)->fill_discovery_data_from_cdr_message(data, msg);
@@ -136,7 +136,7 @@ ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
 
 ReturnCode_t DomainParticipant::fill_discovery_data_from_cdr_message(
         fastrtps::rtps::ReaderProxyData& data,
-        const fastdds::statistics::MonitorServiceStatusData& msg)
+        fastdds::statistics::MonitorServiceStatusData& msg)
 {
 #ifdef FASTDDS_STATISTICS
     return static_cast<DomainParticipantImpl*>(impl_)->fill_discovery_data_from_cdr_message(data, msg);

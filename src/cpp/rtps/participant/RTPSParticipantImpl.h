@@ -74,7 +74,9 @@ namespace statistics {
 namespace rtps {
 
 struct IStatusQueryable;
-struct IStatusListener;
+struct IStatusObserver;
+struct IConnectionsObserver;
+class SimpleQueryable;
 
 } // namespace rtps
 } // namespace statistics
@@ -1149,7 +1151,7 @@ public:
      *
      * @note Not supported yet. Currently always returns nullptr
      */
-    const fastdds::statistics::rtps::IStatusListener* create_monitor_service(
+    const fastdds::statistics::rtps::IStatusObserver* create_monitor_service(
             fastdds::statistics::rtps::IStatusQueryable& status_queryable);
 
     /**
@@ -1201,7 +1203,7 @@ public:
      */
     bool fill_discovery_data_from_cdr_message(
             fastrtps::rtps::ParticipantProxyData& data,
-            const fastdds::statistics::MonitorServiceStatusData& msg);
+            fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
      * fills in the WriterProxyData from a MonitorService Message
@@ -1213,7 +1215,7 @@ public:
      */
     bool fill_discovery_data_from_cdr_message(
             fastrtps::rtps::WriterProxyData& data,
-            const fastdds::statistics::MonitorServiceStatusData& msg);
+            fastdds::statistics::MonitorServiceStatusData& msg);
 
     /**
      * fills in the ReaderProxyData from a MonitorService Message
@@ -1225,10 +1227,13 @@ public:
      */
     bool fill_discovery_data_from_cdr_message(
             fastrtps::rtps::ReaderProxyData& data,
-            const fastdds::statistics::MonitorServiceStatusData& msg);
+            fastdds::statistics::MonitorServiceStatusData& msg);
 
     std::vector<fastdds::statistics::Connection> get_entity_connections(
             const GUID_t&) override;
+    std::unique_ptr<fastdds::statistics::rtps::SimpleQueryable> simple_queryable_;
+    const fastdds::statistics::rtps::IConnectionsObserver* conns_observer_;
+
 #else
     std::vector<fastdds::statistics::Connection> get_entity_connections(
             const GUID_t&) override

@@ -22,9 +22,9 @@
 
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsObserver.hpp>
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsQueryable.hpp>
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IEDPObserver.hpp>
+#include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyObserver.hpp>
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IProxyQueryable.hpp>
-#include <fastdds/statistics/rtps/monitor_service/interfaces/IStatusListerner.hpp>
+#include <fastdds/statistics/rtps/monitor_service/interfaces/IStatusObserver.hpp>
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IStatusQueryable.hpp>
 
 #endif // _FASTDDS_STATISTICS_MONITOR_SERVICE_INTERFACES_HPP_
