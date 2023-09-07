@@ -129,13 +129,6 @@ bool ParameterList::read_guid_from_cdr_msg(
         {
             break;
         }
-        if (pid == PID_KEY_HASH)
-        {
-            valid &= fastrtps::rtps::CDRMessage::readData(&msg, guid.guidPrefix.value,
-                            fastrtps::rtps::GuidPrefix_t::size);
-            valid &= fastrtps::rtps::CDRMessage::readData(&msg, guid.entityId.value, fastrtps::rtps::EntityId_t::size);
-            return valid;
-        }
         if (pid == search_pid)
         {
             valid &= fastrtps::rtps::CDRMessage::readData(&msg, guid.guidPrefix.value,

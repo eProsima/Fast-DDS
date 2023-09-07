@@ -287,8 +287,6 @@ protected:
         attrs.writers.initial = 3;
         pdp_ = new PDPTester(&bp_, attrs);
 
-        std::cout << "Addresss of participantimpl " << &participant_ << std::endl;
-
         pdp_->init(&participant_);
     }
 
@@ -307,12 +305,13 @@ TEST_F(PDPTests, iproxy_queryable_get_all_local_proxies)
 #ifdef FASTDDS_STATISTICS
 
     std::vector<GUID_t> local_guids, output_guids;
-    size_t n_entities = 9;
+    size_t n_entities = 10;
     local_guids.reserve(n_entities);
 
     GUID_t part_guid(GuidPrefix_t::unknown(), ENTITYID_RTPSParticipant);
     EXPECT_CALL(participant_, getGuid()).WillRepeatedly(testing::ReturnRef(part_guid));
     pdp_->create_and_add_participant_proxy_data(part_guid);
+    local_guids.push_back(part_guid);
 
     //! Generate local entities
     for (size_t i = 1; i < 10; i++)
@@ -398,24 +397,29 @@ TEST_F(PDPTests, iproxy_queryable_get_serialized_proxy)
     pdp_->create_and_add_participant_proxy_data(part_guid);
 
     CDRMessage_t part_proxy_serialized;
-    ASSERT_FALSE(pdp_->get_serialized_proxy(part_guid, &part_proxy_serialized));
+    ASSERT_TRUE(pdp_->get_serialized_proxy(part_guid, &part_proxy_serialized));
 
     GUID_t expected_participant_guid;
+    part_proxy_serialized.pos = 0;
     ASSERT_TRUE(fastdds::dds::ParameterList::read_guid_from_cdr_msg(part_proxy_serialized,
             fastdds::dds::PID_PARTICIPANT_GUID, expected_participant_guid));
     ASSERT_EQ(part_guid, expected_participant_guid);
 
     EntityId_t entity;
-    entity.value[3] = 1;
+    entity.value[3] = 4;//! valid reader EntityId
     GUID_t reader_guid = {GuidPrefix_t::unknown(), entity};
-    pdp_->addReaderProxyData(reader_guid, part_guid, [](ReaderProxyData*, bool, const ParticipantProxyData&)
+    pdp_->addReaderProxyData(reader_guid, part_guid, [&reader_guid](ReaderProxyData* rdata, bool, const ParticipantProxyData&)
             {
+                rdata->guid(reader_guid);
+                rdata->topicName("test");
+                rdata->typeName("foo");
                 return true;
             });
 
     CDRMessage_t reader_proxy_serialized;
-    ASSERT_TRUE(pdp_->get_serialized_proxy(part_guid, &reader_proxy_serialized));
+    ASSERT_TRUE(pdp_->get_serialized_proxy(reader_guid, &reader_proxy_serialized));
 
+    reader_proxy_serialized.pos = 0;
     GUID_t expected_reader_guid;
     ASSERT_TRUE(fastdds::dds::ParameterList::read_guid_from_cdr_msg(reader_proxy_serialized,
             fastdds::dds::PID_ENDPOINT_GUID, expected_reader_guid));
