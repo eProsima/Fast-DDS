@@ -364,16 +364,18 @@ public:
      */
     class Segment
     {
-		static constexpr uint32_t shm_initial_buffers = 1;
+        static constexpr uint32_t shm_initial_buffers = 1;
+
     public:
+
         Segment(
                 uint32_t size,
                 uint32_t payload_size,
                 uint32_t max_allocations,
                 const std::string& domain_name)
             : buffer_node_list_allocator_(
-                        buffer_node_list_helper::node_size,
-                        buffer_node_list_helper::min_pool_size<pool_allocator_t>(shm_initial_buffers))
+                buffer_node_list_helper::node_size,
+                buffer_node_list_helper::min_pool_size<pool_allocator_t>(shm_initial_buffers))
             , free_buffers_(buffer_node_list_allocator_)
             , allocated_buffers_(buffer_node_list_allocator_)
             , segment_id_()
@@ -511,15 +513,15 @@ public:
 
         std::unique_ptr<RobustExclusiveLock> segment_name_lock_;
 
-		using buffer_node_list_helper =
-				utilities::collections::list_size_helper<BufferNode*>;
+        using buffer_node_list_helper =
+                utilities::collections::list_size_helper<BufferNode*>;
 
-		using pool_allocator_t =
-				foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
-		pool_allocator_t buffer_node_list_allocator_;
+        using pool_allocator_t =
+                foonathan::memory::memory_pool<foonathan::memory::node_pool, foonathan::memory::heap_allocator>;
+        pool_allocator_t buffer_node_list_allocator_;
 
-		foonathan::memory::list<BufferNode*, pool_allocator_t> free_buffers_;
-		foonathan::memory::list<BufferNode*, pool_allocator_t> allocated_buffers_;
+        foonathan::memory::list<BufferNode*, pool_allocator_t> free_buffers_;
+        foonathan::memory::list<BufferNode*, pool_allocator_t> allocated_buffers_;
 
         std::mutex alloc_mutex_;
         std::shared_ptr<SharedMemSegment> segment_;
