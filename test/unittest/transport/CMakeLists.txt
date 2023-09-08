@@ -422,6 +422,7 @@ if(IS_THIRDPARTY_BOOST_OK)
         $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
         )
     target_link_libraries(SharedMemTests
+        foonathan_memory
         fastcdr
         GTest::gtest
         ${MOCKS}
