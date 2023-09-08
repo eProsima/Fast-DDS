@@ -2,6 +2,11 @@ name: statistics_coverage
 
 on:
   workflow_dispatch:
+    inputs:
+      fastdds_branch:
+        description: 'Branch or tag of Fast DDS repository (https://github.com/eProsima/Fast-DDS)'
+        required: true
+        default: 'master'
 
 jobs:
   ubuntu-build-test:
@@ -10,13 +15,34 @@ jobs:
       name: codecov
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: eProsima/eProsima-CI/ubuntu/install_apt_packages@v0
         with:
-          path: src/Fast-DDS
+          packages: wget
 
-      - uses: ./src/Fast-DDS/.github/actions/install-apt-packages
-      - uses: ./src/Fast-DDS/.github/actions/install-python-packages
-      - uses: ./src/Fast-DDS/.github/actions/fetch-fastdds-repos
+      - uses: eProsima/eProsima-CI/ubuntu/install_python_packages@v0
+        with:
+          packages: vcstool
+
+      - uses: eProsima/eProsima-CI/ubuntu/get_file_from_repo@v0
+        with:
+          source_repository: eProsima/Fast-DDS
+          source_repository_branch: ${{ github.event.inputs.fastdds_branch }}
+          file_name: fastrtps.repos
+          file_result: fastrtps.repos
+
+      - name: Fetch Fast DDS & dependencies
+        uses: eProsima/eProsima-CI/ubuntu/vcs_import@v0
+        with:
+          vcs_repos_file: fastrtps.repos
+          destination_workspace: src
+
+      - uses: ./src/fastrtps/.github/actions/install-apt-packages
+      - uses: ./src/fastrtps/.github/actions/install-python-packages
+
+      - name: Install GTest
+        uses: eProsima/eProsima-CI/ubuntu/install_gtest@v0
+        with:
+          version: v1.12.1
 
       - name: Update colcon mixin
         run: |
@@ -27,11 +53,11 @@ jobs:
 
       - name: Build workspace
         run: |
-          cat src/Fast-DDS/.github/workflows/statistics_module.meta
+          cat src/fastrtps/.github/workflows/statistics_module.meta
           colcon build \
             --packages-up-to fastrtps --packages-skip fastrtps \
             --event-handlers=console_direct+ \
-            --metas src/Fast-DDS/.github/workflows/statistics_module.meta \
+            --metas src/fastrtps/.github/workflows/statistics_module.meta \
             --mixin coverage-gcc
           for target in RTPSStatisticsTests StatisticsDomainParticipantTests StatisticsQosTests DomainParticipantStatisticsListenerTests StatisticsDomainParticipantMockTests BlackboxTests_DDS_PIM
           do
@@ -40,7 +66,7 @@ jobs:
                 --cmake-target $target \
                 --cmake-target-skip-unavailable \
                 --event-handlers=console_direct+ \
-                --metas src/Fast-DDS/.github/workflows/statistics_module.meta \
+                --metas src/fastrtps/.github/workflows/statistics_module.meta \
                 --mixin coverage-gcc
           done
 
@@ -53,10 +79,10 @@ jobs:
 
       - name: Generate coverage report
         run: |
-          cp src/Fast-DDS/codecov.yml .
+          cp src/fastrtps/codecov.yml .
           mkdir coverage-report
           gcovr \
-          --root src/Fast-DDS/ \
+          --root src/fastrtps/ \
           --object-directory build/fastrtps \
           --output coverage-report/coverage.xml \
           --xml-pretty \
@@ -80,5 +106,5 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: coverage-report/coverage.xml
-          root_dir: src/Fast-DDS
+          root_dir: src/fastrtps
           fail_ci_if_error: true
