@@ -78,7 +78,7 @@ jobs:
       - name: Download Fast-CDR and make it sanitizer aware
         run: |
           cd ws
-          git clone https://github.com/eProsima/Fast-CDR.git
+          git clone --branch 1.1.x https://github.com/eProsima/Fast-CDR.git
           cd Fast-CDR
           git remote add efork https://github.com/MiguelBarro/Fast-CDR.git
           git fetch efork
