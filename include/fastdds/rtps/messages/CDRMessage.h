@@ -204,10 +204,21 @@ inline bool addData(
         CDRMessage_t*,
         const octet*,
         const uint32_t number_bytes);
+
+
 inline bool addDataReversed(
         CDRMessage_t*,
         const octet*,
         const uint32_t byte_number);
+
+inline bool ensureSpace(
+        const CDRMessage_t* msg,
+        uint32_t size);
+
+inline bool addDataToBuffer(
+        CDRMessage_t* msg,
+        const octet* data, 
+        uint32_t length);
 
 inline bool addOctet(
         CDRMessage_t* msg,

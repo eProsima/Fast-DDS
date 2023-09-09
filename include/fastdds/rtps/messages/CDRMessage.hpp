@@ -391,278 +391,105 @@ inline bool CDRMessage::readUInt16(
     return true;
 }
 
-inline bool CDRMessage::readOctet(
-        CDRMessage_t* msg,
-        octet* o)
+
+
+inline bool CDRMessage::readOctet(CDRMessage_t* msg, octet* o)
 {
     if (msg->pos + 1 > msg->length)
     {
         return false;
     }
-    *o = msg->buffer[msg->pos];
-    msg->pos++;
+    *o = msg->buffer[msg->pos++];
     return true;
 }
 
-inline bool CDRMessage::readOctetVector(
-        CDRMessage_t* msg,
-        std::vector<octet>* ocvec)
+inline bool CDRMessage::ensureSpace(const CDRMessage_t* msg, uint32_t size)
 {
-    if (msg->pos + 4 > msg->length)
-    {
-        return false;
-    }
-    uint32_t vecsize;
-    bool valid = CDRMessage::readUInt32(msg, &vecsize);
-    ocvec->resize(vecsize);
-    valid &= CDRMessage::readData(msg, ocvec->data(), vecsize);
-    msg->pos = (msg->pos + 3u) & ~3u;
-    return valid;
+    /*Tells us whether it is safe to add data of the specified size to the message axis without exceeding its maximum size.*/
+    return msg->pos + size <= msg->max_size;
 }
 
-inline bool CDRMessage::readString(
-        CDRMessage_t* msg,
-        std::string* stri)
+inline bool CDRMessage::addDataToBuffer(CDRMessage_t* msg, const octet* data, uint32_t length)
 {
-    uint32_t str_size = 1;
-    bool valid = true;
-    valid &= CDRMessage::readUInt32(msg, &str_size);
-    if (msg->pos + str_size > msg->length)
+    // 1. Check if there is enough space and make sure the data is not empty.
+    if (!ensureSpace(msg, length) || data == nullptr)
     {
         return false;
     }
+    // 2. Copy the data to the message buffer.
+    memcpy(&msg->buffer[msg->pos], data, length);
 
-    stri->clear();
-    if (str_size > 1)
-    {
-        stri->resize(str_size - 1);
-        for (uint32_t i = 0; i < str_size - 1; i++)
-        {
-            stri->at(i) = static_cast<char>(msg->buffer[msg->pos + i]);
-        }
-    }
-    msg->pos += str_size;
-    msg->pos = (msg->pos + 3u) & ~3u;
-
-    return valid;
-}
-
-inline bool CDRMessage::readString(
-        CDRMessage_t* msg,
-        string_255* stri)
-{
-    uint32_t str_size = 1;
-    bool valid = true;
-    valid &= CDRMessage::readUInt32(msg, &str_size);
-    if (msg->pos + str_size > msg->length)
-    {
-        return false;
-    }
-
-    *stri = "";
-    if (str_size > 1)
-    {
-        *stri = (const char*) &(msg->buffer[msg->pos]);
-    }
-    msg->pos += str_size;
-    msg->pos = (msg->pos + 3u) & ~3u;
-
-    return valid;
-}
-
-inline bool CDRMessage::addData(
-        CDRMessage_t* msg,
-        const octet* data,
-        const uint32_t length)
-{
-    if (msg == nullptr)
-    {
-        return false;
-    }
-    if (msg->pos + length > msg->max_size)
-    {
-        return false;
-    }
-    if (length > 0)
-    {
-        if (data == nullptr)
-        {
-            return false;
-        }
-        memcpy(&msg->buffer[msg->pos], data, length);
-        msg->pos += length;
-        msg->length += length;
-    }
-    return true;
-}
-
-inline bool CDRMessage::addDataReversed(
-        CDRMessage_t* msg,
-        const octet* data,
-        const uint32_t length)
-{
-    if (msg->pos + length > msg->max_size)
-    {
-        return false;
-    }
-    for (uint32_t i = 0; i < length; i++)
-    {
-        msg->buffer[msg->pos + i] = *(data + length - 1 - i);
-    }
+    // 3. Update the position and length of the message buffer.
     msg->pos += length;
     msg->length += length;
     return true;
 }
 
-inline bool CDRMessage::addOctet(
-        CDRMessage_t* msg,
-        octet O)
+inline bool CDRMessage::addDataReversed(CDRMessage_t* msg, const octet* data, uint32_t length)
 {
-    if (msg->pos + 1 > msg->max_size)
+    // 1. Check if there is enough space in the message buffer to add data.
+    if (!ensureSpace(msg, length))
     {
         return false;
     }
-    //const void* d = (void*)&O;
-    msg->buffer[msg->pos] = O;
-    msg->pos++;
-    msg->length++;
+
+    // 2. Copy data to the message buffer in reverse order.
+    for (uint32_t i = 0; i < length; i++)
+    {
+        msg->buffer[msg->pos + i] = *(data + length - 1 - i);
+    }
+
+    // 3. Update the position and length of the message buffer.
+    msg->pos += length;
+    msg->length += length;
     return true;
 }
 
-inline bool CDRMessage::addUInt16(
-        CDRMessage_t* msg,
-        uint16_t us)
+inline bool CDRMessage::addOctet(CDRMessage_t* msg, octet o)
 {
-    if (msg->pos + 2 > msg->max_size)
-    {
-        return false;
-    }
+    return addDataToBuffer(msg, &o, 1);
+}
+
+inline bool CDRMessage::addUInt16(CDRMessage_t* msg, uint16_t us)
+{
     octet* o = (octet*)&us;
-    if (msg->msg_endian == DEFAULT_ENDIAN)
-    {
-        msg->buffer[msg->pos] = *(o);
-        msg->buffer[msg->pos + 1] = *(o + 1);
-    }
-    else
-    {
-        msg->buffer[msg->pos] = *(o + 1);
-        msg->buffer[msg->pos + 1] = *(o);
-    }
-    msg->pos += 2;
-    msg->length += 2;
-    return true;
+    return msg->msg_endian == DEFAULT_ENDIAN ? 
+           addDataToBuffer(msg, o, 2) : 
+           addDataReversed(msg, o, 2);
 }
 
-inline bool CDRMessage::addInt32(
-        CDRMessage_t* msg,
-        int32_t lo)
+inline bool CDRMessage::addInt32(CDRMessage_t* msg, int32_t lo)
 {
-    octet* o = (octet*)&lo;
-    if (msg->pos + 4 > msg->max_size)
-    {
-        return false;
-    }
-    if (msg->msg_endian == DEFAULT_ENDIAN)
-    {
-        for (uint8_t i = 0; i < 4; i++)
-        {
-            msg->buffer[msg->pos + i] = *(o + i);
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 4; i++)
-        {
-            msg->buffer[msg->pos + i] = *(o + 3 - i);
-        }
-    }
-    msg->pos += 4;
-    msg->length += 4;
-    return true;
+    return msg->msg_endian == DEFAULT_ENDIAN ? 
+           addDataToBuffer(msg, (octet*)&lo, 4) : 
+           addDataReversed(msg, (octet*)&lo, 4);
 }
 
-inline bool CDRMessage::addUInt32(
-        CDRMessage_t* msg,
-        uint32_t ulo)
+inline bool CDRMessage::addUInt32(CDRMessage_t* msg, uint32_t ulo)
 {
-    octet* o = (octet*)&ulo;
-    if (msg->pos + 4 > msg->max_size)
-    {
-        return false;
-    }
-    if (msg->msg_endian == DEFAULT_ENDIAN)
-    {
-        for (uint8_t i = 0; i < 4; i++)
-        {
-            msg->buffer[msg->pos + i] = *(o + i);
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 4; i++)
-        {
-            msg->buffer[msg->pos + i] = *(o + 3 - i);
-        }
-    }
-    msg->pos += 4;
-    msg->length += 4;
-    return true;
+    return msg->msg_endian == DEFAULT_ENDIAN ? 
+           addDataToBuffer(msg, (octet*)&ulo, 4) : 
+           addDataReversed(msg, (octet*)&ulo, 4);
 }
+
+
 
 inline bool CDRMessage::addInt64(
         CDRMessage_t* msg,
         int64_t lolo)
 {
-    octet* o = (octet*)&lolo;
-    if (msg->pos + 8 > msg->max_size)
-    {
-        return false;
-    }
-    if (msg->msg_endian == DEFAULT_ENDIAN)
-    {
-        for (uint8_t i = 0; i < 8; i++)
-        {
-            msg->buffer[msg->pos + i] = *(o + i);
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 8; i++)
-        {
-            msg->buffer[msg->pos + i] = *(o + 7 - i);
-        }
-    }
-    msg->pos += 8;
-    msg->length += 8;
-    return true;
+    return msg->msg_endian == DEFAULT_ENDIAN ? 
+           addDataToBuffer(msg,(octet*)&lolo,4):
+           addDataReversed(msg,(octet*)&lolo,4);
 }
 
 inline bool CDRMessage::addUInt64(
         CDRMessage_t* msg,
         uint64_t ulolo)
 {
-    octet* o = (octet*)&ulolo;
-    if (msg->pos + 8 > msg->max_size)
-    {
-        return false;
-    }
-    if (msg->msg_endian == DEFAULT_ENDIAN)
-    {
-        for (uint8_t i = 0; i < 8; i++)
-        {
-            msg->buffer[msg->pos + i] = *(o + i);
-        }
-    }
-    else
-    {
-        for (uint8_t i = 0; i < 8; i++)
-        {
-            msg->buffer[msg->pos + i] = *(o + 7 - i);
-        }
-    }
-    msg->pos += 8;
-    msg->length += 8;
-    return true;
+    return msg->msg_endian == DEFAULT_ENDIAN ? 
+           addDataToBuffer(msg,(octet*)&ulolo,4):
+           addDataReversed(msg,(octet*)&ulolo,4);
 }
 
 inline bool CDRMessage::addOctetVector(
