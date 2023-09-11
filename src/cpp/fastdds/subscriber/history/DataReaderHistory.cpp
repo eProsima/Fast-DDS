@@ -665,15 +665,6 @@ ReaderHistory::iterator DataReaderHistory::remove_change_nts(
         ReaderHistory::const_iterator removal,
         bool release)
 {
-    return DataReaderHistory::remove_change_nts(removal, std::chrono::steady_clock::now() + std::chrono::hours(
-                       24), release);
-}
-
-ReaderHistory::iterator DataReaderHistory::remove_change_nts(
-        ReaderHistory::const_iterator removal,
-        const std::chrono::time_point<std::chrono::steady_clock>&,
-        bool release)
-{
     if (removal != changesEnd())
     {
         CacheChange_t* p_sample = *removal;
@@ -703,6 +694,14 @@ ReaderHistory::iterator DataReaderHistory::remove_change_nts(
     auto ret_val = ReaderHistory::remove_change_nts(removal, release);
     counters_.samples_unread = mp_reader->get_unread_count();
     return ret_val;
+}
+
+ReaderHistory::iterator DataReaderHistory::remove_change_nts(
+        ReaderHistory::const_iterator removal,
+        const std::chrono::time_point<std::chrono::steady_clock>&,
+        bool release)
+{
+    return DataReaderHistory::remove_change_nts(removal, release);
 }
 
 bool DataReaderHistory::completed_change(

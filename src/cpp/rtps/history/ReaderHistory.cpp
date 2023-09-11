@@ -131,15 +131,6 @@ History::iterator ReaderHistory::remove_change_nts(
         const_iterator removal,
         bool release)
 {
-    return ReaderHistory::remove_change_nts(removal, std::chrono::steady_clock::now() + std::chrono::hours(24),
-                   release);
-}
-
-History::iterator ReaderHistory::remove_change_nts(
-        const_iterator removal,
-        const std::chrono::time_point<std::chrono::steady_clock>&,
-        bool release)
-{
     if ( mp_reader == nullptr || mp_mutex == nullptr)
     {
         EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY,
@@ -164,6 +155,14 @@ History::iterator ReaderHistory::remove_change_nts(
     }
 
     return ret_val;
+}
+
+History::iterator ReaderHistory::remove_change_nts(
+        const_iterator removal,
+        const std::chrono::time_point<std::chrono::steady_clock>&,
+        bool release)
+{
+    return ReaderHistory::remove_change_nts(removal, release);
 }
 
 void ReaderHistory::writer_unmatched(
