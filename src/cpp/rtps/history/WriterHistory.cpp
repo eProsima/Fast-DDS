@@ -287,7 +287,17 @@ bool WriterHistory::remove_min_change(
         return false;
     }
 
+#if HAVE_STRICT_REALTIME
+    std::unique_lock<RecursiveTimedMutex> lock(*mp_mutex, std::defer_lock);
+    if (!lock.try_lock_until(max_blocking_time))
+    {
+        EPROSIMA_LOG_ERROR(PUBLISHER, "Cannot lock the DataWriterHistory mutex");
+        return false;
+    }
+#else
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+#endif // if HAVE_STRICT_REALTIME
+
     if (m_changes.size() > 0 && remove_change_g(m_changes.front(), max_blocking_time))
     {
         return true;

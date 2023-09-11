@@ -112,7 +112,16 @@ bool History::remove_change(
         CacheChange_t* ch,
         const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
 {
+#if HAVE_STRICT_REALTIME
+    std::unique_lock<RecursiveTimedMutex> lock(*mp_mutex, std::defer_lock);
+    if (!lock.try_lock_until(max_blocking_time))
+    {
+        EPROSIMA_LOG_ERROR(PUBLISHER, "Cannot lock the DataWriterHistory mutex");
+        return false;
+    }
+#else
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+#endif // if HAVE_STRICT_REALTIME
 
     const_iterator it = find_change_nts(ch);
     const_iterator end_it = changesEnd();

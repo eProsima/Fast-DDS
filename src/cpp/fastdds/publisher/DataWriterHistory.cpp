@@ -369,7 +369,6 @@ bool DataWriterHistory::remove_change_pub(
         return false;
     }
 #else
-    static_cast<void>(max_blocking_time);
     std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
 #endif // if HAVE_STRICT_REALTIME
 
