@@ -39,7 +39,7 @@ jobs:
       - uses: eProsima/eProsima-CI/ubuntu/get_file_from_repo@v0
         with:
           source_repository: eProsima/Fast-DDS
-          source_repository_branch: ${{ github.head_ref || github.event.inputs.fastdds_branch }}
+          source_repository_branch: ${{ github.head_ref || github.event.inputs.fastdds_branch || master }}
           file_name: fastrtps.repos
           file_result: fastrtps.repos
 
