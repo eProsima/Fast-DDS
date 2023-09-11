@@ -39,7 +39,7 @@ jobs:
       - uses: eProsima/eProsima-CI/ubuntu/get_file_from_repo@v0
         with:
           source_repository: eProsima/Fast-DDS
-          source_repository_branch: ${{ github.head_ref || github.event.inputs.fastdds_branch || master }}
+          source_repository_branch: ${{ github.head_ref || github.event.inputs.fastdds_branch || 'master' }}
           file_name: fastrtps.repos
           file_result: fastrtps.repos
 
@@ -62,10 +62,10 @@ jobs:
 
       - name: Build workspace
         run: |
-          cat src/fastrtps/.github/workflows/asan/asan_colcon.meta
+          cat src/fastrtps/.github/workflows/config/asan_colcon.meta
           colcon build \
             --event-handlers=console_direct+ \
-            --metas src/fastrtps/.github/workflows/asan/asan_colcon.meta
+            --metas src/fastrtps/.github/workflows/config/asan_colcon.meta
 
       - name: Run tests Fast DDS
         run: |
@@ -112,7 +112,7 @@ jobs:
       - uses: eProsima/eProsima-CI/ubuntu/get_file_from_repo@v0
         with:
           source_repository: eProsima/Fast-DDS
-          source_repository_branch: ${{ github.head_ref || github.event.inputs.fastdds_branch || master }}
+          source_repository_branch: ${{ github.head_ref || github.event.inputs.fastdds_branch || 'master' }}
           file_name: fastrtps.repos
           file_result: fastrtps.repos
 
@@ -144,10 +144,10 @@ jobs:
 
       - name: Build workspace
         run: |
-          cat src/fastrtps/.github/workflows/asan/asan_colcon.meta
+          cat src/fastrtps/.github/workflows/config/asan_colcon.meta
           colcon build \
             --event-handlers=console_direct+ \
-            --metas src/fastrtps/.github/workflows/asan/asan_colcon.meta
+            --metas src/fastrtps/.github/workflows/config/asan_colcon.meta
 
       - name: Run tests Fast DDS
         run: |
