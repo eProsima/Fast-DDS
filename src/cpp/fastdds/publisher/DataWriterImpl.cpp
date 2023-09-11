@@ -478,7 +478,7 @@ ReturnCode_t DataWriterImpl::loan_sample(
     }
 #else
     static_cast<void>(max_blocking_time);
-    std::unique_lock<RecursiveTimedMutex> lock(writer_->getMutex());
+    std::lock_guard<RecursiveTimedMutex> lock(writer_->getMutex());
 #endif // if HAVE_STRICT_REALTIME
 
     // Get one payload from the pool

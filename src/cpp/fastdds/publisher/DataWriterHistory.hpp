@@ -177,7 +177,7 @@ public:
     /**
      * Remove a change by the publisher History.
      * @param change Pointer to the CacheChange_t.
-     * @param max_blocking_time
+     * @param[in] max_blocking_time Maximum time this method has to complete the task.
      * @return True if removed.
      */
     bool remove_change_pub(
