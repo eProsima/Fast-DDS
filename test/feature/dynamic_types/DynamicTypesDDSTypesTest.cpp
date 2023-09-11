@@ -5807,7 +5807,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLong)
         MemberId keyId2;
         MemberId valueId2;
         key_data = DynamicDataFactory::get_instance()->create_data(key_type);
-        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
         ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
@@ -5901,7 +5901,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortULong)
         MemberId keyId2;
         MemberId valueId2;
         key_data = DynamicDataFactory::get_instance()->create_data(key_type);
-        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
         ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
@@ -5996,7 +5996,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLongLong)
         MemberId keyId2;
         MemberId valueId2;
         key_data = DynamicDataFactory::get_instance()->create_data(key_type);
-        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
         ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
@@ -6059,7 +6059,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortULongLong)
         ASSERT_TRUE(key_type_builder != nullptr);
         ASSERT_TRUE(key_type != nullptr);
 
-        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint64_builder();
         DynamicType_ptr value_type = value_type_builder->build();
         ASSERT_TRUE(value_type_builder != nullptr);
         ASSERT_TRUE(value_type != nullptr);
@@ -6077,7 +6077,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortULongLong)
         uint64_t test_value_2 = 0;
         
         // Try to write on an empty position
-        ASSERT_FALSE(data->set_int64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
         MemberId keyId;
         MemberId valueId;
@@ -6091,7 +6091,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortULongLong)
         MemberId keyId2;
         MemberId valueId2;
         key_data = DynamicDataFactory::get_instance()->create_data(key_type);
-        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
         ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
@@ -6185,7 +6185,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortFloat)
         MemberId keyId2;
         MemberId valueId2;
         key_data = DynamicDataFactory::get_instance()->create_data(key_type);
-        key_data->set_float32_value(2, MEMBER_ID_INVALID);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
         ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
@@ -6280,7 +6280,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortDouble)
         MemberId keyId2;
         MemberId valueId2;
         key_data = DynamicDataFactory::get_instance()->create_data(key_type);
-        key_data->set_float64_value(2, MEMBER_ID_INVALID);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
         ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
@@ -6375,7 +6375,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortLongDouble)
         MemberId keyId2;
         MemberId valueId2;
         key_data = DynamicDataFactory::get_instance()->create_data(key_type);
-        key_data->set_float128_value(2, MEMBER_ID_INVALID);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
         ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
@@ -6470,7 +6470,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortBoolean)
         MemberId keyId2;
         MemberId valueId2;
         key_data = DynamicDataFactory::get_instance()->create_data(key_type);
-        key_data->set_bool_value(2, MEMBER_ID_INVALID);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
         ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
@@ -6565,7 +6565,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortOctet)
         MemberId keyId2;
         MemberId valueId2;
         key_data = DynamicDataFactory::get_instance()->create_data(key_type);
-        key_data->set_byte_value(2, MEMBER_ID_INVALID);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
         ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
@@ -6660,7 +6660,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortChar)
         MemberId keyId2;
         MemberId valueId2;
         key_data = DynamicDataFactory::get_instance()->create_data(key_type);
-        key_data->set_char8_value(2, MEMBER_ID_INVALID);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
         ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
@@ -6755,7 +6755,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortWChar)
         MemberId keyId2;
         MemberId valueId2;
         key_data = DynamicDataFactory::get_instance()->create_data(key_type);
-        key_data->set_char16_value(2, MEMBER_ID_INVALID);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
         ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
@@ -6850,7 +6850,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortString)
         MemberId keyId2;
         MemberId valueId2;
         key_data = DynamicDataFactory::get_instance()->create_data(key_type);
-        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
         ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
@@ -6945,7 +6945,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortWString)
         MemberId keyId2;
         MemberId valueId2;
         key_data = DynamicDataFactory::get_instance()->create_data(key_type);
-        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
         ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
@@ -7040,7 +7040,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasBoundedStringHel
         MemberId keyId2;
         MemberId valueId2;
         key_data = DynamicDataFactory::get_instance()->create_data(key_type);
-        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
         ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
@@ -7135,7 +7135,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasBoundedWStringHe
         MemberId keyId2;
         MemberId valueId2;
         key_data = DynamicDataFactory::get_instance()->create_data(key_type);
-        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
         ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
@@ -7238,7 +7238,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerEnumHelper)
         MemberId keyId2;
         MemberId valueId2;
         key_data = DynamicDataFactory::get_instance()->create_data(key_type);
-        key_data->set_enum_value(2, MEMBER_ID_INVALID);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
         ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
@@ -7369,9 +7369,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortShort)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -7457,9 +7464,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortUShort)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::UShort};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -7545,9 +7559,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Long};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -7633,9 +7654,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortULong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::ULong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -7721,9 +7749,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLongLong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::LongLong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -7780,7 +7815,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortULongLong)
         ASSERT_TRUE(key_type_builder != nullptr);
         ASSERT_TRUE(key_type != nullptr);
 
-        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint64_builder();
         DynamicType_ptr value_type = value_type_builder->build();
         ASSERT_TRUE(value_type_builder != nullptr);
         ASSERT_TRUE(value_type != nullptr);
@@ -7798,7 +7833,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortULongLong)
         uint64_t test_value_2 = 0;
         
         // Try to write on an empty position
-        ASSERT_FALSE(data->set_int64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
         MemberId keyId;
         MemberId valueId;
@@ -7809,9 +7844,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortULongLong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::ULongLong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -7897,9 +7939,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortFloat)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Float};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -7985,9 +8034,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortDouble)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Double};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -8073,9 +8129,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortLongDouble)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::LongDouble};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -8161,9 +8224,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortBoolean)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Boolean};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -8249,9 +8319,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortOctet)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Octet};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -8337,9 +8414,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortChar)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Char};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -8425,9 +8509,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortWChar)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::WChar};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -8513,9 +8604,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortString)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::String};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -8601,9 +8699,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortWString)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::WString};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -8684,14 +8789,21 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasBoundedStringHe
         MemberId valueId;
         DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
         ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
-
+      
         // Try to Add the same key twice.
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::String};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -8777,9 +8889,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasBoundedWStringH
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::WString};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -8873,9 +8992,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerEnumHelper)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Enum};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -9000,9 +9126,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongShort)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -9088,9 +9221,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongUShort)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::UShort};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -9176,9 +9316,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Long};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -9264,9 +9411,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongULong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::ULong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -9352,9 +9506,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongKeyLongLongValue)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::LongLong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -9411,7 +9572,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongULongLong)
         ASSERT_TRUE(key_type_builder != nullptr);
         ASSERT_TRUE(key_type != nullptr);
 
-        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint64_builder();
         DynamicType_ptr value_type = value_type_builder->build();
         ASSERT_TRUE(value_type_builder != nullptr);
         ASSERT_TRUE(value_type != nullptr);
@@ -9429,7 +9590,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongULongLong)
         uint64_t test_value_2 = 0;
         
         // Try to write on an empty position
-        ASSERT_FALSE(data->set_int64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
         MemberId keyId;
         MemberId valueId;
@@ -9440,9 +9601,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongULongLong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::ULongLong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -9528,9 +9696,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongFloat)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Float};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -9616,9 +9791,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongDouble)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Double};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -9704,9 +9886,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongKeyLongDoubleValue)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::LongDouble};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -9792,9 +9981,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongBoolean)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Boolean};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -9880,9 +10076,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongOctet)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Octet};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -9968,9 +10171,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongChar)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Char};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -10056,9 +10266,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongWChar)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::WChar};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -10144,9 +10361,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongString)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::String};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -10232,9 +10456,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongWString)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::WString};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -10320,9 +10551,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasBoundedStringHelp
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::String};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -10408,9 +10646,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasBoundedWStringHel
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::WString};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -10504,9 +10749,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerEnumHelper)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Enum};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -10631,9 +10883,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongShort)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -10719,9 +10978,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongUShort)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::UShort};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -10807,9 +11073,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Long};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -10895,9 +11168,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongULong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::ULong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -10983,9 +11263,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::LongLong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -11042,7 +11329,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongULongLong)
         ASSERT_TRUE(key_type_builder != nullptr);
         ASSERT_TRUE(key_type != nullptr);
 
-        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint64_builder();
         DynamicType_ptr value_type = value_type_builder->build();
         ASSERT_TRUE(value_type_builder != nullptr);
         ASSERT_TRUE(value_type != nullptr);
@@ -11060,7 +11347,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongULongLong)
         uint64_t test_value_2 = 0;
         
         // Try to write on an empty position
-        ASSERT_FALSE(data->set_int64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
         MemberId keyId;
         MemberId valueId;
@@ -11071,9 +11358,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongULongLong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::ULongLong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -11159,9 +11453,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongFloat)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Float};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -11247,9 +11548,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongDouble)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Double};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -11335,9 +11643,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapKeyULongValueLongDouble)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::LongDouble};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -11423,9 +11738,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongBoolean)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Boolean};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -11511,9 +11833,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongOctet)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Octet};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -11599,9 +11928,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongChar)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Char};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -11687,9 +12023,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongWChar)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::WChar};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -11775,9 +12118,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongString)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::String};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -11863,9 +12213,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongWString)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::WString};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -11951,9 +12308,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasBoundedStringHel
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::String};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -12039,9 +12403,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasBoundedWStringHe
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::WString};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -12135,9 +12506,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerEnumHelper)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Enum};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -12262,9 +12640,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongShort)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -12350,9 +12735,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongUShort)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::UShort};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -12438,9 +12830,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongKeyLongValue)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Long};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -12526,9 +12925,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongULong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::ULong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -12614,9 +13020,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongLongLong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::LongLong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -12673,7 +13086,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongULongLong)
         ASSERT_TRUE(key_type_builder != nullptr);
         ASSERT_TRUE(key_type != nullptr);
 
-        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint64_builder();
         DynamicType_ptr value_type = value_type_builder->build();
         ASSERT_TRUE(value_type_builder != nullptr);
         ASSERT_TRUE(value_type != nullptr);
@@ -12691,7 +13104,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongULongLong)
         uint64_t test_value_2 = 0;
         
         // Try to write on an empty position
-        ASSERT_FALSE(data->set_int64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
         MemberId keyId;
         MemberId valueId;
@@ -12702,9 +13115,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongULongLong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::ULongLong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -12790,9 +13210,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongFloat)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Float};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -12878,9 +13305,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongKeyDoubleValue)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Double};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -12966,9 +13400,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongLongDouble)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::LongDouble};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -13054,9 +13495,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongBoolean)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Boolean};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -13142,9 +13590,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongOctet)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Octet};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -13230,9 +13685,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongChar)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Char};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -13318,9 +13780,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongWChar)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::WChar};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -13406,9 +13875,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongString)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::String};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -13494,9 +13970,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongWString)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::WString};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -13582,9 +14065,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasBoundedString
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::String};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -13670,9 +14160,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasBoundedWStrin
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::WString};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -13766,9 +14263,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerEnumHelper)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Enum};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -13893,9 +14397,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongShort)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -13981,9 +14492,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongUShort)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::UShort};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -14069,9 +14587,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapKeyULongValueLongLong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Long};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -14157,9 +14682,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongULong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::ULong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -14245,9 +14777,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLongLong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::LongLong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -14304,7 +14843,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongULongLong)
         ASSERT_TRUE(key_type_builder != nullptr);
         ASSERT_TRUE(key_type != nullptr);
 
-        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint64_builder();
         DynamicType_ptr value_type = value_type_builder->build();
         ASSERT_TRUE(value_type_builder != nullptr);
         ASSERT_TRUE(value_type != nullptr);
@@ -14322,7 +14861,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongULongLong)
         uint64_t test_value_2 = 0;
         
         // Try to write on an empty position
-        ASSERT_FALSE(data->set_int64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
         MemberId keyId;
         MemberId valueId;
@@ -14333,9 +14872,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongULongLong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::ULongLong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -14421,9 +14967,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongFloat)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Float};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -14509,9 +15062,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapKeyULongLongValueDouble)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Double};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -14597,9 +15157,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongLongDouble)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::LongDouble};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -14685,9 +15252,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongBoolean)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Boolean};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -14773,9 +15347,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongOctet)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Octet};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -14861,9 +15442,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongChar)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Char};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -14949,9 +15537,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongWChar)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::WChar};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -15037,9 +15632,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongString)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::String};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -15125,9 +15727,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongWString)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::WString};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -15213,9 +15822,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasBoundedStrin
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::String};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -15301,9 +15917,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasBoundedWStri
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::WString};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -15397,9 +16020,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerEnumHelper)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Enum};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -15524,9 +16154,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringShort)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -15612,9 +16249,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringUShort)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::UShort};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -15700,9 +16344,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Long};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -15788,9 +16439,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringULong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::ULong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -15876,9 +16534,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLongLong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::LongLong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -15935,7 +16600,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringULongLong)
         ASSERT_TRUE(key_type_builder != nullptr);
         ASSERT_TRUE(key_type != nullptr);
 
-        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint64_builder();
         DynamicType_ptr value_type = value_type_builder->build();
         ASSERT_TRUE(value_type_builder != nullptr);
         ASSERT_TRUE(value_type != nullptr);
@@ -15953,7 +16618,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringULongLong)
         uint64_t test_value_2 = 0;
         
         // Try to write on an empty position
-        ASSERT_FALSE(data->set_int64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
         MemberId keyId;
         MemberId valueId;
@@ -15964,9 +16629,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringULongLong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::ULongLong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -16052,9 +16724,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringFloat)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Float};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -16140,9 +16819,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringDouble)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Double};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -16228,9 +16914,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringLongDouble)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::LongDouble};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -16316,9 +17009,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringBoolean)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Boolean};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -16404,9 +17104,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringOctet)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Octet};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -16492,9 +17199,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringChar)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Char};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -16580,9 +17294,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringWChar)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::WChar};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -16668,9 +17389,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringString)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::String};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -16756,9 +17484,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringWString)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::WString};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -16844,9 +17579,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasBoundedStringHe
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::String};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -16932,9 +17674,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasBoundedWStringH
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::WString};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -17028,9 +17777,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerEnumHelper)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Enum};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -17155,9 +17911,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringShort)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -17243,9 +18006,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringUShort)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::UShort};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -17331,9 +18101,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringLong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Long};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -17419,9 +18196,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringULong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::ULong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -17507,9 +18291,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringLongLong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::LongLong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -17566,7 +18357,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringULongLong)
         ASSERT_TRUE(key_type_builder != nullptr);
         ASSERT_TRUE(key_type != nullptr);
 
-        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint64_builder();
         DynamicType_ptr value_type = value_type_builder->build();
         ASSERT_TRUE(value_type_builder != nullptr);
         ASSERT_TRUE(value_type != nullptr);
@@ -17584,7 +18375,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringULongLong)
         uint64_t test_value_2 = 0;
         
         // Try to write on an empty position
-        ASSERT_FALSE(data->set_int64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
         MemberId keyId;
         MemberId valueId;
@@ -17595,9 +18386,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringULongLong)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::ULongLong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -17683,9 +18481,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringFloat)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Float};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -17771,9 +18576,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringDouble)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Double};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -17859,9 +18671,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringLongDouble)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::LongDouble};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -17947,9 +18766,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringBoolean)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Boolean};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -18035,9 +18861,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringOctet)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Octet};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -18123,9 +18956,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringChar)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Char};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -18211,9 +19051,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringWChar)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::WChar};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -18299,9 +19146,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringString)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::String};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -18387,9 +19241,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringWString)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::WString};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -18475,9 +19336,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringInnerAliasBoundedStringH
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::String};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -18563,9 +19431,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringInnerAliasBoundedWString
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::WString};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -18659,9 +19534,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringInnerEnumHelper)
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Enum};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -18786,9 +19668,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperSh
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -18874,9 +19763,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUS
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::UShort};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -18962,9 +19858,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Long};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -19050,9 +19953,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUL
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::ULong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -19138,9 +20048,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::LongLong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -19197,7 +20114,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUL
         ASSERT_TRUE(key_type_builder != nullptr);
         ASSERT_TRUE(key_type != nullptr);
 
-        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint64_builder();
         DynamicType_ptr value_type = value_type_builder->build();
         ASSERT_TRUE(value_type_builder != nullptr);
         ASSERT_TRUE(value_type != nullptr);
@@ -19215,7 +20132,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUL
         uint64_t test_value_2 = 0;
         
         // Try to write on an empty position
-        ASSERT_FALSE(data->set_int64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
         MemberId keyId;
         MemberId valueId;
@@ -19226,9 +20143,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperUL
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::ULongLong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -19314,9 +20238,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperFl
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Float};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -19402,9 +20333,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperDo
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Double};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -19490,9 +20428,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperLo
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::LongDouble};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -19578,9 +20523,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperBo
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Boolean};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -19666,9 +20618,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperOc
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Octet};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -19754,9 +20713,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperCh
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Char};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -19842,9 +20808,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperWC
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::WChar};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -19930,9 +20903,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperSt
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::String};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -20018,9 +20998,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperWS
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::WString};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -20106,9 +21093,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::String};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -20194,9 +21188,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::WString};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -20290,9 +21291,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Enum};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -20417,9 +21425,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperS
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -20505,9 +21520,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperU
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::UShort};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -20593,9 +21615,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperL
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Long};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -20681,9 +21710,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperU
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::ULong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -20769,9 +21805,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperL
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::LongLong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -20828,7 +21871,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperU
         ASSERT_TRUE(key_type_builder != nullptr);
         ASSERT_TRUE(key_type != nullptr);
 
-        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint64_builder();
         DynamicType_ptr value_type = value_type_builder->build();
         ASSERT_TRUE(value_type_builder != nullptr);
         ASSERT_TRUE(value_type != nullptr);
@@ -20846,7 +21889,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperU
         uint64_t test_value_2 = 0;
         
         // Try to write on an empty position
-        ASSERT_FALSE(data->set_int64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->set_uint64_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
         MemberId keyId;
         MemberId valueId;
@@ -20857,9 +21900,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperU
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::ULongLong};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -20945,9 +21995,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperF
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Float};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -21033,9 +22090,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperD
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Double};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -21121,9 +22185,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperL
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::LongDouble};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -21209,9 +22280,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperB
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Boolean};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -21297,9 +22375,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperO
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Octet};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -21385,9 +22470,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperC
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Char};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -21473,9 +22565,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperW
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::WChar};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -21561,9 +22660,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperS
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::String};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -21649,9 +22755,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperW
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::WString};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -21737,9 +22850,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperI
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::String};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -21825,9 +22945,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperI
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::WString};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -21921,9 +23048,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperI
         ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
-        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Enum};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -22050,8 +23184,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedSmallMap)
         ASSERT_FALSE(data->insert_map_data(key_data2, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
 
         std::vector<ExpectedType> expected_types = {ExpectedType::Long};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -22151,8 +23285,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedLargeMap)
         ASSERT_FALSE(data->insert_map_data(key_data3, keyId3, valueId3) == ReturnCode_t::RETCODE_OK);
 
         std::vector<ExpectedType> expected_types = {ExpectedType::Long};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
