@@ -62,10 +62,10 @@ jobs:
 
       - name: Build workspace
         run: |
-          cat src/fastrtps/.github/workflows/asan/asan_colcon.meta
+          cat src/fastrtps/.github/workflows/config/asan_colcon.meta
           colcon build \
             --event-handlers=console_direct+ \
-            --metas src/fastrtps/.github/workflows/asan/asan_colcon.meta
+            --metas src/fastrtps/.github/workflows/config/asan_colcon.meta
 
       - name: Run tests Fast DDS
         run: |
@@ -144,10 +144,10 @@ jobs:
 
       - name: Build workspace
         run: |
-          cat src/fastrtps/.github/workflows/asan/asan_colcon.meta
+          cat src/fastrtps/.github/workflows/config/asan_colcon.meta
           colcon build \
             --event-handlers=console_direct+ \
-            --metas src/fastrtps/.github/workflows/asan/asan_colcon.meta
+            --metas src/fastrtps/.github/workflows/config/asan_colcon.meta
 
       - name: Run tests Fast DDS
         run: |
