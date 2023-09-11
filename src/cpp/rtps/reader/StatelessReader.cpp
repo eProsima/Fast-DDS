@@ -459,6 +459,17 @@ void StatelessReader::change_read_by_user(
 
 }
 
+#ifdef FASTDDS_STATISTICS
+
+bool StatelessReader::get_connections(
+        fastdds::statistics::rtps::ConnectionList &connection_list)
+{
+    static_cast<void>(connection_list);
+    return false;
+}
+
+#endif
+
 bool StatelessReader::processDataMsg(
         CacheChange_t* change)
 {

@@ -2850,9 +2850,36 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
 bool
 RTPSParticipantImpl::get_entity_connections(
         const GUID_t& guid,
-        fastdds::statistics::rtps::ConnectionList& /*conn_list*/)
+        fastdds::statistics::rtps::ConnectionList& conn_list)
 {
-    static_cast<void>(guid);
+    if (guid.entityId == c_EntityId_RTPSParticipant)
+    {
+
+    }
+    else if (guid.entityId.is_reader())
+    {
+        for (auto& reader : m_userReaderList)
+        {
+            if (reader->m_guid == guid)
+            {
+                reader->get_connections(conn_list);
+            }
+        }
+    }
+    else if (guid.entityId.is_writer())
+    {
+        for (auto& writer : m_userWriterList)
+        {
+            if (writer->m_guid == guid)
+            {
+                writer->get_connections(conn_list);
+            }
+        }
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Unknown entitiy kind to get connections: " << guid);
+    }
     return false;
 }
 

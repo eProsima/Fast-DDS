@@ -882,6 +882,17 @@ DeliveryRetCode StatelessWriter::deliver_sample_nts(
     return ret_code;
 }
 
+#ifdef FASTDDS_STATISTICS
+
+bool StatelessWriter::get_connections(
+        fastdds::statistics::rtps::ConnectionList &connection_list)
+{
+    static_cast<void>(connection_list);
+    return false;
+}
+
+#endif
+
 } /* namespace rtps */
 } /* namespace fastrtps */
 } /* namespace eprosima */

@@ -1445,6 +1445,17 @@ void StatefulReader::change_read_by_user(
     }
 }
 
+#ifdef FASTDDS_STATISTICS
+
+bool StatefulReader::get_connections(
+        fastdds::statistics::rtps::ConnectionList &connection_list)
+{
+    static_cast<void>(connection_list);
+    return false;
+}
+
+#endif
+
 void StatefulReader::send_acknack(
         const WriterProxy* writer,
         const SequenceNumberSet_t& sns,
