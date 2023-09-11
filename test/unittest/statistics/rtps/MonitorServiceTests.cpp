@@ -56,8 +56,9 @@ struct MockStatusQueryable : public IStatusQueryable
 
 struct MockConnectionsQueryable : public IConnectionsQueryable
 {
-    MOCK_METHOD1(get_entity_connections, ConnectionList(
-                const fastrtps::rtps::GUID_t& guid));
+    MOCK_METHOD2(get_entity_connections, bool(
+                const fastrtps::rtps::GUID_t& guid,
+                ConnectionList &conns_list));
 };
 
 struct MockProxyQueryable : public IProxyQueryable
@@ -133,7 +134,7 @@ TEST_F(MonitorServiceTests, enabling_monitor_service_routine)
     //! local entities
     EXPECT_CALL(mock_proxy_q_, get_all_local_proxies(::testing::_)).Times(1);
     EXPECT_CALL(mock_proxy_q_, get_serialized_proxy(::testing::_, ::testing::_)).Times(n_local_entities);
-    EXPECT_CALL(mock_conns_q_, get_entity_connections(::testing::_)).Times(n_local_entities);
+    EXPECT_CALL(mock_conns_q_, get_entity_connections(::testing::_, ::testing::_)).Times(n_local_entities);
 
     //! Enable the service
     ASSERT_FALSE(monitor_srv_.disable_monitor_service());
@@ -160,7 +161,7 @@ TEST_F(MonitorServiceTests, multiple_proxy_and_connection_updates)
     //! Expect the getters for each status that is going to be updated
     EXPECT_CALL(mock_proxy_q_, get_serialized_proxy(::testing::_, ::testing::_)).
             Times(n_local_entities);
-    EXPECT_CALL(mock_conns_q_, get_entity_connections(::testing::_)).
+    EXPECT_CALL(mock_conns_q_, get_entity_connections(::testing::_, ::testing::_)).
             Times(n_local_entities);
 
     //! Trigger statuses updates for each entity
@@ -225,7 +226,7 @@ TEST_F(MonitorServiceTests, entity_removal_correctly_performs)
 
     EXPECT_CALL(mock_proxy_q_, get_serialized_proxy(::testing::_, ::testing::_)).
             Times(0);
-    EXPECT_CALL(mock_conns_q_, get_entity_connections(::testing::_)).
+    EXPECT_CALL(mock_conns_q_, get_entity_connections(::testing::_, ::testing::_)).
             Times(0);
 
     //! Expect the getters for each status that is going to be updated

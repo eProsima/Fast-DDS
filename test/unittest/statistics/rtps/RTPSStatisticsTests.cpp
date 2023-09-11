@@ -1410,8 +1410,8 @@ TEST_F(RTPSStatisticsTests, iconnections_queryable_get_entity_connections)
     auto participant_mock = static_cast<RTPSParticipantMock*>(participant_);
     auto part_impl = participant_mock->get_impl();
 
-    conns_reader = part_impl->get_entity_connections(reader_->getGuid());
-    conns_writer = part_impl->get_entity_connections(writer_->getGuid());
+    part_impl->get_entity_connections(reader_->getGuid(), conns_reader);
+    part_impl->get_entity_connections(writer_->getGuid(), conns_writer);
 
     ASSERT_EQ(1, conns_writer.size());
     ASSERT_EQ(1, conns_writer.size());
