@@ -31,20 +31,22 @@ namespace statistics {
 class Connection;
 namespace rtps {
 
+using ConnectionList = std::vector<eprosima::fastdds::statistics::Connection>;
+
 struct IConnectionsQueryable
 {
-    using ConnectionList = std::vector<eprosima::fastdds::statistics::Connection>;
-
     /**
      * @brief Interface for retrieving a list of Connections
      * (announced locators, used_locators and mode)
      * of a given entity, by guid
      *
-     * @param guid The GUID_t identifying the target entity
-     * @return ConnectionList The Connections collection
+     * @param [in] guid The GUID_t identifying the target entity
+     * @param [out] conns_list The output connection list
+     * @return Whether the list of connnections could be retrieved
      */
-    virtual ConnectionList get_entity_connections(
-            const fastrtps::rtps::GUID_t& guid) = 0;
+    virtual bool get_entity_connections(
+            const fastrtps::rtps::GUID_t& guid,
+            ConnectionList& conns_list) = 0;
 };
 
 } // rtps

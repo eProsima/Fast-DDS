@@ -2847,12 +2847,13 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
     return ret && (data.guid().entityId.is_reader());
 }
 
-std::vector<fastdds::statistics::Connection>
+bool
 RTPSParticipantImpl::get_entity_connections(
-        const GUID_t& guid)
+        const GUID_t& guid,
+        fastdds::statistics::rtps::ConnectionList& /*conn_list*/)
 {
     static_cast<void>(guid);
-    return std::vector<fastdds::statistics::Connection>();
+    return false;
 }
 
 #endif // FASTDDS_STATISTICS

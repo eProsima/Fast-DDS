@@ -1223,8 +1223,9 @@ public:
             fastrtps::rtps::ReaderProxyData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 
-    std::vector<fastdds::statistics::Connection> get_entity_connections(
-            const GUID_t&) override;
+    bool get_entity_connections(
+            const GUID_t&,
+            fastdds::statistics::rtps::ConnectionList& conn_list) override;
 
     std::unique_ptr<fastdds::statistics::rtps::MonitorService> monitor_server_;
     std::unique_ptr<fastdds::statistics::rtps::SimpleQueryable> simple_queryable_;
