@@ -23342,7 +23342,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedLargeMap)
 #pragma region PRIMITIVES
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ShortStruct)
-{        
+{
     {
         DynamicTypeBuilder_ptr created_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
         ASSERT_TRUE(created_builder != nullptr);
@@ -25859,12 +25859,12 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceMap)
         ASSERT_TRUE(value_type_builder != nullptr);
         ASSERT_TRUE(value_type != nullptr);
 
-        DynamicTypeBuilder_ptr content_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
-        DynamicType_ptr content_type = content_type_builder->build();
-        ASSERT_TRUE(content_type_builder != nullptr);
-        ASSERT_TRUE(content_type != nullptr);
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
 
-        DynamicTypeBuilder_ptr complex_seq_type_builder = DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(content_type_builder.get(), length);
+        DynamicTypeBuilder_ptr complex_seq_type_builder = DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(map_type_builder.get(), length);
         DynamicType_ptr complex_seq_type = complex_seq_type_builder->build();
         ASSERT_TRUE(complex_seq_type_builder != nullptr);
         ASSERT_TRUE(complex_seq_type != nullptr);
@@ -25884,9 +25884,9 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceMap)
         // Set and get a value.
         int32_t test_value_1 = 123;
         int32_t test_value_2 = 0;
-
+        
         // Try to write on an empty position
-        ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(seq_data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
 
         MemberId keyId;
         MemberId valueId;
@@ -25897,9 +25897,16 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceMap)
         ASSERT_FALSE(seq_data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(seq_data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
         std::vector<ExpectedType> expected_types = {ExpectedType::Long};
-        check_set_values(data, expected_types, &test_value_1);
-        check_get_values(data, expected_types, &test_value_2);
+        check_set_values(seq_data, expected_types, &test_value_1, valueId);
+        check_get_values(seq_data, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -25955,7 +25962,6 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceMap)
     ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
-
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceUnion)
 {
 }
@@ -25967,7 +25973,6 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceStructure)
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceBitset)
 {
 }
-
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedSmallSequences)
 {
@@ -26519,7 +26524,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Structures)
     StructStructure var_StructStructure;
     StructBitset var_StructBitset;
     StructEmpty var_StructEmpty;
-}
+} 
 
 #pragma endregion
 
@@ -26529,7 +26534,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Structures)
 #pragma region UNIONS
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionShort)
-{        
+{
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
         DynamicType_ptr base_type = base_type_builder->build();
@@ -26605,7 +26610,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionShort)
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionUShort)
-{        
+{
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint16_builder();
         DynamicType_ptr base_type = base_type_builder->build();
@@ -27823,7 +27828,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionBoundedWString)
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerEnumHelper)
 {
-}
+} 
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerBitMaskHelper)
 {
@@ -28209,7 +28214,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerBitsetHelper)
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorShort)
-{        
+{
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
         DynamicType_ptr base_type = base_type_builder->build();
@@ -28304,7 +28309,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorShort)
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorUShort)
-{        
+{
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
         DynamicType_ptr base_type = base_type_builder->build();
@@ -28399,7 +28404,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorUShort)
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorLong)
-{        
+{
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
         DynamicType_ptr base_type = base_type_builder->build();
@@ -28494,7 +28499,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorLong)
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorULong)
-{        
+{
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
         DynamicType_ptr base_type = base_type_builder->build();
@@ -28589,7 +28594,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorULong)
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorLongLong)
-{        
+{
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
         DynamicType_ptr base_type = base_type_builder->build();
@@ -28684,7 +28689,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorLongLong)
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorULongLong)
-{        
+{
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
         DynamicType_ptr base_type = base_type_builder->build();
@@ -28779,7 +28784,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorULongLong)
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorBoolean)
-{        
+{
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
         DynamicType_ptr base_type = base_type_builder->build();
@@ -28874,7 +28879,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorBoolean)
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorOctet)
-{        
+{
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
         DynamicType_ptr base_type = base_type_builder->build();
@@ -28969,7 +28974,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorOctet)
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorChar)
-{        
+{
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
         DynamicType_ptr base_type = base_type_builder->build();
@@ -29064,7 +29069,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorChar)
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorWChar)
-{        
+{
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
         DynamicType_ptr base_type = base_type_builder->build();
@@ -29163,7 +29168,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorEnum)
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorAlias)
-{        
+{
     {
         DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
         DynamicType_ptr base_type = base_type_builder->build();
