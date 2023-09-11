@@ -2122,6 +2122,17 @@ DeliveryRetCode StatefulWriter::deliver_sample_nts(
     return ret_code;
 }
 
+#ifdef FASTDDS_STATISTICS
+
+bool StatefulWriter::get_connections(
+        fastdds::statistics::rtps::ConnectionList &connection_list)
+{
+    static_cast<void>(connection_list);
+    return false;
+}
+
+#endif
+
 void StatefulWriter::add_gaps_for_holes_in_history_(
         RTPSMessageGroup& group)
 {
