@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <cstdlib>
 #include <fstream>
 #include <mutex>
 #include <sstream>
@@ -26,6 +27,7 @@
 #include <fastrtps/xmlparser/XMLTree.h>
 
 #include "../logging/mock/MockConsumer.h"
+#include "rtps/xmlparser/XMLParserUtils.hpp"
 #include "wrapper/XMLParserTest.hpp"
 
 using namespace eprosima::fastdds::dds;
@@ -849,7 +851,8 @@ TEST_F(XMLParserTests, getXMLPortParameters_NegativeClauses)
                     "\
                     <port>\
                         <portBase>" + parameters[0] + "</portBase>\
-                        <domainIDGain>" + parameters[1] + "</domainIDGain>\
+                        <domainIDGain>" + parameters[1] +
+                    "</domainIDGain>\
                         <participantIDGain>" + parameters[2] +
                     "</participantIDGain>\
                         <offsetd0>" + parameters[3] + "</offsetd0>\
@@ -3871,4 +3874,206 @@ TEST_F(XMLParserTests, getXMLTypeLookupSettings_NegativeClauses)
     titleElement = xml_doc.RootElement();
     EXPECT_EQ(XMLP_ret::XML_ERROR,
             XMLParserTest::getXMLTypeLookupSettings_wrapper(titleElement, settings, ident));
+}
+
+TEST_F(XMLParserTests, get_element_text)
+{
+    using namespace eprosima::fastdds::xml::detail;
+
+    // 1. Empty content
+    {
+        tinyxml2::XMLDocument xml_doc;
+        tinyxml2::XMLElement* xml_element;
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse("<elem></elem>"));
+        xml_element = xml_doc.RootElement();
+
+        std::string result;
+        EXPECT_EQ(get_element_text(xml_element), "");
+        EXPECT_FALSE(get_element_text(xml_element, result));
+    }
+
+    // 2. Plain content
+    {
+        tinyxml2::XMLDocument xml_doc;
+        tinyxml2::XMLElement* xml_element;
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse("<elem>Content</elem>"));
+        xml_element = xml_doc.RootElement();
+
+        std::string result;
+        EXPECT_EQ(get_element_text(xml_element), "Content");
+        EXPECT_TRUE(get_element_text(xml_element, result));
+        EXPECT_EQ(result, "Content");
+    }
+}
+
+static void set_environment_variable(
+        const char* const env_var,
+        const char* const value)
+{
+#ifdef _WIN32
+    ASSERT_EQ(0, _putenv_s(env_var, value));
+#else
+    ASSERT_EQ(0, setenv(env_var, value));
+#endif // _WIN32
+}
+
+static void clear_environment_variable(
+        const char* const env_var)
+{
+#ifdef _WIN32
+    ASSERT_EQ(0, _putenv_s(env_var, ""));
+#else
+    ASSERT_EQ(0, unsetenv(env_var));
+#endif // _WIN32
+}
+
+TEST_F(XMLParserTests, env_var_substitution)
+{
+    using namespace eprosima::fastdds::xml::detail;
+
+    const char* const env_var_1 = "XML_PARSER_TESTS_ENV_VAR_1";
+    const char* const env_var_2 = "XML_PARSER_TESTS_ENV_VAR_2";
+
+    // 1. Empty var
+    {
+        clear_environment_variable(env_var_1);
+        tinyxml2::XMLDocument xml_doc;
+        tinyxml2::XMLElement* xml_element;
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse("<elem>${XML_PARSER_TESTS_ENV_VAR_1}</elem>"));
+        xml_element = xml_doc.RootElement();
+
+        std::string result;
+        EXPECT_EQ(get_element_text(xml_element), "");
+        EXPECT_FALSE(get_element_text(xml_element, result));
+    }
+
+    // 2. Single environment var only
+    {
+        set_environment_variable(env_var_1, "Content");
+        tinyxml2::XMLDocument xml_doc;
+        tinyxml2::XMLElement* xml_element;
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse("<elem>${XML_PARSER_TESTS_ENV_VAR_1}</elem>"));
+        xml_element = xml_doc.RootElement();
+
+        std::string result;
+        EXPECT_EQ(get_element_text(xml_element), "Content");
+        EXPECT_TRUE(get_element_text(xml_element, result));
+        EXPECT_EQ(result, "Content");
+    }
+
+    // 3. Text plus env var
+    {
+        tinyxml2::XMLDocument xml_doc;
+        tinyxml2::XMLElement* xml_element;
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse("<elem>Has ${XML_PARSER_TESTS_ENV_VAR_1}</elem>"));
+        xml_element = xml_doc.RootElement();
+
+        std::string result;
+        EXPECT_EQ(get_element_text(xml_element), "Has Content");
+        EXPECT_TRUE(get_element_text(xml_element, result));
+        EXPECT_EQ(result, "Has Content");
+    }
+
+    // 4. Text plus empty env var
+    {
+        clear_environment_variable(env_var_1);
+
+        tinyxml2::XMLDocument xml_doc;
+        tinyxml2::XMLElement* xml_element;
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse("<elem>Empty ${XML_PARSER_TESTS_ENV_VAR_1}</elem>"));
+        xml_element = xml_doc.RootElement();
+
+        std::string result;
+        EXPECT_EQ(get_element_text(xml_element), "Empty ");
+        EXPECT_TRUE(get_element_text(xml_element, result));
+        EXPECT_EQ(result, "Empty ");
+    }
+
+    // 5. Mixing vars
+    {
+        tinyxml2::XMLDocument xml_doc;
+        tinyxml2::XMLElement* xml_element;
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS,
+                xml_doc.Parse("<elem>${XML_PARSER_TESTS_ENV_VAR_1}${XML_PARSER_TESTS_ENV_VAR_2}</elem>"));
+        xml_element = xml_doc.RootElement();
+
+        // 5.1. Both empty
+        clear_environment_variable(env_var_1);
+        clear_environment_variable(env_var_2);
+
+        std::string result;
+        EXPECT_EQ(get_element_text(xml_element), "");
+        EXPECT_FALSE(get_element_text(xml_element, result));
+        EXPECT_EQ(result, "");
+
+        // 5.2. First with data
+        set_environment_variable(env_var_1, "Content-1");
+        clear_environment_variable(env_var_2);
+
+        EXPECT_EQ(get_element_text(xml_element), "Content-1");
+        EXPECT_TRUE(get_element_text(xml_element, result));
+        EXPECT_EQ(result, "Content-1");
+
+        // 5.3. Second with data
+        clear_environment_variable(env_var_1);
+        set_environment_variable(env_var_2, "Content-2");
+
+        EXPECT_EQ(get_element_text(xml_element), "Content-2");
+        EXPECT_TRUE(get_element_text(xml_element, result));
+        EXPECT_EQ(result, "Content-2");
+
+        // 5.4. Both with data
+        set_environment_variable(env_var_1, "Content-1");
+        set_environment_variable(env_var_2, "Content-2");
+
+        EXPECT_EQ(get_element_text(xml_element), "Content-1Content-2");
+        EXPECT_TRUE(get_element_text(xml_element, result));
+        EXPECT_EQ(result, "Content-1Content-2");
+    }
+
+    // 6. Mixing text and vars
+    {
+        tinyxml2::XMLDocument xml_doc;
+        tinyxml2::XMLElement* xml_element;
+        ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS,
+                xml_doc.Parse("<elem>A mix of ${XML_PARSER_TESTS_ENV_VAR_1} & ${XML_PARSER_TESTS_ENV_VAR_2}!</elem>"));
+        xml_element = xml_doc.RootElement();
+
+        // 5.1. Both empty
+        clear_environment_variable(env_var_1);
+        clear_environment_variable(env_var_2);
+
+        std::string result;
+        EXPECT_EQ(get_element_text(xml_element), "A mix of  & !");
+        EXPECT_TRUE(get_element_text(xml_element, result));
+        EXPECT_EQ(result, "A mix of  & !");
+
+        // 6.2. First with data
+        set_environment_variable(env_var_1, "Content-1");
+        clear_environment_variable(env_var_2);
+
+        EXPECT_EQ(get_element_text(xml_element), "A mix of Content-1 & !");
+        EXPECT_TRUE(get_element_text(xml_element, result));
+        EXPECT_EQ(result, "A mix of Content-1 & !");
+
+        // 6.3. Second with data
+        clear_environment_variable(env_var_1);
+        set_environment_variable(env_var_2, "Content-2");
+
+        EXPECT_EQ(get_element_text(xml_element), "A mix of  & Content-2!");
+        EXPECT_TRUE(get_element_text(xml_element, result));
+        EXPECT_EQ(result, "A mix of  & Content-2!");
+
+        // 6.4. Both with data
+        set_environment_variable(env_var_1, "Content-1");
+        set_environment_variable(env_var_2, "Content-2");
+
+        EXPECT_EQ(get_element_text(xml_element), "A mix of Content-1 & Content-2!");
+        EXPECT_TRUE(get_element_text(xml_element, result));
+        EXPECT_EQ(result, "A mix of Content-1 & Content-2!");
+    }
+
+    // Cleanup environment variables used in this test
+    clear_environment_variable(env_var_1);
+    clear_environment_variable(env_var_2);
 }
