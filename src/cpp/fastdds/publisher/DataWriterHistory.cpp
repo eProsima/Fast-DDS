@@ -361,7 +361,18 @@ bool DataWriterHistory::remove_change_pub(
         return false;
     }
 
+#if HAVE_STRICT_REALTIME
+    std::unique_lock<RecursiveTimedMutex> lock(*this->mp_mutex, std::defer_lock);
+    if (!lock.try_lock_until(max_blocking_time))
+    {
+        EPROSIMA_LOG_ERROR(PUBLISHER, "Cannot lock the DataWriterHistory mutex");
+        return false;
+    }
+#else
+    static_cast<void>(max_blocking_time);
     std::lock_guard<RecursiveTimedMutex> guard(*this->mp_mutex);
+#endif // if HAVE_STRICT_REALTIME
+
     if (topic_att_.getTopicKind() == NO_KEY)
     {
         if (remove_change(change, max_blocking_time))
