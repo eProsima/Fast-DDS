@@ -47,7 +47,7 @@ std::string get_element_text(
  *
  * @param[in]  element  XMLElement from where to extract its text.
  * @param[out] text     String where to store the resulting text.
- * 
+ *
  * @return true on success.
  * @return false on error.
  */
