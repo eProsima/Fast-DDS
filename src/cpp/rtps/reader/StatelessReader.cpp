@@ -464,8 +464,38 @@ void StatelessReader::change_read_by_user(
 bool StatelessReader::get_connections(
         fastdds::statistics::rtps::ConnectionList &connection_list)
 {
-    static_cast<void>(connection_list);
-    return false;
+    connection_list.reserve(matched_writers_.size());
+
+    std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
+    for (RemoteWriterInfo_t& writer : matched_writers_)
+    {
+        fastdds::statistics::Connection connection;
+        fastdds::statistics::ConnectionMode mode;
+
+        connection.guid(fastdds::statistics::to_statistics_type(writer.guid));
+
+        if (writer.is_datasharing)
+        {
+            mode = fastdds::statistics::DATA_SHARING;
+        }
+        else if (RTPSDomainImpl::should_intraprocess_between(m_guid, writer.guid))
+        {
+            mode = fastdds::statistics::INTRAPROCESS;
+        }
+        else
+        {
+            mode = fastdds::statistics::TRANSPORT;
+
+            //! In the case of a stateless reader
+            //! there is no need to communicate with the writer
+            //! so there are no posible locators.
+        }
+
+        connection.mode(mode);
+        connection_list.push_back(connection);
+    }
+
+    return true;
 }
 
 #endif

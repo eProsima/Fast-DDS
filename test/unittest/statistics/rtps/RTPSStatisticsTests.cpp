@@ -37,6 +37,7 @@
 #include <fastdds/rtps/reader/RTPSReader.h>
 #include <fastdds/rtps/writer/RTPSWriter.h>
 #include <fastdds/statistics/IListeners.hpp>
+#include <fastdds/statistics/rtps/monitor_service/Interfaces.hpp>
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/attributes/LibrarySettingsAttributes.h>
 #include <fastrtps/attributes/TopicAttributes.h>
@@ -1401,7 +1402,7 @@ TEST_F(RTPSStatisticsTests, statistics_rpts_unordered_datagrams)
 
 TEST_F(RTPSStatisticsTests, iconnections_queryable_get_entity_connections)
 {
-    std::vector<Connection> conns_reader, conns_writer;
+    ConnectionList conns_reader, conns_writer;
     create_endpoints(1024);
 
     // match writer and reader on a dummy topic
@@ -1423,7 +1424,10 @@ TEST_F(RTPSStatisticsTests, iconnections_queryable_get_entity_connections)
         bool found = false;
         for (auto& writer_loc : writer_->get_general_locator_selector().locator_selector)
         {
-            if (statistics::to_statistics_type(writer_loc) == locator)
+            //! Checking the address can be confusing since the writer_loc could be translated to
+            //! 127.0.0.1
+            if (statistics::to_statistics_type(writer_loc).port() == locator.port() &&
+                statistics::to_statistics_type(writer_loc).kind() == locator.kind())
             {
                 found = true;
             }
