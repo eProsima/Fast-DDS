@@ -363,6 +363,15 @@ public:
     }
 
     /**
+     * Get the number of participant proxies.
+     * @return size_t.
+     */
+    size_t participant_proxies_number()
+    {
+        return participant_proxies_number_;
+    }
+
+    /**
      * Assert the liveliness of a Remote Participant.
      * @param remote_guid GuidPrefix_t of the participant whose liveliness is being asserted.
      */

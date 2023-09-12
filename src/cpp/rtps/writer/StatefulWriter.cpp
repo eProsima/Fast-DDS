@@ -2127,8 +2127,74 @@ DeliveryRetCode StatefulWriter::deliver_sample_nts(
 bool StatefulWriter::get_connections(
         fastdds::statistics::rtps::ConnectionList &connection_list)
 {
-    static_cast<void>(connection_list);
-    return false;
+    connection_list.reserve(matched_local_readers_.size() +
+                            matched_datasharing_readers_.size() +
+                            matched_remote_readers_.size());
+
+    fastdds::statistics::Connection connection;
+
+    {
+        std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
+
+        //! intraprocess
+        for_matched_readers(matched_local_readers_, [&connection, &connection_list](ReaderProxy*& reader)
+                {
+                    connection.guid(fastdds::statistics::to_statistics_type(reader->guid()));
+                    connection.mode(fastdds::statistics::INTRAPROCESS);
+                    connection_list.push_back(connection);
+
+                    return false;
+                });
+    }
+
+    {
+        std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
+
+        //! datasharing
+        for_matched_readers(matched_datasharing_readers_, [&connection, &connection_list](ReaderProxy*& reader)
+                {
+                    connection.guid(fastdds::statistics::to_statistics_type(reader->guid()));
+                    connection.mode(fastdds::statistics::DATA_SHARING);
+                    connection_list.push_back(connection);
+
+                    return false;
+                });
+    }
+
+    {
+        std::unique_lock<RecursiveTimedMutex> lock(mp_mutex);
+
+        //! remote
+        for_matched_readers(matched_remote_readers_, [&connection, &connection_list](ReaderProxy*& reader)
+                {
+                    //! Announced locators is, for the moment,
+                    //! equal to the used_locators
+                    LocatorSelectorEntry* loc_selector_entry = reader->general_locator_selector_entry();
+
+                    connection.announced_locators().reserve(reader->locators_size());
+                    connection.used_locators().reserve(reader->locators_size());
+
+                    std::vector<fastdds::statistics::detail::Locator_s> statistics_locators;
+                    std::for_each(loc_selector_entry->multicast.begin(), loc_selector_entry->multicast.end(), [&statistics_locators](const Locator_t& locator){
+                        statistics_locators.push_back(fastdds::statistics::to_statistics_type(locator));
+                    });
+
+                    std::for_each(loc_selector_entry->unicast.begin(), loc_selector_entry->unicast.end(), [&statistics_locators](const Locator_t& locator){
+                        statistics_locators.push_back(fastdds::statistics::to_statistics_type(locator));
+                    });
+
+                    connection.guid(fastdds::statistics::to_statistics_type(reader->guid()));
+                    connection.mode(fastdds::statistics::TRANSPORT);
+                    connection.announced_locators(statistics_locators);
+                    connection.used_locators(statistics_locators);
+                    connection_list.push_back(connection);
+
+                    return false;
+                });
+    }
+
+    return true;
+
 }
 
 #endif

@@ -148,12 +148,12 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     , mp_userParticipant(par)
     , mp_mutex(new std::recursive_mutex())
     , is_intraprocess_only_(should_be_intraprocess_only(PParam))
-    , has_shm_transport_(false)
-    , match_local_endpoints_(should_match_local_endpoints(PParam))
 #ifdef FASTDDS_STATISTICS
     , monitor_server_(nullptr)
     , conns_observer_(nullptr)
 #endif // if FASTDDS_STATISTICS
+    , has_shm_transport_(false)
+    , match_local_endpoints_(should_match_local_endpoints(PParam))
 {
     if (c_GuidPrefix_Unknown != persistence_guid)
     {
@@ -2847,9 +2847,50 @@ RTPSParticipantImpl::get_entity_connections(
         const GUID_t& guid,
         fastdds::statistics::rtps::ConnectionList& conn_list)
 {
+    bool ret = true;
     if (guid.entityId == c_EntityId_RTPSParticipant)
     {
 
+        //! Avoid getting the local participant
+        conn_list.reserve(pdp()->participant_proxies_number());
+        std::lock_guard<std::recursive_mutex> lock(*pdp()->getMutex());
+
+        auto pit = pdp()->ParticipantProxiesBegin();
+        ++pit;
+        for (; pit != pdp()->ParticipantProxiesEnd(); ++pit)
+        {
+            fastdds::statistics::Connection connection;
+            connection.guid(fastdds::statistics::to_statistics_type((*pit)->m_guid));
+            connection.mode(fastdds::statistics::TRANSPORT);
+
+            std::vector<fastdds::statistics::detail::Locator_s> statistic_locators;
+            statistic_locators.reserve((*pit)->metatraffic_locators.multicast.size() +
+                                        (*pit)->metatraffic_locators.unicast.size());
+
+            std::for_each((*pit)->metatraffic_locators.multicast.begin(), (*pit)->metatraffic_locators.multicast.end(),
+                [&statistic_locators](const Locator_t& locator){
+                    statistic_locators.push_back(fastdds::statistics::to_statistics_type(locator));
+                });
+
+            std::for_each((*pit)->metatraffic_locators.unicast.begin(), (*pit)->metatraffic_locators.unicast.end(),
+                [&statistic_locators](const Locator_t& locator){
+                    statistic_locators.push_back(fastdds::statistics::to_statistics_type(locator));
+                });
+
+            std::for_each((*pit)->default_locators.multicast.begin(), (*pit)->default_locators.multicast.end(),
+                [&statistic_locators](const Locator_t& locator){
+                    statistic_locators.push_back(fastdds::statistics::to_statistics_type(locator));
+                });
+
+            std::for_each((*pit)->default_locators.unicast.begin(), (*pit)->default_locators.unicast.end(),
+                [&statistic_locators](const Locator_t& locator){
+                    statistic_locators.push_back(fastdds::statistics::to_statistics_type(locator));
+                });
+
+            connection.announced_locators(statistic_locators);
+            connection.used_locators(statistic_locators);
+            conn_list.push_back(connection);
+        }
     }
     else if (guid.entityId.is_reader())
     {
@@ -2873,9 +2914,10 @@ RTPSParticipantImpl::get_entity_connections(
     }
     else
     {
+        ret = false;
         EPROSIMA_LOG_ERROR(RTPS_PARTICIPANT, "Unknown entitiy kind to get connections: " << guid);
     }
-    return false;
+    return ret;
 }
 
 #endif // FASTDDS_STATISTICS
