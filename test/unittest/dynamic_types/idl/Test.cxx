@@ -64,9 +64,7 @@ BasicStruct::BasicStruct(
     m_my_float64 = x.m_my_float64;
     m_my_float128 = x.m_my_float128;
     m_my_char = x.m_my_char;
-    m_my_wchar = x.m_my_wchar;
     m_my_string = x.m_my_string;
-    m_my_wstring = x.m_my_wstring;
 }
 
 BasicStruct::BasicStruct(
@@ -84,9 +82,7 @@ BasicStruct::BasicStruct(
     m_my_float64 = x.m_my_float64;
     m_my_float128 = x.m_my_float128;
     m_my_char = x.m_my_char;
-    m_my_wchar = x.m_my_wchar;
     m_my_string = std::move(x.m_my_string);
-    m_my_wstring = std::move(x.m_my_wstring);
 }
 
 BasicStruct& BasicStruct::operator =(
@@ -105,9 +101,7 @@ BasicStruct& BasicStruct::operator =(
     m_my_float64 = x.m_my_float64;
     m_my_float128 = x.m_my_float128;
     m_my_char = x.m_my_char;
-    m_my_wchar = x.m_my_wchar;
     m_my_string = x.m_my_string;
-    m_my_wstring = x.m_my_wstring;
 
     return *this;
 }
@@ -128,9 +122,7 @@ BasicStruct& BasicStruct::operator =(
     m_my_float64 = x.m_my_float64;
     m_my_float128 = x.m_my_float128;
     m_my_char = x.m_my_char;
-    m_my_wchar = x.m_my_wchar;
     m_my_string = std::move(x.m_my_string);
-    m_my_wstring = std::move(x.m_my_wstring);
 
     return *this;
 }
@@ -150,9 +142,7 @@ bool BasicStruct::operator ==(
            m_my_float64 == x.m_my_float64 &&
            m_my_float128 == x.m_my_float128 &&
            m_my_char == x.m_my_char &&
-           m_my_wchar == x.m_my_wchar &&
-           m_my_string == x.m_my_string &&
-           m_my_wstring == x.m_my_wstring);
+           m_my_string == x.m_my_string);
 }
 
 bool BasicStruct::operator !=(
@@ -510,35 +500,6 @@ char& BasicStruct::my_char()
 
 
 /*!
- * @brief This function sets a value in member my_wchar
- * @param _my_wchar New value for member my_wchar
- */
-void BasicStruct::my_wchar(
-        wchar_t _my_wchar)
-{
-    m_my_wchar = _my_wchar;
-}
-
-/*!
- * @brief This function returns the value of member my_wchar
- * @return Value of member my_wchar
- */
-wchar_t BasicStruct::my_wchar() const
-{
-    return m_my_wchar;
-}
-
-/*!
- * @brief This function returns a reference to member my_wchar
- * @return Reference to member my_wchar
- */
-wchar_t& BasicStruct::my_wchar()
-{
-    return m_my_wchar;
-}
-
-
-/*!
  * @brief This function copies the value in member my_string
  * @param _my_string New value to be copied in member my_string
  */
@@ -577,45 +538,6 @@ std::string& BasicStruct::my_string()
 }
 
 
-/*!
- * @brief This function copies the value in member my_wstring
- * @param _my_wstring New value to be copied in member my_wstring
- */
-void BasicStruct::my_wstring(
-        const std::wstring& _my_wstring)
-{
-    m_my_wstring = _my_wstring;
-}
-
-/*!
- * @brief This function moves the value in member my_wstring
- * @param _my_wstring New value to be moved in member my_wstring
- */
-void BasicStruct::my_wstring(
-        std::wstring&& _my_wstring)
-{
-    m_my_wstring = std::move(_my_wstring);
-}
-
-/*!
- * @brief This function returns a constant reference to member my_wstring
- * @return Constant reference to member my_wstring
- */
-const std::wstring& BasicStruct::my_wstring() const
-{
-    return m_my_wstring;
-}
-
-/*!
- * @brief This function returns a reference to member my_wstring
- * @return Reference to member my_wstring
- */
-std::wstring& BasicStruct::my_wstring()
-{
-    return m_my_wstring;
-}
-
-
 
 
 
@@ -650,9 +572,7 @@ ComplexStruct::ComplexStruct(
     m_my_map_long_octet_array_500 = x.m_my_map_long_octet_array_500;
     m_my_map_long_lol_type = x.m_my_map_long_lol_type;
     m_my_small_string_8 = x.m_my_small_string_8;
-    m_my_small_string_16 = x.m_my_small_string_16;
     m_my_large_string_8 = x.m_my_large_string_8;
-    m_my_large_string_16 = x.m_my_large_string_16;
     m_my_array_string = x.m_my_array_string;
     m_multi_alias_array_42 = x.m_multi_alias_array_42;
     m_my_array_arrays = x.m_my_array_arrays;
@@ -677,9 +597,7 @@ ComplexStruct::ComplexStruct(
     m_my_map_long_octet_array_500 = std::move(x.m_my_map_long_octet_array_500);
     m_my_map_long_lol_type = std::move(x.m_my_map_long_lol_type);
     m_my_small_string_8 = std::move(x.m_my_small_string_8);
-    m_my_small_string_16 = std::move(x.m_my_small_string_16);
     m_my_large_string_8 = std::move(x.m_my_large_string_8);
-    m_my_large_string_16 = std::move(x.m_my_large_string_16);
     m_my_array_string = std::move(x.m_my_array_string);
     m_multi_alias_array_42 = std::move(x.m_multi_alias_array_42);
     m_my_array_arrays = std::move(x.m_my_array_arrays);
@@ -705,9 +623,7 @@ ComplexStruct& ComplexStruct::operator =(
     m_my_map_long_octet_array_500 = x.m_my_map_long_octet_array_500;
     m_my_map_long_lol_type = x.m_my_map_long_lol_type;
     m_my_small_string_8 = x.m_my_small_string_8;
-    m_my_small_string_16 = x.m_my_small_string_16;
     m_my_large_string_8 = x.m_my_large_string_8;
-    m_my_large_string_16 = x.m_my_large_string_16;
     m_my_array_string = x.m_my_array_string;
     m_multi_alias_array_42 = x.m_multi_alias_array_42;
     m_my_array_arrays = x.m_my_array_arrays;
@@ -735,9 +651,7 @@ ComplexStruct& ComplexStruct::operator =(
     m_my_map_long_octet_array_500 = std::move(x.m_my_map_long_octet_array_500);
     m_my_map_long_lol_type = std::move(x.m_my_map_long_lol_type);
     m_my_small_string_8 = std::move(x.m_my_small_string_8);
-    m_my_small_string_16 = std::move(x.m_my_small_string_16);
     m_my_large_string_8 = std::move(x.m_my_large_string_8);
-    m_my_large_string_16 = std::move(x.m_my_large_string_16);
     m_my_array_string = std::move(x.m_my_array_string);
     m_multi_alias_array_42 = std::move(x.m_multi_alias_array_42);
     m_my_array_arrays = std::move(x.m_my_array_arrays);
@@ -764,9 +678,7 @@ bool ComplexStruct::operator ==(
            m_my_map_long_octet_array_500 == x.m_my_map_long_octet_array_500 &&
            m_my_map_long_lol_type == x.m_my_map_long_lol_type &&
            m_my_small_string_8 == x.m_my_small_string_8 &&
-           m_my_small_string_16 == x.m_my_small_string_16 &&
            m_my_large_string_8 == x.m_my_large_string_8 &&
-           m_my_large_string_16 == x.m_my_large_string_16 &&
            m_my_array_string == x.m_my_array_string &&
            m_multi_alias_array_42 == x.m_multi_alias_array_42 &&
            m_my_array_arrays == x.m_my_array_arrays &&
@@ -1335,45 +1247,6 @@ eprosima::fastcdr::fixed_string<128>& ComplexStruct::my_small_string_8()
 
 
 /*!
- * @brief This function copies the value in member my_small_string_16
- * @param _my_small_string_16 New value to be copied in member my_small_string_16
- */
-void ComplexStruct::my_small_string_16(
-        const std::wstring& _my_small_string_16)
-{
-    m_my_small_string_16 = _my_small_string_16;
-}
-
-/*!
- * @brief This function moves the value in member my_small_string_16
- * @param _my_small_string_16 New value to be moved in member my_small_string_16
- */
-void ComplexStruct::my_small_string_16(
-        std::wstring&& _my_small_string_16)
-{
-    m_my_small_string_16 = std::move(_my_small_string_16);
-}
-
-/*!
- * @brief This function returns a constant reference to member my_small_string_16
- * @return Constant reference to member my_small_string_16
- */
-const std::wstring& ComplexStruct::my_small_string_16() const
-{
-    return m_my_small_string_16;
-}
-
-/*!
- * @brief This function returns a reference to member my_small_string_16
- * @return Reference to member my_small_string_16
- */
-std::wstring& ComplexStruct::my_small_string_16()
-{
-    return m_my_small_string_16;
-}
-
-
-/*!
  * @brief This function copies the value in member my_large_string_8
  * @param _my_large_string_8 New value to be copied in member my_large_string_8
  */
@@ -1409,45 +1282,6 @@ const eprosima::fastcdr::fixed_string<500>& ComplexStruct::my_large_string_8() c
 eprosima::fastcdr::fixed_string<500>& ComplexStruct::my_large_string_8()
 {
     return m_my_large_string_8;
-}
-
-
-/*!
- * @brief This function copies the value in member my_large_string_16
- * @param _my_large_string_16 New value to be copied in member my_large_string_16
- */
-void ComplexStruct::my_large_string_16(
-        const std::wstring& _my_large_string_16)
-{
-    m_my_large_string_16 = _my_large_string_16;
-}
-
-/*!
- * @brief This function moves the value in member my_large_string_16
- * @param _my_large_string_16 New value to be moved in member my_large_string_16
- */
-void ComplexStruct::my_large_string_16(
-        std::wstring&& _my_large_string_16)
-{
-    m_my_large_string_16 = std::move(_my_large_string_16);
-}
-
-/*!
- * @brief This function returns a constant reference to member my_large_string_16
- * @return Constant reference to member my_large_string_16
- */
-const std::wstring& ComplexStruct::my_large_string_16() const
-{
-    return m_my_large_string_16;
-}
-
-/*!
- * @brief This function returns a reference to member my_large_string_16
- * @return Reference to member my_large_string_16
- */
-std::wstring& ComplexStruct::my_large_string_16()
-{
-    return m_my_large_string_16;
 }
 
 

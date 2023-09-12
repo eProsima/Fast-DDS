@@ -26,61 +26,48 @@
 
 constexpr uint32_t eprosima_fastdds_statistics_DiscoveryTime_max_cdr_typesize {852UL};
 constexpr uint32_t eprosima_fastdds_statistics_DiscoveryTime_max_key_cdr_typesize {56UL};
- 
 
 constexpr uint32_t eprosima_fastdds_statistics_PhysicalData_max_cdr_typesize {812UL};
 constexpr uint32_t eprosima_fastdds_statistics_PhysicalData_max_key_cdr_typesize {28UL};
- 
- 
+
 
 constexpr uint32_t eprosima_fastdds_statistics_detail_Locator_s_max_cdr_typesize {28UL};
 constexpr uint32_t eprosima_fastdds_statistics_detail_Locator_s_max_key_cdr_typesize {0UL};
- 
- 
+
 
 constexpr uint32_t eprosima_fastdds_statistics_detail_GuidPrefix_s_max_cdr_typesize {16UL};
 constexpr uint32_t eprosima_fastdds_statistics_detail_GuidPrefix_s_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t eprosima_fastdds_statistics_detail_SampleIdentity_s_max_cdr_typesize {44UL};
 constexpr uint32_t eprosima_fastdds_statistics_detail_SampleIdentity_s_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t eprosima_fastdds_statistics_EntityData_max_cdr_typesize {36UL};
 constexpr uint32_t eprosima_fastdds_statistics_EntityData_max_key_cdr_typesize {28UL};
- 
 
 constexpr uint32_t eprosima_fastdds_statistics_Entity2LocatorTraffic_max_cdr_typesize {82UL};
 constexpr uint32_t eprosima_fastdds_statistics_Entity2LocatorTraffic_max_key_cdr_typesize {56UL};
- 
 
 constexpr uint32_t eprosima_fastdds_statistics_detail_EntityId_s_max_cdr_typesize {8UL};
 constexpr uint32_t eprosima_fastdds_statistics_detail_EntityId_s_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t eprosima_fastdds_statistics_EntityCount_max_cdr_typesize {40UL};
 constexpr uint32_t eprosima_fastdds_statistics_EntityCount_max_key_cdr_typesize {28UL};
- 
 
 constexpr uint32_t eprosima_fastdds_statistics_WriterReaderData_max_cdr_typesize {64UL};
 constexpr uint32_t eprosima_fastdds_statistics_WriterReaderData_max_key_cdr_typesize {56UL};
- 
 
 constexpr uint32_t eprosima_fastdds_statistics_SampleIdentityCount_max_cdr_typesize {56UL};
 constexpr uint32_t eprosima_fastdds_statistics_SampleIdentityCount_max_key_cdr_typesize {44UL};
- 
 
 constexpr uint32_t eprosima_fastdds_statistics_Locator2LocatorData_max_cdr_typesize {64UL};
 constexpr uint32_t eprosima_fastdds_statistics_Locator2LocatorData_max_key_cdr_typesize {56UL};
- 
 
 constexpr uint32_t eprosima_fastdds_statistics_detail_GUID_s_max_cdr_typesize {28UL};
 constexpr uint32_t eprosima_fastdds_statistics_detail_GUID_s_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t eprosima_fastdds_statistics_detail_SequenceNumber_s_max_cdr_typesize {12UL};
 constexpr uint32_t eprosima_fastdds_statistics_detail_SequenceNumber_s_max_key_cdr_typesize {0UL};
- 
+
 
 namespace eprosima {
 namespace fastcdr {

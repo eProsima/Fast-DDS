@@ -26,155 +26,120 @@
 
 constexpr uint32_t SimpleUnionStruct_max_cdr_typesize {24UL};
 constexpr uint32_t SimpleUnionStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t SequenceSequenceBoundsStruct_max_cdr_typesize {132UL};
 constexpr uint32_t SequenceSequenceBoundsStruct_max_key_cdr_typesize {0UL};
- 
- 
+
 
 constexpr uint32_t MyAliasEnumStruct_max_cdr_typesize {8UL};
 constexpr uint32_t MyAliasEnumStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t ArrayBadStruct_max_cdr_typesize {6UL};
 constexpr uint32_t ArrayBadStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t MapBadKeyStruct_max_cdr_typesize {24UL};
 constexpr uint32_t MapBadKeyStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t SimpleBadUnionStruct_max_cdr_typesize {24UL};
 constexpr uint32_t SimpleBadUnionStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t MyEnumStruct_max_cdr_typesize {8UL};
 constexpr uint32_t MyEnumStruct_max_key_cdr_typesize {0UL};
- 
- 
+
 
 constexpr uint32_t ArrayStructEqual_max_cdr_typesize {12UL};
 constexpr uint32_t ArrayStructEqual_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t LargeWStringStruct_max_cdr_typesize {83858UL};
 constexpr uint32_t LargeWStringStruct_max_key_cdr_typesize {0UL};
- 
- 
+
 
 constexpr uint32_t WStringStruct_max_cdr_typesize {518UL};
 constexpr uint32_t WStringStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t SequenceStruct_max_cdr_typesize {16UL};
 constexpr uint32_t SequenceStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t SimpleTypeUnionStruct_max_cdr_typesize {24UL};
 constexpr uint32_t SimpleTypeUnionStruct_max_key_cdr_typesize {0UL};
- 
- 
+
 
 constexpr uint32_t ArrayDimensionsStruct_max_cdr_typesize {20UL};
 constexpr uint32_t ArrayDimensionsStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t SequenceSequenceStruct_max_cdr_typesize {48UL};
 constexpr uint32_t SequenceSequenceStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t MapBoundsStruct_max_cdr_typesize {40UL};
 constexpr uint32_t MapBoundsStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t SequenceStructEqual_max_cdr_typesize {16UL};
 constexpr uint32_t SequenceStructEqual_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t MapStructEqual_max_cdr_typesize {24UL};
 constexpr uint32_t MapStructEqual_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t BasicStruct_max_cdr_typesize {272UL};
 constexpr uint32_t BasicStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t SequenceBoundsStruct_max_cdr_typesize {24UL};
 constexpr uint32_t SequenceBoundsStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t MapMapStruct_max_cdr_typesize {60UL};
 constexpr uint32_t MapMapStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t BasicWideStruct_max_cdr_typesize {536UL};
 constexpr uint32_t BasicWideStruct_max_key_cdr_typesize {0UL};
- 
- 
+
 
 constexpr uint32_t SimplBadDiscUnionStruct_max_cdr_typesize {24UL};
 constexpr uint32_t SimplBadDiscUnionStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t MapStruct_max_cdr_typesize {24UL};
 constexpr uint32_t MapStruct_max_key_cdr_typesize {0UL};
- 
- 
+
 
 constexpr uint32_t MyBadEnumStruct_max_cdr_typesize {8UL};
 constexpr uint32_t MyBadEnumStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t SequenceBadStruct_max_cdr_typesize {10UL};
 constexpr uint32_t SequenceBadStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t SimpleUnionNamesStruct_max_cdr_typesize {24UL};
 constexpr uint32_t SimpleUnionNamesStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t LargeStringStruct_max_cdr_typesize {41934UL};
 constexpr uint32_t LargeStringStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t ArrayStruct_max_cdr_typesize {12UL};
 constexpr uint32_t ArrayStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t BadBasicWideStruct_max_cdr_typesize {536UL};
 constexpr uint32_t BadBasicWideStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t ArraySizeStruct_max_cdr_typesize {24UL};
 constexpr uint32_t ArraySizeStruct_max_key_cdr_typesize {0UL};
- 
- 
+
 
 constexpr uint32_t MapBadElemStruct_max_cdr_typesize {40UL};
 constexpr uint32_t MapBadElemStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t SimpleUnionStructEqual_max_cdr_typesize {24UL};
 constexpr uint32_t SimpleUnionStructEqual_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t BasicBadStruct_max_cdr_typesize {272UL};
 constexpr uint32_t BasicBadStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t BasicNamesStruct_max_cdr_typesize {272UL};
 constexpr uint32_t BasicNamesStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t StringStruct_max_cdr_typesize {264UL};
 constexpr uint32_t StringStruct_max_key_cdr_typesize {0UL};
- 
- 
+
 
 constexpr uint32_t MapMapBoundsStruct_max_cdr_typesize {108UL};
 constexpr uint32_t MapMapBoundsStruct_max_key_cdr_typesize {0UL};
- 
+
 
 namespace eprosima {
 namespace fastcdr {

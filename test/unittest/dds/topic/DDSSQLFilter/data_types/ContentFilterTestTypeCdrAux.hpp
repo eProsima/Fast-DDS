@@ -26,13 +26,12 @@
 
 constexpr uint32_t StructType_max_cdr_typesize {344UL};
 constexpr uint32_t StructType_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t ContentFilterTestType_max_cdr_typesize {73360UL};
 constexpr uint32_t ContentFilterTestType_max_key_cdr_typesize {0UL};
- 
- 
- 
+
+
+
 
 namespace eprosima {
 namespace fastcdr {

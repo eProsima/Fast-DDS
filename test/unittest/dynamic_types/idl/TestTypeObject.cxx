@@ -1201,25 +1201,6 @@ const TypeObject* GetMinimalBasicStructObject()
     }
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_char);
 
-    MinimalStructMember mst_my_wchar;
-    mst_my_wchar.common().member_id(memberId++);
-    mst_my_wchar.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_my_wchar.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_my_wchar.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_my_wchar.common().member_flags().IS_OPTIONAL(false);
-    mst_my_wchar.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_my_wchar.common().member_flags().IS_KEY(false);
-    mst_my_wchar.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_my_wchar.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("wchar_t", false));
-
-
-    MD5 my_wchar_hash("my_wchar");
-    for(int i = 0; i < 4; ++i)
-    {
-        mst_my_wchar.detail().name_hash()[i] = my_wchar_hash.digest[i];
-    }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_my_wchar);
-
     MinimalStructMember mst_my_string;
     mst_my_string.common().member_id(memberId++);
     mst_my_string.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -1237,24 +1218,6 @@ const TypeObject* GetMinimalBasicStructObject()
         mst_my_string.detail().name_hash()[i] = my_string_hash.digest[i];
     }
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_string);
-
-    MinimalStructMember mst_my_wstring;
-    mst_my_wstring.common().member_id(memberId++);
-    mst_my_wstring.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_my_wstring.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_my_wstring.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_my_wstring.common().member_flags().IS_OPTIONAL(false);
-    mst_my_wstring.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_my_wstring.common().member_flags().IS_KEY(false);
-    mst_my_wstring.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_my_wstring.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, true));
-
-    MD5 my_wstring_hash("my_wstring");
-    for(int i = 0; i < 4; ++i)
-    {
-        mst_my_wstring.detail().name_hash()[i] = my_wstring_hash.digest[i];
-    }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_my_wstring);
 
 
     // Header
@@ -1502,22 +1465,6 @@ const TypeObject* GetCompleteBasicStructObject()
 
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_char);
 
-    CompleteStructMember cst_my_wchar;
-    cst_my_wchar.common().member_id(memberId++);
-    cst_my_wchar.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_my_wchar.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_my_wchar.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_my_wchar.common().member_flags().IS_OPTIONAL(false);
-    cst_my_wchar.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_my_wchar.common().member_flags().IS_KEY(false);
-    cst_my_wchar.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_my_wchar.common().member_type_id(*TypeObjectFactory::get_instance()->get_type_identifier("wchar_t", false));
-
-
-    cst_my_wchar.detail().name("my_wchar");
-
-    type_object->complete().struct_type().member_seq().emplace_back(cst_my_wchar);
-
     CompleteStructMember cst_my_string;
     cst_my_string.common().member_id(memberId++);
     cst_my_string.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -1532,21 +1479,6 @@ const TypeObject* GetCompleteBasicStructObject()
     cst_my_string.detail().name("my_string");
 
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_string);
-
-    CompleteStructMember cst_my_wstring;
-    cst_my_wstring.common().member_id(memberId++);
-    cst_my_wstring.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_my_wstring.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_my_wstring.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_my_wstring.common().member_flags().IS_OPTIONAL(false);
-    cst_my_wstring.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_my_wstring.common().member_flags().IS_KEY(false);
-    cst_my_wstring.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_my_wstring.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(255, true));
-
-    cst_my_wstring.detail().name("my_wstring");
-
-    type_object->complete().struct_type().member_seq().emplace_back(cst_my_wstring);
 
 
     // Header
@@ -2849,24 +2781,6 @@ const TypeObject* GetMinimalComplexStructObject()
     }
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_small_string_8);
 
-    MinimalStructMember mst_my_small_string_16;
-    mst_my_small_string_16.common().member_id(memberId++);
-    mst_my_small_string_16.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_my_small_string_16.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_my_small_string_16.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_my_small_string_16.common().member_flags().IS_OPTIONAL(false);
-    mst_my_small_string_16.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_my_small_string_16.common().member_flags().IS_KEY(false);
-    mst_my_small_string_16.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_my_small_string_16.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(64, true));
-
-    MD5 my_small_string_16_hash("my_small_string_16");
-    for(int i = 0; i < 4; ++i)
-    {
-        mst_my_small_string_16.detail().name_hash()[i] = my_small_string_16_hash.digest[i];
-    }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_my_small_string_16);
-
     MinimalStructMember mst_my_large_string_8;
     mst_my_large_string_8.common().member_id(memberId++);
     mst_my_large_string_8.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -2884,24 +2798,6 @@ const TypeObject* GetMinimalComplexStructObject()
         mst_my_large_string_8.detail().name_hash()[i] = my_large_string_8_hash.digest[i];
     }
     type_object->minimal().struct_type().member_seq().emplace_back(mst_my_large_string_8);
-
-    MinimalStructMember mst_my_large_string_16;
-    mst_my_large_string_16.common().member_id(memberId++);
-    mst_my_large_string_16.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_my_large_string_16.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_my_large_string_16.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_my_large_string_16.common().member_flags().IS_OPTIONAL(false);
-    mst_my_large_string_16.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_my_large_string_16.common().member_flags().IS_KEY(false);
-    mst_my_large_string_16.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_my_large_string_16.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(1024, true));
-
-    MD5 my_large_string_16_hash("my_large_string_16");
-    for(int i = 0; i < 4; ++i)
-    {
-        mst_my_large_string_16.detail().name_hash()[i] = my_large_string_16_hash.digest[i];
-    }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_my_large_string_16);
 
     MinimalStructMember mst_my_array_string;
     mst_my_array_string.common().member_id(memberId++);
@@ -3255,21 +3151,6 @@ const TypeObject* GetCompleteComplexStructObject()
 
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_small_string_8);
 
-    CompleteStructMember cst_my_small_string_16;
-    cst_my_small_string_16.common().member_id(memberId++);
-    cst_my_small_string_16.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_my_small_string_16.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_my_small_string_16.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_my_small_string_16.common().member_flags().IS_OPTIONAL(false);
-    cst_my_small_string_16.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_my_small_string_16.common().member_flags().IS_KEY(false);
-    cst_my_small_string_16.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_my_small_string_16.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(64, true));
-
-    cst_my_small_string_16.detail().name("my_small_string_16");
-
-    type_object->complete().struct_type().member_seq().emplace_back(cst_my_small_string_16);
-
     CompleteStructMember cst_my_large_string_8;
     cst_my_large_string_8.common().member_id(memberId++);
     cst_my_large_string_8.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -3284,21 +3165,6 @@ const TypeObject* GetCompleteComplexStructObject()
     cst_my_large_string_8.detail().name("my_large_string_8");
 
     type_object->complete().struct_type().member_seq().emplace_back(cst_my_large_string_8);
-
-    CompleteStructMember cst_my_large_string_16;
-    cst_my_large_string_16.common().member_id(memberId++);
-    cst_my_large_string_16.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_my_large_string_16.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_my_large_string_16.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_my_large_string_16.common().member_flags().IS_OPTIONAL(false);
-    cst_my_large_string_16.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_my_large_string_16.common().member_flags().IS_KEY(false);
-    cst_my_large_string_16.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_my_large_string_16.common().member_type_id(*TypeObjectFactory::get_instance()->get_string_identifier(1024, true));
-
-    cst_my_large_string_16.detail().name("my_large_string_16");
-
-    type_object->complete().struct_type().member_seq().emplace_back(cst_my_large_string_16);
 
     CompleteStructMember cst_my_array_string;
     cst_my_array_string.common().member_id(memberId++);
@@ -4244,8 +4110,8 @@ const TypeObject* GetCompleteKeyedStructObject()
 
     {
         AppliedAnnotation ann;
-        //ann.annotation_typeid(GetKeyIdentifier(true));
-        ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("Key"));
+        //ann.annotation_typeid(GetkeyIdentifier(true));
+        ann.annotation_typeid(*TypeObjectFactory::get_instance()->get_type_identifier_trying_complete("key"));
             {
                 AppliedAnnotationParameter annParam;
                 MD5 message_hash("value");

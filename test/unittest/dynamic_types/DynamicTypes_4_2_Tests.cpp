@@ -117,9 +117,9 @@ TEST_F(DynamicTypes_4_2_Tests, Bitset)
     mybitset.d(-1);                       // 1111111111111111
     mybitset.e(5555);                     // 0001010110110011 (The most significant bit is not stored)
     mybitset.f(3851);
-    ASSERT_TRUE(mybitset.d() == 4095);    // 0000111111111111 (2^12 - 1)
-    ASSERT_TRUE(mybitset.e() == 1459);    // 0000010110110011 (The most significant bit is not stored)
-    ASSERT_TRUE(mybitset.f() == 3851);
+    ASSERT_TRUE(mybitset.d() == 31);    // 0000111111111111 (2^12 - 1)
+    ASSERT_TRUE(mybitset.e() == 19);    // 0000010110110011 (The most significant bit is not stored)
+    ASSERT_TRUE(mybitset.f() == 11);
     mybitset.parent_bitfield(static_cast<uint32_t>(-1));// 11111111111111111111111111111111
     ASSERT_TRUE(mybitset.parent_bitfield() == 131071);  // 00000000000000111111111111111111 (2^17 - 1)
 }

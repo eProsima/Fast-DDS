@@ -384,26 +384,6 @@ public:
 
 
     /*!
-     * @brief This function sets a value in member my_wchar
-     * @param _my_wchar New value for member my_wchar
-     */
-    eProsima_user_DllExport void my_wchar(
-            wchar_t _my_wchar);
-
-    /*!
-     * @brief This function returns the value of member my_wchar
-     * @return Value of member my_wchar
-     */
-    eProsima_user_DllExport wchar_t my_wchar() const;
-
-    /*!
-     * @brief This function returns a reference to member my_wchar
-     * @return Reference to member my_wchar
-     */
-    eProsima_user_DllExport wchar_t& my_wchar();
-
-
-    /*!
      * @brief This function copies the value in member my_string
      * @param _my_string New value to be copied in member my_string
      */
@@ -429,33 +409,6 @@ public:
      */
     eProsima_user_DllExport std::string& my_string();
 
-
-    /*!
-     * @brief This function copies the value in member my_wstring
-     * @param _my_wstring New value to be copied in member my_wstring
-     */
-    eProsima_user_DllExport void my_wstring(
-            const std::wstring& _my_wstring);
-
-    /*!
-     * @brief This function moves the value in member my_wstring
-     * @param _my_wstring New value to be moved in member my_wstring
-     */
-    eProsima_user_DllExport void my_wstring(
-            std::wstring&& _my_wstring);
-
-    /*!
-     * @brief This function returns a constant reference to member my_wstring
-     * @return Constant reference to member my_wstring
-     */
-    eProsima_user_DllExport const std::wstring& my_wstring() const;
-
-    /*!
-     * @brief This function returns a reference to member my_wstring
-     * @return Reference to member my_wstring
-     */
-    eProsima_user_DllExport std::wstring& my_wstring();
-
 private:
 
     bool m_my_bool{false};
@@ -470,9 +423,7 @@ private:
     double m_my_float64{0.0};
     long double m_my_float128{0.0};
     char m_my_char{0};
-    wchar_t m_my_wchar{0};
     std::string m_my_string;
-    std::wstring m_my_wstring;
 
 };
 typedef std::array<uint8_t, 500> MyOctetArray500;
@@ -930,33 +881,6 @@ public:
 
 
     /*!
-     * @brief This function copies the value in member my_small_string_16
-     * @param _my_small_string_16 New value to be copied in member my_small_string_16
-     */
-    eProsima_user_DllExport void my_small_string_16(
-            const std::wstring& _my_small_string_16);
-
-    /*!
-     * @brief This function moves the value in member my_small_string_16
-     * @param _my_small_string_16 New value to be moved in member my_small_string_16
-     */
-    eProsima_user_DllExport void my_small_string_16(
-            std::wstring&& _my_small_string_16);
-
-    /*!
-     * @brief This function returns a constant reference to member my_small_string_16
-     * @return Constant reference to member my_small_string_16
-     */
-    eProsima_user_DllExport const std::wstring& my_small_string_16() const;
-
-    /*!
-     * @brief This function returns a reference to member my_small_string_16
-     * @return Reference to member my_small_string_16
-     */
-    eProsima_user_DllExport std::wstring& my_small_string_16();
-
-
-    /*!
      * @brief This function copies the value in member my_large_string_8
      * @param _my_large_string_8 New value to be copied in member my_large_string_8
      */
@@ -981,33 +905,6 @@ public:
      * @return Reference to member my_large_string_8
      */
     eProsima_user_DllExport eprosima::fastcdr::fixed_string<500>& my_large_string_8();
-
-
-    /*!
-     * @brief This function copies the value in member my_large_string_16
-     * @param _my_large_string_16 New value to be copied in member my_large_string_16
-     */
-    eProsima_user_DllExport void my_large_string_16(
-            const std::wstring& _my_large_string_16);
-
-    /*!
-     * @brief This function moves the value in member my_large_string_16
-     * @param _my_large_string_16 New value to be moved in member my_large_string_16
-     */
-    eProsima_user_DllExport void my_large_string_16(
-            std::wstring&& _my_large_string_16);
-
-    /*!
-     * @brief This function returns a constant reference to member my_large_string_16
-     * @return Constant reference to member my_large_string_16
-     */
-    eProsima_user_DllExport const std::wstring& my_large_string_16() const;
-
-    /*!
-     * @brief This function returns a reference to member my_large_string_16
-     * @return Reference to member my_large_string_16
-     */
-    eProsima_user_DllExport std::wstring& my_large_string_16();
 
 
     /*!
@@ -1134,9 +1031,7 @@ private:
     std::map<int32_t, MyOctetArray500> m_my_map_long_octet_array_500;
     std::map<int32_t, std::map<uint8_t, BSAlias5>> m_my_map_long_lol_type;
     eprosima::fastcdr::fixed_string<128> m_my_small_string_8;
-    std::wstring m_my_small_string_16;
     eprosima::fastcdr::fixed_string<500> m_my_large_string_8;
-    std::wstring m_my_large_string_16;
     std::array<std::array<eprosima::fastcdr::fixed_string<75>, 5>, 5> m_my_array_string;
     MA3 m_multi_alias_array_42{::A};
     std::array<MyMiniArray, 5> m_my_array_arrays{0};

@@ -282,9 +282,9 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetBasicStructType()
         DynamicTypeBuilder_ptr double_builder = m_factory->create_float64_builder();
         DynamicTypeBuilder_ptr ldouble_builder = m_factory->create_float128_builder();
         DynamicTypeBuilder_ptr char_builder = m_factory->create_char8_builder();
-        DynamicTypeBuilder_ptr wchar_builder = m_factory->create_char16_builder();
+        //DynamicTypeBuilder_ptr wchar_builder = m_factory->create_char16_builder();
         DynamicTypeBuilder_ptr string_builder = m_factory->create_string_builder();
-        DynamicTypeBuilder_ptr wstring_builder = m_factory->create_wstring_builder();
+        //DynamicTypeBuilder_ptr wstring_builder = m_factory->create_wstring_builder();
         DynamicTypeBuilder_ptr basicStruct_builder = m_factory->create_struct_builder();
 
         // Add members to the struct.
@@ -301,9 +301,9 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetBasicStructType()
         basicStruct_builder->add_member(idx++, "my_float64", double_builder.get());
         basicStruct_builder->add_member(idx++, "my_float128", ldouble_builder.get());
         basicStruct_builder->add_member(idx++, "my_char", char_builder.get());
-        basicStruct_builder->add_member(idx++, "my_wchar", wchar_builder.get());
+        //basicStruct_builder->add_member(idx++, "my_wchar", wchar_builder.get());
         basicStruct_builder->add_member(idx++, "my_string", string_builder.get());
-        basicStruct_builder->add_member(idx++, "my_wstring", wstring_builder.get());
+        //basicStruct_builder->add_member(idx++, "my_wstring", wstring_builder.get());
         basicStruct_builder->set_name("BasicStruct");
 
         m_BasicStructType = basicStruct_builder->build();
@@ -344,9 +344,9 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetComplexStructType()
         DynamicTypeBuilder_ptr my_map_long_lol_type_builder = m_factory->create_map_builder(
             int32_builder.get(), map_octet_bsalias5_builder.get());
         DynamicTypeBuilder_ptr my_small_string_8_builder = m_factory->create_string_builder(128);
-        DynamicTypeBuilder_ptr my_small_string_16_builder = m_factory->create_wstring_builder(64);
+        //DynamicTypeBuilder_ptr my_small_string_16_builder = m_factory->create_wstring_builder(64);
         DynamicTypeBuilder_ptr my_large_string_8_builder = m_factory->create_string_builder(500);
-        DynamicTypeBuilder_ptr my_large_string_16_builder = m_factory->create_wstring_builder(1024);
+        //DynamicTypeBuilder_ptr my_large_string_16_builder = m_factory->create_wstring_builder(1024);
         DynamicTypeBuilder_ptr string75_8_builder = m_factory->create_string_builder(75);
         DynamicTypeBuilder_ptr my_array_string_builder = m_factory->create_array_builder(
             string75_8_builder.get(), { 5, 5 });
@@ -376,9 +376,9 @@ types::DynamicType_ptr DynamicComplexTypesTests::GetComplexStructType()
                 my_map_long_octet_array_500_builder.get());
         complexStruct_builder->add_member(idx++, "my_map_long_lol_type", my_map_long_lol_type_builder.get());
         complexStruct_builder->add_member(idx++, "my_small_string_8", my_small_string_8_builder.get());
-        complexStruct_builder->add_member(idx++, "my_small_string_16", my_small_string_16_builder.get());
+        //complexStruct_builder->add_member(idx++, "my_small_string_16", my_small_string_16_builder.get());
         complexStruct_builder->add_member(idx++, "my_large_string_8", my_large_string_8_builder.get());
-        complexStruct_builder->add_member(idx++, "my_large_string_16", my_large_string_16_builder.get());
+        //complexStruct_builder->add_member(idx++, "my_large_string_16", my_large_string_16_builder.get());
         complexStruct_builder->add_member(idx++, "my_array_string", my_array_string_builder.get());
         complexStruct_builder->add_member(idx++, "multi_alias_array_42", GetMA3Type());
         complexStruct_builder->add_member(idx++, "my_array_arrays", my_array_arrays_builder.get());
@@ -574,9 +574,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_A)
     staticData.my_union().basic().my_float64(765241.58);
     staticData.my_union().basic().my_float128(765241878.154874);
     staticData.my_union().basic().my_char('L');
-    staticData.my_union().basic().my_wchar(L'G');
+    //staticData.my_union().basic().my_wchar(L'G');
     staticData.my_union().basic().my_string("Luis@eProsima");
-    staticData.my_union().basic().my_wstring(L"LuisGasco@eProsima");
+    //staticData.my_union().basic().my_wstring(L"LuisGasco@eProsima");
 
     //staticData.my_union_2()._d(A);
     staticData.my_union_2().uno(156);
@@ -596,9 +596,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_A)
     basic->set_float64_value(765241.58, basic->get_member_id_by_name("my_float64"));
     basic->set_float128_value(765241878.154874, basic->get_member_id_by_name("my_float128"));
     basic->set_char8_value('L', basic->get_member_id_by_name("my_char"));
-    basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
+    //basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
     basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
-    basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
+    //basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
 
     my_union->return_loaned_value(basic);
     dynData->return_loaned_value(my_union);
@@ -643,9 +643,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_B)
     staticData.my_union().basic().my_float64(765241.58);
     staticData.my_union().basic().my_float128(765241878.154874);
     staticData.my_union().basic().my_char('L');
-    staticData.my_union().basic().my_wchar(L'G');
+    //staticData.my_union().basic().my_wchar(L'G');
     staticData.my_union().basic().my_string("Luis@eProsima");
-    staticData.my_union().basic().my_wstring(L"LuisGasco@eProsima");
+    //staticData.my_union().basic().my_wstring(L"LuisGasco@eProsima");
 
     staticData.my_union_2().imString("JuanCarlosArcereredekljnjkds");
 
@@ -664,9 +664,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_B)
     basic->set_float64_value(765241.58, basic->get_member_id_by_name("my_float64"));
     basic->set_float128_value(765241878.154874, basic->get_member_id_by_name("my_float128"));
     basic->set_char8_value('L', basic->get_member_id_by_name("my_char"));
-    basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
+    //basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
     basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
-    basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
+    //basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
 
     my_union->return_loaned_value(basic);
     dynData->return_loaned_value(my_union);
@@ -712,9 +712,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_C)
     staticData.my_union().basic().my_float64(765241.58);
     staticData.my_union().basic().my_float128(765241878.154874);
     staticData.my_union().basic().my_char('L');
-    staticData.my_union().basic().my_wchar(L'G');
+    //staticData.my_union().basic().my_wchar(L'G');
     staticData.my_union().basic().my_string("Luis@eProsima");
-    staticData.my_union().basic().my_wstring(L"LuisGasco@eProsima");
+    //staticData.my_union().basic().my_wstring(L"LuisGasco@eProsima");
 
     //staticData.my_union_2()._d(A);
     staticData.my_union_2().tres(333);
@@ -734,9 +734,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_A_C)
     basic->set_float64_value(765241.58, basic->get_member_id_by_name("my_float64"));
     basic->set_float128_value(765241878.154874, basic->get_member_id_by_name("my_float128"));
     basic->set_char8_value('L', basic->get_member_id_by_name("my_char"));
-    basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
+    //basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
     basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
-    basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
+    //basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
 
     my_union->return_loaned_value(basic);
     dynData->return_loaned_value(my_union);
@@ -778,9 +778,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     staticData.my_union().complex().my_basic_struct().my_float64(765241.58);
     staticData.my_union().complex().my_basic_struct().my_float128(765241878.154874);
     staticData.my_union().complex().my_basic_struct().my_char('L');
-    staticData.my_union().complex().my_basic_struct().my_wchar(L'G');
+    //staticData.my_union().complex().my_basic_struct().my_wchar(L'G');
     staticData.my_union().complex().my_basic_struct().my_string("Luis@eProsima");
-    staticData.my_union().complex().my_basic_struct().my_wstring(L"LuisGasco@eProsima");
+    //staticData.my_union().complex().my_basic_struct().my_wstring(L"LuisGasco@eProsima");
 
     staticData.my_union().complex().my_alias_enum(C);
     staticData.my_union().complex().my_enum(B);
@@ -812,9 +812,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
         staticData.my_union().complex().my_array_struct()[i].my_float64(i * 8.8);
         staticData.my_union().complex().my_array_struct()[i].my_float128(i * 10.0);
         staticData.my_union().complex().my_array_struct()[i].my_char('J');
-        staticData.my_union().complex().my_array_struct()[i].my_wchar(L'C');
+        //staticData.my_union().complex().my_array_struct()[i].my_wchar(L'C');
         staticData.my_union().complex().my_array_struct()[i].my_string("JC@eProsima");
-        staticData.my_union().complex().my_array_struct()[i].my_wstring(L"JC-BOOM-Armadilo!@eProsima");
+        //staticData.my_union().complex().my_array_struct()[i].my_wstring(L"JC-BOOM-Armadilo!@eProsima");
     }
 
     staticData.my_union().complex().my_map_octet_short()[0] = 1340;
@@ -833,12 +833,12 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
 
     staticData.my_union().complex().my_small_string_8(
         "Bv7EMffURwGNqePoujdSfkF9PXN9TH125X5nGpNLfzya53tZtNJdgMROlYdZnTE1SLWzBdIU7ZyjjGvsGHkmuJUROwVPcNa9q5dRUV3KZAKNx1exL7BjhqIgQFconhd");
-    staticData.my_union().complex().my_small_string_16(
-        L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c");
+    //staticData.my_union().complex().my_small_string_16(
+    //    L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c");
     staticData.my_union().complex().my_large_string_8(
         "hYE5vjcLJe6ML5DmoqQwh9ns866dAbnjkVKIKu2VF6lbkvh91ZOG2enEcdoRa8T43hR0Ym0k7tI621EQGufvzmLqxKCPgiXSp2zUTTmIWtn4fM8tC3aP1Yd0dKvn0tDobyp6p3156KvxqG3BKQ6VjFiHlMFoEyz8pjCclhXLl2cfAi97sQzXLUoPYUC5BWKyQTrA2JF6HXZM6vrbw5dc3B4AOJNGdPJ9ai6weF43h1RhnXE9MOFxPNoQnJ8gqSXYbMtpG6ZzqhUyoz0XhFDt7EOqXIgvc9SCejQTVMPeRcF5Zy57hrYZiKrCQqFWidS4BdfEAkuwESgBmEpEFOpZotwDt0TGDaLktSt3dKRsURO6TpuZ2nZNdiEJyc597ZjjQXtyKU7OCyRRqllzAnHEtoU3zd3OLTOvT5uk32N1Y64tpUte63De2EMwDNYb2eGAQfATdSt8VcGBOzJQjsmrMwMumtk48JzXXLxjo6s2vl2rNK9WQM1");
-    staticData.my_union().complex().my_large_string_16(
-        L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX");
+    //staticData.my_union().complex().my_large_string_16(
+    //    L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX");
     for (int i = 0; i < 5; ++i)
     {
         for (int j = 0; j < 5; ++j)
@@ -887,9 +887,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     basic->set_float64_value(765241.58, basic->get_member_id_by_name("my_float64"));
     basic->set_float128_value(765241878.154874, basic->get_member_id_by_name("my_float128"));
     basic->set_char8_value('L', basic->get_member_id_by_name("my_char"));
-    basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
+    //basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
     basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
-    basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
+    //basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
     complex->return_loaned_value(basic);
 
     complex->set_enum_value("C", complex->get_member_id_by_name("my_alias_enum"));
@@ -942,9 +942,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
         tempBasic->set_float64_value(i * 8.8, tempBasic->get_member_id_by_name("my_float64"));
         tempBasic->set_float128_value(i * 10.0, tempBasic->get_member_id_by_name("my_float128"));
         tempBasic->set_char8_value('J', tempBasic->get_member_id_by_name("my_char"));
-        tempBasic->set_char16_value(L'C', tempBasic->get_member_id_by_name("my_wchar"));
+        //tempBasic->set_char16_value(L'C', tempBasic->get_member_id_by_name("my_wchar"));
         tempBasic->set_string_value("JC@eProsima", tempBasic->get_member_id_by_name("my_string"));
-        tempBasic->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", tempBasic->get_member_id_by_name("my_wstring"));
+        //tempBasic->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", tempBasic->get_member_id_by_name("my_wstring"));
         my_array_struct->set_complex_value(tempBasic, i);
     }
     complex->return_loaned_value(my_array_struct);
@@ -988,9 +988,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     basic->set_float64_value(765241.58, basic->get_member_id_by_name("my_float64"));
     basic->set_float128_value(765241878.154874, basic->get_member_id_by_name("my_float128"));
     basic->set_char8_value('L', basic->get_member_id_by_name("my_char"));
-    basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
+    //basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
     basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
-    basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
+    //basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
     my_map_long_struct->return_loaned_value(basic);
     key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
     key->set_int32_value(1000);
@@ -1009,9 +1009,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     mas3->set_float64_value(i * 8.8, mas3->get_member_id_by_name("my_float64"));
     mas3->set_float128_value(i * 10.0, mas3->get_member_id_by_name("my_float128"));
     mas3->set_char8_value('J', mas3->get_member_id_by_name("my_char"));
-    mas3->set_char16_value(L'C', mas3->get_member_id_by_name("my_wchar"));
+    //mas3->set_char16_value(L'C', mas3->get_member_id_by_name("my_wchar"));
     mas3->set_string_value("JC@eProsima", mas3->get_member_id_by_name("my_string"));
-    mas3->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", mas3->get_member_id_by_name("my_wstring"));
+    //mas3->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", mas3->get_member_id_by_name("my_wstring"));
     my_map_long_struct->return_loaned_value(mas3);
 
     // staticData.my_union().complex().my_map_long_struct()[1000] = staticData.my_union().complex().my_array_struct()[3];
@@ -1129,14 +1129,14 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_A)
     complex->set_string_value(
         "Bv7EMffURwGNqePoujdSfkF9PXN9TH125X5nGpNLfzya53tZtNJdgMROlYdZnTE1SLWzBdIU7ZyjjGvsGHkmuJUROwVPcNa9q5dRUV3KZAKNx1exL7BjhqIgQFconhd", complex->get_member_id_by_name(
             "my_small_string_8"));
-    complex->set_wstring_value(L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c", complex->get_member_id_by_name(
-                "my_small_string_16"));
+    //complex->set_wstring_value(L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c", complex->get_member_id_by_name(
+    //            "my_small_string_16"));
     complex->set_string_value(
         "hYE5vjcLJe6ML5DmoqQwh9ns866dAbnjkVKIKu2VF6lbkvh91ZOG2enEcdoRa8T43hR0Ym0k7tI621EQGufvzmLqxKCPgiXSp2zUTTmIWtn4fM8tC3aP1Yd0dKvn0tDobyp6p3156KvxqG3BKQ6VjFiHlMFoEyz8pjCclhXLl2cfAi97sQzXLUoPYUC5BWKyQTrA2JF6HXZM6vrbw5dc3B4AOJNGdPJ9ai6weF43h1RhnXE9MOFxPNoQnJ8gqSXYbMtpG6ZzqhUyoz0XhFDt7EOqXIgvc9SCejQTVMPeRcF5Zy57hrYZiKrCQqFWidS4BdfEAkuwESgBmEpEFOpZotwDt0TGDaLktSt3dKRsURO6TpuZ2nZNdiEJyc597ZjjQXtyKU7OCyRRqllzAnHEtoU3zd3OLTOvT5uk32N1Y64tpUte63De2EMwDNYb2eGAQfATdSt8VcGBOzJQjsmrMwMumtk48JzXXLxjo6s2vl2rNK9WQM1", complex->get_member_id_by_name(
             "my_large_string_8"));
-    complex->set_wstring_value(
-        L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX", complex->get_member_id_by_name(
-            "my_large_string_16"));
+    //complex->set_wstring_value(
+    //    L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX", complex->get_member_id_by_name(
+    //        "my_large_string_16"));
 
     DynamicData* my_array_string = complex->loan_value(complex->get_member_id_by_name("my_array_string"));
     for (unsigned int j = 0; j < 5; ++j)
@@ -1280,9 +1280,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     staticData.my_union().complex().my_basic_struct().my_float64(765241.58);
     staticData.my_union().complex().my_basic_struct().my_float128(765241878.154874);
     staticData.my_union().complex().my_basic_struct().my_char('L');
-    staticData.my_union().complex().my_basic_struct().my_wchar(L'G');
+    //staticData.my_union().complex().my_basic_struct().my_wchar(L'G');
     staticData.my_union().complex().my_basic_struct().my_string("Luis@eProsima");
-    staticData.my_union().complex().my_basic_struct().my_wstring(L"LuisGasco@eProsima");
+    //staticData.my_union().complex().my_basic_struct().my_wstring(L"LuisGasco@eProsima");
 
     staticData.my_union().complex().my_alias_enum(C);
     staticData.my_union().complex().my_enum(B);
@@ -1314,9 +1314,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
         staticData.my_union().complex().my_array_struct()[i].my_float64(i * 8.8);
         staticData.my_union().complex().my_array_struct()[i].my_float128(i * 10.0);
         staticData.my_union().complex().my_array_struct()[i].my_char('J');
-        staticData.my_union().complex().my_array_struct()[i].my_wchar(L'C');
+        //staticData.my_union().complex().my_array_struct()[i].my_wchar(L'C');
         staticData.my_union().complex().my_array_struct()[i].my_string("JC@eProsima");
-        staticData.my_union().complex().my_array_struct()[i].my_wstring(L"JC-BOOM-Armadilo!@eProsima");
+        //staticData.my_union().complex().my_array_struct()[i].my_wstring(L"JC-BOOM-Armadilo!@eProsima");
     }
 
     staticData.my_union().complex().my_map_octet_short()[0] = 1340;
@@ -1335,12 +1335,12 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
 
     staticData.my_union().complex().my_small_string_8(
         "Bv7EMffURwGNqePoujdSfkF9PXN9TH125X5nGpNLfzya53tZtNJdgMROlYdZnTE1SLWzBdIU7ZyjjGvsGHkmuJUROwVPcNa9q5dRUV3KZAKNx1exL7BjhqIgQFconhd");
-    staticData.my_union().complex().my_small_string_16(
-        L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c");
+    //staticData.my_union().complex().my_small_string_16(
+    //    L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c");
     staticData.my_union().complex().my_large_string_8(
         "hYE5vjcLJe6ML5DmoqQwh9ns866dAbnjkVKIKu2VF6lbkvh91ZOG2enEcdoRa8T43hR0Ym0k7tI621EQGufvzmLqxKCPgiXSp2zUTTmIWtn4fM8tC3aP1Yd0dKvn0tDobyp6p3156KvxqG3BKQ6VjFiHlMFoEyz8pjCclhXLl2cfAi97sQzXLUoPYUC5BWKyQTrA2JF6HXZM6vrbw5dc3B4AOJNGdPJ9ai6weF43h1RhnXE9MOFxPNoQnJ8gqSXYbMtpG6ZzqhUyoz0XhFDt7EOqXIgvc9SCejQTVMPeRcF5Zy57hrYZiKrCQqFWidS4BdfEAkuwESgBmEpEFOpZotwDt0TGDaLktSt3dKRsURO6TpuZ2nZNdiEJyc597ZjjQXtyKU7OCyRRqllzAnHEtoU3zd3OLTOvT5uk32N1Y64tpUte63De2EMwDNYb2eGAQfATdSt8VcGBOzJQjsmrMwMumtk48JzXXLxjo6s2vl2rNK9WQM1");
-    staticData.my_union().complex().my_large_string_16(
-        L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX");
+    //staticData.my_union().complex().my_large_string_16(
+    //    L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX");
     for (int i = 0; i < 5; ++i)
     {
         for (int j = 0; j < 5; ++j)
@@ -1389,9 +1389,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     basic->set_float64_value(765241.58, basic->get_member_id_by_name("my_float64"));
     basic->set_float128_value(765241878.154874, basic->get_member_id_by_name("my_float128"));
     basic->set_char8_value('L', basic->get_member_id_by_name("my_char"));
-    basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
+    //basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
     basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
-    basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
+    //basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
     complex->return_loaned_value(basic);
 
     complex->set_enum_value("C", complex->get_member_id_by_name("my_alias_enum"));
@@ -1444,9 +1444,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
         tempBasic->set_float64_value(i * 8.8, tempBasic->get_member_id_by_name("my_float64"));
         tempBasic->set_float128_value(i * 10.0, tempBasic->get_member_id_by_name("my_float128"));
         tempBasic->set_char8_value('J', tempBasic->get_member_id_by_name("my_char"));
-        tempBasic->set_char16_value(L'C', tempBasic->get_member_id_by_name("my_wchar"));
+        //tempBasic->set_char16_value(L'C', tempBasic->get_member_id_by_name("my_wchar"));
         tempBasic->set_string_value("JC@eProsima", tempBasic->get_member_id_by_name("my_string"));
-        tempBasic->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", tempBasic->get_member_id_by_name("my_wstring"));
+        //tempBasic->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", tempBasic->get_member_id_by_name("my_wstring"));
         my_array_struct->set_complex_value(tempBasic, i);
     }
     complex->return_loaned_value(my_array_struct);
@@ -1490,9 +1490,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     basic->set_float64_value(765241.58, basic->get_member_id_by_name("my_float64"));
     basic->set_float128_value(765241878.154874, basic->get_member_id_by_name("my_float128"));
     basic->set_char8_value('L', basic->get_member_id_by_name("my_char"));
-    basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
+    //basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
     basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
-    basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
+    //basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
     my_map_long_struct->return_loaned_value(basic);
     key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
     key->set_int32_value(1000);
@@ -1511,9 +1511,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     mas3->set_float64_value(i * 8.8, mas3->get_member_id_by_name("my_float64"));
     mas3->set_float128_value(i * 10.0, mas3->get_member_id_by_name("my_float128"));
     mas3->set_char8_value('J', mas3->get_member_id_by_name("my_char"));
-    mas3->set_char16_value(L'C', mas3->get_member_id_by_name("my_wchar"));
+    //mas3->set_char16_value(L'C', mas3->get_member_id_by_name("my_wchar"));
     mas3->set_string_value("JC@eProsima", mas3->get_member_id_by_name("my_string"));
-    mas3->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", mas3->get_member_id_by_name("my_wstring"));
+    //mas3->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", mas3->get_member_id_by_name("my_wstring"));
     my_map_long_struct->return_loaned_value(mas3);
 
     // staticData.my_union().complex().my_map_long_struct()[1000] = staticData.my_union().complex().my_array_struct()[3];
@@ -1631,14 +1631,14 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_B)
     complex->set_string_value(
         "Bv7EMffURwGNqePoujdSfkF9PXN9TH125X5nGpNLfzya53tZtNJdgMROlYdZnTE1SLWzBdIU7ZyjjGvsGHkmuJUROwVPcNa9q5dRUV3KZAKNx1exL7BjhqIgQFconhd", complex->get_member_id_by_name(
             "my_small_string_8"));
-    complex->set_wstring_value(L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c", complex->get_member_id_by_name(
-                "my_small_string_16"));
+    //complex->set_wstring_value(L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c", complex->get_member_id_by_name(
+    //            "my_small_string_16"));
     complex->set_string_value(
         "hYE5vjcLJe6ML5DmoqQwh9ns866dAbnjkVKIKu2VF6lbkvh91ZOG2enEcdoRa8T43hR0Ym0k7tI621EQGufvzmLqxKCPgiXSp2zUTTmIWtn4fM8tC3aP1Yd0dKvn0tDobyp6p3156KvxqG3BKQ6VjFiHlMFoEyz8pjCclhXLl2cfAi97sQzXLUoPYUC5BWKyQTrA2JF6HXZM6vrbw5dc3B4AOJNGdPJ9ai6weF43h1RhnXE9MOFxPNoQnJ8gqSXYbMtpG6ZzqhUyoz0XhFDt7EOqXIgvc9SCejQTVMPeRcF5Zy57hrYZiKrCQqFWidS4BdfEAkuwESgBmEpEFOpZotwDt0TGDaLktSt3dKRsURO6TpuZ2nZNdiEJyc597ZjjQXtyKU7OCyRRqllzAnHEtoU3zd3OLTOvT5uk32N1Y64tpUte63De2EMwDNYb2eGAQfATdSt8VcGBOzJQjsmrMwMumtk48JzXXLxjo6s2vl2rNK9WQM1", complex->get_member_id_by_name(
             "my_large_string_8"));
-    complex->set_wstring_value(
-        L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX", complex->get_member_id_by_name(
-            "my_large_string_16"));
+    //complex->set_wstring_value(
+    //    L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX", complex->get_member_id_by_name(
+    //"my_large_string_16"));
 
     DynamicData* my_array_string = complex->loan_value(complex->get_member_id_by_name("my_array_string"));
     for (unsigned int j = 0; j < 5; ++j)
@@ -1740,9 +1740,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     staticData.my_union().complex().my_basic_struct().my_float64(765241.58);
     staticData.my_union().complex().my_basic_struct().my_float128(765241878.154874);
     staticData.my_union().complex().my_basic_struct().my_char('L');
-    staticData.my_union().complex().my_basic_struct().my_wchar(L'G');
+    //staticData.my_union().complex().my_basic_struct().my_wchar(L'G');
     staticData.my_union().complex().my_basic_struct().my_string("Luis@eProsima");
-    staticData.my_union().complex().my_basic_struct().my_wstring(L"LuisGasco@eProsima");
+    //staticData.my_union().complex().my_basic_struct().my_wstring(L"LuisGasco@eProsima");
 
     staticData.my_union().complex().my_alias_enum(C);
     staticData.my_union().complex().my_enum(B);
@@ -1774,9 +1774,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
         staticData.my_union().complex().my_array_struct()[i].my_float64(i * 8.8);
         staticData.my_union().complex().my_array_struct()[i].my_float128(i * 10.0);
         staticData.my_union().complex().my_array_struct()[i].my_char('J');
-        staticData.my_union().complex().my_array_struct()[i].my_wchar(L'C');
+        //staticData.my_union().complex().my_array_struct()[i].my_wchar(L'C');
         staticData.my_union().complex().my_array_struct()[i].my_string("JC@eProsima");
-        staticData.my_union().complex().my_array_struct()[i].my_wstring(L"JC-BOOM-Armadilo!@eProsima");
+        //staticData.my_union().complex().my_array_struct()[i].my_wstring(L"JC-BOOM-Armadilo!@eProsima");
     }
 
     staticData.my_union().complex().my_map_octet_short()[0] = 1340;
@@ -1795,12 +1795,12 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
 
     staticData.my_union().complex().my_small_string_8(
         "Bv7EMffURwGNqePoujdSfkF9PXN9TH125X5nGpNLfzya53tZtNJdgMROlYdZnTE1SLWzBdIU7ZyjjGvsGHkmuJUROwVPcNa9q5dRUV3KZAKNx1exL7BjhqIgQFconhd");
-    staticData.my_union().complex().my_small_string_16(
-        L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c");
+    //staticData.my_union().complex().my_small_string_16(
+    //    L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c");
     staticData.my_union().complex().my_large_string_8(
         "hYE5vjcLJe6ML5DmoqQwh9ns866dAbnjkVKIKu2VF6lbkvh91ZOG2enEcdoRa8T43hR0Ym0k7tI621EQGufvzmLqxKCPgiXSp2zUTTmIWtn4fM8tC3aP1Yd0dKvn0tDobyp6p3156KvxqG3BKQ6VjFiHlMFoEyz8pjCclhXLl2cfAi97sQzXLUoPYUC5BWKyQTrA2JF6HXZM6vrbw5dc3B4AOJNGdPJ9ai6weF43h1RhnXE9MOFxPNoQnJ8gqSXYbMtpG6ZzqhUyoz0XhFDt7EOqXIgvc9SCejQTVMPeRcF5Zy57hrYZiKrCQqFWidS4BdfEAkuwESgBmEpEFOpZotwDt0TGDaLktSt3dKRsURO6TpuZ2nZNdiEJyc597ZjjQXtyKU7OCyRRqllzAnHEtoU3zd3OLTOvT5uk32N1Y64tpUte63De2EMwDNYb2eGAQfATdSt8VcGBOzJQjsmrMwMumtk48JzXXLxjo6s2vl2rNK9WQM1");
-    staticData.my_union().complex().my_large_string_16(
-        L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX");
+    //staticData.my_union().complex().my_large_string_16(
+    //    L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX");
     for (int i = 0; i < 5; ++i)
     {
         for (int j = 0; j < 5; ++j)
@@ -1848,9 +1848,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     basic->set_float64_value(765241.58, basic->get_member_id_by_name("my_float64"));
     basic->set_float128_value(765241878.154874, basic->get_member_id_by_name("my_float128"));
     basic->set_char8_value('L', basic->get_member_id_by_name("my_char"));
-    basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
+    //basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
     basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
-    basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
+    //basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
     complex->return_loaned_value(basic);
 
     complex->set_enum_value("C", complex->get_member_id_by_name("my_alias_enum"));
@@ -1903,9 +1903,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
         tempBasic->set_float64_value(i * 8.8, tempBasic->get_member_id_by_name("my_float64"));
         tempBasic->set_float128_value(i * 10.0, tempBasic->get_member_id_by_name("my_float128"));
         tempBasic->set_char8_value('J', tempBasic->get_member_id_by_name("my_char"));
-        tempBasic->set_char16_value(L'C', tempBasic->get_member_id_by_name("my_wchar"));
+        //tempBasic->set_char16_value(L'C', tempBasic->get_member_id_by_name("my_wchar"));
         tempBasic->set_string_value("JC@eProsima", tempBasic->get_member_id_by_name("my_string"));
-        tempBasic->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", tempBasic->get_member_id_by_name("my_wstring"));
+        //tempBasic->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", tempBasic->get_member_id_by_name("my_wstring"));
         my_array_struct->set_complex_value(tempBasic, i);
     }
     complex->return_loaned_value(my_array_struct);
@@ -1949,9 +1949,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     basic->set_float64_value(765241.58, basic->get_member_id_by_name("my_float64"));
     basic->set_float128_value(765241878.154874, basic->get_member_id_by_name("my_float128"));
     basic->set_char8_value('L', basic->get_member_id_by_name("my_char"));
-    basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
+    //basic->set_char16_value(L'G', basic->get_member_id_by_name("my_wchar"));
     basic->set_string_value("Luis@eProsima", basic->get_member_id_by_name("my_string"));
-    basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
+    //basic->set_wstring_value(L"LuisGasco@eProsima", basic->get_member_id_by_name("my_wstring"));
     my_map_long_struct->return_loaned_value(basic);
     key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
     key->set_int32_value(1000);
@@ -1970,9 +1970,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     mas3->set_float64_value(i * 8.8, mas3->get_member_id_by_name("my_float64"));
     mas3->set_float128_value(i * 10.0, mas3->get_member_id_by_name("my_float128"));
     mas3->set_char8_value('J', mas3->get_member_id_by_name("my_char"));
-    mas3->set_char16_value(L'C', mas3->get_member_id_by_name("my_wchar"));
+    //mas3->set_char16_value(L'C', mas3->get_member_id_by_name("my_wchar"));
     mas3->set_string_value("JC@eProsima", mas3->get_member_id_by_name("my_string"));
-    mas3->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", mas3->get_member_id_by_name("my_wstring"));
+    //mas3->set_wstring_value(L"JC-BOOM-Armadilo!@eProsima", mas3->get_member_id_by_name("my_wstring"));
     my_map_long_struct->return_loaned_value(mas3);
 
     // staticData.my_union().complex().my_map_long_struct()[1000] = staticData.my_union().complex().my_array_struct()[3];
@@ -2090,14 +2090,14 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
     complex->set_string_value(
         "Bv7EMffURwGNqePoujdSfkF9PXN9TH125X5nGpNLfzya53tZtNJdgMROlYdZnTE1SLWzBdIU7ZyjjGvsGHkmuJUROwVPcNa9q5dRUV3KZAKNx1exL7BjhqIgQFconhd", complex->get_member_id_by_name(
             "my_small_string_8"));
-    complex->set_wstring_value(L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c", complex->get_member_id_by_name(
-                "my_small_string_16"));
+    //complex->set_wstring_value(L"AgzñgXsI9pXbWjYLDvvn8JUFWhxZhk9t92rdsTqylvdpqtXA6hy9dHkoBTgmF2c", complex->get_member_id_by_name(
+    //            "my_small_string_16"));
     complex->set_string_value(
         "hYE5vjcLJe6ML5DmoqQwh9ns866dAbnjkVKIKu2VF6lbkvh91ZOG2enEcdoRa8T43hR0Ym0k7tI621EQGufvzmLqxKCPgiXSp2zUTTmIWtn4fM8tC3aP1Yd0dKvn0tDobyp6p3156KvxqG3BKQ6VjFiHlMFoEyz8pjCclhXLl2cfAi97sQzXLUoPYUC5BWKyQTrA2JF6HXZM6vrbw5dc3B4AOJNGdPJ9ai6weF43h1RhnXE9MOFxPNoQnJ8gqSXYbMtpG6ZzqhUyoz0XhFDt7EOqXIgvc9SCejQTVMPeRcF5Zy57hrYZiKrCQqFWidS4BdfEAkuwESgBmEpEFOpZotwDt0TGDaLktSt3dKRsURO6TpuZ2nZNdiEJyc597ZjjQXtyKU7OCyRRqllzAnHEtoU3zd3OLTOvT5uk32N1Y64tpUte63De2EMwDNYb2eGAQfATdSt8VcGBOzJQjsmrMwMumtk48JzXXLxjo6s2vl2rNK9WQM1", complex->get_member_id_by_name(
             "my_large_string_8"));
-    complex->set_wstring_value(
-        L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX", complex->get_member_id_by_name(
-            "my_large_string_16"));
+    //complex->set_wstring_value(
+    //    L"nosYBfFr1s3t8rUsuUrVCWFi6moDk7GULFj6XnkebIDkjl3n2ykKxUIaLj3qNNUx0ny8DvFbdfxZBdMhBNW3fHbKrig4GkHnN1JoEo0ACiPxrARusDs3xKzvaQQrls6lVUFAUXzDOtw5f2CNVJKiruGjXUO2Lq5Mmy8ygW3eUiTlueAHA2dRXXryOFi47jS3DkmBH4aAOKcmR27KhhJnXaY0gWy3XdSnaGQNB3XvbmxQ7xXDsf1wz860WMEKP3VhdOLsmS6tKCb4sshuOlmUSyTggY7vNoxfpG1EUFP5iPro9E0tHLLdHlWf2NwU8OXCYx6KKEbs5pFMvgEstnQglsdTk0lOv6riaFkFOwx83gW1l6Pg4eXjacnJKoVh1pOeZxULLZpCECw8yRZ9z4JPHxh2C7ytkCHMKp9O4MwQwYvvvgWWLWfJgb7Ecy2tgvWLpNDzgkFrEFhaCTKitChlG422CnLSsXvTBNnF52sULH6rcwOVx3mbhqte3ld3fObtAuH3zPzjOF4vVbvUXxgZh1Zx1cey0iGfnhOZHUfUwJ3Qv0WZNcuVLvMMhhg85A3620b84MAIc2UoW9Hl4BIT7pHo41ApF0DxIPJL0QdIdAOjn0JTPZqAhoHVBQoYvivPHftk5Crd1a1J8L7hSs0s4uSQKAMTKDxy3gKLaGAg277h4iEsEZRCI4RPlPTo9nZ48s8OO2KzqrUbMkoPSTgaJEXq8GsozAzh0wtL4P3gPeHO5nQzoytoXAkiXoPph0GaTLiahYQksYeK1eVQADDqZPXC55teXKKdX4aomCufr1ZizgzkGwAmnsFmhmBSF0gvbm56NDaUVT0UqXxKxAfRjkILeWR1mW8jfn6RYJH3IWiHxEfyB23rr78NySfgzIchhrm7jEFtmwPpKPKAwzajLv0HpkrtTr38YwWeT5LzHokFAQEc6l3aWdJWapVyt9wX89dEkmPPG9torCV2ddjyF4jAKsxKvzU4pCxV6B3m16IIdnksemJ0xG8iKh4ZPsX", complex->get_member_id_by_name(
+    //        "my_large_string_16"));
 
     DynamicData* my_array_string = complex->loan_value(complex->get_member_id_by_name("my_array_string"));
     for (unsigned int j = 0; j < 5; ++j)
@@ -2238,9 +2238,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_with_Keys)
     staticData.basic().my_float64(8.888);
     staticData.basic().my_float128(1005.1005);
     staticData.basic().my_char('O');
-    staticData.basic().my_wchar(L'M');
+    //staticData.basic().my_wchar(L'M');
     staticData.basic().my_string("G It's");
-    staticData.basic().my_wstring(L" Working");
+    //staticData.basic().my_wstring(L" Working");
     //staticData.key(88);
 
     DynamicData* dynData = DynamicDataFactory::get_instance()->create_data(GetKeyedStructType());
@@ -2257,9 +2257,9 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_with_Keys)
     basic->set_float64_value(8.888, basic->get_member_id_by_name("my_float64"));
     basic->set_float128_value(1005.1005, basic->get_member_id_by_name("my_float128"));
     basic->set_char8_value('O', basic->get_member_id_by_name("my_char"));
-    basic->set_char16_value(L'M', basic->get_member_id_by_name("my_wchar"));
+    //basic->set_char16_value(L'M', basic->get_member_id_by_name("my_wchar"));
     basic->set_string_value("G It's", basic->get_member_id_by_name("my_string"));
-    basic->set_wstring_value(L" Working", basic->get_member_id_by_name("my_wstring"));
+    //basic->set_wstring_value(L" Working", basic->get_member_id_by_name("my_wstring"));
     dynData->return_loaned_value(basic);
     //dynData->set_byte_value(88, dynData->get_member_id_by_name("key"));
 

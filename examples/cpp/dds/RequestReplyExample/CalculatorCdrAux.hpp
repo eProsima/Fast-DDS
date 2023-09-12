@@ -24,15 +24,12 @@
 
 #include "Calculator.h"
 
- 
-
 constexpr uint32_t ReplyType_max_cdr_typesize {16UL};
 constexpr uint32_t ReplyType_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t RequestType_max_cdr_typesize {16UL};
 constexpr uint32_t RequestType_max_key_cdr_typesize {0UL};
- 
+
 
 namespace eprosima {
 namespace fastcdr {

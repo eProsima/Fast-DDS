@@ -26,7 +26,7 @@
 
 constexpr uint32_t KeyedHelloWorld_max_cdr_typesize {141UL};
 constexpr uint32_t KeyedHelloWorld_max_key_cdr_typesize {2UL};
- 
+
 
 namespace eprosima {
 namespace fastcdr {

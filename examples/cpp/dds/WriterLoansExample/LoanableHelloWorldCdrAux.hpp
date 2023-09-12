@@ -26,7 +26,7 @@
 
 constexpr uint32_t LoanableHelloWorld_max_cdr_typesize {264UL};
 constexpr uint32_t LoanableHelloWorld_max_key_cdr_typesize {0UL};
- 
+
 
 namespace eprosima {
 namespace fastcdr {

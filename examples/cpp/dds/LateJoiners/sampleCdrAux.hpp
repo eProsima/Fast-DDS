@@ -26,7 +26,7 @@
 
 constexpr uint32_t sample_max_cdr_typesize {6UL};
 constexpr uint32_t sample_max_key_cdr_typesize {1UL};
- 
+
 
 namespace eprosima {
 namespace fastcdr {

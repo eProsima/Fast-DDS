@@ -24,28 +24,22 @@
 
 #include "new_features_4_2.h"
 
- 
- 
-
 constexpr uint32_t bitmodule_BM2_max_cdr_typesize {24UL};
 constexpr uint32_t bitmodule_BM2_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t NewAliases_max_cdr_typesize {40UL};
 constexpr uint32_t NewAliases_max_key_cdr_typesize {0UL};
- 
- 
+
 
 constexpr uint32_t StructTest_max_cdr_typesize {96UL};
 constexpr uint32_t StructTest_max_key_cdr_typesize {0UL};
- 
- 
- 
- 
+
+
+
 
 constexpr uint32_t bitmodule_BitsetBitmask_max_cdr_typesize {17UL};
 constexpr uint32_t bitmodule_BitsetBitmask_max_key_cdr_typesize {0UL};
- 
+
 
 namespace eprosima {
 namespace fastcdr {

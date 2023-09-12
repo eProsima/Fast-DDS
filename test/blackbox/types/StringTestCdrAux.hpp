@@ -26,7 +26,7 @@
 
 constexpr uint32_t StringTest_max_cdr_typesize {10009UL};
 constexpr uint32_t StringTest_max_key_cdr_typesize {0UL};
- 
+
 
 namespace eprosima {
 namespace fastcdr {

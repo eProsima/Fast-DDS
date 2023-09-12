@@ -26,7 +26,7 @@
 
 constexpr uint32_t Data64kb_max_cdr_typesize {64004UL};
 constexpr uint32_t Data64kb_max_key_cdr_typesize {0UL};
- 
+
 
 namespace eprosima {
 namespace fastcdr {

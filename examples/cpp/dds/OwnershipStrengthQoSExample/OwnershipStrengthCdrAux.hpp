@@ -26,7 +26,7 @@
 
 constexpr uint32_t ExampleMessage_max_cdr_typesize {272UL};
 constexpr uint32_t ExampleMessage_max_key_cdr_typesize {0UL};
- 
+
 
 namespace eprosima {
 namespace fastcdr {

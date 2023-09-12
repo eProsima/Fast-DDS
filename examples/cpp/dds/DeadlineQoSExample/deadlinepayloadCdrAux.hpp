@@ -26,7 +26,7 @@
 
 constexpr uint32_t HelloMsg_max_cdr_typesize {269UL};
 constexpr uint32_t HelloMsg_max_key_cdr_typesize {2UL};
- 
+
 
 namespace eprosima {
 namespace fastcdr {

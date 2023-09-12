@@ -26,13 +26,12 @@
 
 constexpr uint32_t MyEnumWideStruct_max_cdr_typesize {8UL};
 constexpr uint32_t MyEnumWideStruct_max_key_cdr_typesize {0UL};
- 
- 
+
 
 constexpr uint32_t SimpleWideUnionStruct_max_cdr_typesize {24UL};
 constexpr uint32_t SimpleWideUnionStruct_max_key_cdr_typesize {0UL};
- 
- 
+
+
 
 namespace eprosima {
 namespace fastcdr {

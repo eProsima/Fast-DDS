@@ -26,139 +26,108 @@
 
 constexpr uint32_t ArraytStruct_max_cdr_typesize {36UL};
 constexpr uint32_t ArraytStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t SimpleUnionStruct_max_cdr_typesize {24UL};
 constexpr uint32_t SimpleUnionStruct_max_key_cdr_typesize {0UL};
- 
- 
+
 
 constexpr uint32_t WCharUnionStruct_max_cdr_typesize {24UL};
 constexpr uint32_t WCharUnionStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t OctetStruct_max_cdr_typesize {5UL};
 constexpr uint32_t OctetStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t LongStruct_max_cdr_typesize {8UL};
 constexpr uint32_t LongStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t EnumStruct_max_cdr_typesize {8UL};
 constexpr uint32_t EnumStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t BitsetStruct_max_cdr_typesize {8UL};
 constexpr uint32_t BitsetStruct_max_key_cdr_typesize {0UL};
- 
- 
- 
+
+
 
 constexpr uint32_t DoubleStruct_max_cdr_typesize {16UL};
 constexpr uint32_t DoubleStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t LargeWStringStruct_max_cdr_typesize {83858UL};
 constexpr uint32_t LargeWStringStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t WCharStruct_max_cdr_typesize {6UL};
 constexpr uint32_t WCharStruct_max_key_cdr_typesize {0UL};
- 
- 
+
 
 constexpr uint32_t WStringStruct_max_cdr_typesize {518UL};
 constexpr uint32_t WStringStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t SequenceStruct_max_cdr_typesize {16UL};
 constexpr uint32_t SequenceStruct_max_key_cdr_typesize {0UL};
- 
- 
+
 
 constexpr uint32_t ULongStruct_max_cdr_typesize {8UL};
 constexpr uint32_t ULongStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t SequenceSequenceStruct_max_cdr_typesize {48UL};
 constexpr uint32_t SequenceSequenceStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t FloatStruct_max_cdr_typesize {8UL};
 constexpr uint32_t FloatStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t LongDoubleStruct_max_cdr_typesize {24UL};
 constexpr uint32_t LongDoubleStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t StructStructStruct_max_cdr_typesize {32UL};
 constexpr uint32_t StructStructStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t UnionUnionUnionStruct_max_cdr_typesize {32UL};
 constexpr uint32_t UnionUnionUnionStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t BoolStruct_max_cdr_typesize {5UL};
 constexpr uint32_t BoolStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t MapMapStruct_max_cdr_typesize {60UL};
 constexpr uint32_t MapMapStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t AliasAliasStruct_max_cdr_typesize {8UL};
 constexpr uint32_t AliasAliasStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t ArrayArrayStruct_max_cdr_typesize {72UL};
 constexpr uint32_t ArrayArrayStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t ShortStruct_max_cdr_typesize {6UL};
 constexpr uint32_t ShortStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t MapStruct_max_cdr_typesize {24UL};
 constexpr uint32_t MapStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t UShortStruct_max_cdr_typesize {6UL};
 constexpr uint32_t UShortStruct_max_key_cdr_typesize {0UL};
- 
- 
- 
+
+
 
 constexpr uint32_t ULongLongStruct_max_cdr_typesize {16UL};
 constexpr uint32_t ULongLongStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t AliasStruct_max_cdr_typesize {8UL};
 constexpr uint32_t AliasStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t LargeStringStruct_max_cdr_typesize {41934UL};
 constexpr uint32_t LargeStringStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t CharStruct_max_cdr_typesize {5UL};
 constexpr uint32_t CharStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t LongLongStruct_max_cdr_typesize {16UL};
 constexpr uint32_t LongLongStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t StringStruct_max_cdr_typesize {264UL};
 constexpr uint32_t StringStruct_max_key_cdr_typesize {0UL};
- 
 
 constexpr uint32_t StructStruct_max_cdr_typesize {16UL};
 constexpr uint32_t StructStruct_max_key_cdr_typesize {0UL};
- 
- 
+
+
 
 namespace eprosima {
 namespace fastcdr {

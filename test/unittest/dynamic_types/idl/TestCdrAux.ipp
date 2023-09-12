@@ -87,13 +87,7 @@ eProsima_user_DllExport size_t calculate_serialized_size(
                 data.my_char(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(12),
-                data.my_wchar(), current_alignment);
-
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(13),
                 data.my_string(), current_alignment);
-
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(14),
-                data.my_wstring(), current_alignment);
 
 
     calculated_size += calculator.end_calculate_type_serialized_size(previous_encoding, current_alignment);
@@ -125,9 +119,7 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(9) << data.my_float64()
         << eprosima::fastcdr::MemberId(10) << data.my_float128()
         << eprosima::fastcdr::MemberId(11) << data.my_char()
-        << eprosima::fastcdr::MemberId(12) << data.my_wchar()
-        << eprosima::fastcdr::MemberId(13) << data.my_string()
-        << eprosima::fastcdr::MemberId(14) << data.my_wstring()
+        << eprosima::fastcdr::MemberId(12) << data.my_string()
 ;
 
     scdr.end_serialize_type(current_state);
@@ -195,15 +187,7 @@ eProsima_user_DllExport void deserialize(
                                             break;
 
                                         case 12:
-                                                dcdr >> data.my_wchar();
-                                            break;
-
-                                        case 13:
                                                 dcdr >> data.my_string();
-                                            break;
-
-                                        case 14:
-                                                dcdr >> data.my_wstring();
                                             break;
 
                     default:
@@ -290,24 +274,18 @@ eProsima_user_DllExport size_t calculate_serialized_size(
                 data.my_small_string_8(), current_alignment);
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(15),
-                data.my_small_string_16(), current_alignment);
-
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(16),
                 data.my_large_string_8(), current_alignment);
 
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(17),
-                data.my_large_string_16(), current_alignment);
-
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(18),
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(16),
                 data.my_array_string(), current_alignment);
 
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(19),
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(17),
                 data.multi_alias_array_42(), current_alignment);
 
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(20),
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(18),
                 data.my_array_arrays(), current_alignment);
 
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(21),
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(19),
                 data.my_sequences_array(), current_alignment);
 
 
@@ -343,13 +321,11 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(12) << data.my_map_long_octet_array_500()
         << eprosima::fastcdr::MemberId(13) << data.my_map_long_lol_type()
         << eprosima::fastcdr::MemberId(14) << data.my_small_string_8()
-        << eprosima::fastcdr::MemberId(15) << data.my_small_string_16()
-        << eprosima::fastcdr::MemberId(16) << data.my_large_string_8()
-        << eprosima::fastcdr::MemberId(17) << data.my_large_string_16()
-        << eprosima::fastcdr::MemberId(18) << data.my_array_string()
-        << eprosima::fastcdr::MemberId(19) << data.multi_alias_array_42()
-        << eprosima::fastcdr::MemberId(20) << data.my_array_arrays()
-        << eprosima::fastcdr::MemberId(21) << data.my_sequences_array()
+        << eprosima::fastcdr::MemberId(15) << data.my_large_string_8()
+        << eprosima::fastcdr::MemberId(16) << data.my_array_string()
+        << eprosima::fastcdr::MemberId(17) << data.multi_alias_array_42()
+        << eprosima::fastcdr::MemberId(18) << data.my_array_arrays()
+        << eprosima::fastcdr::MemberId(19) << data.my_sequences_array()
 ;
 
     scdr.end_serialize_type(current_state);
@@ -429,30 +405,22 @@ eProsima_user_DllExport void deserialize(
                                             break;
 
                                         case 15:
-                                                dcdr >> data.my_small_string_16();
-                                            break;
-
-                                        case 16:
                                                 dcdr >> data.my_large_string_8();
                                             break;
 
-                                        case 17:
-                                                dcdr >> data.my_large_string_16();
-                                            break;
-
-                                        case 18:
+                                        case 16:
                                                 dcdr >> data.my_array_string();
                                             break;
 
-                                        case 19:
+                                        case 17:
                                                 dcdr >> data.multi_alias_array_42();
                                             break;
 
-                                        case 20:
+                                        case 18:
                                                 dcdr >> data.my_array_arrays();
                                             break;
 
-                                        case 21:
+                                        case 19:
                                                 dcdr >> data.my_sequences_array();
                                             break;
 

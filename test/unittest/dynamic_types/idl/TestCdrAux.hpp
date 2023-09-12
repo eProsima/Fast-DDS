@@ -24,32 +24,29 @@
 
 #include "Test.h"
 
-constexpr uint32_t KeyedStruct_max_cdr_typesize {858UL};
+constexpr uint32_t KeyedStruct_max_cdr_typesize {344UL};
 constexpr uint32_t KeyedStruct_max_key_cdr_typesize {1UL};
- 
- 
- 
- 
 
-constexpr uint32_t BasicStruct_max_cdr_typesize {850UL};
+
+
+
+constexpr uint32_t BasicStruct_max_cdr_typesize {336UL};
 constexpr uint32_t BasicStruct_max_key_cdr_typesize {0UL};
- 
- 
 
-constexpr uint32_t ComplexStruct_max_cdr_typesize {43774056UL};
+
+constexpr uint32_t ComplexStruct_max_cdr_typesize {18064796UL};
 constexpr uint32_t ComplexStruct_max_key_cdr_typesize {0UL};
- 
- 
- 
 
-constexpr uint32_t CompleteStruct_max_cdr_typesize {43774332UL};
+
+
+constexpr uint32_t CompleteStruct_max_cdr_typesize {18065072UL};
 constexpr uint32_t CompleteStruct_max_key_cdr_typesize {0UL};
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
 
 namespace eprosima {
 namespace fastcdr {

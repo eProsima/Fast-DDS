@@ -106,11 +106,6 @@ bool DynamicPubSubType::deserialize(
         eprosima::fastrtps::rtps::SerializedPayload_t* payload,
         void* data)
 {
-    if (dynamic_type_ == nullptr)
-    {
-        return false;
-    }
-
     eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length); // Object that manages the raw buffer.
     eprosima::fastcdr::Cdr deser(fastbuffer);
 
@@ -189,7 +184,8 @@ bool DynamicPubSubType::serialize(
 {
     if (dynamic_type_ == nullptr)
     {
-        return false;
+        dynamic_type_ = static_cast<DynamicData*>(data)->type_;
+        UpdateDynamicTypeInfo();
     }
 
     // Object that manages the raw buffer.

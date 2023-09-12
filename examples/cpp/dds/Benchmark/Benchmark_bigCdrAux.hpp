@@ -26,7 +26,7 @@
 
 constexpr uint32_t BenchMarkBig_max_cdr_typesize {8388616UL};
 constexpr uint32_t BenchMarkBig_max_key_cdr_typesize {0UL};
- 
+
 
 namespace eprosima {
 namespace fastcdr {
