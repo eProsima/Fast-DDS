@@ -3625,6 +3625,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayUnion)
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayStructure)
 {
+    //TODO
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayBitset)
@@ -5949,6 +5950,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionUnion)
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionStructure)
 {
+    //TODO
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionBitset)
@@ -6520,26 +6522,32 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_Bitmask)
 #pragma region INHERITANCE
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperChild)
 {
+    //TODO
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperChildChild)
 {
+    //TODO
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerStructureHelperEmptyChild)
 {
+    //TODO
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerEmptyStructureHelperChild)
 {
+    //TODO
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerBitsetHelperChild)
 {
+    //TODO
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_InnerBitsetHelperChildChild)
 {
+    //TODO
 }
 
 #pragma endregion
@@ -8272,34 +8280,899 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerEnumHelper)
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitMaskHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    uint32_t limit = 5;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitmask_builder(limit);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        // Add members to the bitmask
+        ASSERT_TRUE(value_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
+        
+        // Try to add a descriptor with the same name
+        ASSERT_FALSE(value_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
+        // Out of bounds
+        ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t test_value_1 = 55;// 00110111
+        uint64_t test_value_2;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Bitmask};
+        expected_types.push_back(ExpectedType::ULongLong);
+        check_set_values(loaned_value1, expected_types, &test_value_1);
+        check_get_values(loaned_value1, expected_types, &test_value_2);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapShortInnerEnumHelper wmap;
+        MapShortInnerEnumHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        std::string name = "InnerAliasHelper";
+        DynamicTypeBuilder_ptr alias_builder = DynamicTypeBuilderFactory::get_instance()->create_alias_builder(value_type_builder.get(), name);
+        ASSERT_TRUE(alias_builder != nullptr);
+        DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(alias_builder.get());
+        ASSERT_TRUE(created_type != nullptr);
+        ASSERT_TRUE(created_type->get_name() == "InnerAliasHelper");
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), alias_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int32_t test_value_1 = 123;
+        int32_t test_value_2 = 0;
+        
+        // Try to write on an empty position
+        ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Long};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapShortInnerAliasHelper wmap;
+        MapShortInnerAliasHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasArrayHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    std::vector<uint32_t> array_length = { 10 };
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_array_builder(base_type_builder.get(), array_length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Get an index in the array.
+        std::vector<uint32_t> vPosition = { 1 };
+        MemberId testPos(0);
+        testPos = loaned_value1->get_array_index(vPosition);
+        ASSERT_TRUE(testPos != MEMBER_ID_INVALID);
+
+        // Invalid input vectors.
+        std::vector<uint32_t> vPosition2 = { 1, 1 };
+        ASSERT_FALSE(loaned_value1->get_array_index(vPosition2) != MEMBER_ID_INVALID);
+        std::vector<uint32_t> vPosition3 = { 1, 1, 1, 1 };
+        ASSERT_FALSE(loaned_value1->get_array_index(vPosition3) != MEMBER_ID_INVALID);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, testPos);
+        check_get_values(loaned_value1, expected_types, &test_value_2, testPos);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Check items count before and after remove an element.
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_value(testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_array_data(testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+
+        // Check the clear values method
+        ASSERT_TRUE(loaned_value1->set_int16_value(test_value_1, testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+
+        // Try to set a value out of the array.
+        ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 100) == ReturnCode_t::RETCODE_OK);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapShortInnerAliasArrayHelper wmap;
+        MapShortInnerAliasArrayHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasSequenceHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(base_type_builder.get(), length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Try to write on an empty position
+        ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 1) == ReturnCode_t::RETCODE_OK);
+
+        MemberId newId;
+        ASSERT_TRUE(loaned_value1->insert_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        MemberId newId2;
+        ASSERT_TRUE(loaned_value1->insert_sequence_data(newId2) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, newId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, newId);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Remove the elements.
+        ASSERT_TRUE(loaned_value1->remove_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // New Insert Methods
+        ASSERT_TRUE(loaned_value1->insert_int16_value(test_value_1, newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_int16_value(test_value_2, newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // Check that the sequence is empty.
+        ASSERT_FALSE(loaned_value1->get_int16_value(test_value_2, 0) == ReturnCode_t::RETCODE_OK);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapShortInnerAliasSequenceHelper wmap;
+        MapShortInnerAliasSequenceHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerAliasMapHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr inner_key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr inner_key_type = inner_key_type_builder->build();
+        ASSERT_TRUE(inner_key_type_builder != nullptr);
+        ASSERT_TRUE(inner_key_type != nullptr);
+
+        DynamicTypeBuilder_ptr inner_value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr inner_value_type = inner_value_type_builder->build();
+        ASSERT_TRUE(inner_value_type_builder != nullptr);
+        ASSERT_TRUE(inner_value_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(inner_key_type_builder.get(), inner_value_type_builder.get(), length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int32_t test_value_1 = 123;
+        int32_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Try to write on an empty position
+        ASSERT_FALSE(loaned_value1->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+
+        MemberId inner_keyId;
+        MemberId inner_valueId;
+        DynamicData* inner_key_data = DynamicDataFactory::get_instance()->create_data(inner_key_type);
+        ASSERT_TRUE(loaned_value1->insert_map_data(inner_key_data, inner_keyId, inner_valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(loaned_value1->insert_map_data(inner_key_data, inner_keyId, inner_valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(inner_key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId inner_keyId2;
+        MemberId inner_valueId2;
+        inner_key_data = DynamicDataFactory::get_instance()->create_data(inner_key_type);
+        inner_key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(loaned_value1->insert_map_data(inner_key_data, inner_keyId2, inner_valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(inner_key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Long};
+        check_set_values(loaned_value1, expected_types, &test_value_1, inner_valueId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, inner_valueId);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Check items count with removes
+        ASSERT_TRUE(loaned_value1->get_item_count() == 2);
+        ASSERT_FALSE(loaned_value1->remove_map_data(inner_valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 2);
+        ASSERT_TRUE(loaned_value1->remove_map_data(inner_keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 1);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapShortInnerAliasMapHelper wmap;
+        MapShortInnerAliasMapHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerUnionHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder1 = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr base_type1 = base_type_builder1->build();
+        ASSERT_TRUE(base_type_builder1!= nullptr);
+        ASSERT_TRUE(base_type1 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_float32_builder();
+        DynamicType_ptr base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder3 = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type3 = base_type_builder3->build();
+        ASSERT_TRUE(base_type_builder3 != nullptr);
+        ASSERT_TRUE(base_type3 != nullptr);
+
+        DynamicTypeBuilder_ptr discriminator_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr discriminator_type = discriminator_type_builder->build();
+        ASSERT_TRUE(discriminator_type_builder != nullptr);
+        ASSERT_TRUE(discriminator_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(discriminator_type_builder.get());
+        ASSERT_TRUE(value_type_builder != nullptr);
+
+        // Add members to the union.
+        ASSERT_TRUE(value_type_builder->add_member(0, "default", base_type3, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(0, "first", base_type1, "", { 1}, false) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(0, "second", base_type2, "", { 2 }, false) == ReturnCode_t::RETCODE_OK);
+
+        // Try to add a second "DEFAULT" value to the union
+        ASSERT_FALSE(value_type_builder->add_member(0, "third", base_type1, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        // Try to add a second value to the same case label
+        ASSERT_FALSE(value_type_builder->add_member(0, "third", base_type1, "", { 1 }, false) == ReturnCode_t::RETCODE_OK);
+
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t label;
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, 0);
+        check_get_values(loaned_value1, expected_types, &test_value_2, 0);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapShortInnerUnionHelper wmap;
+        MapShortInnerUnionHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerStructureHelper)
 {
+    //TODO
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapShortInnerBitsetHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_byte_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
+        auto base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitset_builder();
+        ASSERT_TRUE(value_type_builder != nullptr);
+
+        // Add members to the struct.
+        ASSERT_TRUE(value_type_builder->add_member(0, "a", base_type) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(1, "b", base_type2) == ReturnCode_t::RETCODE_OK);
+        value_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
+        value_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
+        value_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
+        value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+
+        DynamicType_ptr bitset_type = value_type_builder->build();
+        ASSERT_TRUE(bitset_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Set and get the child values.
+        octet test1(234);
+        ASSERT_TRUE(loaned_value1->set_byte_value(test1, 0) == ReturnCode_t::RETCODE_OK);
+        octet test2(0);
+        ASSERT_TRUE(loaned_value1->get_byte_value(test2, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test1 == test2);
+        // 11101010
+        // 00000010 (two bits)
+        ASSERT_TRUE(test2 == 2);
+        uint32_t test3(289582314);
+        ASSERT_TRUE(loaned_value1->set_uint32_value(test3, 1) == ReturnCode_t::RETCODE_OK);
+        uint32_t test4(0);
+        ASSERT_TRUE(loaned_value1->get_uint32_value(test4, 1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test3 == test4);
+        // 00000001010000101010110011101010
+        // 00000000000000101010110011101010 (20 bits)
+        ASSERT_TRUE(test4 == 175338);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapShortInnerBitsetHelper wmap;
+        MapShortInnerBitsetHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 #pragma endregion
@@ -10029,34 +10902,899 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerEnumHelper)
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitMaskHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    uint32_t limit = 5;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint16_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitmask_builder(limit);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        // Add members to the bitmask
+        ASSERT_TRUE(value_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
+        
+        // Try to add a descriptor with the same name
+        ASSERT_FALSE(value_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
+        // Out of bounds
+        ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t test_value_1 = 55;// 00110111
+        uint64_t test_value_2;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Bitmask};
+        expected_types.push_back(ExpectedType::ULongLong);
+        check_set_values(loaned_value1, expected_types, &test_value_1);
+        check_get_values(loaned_value1, expected_types, &test_value_2);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapUShortInnerEnumHelper wmap;
+        MapUShortInnerEnumHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint16_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        std::string name = "InnerAliasHelper";
+        DynamicTypeBuilder_ptr alias_builder = DynamicTypeBuilderFactory::get_instance()->create_alias_builder(value_type_builder.get(), name);
+        ASSERT_TRUE(alias_builder != nullptr);
+        DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(alias_builder.get());
+        ASSERT_TRUE(created_type != nullptr);
+        ASSERT_TRUE(created_type->get_name() == "InnerAliasHelper");
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), alias_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int32_t test_value_1 = 123;
+        int32_t test_value_2 = 0;
+        
+        // Try to write on an empty position
+        ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Long};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapUShortInnerAliasHelper wmap;
+        MapUShortInnerAliasHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasArrayHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    std::vector<uint32_t> array_length = { 10 };
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint16_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_array_builder(base_type_builder.get(), array_length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Get an index in the array.
+        std::vector<uint32_t> vPosition = { 1 };
+        MemberId testPos(0);
+        testPos = loaned_value1->get_array_index(vPosition);
+        ASSERT_TRUE(testPos != MEMBER_ID_INVALID);
+
+        // Invalid input vectors.
+        std::vector<uint32_t> vPosition2 = { 1, 1 };
+        ASSERT_FALSE(loaned_value1->get_array_index(vPosition2) != MEMBER_ID_INVALID);
+        std::vector<uint32_t> vPosition3 = { 1, 1, 1, 1 };
+        ASSERT_FALSE(loaned_value1->get_array_index(vPosition3) != MEMBER_ID_INVALID);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, testPos);
+        check_get_values(loaned_value1, expected_types, &test_value_2, testPos);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Check items count before and after remove an element.
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_value(testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_array_data(testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+
+        // Check the clear values method
+        ASSERT_TRUE(loaned_value1->set_int16_value(test_value_1, testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+
+        // Try to set a value out of the array.
+        ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 100) == ReturnCode_t::RETCODE_OK);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapUShortInnerAliasArrayHelper wmap;
+        MapUShortInnerAliasArrayHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasSequenceHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint16_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(base_type_builder.get(), length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Try to write on an empty position
+        ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 1) == ReturnCode_t::RETCODE_OK);
+
+        MemberId newId;
+        ASSERT_TRUE(loaned_value1->insert_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        MemberId newId2;
+        ASSERT_TRUE(loaned_value1->insert_sequence_data(newId2) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, newId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, newId);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Remove the elements.
+        ASSERT_TRUE(loaned_value1->remove_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // New Insert Methods
+        ASSERT_TRUE(loaned_value1->insert_int16_value(test_value_1, newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_int16_value(test_value_2, newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // Check that the sequence is empty.
+        ASSERT_FALSE(loaned_value1->get_int16_value(test_value_2, 0) == ReturnCode_t::RETCODE_OK);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapUShortInnerAliasSequenceHelper wmap;
+        MapUShortInnerAliasSequenceHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerAliasMapHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint16_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr inner_key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr inner_key_type = inner_key_type_builder->build();
+        ASSERT_TRUE(inner_key_type_builder != nullptr);
+        ASSERT_TRUE(inner_key_type != nullptr);
+
+        DynamicTypeBuilder_ptr inner_value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr inner_value_type = inner_value_type_builder->build();
+        ASSERT_TRUE(inner_value_type_builder != nullptr);
+        ASSERT_TRUE(inner_value_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(inner_key_type_builder.get(), inner_value_type_builder.get(), length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int32_t test_value_1 = 123;
+        int32_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Try to write on an empty position
+        ASSERT_FALSE(loaned_value1->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+
+        MemberId inner_keyId;
+        MemberId inner_valueId;
+        DynamicData* inner_key_data = DynamicDataFactory::get_instance()->create_data(inner_key_type);
+        ASSERT_TRUE(loaned_value1->insert_map_data(inner_key_data, inner_keyId, inner_valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(loaned_value1->insert_map_data(inner_key_data, inner_keyId, inner_valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(inner_key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId inner_keyId2;
+        MemberId inner_valueId2;
+        inner_key_data = DynamicDataFactory::get_instance()->create_data(inner_key_type);
+        inner_key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(loaned_value1->insert_map_data(inner_key_data, inner_keyId2, inner_valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(inner_key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Long};
+        check_set_values(loaned_value1, expected_types, &test_value_1, inner_valueId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, inner_valueId);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Check items count with removes
+        ASSERT_TRUE(loaned_value1->get_item_count() == 2);
+        ASSERT_FALSE(loaned_value1->remove_map_data(inner_valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 2);
+        ASSERT_TRUE(loaned_value1->remove_map_data(inner_keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 1);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapUShortInnerAliasMapHelper wmap;
+        MapUShortInnerAliasMapHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerUnionHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint16_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder1 = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr base_type1 = base_type_builder1->build();
+        ASSERT_TRUE(base_type_builder1!= nullptr);
+        ASSERT_TRUE(base_type1 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_float32_builder();
+        DynamicType_ptr base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder3 = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type3 = base_type_builder3->build();
+        ASSERT_TRUE(base_type_builder3 != nullptr);
+        ASSERT_TRUE(base_type3 != nullptr);
+
+        DynamicTypeBuilder_ptr discriminator_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr discriminator_type = discriminator_type_builder->build();
+        ASSERT_TRUE(discriminator_type_builder != nullptr);
+        ASSERT_TRUE(discriminator_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(discriminator_type_builder.get());
+        ASSERT_TRUE(value_type_builder != nullptr);
+
+        // Add members to the union.
+        ASSERT_TRUE(value_type_builder->add_member(0, "default", base_type3, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(0, "first", base_type1, "", { 1}, false) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(0, "second", base_type2, "", { 2 }, false) == ReturnCode_t::RETCODE_OK);
+
+        // Try to add a second "DEFAULT" value to the union
+        ASSERT_FALSE(value_type_builder->add_member(0, "third", base_type1, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        // Try to add a second value to the same case label
+        ASSERT_FALSE(value_type_builder->add_member(0, "third", base_type1, "", { 1 }, false) == ReturnCode_t::RETCODE_OK);
+
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t label;
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, 0);
+        check_get_values(loaned_value1, expected_types, &test_value_2, 0);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapUShortInnerUnionHelper wmap;
+        MapUShortInnerUnionHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerStructureHelper)
 {
+    //TODO
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapUShortInnerBitsetHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint16_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_byte_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
+        auto base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitset_builder();
+        ASSERT_TRUE(value_type_builder != nullptr);
+
+        // Add members to the struct.
+        ASSERT_TRUE(value_type_builder->add_member(0, "a", base_type) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(1, "b", base_type2) == ReturnCode_t::RETCODE_OK);
+        value_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
+        value_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
+        value_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
+        value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+
+        DynamicType_ptr bitset_type = value_type_builder->build();
+        ASSERT_TRUE(bitset_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint16_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Set and get the child values.
+        octet test1(234);
+        ASSERT_TRUE(loaned_value1->set_byte_value(test1, 0) == ReturnCode_t::RETCODE_OK);
+        octet test2(0);
+        ASSERT_TRUE(loaned_value1->get_byte_value(test2, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test1 == test2);
+        // 11101010
+        // 00000010 (two bits)
+        ASSERT_TRUE(test2 == 2);
+        uint32_t test3(289582314);
+        ASSERT_TRUE(loaned_value1->set_uint32_value(test3, 1) == ReturnCode_t::RETCODE_OK);
+        uint32_t test4(0);
+        ASSERT_TRUE(loaned_value1->get_uint32_value(test4, 1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test3 == test4);
+        // 00000001010000101010110011101010
+        // 00000000000000101010110011101010 (20 bits)
+        ASSERT_TRUE(test4 == 175338);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapUShortInnerBitsetHelper wmap;
+        MapUShortInnerBitsetHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 #pragma endregion
@@ -11786,34 +13524,899 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerEnumHelper)
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitMaskHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    uint32_t limit = 5;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitmask_builder(limit);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        // Add members to the bitmask
+        ASSERT_TRUE(value_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
+        
+        // Try to add a descriptor with the same name
+        ASSERT_FALSE(value_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
+        // Out of bounds
+        ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t test_value_1 = 55;// 00110111
+        uint64_t test_value_2;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Bitmask};
+        expected_types.push_back(ExpectedType::ULongLong);
+        check_set_values(loaned_value1, expected_types, &test_value_1);
+        check_get_values(loaned_value1, expected_types, &test_value_2);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapLongInnerEnumHelper wmap;
+        MapLongInnerEnumHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        std::string name = "InnerAliasHelper";
+        DynamicTypeBuilder_ptr alias_builder = DynamicTypeBuilderFactory::get_instance()->create_alias_builder(value_type_builder.get(), name);
+        ASSERT_TRUE(alias_builder != nullptr);
+        DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(alias_builder.get());
+        ASSERT_TRUE(created_type != nullptr);
+        ASSERT_TRUE(created_type->get_name() == "InnerAliasHelper");
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), alias_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int32_t test_value_1 = 123;
+        int32_t test_value_2 = 0;
+        
+        // Try to write on an empty position
+        ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Long};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapLongInnerAliasHelper wmap;
+        MapLongInnerAliasHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasArrayHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    std::vector<uint32_t> array_length = { 10 };
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_array_builder(base_type_builder.get(), array_length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Get an index in the array.
+        std::vector<uint32_t> vPosition = { 1 };
+        MemberId testPos(0);
+        testPos = loaned_value1->get_array_index(vPosition);
+        ASSERT_TRUE(testPos != MEMBER_ID_INVALID);
+
+        // Invalid input vectors.
+        std::vector<uint32_t> vPosition2 = { 1, 1 };
+        ASSERT_FALSE(loaned_value1->get_array_index(vPosition2) != MEMBER_ID_INVALID);
+        std::vector<uint32_t> vPosition3 = { 1, 1, 1, 1 };
+        ASSERT_FALSE(loaned_value1->get_array_index(vPosition3) != MEMBER_ID_INVALID);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, testPos);
+        check_get_values(loaned_value1, expected_types, &test_value_2, testPos);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Check items count before and after remove an element.
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_value(testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_array_data(testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+
+        // Check the clear values method
+        ASSERT_TRUE(loaned_value1->set_int16_value(test_value_1, testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+
+        // Try to set a value out of the array.
+        ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 100) == ReturnCode_t::RETCODE_OK);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapLongInnerAliasArrayHelper wmap;
+        MapLongInnerAliasArrayHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasSequenceHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(base_type_builder.get(), length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Try to write on an empty position
+        ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 1) == ReturnCode_t::RETCODE_OK);
+
+        MemberId newId;
+        ASSERT_TRUE(loaned_value1->insert_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        MemberId newId2;
+        ASSERT_TRUE(loaned_value1->insert_sequence_data(newId2) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, newId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, newId);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Remove the elements.
+        ASSERT_TRUE(loaned_value1->remove_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // New Insert Methods
+        ASSERT_TRUE(loaned_value1->insert_int16_value(test_value_1, newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_int16_value(test_value_2, newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // Check that the sequence is empty.
+        ASSERT_FALSE(loaned_value1->get_int16_value(test_value_2, 0) == ReturnCode_t::RETCODE_OK);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapLongInnerAliasSequenceHelper wmap;
+        MapLongInnerAliasSequenceHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerAliasMapHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr inner_key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr inner_key_type = inner_key_type_builder->build();
+        ASSERT_TRUE(inner_key_type_builder != nullptr);
+        ASSERT_TRUE(inner_key_type != nullptr);
+
+        DynamicTypeBuilder_ptr inner_value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr inner_value_type = inner_value_type_builder->build();
+        ASSERT_TRUE(inner_value_type_builder != nullptr);
+        ASSERT_TRUE(inner_value_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(inner_key_type_builder.get(), inner_value_type_builder.get(), length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int32_t test_value_1 = 123;
+        int32_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Try to write on an empty position
+        ASSERT_FALSE(loaned_value1->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+
+        MemberId inner_keyId;
+        MemberId inner_valueId;
+        DynamicData* inner_key_data = DynamicDataFactory::get_instance()->create_data(inner_key_type);
+        ASSERT_TRUE(loaned_value1->insert_map_data(inner_key_data, inner_keyId, inner_valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(loaned_value1->insert_map_data(inner_key_data, inner_keyId, inner_valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(inner_key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId inner_keyId2;
+        MemberId inner_valueId2;
+        inner_key_data = DynamicDataFactory::get_instance()->create_data(inner_key_type);
+        inner_key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(loaned_value1->insert_map_data(inner_key_data, inner_keyId2, inner_valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(inner_key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Long};
+        check_set_values(loaned_value1, expected_types, &test_value_1, inner_valueId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, inner_valueId);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Check items count with removes
+        ASSERT_TRUE(loaned_value1->get_item_count() == 2);
+        ASSERT_FALSE(loaned_value1->remove_map_data(inner_valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 2);
+        ASSERT_TRUE(loaned_value1->remove_map_data(inner_keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 1);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapLongInnerAliasMapHelper wmap;
+        MapLongInnerAliasMapHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerUnionHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder1 = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr base_type1 = base_type_builder1->build();
+        ASSERT_TRUE(base_type_builder1!= nullptr);
+        ASSERT_TRUE(base_type1 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_float32_builder();
+        DynamicType_ptr base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder3 = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type3 = base_type_builder3->build();
+        ASSERT_TRUE(base_type_builder3 != nullptr);
+        ASSERT_TRUE(base_type3 != nullptr);
+
+        DynamicTypeBuilder_ptr discriminator_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr discriminator_type = discriminator_type_builder->build();
+        ASSERT_TRUE(discriminator_type_builder != nullptr);
+        ASSERT_TRUE(discriminator_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(discriminator_type_builder.get());
+        ASSERT_TRUE(value_type_builder != nullptr);
+
+        // Add members to the union.
+        ASSERT_TRUE(value_type_builder->add_member(0, "default", base_type3, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(0, "first", base_type1, "", { 1}, false) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(0, "second", base_type2, "", { 2 }, false) == ReturnCode_t::RETCODE_OK);
+
+        // Try to add a second "DEFAULT" value to the union
+        ASSERT_FALSE(value_type_builder->add_member(0, "third", base_type1, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        // Try to add a second value to the same case label
+        ASSERT_FALSE(value_type_builder->add_member(0, "third", base_type1, "", { 1 }, false) == ReturnCode_t::RETCODE_OK);
+
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t label;
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, 0);
+        check_get_values(loaned_value1, expected_types, &test_value_2, 0);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapLongInnerUnionHelper wmap;
+        MapLongInnerUnionHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerStructureHelper)
 {
+    //TODO
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongInnerBitsetHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_byte_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
+        auto base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitset_builder();
+        ASSERT_TRUE(value_type_builder != nullptr);
+
+        // Add members to the struct.
+        ASSERT_TRUE(value_type_builder->add_member(0, "a", base_type) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(1, "b", base_type2) == ReturnCode_t::RETCODE_OK);
+        value_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
+        value_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
+        value_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
+        value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+
+        DynamicType_ptr bitset_type = value_type_builder->build();
+        ASSERT_TRUE(bitset_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Set and get the child values.
+        octet test1(234);
+        ASSERT_TRUE(loaned_value1->set_byte_value(test1, 0) == ReturnCode_t::RETCODE_OK);
+        octet test2(0);
+        ASSERT_TRUE(loaned_value1->get_byte_value(test2, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test1 == test2);
+        // 11101010
+        // 00000010 (two bits)
+        ASSERT_TRUE(test2 == 2);
+        uint32_t test3(289582314);
+        ASSERT_TRUE(loaned_value1->set_uint32_value(test3, 1) == ReturnCode_t::RETCODE_OK);
+        uint32_t test4(0);
+        ASSERT_TRUE(loaned_value1->get_uint32_value(test4, 1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test3 == test4);
+        // 00000001010000101010110011101010
+        // 00000000000000101010110011101010 (20 bits)
+        ASSERT_TRUE(test4 == 175338);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapLongInnerBitsetHelper wmap;
+        MapLongInnerBitsetHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 #pragma endregion
@@ -13543,34 +16146,899 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerEnumHelper)
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitMaskHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    uint32_t limit = 5;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitmask_builder(limit);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        // Add members to the bitmask
+        ASSERT_TRUE(value_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
+        
+        // Try to add a descriptor with the same name
+        ASSERT_FALSE(value_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
+        // Out of bounds
+        ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t test_value_1 = 55;// 00110111
+        uint64_t test_value_2;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Bitmask};
+        expected_types.push_back(ExpectedType::ULongLong);
+        check_set_values(loaned_value1, expected_types, &test_value_1);
+        check_get_values(loaned_value1, expected_types, &test_value_2);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapULongInnerEnumHelper wmap;
+        MapULongInnerEnumHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        std::string name = "InnerAliasHelper";
+        DynamicTypeBuilder_ptr alias_builder = DynamicTypeBuilderFactory::get_instance()->create_alias_builder(value_type_builder.get(), name);
+        ASSERT_TRUE(alias_builder != nullptr);
+        DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(alias_builder.get());
+        ASSERT_TRUE(created_type != nullptr);
+        ASSERT_TRUE(created_type->get_name() == "InnerAliasHelper");
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), alias_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int32_t test_value_1 = 123;
+        int32_t test_value_2 = 0;
+        
+        // Try to write on an empty position
+        ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Long};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapULongInnerAliasHelper wmap;
+        MapULongInnerAliasHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasArrayHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    std::vector<uint32_t> array_length = { 10 };
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_array_builder(base_type_builder.get(), array_length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Get an index in the array.
+        std::vector<uint32_t> vPosition = { 1 };
+        MemberId testPos(0);
+        testPos = loaned_value1->get_array_index(vPosition);
+        ASSERT_TRUE(testPos != MEMBER_ID_INVALID);
+
+        // Invalid input vectors.
+        std::vector<uint32_t> vPosition2 = { 1, 1 };
+        ASSERT_FALSE(loaned_value1->get_array_index(vPosition2) != MEMBER_ID_INVALID);
+        std::vector<uint32_t> vPosition3 = { 1, 1, 1, 1 };
+        ASSERT_FALSE(loaned_value1->get_array_index(vPosition3) != MEMBER_ID_INVALID);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, testPos);
+        check_get_values(loaned_value1, expected_types, &test_value_2, testPos);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Check items count before and after remove an element.
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_value(testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_array_data(testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+
+        // Check the clear values method
+        ASSERT_TRUE(loaned_value1->set_int16_value(test_value_1, testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+
+        // Try to set a value out of the array.
+        ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 100) == ReturnCode_t::RETCODE_OK);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapULongInnerAliasArrayHelper wmap;
+        MapULongInnerAliasArrayHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasSequenceHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(base_type_builder.get(), length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Try to write on an empty position
+        ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 1) == ReturnCode_t::RETCODE_OK);
+
+        MemberId newId;
+        ASSERT_TRUE(loaned_value1->insert_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        MemberId newId2;
+        ASSERT_TRUE(loaned_value1->insert_sequence_data(newId2) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, newId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, newId);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Remove the elements.
+        ASSERT_TRUE(loaned_value1->remove_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // New Insert Methods
+        ASSERT_TRUE(loaned_value1->insert_int16_value(test_value_1, newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_int16_value(test_value_2, newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // Check that the sequence is empty.
+        ASSERT_FALSE(loaned_value1->get_int16_value(test_value_2, 0) == ReturnCode_t::RETCODE_OK);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapULongInnerAliasSequenceHelper wmap;
+        MapULongInnerAliasSequenceHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerAliasMapHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr inner_key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr inner_key_type = inner_key_type_builder->build();
+        ASSERT_TRUE(inner_key_type_builder != nullptr);
+        ASSERT_TRUE(inner_key_type != nullptr);
+
+        DynamicTypeBuilder_ptr inner_value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr inner_value_type = inner_value_type_builder->build();
+        ASSERT_TRUE(inner_value_type_builder != nullptr);
+        ASSERT_TRUE(inner_value_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(inner_key_type_builder.get(), inner_value_type_builder.get(), length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int32_t test_value_1 = 123;
+        int32_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Try to write on an empty position
+        ASSERT_FALSE(loaned_value1->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+
+        MemberId inner_keyId;
+        MemberId inner_valueId;
+        DynamicData* inner_key_data = DynamicDataFactory::get_instance()->create_data(inner_key_type);
+        ASSERT_TRUE(loaned_value1->insert_map_data(inner_key_data, inner_keyId, inner_valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(loaned_value1->insert_map_data(inner_key_data, inner_keyId, inner_valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(inner_key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId inner_keyId2;
+        MemberId inner_valueId2;
+        inner_key_data = DynamicDataFactory::get_instance()->create_data(inner_key_type);
+        inner_key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(loaned_value1->insert_map_data(inner_key_data, inner_keyId2, inner_valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(inner_key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Long};
+        check_set_values(loaned_value1, expected_types, &test_value_1, inner_valueId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, inner_valueId);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Check items count with removes
+        ASSERT_TRUE(loaned_value1->get_item_count() == 2);
+        ASSERT_FALSE(loaned_value1->remove_map_data(inner_valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 2);
+        ASSERT_TRUE(loaned_value1->remove_map_data(inner_keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 1);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapULongInnerAliasMapHelper wmap;
+        MapULongInnerAliasMapHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerUnionHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder1 = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr base_type1 = base_type_builder1->build();
+        ASSERT_TRUE(base_type_builder1!= nullptr);
+        ASSERT_TRUE(base_type1 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_float32_builder();
+        DynamicType_ptr base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder3 = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type3 = base_type_builder3->build();
+        ASSERT_TRUE(base_type_builder3 != nullptr);
+        ASSERT_TRUE(base_type3 != nullptr);
+
+        DynamicTypeBuilder_ptr discriminator_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr discriminator_type = discriminator_type_builder->build();
+        ASSERT_TRUE(discriminator_type_builder != nullptr);
+        ASSERT_TRUE(discriminator_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(discriminator_type_builder.get());
+        ASSERT_TRUE(value_type_builder != nullptr);
+
+        // Add members to the union.
+        ASSERT_TRUE(value_type_builder->add_member(0, "default", base_type3, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(0, "first", base_type1, "", { 1}, false) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(0, "second", base_type2, "", { 2 }, false) == ReturnCode_t::RETCODE_OK);
+
+        // Try to add a second "DEFAULT" value to the union
+        ASSERT_FALSE(value_type_builder->add_member(0, "third", base_type1, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        // Try to add a second value to the same case label
+        ASSERT_FALSE(value_type_builder->add_member(0, "third", base_type1, "", { 1 }, false) == ReturnCode_t::RETCODE_OK);
+
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t label;
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, 0);
+        check_get_values(loaned_value1, expected_types, &test_value_2, 0);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapULongInnerUnionHelper wmap;
+        MapULongInnerUnionHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerStructureHelper)
 {
+    //TODO
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongInnerBitsetHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_byte_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
+        auto base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitset_builder();
+        ASSERT_TRUE(value_type_builder != nullptr);
+
+        // Add members to the struct.
+        ASSERT_TRUE(value_type_builder->add_member(0, "a", base_type) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(1, "b", base_type2) == ReturnCode_t::RETCODE_OK);
+        value_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
+        value_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
+        value_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
+        value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+
+        DynamicType_ptr bitset_type = value_type_builder->build();
+        ASSERT_TRUE(bitset_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Set and get the child values.
+        octet test1(234);
+        ASSERT_TRUE(loaned_value1->set_byte_value(test1, 0) == ReturnCode_t::RETCODE_OK);
+        octet test2(0);
+        ASSERT_TRUE(loaned_value1->get_byte_value(test2, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test1 == test2);
+        // 11101010
+        // 00000010 (two bits)
+        ASSERT_TRUE(test2 == 2);
+        uint32_t test3(289582314);
+        ASSERT_TRUE(loaned_value1->set_uint32_value(test3, 1) == ReturnCode_t::RETCODE_OK);
+        uint32_t test4(0);
+        ASSERT_TRUE(loaned_value1->get_uint32_value(test4, 1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test3 == test4);
+        // 00000001010000101010110011101010
+        // 00000000000000101010110011101010 (20 bits)
+        ASSERT_TRUE(test4 == 175338);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapULongInnerBitsetHelper wmap;
+        MapULongInnerBitsetHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 #pragma endregion
@@ -15300,34 +18768,899 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerEnumHelper)
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitMaskHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    uint32_t limit = 5;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitmask_builder(limit);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        // Add members to the bitmask
+        ASSERT_TRUE(value_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
+        
+        // Try to add a descriptor with the same name
+        ASSERT_FALSE(value_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
+        // Out of bounds
+        ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t test_value_1 = 55;// 00110111
+        uint64_t test_value_2;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Bitmask};
+        expected_types.push_back(ExpectedType::ULongLong);
+        check_set_values(loaned_value1, expected_types, &test_value_1);
+        check_get_values(loaned_value1, expected_types, &test_value_2);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapLongLongInnerEnumHelper wmap;
+        MapLongLongInnerEnumHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        std::string name = "InnerAliasHelper";
+        DynamicTypeBuilder_ptr alias_builder = DynamicTypeBuilderFactory::get_instance()->create_alias_builder(value_type_builder.get(), name);
+        ASSERT_TRUE(alias_builder != nullptr);
+        DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(alias_builder.get());
+        ASSERT_TRUE(created_type != nullptr);
+        ASSERT_TRUE(created_type->get_name() == "InnerAliasHelper");
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), alias_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int32_t test_value_1 = 123;
+        int32_t test_value_2 = 0;
+        
+        // Try to write on an empty position
+        ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Long};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapLongLongInnerAliasHelper wmap;
+        MapLongLongInnerAliasHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasArrayHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    std::vector<uint32_t> array_length = { 10 };
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_array_builder(base_type_builder.get(), array_length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Get an index in the array.
+        std::vector<uint32_t> vPosition = { 1 };
+        MemberId testPos(0);
+        testPos = loaned_value1->get_array_index(vPosition);
+        ASSERT_TRUE(testPos != MEMBER_ID_INVALID);
+
+        // Invalid input vectors.
+        std::vector<uint32_t> vPosition2 = { 1, 1 };
+        ASSERT_FALSE(loaned_value1->get_array_index(vPosition2) != MEMBER_ID_INVALID);
+        std::vector<uint32_t> vPosition3 = { 1, 1, 1, 1 };
+        ASSERT_FALSE(loaned_value1->get_array_index(vPosition3) != MEMBER_ID_INVALID);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, testPos);
+        check_get_values(loaned_value1, expected_types, &test_value_2, testPos);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Check items count before and after remove an element.
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_value(testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_array_data(testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+
+        // Check the clear values method
+        ASSERT_TRUE(loaned_value1->set_int16_value(test_value_1, testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+
+        // Try to set a value out of the array.
+        ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 100) == ReturnCode_t::RETCODE_OK);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapLongLongInnerAliasArrayHelper wmap;
+        MapLongLongInnerAliasArrayHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasSequenceHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(base_type_builder.get(), length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Try to write on an empty position
+        ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 1) == ReturnCode_t::RETCODE_OK);
+
+        MemberId newId;
+        ASSERT_TRUE(loaned_value1->insert_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        MemberId newId2;
+        ASSERT_TRUE(loaned_value1->insert_sequence_data(newId2) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, newId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, newId);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Remove the elements.
+        ASSERT_TRUE(loaned_value1->remove_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // New Insert Methods
+        ASSERT_TRUE(loaned_value1->insert_int16_value(test_value_1, newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_int16_value(test_value_2, newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // Check that the sequence is empty.
+        ASSERT_FALSE(loaned_value1->get_int16_value(test_value_2, 0) == ReturnCode_t::RETCODE_OK);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapLongLongInnerAliasSequenceHelper wmap;
+        MapLongLongInnerAliasSequenceHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerAliasMapHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr inner_key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr inner_key_type = inner_key_type_builder->build();
+        ASSERT_TRUE(inner_key_type_builder != nullptr);
+        ASSERT_TRUE(inner_key_type != nullptr);
+
+        DynamicTypeBuilder_ptr inner_value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr inner_value_type = inner_value_type_builder->build();
+        ASSERT_TRUE(inner_value_type_builder != nullptr);
+        ASSERT_TRUE(inner_value_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(inner_key_type_builder.get(), inner_value_type_builder.get(), length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int32_t test_value_1 = 123;
+        int32_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Try to write on an empty position
+        ASSERT_FALSE(loaned_value1->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+
+        MemberId inner_keyId;
+        MemberId inner_valueId;
+        DynamicData* inner_key_data = DynamicDataFactory::get_instance()->create_data(inner_key_type);
+        ASSERT_TRUE(loaned_value1->insert_map_data(inner_key_data, inner_keyId, inner_valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(loaned_value1->insert_map_data(inner_key_data, inner_keyId, inner_valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(inner_key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId inner_keyId2;
+        MemberId inner_valueId2;
+        inner_key_data = DynamicDataFactory::get_instance()->create_data(inner_key_type);
+        inner_key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(loaned_value1->insert_map_data(inner_key_data, inner_keyId2, inner_valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(inner_key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Long};
+        check_set_values(loaned_value1, expected_types, &test_value_1, inner_valueId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, inner_valueId);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Check items count with removes
+        ASSERT_TRUE(loaned_value1->get_item_count() == 2);
+        ASSERT_FALSE(loaned_value1->remove_map_data(inner_valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 2);
+        ASSERT_TRUE(loaned_value1->remove_map_data(inner_keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 1);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapLongLongInnerAliasMapHelper wmap;
+        MapLongLongInnerAliasMapHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerUnionHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder1 = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr base_type1 = base_type_builder1->build();
+        ASSERT_TRUE(base_type_builder1!= nullptr);
+        ASSERT_TRUE(base_type1 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_float32_builder();
+        DynamicType_ptr base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder3 = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type3 = base_type_builder3->build();
+        ASSERT_TRUE(base_type_builder3 != nullptr);
+        ASSERT_TRUE(base_type3 != nullptr);
+
+        DynamicTypeBuilder_ptr discriminator_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr discriminator_type = discriminator_type_builder->build();
+        ASSERT_TRUE(discriminator_type_builder != nullptr);
+        ASSERT_TRUE(discriminator_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(discriminator_type_builder.get());
+        ASSERT_TRUE(value_type_builder != nullptr);
+
+        // Add members to the union.
+        ASSERT_TRUE(value_type_builder->add_member(0, "default", base_type3, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(0, "first", base_type1, "", { 1}, false) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(0, "second", base_type2, "", { 2 }, false) == ReturnCode_t::RETCODE_OK);
+
+        // Try to add a second "DEFAULT" value to the union
+        ASSERT_FALSE(value_type_builder->add_member(0, "third", base_type1, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        // Try to add a second value to the same case label
+        ASSERT_FALSE(value_type_builder->add_member(0, "third", base_type1, "", { 1 }, false) == ReturnCode_t::RETCODE_OK);
+
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t label;
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, 0);
+        check_get_values(loaned_value1, expected_types, &test_value_2, 0);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapLongLongInnerUnionHelper wmap;
+        MapLongLongInnerUnionHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerStructureHelper)
 {
+    //TODO
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapLongLongInnerBitsetHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int64_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_byte_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
+        auto base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitset_builder();
+        ASSERT_TRUE(value_type_builder != nullptr);
+
+        // Add members to the struct.
+        ASSERT_TRUE(value_type_builder->add_member(0, "a", base_type) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(1, "b", base_type2) == ReturnCode_t::RETCODE_OK);
+        value_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
+        value_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
+        value_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
+        value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+
+        DynamicType_ptr bitset_type = value_type_builder->build();
+        ASSERT_TRUE(bitset_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_int64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Set and get the child values.
+        octet test1(234);
+        ASSERT_TRUE(loaned_value1->set_byte_value(test1, 0) == ReturnCode_t::RETCODE_OK);
+        octet test2(0);
+        ASSERT_TRUE(loaned_value1->get_byte_value(test2, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test1 == test2);
+        // 11101010
+        // 00000010 (two bits)
+        ASSERT_TRUE(test2 == 2);
+        uint32_t test3(289582314);
+        ASSERT_TRUE(loaned_value1->set_uint32_value(test3, 1) == ReturnCode_t::RETCODE_OK);
+        uint32_t test4(0);
+        ASSERT_TRUE(loaned_value1->get_uint32_value(test4, 1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test3 == test4);
+        // 00000001010000101010110011101010
+        // 00000000000000101010110011101010 (20 bits)
+        ASSERT_TRUE(test4 == 175338);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapLongLongInnerBitsetHelper wmap;
+        MapLongLongInnerBitsetHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 #pragma endregion
@@ -17057,34 +21390,899 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerEnumHelper)
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitMaskHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    uint32_t limit = 5;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint64_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitmask_builder(limit);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        // Add members to the bitmask
+        ASSERT_TRUE(value_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
+        
+        // Try to add a descriptor with the same name
+        ASSERT_FALSE(value_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
+        // Out of bounds
+        ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t test_value_1 = 55;// 00110111
+        uint64_t test_value_2;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Bitmask};
+        expected_types.push_back(ExpectedType::ULongLong);
+        check_set_values(loaned_value1, expected_types, &test_value_1);
+        check_get_values(loaned_value1, expected_types, &test_value_2);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapULongLongInnerEnumHelper wmap;
+        MapULongLongInnerEnumHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint64_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        std::string name = "InnerAliasHelper";
+        DynamicTypeBuilder_ptr alias_builder = DynamicTypeBuilderFactory::get_instance()->create_alias_builder(value_type_builder.get(), name);
+        ASSERT_TRUE(alias_builder != nullptr);
+        DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(alias_builder.get());
+        ASSERT_TRUE(created_type != nullptr);
+        ASSERT_TRUE(created_type->get_name() == "InnerAliasHelper");
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), alias_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int32_t test_value_1 = 123;
+        int32_t test_value_2 = 0;
+        
+        // Try to write on an empty position
+        ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Long};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapULongLongInnerAliasHelper wmap;
+        MapULongLongInnerAliasHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasArrayHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    std::vector<uint32_t> array_length = { 10 };
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint64_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_array_builder(base_type_builder.get(), array_length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Get an index in the array.
+        std::vector<uint32_t> vPosition = { 1 };
+        MemberId testPos(0);
+        testPos = loaned_value1->get_array_index(vPosition);
+        ASSERT_TRUE(testPos != MEMBER_ID_INVALID);
+
+        // Invalid input vectors.
+        std::vector<uint32_t> vPosition2 = { 1, 1 };
+        ASSERT_FALSE(loaned_value1->get_array_index(vPosition2) != MEMBER_ID_INVALID);
+        std::vector<uint32_t> vPosition3 = { 1, 1, 1, 1 };
+        ASSERT_FALSE(loaned_value1->get_array_index(vPosition3) != MEMBER_ID_INVALID);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, testPos);
+        check_get_values(loaned_value1, expected_types, &test_value_2, testPos);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Check items count before and after remove an element.
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_value(testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_array_data(testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+
+        // Check the clear values method
+        ASSERT_TRUE(loaned_value1->set_int16_value(test_value_1, testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+
+        // Try to set a value out of the array.
+        ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 100) == ReturnCode_t::RETCODE_OK);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapULongLongInnerAliasArrayHelper wmap;
+        MapULongLongInnerAliasArrayHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasSequenceHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint64_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(base_type_builder.get(), length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Try to write on an empty position
+        ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 1) == ReturnCode_t::RETCODE_OK);
+
+        MemberId newId;
+        ASSERT_TRUE(loaned_value1->insert_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        MemberId newId2;
+        ASSERT_TRUE(loaned_value1->insert_sequence_data(newId2) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, newId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, newId);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Remove the elements.
+        ASSERT_TRUE(loaned_value1->remove_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // New Insert Methods
+        ASSERT_TRUE(loaned_value1->insert_int16_value(test_value_1, newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_int16_value(test_value_2, newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // Check that the sequence is empty.
+        ASSERT_FALSE(loaned_value1->get_int16_value(test_value_2, 0) == ReturnCode_t::RETCODE_OK);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapULongLongInnerAliasSequenceHelper wmap;
+        MapULongLongInnerAliasSequenceHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerAliasMapHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint64_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr inner_key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr inner_key_type = inner_key_type_builder->build();
+        ASSERT_TRUE(inner_key_type_builder != nullptr);
+        ASSERT_TRUE(inner_key_type != nullptr);
+
+        DynamicTypeBuilder_ptr inner_value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr inner_value_type = inner_value_type_builder->build();
+        ASSERT_TRUE(inner_value_type_builder != nullptr);
+        ASSERT_TRUE(inner_value_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(inner_key_type_builder.get(), inner_value_type_builder.get(), length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int32_t test_value_1 = 123;
+        int32_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Try to write on an empty position
+        ASSERT_FALSE(loaned_value1->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+
+        MemberId inner_keyId;
+        MemberId inner_valueId;
+        DynamicData* inner_key_data = DynamicDataFactory::get_instance()->create_data(inner_key_type);
+        ASSERT_TRUE(loaned_value1->insert_map_data(inner_key_data, inner_keyId, inner_valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(loaned_value1->insert_map_data(inner_key_data, inner_keyId, inner_valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(inner_key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId inner_keyId2;
+        MemberId inner_valueId2;
+        inner_key_data = DynamicDataFactory::get_instance()->create_data(inner_key_type);
+        inner_key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(loaned_value1->insert_map_data(inner_key_data, inner_keyId2, inner_valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(inner_key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Long};
+        check_set_values(loaned_value1, expected_types, &test_value_1, inner_valueId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, inner_valueId);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Check items count with removes
+        ASSERT_TRUE(loaned_value1->get_item_count() == 2);
+        ASSERT_FALSE(loaned_value1->remove_map_data(inner_valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 2);
+        ASSERT_TRUE(loaned_value1->remove_map_data(inner_keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 1);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapULongLongInnerAliasMapHelper wmap;
+        MapULongLongInnerAliasMapHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerUnionHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint64_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder1 = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr base_type1 = base_type_builder1->build();
+        ASSERT_TRUE(base_type_builder1!= nullptr);
+        ASSERT_TRUE(base_type1 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_float32_builder();
+        DynamicType_ptr base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder3 = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type3 = base_type_builder3->build();
+        ASSERT_TRUE(base_type_builder3 != nullptr);
+        ASSERT_TRUE(base_type3 != nullptr);
+
+        DynamicTypeBuilder_ptr discriminator_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr discriminator_type = discriminator_type_builder->build();
+        ASSERT_TRUE(discriminator_type_builder != nullptr);
+        ASSERT_TRUE(discriminator_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(discriminator_type_builder.get());
+        ASSERT_TRUE(value_type_builder != nullptr);
+
+        // Add members to the union.
+        ASSERT_TRUE(value_type_builder->add_member(0, "default", base_type3, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(0, "first", base_type1, "", { 1}, false) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(0, "second", base_type2, "", { 2 }, false) == ReturnCode_t::RETCODE_OK);
+
+        // Try to add a second "DEFAULT" value to the union
+        ASSERT_FALSE(value_type_builder->add_member(0, "third", base_type1, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        // Try to add a second value to the same case label
+        ASSERT_FALSE(value_type_builder->add_member(0, "third", base_type1, "", { 1 }, false) == ReturnCode_t::RETCODE_OK);
+
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t label;
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, 0);
+        check_get_values(loaned_value1, expected_types, &test_value_2, 0);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapULongLongInnerUnionHelper wmap;
+        MapULongLongInnerUnionHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerStructureHelper)
 {
+    //TODO
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapULongLongInnerBitsetHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_uint64_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_byte_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
+        auto base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitset_builder();
+        ASSERT_TRUE(value_type_builder != nullptr);
+
+        // Add members to the struct.
+        ASSERT_TRUE(value_type_builder->add_member(0, "a", base_type) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(1, "b", base_type2) == ReturnCode_t::RETCODE_OK);
+        value_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
+        value_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
+        value_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
+        value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+
+        DynamicType_ptr bitset_type = value_type_builder->build();
+        ASSERT_TRUE(bitset_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_uint64_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Set and get the child values.
+        octet test1(234);
+        ASSERT_TRUE(loaned_value1->set_byte_value(test1, 0) == ReturnCode_t::RETCODE_OK);
+        octet test2(0);
+        ASSERT_TRUE(loaned_value1->get_byte_value(test2, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test1 == test2);
+        // 11101010
+        // 00000010 (two bits)
+        ASSERT_TRUE(test2 == 2);
+        uint32_t test3(289582314);
+        ASSERT_TRUE(loaned_value1->set_uint32_value(test3, 1) == ReturnCode_t::RETCODE_OK);
+        uint32_t test4(0);
+        ASSERT_TRUE(loaned_value1->get_uint32_value(test4, 1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test3 == test4);
+        // 00000001010000101010110011101010
+        // 00000000000000101010110011101010 (20 bits)
+        ASSERT_TRUE(test4 == 175338);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapULongLongInnerBitsetHelper wmap;
+        MapULongLongInnerBitsetHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 #pragma endregion
@@ -18814,34 +24012,899 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerEnumHelper)
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitMaskHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    uint32_t limit = 5;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitmask_builder(limit);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        // Add members to the bitmask
+        ASSERT_TRUE(value_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
+        
+        // Try to add a descriptor with the same name
+        ASSERT_FALSE(value_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
+        // Out of bounds
+        ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t test_value_1 = 55;// 00110111
+        uint64_t test_value_2;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Bitmask};
+        expected_types.push_back(ExpectedType::ULongLong);
+        check_set_values(loaned_value1, expected_types, &test_value_1);
+        check_get_values(loaned_value1, expected_types, &test_value_2);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapStringInnerEnumHelper wmap;
+        MapStringInnerEnumHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        std::string name = "InnerAliasHelper";
+        DynamicTypeBuilder_ptr alias_builder = DynamicTypeBuilderFactory::get_instance()->create_alias_builder(value_type_builder.get(), name);
+        ASSERT_TRUE(alias_builder != nullptr);
+        DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(alias_builder.get());
+        ASSERT_TRUE(created_type != nullptr);
+        ASSERT_TRUE(created_type->get_name() == "InnerAliasHelper");
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), alias_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int32_t test_value_1 = 123;
+        int32_t test_value_2 = 0;
+        
+        // Try to write on an empty position
+        ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Long};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapStringInnerAliasHelper wmap;
+        MapStringInnerAliasHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasArrayHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    std::vector<uint32_t> array_length = { 10 };
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_array_builder(base_type_builder.get(), array_length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Get an index in the array.
+        std::vector<uint32_t> vPosition = { 1 };
+        MemberId testPos(0);
+        testPos = loaned_value1->get_array_index(vPosition);
+        ASSERT_TRUE(testPos != MEMBER_ID_INVALID);
+
+        // Invalid input vectors.
+        std::vector<uint32_t> vPosition2 = { 1, 1 };
+        ASSERT_FALSE(loaned_value1->get_array_index(vPosition2) != MEMBER_ID_INVALID);
+        std::vector<uint32_t> vPosition3 = { 1, 1, 1, 1 };
+        ASSERT_FALSE(loaned_value1->get_array_index(vPosition3) != MEMBER_ID_INVALID);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, testPos);
+        check_get_values(loaned_value1, expected_types, &test_value_2, testPos);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Check items count before and after remove an element.
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_value(testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_array_data(testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+
+        // Check the clear values method
+        ASSERT_TRUE(loaned_value1->set_int16_value(test_value_1, testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+
+        // Try to set a value out of the array.
+        ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 100) == ReturnCode_t::RETCODE_OK);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapStringInnerAliasArrayHelper wmap;
+        MapStringInnerAliasArrayHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasSequenceHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(base_type_builder.get(), length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Try to write on an empty position
+        ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 1) == ReturnCode_t::RETCODE_OK);
+
+        MemberId newId;
+        ASSERT_TRUE(loaned_value1->insert_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        MemberId newId2;
+        ASSERT_TRUE(loaned_value1->insert_sequence_data(newId2) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, newId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, newId);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Remove the elements.
+        ASSERT_TRUE(loaned_value1->remove_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // New Insert Methods
+        ASSERT_TRUE(loaned_value1->insert_int16_value(test_value_1, newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_int16_value(test_value_2, newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // Check that the sequence is empty.
+        ASSERT_FALSE(loaned_value1->get_int16_value(test_value_2, 0) == ReturnCode_t::RETCODE_OK);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapStringInnerAliasSequenceHelper wmap;
+        MapStringInnerAliasSequenceHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerAliasMapHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr inner_key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr inner_key_type = inner_key_type_builder->build();
+        ASSERT_TRUE(inner_key_type_builder != nullptr);
+        ASSERT_TRUE(inner_key_type != nullptr);
+
+        DynamicTypeBuilder_ptr inner_value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr inner_value_type = inner_value_type_builder->build();
+        ASSERT_TRUE(inner_value_type_builder != nullptr);
+        ASSERT_TRUE(inner_value_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(inner_key_type_builder.get(), inner_value_type_builder.get(), length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int32_t test_value_1 = 123;
+        int32_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Try to write on an empty position
+        ASSERT_FALSE(loaned_value1->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+
+        MemberId inner_keyId;
+        MemberId inner_valueId;
+        DynamicData* inner_key_data = DynamicDataFactory::get_instance()->create_data(inner_key_type);
+        ASSERT_TRUE(loaned_value1->insert_map_data(inner_key_data, inner_keyId, inner_valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(loaned_value1->insert_map_data(inner_key_data, inner_keyId, inner_valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(inner_key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId inner_keyId2;
+        MemberId inner_valueId2;
+        inner_key_data = DynamicDataFactory::get_instance()->create_data(inner_key_type);
+        inner_key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(loaned_value1->insert_map_data(inner_key_data, inner_keyId2, inner_valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(inner_key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Long};
+        check_set_values(loaned_value1, expected_types, &test_value_1, inner_valueId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, inner_valueId);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Check items count with removes
+        ASSERT_TRUE(loaned_value1->get_item_count() == 2);
+        ASSERT_FALSE(loaned_value1->remove_map_data(inner_valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 2);
+        ASSERT_TRUE(loaned_value1->remove_map_data(inner_keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 1);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapStringInnerAliasMapHelper wmap;
+        MapStringInnerAliasMapHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerUnionHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder1 = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr base_type1 = base_type_builder1->build();
+        ASSERT_TRUE(base_type_builder1!= nullptr);
+        ASSERT_TRUE(base_type1 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_float32_builder();
+        DynamicType_ptr base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder3 = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type3 = base_type_builder3->build();
+        ASSERT_TRUE(base_type_builder3 != nullptr);
+        ASSERT_TRUE(base_type3 != nullptr);
+
+        DynamicTypeBuilder_ptr discriminator_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr discriminator_type = discriminator_type_builder->build();
+        ASSERT_TRUE(discriminator_type_builder != nullptr);
+        ASSERT_TRUE(discriminator_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(discriminator_type_builder.get());
+        ASSERT_TRUE(value_type_builder != nullptr);
+
+        // Add members to the union.
+        ASSERT_TRUE(value_type_builder->add_member(0, "default", base_type3, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(0, "first", base_type1, "", { 1}, false) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(0, "second", base_type2, "", { 2 }, false) == ReturnCode_t::RETCODE_OK);
+
+        // Try to add a second "DEFAULT" value to the union
+        ASSERT_FALSE(value_type_builder->add_member(0, "third", base_type1, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        // Try to add a second value to the same case label
+        ASSERT_FALSE(value_type_builder->add_member(0, "third", base_type1, "", { 1 }, false) == ReturnCode_t::RETCODE_OK);
+
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t label;
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, 0);
+        check_get_values(loaned_value1, expected_types, &test_value_2, 0);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapStringInnerUnionHelper wmap;
+        MapStringInnerUnionHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerStructureHelper)
 {
+    //TODO
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapStringInnerBitsetHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_byte_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
+        auto base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitset_builder();
+        ASSERT_TRUE(value_type_builder != nullptr);
+
+        // Add members to the struct.
+        ASSERT_TRUE(value_type_builder->add_member(0, "a", base_type) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(1, "b", base_type2) == ReturnCode_t::RETCODE_OK);
+        value_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
+        value_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
+        value_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
+        value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+
+        DynamicType_ptr bitset_type = value_type_builder->build();
+        ASSERT_TRUE(bitset_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Set and get the child values.
+        octet test1(234);
+        ASSERT_TRUE(loaned_value1->set_byte_value(test1, 0) == ReturnCode_t::RETCODE_OK);
+        octet test2(0);
+        ASSERT_TRUE(loaned_value1->get_byte_value(test2, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test1 == test2);
+        // 11101010
+        // 00000010 (two bits)
+        ASSERT_TRUE(test2 == 2);
+        uint32_t test3(289582314);
+        ASSERT_TRUE(loaned_value1->set_uint32_value(test3, 1) == ReturnCode_t::RETCODE_OK);
+        uint32_t test4(0);
+        ASSERT_TRUE(loaned_value1->get_uint32_value(test4, 1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test3 == test4);
+        // 00000001010000101010110011101010
+        // 00000000000000101010110011101010 (20 bits)
+        ASSERT_TRUE(test4 == 175338);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapStringInnerBitsetHelper wmap;
+        MapStringInnerBitsetHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 #pragma endregion
@@ -20571,34 +26634,899 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringInnerEnumHelper)
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringInnerBitMaskHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    uint32_t limit = 5;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitmask_builder(limit);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        // Add members to the bitmask
+        ASSERT_TRUE(value_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
+        
+        // Try to add a descriptor with the same name
+        ASSERT_FALSE(value_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
+        // Out of bounds
+        ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t test_value_1 = 55;// 00110111
+        uint64_t test_value_2;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Bitmask};
+        expected_types.push_back(ExpectedType::ULongLong);
+        check_set_values(loaned_value1, expected_types, &test_value_1);
+        check_get_values(loaned_value1, expected_types, &test_value_2);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapWStringInnerEnumHelper wmap;
+        MapWStringInnerEnumHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringInnerAliasHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        std::string name = "InnerAliasHelper";
+        DynamicTypeBuilder_ptr alias_builder = DynamicTypeBuilderFactory::get_instance()->create_alias_builder(value_type_builder.get(), name);
+        ASSERT_TRUE(alias_builder != nullptr);
+        DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(alias_builder.get());
+        ASSERT_TRUE(created_type != nullptr);
+        ASSERT_TRUE(created_type->get_name() == "InnerAliasHelper");
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), alias_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int32_t test_value_1 = 123;
+        int32_t test_value_2 = 0;
+        
+        // Try to write on an empty position
+        ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Long};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapWStringInnerAliasHelper wmap;
+        MapWStringInnerAliasHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringInnerAliasArrayHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    std::vector<uint32_t> array_length = { 10 };
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_array_builder(base_type_builder.get(), array_length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Get an index in the array.
+        std::vector<uint32_t> vPosition = { 1 };
+        MemberId testPos(0);
+        testPos = loaned_value1->get_array_index(vPosition);
+        ASSERT_TRUE(testPos != MEMBER_ID_INVALID);
+
+        // Invalid input vectors.
+        std::vector<uint32_t> vPosition2 = { 1, 1 };
+        ASSERT_FALSE(loaned_value1->get_array_index(vPosition2) != MEMBER_ID_INVALID);
+        std::vector<uint32_t> vPosition3 = { 1, 1, 1, 1 };
+        ASSERT_FALSE(loaned_value1->get_array_index(vPosition3) != MEMBER_ID_INVALID);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, testPos);
+        check_get_values(loaned_value1, expected_types, &test_value_2, testPos);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Check items count before and after remove an element.
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_value(testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_array_data(testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+
+        // Check the clear values method
+        ASSERT_TRUE(loaned_value1->set_int16_value(test_value_1, testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+
+        // Try to set a value out of the array.
+        ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 100) == ReturnCode_t::RETCODE_OK);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapWStringInnerAliasArrayHelper wmap;
+        MapWStringInnerAliasArrayHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringInnerAliasSequenceHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(base_type_builder.get(), length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Try to write on an empty position
+        ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 1) == ReturnCode_t::RETCODE_OK);
+
+        MemberId newId;
+        ASSERT_TRUE(loaned_value1->insert_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        MemberId newId2;
+        ASSERT_TRUE(loaned_value1->insert_sequence_data(newId2) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, newId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, newId);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Remove the elements.
+        ASSERT_TRUE(loaned_value1->remove_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // New Insert Methods
+        ASSERT_TRUE(loaned_value1->insert_int16_value(test_value_1, newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_int16_value(test_value_2, newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // Check that the sequence is empty.
+        ASSERT_FALSE(loaned_value1->get_int16_value(test_value_2, 0) == ReturnCode_t::RETCODE_OK);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapWStringInnerAliasSequenceHelper wmap;
+        MapWStringInnerAliasSequenceHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringInnerAliasMapHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr inner_key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr inner_key_type = inner_key_type_builder->build();
+        ASSERT_TRUE(inner_key_type_builder != nullptr);
+        ASSERT_TRUE(inner_key_type != nullptr);
+
+        DynamicTypeBuilder_ptr inner_value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr inner_value_type = inner_value_type_builder->build();
+        ASSERT_TRUE(inner_value_type_builder != nullptr);
+        ASSERT_TRUE(inner_value_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(inner_key_type_builder.get(), inner_value_type_builder.get(), length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int32_t test_value_1 = 123;
+        int32_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Try to write on an empty position
+        ASSERT_FALSE(loaned_value1->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+
+        MemberId inner_keyId;
+        MemberId inner_valueId;
+        DynamicData* inner_key_data = DynamicDataFactory::get_instance()->create_data(inner_key_type);
+        ASSERT_TRUE(loaned_value1->insert_map_data(inner_key_data, inner_keyId, inner_valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(loaned_value1->insert_map_data(inner_key_data, inner_keyId, inner_valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(inner_key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId inner_keyId2;
+        MemberId inner_valueId2;
+        inner_key_data = DynamicDataFactory::get_instance()->create_data(inner_key_type);
+        inner_key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(loaned_value1->insert_map_data(inner_key_data, inner_keyId2, inner_valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(inner_key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Long};
+        check_set_values(loaned_value1, expected_types, &test_value_1, inner_valueId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, inner_valueId);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Check items count with removes
+        ASSERT_TRUE(loaned_value1->get_item_count() == 2);
+        ASSERT_FALSE(loaned_value1->remove_map_data(inner_valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 2);
+        ASSERT_TRUE(loaned_value1->remove_map_data(inner_keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 1);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapWStringInnerAliasMapHelper wmap;
+        MapWStringInnerAliasMapHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringInnerUnionHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder1 = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr base_type1 = base_type_builder1->build();
+        ASSERT_TRUE(base_type_builder1!= nullptr);
+        ASSERT_TRUE(base_type1 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_float32_builder();
+        DynamicType_ptr base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder3 = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type3 = base_type_builder3->build();
+        ASSERT_TRUE(base_type_builder3 != nullptr);
+        ASSERT_TRUE(base_type3 != nullptr);
+
+        DynamicTypeBuilder_ptr discriminator_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr discriminator_type = discriminator_type_builder->build();
+        ASSERT_TRUE(discriminator_type_builder != nullptr);
+        ASSERT_TRUE(discriminator_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(discriminator_type_builder.get());
+        ASSERT_TRUE(value_type_builder != nullptr);
+
+        // Add members to the union.
+        ASSERT_TRUE(value_type_builder->add_member(0, "default", base_type3, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(0, "first", base_type1, "", { 1}, false) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(0, "second", base_type2, "", { 2 }, false) == ReturnCode_t::RETCODE_OK);
+
+        // Try to add a second "DEFAULT" value to the union
+        ASSERT_FALSE(value_type_builder->add_member(0, "third", base_type1, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        // Try to add a second value to the same case label
+        ASSERT_FALSE(value_type_builder->add_member(0, "third", base_type1, "", { 1 }, false) == ReturnCode_t::RETCODE_OK);
+
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t label;
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, 0);
+        check_get_values(loaned_value1, expected_types, &test_value_2, 0);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapWStringInnerUnionHelper wmap;
+        MapWStringInnerUnionHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringInnerStructureHelper)
 {
+    //TODO
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapWStringInnerBitsetHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder();
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_byte_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
+        auto base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitset_builder();
+        ASSERT_TRUE(value_type_builder != nullptr);
+
+        // Add members to the struct.
+        ASSERT_TRUE(value_type_builder->add_member(0, "a", base_type) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(1, "b", base_type2) == ReturnCode_t::RETCODE_OK);
+        value_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
+        value_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
+        value_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
+        value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+
+        DynamicType_ptr bitset_type = value_type_builder->build();
+        ASSERT_TRUE(bitset_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Set and get the child values.
+        octet test1(234);
+        ASSERT_TRUE(loaned_value1->set_byte_value(test1, 0) == ReturnCode_t::RETCODE_OK);
+        octet test2(0);
+        ASSERT_TRUE(loaned_value1->get_byte_value(test2, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test1 == test2);
+        // 11101010
+        // 00000010 (two bits)
+        ASSERT_TRUE(test2 == 2);
+        uint32_t test3(289582314);
+        ASSERT_TRUE(loaned_value1->set_uint32_value(test3, 1) == ReturnCode_t::RETCODE_OK);
+        uint32_t test4(0);
+        ASSERT_TRUE(loaned_value1->get_uint32_value(test4, 1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test3 == test4);
+        // 00000001010000101010110011101010
+        // 00000000000000101010110011101010 (20 bits)
+        ASSERT_TRUE(test4 == 175338);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapWStringInnerBitsetHelper wmap;
+        MapWStringInnerBitsetHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 #pragma endregion
@@ -22328,34 +29256,899 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperIn
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperInnerBitMaskHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    uint32_t limit = 5;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder(1);
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitmask_builder(limit);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        // Add members to the bitmask
+        ASSERT_TRUE(value_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
+        
+        // Try to add a descriptor with the same name
+        ASSERT_FALSE(value_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
+        // Out of bounds
+        ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t test_value_1 = 55;// 00110111
+        uint64_t test_value_2;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Bitmask};
+        expected_types.push_back(ExpectedType::ULongLong);
+        check_set_values(loaned_value1, expected_types, &test_value_1);
+        check_get_values(loaned_value1, expected_types, &test_value_2);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapInnerAliasBoundedStringHelperInnerBitMaskHelper wmap;
+        MapInnerAliasBoundedStringHelperInnerBitMaskHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperInnerAliasHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder(1);
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        std::string name = "InnerAliasHelper";
+        DynamicTypeBuilder_ptr alias_builder = DynamicTypeBuilderFactory::get_instance()->create_alias_builder(value_type_builder.get(), name);
+        ASSERT_TRUE(alias_builder != nullptr);
+        DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(alias_builder.get());
+        ASSERT_TRUE(created_type != nullptr);
+        ASSERT_TRUE(created_type->get_name() == "InnerAliasHelper");
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), alias_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int32_t test_value_1 = 123;
+        int32_t test_value_2 = 0;
+        
+        // Try to write on an empty position
+        ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Long};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapInnerAliasBoundedStringHelperInnerAliasHelper wmap;
+        MapInnerAliasBoundedStringHelperInnerAliasHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperInnerAliasArrayHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    std::vector<uint32_t> array_length = { 10 };
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder(1);
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_array_builder(base_type_builder.get(), array_length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Get an index in the array.
+        std::vector<uint32_t> vPosition = { 1 };
+        MemberId testPos(0);
+        testPos = loaned_value1->get_array_index(vPosition);
+        ASSERT_TRUE(testPos != MEMBER_ID_INVALID);
+
+        // Invalid input vectors.
+        std::vector<uint32_t> vPosition2 = { 1, 1 };
+        ASSERT_FALSE(loaned_value1->get_array_index(vPosition2) != MEMBER_ID_INVALID);
+        std::vector<uint32_t> vPosition3 = { 1, 1, 1, 1 };
+        ASSERT_FALSE(loaned_value1->get_array_index(vPosition3) != MEMBER_ID_INVALID);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, testPos);
+        check_get_values(loaned_value1, expected_types, &test_value_2, testPos);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Check items count before and after remove an element.
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_value(testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_array_data(testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+
+        // Check the clear values method
+        ASSERT_TRUE(loaned_value1->set_int16_value(test_value_1, testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+
+        // Try to set a value out of the array.
+        ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 100) == ReturnCode_t::RETCODE_OK);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapInnerAliasBoundedStringHelperInnerAliasArrayHelper wmap;
+        MapInnerAliasBoundedStringHelperInnerAliasArrayHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder(1);
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(base_type_builder.get(), length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Try to write on an empty position
+        ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 1) == ReturnCode_t::RETCODE_OK);
+
+        MemberId newId;
+        ASSERT_TRUE(loaned_value1->insert_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        MemberId newId2;
+        ASSERT_TRUE(loaned_value1->insert_sequence_data(newId2) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, newId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, newId);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Remove the elements.
+        ASSERT_TRUE(loaned_value1->remove_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // New Insert Methods
+        ASSERT_TRUE(loaned_value1->insert_int16_value(test_value_1, newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_int16_value(test_value_2, newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // Check that the sequence is empty.
+        ASSERT_FALSE(loaned_value1->get_int16_value(test_value_2, 0) == ReturnCode_t::RETCODE_OK);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapInnerAliasBoundedStringHelperInnerAliasSequenceHelper wmap;
+        MapInnerAliasBoundedStringHelperInnerAliasSequenceHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperInnerAliasMapHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder(1);
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr inner_key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr inner_key_type = inner_key_type_builder->build();
+        ASSERT_TRUE(inner_key_type_builder != nullptr);
+        ASSERT_TRUE(inner_key_type != nullptr);
+
+        DynamicTypeBuilder_ptr inner_value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr inner_value_type = inner_value_type_builder->build();
+        ASSERT_TRUE(inner_value_type_builder != nullptr);
+        ASSERT_TRUE(inner_value_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(inner_key_type_builder.get(), inner_value_type_builder.get(), length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int32_t test_value_1 = 123;
+        int32_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Try to write on an empty position
+        ASSERT_FALSE(loaned_value1->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+
+        MemberId inner_keyId;
+        MemberId inner_valueId;
+        DynamicData* inner_key_data = DynamicDataFactory::get_instance()->create_data(inner_key_type);
+        ASSERT_TRUE(loaned_value1->insert_map_data(inner_key_data, inner_keyId, inner_valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(loaned_value1->insert_map_data(inner_key_data, inner_keyId, inner_valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(inner_key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId inner_keyId2;
+        MemberId inner_valueId2;
+        inner_key_data = DynamicDataFactory::get_instance()->create_data(inner_key_type);
+        inner_key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(loaned_value1->insert_map_data(inner_key_data, inner_keyId2, inner_valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(inner_key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Long};
+        check_set_values(loaned_value1, expected_types, &test_value_1, inner_valueId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, inner_valueId);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Check items count with removes
+        ASSERT_TRUE(loaned_value1->get_item_count() == 2);
+        ASSERT_FALSE(loaned_value1->remove_map_data(inner_valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 2);
+        ASSERT_TRUE(loaned_value1->remove_map_data(inner_keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 1);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapInnerAliasBoundedStringHelperInnerAliasMapHelper wmap;
+        MapInnerAliasBoundedStringHelperInnerAliasMapHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperInnerUnionHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder(1);
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder1 = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr base_type1 = base_type_builder1->build();
+        ASSERT_TRUE(base_type_builder1!= nullptr);
+        ASSERT_TRUE(base_type1 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_float32_builder();
+        DynamicType_ptr base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder3 = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type3 = base_type_builder3->build();
+        ASSERT_TRUE(base_type_builder3 != nullptr);
+        ASSERT_TRUE(base_type3 != nullptr);
+
+        DynamicTypeBuilder_ptr discriminator_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr discriminator_type = discriminator_type_builder->build();
+        ASSERT_TRUE(discriminator_type_builder != nullptr);
+        ASSERT_TRUE(discriminator_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(discriminator_type_builder.get());
+        ASSERT_TRUE(value_type_builder != nullptr);
+
+        // Add members to the union.
+        ASSERT_TRUE(value_type_builder->add_member(0, "default", base_type3, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(0, "first", base_type1, "", { 1}, false) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(0, "second", base_type2, "", { 2 }, false) == ReturnCode_t::RETCODE_OK);
+
+        // Try to add a second "DEFAULT" value to the union
+        ASSERT_FALSE(value_type_builder->add_member(0, "third", base_type1, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        // Try to add a second value to the same case label
+        ASSERT_FALSE(value_type_builder->add_member(0, "third", base_type1, "", { 1 }, false) == ReturnCode_t::RETCODE_OK);
+
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t label;
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, 0);
+        check_get_values(loaned_value1, expected_types, &test_value_2, 0);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapInnerAliasBoundedStringHelperInnerUnionHelper wmap;
+        MapInnerAliasBoundedStringHelperInnerUnionHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperInnerStructureHelper)
 {
+    //TODO
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedStringHelperInnerBitsetHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_string_builder(1);
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_byte_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
+        auto base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitset_builder();
+        ASSERT_TRUE(value_type_builder != nullptr);
+
+        // Add members to the struct.
+        ASSERT_TRUE(value_type_builder->add_member(0, "a", base_type) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(1, "b", base_type2) == ReturnCode_t::RETCODE_OK);
+        value_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
+        value_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
+        value_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
+        value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+
+        DynamicType_ptr bitset_type = value_type_builder->build();
+        ASSERT_TRUE(bitset_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_string_value("2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Set and get the child values.
+        octet test1(234);
+        ASSERT_TRUE(loaned_value1->set_byte_value(test1, 0) == ReturnCode_t::RETCODE_OK);
+        octet test2(0);
+        ASSERT_TRUE(loaned_value1->get_byte_value(test2, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test1 == test2);
+        // 11101010
+        // 00000010 (two bits)
+        ASSERT_TRUE(test2 == 2);
+        uint32_t test3(289582314);
+        ASSERT_TRUE(loaned_value1->set_uint32_value(test3, 1) == ReturnCode_t::RETCODE_OK);
+        uint32_t test4(0);
+        ASSERT_TRUE(loaned_value1->get_uint32_value(test4, 1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test3 == test4);
+        // 00000001010000101010110011101010
+        // 00000000000000101010110011101010 (20 bits)
+        ASSERT_TRUE(test4 == 175338);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapInnerAliasBoundedStringHelperInnerBitsetHelper wmap;
+        MapInnerAliasBoundedStringHelperInnerBitsetHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 #pragma endregion
@@ -24085,34 +31878,899 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperI
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperInnerBitMaskHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    uint32_t limit = 5;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(1);
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitmask_builder(limit);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        // Add members to the bitmask
+        ASSERT_TRUE(value_type_builder->add_empty_member(0, "FLAG0") == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_empty_member(1, "FLAG1") == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_empty_member(4, "FLAG4") == ReturnCode_t::RETCODE_OK);
+        
+        // Try to add a descriptor with the same name
+        ASSERT_FALSE(value_type_builder->add_empty_member(1, "FLAG0") == ReturnCode_t::RETCODE_OK);
+        // Out of bounds
+        ASSERT_FALSE(value_type_builder->add_empty_member(5, "FLAG5") == ReturnCode_t::RETCODE_OK); 
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t test_value_1 = 55;// 00110111
+        uint64_t test_value_2;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Bitmask};
+        expected_types.push_back(ExpectedType::ULongLong);
+        check_set_values(loaned_value1, expected_types, &test_value_1);
+        check_get_values(loaned_value1, expected_types, &test_value_2);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapInnerAliasBoundedWStringHelperInnerBitMaskHelper wmap;
+        MapInnerAliasBoundedWStringHelperInnerBitMaskHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperInnerAliasHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(1);
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        std::string name = "InnerAliasHelper";
+        DynamicTypeBuilder_ptr alias_builder = DynamicTypeBuilderFactory::get_instance()->create_alias_builder(value_type_builder.get(), name);
+        ASSERT_TRUE(alias_builder != nullptr);
+        DynamicType_ptr created_type = DynamicTypeBuilderFactory::get_instance()->create_type(alias_builder.get());
+        ASSERT_TRUE(created_type != nullptr);
+        ASSERT_TRUE(created_type->get_name() == "InnerAliasHelper");
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), alias_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int32_t test_value_1 = 123;
+        int32_t test_value_2 = 0;
+        
+        // Try to write on an empty position
+        ASSERT_FALSE(data->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Long};
+        check_set_values(data, expected_types, &test_value_1, valueId);
+        check_get_values(data, expected_types, &test_value_2, valueId);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapInnerAliasBoundedWStringHelperInnerAliasHelper wmap;
+        MapInnerAliasBoundedWStringHelperInnerAliasHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    std::vector<uint32_t> array_length = { 10 };
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(1);
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_array_builder(base_type_builder.get(), array_length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Get an index in the array.
+        std::vector<uint32_t> vPosition = { 1 };
+        MemberId testPos(0);
+        testPos = loaned_value1->get_array_index(vPosition);
+        ASSERT_TRUE(testPos != MEMBER_ID_INVALID);
+
+        // Invalid input vectors.
+        std::vector<uint32_t> vPosition2 = { 1, 1 };
+        ASSERT_FALSE(loaned_value1->get_array_index(vPosition2) != MEMBER_ID_INVALID);
+        std::vector<uint32_t> vPosition3 = { 1, 1, 1, 1 };
+        ASSERT_FALSE(loaned_value1->get_array_index(vPosition3) != MEMBER_ID_INVALID);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, testPos);
+        check_get_values(loaned_value1, expected_types, &test_value_2, testPos);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Check items count before and after remove an element.
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_value(testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_array_data(testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+
+        // Check the clear values method
+        ASSERT_TRUE(loaned_value1->set_int16_value(test_value_1, testPos) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == value_type->get_total_bounds());
+
+        // Try to set a value out of the array.
+        ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 100) == ReturnCode_t::RETCODE_OK);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapInnerAliasBoundedWStringHelperInnerAliasArrayHelper wmap;
+        MapInnerAliasBoundedWStringHelperInnerAliasArrayHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(1);
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(base_type_builder.get(), length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Try to write on an empty position
+        ASSERT_FALSE(loaned_value1->set_int16_value(test_value_1, 1) == ReturnCode_t::RETCODE_OK);
+
+        MemberId newId;
+        ASSERT_TRUE(loaned_value1->insert_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        MemberId newId2;
+        ASSERT_TRUE(loaned_value1->insert_sequence_data(newId2) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, newId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, newId);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Remove the elements.
+        ASSERT_TRUE(loaned_value1->remove_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // New Insert Methods
+        ASSERT_TRUE(loaned_value1->insert_int16_value(test_value_1, newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_int16_value(test_value_2, newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // Check that the sequence is empty.
+        ASSERT_FALSE(loaned_value1->get_int16_value(test_value_2, 0) == ReturnCode_t::RETCODE_OK);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelper wmap;
+        MapInnerAliasBoundedWStringHelperInnerAliasSequenceHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperInnerAliasMapHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(1);
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr inner_key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr inner_key_type = inner_key_type_builder->build();
+        ASSERT_TRUE(inner_key_type_builder != nullptr);
+        ASSERT_TRUE(inner_key_type != nullptr);
+
+        DynamicTypeBuilder_ptr inner_value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr inner_value_type = inner_value_type_builder->build();
+        ASSERT_TRUE(inner_value_type_builder != nullptr);
+        ASSERT_TRUE(inner_value_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(inner_key_type_builder.get(), inner_value_type_builder.get(), length);
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type_builder != nullptr);
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        int32_t test_value_1 = 123;
+        int32_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Try to write on an empty position
+        ASSERT_FALSE(loaned_value1->set_int32_value(test_value_1, 0) == ReturnCode_t::RETCODE_OK);
+
+        MemberId inner_keyId;
+        MemberId inner_valueId;
+        DynamicData* inner_key_data = DynamicDataFactory::get_instance()->create_data(inner_key_type);
+        ASSERT_TRUE(loaned_value1->insert_map_data(inner_key_data, inner_keyId, inner_valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(loaned_value1->insert_map_data(inner_key_data, inner_keyId, inner_valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(inner_key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId inner_keyId2;
+        MemberId inner_valueId2;
+        inner_key_data = DynamicDataFactory::get_instance()->create_data(inner_key_type);
+        inner_key_data->set_int32_value(2, MEMBER_ID_INVALID);
+        ASSERT_TRUE(loaned_value1->insert_map_data(inner_key_data, inner_keyId2, inner_valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(inner_key_data) == ReturnCode_t::RETCODE_OK);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Long};
+        check_set_values(loaned_value1, expected_types, &test_value_1, inner_valueId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, inner_valueId);
+
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        // Check items count with removes
+        ASSERT_TRUE(loaned_value1->get_item_count() == 2);
+        ASSERT_FALSE(loaned_value1->remove_map_data(inner_valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 2);
+        ASSERT_TRUE(loaned_value1->remove_map_data(inner_keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 1);
+        ASSERT_TRUE(loaned_value1->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(loaned_value1->get_item_count() == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapInnerAliasBoundedWStringHelperInnerAliasMapHelper wmap;
+        MapInnerAliasBoundedWStringHelperInnerAliasMapHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperInnerUnionHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(1);
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder1 = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr base_type1 = base_type_builder1->build();
+        ASSERT_TRUE(base_type_builder1!= nullptr);
+        ASSERT_TRUE(base_type1 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_float32_builder();
+        DynamicType_ptr base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder3 = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type3 = base_type_builder3->build();
+        ASSERT_TRUE(base_type_builder3 != nullptr);
+        ASSERT_TRUE(base_type3 != nullptr);
+
+        DynamicTypeBuilder_ptr discriminator_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr discriminator_type = discriminator_type_builder->build();
+        ASSERT_TRUE(discriminator_type_builder != nullptr);
+        ASSERT_TRUE(discriminator_type != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(discriminator_type_builder.get());
+        ASSERT_TRUE(value_type_builder != nullptr);
+
+        // Add members to the union.
+        ASSERT_TRUE(value_type_builder->add_member(0, "default", base_type3, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(0, "first", base_type1, "", { 1}, false) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(0, "second", base_type2, "", { 2 }, false) == ReturnCode_t::RETCODE_OK);
+
+        // Try to add a second "DEFAULT" value to the union
+        ASSERT_FALSE(value_type_builder->add_member(0, "third", base_type1, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        // Try to add a second value to the same case label
+        ASSERT_FALSE(value_type_builder->add_member(0, "third", base_type1, "", { 1 }, false) == ReturnCode_t::RETCODE_OK);
+
+        DynamicType_ptr value_type = value_type_builder->build();
+        ASSERT_TRUE(value_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t label;
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+        
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, 0);
+        check_get_values(loaned_value1, expected_types, &test_value_2, 0);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapInnerAliasBoundedWStringHelperInnerUnionHelper wmap;
+        MapInnerAliasBoundedWStringHelperInnerUnionHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperInnerStructureHelper)
 {
+    //TODO
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_MapInnerAliasBoundedWStringHelperInnerBitsetHelper)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr key_type_builder = DynamicTypeBuilderFactory::get_instance()->create_wstring_builder(1);
+        DynamicType_ptr key_type = key_type_builder->build();
+        ASSERT_TRUE(key_type_builder != nullptr);
+        ASSERT_TRUE(key_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_byte_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
+        auto base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr value_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitset_builder();
+        ASSERT_TRUE(value_type_builder != nullptr);
+
+        // Add members to the struct.
+        ASSERT_TRUE(value_type_builder->add_member(0, "a", base_type) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(value_type_builder->add_member(1, "b", base_type2) == ReturnCode_t::RETCODE_OK);
+        value_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
+        value_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
+        value_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
+        value_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+
+        DynamicType_ptr bitset_type = value_type_builder->build();
+        ASSERT_TRUE(bitset_type != nullptr);
+
+        DynamicTypeBuilder_ptr map_type_builder = DynamicTypeBuilderFactory::get_instance()->create_map_builder(key_type_builder.get(), value_type_builder.get(), length);
+        DynamicType_ptr map_type = map_type_builder->build();
+        ASSERT_TRUE(map_type_builder != nullptr);
+        ASSERT_TRUE(map_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(data != nullptr);
+
+        MemberId keyId;
+        MemberId valueId;
+        DynamicData* key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+
+        // Try to Add the same key twice.
+        ASSERT_FALSE(data->insert_map_data(key_data, keyId, valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        MemberId keyId2;
+        MemberId valueId2;
+        key_data = DynamicDataFactory::get_instance()->create_data(key_type);
+        key_data->set_wstring_value(L"2", MEMBER_ID_INVALID);
+        ASSERT_TRUE(data->insert_map_data(key_data, keyId2, valueId2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Complex values.
+        DynamicData* loaned_value1 = data->loan_value(valueId);
+        ASSERT_TRUE(loaned_value1 != nullptr);
+        DynamicData* loaned_value2 = data->loan_value(valueId);
+        ASSERT_FALSE(loaned_value2 != nullptr);
+
+        // Set and get the child values.
+        octet test1(234);
+        ASSERT_TRUE(loaned_value1->set_byte_value(test1, 0) == ReturnCode_t::RETCODE_OK);
+        octet test2(0);
+        ASSERT_TRUE(loaned_value1->get_byte_value(test2, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test1 == test2);
+        // 11101010
+        // 00000010 (two bits)
+        ASSERT_TRUE(test2 == 2);
+        uint32_t test3(289582314);
+        ASSERT_TRUE(loaned_value1->set_uint32_value(test3, 1) == ReturnCode_t::RETCODE_OK);
+        uint32_t test4(0);
+        ASSERT_TRUE(loaned_value1->get_uint32_value(test4, 1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test3 == test4);
+        // 00000001010000101010110011101010
+        // 00000000000000101010110011101010 (20 bits)
+        ASSERT_TRUE(test4 == 175338);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value2) == ReturnCode_t::RETCODE_OK);
+
+        // Check items count with removes
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_FALSE(data->remove_map_data(valueId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 2);
+        ASSERT_TRUE(data->remove_map_data(keyId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 1);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->get_item_count() == 0);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(map_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        MapInnerAliasBoundedWStringHelperInnerBitsetHelper wmap;
+        MapInnerAliasBoundedWStringHelperInnerBitsetHelperPubSubType wmappb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wmappb.deserialize(&dynamic_payload, &wmap));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wmappb.getSerializedSizeProvider(&wmap)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wmappb.serialize(&wmap, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(map_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 #pragma endregion
@@ -26950,14 +35608,230 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceMap)
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceUnion)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr base_type_builder1 = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr base_type1 = base_type_builder1->build();
+        ASSERT_TRUE(base_type_builder1!= nullptr);
+        ASSERT_TRUE(base_type1 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_float32_builder();
+        DynamicType_ptr base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder3 = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type3 = base_type_builder3->build();
+        ASSERT_TRUE(base_type_builder3 != nullptr);
+        ASSERT_TRUE(base_type3 != nullptr);
+
+        DynamicTypeBuilder_ptr discriminator_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr discriminator_type = discriminator_type_builder->build();
+        ASSERT_TRUE(discriminator_type_builder != nullptr);
+        ASSERT_TRUE(discriminator_type != nullptr);
+
+        DynamicTypeBuilder_ptr union_type_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(discriminator_type_builder.get());
+        ASSERT_TRUE(union_type_builder != nullptr);
+
+        // Add members to the union.
+        ASSERT_TRUE(union_type_builder->add_member(0, "default", base_type3, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(union_type_builder->add_member(0, "first", base_type1, "", { 1}, false) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(union_type_builder->add_member(0, "second", base_type2, "", { 2 }, false) == ReturnCode_t::RETCODE_OK);
+
+        // Try to add a second "DEFAULT" value to the union
+        ASSERT_FALSE(union_type_builder->add_member(0, "third", base_type1, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        // Try to add a second value to the same case label
+        ASSERT_FALSE(union_type_builder->add_member(0, "third", base_type1, "", { 1 }, false) == ReturnCode_t::RETCODE_OK);
+
+        // Create a data of this union
+        DynamicType_ptr union_type = union_type_builder->build();
+        ASSERT_TRUE(union_type != nullptr);
+
+        DynamicTypeBuilder_ptr complex_seq_type_builder = DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(union_type_builder.get(), length);
+        DynamicType_ptr complex_seq_type = complex_seq_type_builder->build();
+        ASSERT_TRUE(complex_seq_type_builder != nullptr);
+        ASSERT_TRUE(complex_seq_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(complex_seq_type);
+        ASSERT_TRUE(data != nullptr);
+
+        MemberId newId;
+        ASSERT_TRUE(data->insert_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        MemberId newId2;
+        ASSERT_TRUE(data->insert_sequence_data(newId2) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Value to modify the first sequence
+        DynamicData* seq_data = data->loan_value(newId);
+        ASSERT_TRUE(seq_data != nullptr);
+
+        // Set and get a value.
+        uint64_t label;
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+
+        ASSERT_TRUE(seq_data->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(seq_data, expected_types, &test_value_1, 0);
+        check_get_values(seq_data, expected_types, &test_value_2, 0);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        ASSERT_TRUE(seq_data->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        // Return the pointer of the sequence
+        ASSERT_TRUE(data->return_loaned_value(seq_data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(seq_data) == ReturnCode_t::RETCODE_OK);
+
+        // Remove the elements.
+        ASSERT_TRUE(data->remove_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(complex_seq_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(complex_seq_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        SequenceMap seq;
+        SequenceMapPubSubType seqpb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(complex_seq_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceStructure)
 {
+    //TODO
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_SequenceBitset)
 {
+    uint32_t length = eprosima::fastrtps::types::BOUND_UNLIMITED;
+    {
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_byte_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
+        auto base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr bitset_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitset_builder();
+        ASSERT_TRUE(bitset_type_builder != nullptr);
+
+        // Add members to the struct.
+        ASSERT_TRUE(bitset_type_builder->add_member(0, "a", base_type) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(bitset_type_builder->add_member(1, "b", base_type2) == ReturnCode_t::RETCODE_OK);
+        bitset_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
+        bitset_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
+        bitset_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
+        bitset_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+
+        DynamicType_ptr bitset_type = bitset_type_builder->build();
+        ASSERT_TRUE(bitset_type != nullptr);
+
+        DynamicTypeBuilder_ptr complex_seq_type_builder = DynamicTypeBuilderFactory::get_instance()->create_sequence_builder(bitset_type_builder.get(), length);
+        DynamicType_ptr complex_seq_type = complex_seq_type_builder->build();
+        ASSERT_TRUE(complex_seq_type_builder != nullptr);
+        ASSERT_TRUE(complex_seq_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(complex_seq_type);
+        ASSERT_TRUE(data != nullptr);
+
+        MemberId newId;
+        ASSERT_TRUE(data->insert_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        MemberId newId2;
+        ASSERT_TRUE(data->insert_sequence_data(newId2) == ReturnCode_t::RETCODE_OK);
+
+        // Loan Value to modify the first sequence
+        DynamicData* seq_data = data->loan_value(newId);
+        ASSERT_TRUE(seq_data != nullptr);
+
+        // Set and get the child values.
+        octet test1(234);
+        ASSERT_TRUE(seq_data->set_byte_value(test1, 0) == ReturnCode_t::RETCODE_OK);
+        octet test2(0);
+        ASSERT_TRUE(seq_data->get_byte_value(test2, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test1 == test2);
+        // 11101010
+        // 00000010 (two bits)
+        ASSERT_TRUE(test2 == 2);
+        uint32_t test3(289582314);
+        ASSERT_TRUE(seq_data->set_uint32_value(test3, 1) == ReturnCode_t::RETCODE_OK);
+        uint32_t test4(0);
+        ASSERT_TRUE(seq_data->get_uint32_value(test4, 1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test3 == test4);
+        // 00000001010000101010110011101010
+        // 00000000000000101010110011101010 (20 bits)
+        ASSERT_TRUE(test4 == 175338);
+
+        // Return the pointer of the sequence
+        ASSERT_TRUE(data->return_loaned_value(seq_data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(seq_data) == ReturnCode_t::RETCODE_OK);
+
+        // Remove the elements.
+        ASSERT_TRUE(data->remove_sequence_data(newId) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(data->clear_all_values() == ReturnCode_t::RETCODE_OK);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(complex_seq_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(complex_seq_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        SequenceMap seq;
+        SequenceMapPubSubType seqpb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(seqpb.deserialize(&dynamic_payload, &seq));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(seqpb.getSerializedSizeProvider(&seq)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(seqpb.serialize(&seq, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(complex_seq_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedSmallSequences)
@@ -29364,14 +38238,241 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionMap)
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerUnionHelper)
 {
+    {
+        DynamicTypeBuilder_ptr base_type_builder1 = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr base_type1 = base_type_builder1->build();
+        ASSERT_TRUE(base_type_builder1!= nullptr);
+        ASSERT_TRUE(base_type1 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_float32_builder();
+        DynamicType_ptr base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder3 = DynamicTypeBuilderFactory::get_instance()->create_int16_builder();
+        DynamicType_ptr base_type3 = base_type_builder3->build();
+        ASSERT_TRUE(base_type_builder3 != nullptr);
+        ASSERT_TRUE(base_type3 != nullptr);
+
+        DynamicTypeBuilder_ptr discriminator_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr discriminator_type = discriminator_type_builder->build();
+        ASSERT_TRUE(discriminator_type_builder != nullptr);
+        ASSERT_TRUE(discriminator_type != nullptr);
+
+        DynamicTypeBuilder_ptr content_type_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(discriminator_type_builder.get());
+        ASSERT_TRUE(content_type_builder != nullptr);
+
+        // Add members to the union.
+        ASSERT_TRUE(content_type_builder->add_member(0, "default", base_type3, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(content_type_builder->add_member(0, "first", base_type1, "", { 1}, false) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(content_type_builder->add_member(0, "second", base_type2, "", { 2 }, false) == ReturnCode_t::RETCODE_OK);
+
+        // Try to add a second "DEFAULT" value to the union
+        ASSERT_FALSE(content_type_builder->add_member(0, "third", base_type1, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        // Try to add a second value to the same case label
+        ASSERT_FALSE(content_type_builder->add_member(0, "third", base_type1, "", { 1 }, false) == ReturnCode_t::RETCODE_OK);
+
+        // Create a data of this union
+        DynamicType_ptr content_type = content_type_builder->build();
+        ASSERT_TRUE(content_type != nullptr);
+
+        DynamicTypeBuilder_ptr union_type_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(discriminator_type_builder.get());
+        ASSERT_TRUE(union_type_builder != nullptr);
+
+        // Add members to the union.
+        ASSERT_TRUE(union_type_builder->add_member(0, "l", content_type, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        // Try to add a second value to the same case label
+        ASSERT_FALSE(union_type_builder->add_member(0, "l", content_type, "", { 1 }, false) == ReturnCode_t::RETCODE_OK);
+        // Try to add a second "DEFAULT" value to the union
+        ASSERT_FALSE(union_type_builder->add_member(0, "X", content_type, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+
+        // Create a data of this union
+        DynamicType_ptr union_type = union_type_builder->build();
+        ASSERT_TRUE(union_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(union_type);
+        ASSERT_TRUE(data != nullptr);
+
+        // Set and get a value.
+        uint64_t label;
+        int16_t test_value_1 = 123;
+        int16_t test_value_2 = 0;
+
+        ASSERT_TRUE(data->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        // Loan Value
+        DynamicData* loaned_value1 = data->loan_value(0);
+        ASSERT_TRUE(loaned_value1 != 0);
+ 
+        uint64_t inner_label;
+
+        ASSERT_TRUE(loaned_value1->get_union_label(inner_label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(inner_label == 0);
+
+        std::vector<ExpectedType> expected_types = {ExpectedType::Short};
+        check_set_values(loaned_value1, expected_types, &test_value_1, 0);
+        check_get_values(loaned_value1, expected_types, &test_value_2, 0);
+        ASSERT_TRUE(test_value_1 == test_value_2);
+
+        ASSERT_TRUE(loaned_value1->get_union_label(inner_label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(inner_label == 0);
+
+        // Return the pointer 
+        ASSERT_TRUE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(loaned_value1) == ReturnCode_t::RETCODE_OK);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(union_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(union_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        UnionArray wunion;
+        UnionArrayPubSubType wunionpb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wunionpb.deserialize(&dynamic_payload, &wunion));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wunionpb.getSerializedSizeProvider(&wunion)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wunionpb.serialize(&wunion, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(union_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerStructureHelper)
 {
+    //TODO
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionInnerBitsetHelper)
 {
+    {
+        DynamicTypeBuilder_ptr base_type_builder = DynamicTypeBuilderFactory::get_instance()->create_byte_builder();
+        DynamicType_ptr base_type = base_type_builder->build();
+        ASSERT_TRUE(base_type_builder != nullptr);
+        ASSERT_TRUE(base_type != nullptr);
+
+        DynamicTypeBuilder_ptr base_type_builder2 = DynamicTypeBuilderFactory::get_instance()->create_uint32_builder();
+        auto base_type2 = base_type_builder2->build();
+        ASSERT_TRUE(base_type_builder2 != nullptr);
+        ASSERT_TRUE(base_type2 != nullptr);
+
+        DynamicTypeBuilder_ptr content_type_builder = DynamicTypeBuilderFactory::get_instance()->create_bitset_builder();
+        ASSERT_TRUE(content_type_builder != nullptr);
+
+        // Add members to the struct.
+        ASSERT_TRUE(content_type_builder->add_member(0, "a", base_type) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(content_type_builder->add_member(1, "b", base_type2) == ReturnCode_t::RETCODE_OK);
+        content_type_builder->apply_annotation_to_member(0, ANNOTATION_BIT_BOUND_ID, "value", "2");
+        content_type_builder->apply_annotation_to_member(0, ANNOTATION_POSITION_ID, "value", "0");
+        content_type_builder->apply_annotation_to_member(1, ANNOTATION_BIT_BOUND_ID, "value", "20");
+        content_type_builder->apply_annotation_to_member(1, ANNOTATION_POSITION_ID, "value", "10"); 
+
+        DynamicType_ptr content_type = content_type_builder->build();
+        ASSERT_TRUE(content_type != nullptr);
+
+        DynamicTypeBuilder_ptr discriminator_type_builder = DynamicTypeBuilderFactory::get_instance()->create_int32_builder();
+        DynamicType_ptr discriminator_type = discriminator_type_builder->build();
+        ASSERT_TRUE(discriminator_type_builder != nullptr);
+        ASSERT_TRUE(discriminator_type != nullptr);
+
+        DynamicTypeBuilder_ptr union_type_builder = DynamicTypeBuilderFactory::get_instance()->create_union_builder(discriminator_type_builder.get());
+        ASSERT_TRUE(union_type_builder != nullptr);
+
+        // Add members to the union.
+        ASSERT_TRUE(union_type_builder->add_member(0, "l", content_type, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+        // Try to add a second value to the same case label
+        ASSERT_FALSE(union_type_builder->add_member(0, "l", content_type, "", { 1 }, false) == ReturnCode_t::RETCODE_OK);
+        // Try to add a second "DEFAULT" value to the union
+        ASSERT_FALSE(union_type_builder->add_member(0, "X", content_type, "", { 0 }, true) == ReturnCode_t::RETCODE_OK);
+
+        // Create a data of this union
+        DynamicType_ptr union_type = union_type_builder->build();
+        ASSERT_TRUE(union_type != nullptr);
+
+        DynamicData* data = DynamicDataFactory::get_instance()->create_data(union_type);
+        ASSERT_TRUE(data != nullptr);
+
+        uint64_t label;
+
+        ASSERT_TRUE(data->get_union_label(label) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(label == 0);
+
+        // Loan Value
+        DynamicData* content_data = data->loan_value(0);
+        ASSERT_TRUE(content_data != 0);
+
+        // Set and get the child values.
+        octet test1(234);
+        ASSERT_TRUE(content_data->set_byte_value(test1, 0) == ReturnCode_t::RETCODE_OK);
+        octet test2(0);
+        ASSERT_TRUE(content_data->get_byte_value(test2, 0) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test1 == test2);
+        // 11101010
+        // 00000010 (two bits)
+        ASSERT_TRUE(test2 == 2);
+        uint32_t test3(289582314);
+        ASSERT_TRUE(content_data->set_uint32_value(test3, 1) == ReturnCode_t::RETCODE_OK);
+        uint32_t test4(0);
+        ASSERT_TRUE(content_data->get_uint32_value(test4, 1) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(test3 == test4);
+        // 00000001010000101010110011101010
+        // 00000000000000101010110011101010 (20 bits)
+        ASSERT_TRUE(test4 == 175338);
+
+        // Return the pointer
+        ASSERT_TRUE(data->return_loaned_value(content_data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->return_loaned_value(content_data) == ReturnCode_t::RETCODE_OK);
+
+        // Serialize <-> Deserialize Test
+        DynamicPubSubType pubsubType(union_type);
+        uint32_t payloadSize = static_cast<uint32_t>(pubsubType.getSerializedSizeProvider(data)());
+        SerializedPayload_t payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &payload));
+        ASSERT_TRUE(payload.length == payloadSize);
+        DynamicData* data2 = DynamicDataFactory::get_instance()->create_data(union_type);
+        ASSERT_TRUE(pubsubType.deserialize(&payload, data2));
+        ASSERT_TRUE(data2->equals(data));
+
+        // SERIALIZATION TEST
+        UnionMap wunion;
+        UnionMapPubSubType wunionpb;
+
+        SerializedPayload_t dynamic_payload(payloadSize);
+        ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));
+        ASSERT_TRUE(wunionpb.deserialize(&dynamic_payload, &wunion));
+
+        uint32_t static_payloadSize = static_cast<uint32_t>(wunionpb.getSerializedSizeProvider(&wunion)());
+        SerializedPayload_t static_payload(static_payloadSize);
+        ASSERT_TRUE(wunionpb.serialize(&wunion, &static_payload));
+        ASSERT_TRUE(static_payload.length == static_payloadSize);
+        DynamicData* data3 = DynamicDataFactory::get_instance()->create_data(union_type);
+        ASSERT_TRUE(pubsubType.deserialize(&static_payload, data3));
+        ASSERT_TRUE(data3->equals(data));
+
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(data3) == ReturnCode_t::RETCODE_OK);
+    }
+    ASSERT_TRUE(DynamicTypeBuilderFactory::get_instance()->is_empty());
+    ASSERT_TRUE(DynamicDataFactory::get_instance()->is_empty());
 }
 
 TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_UnionDiscriminatorShort)
