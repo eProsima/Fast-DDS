@@ -668,7 +668,7 @@ TEST_F(XMLParserTests, getXMLPropertiesPolicy)
     EXPECT_EQ(property_policy.binary_properties()[0].value(), std::vector<uint8_t>({0x01, 0x02, 0xCA, 0xFE}));
     EXPECT_EQ(property_policy.binary_properties()[0].propagate(), false);
 
-    for (int i = 0; i < valid_parameters.size(); i++)
+    for (size_t i = 0; i < valid_parameters.size(); i++)
     {
         parameters = valid_parameters;
         parameters[i] = wrong_parameters[i];
@@ -3913,7 +3913,7 @@ static void set_environment_variable(
 #ifdef _WIN32
     ASSERT_EQ(0, _putenv_s(env_var, value));
 #else
-    ASSERT_EQ(0, setenv(env_var, value));
+    ASSERT_EQ(0, setenv(env_var, value, 1));
 #endif // _WIN32
 }
 

@@ -100,7 +100,7 @@ protected:
 #ifdef _WIN32
                 ASSERT_EQ(0, _putenv_s(value.first.c_str(), value.second.c_str()));
 #else
-                ASSERT_EQ(0, setenv(value.first.c_str(), value.second.c_str()));
+                ASSERT_EQ(0, setenv(value.first.c_str(), value.second.c_str(), 1));
 #endif // _WIN32
             }
         }
