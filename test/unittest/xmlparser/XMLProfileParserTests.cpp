@@ -85,6 +85,8 @@ protected:
 
     void SetUp() override
     {
+        XMLProfileParserBasicTests::SetUp();
+
         // Use plain file by default
         xml_filename_ = "test_xml_profile.xml";
 
