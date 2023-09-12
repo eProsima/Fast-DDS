@@ -684,6 +684,12 @@ private:
     //!Will this participant use intraprocess only?
     bool is_intraprocess_only_;
 
+#ifdef FASTDDS_STATISTICS
+    std::unique_ptr<fastdds::statistics::rtps::MonitorService> monitor_server_;
+    std::unique_ptr<fastdds::statistics::rtps::SimpleQueryable> simple_queryable_;
+    const fastdds::statistics::rtps::IConnectionsObserver* conns_observer_;
+#endif
+
     /*
      * Flow controller factory.
      */
@@ -1227,9 +1233,10 @@ public:
             const GUID_t&,
             fastdds::statistics::rtps::ConnectionList& conn_list) override;
 
-    std::unique_ptr<fastdds::statistics::rtps::MonitorService> monitor_server_;
-    std::unique_ptr<fastdds::statistics::rtps::SimpleQueryable> simple_queryable_;
-    const fastdds::statistics::rtps::IConnectionsObserver* conns_observer_;
+    const fastdds::statistics::rtps::IConnectionsObserver* get_connections_observer()
+    {
+        return conns_observer_;
+    }
 
 #else
     std::vector<fastdds::statistics::Connection> get_entity_connections(
