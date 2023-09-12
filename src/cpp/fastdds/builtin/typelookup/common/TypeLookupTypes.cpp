@@ -928,7 +928,7 @@ void TypeLookup_RequestTypeSupport::delete_data(
 bool TypeLookup_ReplyTypeSupport::serialize(
         void* data,
         fastrtps::rtps::SerializedPayload_t* payload,
-        DataRepresentationId_t data_representation)
+        fastdds::dds::DataRepresentationId_t data_representation)
 {
     TypeLookup_Reply* type = static_cast<TypeLookup_Reply*>(data);
     eprosima::fastcdr::FastBuffer fastbuffer(reinterpret_cast<char*>(payload->data), payload->max_size);
