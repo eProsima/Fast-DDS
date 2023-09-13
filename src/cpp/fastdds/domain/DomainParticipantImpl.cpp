@@ -2322,6 +2322,27 @@ bool DomainParticipantImpl::can_qos_be_updated(
         updatable = false;
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK, "Participant name cannot be changed after the participant is enabled");
     }
+    // TODO(eduponz): discuss possibility of updating thread settings
+    if (!(to.timed_events_thread() == from.timed_events_thread()))
+    {
+        updatable = false;
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
+                "Participant timed_events_thread cannot be changed after the participant is enabled");
+    }
+    // TODO(eduponz): discuss possibility of updating thread settings
+    if (!(to.discovery_server_thread() == from.discovery_server_thread()))
+    {
+        updatable = false;
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
+                "Participant discovery_server_thread cannot be changed after the participant is enabled");
+    }
+    // TODO(eduponz): discuss possibility of updating thread settings
+    if (!(to.security_log_thread() == from.security_log_thread()))
+    {
+        updatable = false;
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
+                "Participant security_log_thread cannot be changed after the participant is enabled");
+    }
     return updatable;
 }
 

@@ -22,9 +22,10 @@
 
 #include <string>
 
-#include <fastrtps/fastrtps_dll.h>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
+#include <fastrtps/fastrtps_dll.h>
 
 namespace eprosima {
 namespace fastdds {
@@ -81,6 +82,9 @@ public:
                (this->wire_protocol_ == b.wire_protocol()) &&
                (this->transport_ == b.transport()) &&
                (this->name_ == b.name()) &&
+               (this->timed_events_thread_ == b.timed_events_thread()) &&
+               (this->discovery_server_thread_ == b.discovery_server_thread()) &&
+               (this->security_log_thread_ == b.security_log_thread()) &&
                (this->flow_controllers_ == b.flow_controllers());
     }
 
@@ -321,6 +325,99 @@ public:
         return flow_controllers_;
     }
 
+    /**
+     * Getter for timed event ThreadSettings
+     *
+     * @return rtps::ThreadSettings reference
+     */
+    rtps::ThreadSettings& timed_events_thread()
+    {
+        return timed_events_thread_;
+    }
+
+    /**
+     * Getter for timed event ThreadSettings
+     *
+     * @return rtps::ThreadSettings reference
+     */
+    const rtps::ThreadSettings& timed_events_thread() const
+    {
+        return timed_events_thread_;
+    }
+
+    /**
+     * Setter for the timed event ThreadSettings
+     *
+     * @param value New ThreadSettings to be set
+     */
+    void timed_events_thread(
+            const rtps::ThreadSettings& value)
+    {
+        timed_events_thread_ = value;
+    }
+
+    /**
+     * Getter for discovery server ThreadSettings
+     *
+     * @return rtps::ThreadSettings reference
+     */
+    rtps::ThreadSettings& discovery_server_thread()
+    {
+        return discovery_server_thread_;
+    }
+
+    /**
+     * Getter for discovery server ThreadSettings
+     *
+     * @return rtps::ThreadSettings reference
+     */
+    const rtps::ThreadSettings& discovery_server_thread() const
+    {
+        return discovery_server_thread_;
+    }
+
+    /**
+     * Setter for the discovery server ThreadSettings
+     *
+     * @param value New ThreadSettings to be set
+     */
+    void discovery_server_thread(
+            const rtps::ThreadSettings& value)
+    {
+        discovery_server_thread_ = value;
+    }
+
+    /**
+     * Getter for security log ThreadSettings
+     *
+     * @return rtps::ThreadSettings reference
+     */
+    rtps::ThreadSettings& security_log_thread()
+    {
+        return security_log_thread_;
+    }
+
+    /**
+     * Getter for security log ThreadSettings
+     *
+     * @return rtps::ThreadSettings reference
+     */
+    const rtps::ThreadSettings& security_log_thread() const
+    {
+        return security_log_thread_;
+    }
+
+    /**
+     * Setter for the security log ThreadSettings
+     *
+     * @param value New ThreadSettings to be set
+     */
+    void security_log_thread(
+            const rtps::ThreadSettings& value)
+    {
+        security_log_thread_ = value;
+    }
+
 private:
 
     //!UserData Qos, implemented in the library.
@@ -349,6 +446,15 @@ private:
      *  @since 2.4.0
      */
     FlowControllerDescriptorList flow_controllers_;
+
+    //! Thread settings for the timed events thread
+    rtps::ThreadSettings timed_events_thread_;
+
+    //! Thread settings for the discovery server thread
+    rtps::ThreadSettings discovery_server_thread_;
+
+    //! Thread settings for the security log thread
+    rtps::ThreadSettings security_log_thread_;
 
 };
 
