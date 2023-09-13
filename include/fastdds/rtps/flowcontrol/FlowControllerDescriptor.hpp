@@ -54,7 +54,7 @@ struct FlowControllerDescriptor
     uint64_t period_ms = 100;
 
     //! Thread settings for the sender thread
-    ThreadSettings sender_thread_;
+    ThreadSettings sender_thread;
 
 };
 

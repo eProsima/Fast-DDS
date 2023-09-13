@@ -326,6 +326,37 @@ public:
     }
 
     /**
+     * Getter for builtin flow controllers sender threads ThreadSettings
+     *
+     * @return rtps::ThreadSettings reference
+     */
+    rtps::ThreadSettings& builtin_controllers_sender_thread()
+    {
+        return builtin_controllers_sender_thread_;
+    }
+
+    /**
+     * Getter for builtin flow controllers sender threads ThreadSettings
+     *
+     * @return rtps::ThreadSettings reference
+     */
+    const rtps::ThreadSettings& builtin_controllers_sender_thread() const
+    {
+        return builtin_controllers_sender_thread_;
+    }
+
+    /**
+     * Setter for the builtin flow controllers sender threads ThreadSettings
+     *
+     * @param value New ThreadSettings to be set
+     */
+    void builtin_controllers_sender_thread(
+            const rtps::ThreadSettings& value)
+    {
+        builtin_controllers_sender_thread_ = value;
+    }
+
+    /**
      * Getter for timed event ThreadSettings
      *
      * @return rtps::ThreadSettings reference
@@ -446,6 +477,9 @@ private:
      *  @since 2.4.0
      */
     FlowControllerDescriptorList flow_controllers_;
+
+    //! Thread settings for the builtin flow controllers sender threads
+    rtps::ThreadSettings builtin_controllers_sender_thread_;
 
     //! Thread settings for the timed events thread
     rtps::ThreadSettings timed_events_thread_;

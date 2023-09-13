@@ -196,6 +196,7 @@ void set_attributes_from_qos(
     attr.listenSocketBufferSize = qos.transport().listen_socket_buffer_size;
     attr.userData = qos.user_data().data_vec();
     attr.flow_controllers = qos.flow_controllers();
+    attr.builtin_controllers_sender_thread = qos.builtin_controllers_sender_thread();
 }
 
 void set_qos_from_attributes(

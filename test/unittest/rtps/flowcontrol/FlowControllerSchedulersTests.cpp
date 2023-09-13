@@ -1,7 +1,23 @@
-#include <rtps/flowcontrol/FlowControllerImpl.hpp>
-#include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
+// Copyright 2023 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <gtest/gtest.h>
+
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
+#include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
+
+#include <rtps/flowcontrol/FlowControllerImpl.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -90,7 +106,7 @@ TEST_F(FlowControllerSchedulers, Fifo)
     flow_controller_descr.max_bytes_per_period = 10200;
     flow_controller_descr.period_ms = 10;
     FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock, FlowControllerFifoSchedule> async(nullptr,
-            &flow_controller_descr, 0);
+            &flow_controller_descr, 0, ThreadSettings{});
     async.init();
 
     // Instantiate writers.
@@ -691,7 +707,7 @@ TEST_F(FlowControllerSchedulers, RoundRobin)
     flow_controller_descr.max_bytes_per_period = 10200;
     flow_controller_descr.period_ms = 10;
     FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock, FlowControllerRoundRobinSchedule> async(nullptr,
-            &flow_controller_descr, 0);
+            &flow_controller_descr, 0, ThreadSettings{});
     async.init();
 
     // Instantiate writers.
@@ -1292,7 +1308,7 @@ TEST_F(FlowControllerSchedulers, HighPriority)
     flow_controller_descr.max_bytes_per_period = 10200;
     flow_controller_descr.period_ms = 10;
     FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock, FlowControllerHighPrioritySchedule> async(nullptr,
-            &flow_controller_descr, 0);
+            &flow_controller_descr, 0, ThreadSettings{});
     async.init();
 
     // Instantiate writers.
@@ -1916,7 +1932,7 @@ TEST_F(FlowControllerSchedulers, PriorityWithReservation)
     flow_controller_descr.period_ms = 10;
     FlowControllerImpl<FlowControllerLimitedAsyncPublishModeMock,
             FlowControllerPriorityWithReservationSchedule> async(nullptr,
-            &flow_controller_descr, 0);
+            &flow_controller_descr, 0, ThreadSettings{});
     async.init();
 
     // Instantiate writers.
