@@ -158,23 +158,23 @@ protected:
     std::array<Data, 17> data_;
     std::array<EventKind, 17> kinds_ =
     {
-        EventKind::HISTORY2HISTORY_LATENCY,
-        EventKind::NETWORK_LATENCY,
-        EventKind::PUBLICATION_THROUGHPUT,
-        EventKind::SUBSCRIPTION_THROUGHPUT,
-        EventKind::RTPS_SENT,
-        EventKind::RTPS_LOST,
-        EventKind::RESENT_DATAS,
-        EventKind::HEARTBEAT_COUNT,
-        EventKind::ACKNACK_COUNT,
-        EventKind::NACKFRAG_COUNT,
-        EventKind::GAP_COUNT,
-        EventKind::DATA_COUNT,
-        EventKind::PDP_PACKETS,
-        EventKind::EDP_PACKETS,
-        EventKind::DISCOVERED_ENTITY,
-        EventKind::SAMPLE_DATAS,
-        EventKind::PHYSICAL_DATA
+        EventKindBits::HISTORY2HISTORY_LATENCY,
+        EventKindBits::NETWORK_LATENCY,
+        EventKindBits::PUBLICATION_THROUGHPUT,
+        EventKindBits::SUBSCRIPTION_THROUGHPUT,
+        EventKindBits::RTPS_SENT,
+        EventKindBits::RTPS_LOST,
+        EventKindBits::RESENT_DATAS,
+        EventKindBits::HEARTBEAT_COUNT,
+        EventKindBits::ACKNACK_COUNT,
+        EventKindBits::NACKFRAG_COUNT,
+        EventKindBits::GAP_COUNT,
+        EventKindBits::DATA_COUNT,
+        EventKindBits::PDP_PACKETS,
+        EventKindBits::EDP_PACKETS,
+        EventKindBits::DISCOVERED_ENTITY,
+        EventKindBits::SAMPLE_DATAS,
+        EventKindBits::PHYSICAL_DATA
     };
 
     DomainParticipantStatisticsListener listener_;
