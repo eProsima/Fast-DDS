@@ -49,6 +49,7 @@ bool SharedMemTransportDescriptor::operator ==(
            this->port_queue_capacity_ == t.port_queue_capacity() &&
            this->healthy_check_timeout_ms_ == t.healthy_check_timeout_ms() &&
            this->rtps_dump_file_ == t.rtps_dump_file() &&
+           this->dump_thread_ == t.dump_thread() &&
            TransportDescriptorInterface::operator ==(t));
 }
 
