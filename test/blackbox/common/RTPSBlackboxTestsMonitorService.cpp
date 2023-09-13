@@ -104,7 +104,7 @@ TEST(RTPSMonitorServiceTest, monitor_service_create_is_created)
     MSRTPS.init();
 
     //! Assertions
-    ASSERT_TRUE(MSRTPS.is_monitor_service_created());
+    ASSERT_FALSE(MSRTPS.is_monitor_service_created());
     ASSERT_TRUE(MSRTPS.create_monitor_service());
     ASSERT_TRUE(MSRTPS.is_monitor_service_created());
 
