@@ -38,6 +38,10 @@
 
 #include <mutex>
 
+#ifdef FASTDDS_STATISTICS
+#include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsObserver.hpp>
+#endif //FASTDDS_STATISTICS
+
 using ParameterList = eprosima::fastdds::dds::ParameterList;
 
 namespace eprosima {
@@ -224,6 +228,16 @@ void PDPListener::onNewCacheChangeAdded(
                 }
             }
 
+#ifdef FASTDDS_STATISTICS
+            //! Addition or update of a participant proxy should trigger
+            //! a connections update on the local participant connection list
+            if (nullptr != parent_pdp_->getRTPSParticipant()->get_connections_observer())
+            {
+                parent_pdp_->getRTPSParticipant()->get_connections_observer()->on_local_entity_connections_change(
+                        parent_pdp_->getRTPSParticipant()->getGuid());
+            }
+#endif //FASTDDS_STATISTICS
+
             // Take again the reader lock
             reader->getMutex().lock();
         }
@@ -233,6 +247,15 @@ void PDPListener::onNewCacheChangeAdded(
         reader->getMutex().unlock();
         if (parent_pdp_->remove_remote_participant(guid, ParticipantDiscoveryInfo::REMOVED_PARTICIPANT))
         {
+#ifdef FASTDDS_STATISTICS
+            //! Removal of a participant proxy should trigger
+            //! a connections update on the local participant connection list
+            if (nullptr != parent_pdp_->getRTPSParticipant()->get_connections_observer())
+            {
+                parent_pdp_->getRTPSParticipant()->get_connections_observer()->on_local_entity_connections_change(
+                        parent_pdp_->getRTPSParticipant()->getGuid());
+            }
+#endif //FASTDDS_STATISTICS
             reader->getMutex().lock();
             // All changes related with this participant have been removed from history by remove_remote_participant
             return;

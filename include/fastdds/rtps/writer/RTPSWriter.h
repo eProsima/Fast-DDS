@@ -42,6 +42,7 @@
 
 #ifdef FASTDDS_STATISTICS
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsQueryable.hpp>
+#include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsObserver.hpp>
 #endif
 
 namespace eprosima {

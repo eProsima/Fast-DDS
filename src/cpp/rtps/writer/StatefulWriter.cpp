@@ -1051,6 +1051,16 @@ bool StatefulWriter::matched_reader_add(
 
             mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::CHANGED_QOS_READER, rdata.guid(), &rdata);
         }
+
+#ifdef FASTDDS_STATISTICS
+        // notify monitor service so that the connectionlist for this entity
+        // could be updated
+        if (nullptr != mp_RTPSParticipant->get_connections_observer() && !m_guid.is_builtin())
+        {
+            mp_RTPSParticipant->get_connections_observer()->on_local_entity_connections_change(m_guid);
+        }
+#endif //FASTDDS_STATISTICS
+
         return false;
     }
 
@@ -1122,6 +1132,16 @@ bool StatefulWriter::matched_reader_add(
 
             mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::DISCOVERED_READER, rdata.guid(), &rdata);
         }
+
+#ifdef FASTDDS_STATISTICS
+        // notify monitor service so that the connectionlist for this entity
+        // could be updated
+        if (nullptr != mp_RTPSParticipant->get_connections_observer() && !m_guid.is_builtin())
+        {
+            mp_RTPSParticipant->get_connections_observer()->on_local_entity_connections_change(m_guid);
+        }
+#endif //FASTDDS_STATISTICS
+
         return true;
     }
 
@@ -1220,6 +1240,16 @@ bool StatefulWriter::matched_reader_add(
 
         mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::DISCOVERED_READER, rdata.guid(), &rdata);
     }
+
+#ifdef FASTDDS_STATISTICS
+        // notify monitor service so that the connectionlist for this entity
+        // could be updated
+        if (nullptr != mp_RTPSParticipant->get_connections_observer() && !m_guid.is_builtin())
+        {
+            mp_RTPSParticipant->get_connections_observer()->on_local_entity_connections_change(m_guid);
+        }
+#endif //FASTDDS_STATISTICS
+
     return true;
 }
 
@@ -1299,6 +1329,16 @@ bool StatefulWriter::matched_reader_remove(
 
             mp_listener->on_reader_discovery(this, ReaderDiscoveryInfo::REMOVED_READER, reader_guid, nullptr);
         }
+
+#ifdef FASTDDS_STATISTICS
+        // notify monitor service so that the connectionlist for this entity
+        // could be updated
+        if (nullptr != mp_RTPSParticipant->get_connections_observer() && !m_guid.is_builtin())
+        {
+            mp_RTPSParticipant->get_connections_observer()->on_local_entity_connections_change(m_guid);
+        }
+#endif //FASTDDS_STATISTICS
+
         return true;
     }
 
