@@ -451,6 +451,11 @@ public:
 
     void set_proxy_observer(
             const fastdds::statistics::rtps::IProxyObserver* proxy_observer);
+
+    const fastdds::statistics::rtps::IProxyObserver* get_proxy_observer()
+    {
+        return proxy_observer_;
+    }
 #else
     bool get_all_local_proxies(
             std::vector<GUID_t>&) override
