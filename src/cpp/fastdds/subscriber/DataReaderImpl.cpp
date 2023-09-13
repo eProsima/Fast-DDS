@@ -1556,6 +1556,13 @@ bool DataReaderImpl::can_qos_be_updated(
         EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
                 "Unique network flows request cannot be changed after the creation of a DataReader.");
     }
+    // TODO(eduponz): discuss possibility of updating thread settings
+    if (!(to.data_sharing_listener_thread() == from.data_sharing_listener_thread()))
+    {
+        updatable = false;
+        EPROSIMA_LOG_WARNING(RTPS_QOS_CHECK,
+                "data_sharing_listener_thread cannot be changed after the DataReader is enabled");
+    }
     return updatable;
 }
 
