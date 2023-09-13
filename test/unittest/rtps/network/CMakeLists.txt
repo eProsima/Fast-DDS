@@ -23,6 +23,7 @@ set(NETWORKFACTORYTESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
 
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/PropertyPolicy.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/rtps/attributes/ThreadSettings.cpp
 
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/flowcontrol/ThroughputControllerDescriptor.cpp
 
