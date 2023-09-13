@@ -174,8 +174,22 @@ public:
     bool remove_change_pub(
             fastrtps::rtps::CacheChange_t* change);
 
-    virtual bool remove_change_g(
-            fastrtps::rtps::CacheChange_t* a_change);
+    /**
+     * Remove a change by the publisher History.
+     * @param change Pointer to the CacheChange_t.
+     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @return True if removed.
+     */
+    bool remove_change_pub(
+            fastrtps::rtps::CacheChange_t* change,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time);
+
+    bool remove_change_g(
+            fastrtps::rtps::CacheChange_t* a_change) override;
+
+    bool remove_change_g(
+            fastrtps::rtps::CacheChange_t* a_change,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override;
 
     bool remove_instance_changes(
             const fastrtps::rtps::InstanceHandle_t& handle,

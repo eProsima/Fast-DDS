@@ -157,6 +157,19 @@ public:
             bool release = true) override;
 
     /**
+     * Remove a specific change from the history.
+     * No Thread Safe
+     * @param removal iterator to the change for removal
+     * @param[in] max_blocking_time Maximum time this method has to complete the task.
+     * @param release specifies if the change must be returned to the pool
+     * @return iterator to the next change if any
+     */
+    RTPS_DllAPI iterator remove_change_nts(
+            const_iterator removal,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time,
+            bool release = true) override;
+
+    /**
      * Criteria to search a specific CacheChange_t on history
      * @param inner change to compare
      * @param outer change for comparison

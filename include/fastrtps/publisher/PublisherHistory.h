@@ -110,8 +110,12 @@ public:
     bool remove_change_pub(
             rtps::CacheChange_t* change);
 
-    virtual bool remove_change_g(
-            rtps::CacheChange_t* a_change);
+    bool remove_change_g(
+            rtps::CacheChange_t* a_change) override;
+
+    bool remove_change_g(
+            rtps::CacheChange_t* a_change,
+            const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time) override;
 
     bool remove_instance_changes(
             const rtps::InstanceHandle_t& handle,

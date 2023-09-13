@@ -696,6 +696,14 @@ ReaderHistory::iterator DataReaderHistory::remove_change_nts(
     return ret_val;
 }
 
+ReaderHistory::iterator DataReaderHistory::remove_change_nts(
+        ReaderHistory::const_iterator removal,
+        const std::chrono::time_point<std::chrono::steady_clock>&,
+        bool release)
+{
+    return DataReaderHistory::remove_change_nts(removal, release);
+}
+
 bool DataReaderHistory::completed_change(
         CacheChange_t* change)
 {

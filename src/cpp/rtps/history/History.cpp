@@ -94,23 +94,46 @@ History::iterator History::remove_change_nts(
     return m_changes.erase(removal);
 }
 
+History::iterator History::remove_change_nts(
+        const_iterator removal,
+        const std::chrono::time_point<std::chrono::steady_clock>&,
+        bool release)
+{
+    return History::remove_change_nts(removal, release);
+}
+
 bool History::remove_change(
         CacheChange_t* ch)
 {
+    return History::remove_change(ch, std::chrono::steady_clock::now() + std::chrono::hours(24));
+}
+
+bool History::remove_change(
+        CacheChange_t* ch,
+        const std::chrono::time_point<std::chrono::steady_clock>& max_blocking_time)
+{
+#if HAVE_STRICT_REALTIME
+    std::unique_lock<RecursiveTimedMutex> lock(*mp_mutex, std::defer_lock);
+    if (!lock.try_lock_until(max_blocking_time))
+    {
+        EPROSIMA_LOG_ERROR(PUBLISHER, "Cannot lock the DataWriterHistory mutex");
+        return false;
+    }
+#else
     std::lock_guard<RecursiveTimedMutex> guard(*mp_mutex);
+#endif // if HAVE_STRICT_REALTIME
 
     const_iterator it = find_change_nts(ch);
+    const_iterator end_it = changesEnd();
 
-    if (it == changesEnd())
+    if (it == end_it)
     {
         EPROSIMA_LOG_INFO(RTPS_WRITER_HISTORY, "Trying to remove a change not in history");
         return false;
     }
 
     // remove using the virtual method
-    remove_change_nts(it);
-
-    return true;
+    return end_it != remove_change_nts(it, max_blocking_time);
 }
 
 bool History::remove_all_changes()
