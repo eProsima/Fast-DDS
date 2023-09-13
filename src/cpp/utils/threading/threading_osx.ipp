@@ -48,4 +48,9 @@ void set_name_to_current_thread(
     set_name_to_current_thread_impl(fmt, arg1, arg2);
 }
 
+void apply_thread_settings_to_current_thread(
+        const fastdds::rtps::ThreadSettings& /*settings*/)
+{
+}
+
 }  // namespace eprosima
