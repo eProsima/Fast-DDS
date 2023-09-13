@@ -2978,24 +2978,6 @@ const TypeObject* GetMinimalStructTestObject()
     type_object->minimal().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
-    MinimalStructMember mst_charUnion;
-    mst_charUnion.common().member_id(memberId++);
-    mst_charUnion.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    mst_charUnion.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    mst_charUnion.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    mst_charUnion.common().member_flags().IS_OPTIONAL(false);
-    mst_charUnion.common().member_flags().IS_MUST_UNDERSTAND(false);
-    mst_charUnion.common().member_flags().IS_KEY(false);
-    mst_charUnion.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    mst_charUnion.common().member_type_id(*GetWCharUnionIdentifier(false));
-
-    MD5 charUnion_hash("charUnion");
-    for(int i = 0; i < 4; ++i)
-    {
-        mst_charUnion.detail().name_hash()[i] = charUnion_hash.digest[i];
-    }
-    type_object->minimal().struct_type().member_seq().emplace_back(mst_charUnion);
-
     MinimalStructMember mst_octetUnion;
     mst_octetUnion.common().member_id(memberId++);
     mst_octetUnion.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
@@ -3105,21 +3087,6 @@ const TypeObject* GetCompleteStructTestObject()
     type_object->complete().struct_type().struct_flags().IS_AUTOID_HASH(false); // Unsupported
 
     MemberId memberId = 0;
-    CompleteStructMember cst_charUnion;
-    cst_charUnion.common().member_id(memberId++);
-    cst_charUnion.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported
-    cst_charUnion.common().member_flags().TRY_CONSTRUCT2(false); // Unsupported
-    cst_charUnion.common().member_flags().IS_EXTERNAL(false); // Unsupported
-    cst_charUnion.common().member_flags().IS_OPTIONAL(false);
-    cst_charUnion.common().member_flags().IS_MUST_UNDERSTAND(false);
-    cst_charUnion.common().member_flags().IS_KEY(false);
-    cst_charUnion.common().member_flags().IS_DEFAULT(false); // Doesn't apply
-    cst_charUnion.common().member_type_id(*GetWCharUnionIdentifier(true));
-
-    cst_charUnion.detail().name("charUnion");
-
-    type_object->complete().struct_type().member_seq().emplace_back(cst_charUnion);
-
     CompleteStructMember cst_octetUnion;
     cst_octetUnion.common().member_id(memberId++);
     cst_octetUnion.common().member_flags().TRY_CONSTRUCT1(false); // Unsupported

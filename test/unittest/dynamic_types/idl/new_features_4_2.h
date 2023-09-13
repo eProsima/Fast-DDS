@@ -957,10 +957,10 @@ namespace bitmodule {
         std::bitset<33> m_bitset;
     };
     /*!
-     * @brief This class represents the bitmask MyBitMask defined by the user in the IDL file.
+     * @brief This enumeration represents the MyBitMask bitflags defined by the user in the IDL file.
      * @ingroup new_features_4_2
      */
-    enum MyBitMask : uint8_t
+    enum MyBitMaskBits : uint8_t
     {
         flag0 = 0x01ull << 0,
         flag1 = 0x01ull << 1,
@@ -968,6 +968,7 @@ namespace bitmodule {
         flag6 = 0x01ull << 6,
         flag7 = 0x01ull << 7
     };
+    typedef uint8_t MyBitMask;
     /*!
      * @brief This class represents the structure BitsetBitmask defined by the user in the IDL file.
      * @ingroup new_features_4_2
@@ -1056,17 +1057,24 @@ namespace bitmodule {
 
 
         /*!
-         * @brief This function sets a value in member mybitmask
-         * @param _mybitmask New value for member mybitmask
+         * @brief This function copies the value in member mybitmask
+         * @param _mybitmask New value to be copied in member mybitmask
          */
         eProsima_user_DllExport void mybitmask(
-                bitmodule::MyBitMask _mybitmask);
+                const bitmodule::MyBitMask& _mybitmask);
 
         /*!
-         * @brief This function returns the value of member mybitmask
-         * @return Value of member mybitmask
+         * @brief This function moves the value in member mybitmask
+         * @param _mybitmask New value to be moved in member mybitmask
          */
-        eProsima_user_DllExport bitmodule::MyBitMask mybitmask() const;
+        eProsima_user_DllExport void mybitmask(
+                bitmodule::MyBitMask&& _mybitmask);
+
+        /*!
+         * @brief This function returns a constant reference to member mybitmask
+         * @return Constant reference to member mybitmask
+         */
+        eProsima_user_DllExport const bitmodule::MyBitMask& mybitmask() const;
 
         /*!
          * @brief This function returns a reference to member mybitmask
@@ -1077,7 +1085,7 @@ namespace bitmodule {
     private:
 
         bitmodule::MyBitset m_mybitset;
-        bitmodule::MyBitMask m_mybitmask{bitmodule::flag0};
+        bitmodule::MyBitMask m_mybitmask{0};
 
     };
     /*!
@@ -1141,17 +1149,24 @@ namespace bitmodule {
                 const BM2& x) const;
 
         /*!
-         * @brief This function sets a value in member two
-         * @param _two New value for member two
+         * @brief This function copies the value in member two
+         * @param _two New value to be copied in member two
          */
         eProsima_user_DllExport void two(
-                bitmodule::MyBitMask _two);
+                const bitmodule::MyBitMask& _two);
 
         /*!
-         * @brief This function returns the value of member two
-         * @return Value of member two
+         * @brief This function moves the value in member two
+         * @param _two New value to be moved in member two
          */
-        eProsima_user_DllExport bitmodule::MyBitMask two() const;
+        eProsima_user_DllExport void two(
+                bitmodule::MyBitMask&& _two);
+
+        /*!
+         * @brief This function returns a constant reference to member two
+         * @return Constant reference to member two
+         */
+        eProsima_user_DllExport const bitmodule::MyBitMask& two() const;
 
         /*!
          * @brief This function returns a reference to member two
@@ -1181,7 +1196,7 @@ namespace bitmodule {
 
     private:
 
-        bitmodule::MyBitMask m_two{bitmodule::flag0};
+        bitmodule::MyBitMask m_two{0};
         int32_t m_mylong{0};
 
     };
@@ -1245,33 +1260,6 @@ public:
      */
     eProsima_user_DllExport bool operator !=(
             const StructTest& x) const;
-
-    /*!
-     * @brief This function copies the value in member charUnion
-     * @param _charUnion New value to be copied in member charUnion
-     */
-    eProsima_user_DllExport void charUnion(
-            const WCharUnion& _charUnion);
-
-    /*!
-     * @brief This function moves the value in member charUnion
-     * @param _charUnion New value to be moved in member charUnion
-     */
-    eProsima_user_DllExport void charUnion(
-            WCharUnion&& _charUnion);
-
-    /*!
-     * @brief This function returns a constant reference to member charUnion
-     * @return Constant reference to member charUnion
-     */
-    eProsima_user_DllExport const WCharUnion& charUnion() const;
-
-    /*!
-     * @brief This function returns a reference to member charUnion
-     * @return Reference to member charUnion
-     */
-    eProsima_user_DllExport WCharUnion& charUnion();
-
 
     /*!
      * @brief This function copies the value in member octetUnion
@@ -1355,7 +1343,6 @@ public:
 
 private:
 
-    WCharUnion m_charUnion;
     OctetUnion m_octetUnion;
     Int8Union m_int8Union;
     bitmodule::BM2 m_myStructBits;

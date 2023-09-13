@@ -31,7 +31,7 @@ constexpr uint32_t NewAliases_max_cdr_typesize {40UL};
 constexpr uint32_t NewAliases_max_key_cdr_typesize {0UL};
 
 
-constexpr uint32_t StructTest_max_cdr_typesize {96UL};
+constexpr uint32_t StructTest_max_cdr_typesize {88UL};
 constexpr uint32_t StructTest_max_key_cdr_typesize {0UL};
 
 

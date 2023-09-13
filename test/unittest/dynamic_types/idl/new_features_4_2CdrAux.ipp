@@ -758,15 +758,12 @@ eProsima_user_DllExport size_t calculate_serialized_size(
 
 
         calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(9),
-                data.charUnion(), current_alignment);
-
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
                 data.octetUnion(), current_alignment);
 
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(11),
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(10),
                 data.int8Union(), current_alignment);
 
-        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(12),
+        calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(11),
                 data.myStructBits(), current_alignment);
 
 
@@ -795,10 +792,9 @@ eProsima_user_DllExport void serialize(
         << eprosima::fastcdr::MemberId(5) << data.uint32_()
         << eprosima::fastcdr::MemberId(6) << data.int64_()
         << eprosima::fastcdr::MemberId(7) << data.uint64_()
-        << eprosima::fastcdr::MemberId(9) << data.charUnion()
-        << eprosima::fastcdr::MemberId(10) << data.octetUnion()
-        << eprosima::fastcdr::MemberId(11) << data.int8Union()
-        << eprosima::fastcdr::MemberId(12) << data.myStructBits()
+        << eprosima::fastcdr::MemberId(9) << data.octetUnion()
+        << eprosima::fastcdr::MemberId(10) << data.int8Union()
+        << eprosima::fastcdr::MemberId(11) << data.myStructBits()
 ;
 
     scdr.end_serialize_type(current_state);
@@ -853,18 +849,14 @@ eProsima_user_DllExport void deserialize(
                                             break;
 
                                         case 9:
-                                                dcdr >> data.charUnion();
-                                            break;
-
-                                        case 10:
                                                 dcdr >> data.octetUnion();
                                             break;
 
-                                        case 11:
+                                        case 10:
                                                 dcdr >> data.int8Union();
                                             break;
 
-                                        case 12:
+                                        case 11:
                                                 dcdr >> data.myStructBits();
                                             break;
 

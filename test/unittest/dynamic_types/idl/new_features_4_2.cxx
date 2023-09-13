@@ -1601,7 +1601,7 @@ bitmodule::BitsetBitmask::BitsetBitmask(
         BitsetBitmask&& x) noexcept
 {
     m_mybitset = std::move(x.m_mybitset);
-    m_mybitmask = x.m_mybitmask;
+    m_mybitmask = std::move(x.m_mybitmask);
 }
 
 bitmodule::BitsetBitmask& bitmodule::BitsetBitmask::operator =(
@@ -1619,7 +1619,7 @@ bitmodule::BitsetBitmask& bitmodule::BitsetBitmask::operator =(
 {
 
     m_mybitset = std::move(x.m_mybitset);
-    m_mybitmask = x.m_mybitmask;
+    m_mybitmask = std::move(x.m_mybitmask);
 
     return *this;
 }
@@ -1677,20 +1677,30 @@ bitmodule::MyBitset& bitmodule::BitsetBitmask::mybitset()
 
 
 /*!
- * @brief This function sets a value in member mybitmask
- * @param _mybitmask New value for member mybitmask
+ * @brief This function copies the value in member mybitmask
+ * @param _mybitmask New value to be copied in member mybitmask
  */
 void bitmodule::BitsetBitmask::mybitmask(
-        bitmodule::MyBitMask _mybitmask)
+        const bitmodule::MyBitMask& _mybitmask)
 {
     m_mybitmask = _mybitmask;
 }
 
 /*!
- * @brief This function returns the value of member mybitmask
- * @return Value of member mybitmask
+ * @brief This function moves the value in member mybitmask
+ * @param _mybitmask New value to be moved in member mybitmask
  */
-bitmodule::MyBitMask bitmodule::BitsetBitmask::mybitmask() const
+void bitmodule::BitsetBitmask::mybitmask(
+        bitmodule::MyBitMask&& _mybitmask)
+{
+    m_mybitmask = std::move(_mybitmask);
+}
+
+/*!
+ * @brief This function returns a constant reference to member mybitmask
+ * @return Constant reference to member mybitmask
+ */
+const bitmodule::MyBitMask& bitmodule::BitsetBitmask::mybitmask() const
 {
     return m_mybitmask;
 }
@@ -1732,7 +1742,7 @@ bitmodule::BM2::BM2(
     : bitmodule::BitsetBitmask(std::move(x))
 
 {
-    m_two = x.m_two;
+    m_two = std::move(x.m_two);
     m_mylong = x.m_mylong;
 }
 
@@ -1752,7 +1762,7 @@ bitmodule::BM2& bitmodule::BM2::operator =(
 {
     bitmodule::BitsetBitmask::operator =(std::move(x));
 
-    m_two = x.m_two;
+    m_two = std::move(x.m_two);
     m_mylong = x.m_mylong;
 
     return *this;
@@ -1777,20 +1787,30 @@ bool bitmodule::BM2::operator !=(
 }
 
 /*!
- * @brief This function sets a value in member two
- * @param _two New value for member two
+ * @brief This function copies the value in member two
+ * @param _two New value to be copied in member two
  */
 void bitmodule::BM2::two(
-        bitmodule::MyBitMask _two)
+        const bitmodule::MyBitMask& _two)
 {
     m_two = _two;
 }
 
 /*!
- * @brief This function returns the value of member two
- * @return Value of member two
+ * @brief This function moves the value in member two
+ * @param _two New value to be moved in member two
  */
-bitmodule::MyBitMask bitmodule::BM2::two() const
+void bitmodule::BM2::two(
+        bitmodule::MyBitMask&& _two)
+{
+    m_two = std::move(_two);
+}
+
+/*!
+ * @brief This function returns a constant reference to member two
+ * @return Constant reference to member two
+ */
+const bitmodule::MyBitMask& bitmodule::BM2::two() const
 {
     return m_two;
 }
@@ -1853,7 +1873,6 @@ StructTest::StructTest(
     : NewAliases(x) 
 
 {
-    m_charUnion = x.m_charUnion;
     m_octetUnion = x.m_octetUnion;
     m_int8Union = x.m_int8Union;
     m_myStructBits = x.m_myStructBits;
@@ -1864,7 +1883,6 @@ StructTest::StructTest(
     : NewAliases(std::move(x))
 
 {
-    m_charUnion = std::move(x.m_charUnion);
     m_octetUnion = std::move(x.m_octetUnion);
     m_int8Union = std::move(x.m_int8Union);
     m_myStructBits = std::move(x.m_myStructBits);
@@ -1875,7 +1893,6 @@ StructTest& StructTest::operator =(
 {
     NewAliases::operator =(x);
 
-    m_charUnion = x.m_charUnion;
     m_octetUnion = x.m_octetUnion;
     m_int8Union = x.m_int8Union;
     m_myStructBits = x.m_myStructBits;
@@ -1888,7 +1905,6 @@ StructTest& StructTest::operator =(
 {
     NewAliases::operator =(std::move(x));
 
-    m_charUnion = std::move(x.m_charUnion);
     m_octetUnion = std::move(x.m_octetUnion);
     m_int8Union = std::move(x.m_int8Union);
     m_myStructBits = std::move(x.m_myStructBits);
@@ -1904,8 +1920,7 @@ bool StructTest::operator ==(
             return false;
         }
 
-    return (m_charUnion == x.m_charUnion &&
-           m_octetUnion == x.m_octetUnion &&
+    return (m_octetUnion == x.m_octetUnion &&
            m_int8Union == x.m_int8Union &&
            m_myStructBits == x.m_myStructBits);
 }
@@ -1915,45 +1930,6 @@ bool StructTest::operator !=(
 {
     return !(*this == x);
 }
-
-/*!
- * @brief This function copies the value in member charUnion
- * @param _charUnion New value to be copied in member charUnion
- */
-void StructTest::charUnion(
-        const WCharUnion& _charUnion)
-{
-    m_charUnion = _charUnion;
-}
-
-/*!
- * @brief This function moves the value in member charUnion
- * @param _charUnion New value to be moved in member charUnion
- */
-void StructTest::charUnion(
-        WCharUnion&& _charUnion)
-{
-    m_charUnion = std::move(_charUnion);
-}
-
-/*!
- * @brief This function returns a constant reference to member charUnion
- * @return Constant reference to member charUnion
- */
-const WCharUnion& StructTest::charUnion() const
-{
-    return m_charUnion;
-}
-
-/*!
- * @brief This function returns a reference to member charUnion
- * @return Reference to member charUnion
- */
-WCharUnion& StructTest::charUnion()
-{
-    return m_charUnion;
-}
-
 
 /*!
  * @brief This function copies the value in member octetUnion

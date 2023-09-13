@@ -1928,10 +1928,10 @@ namespace eprosima {
 
             };
             /*!
-             * @brief This class represents the bitmask EventKind defined by the user in the IDL file.
+             * @brief This enumeration represents the EventKind bitflags defined by the user in the IDL file.
              * @ingroup types
              */
-            enum EventKind : uint32_t
+            enum EventKindBits : uint32_t
             {
                 HISTORY2HISTORY_LATENCY = 0x01ull << 0,
                 NETWORK_LATENCY = 0x01ull << 1,
@@ -1951,6 +1951,7 @@ namespace eprosima {
                 SAMPLE_DATAS = 0x01ull << 15,
                 PHYSICAL_DATA = 0x01ull << 16
             };
+            typedef uint32_t EventKind;
             /*!
              * @brief This class represents the union Data defined by the user in the IDL file.
              * @ingroup types
