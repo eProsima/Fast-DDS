@@ -198,6 +198,7 @@ set(${PROJECT_NAME}_source_files
     rtps/flowcontrol/FlowControllerFactory.cpp
     rtps/exceptions/Exception.cpp
     rtps/attributes/PropertyPolicy.cpp
+    rtps/attributes/ThreadSettings.cpp
     rtps/common/Token.cpp
     rtps/xmlparser/XMLParserCommon.cpp
     rtps/xmlparser/XMLElementParser.cpp
