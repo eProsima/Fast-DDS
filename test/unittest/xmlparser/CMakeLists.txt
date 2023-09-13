@@ -28,8 +28,8 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_root_library_settings_profil
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profile.xml
     COPYONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_env_var_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/test_xml_env_var_profile.xml
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_profile_env_var.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profile_env_var.xml
     COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_deprecated.xml
     ${CMAKE_CURRENT_BINARY_DIR}/test_xml_deprecated.xml

@@ -94,7 +94,7 @@ protected:
         if (GetParam())
         {
             // Use different file
-            xml_filename_ = "test_xml_env_var_profile.xml";
+            xml_filename_ = "test_xml_profile_env_var.xml";
 
             // Set environment variables values
             for (const std::pair<std::string, std::string>& value : c_environment_values_)
