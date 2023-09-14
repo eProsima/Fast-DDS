@@ -79,6 +79,18 @@ int main(
     )";
     idl::Context context04 = idl::parse(test04);
 
+    std::string test05 =
+        R"(
+        struct Test05
+        {
+            long my_long;
+            short my_short;
+            //long long my_long_long;
+            int32 my_int;
+        };
+    )";
+    idl::Context context05 = idl::parse(test05);
+
     Log::Flush();
     Log::Reset();
 

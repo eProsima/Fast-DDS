@@ -396,6 +396,18 @@ struct action<identifier>
                 evaluated += evaluated.empty() ? in.string() : "," + in.string();
             }
         }
+        else if (state.count("struct"))
+        {
+            if (state["struct"].empty())
+            {
+                state["struct"] = in.string();
+            }
+            else
+            {
+                std::string elem = state["type"] + "," + in.string();
+                evaluated += evaluated.empty() ? elem : ";" + elem;
+            }
+        }
         else
         {
             // Keep the identifier for super-expression use
@@ -954,7 +966,7 @@ struct action<struct_forward_dcl>
             std::string& evaluated,
             std::vector<v1_3::DynamicData_ptr>& operands)
     {
-        const std::string& name = state["identifier"];
+        const std::string& name = state["struct"];
         Module& module = ctx->module();
         if (module.has_symbol(name, false))
         {
@@ -968,6 +980,8 @@ struct action<struct_forward_dcl>
         auto struct_type = builder->build();
         EPROSIMA_LOG_INFO(IDLPARSER, "Found forward struct declaration: " << name);
         module.structure(std::move(const_cast<v1_3::DynamicType&>(*struct_type)));
+
+        state.erase("struct");
     }
 
 };
@@ -1082,6 +1096,69 @@ struct action<enum_dcl>
         module.enum_32(name, enum_type);
 
         state.erase("enum");
+    }
+
+};
+
+template<>
+struct action<kw_struct>
+{
+    template<typename Input>
+    static void apply(
+        const Input& in,
+        Context* ctx,
+        std::map<std::string, std::string>& state,
+        std::string& evaluated,
+        std::vector<v1_3::DynamicData_ptr>& operands)
+    {
+        // Set state["struct"] to empty string to indicate that next identifier is struct
+        state["struct"] = "";
+    }
+
+};
+
+template<>
+struct action<struct_def>
+{
+    template<typename Input>
+    static void apply(
+        const Input& in,
+        Context* ctx,
+        std::map<std::string, std::string>& state,
+        std::string& evaluated,
+        std::vector<v1_3::DynamicData_ptr>& operands)
+    {
+        const std::string& struct_name = state["struct"];
+        Module& module = ctx->module();
+
+        std::istringstream ss(evaluated);
+        std::string token;
+        std::vector<std::string> types;
+        std::vector<std::string> names;
+
+        while (std::getline(ss, token, ','))
+        {
+            types.push_back(token);
+            if (getline(ss, token, ';'))
+            {
+                names.push_back(token);
+            }
+        }
+
+        v1_3::DynamicTypeBuilderFactory& factory = v1_3::DynamicTypeBuilderFactory::get_instance();
+        v1_3::DynamicTypeBuilder_ptr builder = factory.create_struct_type();
+
+        for (int i = 0; i < types.size(); i++)
+        {
+            auto member_type = ctx->get_type(state);
+            builder->add_member(i, types[i], member_type);
+        }
+        builder->set_name(struct_name);
+        auto struct_type = builder->build();
+        EPROSIMA_LOG_INFO(IDLPARSER, "Found struct: " << struct_name);
+        module.structure(std::move(const_cast<v1_3::DynamicType&>(*struct_type)));
+
+        state.erase("struct");
     }
 
 };
