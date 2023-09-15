@@ -1,3 +1,4 @@
+@final
 struct FixedSized
 {
 	unsigned short index;

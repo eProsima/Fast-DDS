@@ -1,3 +1,4 @@
+@final
 struct LoanableHelloWorld
 {
 	unsigned long index;

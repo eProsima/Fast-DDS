@@ -102,6 +102,13 @@ public:
         return false;
     }
 
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -181,6 +188,13 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
         return false;
     }
 

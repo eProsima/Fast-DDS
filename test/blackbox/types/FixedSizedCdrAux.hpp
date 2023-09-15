@@ -24,7 +24,7 @@
 
 #include "FixedSized.h"
 
-constexpr uint32_t FixedSized_max_cdr_typesize {6UL};
+constexpr uint32_t FixedSized_max_cdr_typesize {2UL};
 constexpr uint32_t FixedSized_max_key_cdr_typesize {0UL};
 
 

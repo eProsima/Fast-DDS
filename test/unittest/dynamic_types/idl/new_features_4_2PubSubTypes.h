@@ -102,6 +102,13 @@ public:
         return false;
     }
 
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -123,39 +130,6 @@ public:
 
 namespace bitmodule
 {
-
-    #ifndef SWIG
-    namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct BitsetBitmask_rob
-    {
-        friend constexpr typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-
-    };
-
-    struct BitsetBitmask_f
-    {
-        typedef bitmodule::MyBitMask BitsetBitmask::* type;
-        friend constexpr type get(
-                BitsetBitmask_f);
-    };
-
-    template struct BitsetBitmask_rob<BitsetBitmask_f, &BitsetBitmask::m_mybitmask>;
-
-    template <typename T, typename Tag>
-    inline size_t constexpr BitsetBitmask_offset_of()
-    {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-    }
-
-    } // namespace detail
-    #endif // ifndef SWIG
-
 
     /*!
      * @brief This class represents the TopicDataType of the type BitsetBitmask defined by the user in the IDL file.
@@ -218,7 +192,14 @@ namespace bitmodule
     #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
         eProsima_user_DllExport inline bool is_plain() const override
         {
-            return is_plain_impl();
+            return false;
+        }
+
+        eProsima_user_DllExport inline bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+        {
+            static_cast<void>(data_representation);
+            return false;
         }
 
     #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -227,8 +208,8 @@ namespace bitmodule
         eProsima_user_DllExport inline bool construct_sample(
                 void* memory) const override
         {
-            new (memory) BitsetBitmask();
-            return true;
+            static_cast<void>(memory);
+            return false;
         }
 
     #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -236,49 +217,7 @@ namespace bitmodule
         MD5 m_md5;
         unsigned char* m_keyBuffer;
 
-    private:
-
-        static constexpr bool is_plain_impl()
-        {
-            return 17ULL ==
-                   (detail::BitsetBitmask_offset_of<BitsetBitmask, detail::BitsetBitmask_f>() +
-                   sizeof(bitmodule::MyBitMask));
-        }
-
     };
-
-    #ifndef SWIG
-    namespace detail {
-
-    template<typename Tag, typename Tag::type M>
-    struct BM2_rob
-    {
-        friend constexpr typename Tag::type get(
-                Tag)
-        {
-            return M;
-        }
-
-    };
-
-    struct BM2_f
-    {
-        typedef int32_t BM2::* type;
-        friend constexpr type get(
-                BM2_f);
-    };
-
-    template struct BM2_rob<BM2_f, &BM2::m_mylong>;
-
-    template <typename T, typename Tag>
-    inline size_t constexpr BM2_offset_of()
-    {
-        return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-    }
-
-    } // namespace detail
-    #endif // ifndef SWIG
-
 
     /*!
      * @brief This class represents the TopicDataType of the type BM2 defined by the user in the IDL file.
@@ -341,7 +280,14 @@ namespace bitmodule
     #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
         eProsima_user_DllExport inline bool is_plain() const override
         {
-            return is_plain_impl();
+            return false;
+        }
+
+        eProsima_user_DllExport inline bool is_plain(
+            eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+        {
+            static_cast<void>(data_representation);
+            return false;
         }
 
     #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -350,23 +296,14 @@ namespace bitmodule
         eProsima_user_DllExport inline bool construct_sample(
                 void* memory) const override
         {
-            new (memory) BM2();
-            return true;
+            static_cast<void>(memory);
+            return false;
         }
 
     #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
         MD5 m_md5;
         unsigned char* m_keyBuffer;
-
-    private:
-
-        static constexpr bool is_plain_impl()
-        {
-            return 24ULL ==
-                   (detail::BM2_offset_of<BM2, detail::BM2_f>() +
-                   sizeof(int32_t));
-        }
 
     };
 }
@@ -432,6 +369,13 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
         return false;
     }
 

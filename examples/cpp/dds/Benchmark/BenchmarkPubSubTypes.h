@@ -38,39 +38,6 @@
 #endif  // GEN_API_VER
 
 
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct BenchMark_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct BenchMark_f
-{
-    typedef uint32_t BenchMark::* type;
-    friend constexpr type get(
-            BenchMark_f);
-};
-
-template struct BenchMark_rob<BenchMark_f, &BenchMark::m_index>;
-
-template <typename T, typename Tag>
-inline size_t constexpr BenchMark_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
-
-
 /*!
  * @brief This class represents the TopicDataType of the type BenchMark defined by the user in the IDL file.
  * @ingroup Benchmark
@@ -132,7 +99,14 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return is_plain_impl();
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -141,23 +115,14 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) BenchMark();
-        return true;
+        static_cast<void>(memory);
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-
-private:
-
-    static constexpr bool is_plain_impl()
-    {
-        return 8ULL ==
-               (detail::BenchMark_offset_of<BenchMark, detail::BenchMark_f>() +
-               sizeof(uint32_t));
-    }
 
 };
 

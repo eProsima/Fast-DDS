@@ -102,6 +102,13 @@ public:
         return false;
     }
 
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -180,6 +187,13 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
         return false;
     }
 
@@ -265,6 +279,13 @@ public:
         return false;
     }
 
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -343,6 +364,13 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
         return false;
     }
 
@@ -427,6 +455,13 @@ public:
         return false;
     }
 
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -505,6 +540,13 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
         return false;
     }
 
@@ -589,6 +631,13 @@ public:
         return false;
     }
 
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -667,6 +716,13 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
         return false;
     }
 
@@ -751,6 +807,13 @@ public:
         return false;
     }
 
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -829,6 +892,13 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
         return false;
     }
 
@@ -913,6 +983,13 @@ public:
         return false;
     }
 
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -994,6 +1071,13 @@ public:
         return false;
     }
 
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -1010,39 +1094,6 @@ public:
     unsigned char* m_keyBuffer;
 
 };
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct ArrayStruct_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct ArrayStruct_f
-{
-    typedef std::array<int32_t, 2> ArrayStruct::* type;
-    friend constexpr type get(
-            ArrayStruct_f);
-};
-
-template struct ArrayStruct_rob<ArrayStruct_f, &ArrayStruct::m_my_array>;
-
-template <typename T, typename Tag>
-inline size_t constexpr ArrayStruct_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
-
 
 /*!
  * @brief This class represents the TopicDataType of the type ArrayStruct defined by the user in the IDL file.
@@ -1105,7 +1156,14 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return is_plain_impl();
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1114,8 +1172,8 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) ArrayStruct();
-        return true;
+        static_cast<void>(memory);
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -1123,49 +1181,7 @@ public:
     MD5 m_md5;
     unsigned char* m_keyBuffer;
 
-private:
-
-    static constexpr bool is_plain_impl()
-    {
-        return 12ULL ==
-               (detail::ArrayStruct_offset_of<ArrayStruct, detail::ArrayStruct_f>() +
-               sizeof(std::array<int32_t, 2>));
-    }
-
 };
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct ArrayStructEqual_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct ArrayStructEqual_f
-{
-    typedef std::array<int32_t, 2> ArrayStructEqual::* type;
-    friend constexpr type get(
-            ArrayStructEqual_f);
-};
-
-template struct ArrayStructEqual_rob<ArrayStructEqual_f, &ArrayStructEqual::m_my_array_equal>;
-
-template <typename T, typename Tag>
-inline size_t constexpr ArrayStructEqual_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
-
 
 /*!
  * @brief This class represents the TopicDataType of the type ArrayStructEqual defined by the user in the IDL file.
@@ -1228,7 +1244,14 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return is_plain_impl();
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1237,8 +1260,8 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) ArrayStructEqual();
-        return true;
+        static_cast<void>(memory);
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -1246,49 +1269,7 @@ public:
     MD5 m_md5;
     unsigned char* m_keyBuffer;
 
-private:
-
-    static constexpr bool is_plain_impl()
-    {
-        return 12ULL ==
-               (detail::ArrayStructEqual_offset_of<ArrayStructEqual, detail::ArrayStructEqual_f>() +
-               sizeof(std::array<int32_t, 2>));
-    }
-
 };
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct ArrayBadStruct_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct ArrayBadStruct_f
-{
-    typedef std::array<uint8_t, 2> ArrayBadStruct::* type;
-    friend constexpr type get(
-            ArrayBadStruct_f);
-};
-
-template struct ArrayBadStruct_rob<ArrayBadStruct_f, &ArrayBadStruct::m_my_array>;
-
-template <typename T, typename Tag>
-inline size_t constexpr ArrayBadStruct_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
-
 
 /*!
  * @brief This class represents the TopicDataType of the type ArrayBadStruct defined by the user in the IDL file.
@@ -1351,7 +1332,14 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return is_plain_impl();
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1360,8 +1348,8 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) ArrayBadStruct();
-        return true;
+        static_cast<void>(memory);
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -1369,49 +1357,7 @@ public:
     MD5 m_md5;
     unsigned char* m_keyBuffer;
 
-private:
-
-    static constexpr bool is_plain_impl()
-    {
-        return 6ULL ==
-               (detail::ArrayBadStruct_offset_of<ArrayBadStruct, detail::ArrayBadStruct_f>() +
-               sizeof(std::array<uint8_t, 2>));
-    }
-
 };
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct ArrayDimensionsStruct_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct ArrayDimensionsStruct_f
-{
-    typedef std::array<std::array<int32_t, 2>, 2> ArrayDimensionsStruct::* type;
-    friend constexpr type get(
-            ArrayDimensionsStruct_f);
-};
-
-template struct ArrayDimensionsStruct_rob<ArrayDimensionsStruct_f, &ArrayDimensionsStruct::m_my_array>;
-
-template <typename T, typename Tag>
-inline size_t constexpr ArrayDimensionsStruct_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
-
 
 /*!
  * @brief This class represents the TopicDataType of the type ArrayDimensionsStruct defined by the user in the IDL file.
@@ -1474,7 +1420,14 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return is_plain_impl();
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1483,8 +1436,8 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) ArrayDimensionsStruct();
-        return true;
+        static_cast<void>(memory);
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -1492,49 +1445,7 @@ public:
     MD5 m_md5;
     unsigned char* m_keyBuffer;
 
-private:
-
-    static constexpr bool is_plain_impl()
-    {
-        return 20ULL ==
-               (detail::ArrayDimensionsStruct_offset_of<ArrayDimensionsStruct, detail::ArrayDimensionsStruct_f>() +
-               sizeof(std::array<std::array<int32_t, 2>, 2>));
-    }
-
 };
-
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct ArraySizeStruct_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct ArraySizeStruct_f
-{
-    typedef std::array<int32_t, 5> ArraySizeStruct::* type;
-    friend constexpr type get(
-            ArraySizeStruct_f);
-};
-
-template struct ArraySizeStruct_rob<ArraySizeStruct_f, &ArraySizeStruct::m_my_array>;
-
-template <typename T, typename Tag>
-inline size_t constexpr ArraySizeStruct_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
-
 
 /*!
  * @brief This class represents the TopicDataType of the type ArraySizeStruct defined by the user in the IDL file.
@@ -1597,7 +1508,14 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return is_plain_impl();
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -1606,23 +1524,14 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) ArraySizeStruct();
-        return true;
+        static_cast<void>(memory);
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-
-private:
-
-    static constexpr bool is_plain_impl()
-    {
-        return 24ULL ==
-               (detail::ArraySizeStruct_offset_of<ArraySizeStruct, detail::ArraySizeStruct_f>() +
-               sizeof(std::array<int32_t, 5>));
-    }
 
 };
 
@@ -1687,6 +1596,13 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
         return false;
     }
 
@@ -1771,6 +1687,13 @@ public:
         return false;
     }
 
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -1849,6 +1772,13 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
         return false;
     }
 
@@ -1933,6 +1863,13 @@ public:
         return false;
     }
 
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -2011,6 +1948,13 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
         return false;
     }
 
@@ -2095,6 +2039,13 @@ public:
         return false;
     }
 
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -2173,6 +2124,13 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
         return false;
     }
 
@@ -2257,6 +2215,13 @@ public:
         return false;
     }
 
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -2335,6 +2300,13 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
         return false;
     }
 
@@ -2419,6 +2391,13 @@ public:
         return false;
     }
 
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -2497,6 +2476,13 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
         return false;
     }
 
@@ -2581,6 +2567,13 @@ public:
         return false;
     }
 
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -2659,6 +2652,13 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
         return false;
     }
 
@@ -2748,6 +2748,13 @@ public:
         return false;
     }
 
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -2826,6 +2833,13 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
         return false;
     }
 
@@ -2910,6 +2924,13 @@ public:
         return false;
     }
 
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -2988,6 +3009,13 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
         return false;
     }
 
@@ -3072,6 +3100,13 @@ public:
         return false;
     }
 
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
+    }
+
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
 
 #ifdef TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
@@ -3150,6 +3185,13 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
         return false;
     }
 

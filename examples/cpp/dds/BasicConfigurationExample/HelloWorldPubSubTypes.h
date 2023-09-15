@@ -38,39 +38,6 @@
 #endif  // GEN_API_VER
 
 
-#ifndef SWIG
-namespace detail {
-
-template<typename Tag, typename Tag::type M>
-struct HelloWorld_rob
-{
-    friend constexpr typename Tag::type get(
-            Tag)
-    {
-        return M;
-    }
-
-};
-
-struct HelloWorld_f
-{
-    typedef std::array<char, 20> HelloWorld::* type;
-    friend constexpr type get(
-            HelloWorld_f);
-};
-
-template struct HelloWorld_rob<HelloWorld_f, &HelloWorld::m_message>;
-
-template <typename T, typename Tag>
-inline size_t constexpr HelloWorld_offset_of()
-{
-    return ((::size_t) &reinterpret_cast<char const volatile&>((((T*)0)->*get(Tag()))));
-}
-
-} // namespace detail
-#endif // ifndef SWIG
-
-
 /*!
  * @brief This class represents the TopicDataType of the type HelloWorld defined by the user in the IDL file.
  * @ingroup HelloWorld
@@ -132,7 +99,14 @@ public:
 #ifdef TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
     eProsima_user_DllExport inline bool is_plain() const override
     {
-        return is_plain_impl();
+        return false;
+    }
+
+    eProsima_user_DllExport inline bool is_plain(
+        eprosima::fastdds::dds::DataRepresentationId_t data_representation) const override
+    {
+        static_cast<void>(data_representation);
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_IS_PLAIN
@@ -141,23 +115,14 @@ public:
     eProsima_user_DllExport inline bool construct_sample(
             void* memory) const override
     {
-        new (memory) HelloWorld();
-        return true;
+        static_cast<void>(memory);
+        return false;
     }
 
 #endif  // TOPIC_DATA_TYPE_API_HAS_CONSTRUCT_SAMPLE
 
     MD5 m_md5;
     unsigned char* m_keyBuffer;
-
-private:
-
-    static constexpr bool is_plain_impl()
-    {
-        return 28ULL ==
-               (detail::HelloWorld_offset_of<HelloWorld, detail::HelloWorld_f>() +
-               sizeof(std::array<char, 20>));
-    }
 
 };
 
