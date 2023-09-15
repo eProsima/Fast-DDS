@@ -172,7 +172,6 @@ std::map<ExpectedType, SetMethod> setTypeToMethod = {
         return data->set_enum_value(*static_cast<const std::string*>(value), member_id);
     }},
     {ExpectedType::Bitmask, [](DynamicData* data, const void* value, MemberId member_id) {
-        member_id = 0;
         return data->set_bitmask_value(*static_cast<const uint64_t*>(value));
     }}
 };
@@ -227,7 +226,6 @@ std::map<ExpectedType, GetMethod> getTypeToMethod = {
         return data->get_enum_value(*static_cast<std::string*>(value), member_id);
     }},
     {ExpectedType::Bitmask, [](DynamicData* data, void* value, MemberId member_id) {
-        member_id = 0;
         return data->get_bitmask_value(*static_cast<uint64_t*>(value));
     }}
 };
@@ -259,6 +257,7 @@ void check_get_values(DynamicData* data, const std::vector<ExpectedType>& expect
         GetMethod getMethod = typeMethodPair.second;
 
         if (std::find(expected_types.begin(), expected_types.end(), currentType) != expected_types.end()) {
+            //ASSERT_FALSE(getMethod(data, type_value, 0) == ReturnCode_t::RETCODE_OK);
             ASSERT_TRUE(getMethod(data, type_value, member_id) == ReturnCode_t::RETCODE_OK);
         } else {
             ASSERT_FALSE(getMethod(data, type_value, member_id) == ReturnCode_t::RETCODE_OK);
@@ -5699,7 +5698,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionSequence)
         int32_t test_value_2 = 0;
 
         // Get an index in the array.
-        std::vector<uint32_t> vPosition = { 1 };
+        std::vector<uint32_t> vPosition = { 1, 1, 1 };
         MemberId testPos(0);
         testPos = data->get_array_index(vPosition);
         ASSERT_TRUE(testPos != MEMBER_ID_INVALID);
@@ -5766,8 +5765,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionSequence)
         ASSERT_TRUE(data2->equals(data));
 
         // SERIALIZATION TEST
-        ArraySequence warray;
-        ArraySequencePubSubType warraypb;
+        ArrayMultiDimensionSequence warray;
+        ArrayMultiDimensionSequencePubSubType warraypb;
 
         SerializedPayload_t dynamic_payload(payloadSize);
         ASSERT_TRUE(pubsubType.serialize(data, &dynamic_payload));        
@@ -5859,8 +5858,8 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_ArrayMultiDimensionMap)
         ASSERT_TRUE(DynamicDataFactory::get_instance()->delete_data(key_data) == ReturnCode_t::RETCODE_OK);
 
         std::vector<ExpectedType> expected_types = {ExpectedType::Long};
-        check_set_values(data, expected_types, &test_value_1, valueId);
-        check_get_values(data, expected_types, &test_value_2, valueId);
+        check_set_values(loaned_value1, expected_types, &test_value_1, valueId);
+        check_get_values(loaned_value1, expected_types, &test_value_2, valueId);
 
         ASSERT_TRUE(test_value_1 == test_value_2);
 
@@ -6290,15 +6289,15 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedSmallArrays)
         int16_t test_value_2 = 0;
         
         // Get an index in the array.
-        std::vector<uint32_t> vPosition = { 1 };
+        std::vector<uint32_t> vPosition = { 0 };
         MemberId testPos(0);
         testPos = data->get_array_index(vPosition);
         ASSERT_TRUE(testPos != MEMBER_ID_INVALID);
 
         // Invalid input vectors.
-        std::vector<uint32_t> vPosition2 = { 1, 1 };
+        std::vector<uint32_t> vPosition2 = { 0, 0 };
         ASSERT_FALSE(data->get_array_index(vPosition2) != MEMBER_ID_INVALID);
-        std::vector<uint32_t> vPosition3 = { 1, 1, 1, 1 };
+        std::vector<uint32_t> vPosition3 = { 0, 0, 0, 0 };
         ASSERT_FALSE(data->get_array_index(vPosition3) != MEMBER_ID_INVALID);
 
         std::vector<ExpectedType> expected_types = {ExpectedType::Short};
@@ -6410,7 +6409,7 @@ TEST_F(DynamicTypesDDSTypesTest, DDSTypesTest_BoundedBigArrays)
         ASSERT_TRUE(data->get_item_count() == array_type->get_total_bounds());
 
         // Try to set a value out of the array.
-        ASSERT_FALSE(data->set_int16_value(test_value_1, 2) == ReturnCode_t::RETCODE_OK);
+        ASSERT_FALSE(data->set_int16_value(test_value_1, 41927) == ReturnCode_t::RETCODE_OK);
 
         // Serialize <-> Deserialize Test
         DynamicPubSubType pubsubType(array_type);
