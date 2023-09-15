@@ -567,7 +567,7 @@ public:
     }
 
     size_t block_for_unread_count_of(
-            size_t n_unread)
+            uint64_t n_unread)
     {
         block([this, n_unread]() -> bool
                 {
@@ -1907,7 +1907,7 @@ protected:
     std::map<LastSeqInfo, eprosima::fastrtps::rtps::SequenceNumber_t> last_seq;
     std::atomic<size_t> current_processed_count_;
     std::atomic<size_t> number_samples_expected_;
-    std::atomic<size_t> current_unread_count_;
+    std::atomic<uint64_t> current_unread_count_;
     bool discovery_result_;
 
     std::string xml_file_ = "";
