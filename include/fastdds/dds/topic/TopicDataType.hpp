@@ -326,9 +326,18 @@ public:
     }
 
     /**
-     * Checks if the type is plain.
+     * Checks if the type is plain when using default encoding.
      */
     RTPS_DllAPI virtual inline bool is_plain() const
+    {
+        return false;
+    }
+
+    /**
+     * Checks if the type is plain when using an specific encoding.
+     */
+    RTPS_DllAPI virtual inline bool is_plain(
+            DataRepresentationId_t) const
     {
         return false;
     }

@@ -262,11 +262,20 @@ public:
     }
 
     /**
-     * Checks if the type is plain.
+     * Checks if the type is plain when using default encoding.
      */
     RTPS_DllAPI virtual inline bool is_plain() const
     {
-        return get()->is_plain();
+        return is_plain(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    }
+
+    /**
+     * Checks if the type is plain when using an specific encoding.
+     */
+    RTPS_DllAPI virtual inline bool is_plain(
+            DataRepresentationId_t data_representation) const
+    {
+        return get()->is_plain(data_representation);
     }
 
     RTPS_DllAPI bool operator !=(
