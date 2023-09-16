@@ -470,32 +470,54 @@ inline bool CDRMessage::readString(
     return valid;
 }
 
-inline bool CDRMessage::hasSpace(CDRMessage_t* msg, const uint32_t length) {
+inline bool CDRMessage::hasSpace(
+        CDRMessage_t* msg,
+        const uint32_t length)
+{
     return msg && (msg->pos + length <= msg->max_size);
 }
 
-inline void CDRMessage::copyToBuffer(CDRMessage_t* msg, const octet* data, const uint32_t length, bool reverse) {
-    if (reverse) {
-        for (uint32_t i = 0; i < length; i++) {
+inline void CDRMessage::copyToBuffer(
+        CDRMessage_t* msg,
+        const octet* data,
+        const uint32_t length,
+        bool reverse)
+{
+    if (reverse)
+    {
+        for (uint32_t i = 0; i < length; i++)
+        {
             msg->buffer[msg->pos + i] = *(data + length - 1 - i);
         }
-    } else {
+    }
+    else
+    {
         memcpy(&msg->buffer[msg->pos], data, length);
     }
     msg->pos += length;
     msg->length += length;
 }
 
-inline bool CDRMessage::addData(CDRMessage_t* msg, const octet* data, const uint32_t length) {
-    if (!hasSpace(msg, length) || (length > 0 && !data)) {
+inline bool CDRMessage::addData(
+        CDRMessage_t* msg,
+        const octet* data,
+        const uint32_t length)
+{
+    if (!hasSpace(msg, length) || (length > 0 && !data))
+    {
         return false;
     }
     copyToBuffer(msg, data, length);
     return true;
 }
 
-inline bool CDRMessage::addDataReversed(CDRMessage_t* msg, const octet* data, const uint32_t length) {
-    if (!hasSpace(msg, length)) {
+inline bool CDRMessage::addDataReversed(
+        CDRMessage_t* msg,
+        const octet* data,
+        const uint32_t length)
+{
+    if (!hasSpace(msg, length))
+    {
         return false;
     }
     copyToBuffer(msg, data, length, true);
@@ -503,9 +525,13 @@ inline bool CDRMessage::addDataReversed(CDRMessage_t* msg, const octet* data, co
 }
 
 template<typename T>
-inline bool CDRMessage::addPrimitive(CDRMessage_t* msg, T value) {
+inline bool CDRMessage::addPrimitive(
+        CDRMessage_t* msg,
+        T value)
+{
     const uint32_t size = sizeof(T);
-    if (!hasSpace(msg, size)) {
+    if (!hasSpace(msg, size))
+    {
         return false;
     }
     bool reverse = (msg->msg_endian != DEFAULT_ENDIAN);
@@ -513,30 +539,47 @@ inline bool CDRMessage::addPrimitive(CDRMessage_t* msg, T value) {
     return true;
 }
 
-inline bool CDRMessage::addOctet(CDRMessage_t* msg, octet O) {
+inline bool CDRMessage::addOctet(
+        CDRMessage_t* msg,
+        octet O)
+{
     return addPrimitive(msg, O);
 }
 
-inline bool CDRMessage::addUInt16(CDRMessage_t* msg, uint16_t us) {
+inline bool CDRMessage::addUInt16(
+        CDRMessage_t* msg,
+        uint16_t us)
+{
     return addPrimitive(msg, us);
 }
 
-inline bool CDRMessage::addInt32(CDRMessage_t* msg, int32_t lo) {
+inline bool CDRMessage::addInt32(
+        CDRMessage_t* msg,
+        int32_t lo)
+{
     return addPrimitive(msg, lo);
 }
 
-inline bool CDRMessage::addUInt32(CDRMessage_t* msg, uint32_t ulo) {
+inline bool CDRMessage::addUInt32(
+        CDRMessage_t* msg,
+        uint32_t ulo)
+{
     return addPrimitive(msg, ulo);
 }
 
-inline bool CDRMessage::addInt64(CDRMessage_t* msg, int64_t lolo) {
+inline bool CDRMessage::addInt64(
+        CDRMessage_t* msg,
+        int64_t lolo)
+{
     return addPrimitive(msg, lolo);
 }
 
-inline bool CDRMessage::addUInt64(CDRMessage_t* msg, uint64_t ulolo) {
+inline bool CDRMessage::addUInt64(
+        CDRMessage_t* msg,
+        uint64_t ulolo)
+{
     return addPrimitive(msg, ulolo);
 }
-
 
 inline bool CDRMessage::addOctetVector(
         CDRMessage_t* msg,
@@ -1162,7 +1205,9 @@ inline bool CDRMessage::readParticipantGenericMessage(
     {
         return false;
     }
-    if (!CDRMessage::readString(msg, &message.message_class_id()))
+    if (!CDRMessage::readString(msg, &message.message_c
+
+            lass_id()))
     {
         return false;
     }
