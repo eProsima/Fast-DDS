@@ -52,7 +52,7 @@ namespace CDRMessage {
  * @return True if correct.
  */
 /// @{
-inline bool readEntityId(1111
+inline bool readEntityId(
         CDRMessage_t* msg,
         EntityId_t* id);
 
@@ -199,6 +199,21 @@ inline bool appendMsg(
  * @return True if correct.
  */
 /// @{
+
+template<typename T>
+inline bool addPrimitive(
+        CDRMessage_t* msg,
+        T value);
+
+inline bool hasSpace(
+        CDRMessage_t* msg,
+        const uint32_t length);
+
+inline void copyToBuffer(
+        CDRMessage_t* msg,
+        const octet* data,
+        const uint32_t length,
+        bool reverse = false);
 
 inline bool addData(
         CDRMessage_t*,
