@@ -52,7 +52,7 @@ namespace CDRMessage {
  * @return True if correct.
  */
 /// @{
-inline bool readEntityId(
+inline bool readEntityId(1111
         CDRMessage_t* msg,
         EntityId_t* id);
 
