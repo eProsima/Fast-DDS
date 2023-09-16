@@ -460,7 +460,7 @@ inline bool CDRMessage::readString(
     }
 
     *stri = "";
-    if (str_size > 1)A
+    if (str_size > 1)
     {
         *stri = (const char*) &(msg->buffer[msg->pos]);
     }
