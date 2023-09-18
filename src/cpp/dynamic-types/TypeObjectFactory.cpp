@@ -12,21 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <sstream>
+
 #include <fastcdr/CdrSizeCalculator.hpp>
-#include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/types/TypeDescriptor.h>
-#include <fastrtps/types/MemberDescriptor.h>
+
+#include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/types/AnnotationDescriptor.h>
+#include <fastrtps/types/BuiltinAnnotationsTypeObject.h>
 #include <fastrtps/types/DynamicTypeBuilderFactory.h>
 #include <fastrtps/types/DynamicTypeBuilder.h>
 #include <fastrtps/types/DynamicTypeBuilderPtr.h>
 #include <fastrtps/types/DynamicType.h>
 #include <fastrtps/types/DynamicTypeMember.h>
+#include <fastrtps/types/MemberDescriptor.h>
+#include <fastrtps/types/TypeDescriptor.h>
 #include <fastrtps/types/TypeNamesGenerator.h>
-#include <fastrtps/types/BuiltinAnnotationsTypeObject.h>
-#include <fastrtps/types/AnnotationDescriptor.h>
+#include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/utils/md5.h>
-#include <fastdds/dds/log/Log.hpp>
-#include <sstream>
 
 namespace eprosima {
 namespace fastrtps {

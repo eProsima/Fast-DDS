@@ -13,20 +13,21 @@
 // limitations under the License.
 
 /**
- * @file TopicDataType.hpp
+ * @file CdrSerialization.hpp
  */
 
-#ifndef _FASTDDS_DDS_COMMON_CDRSERIALIZATION_HPP_
-#define _FASTDDS_DDS_COMMON_CDRSERIALIZATION_HPP_
+#ifndef FASTDDS_DDS_COMMON_CDRSERIALIZATION_HPP
+#define FASTDDS_DDS_COMMON_CDRSERIALIZATION_HPP
 
 #include <fastcdr/CdrEncoding.hpp>
 
 namespace eprosima {
 namespace fastdds {
 namespace dds {
+//! Default XCDR encoding version used in Fast DDS.
 constexpr eprosima::fastcdr::CdrVersion DEFAULT_XCDR_VERSION {eprosima::fastcdr::CdrVersion::XCDRv1};
 } // namespace dds
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // _FASTDDS_DDS_COMMON_CDRSERIALIZATION_HPP_
+#endif // FASTDDS_DDS_COMMON_CDRSERIALIZATION_HPP

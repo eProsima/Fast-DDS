@@ -567,7 +567,7 @@ bool TypeLookupManager::send_request(
         SerializedPayload_t payload;
         payload.max_size = change->serializedPayload.max_size - 4;
         payload.data = change->serializedPayload.data + 4;
-        if (valid && request_type_.serialize(&req, &payload, DataRepresentationId_t::XCDR_DATA_REPRESENTATION))
+        if (valid && request_type_.serialize(&req, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION))
         {
             change->serializedPayload.length += payload.length;
             change->serializedPayload.pos += payload.pos;
@@ -610,7 +610,7 @@ bool TypeLookupManager::send_reply(
         SerializedPayload_t payload;
         payload.max_size = change->serializedPayload.max_size - 4;
         payload.data = change->serializedPayload.data + 4;
-        if (valid && reply_type_.serialize(&rep, &payload, DataRepresentationId_t::XCDR_DATA_REPRESENTATION))
+        if (valid && reply_type_.serialize(&rep, &payload, DataRepresentationId_t::XCDR2_DATA_REPRESENTATION))
         {
             change->serializedPayload.length += payload.length;
             change->serializedPayload.pos += payload.pos;

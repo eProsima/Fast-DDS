@@ -26,16 +26,18 @@ char dummy;
 } // namespace
 #endif // ifdef _WIN32
 
-#include <fastrtps/types/BuiltinAnnotationsTypeObject.h>
 #include <utility>
 #include <sstream>
-#include <fastdds/rtps/common/SerializedPayload.h>
-#include <fastrtps/utils/md5.h>
-#include <fastrtps/types/TypeNamesGenerator.h>
-#include <fastrtps/types/AnnotationParameterValue.h>
+
 #include <fastcdr/FastBuffer.h>
 #include <fastcdr/Cdr.h>
 #include <fastcdr/CdrSizeCalculator.hpp>
+
+#include <fastdds/rtps/common/SerializedPayload.h>
+#include <fastrtps/types/AnnotationParameterValue.h>
+#include <fastrtps/types/BuiltinAnnotationsTypeObject.h>
+#include <fastrtps/types/TypeNamesGenerator.h>
+#include <fastrtps/utils/md5.h>
 
 using namespace eprosima::fastrtps::rtps;
 

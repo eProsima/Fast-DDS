@@ -15,14 +15,14 @@
 #ifndef TYPES_BASE_H
 #define TYPES_BASE_H
 
-#include <bitset>
-#include <string>
-#include <map>
-#include <vector>
-#include <cctype>
 #include <algorithm>
+#include <bitset>
+#include <cctype>
+#include <map>
 #include <memory>
+#include <string>
 #include <type_traits>
+#include <vector>
 
 #include <fastdds/rtps/common/Types.h>
 

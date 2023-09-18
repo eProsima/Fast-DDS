@@ -93,11 +93,23 @@ public:
             void* data,
             fastrtps::rtps::SerializedPayload_t* payload) = 0;
 
+    /**
+     * Serialize method, it should be implemented by the user, since it is abstract.
+     * It is VERY IMPORTANT that the user sets the SerializedPayload length correctly.
+     *
+     * @param[in] data Pointer to the data
+     * @param[out] payload Pointer to the payload
+     * @param[in] data_representation Representation that should be used to encode the data into the payload.
+     * @return True if correct.
+     */
     RTPS_DllAPI virtual bool serialize(
-            void*,
-            fastrtps::rtps::SerializedPayload_t*,
-            DataRepresentationId_t)
+            void* data,
+            fastrtps::rtps::SerializedPayload_t* payload,
+            DataRepresentationId_t data_representation)
     {
+        static_cast<void>(data);
+        static_cast<void>(payload);
+        static_cast<void>(data_representation);
         return false;
     }
 
@@ -121,10 +133,19 @@ public:
     RTPS_DllAPI virtual std::function<uint32_t()> getSerializedSizeProvider(
             void* data) = 0;
 
+    /**
+     * @brief Gets the SerializedSizeProvider function
+     *
+     * @param data Pointer
+     * @param data_representation Representation that should be used for calculating the serialized size.
+     * @return function
+     */
     RTPS_DllAPI virtual std::function<uint32_t()> getSerializedSizeProvider(
-            void*,
-            DataRepresentationId_t)
+            void* data,
+            DataRepresentationId_t data_representation)
     {
+        static_cast<void>(data);
+        static_cast<void>(data_representation);
         return []()
                {
                    return 0;

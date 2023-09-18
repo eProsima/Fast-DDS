@@ -39,6 +39,22 @@ struct RequestHeader
 
     InstanceName instanceName;
 
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::rpc::RequestHeader::getCdrSerializedSize()",
+            "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
+    RTPS_DllAPI static size_t getCdrSerializedSize(
+            const RequestHeader& data,
+            size_t current_alignment = 0);
+
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::rpc::RequestHeader::serialize()",
+            "In favor of version using eprosima::fastcdr::serialize.")
+    RTPS_DllAPI void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::rpc::RequestHeader::deserialize()",
+            "In favor of version using eprosima::fastcdr::deserialize.")
+    RTPS_DllAPI void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+
     RTPS_DllAPI static bool isKeyDefined()
     {
         return false;

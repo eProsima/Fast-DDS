@@ -17,11 +17,11 @@
  * @file TypeSupport.cpp
  */
 
-#include <fastdds/dds/topic/TypeSupport.hpp>
+#include <fastcdr/exceptions/Exception.h>
+
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
-
-#include <fastcdr/exceptions/Exception.h>
+#include <fastdds/dds/topic/TypeSupport.hpp>
 
 
 namespace eprosima {

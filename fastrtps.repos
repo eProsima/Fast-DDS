@@ -6,16 +6,16 @@ repositories:
     fastcdr:
         type: git
         url: https://github.com/eProsima/Fast-CDR.git
-        version: feature/xcdr
+        version: 1.1.x
     fastrtps:
         type: git
         url: https://github.com/eProsima/Fast-DDS.git
-        version: feature/xcdr
+        version: master
     fastddsgen:
         type: git
         url: https://github.com/eProsima/Fast-DDS-Gen.git
-        version: feature/xcdr
+        version: master
     fastddsgen/thirdparty/idl-parser:
         type: git
         url: https://github.com/eProsima/IDL-Parser.git
-        version: feature/xcdr
+        version: master
