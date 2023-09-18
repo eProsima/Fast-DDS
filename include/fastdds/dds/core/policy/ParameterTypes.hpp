@@ -1127,16 +1127,16 @@ public:
 
         self_type operator ++()
         {
-            self_type i = *this;
             advance();
-            return i;
+            return *this;
         }
 
         self_type operator ++(
                 int)
         {
+            self_type i = *this;
             advance();
-            return *this;
+            return i;
         }
 
         reference operator *()
@@ -1215,16 +1215,16 @@ public:
 
         self_type operator ++()
         {
-            self_type i = *this;
             advance();
-            return i;
+            return *this;
         }
 
         self_type operator ++(
                 int)
         {
+            self_type i = *this;
             advance();
-            return *this;
+            return i;
         }
 
         reference operator *()
