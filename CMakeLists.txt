@@ -15,8 +15,7 @@
 ###############################################################################
 # CMake build rules for Fast DDS
 ###############################################################################
-cmake_minimum_required(VERSION 3.16.3)
-cmake_policy(VERSION 3.16.3...3.20.3)
+cmake_minimum_required(VERSION 3.22)
 
 # Set CMAKE_BUILD_TYPE to Release by default.
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -232,7 +231,7 @@ if(NOT BUILD_SHARED_LIBS)
     set(FASTDDS_STATIC ON)
 endif()
 
-eprosima_find_package(fastcdr REQUIRED)
+eprosima_find_package(fastcdr 2.0 REQUIRED)
 eprosima_find_thirdparty(Asio asio VERSION 1.10.8)
 eprosima_find_thirdparty(TinyXML2 tinyxml2)
 
@@ -507,9 +506,9 @@ if(BUILD_DOCUMENTATION)
 
             # As stated in CMake's documentation: https://cmake.org/cmake/help/latest/command/file.html#transfer
             # STATUS will return a list with two elements: the numeric status and the message returned.
-            # A 0 numeric error means no error in the operation 
+            # A 0 numeric error means no error in the operation
             list(GET DOWNLOAD_STATUS 0 DOWNLOAD_RC)
-            
+
             if (DOWNLOAD_RC)
                 message(STATUS "Unable to download documentation for version ${PROJECT_VERSION}. Falling back to latest.")
                 file(DOWNLOAD "https://fast-dds.docs.eprosima.com/_/downloads/en/latest/htmlzip/" "./eprosima-fast-rtps.zip")
