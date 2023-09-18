@@ -16,13 +16,12 @@
  * @file Mutex.cpp
  *
  */
-
-#include "TMutex.hpp"
-
-#include <array>
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <pthread.h>
+
+#include "TMutex.hpp"
 
 // TODO contar que solo bloquea una vez y nunca mas despues de timeout.
 // TODO si se bloquea el dos, que no se bloqueen los posteriores
