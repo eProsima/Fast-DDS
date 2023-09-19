@@ -186,6 +186,17 @@ public:
             fastrtps::rtps::ReaderProxyData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 
+     /**
+     * Gets the status observer for that entity
+     *
+     * @return status observer
+     */
+
+    const rtps::IStatusObserver* get_status_observer()
+    {
+        return status_observer_;
+    }
+
 protected:
 
     /**
@@ -276,32 +287,13 @@ protected:
     bool delete_topic_and_type(
             const std::string& topic_name) noexcept;
 
-    bool get_status_observer(
-            const rtps::IStatusObserver*& status_obs);
-
-    bool get_incompatible_qos_status(
-            const fastrtps::rtps::GUID_t&,
-            fastdds::dds::IncompatibleQosStatus&) override;
-
-    bool get_inconsistent_topic_status(
-            const fastrtps::rtps::GUID_t&,
-            fastdds::dds::InconsistentTopicStatus&) override;
-
-    bool get_liveliness_lost_status(
-            const fastrtps::rtps::GUID_t&,
-            fastdds::dds::LivelinessLostStatus&) override;
-
-    bool get_liveliness_changed_status(
-            const fastrtps::rtps::GUID_t&,
-            fastdds::dds::LivelinessChangedStatus&) override;
-
-    bool get_deadline_missed_status(
-            const fastrtps::rtps::GUID_t&,
-            fastdds::dds::DeadlineMissedStatus&) override;
-
-    bool get_sample_lost_status(
-            const fastrtps::rtps::GUID_t&,
-            fastdds::dds::SampleLostStatus&) override;
+    /**
+     * @brief Implementation of the IStatusQueryable interface.
+     */
+    bool get_monitoring_status(
+            const fastrtps::rtps::GUID_t& entity_guid,
+            const uint32_t &status_id,
+            eprosima::fastdds::statistics::rtps::DDSEntityStatus*&) override;
 
     efd::Publisher* builtin_publisher_ = nullptr;
     PublisherImpl* builtin_publisher_impl_ = nullptr;
