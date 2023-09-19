@@ -121,6 +121,7 @@ public:
         return m_member_type_id;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CommonStructMember::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -134,6 +135,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CommonStructMember& other) const;
@@ -236,6 +238,7 @@ public:
         return m_ann_custom;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteMemberDetail::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -249,6 +252,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteMemberDetail& other) const;
@@ -306,6 +310,7 @@ public:
         return m_name_hash;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalMemberDetail::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -319,6 +324,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalMemberDetail& other) const;
@@ -396,6 +402,7 @@ public:
         return m_detail;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteStructMember::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -409,6 +416,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteStructMember& other) const;
@@ -490,6 +498,7 @@ public:
         return m_detail;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalStructMember::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -503,6 +512,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalStructMember& other) const;
@@ -560,6 +570,7 @@ public:
         return m_verbatim;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::AppliedBuiltinTypeAnnotations::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -573,6 +584,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const AppliedBuiltinTypeAnnotations& other) const;
@@ -604,6 +616,7 @@ public:
     RTPS_DllAPI MinimalTypeDetail& operator =(
             MinimalTypeDetail&& x);
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalTypeDetail::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -617,6 +630,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalTypeDetail&) const
@@ -718,6 +732,7 @@ public:
         return m_type_name;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteTypeDetail::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -731,6 +746,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteTypeDetail& other) const;
@@ -808,6 +824,7 @@ public:
         return m_detail;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteStructHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -821,6 +838,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteStructHeader& other) const;
@@ -897,6 +915,7 @@ public:
         return m_detail;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalStructHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -910,6 +929,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalStructHeader& other) const;
@@ -1010,6 +1030,7 @@ public:
         return m_member_seq;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteStructType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -1023,6 +1044,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteStructType& other) const;
@@ -1124,6 +1146,7 @@ public:
         return m_member_seq;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalStructType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -1137,6 +1160,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalStructType& other) const;
@@ -1267,6 +1291,7 @@ public:
         return m_label_seq;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CommonUnionMember::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -1280,6 +1305,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CommonUnionMember& other) const;
@@ -1360,6 +1386,7 @@ public:
         return m_detail;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteUnionMember::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -1373,6 +1400,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteUnionMember& other) const;
@@ -1454,6 +1482,7 @@ public:
         return m_detail;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalUnionMember::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -1467,6 +1496,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalUnionMember& other) const;
@@ -1547,6 +1577,7 @@ public:
         return m_type_id;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CommonDiscriminatorMember::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -1560,6 +1591,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CommonDiscriminatorMember& other) const;
@@ -1661,6 +1693,7 @@ public:
         return m_ann_custom;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteDiscriminatorMember::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -1674,6 +1707,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteDiscriminatorMember& other) const;
@@ -1730,6 +1764,7 @@ public:
         return m_common;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalDiscriminatorMember::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -1743,6 +1778,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalDiscriminatorMember& other) const;
@@ -1796,6 +1832,7 @@ public:
         return m_detail;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteUnionHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -1809,6 +1846,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteUnionHeader& other) const;
@@ -1862,6 +1900,7 @@ public:
         return m_detail;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalUnionHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -1875,6 +1914,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalUnionHeader& other) const;
@@ -1997,6 +2037,7 @@ public:
         return m_member_seq;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteUnionType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -2010,6 +2051,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteUnionType& other) const;
@@ -2135,6 +2177,7 @@ public:
         return m_member_seq;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalUnionType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -2148,6 +2191,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalUnionType& other) const;
@@ -2228,6 +2272,7 @@ public:
         return m_member_type_id;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CommonAnnotationParameter::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -2241,6 +2286,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CommonAnnotationParameter& other) const;
@@ -2343,6 +2389,7 @@ public:
         return m_default_value;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteAnnotationParameter::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -2356,6 +2403,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteAnnotationParameter& other) const;
@@ -2458,6 +2506,7 @@ public:
         return m_default_value;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalAnnotationParameter::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -2471,6 +2520,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalAnnotationParameter& other) const;
@@ -2528,6 +2578,7 @@ public:
         return m_annotation_name;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteAnnotationHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -2541,6 +2592,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteAnnotationHeader& other) const;
@@ -2572,6 +2624,7 @@ public:
     RTPS_DllAPI MinimalAnnotationHeader& operator =(
             MinimalAnnotationHeader&& x);
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalAnnotationHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -2585,6 +2638,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalAnnotationHeader&) const
@@ -2686,6 +2740,7 @@ public:
         return m_member_seq;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteAnnotationType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -2699,6 +2754,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteAnnotationType& other) const;
@@ -2799,6 +2855,7 @@ public:
         return m_member_seq;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalAnnotationType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -2812,6 +2869,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalAnnotationType& other) const;
@@ -2891,6 +2949,7 @@ public:
         return m_related_type;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CommonAliasBody::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -2904,6 +2963,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CommonAliasBody& other) const;
@@ -3003,6 +3063,7 @@ public:
         return m_ann_custom;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteAliasBody::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -3016,6 +3077,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteAliasBody& other) const;
@@ -3070,6 +3132,7 @@ public:
         return m_common;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalAliasBody::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -3083,6 +3146,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalAliasBody& other) const;
@@ -3135,6 +3199,7 @@ public:
         return m_detail;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteAliasHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -3148,6 +3213,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteAliasHeader& other) const;
@@ -3178,6 +3244,7 @@ public:
     RTPS_DllAPI MinimalAliasHeader& operator =(
             MinimalAliasHeader&& x);
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalAliasHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -3191,6 +3258,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalAliasHeader&) const
@@ -3291,6 +3359,7 @@ public:
         return m_body;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteAliasType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -3304,6 +3373,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteAliasType& other) const;
@@ -3403,6 +3473,7 @@ public:
         return m_body;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalAliasType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -3416,6 +3487,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalAliasType& other) const;
@@ -3494,6 +3566,7 @@ public:
         return m_ann_custom;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteElementDetail::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -3507,6 +3580,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteElementDetail& other) const;
@@ -3583,6 +3657,7 @@ public:
         return m_type;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CommonCollectionElement::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -3596,6 +3671,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CommonCollectionElement& other) const;
@@ -3673,6 +3749,7 @@ public:
         return m_detail;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteCollectionElement::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -3686,6 +3763,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteCollectionElement& other) const;
@@ -3740,6 +3818,7 @@ public:
         return m_common;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalCollectionElement::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -3753,6 +3832,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalCollectionElement& other) const;
@@ -3806,6 +3886,7 @@ public:
         return m_bound;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CommonCollectionHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -3819,6 +3900,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CommonCollectionHeader& other) const;
@@ -3895,6 +3977,7 @@ public:
         return m_detail;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteCollectionHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -3908,6 +3991,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteCollectionHeader& other) const;
@@ -3962,6 +4046,7 @@ public:
         return m_common;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalCollectionHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -3975,6 +4060,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalCollectionHeader& other) const;
@@ -4075,6 +4161,7 @@ public:
         return m_element;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteSequenceType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -4088,6 +4175,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteSequenceType& other) const;
@@ -4189,6 +4277,7 @@ public:
         return m_element;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalSequenceType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -4202,6 +4291,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalSequenceType& other) const;
@@ -4258,6 +4348,7 @@ public:
         return m_bound_seq;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CommonArrayHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -4271,6 +4362,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CommonArrayHeader& other) const;
@@ -4347,6 +4439,7 @@ public:
         return m_detail;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteArrayHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -4360,6 +4453,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteArrayHeader& other) const;
@@ -4414,6 +4508,7 @@ public:
         return m_common;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalArrayHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -4427,6 +4522,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalArrayHeader& other) const;
@@ -4526,6 +4622,7 @@ public:
         return m_element;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteArrayType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -4539,6 +4636,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteArrayType& other) const;
@@ -4640,6 +4738,7 @@ public:
         return m_element;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalArrayType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -4653,6 +4752,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalArrayType& other) const;
@@ -4778,6 +4878,7 @@ public:
         return m_element;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteMapType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -4791,6 +4892,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteMapType& other) const;
@@ -4915,6 +5017,7 @@ public:
         return m_element;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalMapType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -4928,6 +5031,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalMapType& other) const;
@@ -5012,6 +5116,7 @@ public:
         return m_flags;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CommonEnumeratedLiteral::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -5025,6 +5130,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CommonEnumeratedLiteral& other) const;
@@ -5104,6 +5210,7 @@ public:
         return m_detail;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteEnumeratedLiteral::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -5117,6 +5224,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteEnumeratedLiteral& other) const;
@@ -5198,6 +5306,7 @@ public:
         return m_detail;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalEnumeratedLiteral::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -5211,6 +5320,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalEnumeratedLiteral& other) const;
@@ -5268,6 +5378,7 @@ public:
         return m_bit_bound;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CommonEnumeratedHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -5281,6 +5392,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CommonEnumeratedHeader& other) const;
@@ -5357,6 +5469,7 @@ public:
         return m_detail;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteEnumeratedHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -5370,6 +5483,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteEnumeratedHeader& other) const;
@@ -5424,6 +5538,7 @@ public:
         return m_common;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalEnumeratedHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -5437,6 +5552,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalEnumeratedHeader& other) const;
@@ -5537,6 +5653,7 @@ public:
         return m_literal_seq;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteEnumeratedType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -5550,6 +5667,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteEnumeratedType& other) const;
@@ -5651,6 +5769,7 @@ public:
         return m_literal_seq;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalEnumeratedType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -5664,6 +5783,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalEnumeratedType& other) const;
@@ -5744,6 +5864,7 @@ public:
         return m_flags;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CommonBitflag::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -5757,6 +5878,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CommonBitflag& other) const;
@@ -5834,6 +5956,7 @@ public:
         return m_detail;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteBitflag::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -5847,6 +5970,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteBitflag& other) const;
@@ -5925,6 +6049,7 @@ public:
         return m_detail;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalBitflag::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -5938,6 +6063,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalBitflag& other) const;
@@ -5995,6 +6121,7 @@ public:
         return m_bit_bound;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CommonBitmaskHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -6008,6 +6135,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CommonBitmaskHeader& other) const;
@@ -6109,6 +6237,7 @@ public:
         return m_flag_seq;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteBitmaskType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -6122,6 +6251,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteBitmaskType& other) const;
@@ -6223,6 +6353,7 @@ public:
         return m_flag_seq;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalBitmaskType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -6236,6 +6367,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalBitmaskType& other) const;
@@ -6361,6 +6493,7 @@ public:
         return m_holder_type;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CommonBitfield::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -6374,6 +6507,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CommonBitfield& other) const;
@@ -6453,6 +6587,7 @@ public:
         return m_detail;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteBitfield::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -6466,6 +6601,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteBitfield& other) const;
@@ -6544,6 +6680,7 @@ public:
         return m_common;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalBitfield::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -6557,6 +6694,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalBitfield& other) const;
@@ -6634,6 +6772,7 @@ public:
         return m_detail;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteBitsetHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -6647,6 +6786,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteBitsetHeader& other) const;
@@ -6701,6 +6841,7 @@ public:
         return m_base_type;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalBitsetHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -6714,6 +6855,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalBitsetHeader& other) const;
@@ -6812,6 +6954,7 @@ public:
         return m_field_seq;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteBitsetType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -6825,6 +6968,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteBitsetType& other) const;
@@ -6926,6 +7070,7 @@ public:
         return m_field_seq;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalBitsetType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -6939,6 +7084,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalBitsetType& other) const;
@@ -6976,6 +7122,7 @@ public:
     RTPS_DllAPI CompleteExtendedType& operator =(
             CompleteExtendedType&& x);
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteExtendedType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -6989,6 +7136,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteExtendedType&) const
@@ -7022,6 +7170,7 @@ public:
     RTPS_DllAPI MinimalExtendedType& operator =(
             MinimalExtendedType&& x);
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalExtendedType::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -7035,6 +7184,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalExtendedType&) const
@@ -7124,6 +7274,7 @@ public:
     RTPS_DllAPI const CompleteExtendedType& extended_type() const;
     RTPS_DllAPI CompleteExtendedType& extended_type();
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::CompleteTypeObject::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -7137,6 +7288,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const CompleteTypeObject& other) const;
@@ -7236,6 +7388,7 @@ public:
     RTPS_DllAPI const MinimalExtendedType& extended_type() const;
     RTPS_DllAPI MinimalExtendedType& extended_type();
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::MinimalTypeObject::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -7249,6 +7402,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const MinimalTypeObject& other) const;
@@ -7390,6 +7544,7 @@ public:
      */
     RTPS_DllAPI MinimalTypeObject& minimal();
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
@@ -7418,6 +7573,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool operator ==(
             const TypeObject& other) const;
@@ -7510,6 +7666,7 @@ public:
         return m_type_object;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::TypeIdentifierTypeObjectPair::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -7523,6 +7680,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 private:
 
@@ -7594,6 +7752,7 @@ public:
         return m_type_identifier2;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::TypeIdentifierPair::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -7607,6 +7766,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 private:
 
@@ -7678,6 +7838,7 @@ public:
         return m_typeobject_serialized_size;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::TypeIdentifierWithSize::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -7691,6 +7852,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 private:
 
@@ -7787,6 +7949,7 @@ public:
         return m_dependent_typeids;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::TypeIdentifierWithDependencies::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -7800,6 +7963,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 private:
 

@@ -39,6 +39,7 @@ struct ReplyHeader
 
     RemoteExceptionCode_t remoteEx;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastdds::dds::rpc::ReplyHeader::getCdrSerializedSize()",
             "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
     RTPS_DllAPI static size_t getCdrSerializedSize(
@@ -54,6 +55,7 @@ struct ReplyHeader
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI static bool isKeyDefined()
     {

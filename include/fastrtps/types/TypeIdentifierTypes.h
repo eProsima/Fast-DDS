@@ -126,6 +126,7 @@ public:
         return m_bound;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
@@ -156,6 +157,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool consistent(
             const StringSTypeDefn& x,
@@ -243,6 +245,7 @@ public:
         return m_bound;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
@@ -273,6 +276,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool consistent(
             const StringLTypeDefn& x,
@@ -388,6 +392,7 @@ public:
         return m_element_flags;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
@@ -418,6 +423,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool consistent(
             const PlainCollectionHeader& x,
@@ -565,6 +571,7 @@ public:
         return m_element_identifier;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
@@ -595,6 +602,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool consistent(
             const PlainSequenceSElemDefn& x,
@@ -743,6 +751,7 @@ public:
         return m_element_identifier;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
@@ -773,6 +782,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool consistent(
             const PlainSequenceLElemDefn& x,
@@ -931,6 +941,7 @@ public:
         return m_element_identifier;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
@@ -961,6 +972,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool consistent(
             const PlainArraySElemDefn& x,
@@ -1119,6 +1131,7 @@ public:
         return m_element_identifier;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
@@ -1149,6 +1162,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool consistent(
             const PlainArrayLElemDefn& x,
@@ -1350,6 +1364,7 @@ public:
         return m_key_identifier;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
@@ -1380,6 +1395,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool consistent(
             const PlainMapSTypeDefn& x,
@@ -1583,6 +1599,7 @@ public:
         return m_key_identifier;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
@@ -1613,6 +1630,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool consistent(
             const PlainMapLTypeDefn& x,
@@ -1766,6 +1784,7 @@ public:
         return m_scc_index;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
@@ -1796,6 +1815,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool consistent(
             const StronglyConnectedComponentId& x,
@@ -1853,6 +1873,7 @@ public:
     RTPS_DllAPI virtual ExtendedTypeDefn& operator =(
             ExtendedTypeDefn&& x);
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     /*!
      * @brief This function returns the serialized size of a data depending on the buffer alignment.
      * @param data Data which is calculated its serialized size.
@@ -1883,6 +1904,7 @@ public:
             "In favor of version using eprosima::fastcdr::deserialize.")
     RTPS_DllAPI virtual void deserialize(
             eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
     RTPS_DllAPI bool consistent(
             const ExtendedTypeDefn& x,
