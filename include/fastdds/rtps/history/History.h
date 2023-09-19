@@ -322,6 +322,10 @@ protected:
     RTPS_DllAPI virtual void do_release_cache(
             CacheChange_t* ch) = 0;
 
+    //! Remove history iterator constness
+    History::iterator remove_iterator_constness(
+            const_iterator c_it);
+
 };
 
 } // namespace rtps

@@ -185,7 +185,7 @@ History::iterator WriterHistory::remove_change_nts(
     {
         EPROSIMA_LOG_ERROR(RTPS_WRITER_HISTORY,
                 "You need to create a Writer with this History before removing any changes");
-        return changesEnd();
+        return remove_iterator_constness(removal);
     }
 
     if ( removal == changesEnd())
