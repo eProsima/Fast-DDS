@@ -13,8 +13,14 @@
 // limitations under the License.
 
 #include <pthread.h>
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
+#include <sys/resource.h>
+#include <sys/sysinfo.h>
+#include <sys/time.h>
+#include <sys/types.h>
+
+#include <fastdds/dds/log/Log.hpp>
 
 namespace eprosima {
 
@@ -49,9 +55,61 @@ void set_name_to_current_thread(
     set_name_to_current_thread_impl(fmt, arg1, arg2);
 }
 
-void apply_thread_settings_to_current_thread(
-        const fastdds::rtps::ThreadSettings& /*settings*/)
+static void configure_current_thread_scheduler(
+        int sched_class,
+        int sched_priority)
 {
+    pthread_t self_tid = pthread_self();
+    sched_param param;
+    int result = 0;
+    
+    memset(&param, 0, sizeof(param));
+    param.sched_priority = 0;
+    
+    //
+    // Set Scheduler Class and Priority       
+    //
+    
+    if((sched_class == SCHED_OTHER) ||
+       (sched_class == SCHED_BATCH) ||
+       (sched_class == SCHED_IDLE)) 
+    {               
+        //
+        // BATCH and IDLE do not have explicit priority values.
+        // - Requires priorty value to be zero (0).
+        
+        result = pthread_setschedparam(self_tid, sched_class, &param);
+
+        //
+        // Sched OTHER has a nice value, that we pull from the priority parameter.
+        // 
+        
+        if(sched_class == SCHED_OTHER)
+        {            
+            result = setpriority(PRIO_PROCESS, gettid(), sched_priority);
+        }                
+    }
+    else if((sched_class == SCHED_FIFO) ||
+            (sched_class == SCHED_RR))
+    {
+        //
+        // RT Policies use a different priority numberspace.
+        //
+        
+        param.sched_priority = sched_priority;
+        result = pthread_setschedparam(self_tid, sched_class, &param);
+    }
+
+    if (0 != result)
+    {
+        EPROSIMA_LOG_ERROR(SYSTEM, "Error '" << strerror(result) << "' configuring scheduler for thread " << self_tid);
+    }
+}
+
+void apply_thread_settings_to_current_thread(
+        const fastdds::rtps::ThreadSettings& settings)
+{
+    configure_current_thread_scheduler(settings.scheduling_policy, settings.priority);
 }
 
 }  // namespace eprosima
