@@ -1,6 +1,8 @@
 Forthcoming
 -----------
 
+* Added monitor service feature
+
 Version 2.12.0
 --------------
 
