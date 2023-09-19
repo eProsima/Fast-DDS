@@ -106,10 +106,56 @@ static void configure_current_thread_scheduler(
     }
 }
 
+static void configure_current_thread_affinity(
+        uint32_t affinity_mask)
+{    
+    int a;
+    int result;
+    int cpu_count;
+    cpu_set_t  cpu_set;
+    pthread_t self_tid = pthread_self();
+
+    result = 0;
+       
+    //
+    // Rebuilt the cpu set from scratch...
+    //
+    
+    CPU_ZERO(&cpu_set);
+
+    //
+    // If the bit is set in our mask, set it into the cpu_set
+    // We only consider up to the total number of CPU's the
+    // system has.
+    //
+
+    cpu_count = get_nprocs_conf();
+    
+    for(a = 0; a < cpu_count; a++)
+    {
+        if(affinity_mask & (1 << a))
+        {            
+            CPU_SET(a, &cpu_set);
+            result++;
+        }
+    }
+
+    if(result > 0)
+    {
+        result = pthread_setaffinity_np(self_tid, sizeof(cpu_set_t), &cpu_set);
+    }
+
+    if (0 != result)
+    {
+        EPROSIMA_LOG_ERROR(SYSTEM, "Error '" << strerror(result) << "' configuring affinity for thread " << self_tid);
+    }
+}
+
 void apply_thread_settings_to_current_thread(
         const fastdds::rtps::ThreadSettings& settings)
 {
     configure_current_thread_scheduler(settings.scheduling_policy, settings.priority);
+    configure_current_thread_affinity(settings.cpu_mask);
 }
 
 }  // namespace eprosima
