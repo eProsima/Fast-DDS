@@ -81,6 +81,7 @@ extern const char* DISCARD;
 extern const char* FAIL;
 extern const char* RTPS_DUMP_FILE;
 extern const char* ON;
+extern const char* AUTO;
 
 // IntraprocessDeliveryType
 extern const char* OFF;

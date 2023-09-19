@@ -2147,7 +2147,8 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
             if (!get_element_enum_value(text.c_str(), kind,
                     ON, DataSharingKind::ON,
                     OFF, DataSharingKind::OFF,
-                    AUTOMATIC, DataSharingKind::AUTO))
+                    AUTOMATIC, DataSharingKind::AUTO,
+                    AUTO, DataSharingKind::AUTO))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
