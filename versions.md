@@ -1,6 +1,7 @@
 Forthcoming
 -----------
 
+* Added monitor service feature
 * Added participant property to configure SHM transport metatraffic behavior.
   No metatraffic over SHM transport by default.
 * Exposed custom payload pool on DDS endpoints declaration
