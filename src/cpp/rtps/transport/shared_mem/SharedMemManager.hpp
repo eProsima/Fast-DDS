@@ -375,7 +375,7 @@ public:
                 const std::string& domain_name)
             : buffer_node_list_allocator_(
                 buffer_node_list_helper::node_size,
-                buffer_node_list_helper::min_pool_size<pool_allocator_t>(shm_initial_buffers))
+                buffer_node_list_helper::min_pool_size<pool_allocator_t>(max_allocations))
             , free_buffers_(buffer_node_list_allocator_)
             , allocated_buffers_(buffer_node_list_allocator_)
             , segment_id_()
