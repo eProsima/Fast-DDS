@@ -63,11 +63,24 @@ public:
             fastrtps::rtps::GUID_t(),
             &mock_proxy_q_,
             &mock_conns_q_,
-            mock_status_q_)
-        , listener_(&monitor_srv_)
-        , n_local_entities(5)
+            mock_status_q_,
+            [&](fastrtps::rtps::RTPSWriter**,
+        fastrtps::rtps::WriterAttributes&,
+        const std::shared_ptr<fastrtps::rtps::IPayloadPool>&,
+        fastrtps::rtps::WriterHistory*,
+        fastrtps::rtps::WriterListener*,
+        const fastrtps::rtps::EntityId_t&,
+        bool)->bool{
+            return true;},
+            [&](
+        fastrtps::rtps::RTPSWriter*,
+        const fastrtps::TopicAttributes&,
+        const fastrtps::WriterQos&)->bool{
+            return true;},
+            mock_event_resource_)
     {
-
+        monitor_srv_.set_writer(&writer);
+        mock_event_resource_.init_thread();
     }
 
     void SetUp() override
@@ -89,6 +102,20 @@ public:
                         }
                         return true;
                     }));
+
+        ON_CALL(mock_proxy_q_, get_serialized_proxy(::testing::_, ::testing::_)).WillByDefault(testing::Invoke(
+                    [](const fastrtps::rtps::GUID_t&,
+                                    fastrtps::rtps::CDRMessage_t*)
+                    {
+                        return true;
+                    }));
+
+        ON_CALL(mock_conns_q_, get_entity_connections(::testing::_, ::testing::_)).WillByDefault(testing::Invoke(
+                    [](const fastrtps::rtps::GUID_t&,
+                                      ConnectionList &)
+                    {
+                        return true;
+                    }));
     }
 
     void TearDown() override
@@ -98,14 +125,15 @@ public:
 
 protected:
 
-    MockConnectionsQueryable mock_conns_q_;
-    MockStatusQueryable mock_status_q_;
-    MockProxyQueryable mock_proxy_q_;
-
-    MonitorService monitor_srv_;
+    testing::NiceMock<MockConnectionsQueryable> mock_conns_q_;
+    testing::NiceMock<MockStatusQueryable> mock_status_q_;
+    testing::NiceMock<MockProxyQueryable> mock_proxy_q_;
     MonitorServiceListener listener_;
     int n_local_entities;
     std::vector<fastrtps::rtps::GUID_t> mock_guids;
+    fastrtps::rtps::ResourceEvent mock_event_resource_;
+    MonitorService monitor_srv_;
+    testing::NiceMock<fastrtps::rtps::RTPSWriter> writer;
 };
 
 TEST_F(MonitorServiceTests, enabling_monitor_service_routine)
