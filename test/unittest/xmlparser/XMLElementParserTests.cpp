@@ -850,26 +850,22 @@ TEST_F(XMLParserTests, getXMLPortParameters_NegativeClauses)
             parameters.assign (7, "1");
             parameters[i] = "";
             xml =
-                    "\
-                    <port>\
-                        <portBase>" + parameters[0] + "</portBase>\
-                        <domainIDGain>" + parameters[1] + "</domainIDGain>\
-                        <participantIDGain>" + parameters[2] + "</participantIDGain>\
-                        <offsetd0>" + parameters[3] + "</offsetd0>\
-                        <offsetd1>" + parameters[4] + "</offsetd1>\
-                        <offsetd2>" + parameters[5] + "</offsetd2>\
-                        <offsetd3>" + parameters[6] + "</offsetd3>\
-                    </port>\
-                    ";
+                    "<port>"
+                    "    <portBase>" + parameters[0] + "</portBase>"
+                    "    <domainIDGain>" + parameters[1] + "</domainIDGain>"
+                    "    <participantIDGain>" + parameters[2] + "</participantIDGain>"
+                    "    <offsetd0>" + parameters[3] + "</offsetd0>"
+                    "    <offsetd1>" + parameters[4] + "</offsetd1>"
+                    "    <offsetd2>" + parameters[5] + "</offsetd2>"
+                    "    <offsetd3>" + parameters[6] + "</offsetd3>"
+                    "</port>";
         }
         else
         {
             xml =
-                    "\
-                    <port>\
-                        <bad_element></bad_element>\
-                    </port>\
-                    ";
+                    "<port>"
+                    "    <bad_element></bad_element>"
+                    "</port>";
         }
 
         ASSERT_EQ(tinyxml2::XMLError::XML_SUCCESS, xml_doc.Parse(xml.c_str()));
