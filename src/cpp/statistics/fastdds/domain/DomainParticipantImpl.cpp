@@ -77,6 +77,7 @@ constexpr const char* EDP_PACKETS_TOPIC_ALIAS = "EDP_PACKETS_TOPIC";
 constexpr const char* DISCOVERY_TOPIC_ALIAS = "DISCOVERY_TOPIC";
 constexpr const char* SAMPLE_DATAS_TOPIC_ALIAS = "SAMPLE_DATAS_TOPIC";
 constexpr const char* PHYSICAL_DATA_TOPIC_ALIAS = "PHYSICAL_DATA_TOPIC";
+constexpr const char* MONITOR_SERVICE_TOPIC_ALIAS = "MONITOR_SERVICE_TOPIC";
 
 static constexpr uint32_t participant_statistics_mask =
         EventKindBits::RTPS_SENT | EventKindBits::RTPS_LOST | EventKindBits::NETWORK_LATENCY |
@@ -256,6 +257,20 @@ ReturnCode_t DomainParticipantImpl::enable()
     {
         rtps_participant_->add_statistics_listener(statistics_listener_, participant_statistics_mask);
         create_statistics_builtin_entities();
+
+        if (!rtps_participant_->is_monitor_service_created())
+        {
+            auto enable_ms_property_value = fastrtps::rtps::PropertyPolicyHelper::find_property(
+            qos_.properties(), fastdds::dds::parameter_enable_monitor_service);
+
+            if (nullptr != enable_ms_property_value && *enable_ms_property_value == "true")
+            {
+                if (enable_monitor_service() != ReturnCode_t::RETCODE_OK)
+                {
+                    EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT, "Could not enable the Monitor Service");
+                }
+            }
+        }
     }
 
     return ret;
@@ -408,6 +423,16 @@ void DomainParticipantImpl::enable_statistics_builtin_datawriters(
     std::string topic;
     while (std::getline(topics, topic, ';'))
     {
+        if (MONITOR_SERVICE_TOPIC_ALIAS == topic)
+        {
+            if (!rtps_participant_->is_monitor_service_created() &&
+                enable_monitor_service() != ReturnCode_t::RETCODE_OK)
+            {
+                EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT, "Could not enable the Monitor Service");
+            }
+            continue;
+        }
+
         DataWriterQos datawriter_qos;
         PublisherAttributes attr;
         if (XMLP_ret::XML_OK == XMLProfileManager::fillPublisherAttributes(topic, attr, false))
