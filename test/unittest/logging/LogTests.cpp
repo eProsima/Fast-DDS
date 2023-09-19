@@ -664,6 +664,31 @@ TEST_F(LogTests, flush_n)
     loggind_thread.join();
 }
 
+TEST_F(LogTests, thread_config)
+{
+    // Set general verbosity
+    Log::SetVerbosity(Log::Info);
+    unsigned int n_logs = 1000;
+
+    // Set thread settings
+    eprosima::fastdds::rtps::ThreadSettings thr_settings{};
+#if defined(_POSIX_SOURCE)
+    thr_settings.cpu_mask = 3;
+    thr_settings.scheduling_policy = SCHED_OTHER;
+    thr_settings.priority = 1;
+#endif // if defined(_POSIX_SOURCE)
+    Log::SetThreadConfig(thr_settings);
+
+    for (unsigned int i = 0; i < n_logs; i++)
+    {
+        EPROSIMA_LOG_INFO(TEST_THREADS, "Info message " << i);
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    }
+
+    auto entries = HELPER_WaitForEntries(n_logs);
+    EXPECT_EQ(entries.size(), n_logs);
+}
+
 int main(
         int argc,
         char** argv)
