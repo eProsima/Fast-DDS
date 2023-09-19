@@ -356,60 +356,6 @@ ReturnCode_t DomainParticipantImpl::fill_discovery_data_from_cdr_message(
     return ret;
 }
 
-bool DomainParticipantImpl::get_incompatible_qos_status(
-        const fastrtps::rtps::GUID_t& entity_guid,
-        fastdds::dds::IncompatibleQosStatus& status)
-{
-    static_cast<void>(entity_guid);
-    static_cast<void>(status);
-    return false;
-}
-
-bool DomainParticipantImpl::get_inconsistent_topic_status(
-        const fastrtps::rtps::GUID_t& entity_guid,
-        fastdds::dds::InconsistentTopicStatus& status)
-{
-    static_cast<void>(entity_guid);
-    static_cast<void>(status);
-    return false;
-}
-
-bool DomainParticipantImpl::get_liveliness_lost_status(
-        const fastrtps::rtps::GUID_t& entity_guid,
-        fastdds::dds::LivelinessLostStatus& status)
-{
-    static_cast<void>(entity_guid);
-    static_cast<void>(status);
-    return false;
-}
-
-bool DomainParticipantImpl::get_liveliness_changed_status(
-        const fastrtps::rtps::GUID_t& entity_guid,
-        fastdds::dds::LivelinessChangedStatus& status)
-{
-    static_cast<void>(entity_guid);
-    static_cast<void>(status);
-    return false;
-}
-
-bool DomainParticipantImpl::get_deadline_missed_status(
-        const fastrtps::rtps::GUID_t& entity_guid,
-        fastdds::dds::DeadlineMissedStatus& status)
-{
-    static_cast<void>(entity_guid);
-    static_cast<void>(status);
-    return false;
-}
-
-bool DomainParticipantImpl::get_sample_lost_status(
-        const fastrtps::rtps::GUID_t& entity_guid,
-        fastdds::dds::SampleLostStatus& status)
-{
-    static_cast<void>(entity_guid);
-    static_cast<void>(status);
-    return false;
-}
-
 efd::PublisherImpl* DomainParticipantImpl::create_publisher_impl(
         const efd::PublisherQos& qos,
         efd::PublisherListener* listener)
@@ -649,6 +595,45 @@ bool DomainParticipantImpl::delete_topic_and_type(
     // expected) and if the type_name is empty (which is not going to happen).
     unregister_type(type_name);
     return true;
+}
+
+bool DomainParticipantImpl::get_monitoring_status(
+        const fastrtps::rtps::GUID_t& entity_guid,
+        const uint32_t &status_id,
+        eprosima::fastdds::statistics::rtps::DDSEntityStatus*& status)
+{
+    ReturnCode_t ret = ReturnCode_t::RETCODE_ERROR;
+
+    if (entity_guid.entityId.is_reader())
+    {
+        std::lock_guard<std::mutex> lock(mtx_subs_);
+        for (auto& sub : subscribers_)
+        {
+            if (sub.second->get_monitoring_status(status_id, status, entity_guid))
+            {
+                ret = ReturnCode_t::RETCODE_OK;
+                break;
+            }
+        }
+    }
+    else if (entity_guid.entityId.is_writer())
+    {
+        std::lock_guard<std::mutex> lock(mtx_pubs_);
+        for (auto& pub : publishers_)
+        {
+            if (pub.second->get_monitoring_status(status_id, status, entity_guid))
+            {
+                ret = ReturnCode_t::RETCODE_OK;
+                break;
+            }
+        }
+    }
+    else
+    {
+        EPROSIMA_LOG_ERROR(STATISTICS_DOMAIN_PARTICIPANT, "Unknown entity type to get the status from " << entity_guid.entityId);
+    }
+
+    return (ret == ReturnCode_t::RETCODE_OK);
 }
 
 } // dds
