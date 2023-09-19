@@ -26,6 +26,7 @@
 #include <fastrtps/xmlparser/XMLProfileManager.h>
 #include <fastrtps/xmlparser/XMLTree.h>
 
+#include "../common/env_var_utils.hpp"
 #include "../logging/mock/MockConsumer.h"
 #include "rtps/xmlparser/XMLParserUtils.hpp"
 #include "wrapper/XMLParserTest.hpp"
@@ -33,6 +34,7 @@
 using namespace eprosima::fastdds::dds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::testing;
 
 using eprosima::fastrtps::xmlparser::BaseNode;
 using eprosima::fastrtps::xmlparser::DataNode;
@@ -851,10 +853,8 @@ TEST_F(XMLParserTests, getXMLPortParameters_NegativeClauses)
                     "\
                     <port>\
                         <portBase>" + parameters[0] + "</portBase>\
-                        <domainIDGain>" + parameters[1] +
-                    "</domainIDGain>\
-                        <participantIDGain>" + parameters[2] +
-                    "</participantIDGain>\
+                        <domainIDGain>" + parameters[1] + "</domainIDGain>\
+                        <participantIDGain>" + parameters[2] + "</participantIDGain>\
                         <offsetd0>" + parameters[3] + "</offsetd0>\
                         <offsetd1>" + parameters[4] + "</offsetd1>\
                         <offsetd2>" + parameters[5] + "</offsetd2>\
@@ -3904,27 +3904,6 @@ TEST_F(XMLParserTests, get_element_text)
         EXPECT_TRUE(get_element_text(xml_element, result));
         EXPECT_EQ(result, "Content");
     }
-}
-
-static void set_environment_variable(
-        const char* const env_var,
-        const char* const value)
-{
-#ifdef _WIN32
-    ASSERT_EQ(0, _putenv_s(env_var, value));
-#else
-    ASSERT_EQ(0, setenv(env_var, value, 1));
-#endif // _WIN32
-}
-
-static void clear_environment_variable(
-        const char* const env_var)
-{
-#ifdef _WIN32
-    ASSERT_EQ(0, _putenv_s(env_var, ""));
-#else
-    ASSERT_EQ(0, unsetenv(env_var));
-#endif // _WIN32
 }
 
 TEST_F(XMLParserTests, env_var_substitution)

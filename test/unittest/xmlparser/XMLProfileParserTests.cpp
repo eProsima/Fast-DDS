@@ -12,26 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <chrono>
+#include <cstdlib>
+#include <fstream>
+#include <memory>
+#include <sstream>
+#include <thread>
+
+#include <gtest/gtest.h>
+#include <tinyxml2.h>
+
+#include <fastdds/dds/log/FileConsumer.hpp>
 #include <fastdds/dds/log/Log.hpp>
 #include <fastdds/dds/log/OStreamConsumer.hpp>
-#include <fastdds/dds/log/FileConsumer.hpp>
 #include <fastdds/dds/log/StdoutErrConsumer.hpp>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastrtps/utils/IPLocator.h>
+#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
 #include <fastrtps/transport/TCPTransportDescriptor.h>
 #include <fastrtps/transport/UDPTransportDescriptor.h>
-#include <fastdds/rtps/transport/shared_mem/SharedMemTransportDescriptor.h>
-#include <tinyxml2.h>
-#include <gtest/gtest.h>
-#include <memory>
-#include <thread>
-#include <chrono>
-#include <sstream>
-#include <fstream>
-#include <stdlib.h>
+#include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
+
+#include "../common/env_var_utils.hpp"
 
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
+using namespace eprosima::testing;
 using namespace ::testing;
 
 using eprosima::fastdds::dds::Log;
@@ -99,11 +104,7 @@ protected:
             // Set environment variables values
             for (const std::pair<std::string, std::string>& value : c_environment_values_)
             {
-#ifdef _WIN32
-                ASSERT_EQ(0, _putenv_s(value.first.c_str(), value.second.c_str()));
-#else
-                ASSERT_EQ(0, setenv(value.first.c_str(), value.second.c_str(), 1));
-#endif // _WIN32
+                set_environment_variable(value.first.c_str(), value.second.c_str());
             }
         }
     }
@@ -114,11 +115,7 @@ protected:
         {
             for (const std::pair<std::string, std::string>& value : c_environment_values_)
             {
-#ifdef _WIN32
-                ASSERT_EQ(0, _putenv_s(value.first.c_str(), ""));
-#else
-                ASSERT_EQ(0, unsetenv(value.first.c_str()));
-#endif // _WIN32
+                clear_environment_variable(value.first.c_str());
             }
         }
     }
