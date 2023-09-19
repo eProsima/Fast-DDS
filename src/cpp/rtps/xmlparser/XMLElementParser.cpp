@@ -72,7 +72,11 @@ static std::string process_environment(
         const std::string& input)
 {
     std::string ret_val = input;
-    std::regex expression("\\$\\{([A-Z0-9_]+)\\}");
+    /* From [IEEE Std 1003.1]:(https://pubs.opengroup.org/onlinepubs/000095399/basedefs/xbd_chap08.html)
+     * Environment variable names used ... consist solely of uppercase letters, digits, and the '_' (underscore)
+     * from the characters defined in Portable Character Set and do not begin with a digit.
+     */
+    std::regex expression("\\$\\{([A-Z_][A-Z0-9_]*)\\}");
     std::smatch match;
 
     do
