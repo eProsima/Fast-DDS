@@ -31,6 +31,14 @@ namespace fastdds {
 namespace statistics {
 namespace rtps {
 
+struct DDSEntityStatus : public eprosima::fastdds::dds::IncompatibleQosStatus,
+                                 public eprosima::fastdds::dds::BaseStatus,
+                                 public eprosima::fastdds::dds::LivelinessChangedStatus,
+                                 public eprosima::fastdds::dds::DeadlineMissedStatus
+{
+
+};
+
 struct IStatusQueryable
 {
     /**
@@ -41,71 +49,10 @@ struct IStatusQueryable
      * @param[out] status The requested entity status
      * @return Whether the operation succeeded or not
      */
-    virtual bool get_incompatible_qos_status(
+    virtual bool get_monitoring_status(
             const fastrtps::rtps::GUID_t& guid,
-            eprosima::fastdds::dds::IncompatibleQosStatus& status) = 0;
-
-    /**
-     * @brief Interface for requesting the InconsistentTopicStatus
-     * of and entity identified by its guid.
-     *
-     * @param[in] guid The GUID_t identifying the target entity
-     * @param[out] status The requested entity status
-     * @return Whether the operation succeeded or not
-     */
-    virtual bool get_inconsistent_topic_status(
-            const fastrtps::rtps::GUID_t& guid,
-            eprosima::fastdds::dds::InconsistentTopicStatus& status) = 0;
-
-    /**
-     * @brief Interface for requesting the LivelinessLostStatus
-     * of a writer identified by its guid.
-     *
-     * @param[in] guid The GUID_t identifying the target entity
-     * @param[out] status The requested entity status
-     * @return Whether the operation succeeded or not
-     */
-    virtual bool get_liveliness_lost_status(
-            const fastrtps::rtps::GUID_t& guid,
-            eprosima::fastdds::dds::LivelinessLostStatus& status) = 0;
-
-    /**
-     * @brief Interface for requesting the LivelinessChangedStatus
-     * of a reader identified by its guid.
-     *
-     * @param[in] guid The GUID_t identifying the target entity
-     * @param[out] status The requested entity status
-     * @return Whether the operation succeeded or not
-     */
-    virtual bool get_liveliness_changed_status(
-            const fastrtps::rtps::GUID_t& guid,
-            eprosima::fastdds::dds::LivelinessChangedStatus& status) = 0;
-
-    /**
-     * @brief Interface for requesting the DeadlineMissedStatus
-     * of an entity identified by its guid.
-     * [offered] for the writer
-     * [requested] for the reader
-     *
-     * @param[in] guid The GUID_t identifying the target entity
-     * @param[out] status The requested entity status
-     * @return Whether the operation succeeded or not
-     */
-    virtual bool get_deadline_missed_status(
-            const fastrtps::rtps::GUID_t& guid,
-            eprosima::fastdds::dds::DeadlineMissedStatus& status) = 0;
-
-    /**
-     * @brief Interface for requesting the SampleLostStatus
-     * of a reader identified by its guid.
-     *
-     * @param[in] guid The GUID_t identifying the target entity
-     * @param[out] status The requested entity status
-     * @return Whether the operation succeeded or not
-     */
-    virtual bool get_sample_lost_status(
-            const fastrtps::rtps::GUID_t& guid,
-            eprosima::fastdds::dds::SampleLostStatus& status) = 0;
+            const uint32_t& status_kind,
+            DDSEntityStatus*& status) = 0;
 
 };
 
