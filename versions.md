@@ -4,6 +4,7 @@ Forthcoming
 * Added participant property to configure SHM transport metatraffic behavior.
   No metatraffic over SHM transport by default.
 * Exposed custom payload pool on DDS endpoints declaration
+* Processing environment variables on XML text
 
 Version 2.11.0
 --------------
