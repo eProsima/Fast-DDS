@@ -21,6 +21,8 @@
 
 #include <cstdlib>
 
+#include <gtest/gtest.h>
+
 namespace eprosima {
 namespace testing {
 
