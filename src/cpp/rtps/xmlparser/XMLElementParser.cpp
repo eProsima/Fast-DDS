@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+
+#include <cassert>
 #include <cstring>
 #include <regex>
 #include <string>
@@ -19,15 +21,156 @@
 
 #include <tinyxml2.h>
 
-#include <fastrtps/xmlparser/XMLParserCommon.h>
-#include <fastrtps/xmlparser/XMLParser.h>
-#include <fastrtps/xmlparser/XMLProfileManager.h>
-#include <fastrtps/utils/IPLocator.h>
 #include <fastdds/dds/log/Log.hpp>
+#include <fastrtps/utils/IPLocator.h>
+#include <fastrtps/xmlparser/XMLParser.h>
+#include <fastrtps/xmlparser/XMLParserCommon.h>
+#include <fastrtps/xmlparser/XMLProfileManager.h>
 
-using namespace eprosima::fastrtps;
+#include <rtps/xmlparser/XMLParserUtils.hpp>
+#include <utils/SystemInfo.hpp>
+
+template<typename _Enum>
+static bool get_element_enum_value(
+        const char* input,
+        _Enum& output,
+        const char* name,
+        _Enum value)
+{
+    if (0 == strcmp(input, name))
+    {
+        output = value;
+        return true;
+    }
+
+    return false;
+}
+
+template<typename _Enum, typename ... Targs>
+static bool get_element_enum_value(
+        const char* input,
+        _Enum& output,
+        const char* name,
+        _Enum value,
+        Targs... args)
+{
+    if (0 == strcmp(input, name))
+    {
+        output = value;
+        return true;
+    }
+
+    return get_element_enum_value(input, output, args ...);
+}
+
+namespace eprosima {
+namespace fastdds {
+namespace xml {
+namespace detail {
+
+static std::string process_environment(
+        const std::string& input)
+{
+    std::string ret_val = input;
+    /* From [IEEE Std 1003.1]:(https://pubs.opengroup.org/onlinepubs/000095399/basedefs/xbd_chap08.html)
+     * Environment variable names used ... consist solely of uppercase letters, digits, and the '_' (underscore)
+     * from the characters defined in Portable Character Set and do not begin with a digit.
+     */
+    std::regex expression("\\$\\{([A-Z_][A-Z0-9_]*)\\}");
+    std::smatch match;
+
+    do
+    {
+        std::regex_search(ret_val, match, expression);
+        if (!match.empty())
+        {
+            std::string value;
+            if (ReturnCode_t::RETCODE_OK == SystemInfo::get_env(match[1], value))
+            {
+                ret_val = match.prefix().str() + value + match.suffix().str();
+            }
+            else
+            {
+                ret_val = match.prefix().str() + match.suffix().str();
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Could not find a value for environment variable " << match[1]);
+            }
+        }
+    } while (!match.empty());
+
+    return ret_val;
+}
+
+std::string get_element_text(
+        tinyxml2::XMLElement* element)
+{
+    std::string ret_val{};
+
+    assert(nullptr != element);
+    const char* text = element->GetText();
+    if (nullptr != text)
+    {
+        ret_val = process_environment(text);
+    }
+
+    return ret_val;
+}
+
+}  // namespace detail
+}  // namespace xml
+}  // namespace fastdds
+}  // namespace eprosima
+
+
+namespace eprosima {
+namespace fastrtps {
+namespace xmlparser {
+
 using namespace eprosima::fastrtps::rtps;
-using namespace eprosima::fastrtps::xmlparser;
+using namespace eprosima::fastdds::xml::detail;
+
+static XMLP_ret parseXMLOctetVector(
+        tinyxml2::XMLElement* elem,
+        std::vector<octet>& octet_vector,
+        bool allow_empty)
+{
+    std::string text = get_element_text(elem);
+    if (text.empty() && allow_empty)
+    {
+        return XMLP_ret::XML_OK;
+    }
+
+    std::istringstream ss(text);
+    ss >> std::hex;
+
+    while (!ss.eof())
+    {
+        uint16_t o = 0;
+        ss >> o;
+
+        if (!ss || std::numeric_limits<octet>::max() < o)
+        {
+            EPROSIMA_LOG_ERROR(XMLPARSER, "Expected an octet value on line " << elem->GetLineNum());
+            return XMLP_ret::XML_ERROR;
+        }
+
+        // Add octet in vector.
+        octet_vector.push_back(static_cast<octet>(o));
+
+        if (!ss.eof())
+        {
+            char c = 0;
+            ss >> c;
+
+            if (!ss || '.' != c)
+            {
+                EPROSIMA_LOG_ERROR(XMLPARSER, "Expected a '.' separator on line " << elem->GetLineNum());
+                return XMLP_ret::XML_ERROR;
+            }
+        }
+    }
+
+    return XMLP_ret::XML_OK;
+}
 
 XMLP_ret XMLParser::getXMLParticipantAllocationAttributes(
         tinyxml2::XMLElement* elem,
@@ -285,18 +428,18 @@ XMLP_ret XMLParser::getXMLDiscoverySettings(
                     </xs:restriction>
                 </xs:simpleType>
              */
-            const char* text = p_aux0->GetText();
-            if (nullptr == text)
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << _EDP << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            else if (strcmp(text, SIMPLE) == 0)
+            else if (strcmp(text.c_str(), SIMPLE) == 0)
             {
                 settings.use_SIMPLE_EndpointDiscoveryProtocol = true;
                 settings.use_STATIC_EndpointDiscoveryProtocol = false;
             }
-            else if (strcmp(text, STATIC) == 0)
+            else if (strcmp(text.c_str(), STATIC) == 0)
             {
                 settings.use_SIMPLE_EndpointDiscoveryProtocol = false;
                 settings.use_STATIC_EndpointDiscoveryProtocol = true;
@@ -764,8 +907,8 @@ XMLP_ret XMLParser::getXMLTransports(
 
     while (nullptr != p_aux0)
     {
-        const char* text = p_aux0->GetText();
-        if (nullptr == text)
+        std::string text = get_element_text(p_aux0);
+        if (text.empty())
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << TRANSPORT_ID << "' without content");
             return XMLP_ret::XML_ERROR;
@@ -865,21 +1008,16 @@ XMLP_ret XMLParser::getXMLTopicAttributes(
                     </xs:restriction>
                 </xs:simpleType>
              */
-            const char* text = p_aux0->GetText();
-            if (nullptr == text)
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            if (strcmp(text, _NO_KEY) == 0)
-            {
-                topic.topicKind = TopicKind_t::NO_KEY;
-            }
-            else if (strcmp(text, _WITH_KEY) == 0)
-            {
-                topic.topicKind = TopicKind_t::WITH_KEY;
-            }
-            else
+
+            if (!get_element_enum_value(text.c_str(), topic.topicKind,
+                    _NO_KEY, TopicKind_t::NO_KEY,
+                    _WITH_KEY, TopicKind_t::WITH_KEY))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
@@ -888,8 +1026,8 @@ XMLP_ret XMLParser::getXMLTopicAttributes(
         else if (strcmp(name, NAME) == 0)
         {
             // name - stringType
-            const char* text;
-            if (nullptr == (text = p_aux0->GetText()))
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "<" << p_aux0->Value() << "> getXMLString XML_ERROR!");
                 return XMLP_ret::XML_ERROR;
@@ -899,8 +1037,8 @@ XMLP_ret XMLParser::getXMLTopicAttributes(
         else if (strcmp(name, DATA_TYPE) == 0)
         {
             // dataType - stringType
-            const char* text;
-            if (nullptr == (text = p_aux0->GetText()))
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "<" << p_aux0->Value() << "> getXMLString XML_ERROR!");
                 return XMLP_ret::XML_ERROR;
@@ -1110,21 +1248,16 @@ XMLP_ret XMLParser::getXMLHistoryQosPolicy(
                     </xs:restriction>
                 </xs:simpleType>
              */
-            const char* text = p_aux0->GetText();
-            if (nullptr == text)
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            if (strcmp(text, KEEP_LAST) == 0)
-            {
-                historyQos.kind = HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS;
-            }
-            else if (strcmp(text, KEEP_ALL) == 0)
-            {
-                historyQos.kind = HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS;
-            }
-            else
+
+            if (!get_element_enum_value(text.c_str(), historyQos.kind,
+                    KEEP_LAST, HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS,
+                    KEEP_ALL, HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
@@ -1522,30 +1655,19 @@ XMLP_ret XMLParser::getXMLDurabilityQos(
                     </xs:restriction>
                 </xs:simpleType>
              */
-            const char* text = p_aux0->GetText();
-            if (nullptr == text)
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
             bKindDefined = true;
-            if (strcmp(text, _VOLATILE) == 0)
-            {
-                durability.kind = DurabilityQosPolicyKind::VOLATILE_DURABILITY_QOS;
-            }
-            else if (strcmp(text, _TRANSIENT_LOCAL) == 0)
-            {
-                durability.kind = DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS;
-            }
-            else if (strcmp(text, _TRANSIENT) == 0)
-            {
-                durability.kind = DurabilityQosPolicyKind::TRANSIENT_DURABILITY_QOS;
-            }
-            else if (strcmp(text, _PERSISTENT) == 0)
-            {
-                durability.kind = DurabilityQosPolicyKind::PERSISTENT_DURABILITY_QOS;
-            }
-            else
+
+            if (!get_element_enum_value(text.c_str(), durability.kind,
+                    _VOLATILE, DurabilityQosPolicyKind::VOLATILE_DURABILITY_QOS,
+                    _TRANSIENT_LOCAL, DurabilityQosPolicyKind::TRANSIENT_LOCAL_DURABILITY_QOS,
+                    _TRANSIENT, DurabilityQosPolicyKind::TRANSIENT_DURABILITY_QOS,
+                    _PERSISTENT, DurabilityQosPolicyKind::PERSISTENT_DURABILITY_QOS))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
@@ -1610,17 +1732,17 @@ XMLP_ret XMLParser::getXMLDurabilityQos(
             //        </xs:restriction>
             //    </xs:simpleType>
             //
-            const char* text = p_aux0->GetText();
-            if (nullptr == text)
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << HISTORY_KIND << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            if (strcmp(text, KEEP_LAST) == 0)
+            if (strcmp(text.c_str(), KEEP_LAST) == 0)
             {
                 durabilityService.history_kind = HistoryQosPolicyKind::KEEP_LAST_HISTORY_QOS;
             }
-            else if (strcmp(text, KEEP_ALL) == 0)
+            else if (strcmp(text.c_str(), KEEP_ALL) == 0)
             {
                 durabilityService.history_kind = HistoryQosPolicyKind::KEEP_ALL_HISTORY_QOS;
             }
@@ -1788,25 +1910,17 @@ XMLP_ret XMLParser::getXMLLivelinessQos(
                     </xs:restriction>
                 </xs:simpleType>
              */
-            const char* text = p_aux0->GetText();
-            if (nullptr == text)
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            if (strcmp(text, AUTOMATIC) == 0)
-            {
-                liveliness.kind = LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS;
-            }
-            else if (strcmp(text, MANUAL_BY_PARTICIPANT) == 0)
-            {
-                liveliness.kind = LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS;
-            }
-            else if (strcmp(text, MANUAL_BY_TOPIC) == 0)
-            {
-                liveliness.kind = LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS;
-            }
-            else
+
+            if (!get_element_enum_value(text.c_str(), liveliness.kind,
+                    AUTOMATIC, LivelinessQosPolicyKind::AUTOMATIC_LIVELINESS_QOS,
+                    MANUAL_BY_PARTICIPANT, LivelinessQosPolicyKind::MANUAL_BY_PARTICIPANT_LIVELINESS_QOS,
+                    MANUAL_BY_TOPIC, LivelinessQosPolicyKind::MANUAL_BY_TOPIC_LIVELINESS_QOS))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
@@ -1868,21 +1982,16 @@ XMLP_ret XMLParser::getXMLReliabilityQos(
                     </xs:restriction>
                 </xs:simpleType>
              */
-            const char* text = p_aux0->GetText();
-            if (nullptr == text)
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            if (strcmp(text, _BEST_EFFORT) == 0)
-            {
-                reliability.kind = ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS;
-            }
-            else if (strcmp(text, _RELIABLE) == 0)
-            {
-                reliability.kind = ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS;
-            }
-            else
+
+            if (!get_element_enum_value(text.c_str(), reliability.kind,
+                    _BEST_EFFORT, ReliabilityQosPolicyKind::BEST_EFFORT_RELIABILITY_QOS,
+                    _RELIABLE, ReliabilityQosPolicyKind::RELIABLE_RELIABILITY_QOS))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
@@ -2028,25 +2137,18 @@ XMLP_ret XMLParser::getXMLDataSharingQos(
                     </xs:restriction>
                 </xs:simpleType>
              */
-            const char* text = p_aux0->GetText();
-            if (nullptr == text)
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            if (strcmp(text, ON) == 0)
-            {
-                kind = DataSharingKind::ON;
-            }
-            else if (strcmp(text, OFF) == 0)
-            {
-                kind = DataSharingKind::OFF;
-            }
-            else if (strcmp(text, AUTOMATIC) == 0)
-            {
-                kind = DataSharingKind::AUTO;
-            }
-            else
+
+            if (!get_element_enum_value(text.c_str(), kind,
+                    ON, DataSharingKind::ON,
+                    OFF, DataSharingKind::OFF,
+                    AUTOMATIC, DataSharingKind::AUTO,
+                    AUTO, DataSharingKind::AUTO))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
@@ -2232,21 +2334,16 @@ XMLP_ret XMLParser::getXMLOwnershipQos(
             //    </xs:simpleType>
 
             bKindDefined = true;
-            const char* text = p_aux0->GetText();
-            if (nullptr == text)
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            if (strcmp(text, SHARED) == 0)
-            {
-                ownership.kind = OwnershipQosPolicyKind::SHARED_OWNERSHIP_QOS;
-            }
-            else if (strcmp(text, EXCLUSIVE) == 0)
-            {
-                ownership.kind = OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS;
-            }
-            else
+
+            if (!get_element_enum_value(text.c_str(), ownership.kind,
+                    SHARED, OwnershipQosPolicyKind::SHARED_OWNERSHIP_QOS,
+                    EXCLUSIVE, OwnershipQosPolicyKind::EXCLUSIVE_OWNERSHIP_QOS))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' with bad content");
                 return XMLP_ret::XML_ERROR;
@@ -2265,8 +2362,7 @@ XMLP_ret XMLParser::getXMLOwnershipQos(
         return XMLP_ret::XML_ERROR;
     }
 
-    return XMLP_ret::
-                   XML_OK;
+    return XMLP_ret::XML_OK;
 }
 
 XMLP_ret XMLParser::getXMLOwnershipStrengthQos(
@@ -2344,7 +2440,7 @@ XMLP_ret XMLParser::getXMLOwnershipStrengthQos(
             //    </xs:simpleType>
 
             bKindDefined = true;
-            const char* text = p_aux0->GetText();
+            const char* text = get_element_text(p_aux0);
             if (nullptr == text)
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
@@ -2415,7 +2511,7 @@ XMLP_ret XMLParser::getXMLOwnershipStrengthQos(
             //        </xs:restriction>
             //    </xs:simpleType>
 
-            const char* text = p_aux0->GetText();
+            const char* text = get_element_text(p_aux0);
             if (nullptr == text)
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << ACCESS_SCOPE << "' without content");
@@ -2553,21 +2649,16 @@ XMLP_ret XMLParser::getXMLPublishModeQos(
                 </xs:simpleType>
              */
             bKindDefined = true;
-            const char* text = p_aux0->GetText();
-            if (nullptr == text)
+            std::string text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
                 return XMLP_ret::XML_ERROR;
             }
-            if (strcmp(text, SYNCHRONOUS) == 0)
-            {
-                publishMode.kind = PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE;
-            }
-            else if (strcmp(text, ASYNCHRONOUS) == 0)
-            {
-                publishMode.kind = PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE;
-            }
-            else
+
+            if (!get_element_enum_value(text.c_str(), publishMode.kind,
+                    SYNCHRONOUS, PublishModeQosPolicyKind::SYNCHRONOUS_PUBLISH_MODE,
+                    ASYNCHRONOUS, PublishModeQosPolicyKind::ASYNCHRONOUS_PUBLISH_MODE))
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' bad content");
                 return XMLP_ret::XML_ERROR;
@@ -2622,9 +2713,9 @@ XMLP_ret XMLParser::getXMLDuration(
     std::regex infinite(DURATION_INFINITY);
     std::regex infinite_sec(DURATION_INFINITE_SEC);
     std::regex infinite_nsec(DURATION_INFINITE_NSEC);
-    const char* text = elem->GetText();
+    std::string text = get_element_text(elem);
 
-    if (text != nullptr && std::regex_match(text, infinite))
+    if (!text.empty() && std::regex_match(text, infinite))
     {
         empty = false;
         duration = c_TimeInfinite;
@@ -2661,8 +2752,8 @@ XMLP_ret XMLParser::getXMLDuration(
                     </xs:union>
                 </xs:simpleType>
              */
-            text = p_aux0->GetText();
-            if (nullptr == text)
+            text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node 'SECONDS' without content");
                 return XMLP_ret::XML_ERROR;
@@ -2695,8 +2786,8 @@ XMLP_ret XMLParser::getXMLDuration(
                     </xs:union>
                 </xs:simpleType>
              */
-            text = p_aux0->GetText();
-            if (nullptr == text)
+            text = get_element_text(p_aux0);
+            if (text.empty())
             {
                 EPROSIMA_LOG_ERROR(XMLPARSER, "Node 'NANOSECONDS' without content");
                 return XMLP_ret::XML_ERROR;
@@ -3360,29 +3451,18 @@ XMLP_ret XMLParser::getXMLHistoryMemoryPolicy(
             </xs:restriction>
         </xs:simpleType>
      */
-    const char* text = elem->GetText();
-    if (nullptr == text)
+    std::string text = get_element_text(elem);
+    if (text.empty())
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' without content");
         return XMLP_ret::XML_ERROR;
     }
-    if (strcmp(text, PREALLOCATED) == 0)
-    {
-        historyMemoryPolicy = MemoryManagementPolicy::PREALLOCATED_MEMORY_MODE;
-    }
-    else if (strcmp(text, PREALLOCATED_WITH_REALLOC) == 0)
-    {
-        historyMemoryPolicy = MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE;
-    }
-    else if (strcmp(text, DYNAMIC) == 0)
-    {
-        historyMemoryPolicy = MemoryManagementPolicy::DYNAMIC_RESERVE_MEMORY_MODE;
-    }
-    else if (strcmp(text, DYNAMIC_REUSABLE) == 0)
-    {
-        historyMemoryPolicy = MemoryManagementPolicy::DYNAMIC_REUSABLE_MEMORY_MODE;
-    }
-    else
+
+    if (!get_element_enum_value(text.c_str(), historyMemoryPolicy,
+            PREALLOCATED, MemoryManagementPolicy::PREALLOCATED_MEMORY_MODE,
+            PREALLOCATED_WITH_REALLOC, MemoryManagementPolicy::PREALLOCATED_WITH_REALLOC_MEMORY_MODE,
+            DYNAMIC, MemoryManagementPolicy::DYNAMIC_RESERVE_MEMORY_MODE,
+            DYNAMIC_REUSABLE, MemoryManagementPolicy::DYNAMIC_REUSABLE_MEMORY_MODE))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << KIND << "' bad content");
         return XMLP_ret::XML_ERROR;
@@ -3509,12 +3589,10 @@ XMLP_ret XMLParser::getXMLPropertiesPolicy(
                     }
                     else if (strcmp(sub_name, VALUE) == 0)
                     {
-                        // TODO:
-                        // value - stringType
-                        EPROSIMA_LOG_ERROR(XMLPARSER, "Tag '" << p_aux2->Value() << "' do not supported for now");
-                        /*std::string s = "";
-                           if (XMLP_ret::XML_OK != getXMLString(p_aux2, &s, ident + 2)) return XMLP_ret::XML_ERROR;
-                           bin_prop.value(s);*/
+                        if (XMLP_ret::XML_OK != parseXMLOctetVector(p_aux2, bin_prop.value(), true))
+                        {
+                            return XMLP_ret::XML_ERROR;
+                        }
                     }
                     else if (strcmp(sub_name, PROPAGATE) == 0)
                     {
@@ -3552,61 +3630,29 @@ XMLP_ret XMLParser::getXMLOctetVector(
     }
 
     tinyxml2::XMLElement* p_aux0 = nullptr;
-    XMLP_ret ret_value = XMLP_ret::XML_OK;
     size_t num_elems = 0;
+    XMLP_ret ret_val = XMLP_ret::XML_OK;
 
     for (p_aux0 = elem->FirstChildElement(); nullptr != p_aux0; p_aux0 = p_aux0->NextSiblingElement())
     {
         if (1 < ++num_elems)
         {
             EPROSIMA_LOG_ERROR(XMLPARSER, "More than one tag on " << p_aux0->GetLineNum());
-            ret_value = XMLP_ret::XML_ERROR;
+            return XMLP_ret::XML_ERROR;
         }
         if (0 == strcmp(p_aux0->Name(), VALUE))
         {
-            std::string text = p_aux0->GetText();
-            std::istringstream ss(text);
-
-            ss >> std::hex;
-
-            while (!ss.eof())
-            {
-                uint16_t o = 0;
-                ss >> o;
-
-                if (!ss || std::numeric_limits<octet>::max() < o)
-                {
-                    EPROSIMA_LOG_ERROR(XMLPARSER, "Expected an octet value on line " << p_aux0->GetLineNum());
-                    ret_value = XMLP_ret::XML_ERROR;
-                    break;
-                }
-
-                // Add octet in vector.
-                octet_vector.push_back(static_cast<octet>(o));
-
-                if (!ss.eof())
-                {
-                    char c = 0;
-                    ss >> c;
-
-                    if (!ss || '.' != c)
-                    {
-                        EPROSIMA_LOG_ERROR(XMLPARSER, "Expected a '.' separator on line " << p_aux0->GetLineNum());
-                        ret_value = XMLP_ret::XML_ERROR;
-                        break;
-                    }
-                }
-            }
+            ret_val = parseXMLOctetVector(p_aux0, octet_vector, false);
         }
         else
         {
             EPROSIMA_LOG_ERROR(XMLPARSER,
                     "Invalid tag with name of " << p_aux0->Name() << " on line " << p_aux0->GetLineNum());
-            ret_value = XMLP_ret::XML_ERROR;
+            return XMLP_ret::XML_ERROR;
         }
     }
 
-    return ret_value;
+    return ret_val;
 }
 
 XMLP_ret XMLParser::getXMLInt(
@@ -3619,7 +3665,9 @@ XMLP_ret XMLParser::getXMLInt(
         EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (tinyxml2::XMLError::XML_SUCCESS != elem->QueryIntText(in))
+
+    std::string text = get_element_text(elem);
+    if (text.empty() || !tinyxml2::XMLUtil::ToInt(text.c_str(), in))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLInt XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -3637,7 +3685,9 @@ XMLP_ret XMLParser::getXMLUint(
         EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (tinyxml2::XMLError::XML_SUCCESS != elem->QueryUnsignedText(ui))
+
+    std::string text = get_element_text(elem);
+    if (text.empty() || !tinyxml2::XMLUtil::ToUnsigned(text.c_str(), ui))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -3656,8 +3706,9 @@ XMLP_ret XMLParser::getXMLUint(
         EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (tinyxml2::XMLError::XML_SUCCESS != elem->QueryUnsignedText(&ui) ||
-            ui >= 65536)
+
+    std::string text = get_element_text(elem);
+    if (text.empty() || !tinyxml2::XMLUtil::ToUnsigned(text.c_str(), &ui) || ui >= 65536)
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -3676,7 +3727,9 @@ XMLP_ret XMLParser::getXMLBool(
         EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (tinyxml2::XMLError::XML_SUCCESS != elem->QueryBoolText(b))
+
+    std::string text = get_element_text(elem);
+    if (text.empty() || !tinyxml2::XMLUtil::ToBool(text.c_str(), b))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLBool XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -3697,31 +3750,23 @@ XMLP_ret XMLParser::getXMLEnum(
     //    </xs:restriction>
     //</xs:simpleType>
 
-    const char* text = nullptr;
-
     if (nullptr == elem || nullptr == e)
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLEnum XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (nullptr == (text = elem->GetText()))
+
+    std::string text = get_element_text(elem);
+    if (text.empty())
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLEnum XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (strcmp(text, OFF) == 0)
-    {
-        *e = IntraprocessDeliveryType::INTRAPROCESS_OFF;
-    }
-    else if (strcmp(text, USER_DATA_ONLY) == 0)
-    {
-        *e = IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY;
-    }
-    else if (strcmp(text, FULL) == 0)
-    {
-        *e = IntraprocessDeliveryType::INTRAPROCESS_FULL;
-    }
-    else
+
+    if (!get_element_enum_value(text.c_str(), *e,
+            OFF, IntraprocessDeliveryType::INTRAPROCESS_OFF,
+            USER_DATA_ONLY, IntraprocessDeliveryType::INTRAPROCESS_USER_DATA_ONLY,
+            FULL, IntraprocessDeliveryType::INTRAPROCESS_FULL))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << INTRAPROCESS_DELIVERY << "' with bad content");
         return XMLP_ret::XML_ERROR;
@@ -3748,43 +3793,27 @@ XMLP_ret XMLParser::getXMLEnum(
         </xs:simpleType>
      */
 
-    const char* text = nullptr;
 
     if (nullptr == elem || nullptr == e)
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLEnum XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (nullptr == (text = elem->GetText()))
+
+    std::string text = get_element_text(elem);
+    if (text.empty())
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLEnum XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (strcmp(text, NONE) == 0)
-    {
-        *e = DiscoveryProtocol_t::NONE;
-    }
-    else if (strcmp(text, SIMPLE) == 0)
-    {
-        *e = DiscoveryProtocol_t::SIMPLE;
-    }
-    else if (strcmp(text, CLIENT) == 0)
-    {
-        *e = DiscoveryProtocol_t::CLIENT;
-    }
-    else if (strcmp(text, SERVER) == 0)
-    {
-        *e = DiscoveryProtocol_t::SERVER;
-    }
-    else if (strcmp(text, BACKUP) == 0)
-    {
-        *e = DiscoveryProtocol_t::BACKUP;
-    }
-    else if (strcmp(text, SUPER_CLIENT) == 0)
-    {
-        *e = DiscoveryProtocol_t::SUPER_CLIENT;
-    }
-    else
+
+    if (!get_element_enum_value(text.c_str(), *e,
+            NONE, DiscoveryProtocol_t::NONE,
+            SIMPLE, DiscoveryProtocol_t::SIMPLE,
+            CLIENT, DiscoveryProtocol_t::CLIENT,
+            SERVER, DiscoveryProtocol_t::SERVER,
+            BACKUP, DiscoveryProtocol_t::BACKUP,
+            SUPER_CLIENT, DiscoveryProtocol_t::SUPER_CLIENT))
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "Node '" << RTPS_PDP_TYPE << "' with bad content");
         return XMLP_ret::XML_ERROR;
@@ -3806,14 +3835,14 @@ XMLP_ret XMLParser::getXMLEnum(
         </xs:simpleType>
      */
 
-    const char* text = nullptr;
-
     if (nullptr == elem || nullptr == e)
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLEnum XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (nullptr == (text = elem->GetText()))
+
+    std::string text = get_element_text(elem);
+    if (text.empty())
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLEnum XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -3830,7 +3859,7 @@ XMLP_ret XMLParser::getXMLEnum(
 
     // Lets parse the flags, we assume the flags argument has been already flushed
     std::regex flags("FILTER_DIFFERENT_HOST|FILTER_DIFFERENT_PROCESS|FILTER_SAME_PROCESS");
-    std::cregex_iterator it(text, text + strlen(text), flags);
+    std::cregex_iterator it(text.c_str(), text.c_str() + strlen(text.c_str()), flags);
     uint32_t newflags = *e;
 
     while (it != std::cregex_iterator())
@@ -3964,14 +3993,14 @@ XMLP_ret XMLParser::getXMLString(
         std::string* s,
         uint8_t /*ident*/)
 {
-    const char* text = nullptr;
-
     if (nullptr == elem || nullptr == s)
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLUint XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (nullptr == (text = elem->GetText()))
+
+    std::string text = get_element_text(elem);
+    if (text.empty())
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLString XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -3985,14 +4014,14 @@ XMLP_ret XMLParser::getXMLguidPrefix(
         GuidPrefix_t& prefix,
         uint8_t /*ident*/)
 {
-    const char* text = nullptr;
-
     if (nullptr == elem )
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "nullptr when getXMLguidPrefix XML_ERROR!");
         return XMLP_ret::XML_ERROR;
     }
-    else if (nullptr == (text = elem->GetText()))
+
+    std::string text = get_element_text(elem);
+    if (text.empty())
     {
         EPROSIMA_LOG_ERROR(XMLPARSER, "<" << elem->Value() << "> getXMLguidPrefix XML_ERROR!");
         return XMLP_ret::XML_ERROR;
@@ -4341,3 +4370,7 @@ XMLP_ret XMLParser::getXMLSubscriberAttributes(
 
     return XMLP_ret::XML_OK;
 }
+
+}  // namespace xmlparser
+}  // namespace fastrtps
+}  // namespace eprosima

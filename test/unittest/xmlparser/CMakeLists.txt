@@ -28,6 +28,9 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_root_library_settings_profil
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profile.xml
     COPYONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_profile_env_var.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/test_xml_profile_env_var.xml
+    COPYONLY)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_xml_deprecated.xml
     ${CMAKE_CURRENT_BINARY_DIR}/test_xml_deprecated.xml
     COPYONLY)
@@ -110,6 +113,7 @@ set(XMLPROFILEPARSER_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/TypesBase.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/dynamic-types/BuiltinAnnotationsTypeObject.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
+    ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
     )
 
@@ -150,6 +154,7 @@ target_include_directories(XMLProfileParserTests PRIVATE
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv4TransportDescriptor
     ${PROJECT_SOURCE_DIR}/test/mock/rtps/UDPv6TransportDescriptor
     ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include
+    ${PROJECT_SOURCE_DIR}/src/cpp
     ${Asio_INCLUDE_DIR}
     $<$<BOOL:${ANDROID}>:${ANDROID_IFADDRS_INCLUDE_DIR}>
     )
