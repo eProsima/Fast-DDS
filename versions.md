@@ -5,12 +5,13 @@ Forthcoming
   No metatraffic over SHM transport by default.
 * Exposed custom payload pool on DDS endpoints declaration
 * Processing environment variables on XML text
-* Upgrade to support Fast-CDR v2.0.0.
+* Upgrade to support Fast CDR v2.0.0.
   Default encoding is XCDRv1 to maintain interoperability with previous Fast-DDS versions.
   Some concerns:
-    - Data type source code generated with Fast-DDS-Gen v2 should be regenerated using Fast-DDS-Gen v3.
+    - Data type source code generated with Fast DDS-Gen v2 should be regenerated using Fast DDS-Gen v3.
     - **API break**. Changed a `MEMBER_INVALID` identifier from a `#define` to a `constexpr`.
       Although this is not a new major version, using a `#define` is a bad conduct which was decided to be changed.
+      Note that new `constexpr` is inside namespace `eprosima::fastrtps::types`.
 
 Version 2.11.0
 --------------
