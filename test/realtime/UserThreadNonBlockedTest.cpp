@@ -76,9 +76,7 @@ public:
         // Object that manages the raw buffer.
         eprosima::fastcdr::FastBuffer fastbuffer((char*)payload->data, payload->length);
         // Object that serializes the data.
-        eprosima::fastcdr::Cdr deser(fastbuffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                eprosima::fastdds::dds::DEFAULT_XCDR_VERSION);     // Object that deserializes the data.
-        // Deserialize encapsulation.
+        eprosima::fastcdr::Cdr deser(fastbuffer);       // Deserialize encapsulation.
         deser.read_encapsulation();
         payload->encapsulation = deser.endianness() == eprosima::fastcdr::Cdr::BIG_ENDIANNESS ? CDR_BE : CDR_LE;
         //serialize the object:

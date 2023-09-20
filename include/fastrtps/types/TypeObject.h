@@ -8041,6 +8041,24 @@ public:
         return m_complete;
     }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::TypeInformation::getCdrSerializedSize()",
+            "In favor of version using eprosima::fastcdr::calculate_serialized_size.")
+    RTPS_DllAPI static size_t getCdrSerializedSize(
+            const TypeInformation& data,
+            size_t current_alignment = 0);
+
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::TypeInformation::serialize()",
+            "In favor of version using eprosima::fastcdr::serialize.")
+    RTPS_DllAPI void serialize(
+            eprosima::fastcdr::Cdr& cdr) const;
+
+    FASTDDS_DEPRECATED_UNTIL(3, "eprosima::fastrtps::types::TypeInformation::deserialize()",
+            "In favor of version using eprosima::fastcdr::deserialize.")
+    RTPS_DllAPI void deserialize(
+            eprosima::fastcdr::Cdr& cdr);
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+
 private:
 
     TypeIdentifierWithDependencies m_minimal;

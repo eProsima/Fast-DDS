@@ -184,11 +184,11 @@ public:
             fastrtps::rtps::SerializedPayload_t* payload,
             void* data);
 
-    /**
-     * @brief Getter for the SerializedSizeProvider
+    /*!
+     * @brief Returns a function which can be used to calculate the serialized size of the provided data.
      *
-     * @param data Pointer to data
-     * @return function
+     * @param[in] data Pointer to data.
+     * @return Functor which calculates the serialized size of the data.
      */
     RTPS_DllAPI virtual std::function<uint32_t()> get_serialized_size_provider(
             void* data)
@@ -196,12 +196,12 @@ public:
         return get_serialized_size_provider(data, DEFAULT_DATA_REPRESENTATION);
     }
 
-    /**
-     * @brief Getter for the SerializedSizeProvider
+    /*!
+     * @brief Returns a function which can be used to calculate the serialized size of the provided data.
      *
-     * @param data Pointer to data
-     * @param data_representation Representation that should be used for calculating the serialized size.
-     * @return function
+     * @param[in] data Pointer to data.
+     * @param[in] data_representation Representation that should be used for calculating the serialized size.
+     * @return Functor which calculates the serialized size of the data.
      */
     RTPS_DllAPI virtual std::function<uint32_t()> get_serialized_size_provider(
             void* data,
@@ -285,7 +285,7 @@ public:
     }
 
     /**
-     * Checks if the type is plain when using an specific encoding.
+     * Checks if the type is plain when using a specific encoding.
      */
     RTPS_DllAPI virtual inline bool is_plain(
             DataRepresentationId_t data_representation) const

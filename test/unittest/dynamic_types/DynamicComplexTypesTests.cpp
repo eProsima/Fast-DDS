@@ -2000,7 +2000,6 @@ TEST_F(DynamicComplexTypesTests, Data_Comparison_B_C)
        dataSeqSeqOctet->insert_sequence_data(id);
        dataSeqSeqOctet->set_complex_value(dataSeqOctet, id);*/
     // insert_map_data(DynamicData_ptr key, MemberId& outKeyId, MemberId& outValueId);
-    // TODO De la muerte para Juan Carlos - Esto no es NADA práctico...
 
     key = DynamicDataFactory::get_instance()->create_data(long_builder->build());
     key->set_int32_value(0);

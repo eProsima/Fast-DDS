@@ -78,7 +78,7 @@ module bitmodule
 
 struct StructTest : NewAliases
 {
-	//WCharUnion charUnion; //TODO(richiware) Remove when xtype 1.3
+	//WCharUnion charUnion; //TODO(richiware) Remove when xtype 1.3. Uncomment also in DynamicTypes_4_2_Tests.cpp
 	OctetUnion octetUnion;
 	Int8Union int8Union;
 	bitmodule::BM2 myStructBits;

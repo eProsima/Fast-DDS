@@ -24,9 +24,9 @@ struct BasicStruct
     double my_float64;
     long double my_float128;
     char my_char;
-    //wchar my_wchar; //TODO(richiware) Remove when xtype 1.3
+    //wchar my_wchar; //TODO(richiware) Remove when xtype 1.3. Also in DynamicComplexTypesTests.cpp.
     string my_string;
-    //wstring my_wstring; //TODO(richiware) Remove when xtype 1.3
+    //wstring my_wstring; //TODO(richiware) Remove when xtype 1.3. Also in DynamicComplexTypesTests.cpp.
 };
 
 typedef octet MyOctetArray500[500];

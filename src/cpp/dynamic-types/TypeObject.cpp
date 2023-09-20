@@ -8821,6 +8821,27 @@ TypeInformation& TypeInformation::operator =(
     return *this;
 }
 
+size_t TypeInformation::getCdrSerializedSize(
+        const TypeInformation& data,
+        size_t current_alignment)
+{
+    size_t initial_alignment = current_alignment;
+    eprosima::fastcdr::CdrSizeCalculator calculator(eprosima::fastcdr::CdrVersion::XCDRv2);
+    return eprosima::fastcdr::calculate_serialized_size(calculator, data, current_alignment) - initial_alignment;
+}
+
+void TypeInformation::serialize(
+        eprosima::fastcdr::Cdr& scdr) const
+{
+    eprosima::fastcdr::serialize(scdr, *this);
+}
+
+void TypeInformation::deserialize(
+        eprosima::fastcdr::Cdr& dcdr)
+{
+    eprosima::fastcdr::deserialize(dcdr, *this);
+}
+
 OctetSeq& operator ++(
         OctetSeq& s)
 {
