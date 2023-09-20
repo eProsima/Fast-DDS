@@ -1,9 +1,8 @@
 #include <security/logging/LogTopic.h>
 
-#include <fastrtps/publisher/Publisher.h>
-#include <fastrtps/log/Log.h>
-
 #include <functional>
+
+#include <utils/threading.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -11,15 +10,13 @@ namespace rtps {
 namespace security {
 
 LogTopic::LogTopic(
-        std::function<void()> thread_init_cb)
+        uint32_t thread_id,
+        const fastdds::rtps::ThreadSettings& thr_config)
     : stop_(false)
-    , thread_([this, thread_init_cb]()
+    , thread_(
+        create_thread(
+            [this]()
             {
-                if (thread_init_cb)
-                {
-                    thread_init_cb();
-                }
-
                 while (true)
                 {
                     // Put the thread asleep until there is
@@ -37,7 +34,8 @@ LogTopic::LogTopic(
 
                     publish(*p);
                 }
-            })
+            },
+            thr_config, "dds.slog.%u", thread_id))
 {
     //
 }

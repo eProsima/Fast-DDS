@@ -2199,11 +2199,8 @@ bool RTPSParticipantImpl::is_security_enabled_for_reader(
 
 security::Logging* RTPSParticipantImpl::create_builtin_logging_plugin()
 {
-    return new security::LogTopic([this]()
-                   {
-                       uint32_t participant_id = static_cast<uint32_t>(m_att.participantID);
-                       set_name_to_current_thread("dds.slog.%u", participant_id);
-                   });
+    uint32_t participant_id = static_cast<uint32_t>(m_att.participantID);
+    return new security::LogTopic(participant_id, m_att.security_log_thread);
 }
 
 #endif // if HAVE_SECURITY
