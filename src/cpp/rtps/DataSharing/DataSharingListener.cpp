@@ -31,6 +31,7 @@ namespace rtps {
 DataSharingListener::DataSharingListener(
         std::shared_ptr<DataSharingNotification> notification,
         const std::string& datasharing_pools_directory,
+        const fastdds::rtps::ThreadSettings& thr_config,
         ResourceLimitedContainerConfig limits,
         RTPSReader* reader)
     : notification_(notification)
@@ -39,6 +40,7 @@ DataSharingListener::DataSharingListener(
     , writer_pools_(limits)
     , writer_pools_changed_(false)
     , datasharing_pools_directory_(datasharing_pools_directory)
+    , thread_config_(thr_config)
 {
 }
 
@@ -50,8 +52,6 @@ DataSharingListener::~DataSharingListener()
 
 void DataSharingListener::run()
 {
-    set_name_to_current_thread("dds.dsha.%u", reader_->getGuid().entityId.to_uint32() & 0x0000FFFF);
-
     std::unique_lock<Segment::mutex> lock(notification_->notification_->notification_mutex, std::defer_lock);
     while (is_running_.load())
     {
@@ -100,13 +100,15 @@ void DataSharingListener::start()
     }
 
     // Initialize the thread
-    listening_thread_ = new std::thread(&DataSharingListener::run, this);
+    uint32_t thread_id = reader_->getGuid().entityId.to_uint32() & 0x0000FFFF;
+    listening_thread_ = create_thread([this]()
+                    {
+                        run();
+                    }, thread_config_, "dds.dsha.%u", thread_id);
 }
 
 void DataSharingListener::stop()
 {
-    std::thread* thr = nullptr;
-
     {
         std::lock_guard<std::mutex> guard(mutex_);
 
@@ -116,15 +118,11 @@ void DataSharingListener::stop()
         {
             return;
         }
-
-        thr = listening_thread_;
-        listening_thread_ = nullptr;
     }
 
     // Notify the thread and wait for it to finish
     notification_->notify();
-    thr->join();
-    delete thr;
+    listening_thread_.join();
 }
 
 void DataSharingListener::process_new_data ()
