@@ -2790,7 +2790,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
     serialized_msg.wraps = true;
 
     serialized_msg.buffer = msg.value().entity_proxy().data();
-    serialized_msg.length = msg.value().entity_proxy().size();
+    serialized_msg.length = static_cast<uint32_t>(msg.value().entity_proxy().size());
 
     ret = data.readFromCDRMessage(
         &serialized_msg,
@@ -2811,7 +2811,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
     serialized_msg.wraps = true;
 
     serialized_msg.buffer = msg.value().entity_proxy().data();
-    serialized_msg.length = msg.value().entity_proxy().size();
+    serialized_msg.length = static_cast<uint32_t>(msg.value().entity_proxy().size());
 
     ret = data.readFromCDRMessage(
         &serialized_msg,
@@ -2831,7 +2831,7 @@ bool RTPSParticipantImpl::fill_discovery_data_from_cdr_message(
     serialized_msg.wraps = true;
 
     serialized_msg.buffer = msg.value().entity_proxy().data();
-    serialized_msg.length = msg.value().entity_proxy().size();
+    serialized_msg.length = static_cast<uint32_t>(msg.value().entity_proxy().size());
 
     ret = data.readFromCDRMessage(
         &serialized_msg,
