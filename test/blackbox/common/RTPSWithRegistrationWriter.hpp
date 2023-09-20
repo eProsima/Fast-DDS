@@ -228,7 +228,7 @@ public:
 
             eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
             eprosima::fastcdr::Cdr cdr(buffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                    eprosima::fastdds::dds::DEFAULT_XCDR_VERSION);
+                    eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);
 
             cdr.serialize_encapsulation();
             cdr << *it;
@@ -251,7 +251,7 @@ public:
 
         eprosima::fastcdr::FastBuffer buffer((char*)ch->serializedPayload.data, ch->serializedPayload.max_size);
         eprosima::fastcdr::Cdr cdr(buffer, eprosima::fastcdr::Cdr::DEFAULT_ENDIAN,
-                eprosima::fastdds::dds::DEFAULT_XCDR_VERSION);
+                eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);
 
         cdr.serialize_encapsulation();
         cdr << msg;

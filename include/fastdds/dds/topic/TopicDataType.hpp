@@ -23,8 +23,8 @@
 #include <memory>
 #include <string>
 
-#include <fastdds/dds/common/CdrSerialization.hpp>
 #include <fastdds/dds/core/policy/QosPolicies.hpp>
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastdds/rtps/common/InstanceHandle.h>
 #include <fastdds/rtps/common/SerializedPayload.h>
 

@@ -145,7 +145,7 @@ bool DynamicPubSubType::getKey(
 
     eprosima::fastcdr::FastBuffer fastbuffer((char*)m_keyBuffer, keyBufferSize);
     eprosima::fastcdr::Cdr ser(fastbuffer, eprosima::fastcdr::Cdr::BIG_ENDIANNESS,
-            eprosima::fastdds::dds::DEFAULT_XCDR_VERSION);                                                                            // Object that serializes the data.
+            eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);                                                                            // Object that serializes the data.
     pDynamicData->serializeKey(ser);
     if (force_md5 || keyBufferSize > 16)
     {

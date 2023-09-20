@@ -26,11 +26,12 @@
 #include <vector>
 
 #include <fastcdr/CdrSizeCalculator.hpp>
-#include <fastdds/dds/common/CdrSerialization.hpp>
-#include <fastdds/rtps/Endpoint.h>
+
+#include <fastdds/rtps/common/CdrSerialization.hpp>
 #include <fastdds/rtps/attributes/HistoryAttributes.h>
 #include <fastdds/rtps/attributes/WriterAttributes.h>
 #include <fastdds/rtps/builtin/data/ReaderProxyData.h>
+#include <fastdds/rtps/Endpoint.h>
 #include <fastdds/rtps/interfaces/IReaderDataFilter.hpp>
 #include <fastdds/rtps/messages/RTPSMessageGroup.h>
 #include "DeliveryRetCode.hpp"
@@ -125,7 +126,7 @@ public:
         return new_change([data]() -> uint32_t
                        {
                            eprosima::fastcdr::CdrSizeCalculator calculator(
-                               eprosima::fastdds::dds::DEFAULT_XCDR_VERSION);
+                               eprosima::fastdds::rtps::DEFAULT_XCDR_VERSION);
                            size_t current_alignment {0};
                            return (uint32_t)calculator.calculate_serialized_size(data, current_alignment);
                        }, changeKind, handle);

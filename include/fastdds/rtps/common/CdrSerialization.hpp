@@ -16,18 +16,18 @@
  * @file CdrSerialization.hpp
  */
 
-#ifndef FASTDDS_DDS_COMMON_CDRSERIALIZATION_HPP
-#define FASTDDS_DDS_COMMON_CDRSERIALIZATION_HPP
+#ifndef FASTDDS_RTPS_COMMON_CDRSERIALIZATION_HPP
+#define FASTDDS_RTPS_COMMON_CDRSERIALIZATION_HPP
 
 #include <fastcdr/CdrEncoding.hpp>
 
 namespace eprosima {
 namespace fastdds {
-namespace dds {
+namespace rtps {
 //! Default XCDR encoding version used in Fast DDS.
 constexpr eprosima::fastcdr::CdrVersion DEFAULT_XCDR_VERSION {eprosima::fastcdr::CdrVersion::XCDRv1};
-} // namespace dds
+} // namespace rtps
 } // namespace fastdds
 } // namespace eprosima
 
-#endif // FASTDDS_DDS_COMMON_CDRSERIALIZATION_HPP
+#endif // FASTDDS_RTPS_COMMON_CDRSERIALIZATION_HPP
