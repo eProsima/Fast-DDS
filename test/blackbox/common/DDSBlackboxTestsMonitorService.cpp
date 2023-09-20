@@ -700,8 +700,8 @@ struct ProxySampleValidator : public SampleValidator
                     ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(pdata, data), ReturnCode_t::RETCODE_OK);
 
                     auto part_names = participant->get_participant_names();
-                    auto it = std::find(part_names.begin(), part_names.end(), pdata.m_participantName.to_string());
-                    ASSERT_TRUE(it != part_names.end());
+                    auto it_names = std::find(part_names.begin(), part_names.end(), pdata.m_participantName.to_string());
+                    ASSERT_TRUE(it_names != part_names.end());
                 }
                 else if (guid.entityId.is_reader())
                 {
