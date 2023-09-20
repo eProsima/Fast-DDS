@@ -800,6 +800,8 @@ bool MessageReceiver::proc_Submsg_Data(
             {
                 logWarning(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid or larger than maximum allowed size"
                         "(" << payload_size << "/" << (msg->length - msg->pos) << ")");
+                ch.serializedPayload.data = nullptr;
+                ch.inline_qos.data = nullptr;
                 return false;
             }
         }
@@ -807,7 +809,13 @@ bool MessageReceiver::proc_Submsg_Data(
         {
             if (payload_size <= 0)
             {
+<<<<<<< HEAD
                 logWarning(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid (" << payload_size << ")");
+=======
+                EPROSIMA_LOG_WARNING(RTPS_MSG_IN, IDSTRING "Serialized Payload value invalid (" << payload_size << ")");
+                ch.serializedPayload.data = nullptr;
+                ch.inline_qos.data = nullptr;
+>>>>>>> 47fe5d763 (Fix bad-free when receiving malformed DATA submessage (#3824))
                 return false;
             }
 
