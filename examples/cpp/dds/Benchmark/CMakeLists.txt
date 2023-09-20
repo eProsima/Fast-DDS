@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cmake_minimum_required(VERSION 3.16.3)
+cmake_minimum_required(VERSION 3.22)
 
 project("Benchmark" VERSION 1 LANGUAGES CXX)
 
@@ -55,4 +55,3 @@ target_compile_definitions(DDSBenchmark PRIVATE
 target_link_libraries(DDSBenchmark fastrtps fastcdr foonathan_memory)
 install(TARGETS DDSBenchmark
     RUNTIME DESTINATION examples/cpp/dds/Benchmark/${BIN_INSTALL_DIR})
-
