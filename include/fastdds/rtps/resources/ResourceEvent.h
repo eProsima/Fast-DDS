@@ -22,13 +22,14 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-#include <fastrtps/utils/TimedMutex.hpp>
-#include <fastrtps/utils/TimedConditionVariable.hpp>
-
 #include <atomic>
 #include <functional>
 #include <thread>
 #include <vector>
+
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
+#include <fastrtps/utils/TimedMutex.hpp>
+#include <fastrtps/utils/TimedConditionVariable.hpp>
 
 namespace eprosima {
 namespace fastrtps {
@@ -51,11 +52,16 @@ public:
     /*!
      * @brief Method to initialize the internal thread.
      *
-     * @param[in]  configure_cb  Function to be called in the context of the started thread
-     *                           before calling the internal service routine.
+     * @param[in]  thread_cfg  Settings to apply to the created thread.
+     * @param[in]  name_fmt    A null-terminated string to be used as the format argument of
+     *                         a `snprintf` like function, taking `thread_id` as additional
+     *                         argument, and used to give a name to the created thread.
+     * @param[in]  thread_id   Single variadic argument passed to the formatting function.
      */
     void init_thread(
-            std::function<void()> configure_cb = {});
+            const fastdds::rtps::ThreadSettings& thread_cfg = {},
+            const char* name_fmt = "event %u",
+            uint32_t thread_id = 0);
 
     void stop_thread();
 

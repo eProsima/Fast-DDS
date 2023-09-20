@@ -245,10 +245,8 @@ RTPSParticipantImpl::RTPSParticipantImpl(
 
     mp_userParticipant->mp_impl = this;
     uint32_t id_for_thread = static_cast<uint32_t>(m_att.participantID);
-    mp_event_thr.init_thread([id_for_thread]()
-            {
-                set_name_to_current_thread("dds.ev.%u", id_for_thread);
-            });
+    const fastdds::rtps::ThreadSettings& thr_config = m_att.timed_events_thread;
+    mp_event_thr.init_thread(thr_config, "dds.ev.%u", id_for_thread);
 
     if (!networkFactoryHasRegisteredTransports())
     {
