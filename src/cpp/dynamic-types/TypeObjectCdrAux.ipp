@@ -2634,9 +2634,9 @@ RTPS_DllAPI size_t calculate_serialized_size(
                                 eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment)};
 
     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
-                        0), data.name_hash(), current_alignment);
+                        0), data.common(), current_alignment);
     calculated_size += calculator.calculate_member_serialized_size(eprosima::fastcdr::MemberId(
-                        1), data.common(), current_alignment);
+                        1), data.name_hash(), current_alignment);
 
     calculated_size += calculator.end_calculate_type_serialized_size(
         eprosima::fastcdr::EncodingAlgorithmFlag::PLAIN_CDR2, current_alignment);
