@@ -302,6 +302,7 @@ set(BLACKBOXTESTS_SOURCE ${BLACKBOXTESTS_TEST_SOURCE}
     utils/lambda_functions.cpp
     utils/print_functions.cpp
 
+    common/DatagramInjectionTransport.cpp
     common/TCPReqRepHelloWorldRequester.cpp
     common/TCPReqRepHelloWorldReplier.cpp
     )
@@ -340,6 +341,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utils/check_guid.py
     ${CMAKE_CURRENT_BINARY_DIR}/check_guid.py)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/partitions_profile.xml
     ${CMAKE_CURRENT_BINARY_DIR}/partitions_profile.xml)
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/datagrams" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 
 if(FASTRTPS_API_TESTS)
     set(BLACKBOXTESTS_FASTRTPS_SOURCE
