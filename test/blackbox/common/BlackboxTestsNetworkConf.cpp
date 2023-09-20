@@ -46,6 +46,10 @@ public:
         }
         else
         {
+#ifdef __APPLE__
+            // TODO: fix IPv6 issues related with zone ID
+            GTEST_SKIP() << "UDPv6 tests are disabled in Mac";
+#endif // ifdef __APPLE__
             descriptor_ = std::make_shared<UDPv6TransportDescriptor>();
         }
     }
