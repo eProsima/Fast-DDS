@@ -333,14 +333,9 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/StatisticsDomainParticipant.xml
     ${CMAKE_CURRENT_BINARY_DIR}/StatisticsDomainParticipant.xml)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utils/check_guid.py
     ${CMAKE_CURRENT_BINARY_DIR}/check_guid.py)
-<<<<<<< HEAD
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/partitions.xml
     ${CMAKE_CURRENT_BINARY_DIR}/partitions.xml)
-=======
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/partitions_profile.xml
-    ${CMAKE_CURRENT_BINARY_DIR}/partitions_profile.xml)
 file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/datagrams" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
->>>>>>> 47fe5d763 (Fix bad-free when receiving malformed DATA submessage (#3824))
 
 if(FASTRTPS_API_TESTS)
     set(BLACKBOXTESTS_FASTRTPS_SOURCE
