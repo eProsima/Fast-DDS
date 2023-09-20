@@ -362,8 +362,6 @@ public:
      */
     class Segment
     {
-        static constexpr uint32_t shm_initial_buffers = 1;
-
     public:
 
         Segment(
