@@ -1,6 +1,6 @@
 # Objetive
 
-This example has been developed to allow setting the endpoints payload pool from the DDS layer.
+This example has been developed to allow setting the endpoints' payload pool from the DDS layer.
 In that way, a custom payload pool is mandatory to be implemented, and passed to the endpoints in the publisher and subscriber implementations.
 
 # Launch

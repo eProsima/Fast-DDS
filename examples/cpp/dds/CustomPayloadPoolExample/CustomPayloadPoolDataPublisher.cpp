@@ -17,31 +17,49 @@
  *
  */
 
+#include <thread>
+#include <csignal>
+
 #include "CustomPayloadPoolDataPublisher.h"
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/PublisherAttributes.h>
+
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/publisher/Publisher.hpp>
-#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
+#include <fastdds/dds/publisher/qos/PublisherQos.hpp>
+#include <fastdds/dds/publisher/Publisher.hpp>
+#include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastrtps/attributes/PublisherAttributes.h>
 #include <rtps/history/TopicPayloadPoolRegistry.hpp>
 
-#include <thread>
 
 using namespace eprosima::fastdds::dds;
+using namespace eprosima::fastdds::rtps;
+
+std::atomic<bool> CustomPayloadPoolDataPublisher::stop_(false);
+std::mutex CustomPayloadPoolDataPublisher::wait_matched_cv_mtx_;
+std::condition_variable CustomPayloadPoolDataPublisher::wait_matched_cv_;
 
 CustomPayloadPoolDataPublisher::CustomPayloadPoolDataPublisher(
         std::shared_ptr<CustomPayloadPool> payload_pool)
-    : participant_(nullptr)
+    : payload_pool_(payload_pool)
+    , participant_(nullptr)
     , publisher_(nullptr)
     , topic_(nullptr)
     , writer_(nullptr)
     , type_(new CustomPayloadPoolDataPubSubType())
-    , payload_pool_(payload_pool)
+    , matched_(0)
 {
-    matched_ = 0;
-    first_connected_ = false;
+}
+
+bool CustomPayloadPoolDataPublisher::is_stopped()
+{
+    return stop_;
+}
+
+void CustomPayloadPoolDataPublisher::stop()
+{
+    stop_ = true;
+    awake();
 }
 
 bool CustomPayloadPoolDataPublisher::init()
@@ -49,7 +67,7 @@ bool CustomPayloadPoolDataPublisher::init()
     hello_.index(0);
     hello_.message("CustomPayloadPool");
     DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
-    pqos.name("Participant_pub");
+    pqos.name("CustomPayloadPoolDataPublisher");
     auto factory = DomainParticipantFactory::get_instance();
 
     participant_ = factory->create_participant(0, pqos);
@@ -59,14 +77,12 @@ bool CustomPayloadPoolDataPublisher::init()
         return false;
     }
 
-    //REGISTER THE TYPE
+    /* Register the type */
     type_.register_type(participant_);
 
-    //CREATE THE PUBLISHER
-    PublisherQos pubqos = PUBLISHER_QOS_DEFAULT;
-
+    /* Create the publisher */
     publisher_ = participant_->create_publisher(
-        pubqos,
+        PUBLISHER_QOS_DEFAULT,
         nullptr);
 
     if (publisher_ == nullptr)
@@ -74,25 +90,21 @@ bool CustomPayloadPoolDataPublisher::init()
         return false;
     }
 
-    //CREATE THE TOPIC
-    TopicQos tqos = TOPIC_QOS_DEFAULT;
-
+    /* Create the topic */
     topic_ = participant_->create_topic(
         "CustomPayloadPoolTopic",
-        "CustomPayloadPoolData",
-        tqos);
+        type_.get_type_name(),
+        TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
     {
         return false;
     }
 
-    // CREATE THE WRITER
-    DataWriterQos wqos = DATAWRITER_QOS_DEFAULT;
-
+    /* Create the writer */
     writer_ = publisher_->create_datawriter(
         topic_,
-        wqos,
+        DATAWRITER_QOS_DEFAULT,
         this,
         StatusMask::all(),
         payload_pool_);
@@ -107,19 +119,11 @@ bool CustomPayloadPoolDataPublisher::init()
 
 CustomPayloadPoolDataPublisher::~CustomPayloadPoolDataPublisher()
 {
-    if (writer_ != nullptr)
+    if (participant_ != nullptr)
     {
-        publisher_->delete_datawriter(writer_);
+        participant_->delete_contained_entities();
+        DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
-    if (publisher_ != nullptr)
-    {
-        participant_->delete_publisher(publisher_);
-    }
-    if (topic_ != nullptr)
-    {
-        participant_->delete_topic(topic_);
-    }
-    DomainParticipantFactory::get_instance()->delete_participant(participant_);
 }
 
 void CustomPayloadPoolDataPublisher::on_publication_matched(
@@ -128,13 +132,16 @@ void CustomPayloadPoolDataPublisher::on_publication_matched(
 {
     if (info.current_count_change == 1)
     {
-        matched_ = info.total_count;
-        first_connected_ = true;
+        matched_ = info.current_count;
         std::cout << "Publisher matched." << std::endl;
+        if (matched_ > 0)
+        {
+            awake();
+        }
     }
     else if (info.current_count_change == -1)
     {
-        matched_ = info.total_count;
+        matched_ = info.current_count;
         std::cout << "Publisher unmatched." << std::endl;
     }
     else
@@ -144,36 +151,36 @@ void CustomPayloadPoolDataPublisher::on_publication_matched(
     }
 }
 
+void CustomPayloadPoolDataPublisher::wait()
+{
+    std::unique_lock<std::mutex> lck(wait_matched_cv_mtx_);
+    wait_matched_cv_.wait(lck, [this]
+            {
+                return matched_ > 0 || is_stopped();
+            });
+}
+
+void CustomPayloadPoolDataPublisher::awake()
+{
+    wait_matched_cv_.notify_all();
+}
+
 void CustomPayloadPoolDataPublisher::run_thread(
         uint32_t samples,
         uint32_t sleep)
 {
-    if (samples == 0)
+    while (!is_stopped() && (samples == 0 || hello_.index() < samples))
     {
-        while (!stop_)
+        if (matched_ > 0)
         {
-            if (publish(false))
-            {
-                std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
-                          << " SENT" << std::endl;
-            }
+            publish();
+            std::cout << "Message: " << hello_.message().data() << " with index: " << hello_.index()
+                      << " SENT" << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
         }
-    }
-    else
-    {
-        for (uint32_t i = 0; i < samples; ++i)
+        else
         {
-            if (!publish())
-            {
-                --i;
-            }
-            else
-            {
-                std::cout << "Message: " << hello_.message() << " with index: " << hello_.index()
-                          << " SENT" << std::endl;
-            }
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
+            wait();
         }
     }
 }
@@ -186,25 +193,24 @@ void CustomPayloadPoolDataPublisher::run(
     std::thread thread(&CustomPayloadPoolDataPublisher::run_thread, this, samples, sleep);
     if (samples == 0)
     {
-        std::cout << "Publisher running. Please press enter to stop the Publisher at any time." << std::endl;
-        std::cin.ignore();
-        stop_ = true;
+        std::cout << "Publisher running. Please press CTRL+C to stop the Publisher at any time." << std::endl;
     }
     else
     {
         std::cout << "Publisher running " << samples << " samples." << std::endl;
     }
+
+    // Register SIGINT signal handler to stop thread execution
+    signal(SIGINT, [](int signum)
+            {
+                std::cout << "SIGINT received, stopping Publisher execution." << std::endl;
+                static_cast<void>(signum); CustomPayloadPoolDataPublisher::stop();
+            });
     thread.join();
 }
 
-bool CustomPayloadPoolDataPublisher::publish(
-        bool wait_for_listener)
+void CustomPayloadPoolDataPublisher::publish()
 {
-    if (first_connected_ || !wait_for_listener || matched_ > 0)
-    {
-        hello_.index(hello_.index() + 1);
-        writer_->write(&hello_);
-        return true;
-    }
-    return false;
+    hello_.index(hello_.index() + 1);
+    writer_->write(&hello_);
 }

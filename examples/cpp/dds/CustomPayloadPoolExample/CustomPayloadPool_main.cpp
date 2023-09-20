@@ -32,6 +32,8 @@ using eprosima::fastdds::dds::Log;
 
 namespace option = eprosima::option;
 
+enum DDS_role { Publisher, Subscriber };
+
 struct Arg : public option::Arg
 {
     static void print_error(
@@ -182,7 +184,7 @@ int main(
 
     std::cout << "Starting " << std::endl;
 
-    int type = 1;
+    int type = DDS_role::Publisher;
     uint32_t count = 10;
     uint32_t sleep = 100;
 
@@ -225,11 +227,11 @@ int main(
 
         if (strcmp(type_name, "publisher") == 0)
         {
-            type = 1;
+            type = DDS_role::Publisher;
         }
         else if (strcmp(type_name, "subscriber") == 0)
         {
-            type = 2;
+            type = DDS_role::Subscriber;
         }
         else
         {
@@ -251,7 +253,7 @@ int main(
     {
         // old syntax, only affects publishers
         // old and new syntax cannot be mixed
-        if (type != 1 || parse.optionsCount() >= 0)
+        if (type != DDS_role::Publisher || parse.optionsCount() >= 0)
         {
             option::printUsage(fwrite, stdout, usage, columns);
             return 1;
@@ -273,26 +275,34 @@ int main(
         }
     }
 
-    // CREATE CUSTOM TOPIC PAYLOAD POOL
+    // Create custom payload pool
     std::shared_ptr<CustomPayloadPool> payload_pool = std::make_shared<CustomPayloadPool>();
 
     switch (type)
     {
-        case 1:
+        case DDS_role::Publisher:
         {
             CustomPayloadPoolDataPublisher mypub(payload_pool);
             if (mypub.init())
             {
                 mypub.run(count, sleep);
             }
+            else
+            {
+                return 1;
+            }
             break;
         }
-        case 2:
+        case DDS_role::Subscriber:
         {
             CustomPayloadPoolDataSubscriber mysub(payload_pool);
             if (mysub.init())
             {
-                mysub.run();
+                mysub.run(0);
+            }
+            else
+            {
+                return 1;
             }
             break;
         }

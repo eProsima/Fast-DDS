@@ -17,16 +17,23 @@
  *
  */
 
+#include <csignal>
+
 #include "CustomPayloadPoolDataSubscriber.h"
-#include <fastrtps/attributes/ParticipantAttributes.h>
-#include <fastrtps/attributes/SubscriberAttributes.h>
+
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
-#include <fastdds/dds/subscriber/qos/DataReaderQos.hpp>
+#include <fastdds/dds/subscriber/Subscriber.hpp>
+#include <fastrtps/attributes/ParticipantAttributes.h>
+#include <fastrtps/attributes/SubscriberAttributes.h>
 
 using namespace eprosima::fastdds::dds;
+
+std::atomic<bool> CustomPayloadPoolDataSubscriber::stop_(false);
+std::mutex CustomPayloadPoolDataSubscriber::terminate_cv_mtx_;
+std::condition_variable CustomPayloadPoolDataSubscriber::terminate_cv_;
 
 CustomPayloadPoolDataSubscriber::CustomPayloadPoolDataSubscriber(
         std::shared_ptr<CustomPayloadPool> payload_pool)
@@ -36,9 +43,21 @@ CustomPayloadPoolDataSubscriber::CustomPayloadPoolDataSubscriber(
     , reader_(nullptr)
     , type_(new CustomPayloadPoolDataPubSubType())
     , payload_pool_(payload_pool)
+    , matched_(0)
+    , samples_(0)
 {
-    matched_ = 0;
-    samples_ = 0;
+
+}
+
+bool CustomPayloadPoolDataSubscriber::is_stopped()
+{
+    return stop_;
+}
+
+void CustomPayloadPoolDataSubscriber::stop()
+{
+    stop_ = true;
+    terminate_cv_.notify_all();
 }
 
 bool CustomPayloadPoolDataSubscriber::init()
@@ -54,33 +73,29 @@ bool CustomPayloadPoolDataSubscriber::init()
         return false;
     }
 
-    //REGISTER THE TYPE
+    /* Register the type */
     type_.register_type(participant_);
 
-    //CREATE THE SUBSCRIBER
-    SubscriberQos sqos = SUBSCRIBER_QOS_DEFAULT;
-
-    subscriber_ = participant_->create_subscriber(sqos, nullptr);
+    /* Create the subscriber */
+    subscriber_ = participant_->create_subscriber(SUBSCRIBER_QOS_DEFAULT, nullptr);
 
     if (subscriber_ == nullptr)
     {
         return false;
     }
 
-    //CREATE THE TOPIC
-    TopicQos tqos = TOPIC_QOS_DEFAULT;
-
+    /* Create the topic */
     topic_ = participant_->create_topic(
         "CustomPayloadPoolTopic",
-        "CustomPayloadPoolData",
-        tqos);
+        type_.get_type_name(),
+        TOPIC_QOS_DEFAULT);
 
     if (topic_ == nullptr)
     {
         return false;
     }
 
-    // CREATE THE READER
+    /* Create the reader */
     DataReaderQos rqos = DATAREADER_QOS_DEFAULT;
     rqos.reliability().kind = RELIABLE_RELIABILITY_QOS;
 
@@ -96,19 +111,11 @@ bool CustomPayloadPoolDataSubscriber::init()
 
 CustomPayloadPoolDataSubscriber::~CustomPayloadPoolDataSubscriber()
 {
-    if (reader_ != nullptr)
+    if (participant_ != nullptr)
     {
-        subscriber_->delete_datareader(reader_);
+        participant_->delete_contained_entities();
+        DomainParticipantFactory::get_instance()->delete_participant(participant_);
     }
-    if (topic_ != nullptr)
-    {
-        participant_->delete_topic(topic_);
-    }
-    if (subscriber_ != nullptr)
-    {
-        participant_->delete_subscriber(subscriber_);
-    }
-    DomainParticipantFactory::get_instance()->delete_participant(participant_);
 }
 
 void CustomPayloadPoolDataSubscriber::on_subscription_matched(
@@ -147,18 +154,30 @@ void CustomPayloadPoolDataSubscriber::on_data_available(
     }
 }
 
-void CustomPayloadPoolDataSubscriber::run()
-{
-    std::cout << "Subscriber running. Please press enter to stop the Subscriber" << std::endl;
-    std::cin.ignore();
-}
-
 void CustomPayloadPoolDataSubscriber::run(
         uint32_t number)
 {
-    std::cout << "Subscriber running until " << number << "samples have been received" << std::endl;
-    while (number > samples_)
+
+    stop_ = false;
+    if (number == 0)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::cout << "Subscriber running. Please press Ctrl+C to stop the Subscriber at any time." << std::endl;
     }
+    else
+    {
+        std::cout << "Subscriber running until " << number << "samples have been received" << std::endl;
+    }
+
+    // Register SIGINT signal handler to stop thread execution
+    signal(SIGINT, [](int signum)
+    {
+        std::cout << "SIGINT received, stopping subscriber execution." << std::endl;
+        static_cast<void>(signum);
+        CustomPayloadPoolDataSubscriber::stop();
+    });
+    std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
+    terminate_cv_.wait(lck, []
+    {
+        return is_stopped();
+    });
 }

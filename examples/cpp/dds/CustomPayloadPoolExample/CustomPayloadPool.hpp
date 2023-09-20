@@ -23,6 +23,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <fastdds/rtps/history/IPayloadPool.h>
+#include <fastdds/rtps/common/CacheChange.h>
+
 class CustomPayloadPool : public eprosima::fastrtps::rtps::IPayloadPool
 {
 public:

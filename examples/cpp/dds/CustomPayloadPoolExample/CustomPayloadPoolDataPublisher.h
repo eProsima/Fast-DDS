@@ -20,13 +20,20 @@
 #ifndef CUSTOM_PAYLOAD_POOL_DATA_PUBLISHER_H_
 #define CUSTOM_PAYLOAD_POOL_DATA_PUBLISHER_H_
 
-#include "CustomPayloadPoolDataPubSubTypes.h"
-#include "CustomPayloadPool.hpp"
+#include <condition_variable>
+#include <mutex>
 
+#include "CustomPayloadPool.hpp"
+#include "CustomPayloadPoolDataPubSubTypes.h"
+
+#include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/DataWriterListener.hpp>
 #include <fastdds/dds/topic/TypeSupport.hpp>
-#include <fastdds/dds/domain/DomainParticipant.hpp>
 
+/**
+ * Class used to group into a single working unit a Publisher with a DataWriter, its listener, and a TypeSupport member
+ * corresponding to the HelloWorld datatype
+ */
 class CustomPayloadPoolDataPublisher : public eprosima::fastdds::dds::DataWriterListener
 {
 public:
@@ -34,23 +41,49 @@ public:
     CustomPayloadPoolDataPublisher(
             std::shared_ptr<CustomPayloadPool> payload_pool);
 
-    ~CustomPayloadPoolDataPublisher();
+    virtual ~CustomPayloadPoolDataPublisher();
 
-    //!Initialize
+    //! Initialize the publisher
     bool init();
 
-    //!Publish a sample
-    bool publish(
-            bool wait_for_listener = true);
+    //! Publish a sample
+    void publish();
 
-    //!Run for number samples
+    //! Run for number samples, publish every sleep seconds
     void run(
             uint32_t number,
             uint32_t sleep);
 
+    //! Return the current state of execution
+    static bool is_stopped();
+
+    //! Trigger the end of execution
+    static void stop();
+
+    //! Callback executed when a DataReader is matched or unmatched
+    void on_publication_matched(
+            eprosima::fastdds::dds::DataWriter* writer,
+            const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
+
+    //! Return true if there are at least 1 matched DataReaders
+    bool enough_matched();
+
+    //! Block the thread until enough DataReaders are matched
+    void wait();
+
+    //! Unblock the thread so publication of samples begins/resumes
+    static void awake();
+
 private:
 
+    //! Run thread for number samples, publish every sleep seconds
+    void run_thread(
+            uint32_t number,
+            uint32_t sleep);
+
     CustomPayloadPoolData hello_;
+
+    std::shared_ptr<CustomPayloadPool> payload_pool_;
 
     eprosima::fastdds::dds::DomainParticipant* participant_;
 
@@ -60,25 +93,20 @@ private:
 
     eprosima::fastdds::dds::DataWriter* writer_;
 
-    bool stop_;
-
-    void on_publication_matched(
-            eprosima::fastdds::dds::DataWriter* writer,
-            const eprosima::fastdds::dds::PublicationMatchedStatus& info) override;
-
-    int matched_;
-
-    bool first_connected_;
-
-    void run_thread(
-            uint32_t number,
-            uint32_t sleep);
-
     eprosima::fastdds::dds::TypeSupport type_;
 
-    std::shared_ptr<CustomPayloadPool> payload_pool_;
-};
+    //! Member used for control flow purposes
+    static std::atomic<bool> stop_;
 
+    //! Number of DataReaders matched to the associated DataWriter
+    std::atomic<std::uint32_t> matched_;
+
+    //! Protects wait_matched condition variable
+    static std::mutex wait_matched_cv_mtx_;
+
+    //! Waits until enough DataReaders are matched
+    static std::condition_variable wait_matched_cv_;
+};
 
 
 #endif /* CUSTOM_PAYLOAD_POOL_DATA_PUBLISHER_H_ */

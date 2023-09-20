@@ -20,13 +20,16 @@
 #ifndef CUSTOM_PAYLOAD_POOL_DATA_SUBSCRIBER_H_
 #define CUSTOM_PAYLOAD_POOL_DATA_SUBSCRIBER_H_
 
+#include <condition_variable>
+#include <mutex>
+
 #include "CustomPayloadPoolDataPubSubTypes.h"
 #include "CustomPayloadPool.hpp"
 
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
-#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
 
 class CustomPayloadPoolDataSubscriber : public eprosima::fastdds::dds::DataReaderListener
 {
@@ -40,14 +43,28 @@ public:
     //!Initialize the subscriber
     bool init();
 
-    //!RUN the subscriber
-    void run();
-
     //!Run the subscriber until number samples have been received.
     void run(
             uint32_t number);
 
+    //! Return the current state of execution
+    static bool is_stopped();
+
+    //! Trigger the end of execution
+    static void stop();
+
 private:
+
+    void on_data_available(
+            eprosima::fastdds::dds::DataReader* reader) override;
+
+    void on_subscription_matched(
+            eprosima::fastdds::dds::DataReader* reader,
+            const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
+
+    CustomPayloadPoolData hello_;
+
+    std::shared_ptr<CustomPayloadPool> payload_pool_;
 
     eprosima::fastdds::dds::DomainParticipant* participant_;
 
@@ -59,20 +76,18 @@ private:
 
     eprosima::fastdds::dds::TypeSupport type_;
 
-    std::shared_ptr<CustomPayloadPool> payload_pool_;
-
-    void on_data_available(
-            eprosima::fastdds::dds::DataReader* reader) override;
-
-    void on_subscription_matched(
-            eprosima::fastdds::dds::DataReader* reader,
-            const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
-
-    CustomPayloadPoolData hello_;
-
-    int matched_;
+    int32_t matched_;
 
     uint32_t samples_;
+
+    //! Member used for control flow purposes
+    static std::atomic<bool> stop_;
+
+    //! Protects terminate condition variable
+    static std::mutex terminate_cv_mtx_;
+
+    //! Waits during execution until SIGINT or max_messages_ samples are received
+    static std::condition_variable terminate_cv_;
 };
 
 #endif /* CUSTOM_PAYLOAD_POOL_DATA_SUBSCRIBER_H_ */
