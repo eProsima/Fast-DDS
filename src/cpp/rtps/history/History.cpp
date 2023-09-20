@@ -131,6 +131,7 @@ bool History::remove_change(
         return false;
     }
 
+    // Dummy change just used to compare original change with change returned from remove_change_nts function
     CacheChange_t dummy_change;
     dummy_change.writerGUID = (*it)->writerGUID;
     dummy_change.sequenceNumber = (*it)->sequenceNumber;
@@ -262,7 +263,7 @@ bool History::get_earliest_change(
 History::iterator History::remove_iterator_constness(
         const_iterator c_it)
 {
-    History::iterator it;
+    History::iterator it = changesBegin();
     std::advance(it, std::distance<const_iterator>(it, c_it));
     return it;
 }
