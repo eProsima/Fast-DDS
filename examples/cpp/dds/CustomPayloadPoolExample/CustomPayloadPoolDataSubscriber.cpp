@@ -37,14 +37,15 @@ std::condition_variable CustomPayloadPoolDataSubscriber::terminate_cv_;
 
 CustomPayloadPoolDataSubscriber::CustomPayloadPoolDataSubscriber(
         std::shared_ptr<CustomPayloadPool> payload_pool)
-    : participant_(nullptr)
+    : payload_pool_(payload_pool)
+    , participant_(nullptr)
     , subscriber_(nullptr)
     , topic_(nullptr)
     , reader_(nullptr)
     , type_(new CustomPayloadPoolDataPubSubType())
-    , payload_pool_(payload_pool)
     , matched_(0)
     , samples_(0)
+    , max_samples_(0)
 {
 
 }
@@ -63,7 +64,7 @@ void CustomPayloadPoolDataSubscriber::stop()
 bool CustomPayloadPoolDataSubscriber::init()
 {
     DomainParticipantQos pqos = PARTICIPANT_QOS_DEFAULT;
-    pqos.name("Participant_sub");
+    pqos.name("CustomPayloadPoolDataSubscriber");
     auto factory = DomainParticipantFactory::get_instance();
 
     participant_ = factory->create_participant(0, pqos);
@@ -105,6 +106,13 @@ bool CustomPayloadPoolDataSubscriber::init()
     {
         return false;
     }
+
+    // Register SIGINT signal handler to stop thread execution
+    signal(SIGINT, [](int /*signum*/)
+            {
+                std::cout << "SIGINT received, stopping subscriber execution." << std::endl;
+                CustomPayloadPoolDataSubscriber::stop();
+            });
 
     return true;
 }
@@ -149,35 +157,35 @@ void CustomPayloadPoolDataSubscriber::on_data_available(
         {
             samples_++;
             // Print your structure data here.
-            std::cout << "Message " << hello_.message() << " " << hello_.index() << " RECEIVED" << std::endl;
+            std::cout << "Message [" << samples_ << "] of " << hello_.message() << " " << hello_.index()
+                    << " RECEIVED" << std::endl;
+
+            if (max_samples_ > 0 && (samples_ >= max_samples_))
+            {
+                stop();
+            }
         }
     }
 }
 
-void CustomPayloadPoolDataSubscriber::run(
-        uint32_t number)
+bool CustomPayloadPoolDataSubscriber::run(
+        uint32_t samples)
 {
-
+    max_samples_ = samples;
     stop_ = false;
-    if (number == 0)
+    if (samples == 0)
     {
         std::cout << "Subscriber running. Please press Ctrl+C to stop the Subscriber at any time." << std::endl;
     }
     else
     {
-        std::cout << "Subscriber running until " << number << "samples have been received" << std::endl;
+        std::cout << "Subscriber running until " << samples << " samples have been received" << std::endl;
     }
 
-    // Register SIGINT signal handler to stop thread execution
-    signal(SIGINT, [](int signum)
-    {
-        std::cout << "SIGINT received, stopping subscriber execution." << std::endl;
-        static_cast<void>(signum);
-        CustomPayloadPoolDataSubscriber::stop();
-    });
     std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
     terminate_cv_.wait(lck, []
     {
         return is_stopped();
     });
+    return is_stopped();
 }

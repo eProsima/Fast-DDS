@@ -34,7 +34,7 @@
  * Class used to group into a single working unit a Publisher with a DataWriter, its listener, and a TypeSupport member
  * corresponding to the HelloWorld datatype
  */
-class CustomPayloadPoolDataPublisher : public eprosima::fastdds::dds::DataWriterListener
+class CustomPayloadPoolDataPublisher : private eprosima::fastdds::dds::DataWriterListener
 {
 public:
 
@@ -46,11 +46,18 @@ public:
     //! Initialize the publisher
     bool init();
 
-    //! Publish a sample
-    void publish();
-
     //! Run for number samples, publish every sleep seconds
-    void run(
+    bool run(
+            uint32_t number,
+            uint32_t sleep);
+
+private:
+
+    //! Publish a sample
+    bool publish();
+
+    //! Run thread for number samples, publish every sleep seconds
+    void run_thread(
             uint32_t number,
             uint32_t sleep);
 
@@ -74,13 +81,6 @@ public:
     //! Unblock the thread so publication of samples begins/resumes
     static void awake();
 
-private:
-
-    //! Run thread for number samples, publish every sleep seconds
-    void run_thread(
-            uint32_t number,
-            uint32_t sleep);
-
     CustomPayloadPoolData hello_;
 
     std::shared_ptr<CustomPayloadPool> payload_pool_;
@@ -95,11 +95,14 @@ private:
 
     eprosima::fastdds::dds::TypeSupport type_;
 
-    //! Member used for control flow purposes
-    static std::atomic<bool> stop_;
-
     //! Number of DataReaders matched to the associated DataWriter
     std::atomic<std::uint32_t> matched_;
+
+    //! Member used for control flow purposes
+    std::atomic<bool> has_stopped_for_unexpected_error_;
+
+    //! Member used for control flow purposes
+    static std::atomic<bool> stop_;
 
     //! Protects wait_matched condition variable
     static std::mutex wait_matched_cv_mtx_;

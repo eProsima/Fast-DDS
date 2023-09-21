@@ -48,6 +48,7 @@ CustomPayloadPoolDataPublisher::CustomPayloadPoolDataPublisher(
     , writer_(nullptr)
     , type_(new CustomPayloadPoolDataPubSubType())
     , matched_(0)
+    , has_stopped_for_unexpected_error_(false)
 {
 }
 
@@ -114,6 +115,13 @@ bool CustomPayloadPoolDataPublisher::init()
         return false;
     }
 
+    // Register SIGINT signal handler to stop thread execution
+    signal(SIGINT, [](int /*signum*/)
+            {
+                std::cout << "SIGINT received, stopping Publisher execution." << std::endl;
+                CustomPayloadPoolDataPublisher::stop();
+            });
+
     return true;
 }
 
@@ -173,10 +181,18 @@ void CustomPayloadPoolDataPublisher::run_thread(
     {
         if (matched_ > 0)
         {
-            publish();
-            std::cout << "Message: " << hello_.message().data() << " with index: " << hello_.index()
-                      << " SENT" << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
+            if (publish())
+            {
+                std::cout << "Message: " << hello_.message().data() << " with index: " << hello_.index()
+                        << " SENT" << std::endl;
+                std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
+            }
+            // something went wrong writing
+            else
+            {
+                has_stopped_for_unexpected_error_ = true;
+                CustomPayloadPoolDataPublisher::stop();
+            }
         }
         else
         {
@@ -185,7 +201,7 @@ void CustomPayloadPoolDataPublisher::run_thread(
     }
 }
 
-void CustomPayloadPoolDataPublisher::run(
+bool CustomPayloadPoolDataPublisher::run(
         uint32_t samples,
         uint32_t sleep)
 {
@@ -200,17 +216,13 @@ void CustomPayloadPoolDataPublisher::run(
         std::cout << "Publisher running " << samples << " samples." << std::endl;
     }
 
-    // Register SIGINT signal handler to stop thread execution
-    signal(SIGINT, [](int signum)
-            {
-                std::cout << "SIGINT received, stopping Publisher execution." << std::endl;
-                static_cast<void>(signum); CustomPayloadPoolDataPublisher::stop();
-            });
     thread.join();
+    return has_stopped_for_unexpected_error_;
 }
 
-void CustomPayloadPoolDataPublisher::publish()
+bool CustomPayloadPoolDataPublisher::publish()
 {
     hello_.index(hello_.index() + 1);
-    writer_->write(&hello_);
+    stop_ = !writer_->write(&hello_);
+    return !stop_;
 }

@@ -32,7 +32,11 @@ using eprosima::fastdds::dds::Log;
 
 namespace option = eprosima::option;
 
-enum DDS_role { Publisher, Subscriber };
+enum ApplicationRole : uint8_t
+{
+    PUBLISHER,
+    SUBSCRIBER
+};
 
 struct Arg : public option::Arg
 {
@@ -152,9 +156,9 @@ const option::Descriptor usage[] = {
     { UNKNOWN_OPT, 0, "", "",                Arg::None,
       "Usage: CustomPayloadPoolExample <publisher|subscriber>\n\nGeneral options:" },
     { HELP,    0, "h", "help",               Arg::None,      "  -h \t--help  \tProduce help message." },
-    { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nPublisher options:"},
     { SAMPLES, 0, "s", "samples",            Arg::NumericRange<>,
       "  -s <num>, \t--samples=<num>  \tNumber of samples (0, default, infinite)." },
+    { UNKNOWN_OPT, 0, "", "",                Arg::None,      "\nPublisher options:"},
     { INTERVAL, 0, "i", "interval",          Arg::NumericRange<>,
       "  -i <num>, \t--interval=<num>  \tTime between samples in milliseconds (Default: 100)." },
     { 0, 0, 0, 0, 0, 0 }
@@ -184,8 +188,8 @@ int main(
 
     std::cout << "Starting " << std::endl;
 
-    int type = DDS_role::Publisher;
-    uint32_t count = 10;
+    int type = ApplicationRole::PUBLISHER;
+    uint32_t count = 0;
     uint32_t sleep = 100;
 
     argc -= (argc > 0);
@@ -227,11 +231,11 @@ int main(
 
         if (strcmp(type_name, "publisher") == 0)
         {
-            type = DDS_role::Publisher;
+            type = ApplicationRole::PUBLISHER;
         }
         else if (strcmp(type_name, "subscriber") == 0)
         {
-            type = DDS_role::Subscriber;
+            type = ApplicationRole::SUBSCRIBER;
         }
         else
         {
@@ -253,7 +257,7 @@ int main(
     {
         // old syntax, only affects publishers
         // old and new syntax cannot be mixed
-        if (type != DDS_role::Publisher || parse.optionsCount() >= 0)
+        if (type != ApplicationRole::PUBLISHER || parse.optionsCount() >= 0)
         {
             option::printUsage(fwrite, stdout, usage, columns);
             return 1;
@@ -278,14 +282,16 @@ int main(
     // Create custom payload pool
     std::shared_ptr<CustomPayloadPool> payload_pool = std::make_shared<CustomPayloadPool>();
 
+    bool execution_status = false;
+
     switch (type)
     {
-        case DDS_role::Publisher:
+        case ApplicationRole::PUBLISHER:
         {
             CustomPayloadPoolDataPublisher mypub(payload_pool);
             if (mypub.init())
             {
-                mypub.run(count, sleep);
+                execution_status = !mypub.run(count, sleep);
             }
             else
             {
@@ -293,12 +299,12 @@ int main(
             }
             break;
         }
-        case DDS_role::Subscriber:
+        case ApplicationRole::SUBSCRIBER:
         {
             CustomPayloadPoolDataSubscriber mysub(payload_pool);
             if (mysub.init())
             {
-                mysub.run(0);
+                execution_status = !mysub.run(count);
             }
             else
             {
@@ -308,5 +314,5 @@ int main(
         }
     }
     Log::Reset();
-    return 0;
+    return execution_status;
 }

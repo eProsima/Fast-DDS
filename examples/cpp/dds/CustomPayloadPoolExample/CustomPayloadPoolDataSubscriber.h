@@ -43,15 +43,9 @@ public:
     //!Initialize the subscriber
     bool init();
 
-    //!Run the subscriber until number samples have been received.
-    void run(
-            uint32_t number);
-
-    //! Return the current state of execution
-    static bool is_stopped();
-
-    //! Trigger the end of execution
-    static void stop();
+    //!Run the subscriber until all samples have been received.
+    bool run(
+            uint32_t samples);
 
 private:
 
@@ -61,6 +55,12 @@ private:
     void on_subscription_matched(
             eprosima::fastdds::dds::DataReader* reader,
             const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override;
+
+    //! Return the current state of execution
+    static bool is_stopped();
+
+    //! Trigger the end of execution
+    static void stop();
 
     CustomPayloadPoolData hello_;
 
@@ -79,6 +79,8 @@ private:
     int32_t matched_;
 
     uint32_t samples_;
+
+    uint32_t max_samples_;
 
     //! Member used for control flow purposes
     static std::atomic<bool> stop_;
