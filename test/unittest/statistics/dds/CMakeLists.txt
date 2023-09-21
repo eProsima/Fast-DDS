@@ -29,7 +29,7 @@ set(STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx)
 
 add_executable(StatisticsDomainParticipantTests ${STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE})
-target_compile_definitions(StatisticsDomainParticipantTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(StatisticsDomainParticipantTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
     )
@@ -53,7 +53,7 @@ if(TINYXML2_SOURCE_DIR)
 endif()
 
 add_executable(StatisticsQosTests ${STATISTICS_QOS_TESTS_SOURCE})
-target_compile_definitions(StatisticsQosTests PRIVATE FASTRTPS_NO_LIB BOOST_ASIO_STANDALONE ASIO_STANDALONE
+target_compile_definitions(StatisticsQosTests PRIVATE BOOST_ASIO_STANDALONE ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
     )
@@ -75,7 +75,7 @@ if (FASTDDS_STATISTICS)
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
         ${TINYXML2_SOURCES}
         ${DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE})
-    target_compile_definitions(DomainParticipantStatisticsListenerTests PRIVATE FASTRTPS_NO_LIB
+    target_compile_definitions(DomainParticipantStatisticsListenerTests PRIVATE
         $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
         $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
         )
@@ -333,7 +333,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS AND NOT QNX)
     endif()
 
     add_executable(StatisticsDomainParticipantMockTests ${STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE})
-    target_compile_definitions(StatisticsDomainParticipantMockTests PRIVATE FASTRTPS_NO_LIB
+    target_compile_definitions(StatisticsDomainParticipantMockTests PRIVATE
         BOOST_ASIO_STANDALONE
         ASIO_STANDALONE
         SQLITE_WIN32_GETVERSIONEX=0

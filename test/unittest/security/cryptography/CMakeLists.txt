@@ -40,7 +40,7 @@ add_executable(BuiltinAESGCMGMAC ${COMMON_SOURCES_CRYPTO_PLUGIN_TEST_SOURCE}
     ${PROJECT_SOURCE_DIR}/src/cpp/security/accesscontrol/AccessPermissionsHandle.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/builtinAESGCMGMACTests.cpp)
 
-target_compile_definitions(BuiltinAESGCMGMAC PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(BuiltinAESGCMGMAC PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
