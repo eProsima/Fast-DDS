@@ -15,12 +15,23 @@
 #ifndef _FASTDDS_TCP_TRANSPORT_INTERFACE_H_
 #define _FASTDDS_TCP_TRANSPORT_INTERFACE_H_
 
-#include <fastdds/rtps/transport/TransportInterface.h>
+#include <thread>
+#include <vector>
+#include <map>
+#include <memory>
+#include <mutex>
+
+#include <asio.hpp>
+#include <asio/steady_timer.hpp>
+
 #include <fastdds/rtps/transport/TCPTransportDescriptor.h>
+#include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastrtps/utils/IPFinder.h>
+
 #include <rtps/transport/tcp/RTCPHeader.h>
-#include <rtps/transport/TCPChannelResourceBasic.h>
 #include <rtps/transport/TCPAcceptorBasic.h>
+#include <rtps/transport/TCPChannelResourceBasic.h>
+
 #if TLS_FOUND
 #define OPENSSL_API_COMPAT 10101
 #include <rtps/transport/TCPAcceptorSecure.h>
@@ -28,14 +39,6 @@
 #endif // if TLS_FOUND
 
 #include <statistics/rtps/messages/OutputTrafficManager.hpp>
-
-#include <asio.hpp>
-#include <asio/steady_timer.hpp>
-#include <thread>
-#include <vector>
-#include <map>
-#include <memory>
-#include <mutex>
 
 namespace eprosima {
 namespace fastdds {
@@ -194,6 +197,9 @@ protected:
             uint32_t send_buffer_size,
             std::shared_ptr<TCPChannelResource>& channel,
             const Locator& remote_locator);
+
+    void create_listening_thread(
+            const std::shared_ptr<TCPChannelResource>& channel);
 
 public:
 

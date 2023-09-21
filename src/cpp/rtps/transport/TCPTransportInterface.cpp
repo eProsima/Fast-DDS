@@ -835,6 +835,20 @@ void TCPTransportInterface::keep_alive()
      */
 }
 
+void TCPTransportInterface::create_listening_thread(
+        const std::shared_ptr<TCPChannelResource>& channel)
+{
+    std::weak_ptr<TCPChannelResource> channel_weak_ptr = channel;
+    std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
+    auto fn = [this, channel_weak_ptr, rtcp_manager_weak_ptr]()
+            {
+                perform_listen_operation(channel_weak_ptr, rtcp_manager_weak_ptr);
+            };
+    uint32_t port = channel->local_endpoint().port();
+    const ThreadSettings& thr_config = configuration()->get_thread_config_for_port(port);
+    channel->thread(create_thread(fn, thr_config, "dds.tcp.%u", port));
+}
+
 void TCPTransportInterface::perform_listen_operation(
         std::weak_ptr<TCPChannelResource> channel_weak,
         std::weak_ptr<RTCPMessageManager> rtcp_manager)
@@ -1338,10 +1352,7 @@ void TCPTransportInterface::SocketAccepted(
             }
 
             channel->set_options(configuration());
-            std::weak_ptr<TCPChannelResource> channel_weak_ptr = channel;
-            std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
-            channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
-                    channel_weak_ptr, rtcp_manager_weak_ptr));
+            create_listening_thread(channel);
 
             EPROSIMA_LOG_INFO(RTCP, "Accepted connection (local: "
                     << IPLocator::to_string(locator) << ", remote: "
@@ -1385,10 +1396,7 @@ void TCPTransportInterface::SecureSocketAccepted(
             }
 
             secure_channel->set_options(configuration());
-            std::weak_ptr<TCPChannelResource> channel_weak_ptr = secure_channel;
-            std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
-            secure_channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
-                    channel_weak_ptr, rtcp_manager_weak_ptr));
+            create_listening_thread(secure_channel);
 
             EPROSIMA_LOG_INFO(RTCP, " Accepted connection (local: " << IPLocator::to_string(locator)
                                                                     << ", remote: " << socket->lowest_layer().remote_endpoint().address()
@@ -1430,10 +1438,7 @@ void TCPTransportInterface::SocketConnected(
                 {
                     channel->change_status(TCPChannelResource::eConnectionStatus::eConnected);
                     channel->set_options(configuration());
-
-                    std::weak_ptr<RTCPMessageManager> rtcp_manager_weak_ptr = rtcp_message_manager_;
-                    channel->thread(std::thread(&TCPTransportInterface::perform_listen_operation, this,
-                            channel_weak_ptr, rtcp_manager_weak_ptr));
+                    create_listening_thread(channel);
                 }
             }
             else
