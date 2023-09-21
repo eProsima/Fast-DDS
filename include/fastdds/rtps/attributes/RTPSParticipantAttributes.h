@@ -582,6 +582,15 @@ public:
     //! Thread settings for the builtin flow controllers sender threads
     fastdds::rtps::ThreadSettings builtin_controllers_sender_thread;
 
+    //! Thread settings for the timed events thread
+    fastdds::rtps::ThreadSettings timed_events_thread;
+
+    //! Thread settings for the discovery server thread
+    fastdds::rtps::ThreadSettings discovery_server_thread;
+
+    //! Thread settings for the security log thread
+    fastdds::rtps::ThreadSettings security_log_thread;
+
 private:
 
     //! Name of the participant.
