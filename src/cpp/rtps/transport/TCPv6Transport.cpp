@@ -224,22 +224,39 @@ bool TCPv6Transport::is_interface_allowed(
         return true;
     }
 
-    return find(interface_whitelist_.begin(), interface_whitelist_.end(), ip) != interface_whitelist_.end();
+    for (auto& whitelist : interface_whitelist_)
+    {
+        if (compare_ips(whitelist.to_string(), ip.to_string()))
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 LocatorList TCPv6Transport::NormalizeLocator(
         const Locator& locator)
 {
     LocatorList list;
-
     if (IPLocator::isAny(locator))
     {
         std::vector<IPFinder::info_IP> locNames;
         get_ipv6s(locNames);
         for (const auto& infoIP : locNames)
         {
+            if (is_interface_allowed(infoIP.name))
+            {
+                Locator newloc(locator);
+                IPLocator::setIPv6(newloc, infoIP.locator);
+                list.push_back(newloc);
+            }
+        }
+
+        if (list.empty())
+        {
             Locator newloc(locator);
-            IPLocator::setIPv6(newloc, infoIP.locator);
+            IPLocator::setIPv6(newloc, "::1");
             list.push_back(newloc);
         }
     }
@@ -347,6 +364,22 @@ void TCPv6Transport::endpoint_to_locator(
     IPLocator::setPhysicalPort(locator, endpoint.port());
     auto ipBytes = endpoint.address().to_v6().to_bytes();
     IPLocator::setIPv6(locator, ipBytes.data());
+}
+
+bool TCPv6Transport::compare_ips(
+        const std::string& ip1,
+        const std::string& ip2) const
+{
+    // string::find returns string::npos if the character is not found
+    // If the second parameter is string::npos value, it indicates to take all characters until the end of the string
+    std::string substr1 = ip1.substr(0, ip1.find('%'));
+    std::string substr2 = ip2.substr(0, ip2.find('%'));
+
+    if (substr1.compare(substr2) == 0)
+    {
+        return true;
+    }
+    return false;
 }
 
 } // namespace rtps

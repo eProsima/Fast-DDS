@@ -42,6 +42,7 @@ class NetworkFactory
 
         NetworkFactory() {}
 
+<<<<<<< HEAD:test/mock/rtps/NetworkFactory/fastdds/rtps/network/NetworkFactory.h
         bool transform_remote_locator(
                 const Locator_t& remote_locator,
                 Locator_t& result_locator) const
@@ -51,6 +52,34 @@ class NetworkFactory
         }
 
         uint32_t get_min_send_buffer_size() { return 65536; }
+=======
+    bool transform_remote_locator(
+            const Locator_t& remote_locator,
+            Locator_t& result_locator,
+            const NetworkConfigSet_t&) const
+    {
+        result_locator = remote_locator;
+        return true;
+    }
+
+    bool is_locator_allowed(
+            const Locator_t&) const
+    {
+        return true;
+    }
+
+    uint32_t get_min_send_buffer_size()
+    {
+        return 65536;
+    }
+
+    bool is_local_locator(
+            const Locator_t&) const
+    {
+        return true;
+    }
+
+>>>>>>> c8ab8602a (Fix asymmetric whitelist matching (#3733)):test/mock/rtps/NetworkFactory/rtps/network/NetworkFactory.h
 };
 
 } // namespace rtps

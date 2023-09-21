@@ -22,7 +22,13 @@
 #include <fastdds/rtps/common/Time_t.h>
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/PortParameters.h>
+<<<<<<< HEAD
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
+=======
+#include <fastdds/rtps/common/Time_t.h>
+#include <fastdds/rtps/common/Types.h>
+#include <fastdds/rtps/flowcontrol/FlowControllerDescriptor.hpp>
+>>>>>>> c8ab8602a (Fix asymmetric whitelist matching (#3733))
 #include <fastdds/rtps/flowcontrol/ThroughputControllerDescriptor.h>
 #include <fastdds/rtps/transport/TransportInterface.h>
 #include <fastdds/rtps/resources/ResourceManagement.h>
@@ -380,7 +386,14 @@ public:
     //!TypeLookup Service settings
     TypeLookupSettings typelookup_config;
 
+<<<<<<< HEAD
     //!Metatraffic Unicast Locator List
+=======
+    //! Network Configuration
+    NetworkConfigSet_t network_configuration;
+
+    //! Metatraffic Unicast Locator List
+>>>>>>> c8ab8602a (Fix asymmetric whitelist matching (#3733))
     LocatorList_t metatrafficUnicastLocatorList;
 
     //!Metatraffic Multicast Locator List.
@@ -420,6 +433,7 @@ public:
                (this->use_WriterLivelinessProtocol == b.use_WriterLivelinessProtocol) &&
                (typelookup_config.use_client == b.typelookup_config.use_client) &&
                (typelookup_config.use_server == b.typelookup_config.use_server) &&
+               (this->network_configuration == b.network_configuration) &&
                (this->metatrafficUnicastLocatorList == b.metatrafficUnicastLocatorList) &&
                (this->metatrafficMulticastLocatorList == b.metatrafficMulticastLocatorList) &&
                (this->initialPeersList == b.initialPeersList) &&

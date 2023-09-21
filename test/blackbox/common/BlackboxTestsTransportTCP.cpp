@@ -43,6 +43,10 @@ public:
         use_ipv6 = std::get<1>(GetParam());
         if (use_ipv6)
         {
+#ifdef __APPLE__
+            // TODO: fix IPv6 issues related with zone ID
+            GTEST_SKIP() << "TCPv6 tests are disabled in Mac";
+#endif // ifdef __APPLE__
             test_transport_ = std::make_shared<TCPv6TransportDescriptor>();
         }
         else

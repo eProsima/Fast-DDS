@@ -30,7 +30,7 @@
 #if HAVE_SECURITY
 #include <fastdds/rtps/security/accesscontrol/ParticipantSecurityAttributes.h>
 #include <fastdds/rtps/security/accesscontrol/EndpointSecurityAttributes.h>
-#endif
+#endif // if HAVE_SECURITY
 
 #include <string>
 #include <vector>
@@ -54,16 +54,17 @@ using ParameterCount_t = fastdds::dds::ParameterCount_t;
 using ParameterEntityId_t = fastdds::dds::ParameterEntityId_t;
 using ParameterTime_t = fastdds::dds::ParameterTime_t;
 using ParameterBuiltinEndpointSet_t = fastdds::dds::ParameterBuiltinEndpointSet_t;
+using ParameterNetworkConfigSet_t = fastdds::dds::ParameterNetworkConfigSet_t;
 using ParameterPropertyList_t = fastdds::dds::ParameterPropertyList_t;
 using ParameterSampleIdentity_t = fastdds::dds::ParameterSampleIdentity_t;
 #if HAVE_SECURITY
 using ParameterToken_t = fastdds::dds::ParameterToken_t;
 using ParameterParticipantSecurityInfo_t = fastdds::dds::ParameterParticipantSecurityInfo_t;
 using ParameterEndpointSecurityInfo_t = fastdds::dds::ParameterEndpointSecurityInfo_t;
-#endif
+#endif // if HAVE_SECURITY
 
 } //end of namespace
 } //end of namespace eprosima
 
-#endif
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 #endif /* PARAMETERTYPES_H_ */

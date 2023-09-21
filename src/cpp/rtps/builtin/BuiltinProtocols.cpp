@@ -84,7 +84,7 @@ bool BuiltinProtocols::initBuiltinProtocols(
     // and PDPServer: read the remote servers list after the initialization of PDP.
     m_DiscoveryServers = m_att.discovery_config.m_DiscoveryServers;
 
-    transform_server_remote_locators(p_part->network_factory());
+    filter_server_remote_locators(p_part->network_factory());
 
     const RTPSParticipantAllocationAttributes& allocation = p_part->getRTPSParticipantAttributes().allocation;
 
@@ -168,21 +168,26 @@ bool BuiltinProtocols::updateMetatrafficLocators(
     return true;
 }
 
-void BuiltinProtocols::transform_server_remote_locators(
+void BuiltinProtocols::filter_server_remote_locators(
         NetworkFactory& nf)
 {
     // TODO(jlbueno) The access to the list should be protected with the PDP mutex but requires a refactor on PDPClient
     // and PDPServer: read the remote servers list after the initialization of PDP.
     for (eprosima::fastdds::rtps::RemoteServerAttributes& rs : m_DiscoveryServers)
     {
+        LocatorList_t allowed_locators;
         for (Locator_t& loc : rs.metatrafficUnicastLocatorList)
         {
-            Locator_t localized;
-            if (nf.transform_remote_locator(loc, localized))
+            if (nf.is_locator_allowed(loc))
             {
-                loc = localized;
+                allowed_locators.push_back(loc);
+            }
+            else
+            {
+                EPROSIMA_LOG_WARNING(RTPS_PDP, "Ignoring remote server locator " << loc << " : not allowed.");
             }
         }
+        rs.metatrafficUnicastLocatorList.swap(allowed_locators);
     }
 }
 
