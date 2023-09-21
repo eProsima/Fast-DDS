@@ -53,7 +53,7 @@ if(WIN32)
 endif()
 
 add_executable(ReaderHistoryTests ${READERHISTORYTESTS_SOURCE})
-target_compile_definitions(ReaderHistoryTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(ReaderHistoryTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -69,7 +69,7 @@ target_link_libraries(ReaderHistoryTests
 add_gtest(ReaderHistoryTests SOURCES ${READERHISTORYTESTS_SOURCE})
 
 add_executable(BasicPoolsTests ${BASICPOOLSTESTS_SOURCE})
-target_compile_definitions(BasicPoolsTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(BasicPoolsTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -82,7 +82,7 @@ target_link_libraries(BasicPoolsTests
 add_gtest(BasicPoolsTests SOURCES ${BASICPOOLSTESTS_SOURCE})
 
 add_executable(CacheChangePoolTests ${CACHECHANGEPOOLTESTS_SOURCE})
-target_compile_definitions(CacheChangePoolTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(CacheChangePoolTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -95,7 +95,7 @@ target_link_libraries(CacheChangePoolTests
 add_gtest(CacheChangePoolTests SOURCES ${CACHECHANGEPOOLTESTS_SOURCE})
 
 add_executable(TopicPayloadPoolTests ${TOPICPAYLOADPOOLTESTS_SOURCE})
-target_compile_definitions(TopicPayloadPoolTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(TopicPayloadPoolTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )

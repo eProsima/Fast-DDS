@@ -33,7 +33,7 @@ add_executable(BuiltinLogging ${COMMON_SOURCES_LOGGING_PLUGIN_TEST_SOURCE}
     ${PROJECT_SOURCE_DIR}/src/cpp/security/logging/LogTopic.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinLogTopicTests.cpp)
 
-target_compile_definitions(BuiltinLogging PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(BuiltinLogging PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )

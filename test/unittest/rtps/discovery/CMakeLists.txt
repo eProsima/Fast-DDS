@@ -56,7 +56,7 @@ if(WIN32)
 endif()
 
 add_executable(EdpTests ${EDPTESTS_SOURCE})
-target_compile_definitions(EdpTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(EdpTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>

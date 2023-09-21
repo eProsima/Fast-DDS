@@ -132,7 +132,7 @@ if(WIN32)
 endif()
 
 add_executable(ListenerTests ${LISTENERTESTS_SOURCE})
-target_compile_definitions(ListenerTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(ListenerTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     ASIO_DISABLE_VISIBILITY

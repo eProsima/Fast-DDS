@@ -30,7 +30,7 @@ set(PORTPARAMETERSTESTS_SOURCE PortParametersTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/fastdds/log/StdoutErrConsumer.cpp)
 
 add_executable(CacheChangeTests ${CACHECHANGETESTS_SOURCE})
-target_compile_definitions(CacheChangeTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(CacheChangeTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -40,7 +40,7 @@ target_link_libraries(CacheChangeTests GTest::gtest)
 add_gtest(CacheChangeTests SOURCES ${CACHECHANGETESTS_SOURCE})
 
 add_executable(GuidUtilsTests ${GUID_UTILS_TESTS_SOURCE})
-target_compile_definitions(GuidUtilsTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(GuidUtilsTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -57,7 +57,7 @@ endif()
 add_gtest(GuidUtilsTests SOURCES ${GUID_UTILS_TESTS_SOURCE})
 
 add_executable(SequenceNumberTests ${SEQUENCENUMBERTESTS_SOURCE})
-target_compile_definitions(SequenceNumberTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(SequenceNumberTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -67,7 +67,7 @@ target_link_libraries(SequenceNumberTests GTest::gtest)
 add_gtest(SequenceNumberTests SOURCES ${SEQUENCENUMBERTESTS_SOURCE})
 
 add_executable(PortParametersTests ${PORTPARAMETERSTESTS_SOURCE})
-target_compile_definitions(PortParametersTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(PortParametersTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -83,7 +83,7 @@ add_gtest(PortParametersTests SOURCES ${PORTPARAMETERSTESTS_SOURCE} LABELS "NoMe
 set(GUIDPREFIXTESTS_SOURCE GuidPrefixTests.cpp)
 
 add_executable(GuidPrefixTests ${GUIDPREFIXTESTS_SOURCE})
-target_compile_definitions(GuidPrefixTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(GuidPrefixTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -100,7 +100,7 @@ add_gtest(GuidPrefixTests SOURCES ${GUIDPREFIXTESTS_SOURCE} LABELS "NoMemoryChec
 set(ENTITYIDTESTS_SOURCE EntityIdTests.cpp)
 
 add_executable(EntityIdTests ${ENTITYIDTESTS_SOURCE})
-target_compile_definitions(EntityIdTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(EntityIdTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -117,7 +117,7 @@ add_gtest(EntityIdTests SOURCES ${ENTITYIDTESTS_SOURCE} LABELS "NoMemoryCheck")
 set(GUIDTESTS_SOURCE GuidTests.cpp)
 
 add_executable(GuidTests ${GUIDTESTS_SOURCE})
-target_compile_definitions(GuidTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(GuidTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -126,3 +126,30 @@ target_include_directories(GuidTests PRIVATE
     ${PROJECT_SOURCE_DIR}/src/cpp)
 target_link_libraries(GuidTests GTest::gtest)
 add_gtest(GuidTests SOURCES ${GUIDTESTS_SOURCE} LABELS "NoMemoryCheck")
+<<<<<<< HEAD
+=======
+
+if(ANDROID)
+    set_property(TARGET CacheChangeTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET EntityIdTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET GuidTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET GuidPrefixTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET GuidUtilsTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET PortParametersTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+    set_property(TARGET SequenceNumberTests PROPERTY CROSSCOMPILING_EMULATOR "adb;shell;cd;${CMAKE_CURRENT_BINARY_DIR};&&")
+endif()
+
+#############
+# Time test #
+#############
+
+add_executable(TimeTests ${TIMETESTS_SOURCE})
+target_compile_definitions(TimeTests PRIVATE
+    $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
+    $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
+    )
+target_include_directories(TimeTests PRIVATE ${GTEST_INCLUDE_DIRS}
+    ${PROJECT_SOURCE_DIR}/include ${PROJECT_BINARY_DIR}/include)
+target_link_libraries(TimeTests GTest::gtest)
+add_gtest(TimeTests SOURCES ${TIMETESTS_SOURCE} LABELS "NoMemoryCheck")
+>>>>>>> e00b8e323 (Use FASTRTPS_NO_LIB on unittest root folder (#3856))

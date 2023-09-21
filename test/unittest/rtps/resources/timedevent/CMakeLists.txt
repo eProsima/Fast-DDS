@@ -30,7 +30,7 @@ if(WIN32)
 endif()
 
 add_executable(TimedEventTests ${TIMEDEVENTTESTS_SOURCE})
-target_compile_definitions(TimedEventTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(TimedEventTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>

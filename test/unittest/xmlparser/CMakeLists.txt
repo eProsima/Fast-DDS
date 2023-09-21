@@ -120,7 +120,7 @@ if(TINYXML2_INCLUDE_DIR)
 endif(TINYXML2_INCLUDE_DIR)
 
 add_executable(XMLProfileParserTests ${XMLPROFILEPARSER_SOURCE})
-target_compile_definitions(XMLProfileParserTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(XMLProfileParserTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -206,7 +206,7 @@ if(TINYXML2_SOURCE_DIR)
 endif()
 
 add_executable(XMLParserTests ${XMLPARSER_SOURCE})
-target_compile_definitions(XMLParserTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(XMLParserTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -241,7 +241,7 @@ set(XMLTREE_SOURCE
     )
 
 add_executable(XMLTreeTests ${XMLTREE_SOURCE})
-target_compile_definitions(XMLTreeTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(XMLTreeTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -316,7 +316,7 @@ if(TINYXML2_SOURCE_DIR)
 endif()
 
 add_executable(XMLEndpointParserTests ${XMLENDPOINTPARSERTESTS_SOURCE})
-target_compile_definitions(XMLEndpointParserTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(XMLEndpointParserTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     )

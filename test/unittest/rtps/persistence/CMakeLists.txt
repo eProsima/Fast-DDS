@@ -27,7 +27,7 @@ if(SQLITE3_SUPPORT)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
 
     add_executable(PersistenceTests ${PERSISTENCETESTS_SOURCE})
-    target_compile_definitions(PersistenceTests PRIVATE FASTRTPS_NO_LIB
+    target_compile_definitions(PersistenceTests PRIVATE
         $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
         $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
         )

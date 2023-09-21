@@ -24,7 +24,7 @@ set(STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE
     ${PROJECT_SOURCE_DIR}/src/cpp/statistics/types/types.cxx)
 
 add_executable(StatisticsDomainParticipantTests ${STATISTICS_DOMAINPARTICIPANT_TESTS_SOURCE})
-target_compile_definitions(StatisticsDomainParticipantTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(StatisticsDomainParticipantTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
     )
@@ -38,7 +38,11 @@ set(STATISTICS_QOS_TESTS_SOURCE
     StatisticsQosTests.cpp)
 
 add_executable(StatisticsQosTests ${STATISTICS_QOS_TESTS_SOURCE})
+<<<<<<< HEAD
 target_compile_definitions(StatisticsQosTests PRIVATE FASTRTPS_NO_LIB
+=======
+target_compile_definitions(StatisticsQosTests PRIVATE BOOST_ASIO_STANDALONE ASIO_STANDALONE
+>>>>>>> e00b8e323 (Use FASTRTPS_NO_LIB on unittest root folder (#3856))
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
     )
@@ -59,7 +63,7 @@ if (FASTDDS_STATISTICS)
         ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
         ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
         ${DOMAINPARTICIPANTSTATISTICSLISTENER_TESTS_SOURCE})
-    target_compile_definitions(DomainParticipantStatisticsListenerTests PRIVATE FASTRTPS_NO_LIB
+    target_compile_definitions(DomainParticipantStatisticsListenerTests PRIVATE
         $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
         $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNAL_DEBUG> # Internal debug activated.
         )
@@ -312,7 +316,7 @@ if (SQLITE3_SUPPORT AND FASTDDS_STATISTICS)
     endif(TINYXML2_INCLUDE_DIR)
 
     add_executable(StatisticsDomainParticipantMockTests ${STATISTICS_DOMAINPARTICIPANT_MOCK_TESTS_SOURCE})
-    target_compile_definitions(StatisticsDomainParticipantMockTests PRIVATE FASTRTPS_NO_LIB
+    target_compile_definitions(StatisticsDomainParticipantMockTests PRIVATE
         BOOST_ASIO_STANDALONE
         ASIO_STANDALONE
         SQLITE_WIN32_GETVERSIONEX=0

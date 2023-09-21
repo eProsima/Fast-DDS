@@ -24,7 +24,7 @@ set(LOANABLE_SEQUENCE_TESTS_SOURCE
     LoanableSequenceTests.cpp)
 
 add_executable(LoanableSequenceTests ${LOANABLE_SEQUENCE_TESTS_SOURCE})
-target_compile_definitions(LoanableSequenceTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(LoanableSequenceTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
