@@ -1,0 +1,30 @@
+enum PixelFormatEnum {
+    FORMAT_1,
+    FORMAT_2
+};
+
+struct ImageFormatMsg {
+    unsigned long width;
+    unsigned long height;
+    unsigned long stride;
+    PixelFormatEnum format;
+};
+
+struct LargeDataMsg {
+    unsigned long cameraId;
+    unsigned long long frameNumber;
+    unsigned long frameTag;
+    double exposureDuration;
+    double gain;
+    double readoutDurationSeconds;
+    long long captureTimestampNs;
+    long long captureTimestampInProcessingClockDomainNs;
+    long long arrivalTimestampNs;
+    long long processingStartTimestampNs;
+    double temperatureDegC;
+    ImageFormatMsg imageFormat;
+    string videoCodecName;
+    unsigned long imageBufferSize;
+    sequence<octet> data;
+};
+
