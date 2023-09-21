@@ -20,7 +20,6 @@
 #include <string>
 #include <vector>
 
-#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 #include <fastrtps/fastrtps_dll.h>
 
 namespace eprosima {
@@ -43,9 +42,6 @@ class TransportInterface;
  * */
 struct TransportDescriptorInterface
 {
-
-    using ReceptionThreadsConfigMap = std::map<uint32_t, ThreadSettings>;
-
     //! Constructor
     RTPS_DllAPI TransportDescriptorInterface(
             uint32_t maximumMessageSize,
@@ -90,27 +86,11 @@ struct TransportDescriptorInterface
         return maxInitialPeersRange;
     }
 
-    //! Returns the maximum size expected for received messages.
-    virtual RTPS_DllAPI ThreadSettings default_reception_threads() const
-    {
-        return defaultReceptionThreads;
-    }
-
-    /** Returns the maximum number of opened channels for each initial remote peer
-     * (maximum number of guessed initial peers to try to connect)
-     */
-    virtual RTPS_DllAPI ReceptionThreadsConfigMap reception_threads() const
-    {
-        return receptionThreads;
-    }
-
     //! Comparison operator
     RTPS_DllAPI bool operator ==(
             const TransportDescriptorInterface& t) const
     {
         return (this->maxMessageSize == t.max_message_size() &&
-               this->defaultReceptionThreads == t.default_reception_threads() &&
-               this->receptionThreads == t.reception_threads() &&
                this->maxInitialPeersRange == t.max_initial_peers_range());
     }
 
@@ -119,13 +99,6 @@ struct TransportDescriptorInterface
 
     //! Number of channels opened with each initial remote peer.
     uint32_t maxInitialPeersRange;
-
-    //! Thread settings for the default reception threads
-    ThreadSettings defaultReceptionThreads;
-
-    //! Thread settings for the specific reception threads, indexed by port
-    ReceptionThreadsConfigMap receptionThreads;
-
 };
 
 } // namespace rtps

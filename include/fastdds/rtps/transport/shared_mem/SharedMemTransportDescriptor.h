@@ -16,7 +16,7 @@
 #define _FASTDDS_SHAREDMEM_TRANSPORT_DESCRIPTOR_
 
 #include <fastdds/rtps/attributes/ThreadSettings.hpp>
-#include <fastdds/rtps/transport/TransportDescriptorInterface.h>
+#include <fastdds/rtps/transport/PortBasedTransportDescriptor.hpp>
 #include <fastrtps/fastrtps_dll.h>
 
 namespace eprosima {
@@ -39,7 +39,7 @@ class TransportInterface;
  *
  * @ingroup TRANSPORT_MODULE
  */
-struct SharedMemTransportDescriptor : public TransportDescriptorInterface
+struct SharedMemTransportDescriptor : public PortBasedTransportDescriptor
 {
     //! Destructor
     virtual ~SharedMemTransportDescriptor() = default;
