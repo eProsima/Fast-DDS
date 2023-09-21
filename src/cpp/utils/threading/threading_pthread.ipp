@@ -21,6 +21,7 @@
 #include <sys/types.h>
 
 #include <fastdds/dds/log/Log.hpp>
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
 
 namespace eprosima {
 

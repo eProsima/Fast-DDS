@@ -16,6 +16,8 @@
 #include <string.h>
 #include <stdio.h>
 
+#include <fastdds/rtps/attributes/ThreadSettings.hpp>
+
 namespace eprosima {
 
 template<typename... Args>
