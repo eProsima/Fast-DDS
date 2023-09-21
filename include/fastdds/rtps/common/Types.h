@@ -88,6 +88,7 @@ using octet = unsigned char;
 //typedef unsigned short ushort;
 using SubmessageFlag = unsigned char;
 using BuiltinEndpointSet_t = uint32_t;
+using NetworkConfigSet_t = uint32_t;
 using Count_t = uint32_t;
 
 #define BIT0 0x01u

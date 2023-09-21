@@ -389,31 +389,44 @@ Locator UDPTransportInterface::RemoteToMainLocal(
 
 bool UDPTransportInterface::transform_remote_locator(
         const Locator& remote_locator,
-        Locator& result_locator) const
+        Locator& result_locator,
+        bool allowed_remote_localhost,
+        bool allowed_local_localhost) const
 {
     if (IsLocatorSupported(remote_locator))
     {
         result_locator = remote_locator;
         if (!is_local_locator(result_locator))
         {
-            // is_local_locator will return false for multicast addresses as well as
-            // remote unicast ones.
+            // is_local_locator will return false for multicast addresses as well as remote unicast ones.
             return true;
         }
 
         // If we get here, the locator is a local unicast address
-        if (!is_locator_allowed(result_locator))
+
+        // Attempt conversion to localhost if remote transport listening on it allows it
+        if (allowed_remote_localhost)
         {
-            return false;
+            Locator loopbackLocator;
+            fill_local_ip(loopbackLocator);
+            if (is_locator_allowed(loopbackLocator))
+            {
+                // Locator localhost is in the whitelist, so use localhost instead of remote_locator
+                fill_local_ip(result_locator);
+                return true;
+            }
+            else if (allowed_local_localhost)
+            {
+                // Abort transformation if localhost not allowed by this transport, but it is by other local transport
+                // and the remote one.
+                return false;
+            }
         }
 
-        // The locator is in the whitelist (or the whitelist is empty)
-        Locator loopbackLocator;
-        fill_local_ip(loopbackLocator);
-        if (is_locator_allowed(loopbackLocator))
+        if (!is_locator_allowed(result_locator))
         {
-            // Loopback locator
-            fill_local_ip(result_locator);
+            // Neither original remote locator nor localhost allowed: abort.
+            return false;
         }
 
         return true;
@@ -717,6 +730,13 @@ void UDPTransportInterface::get_unknown_network_interfaces(
 void UDPTransportInterface::update_network_interfaces()
 {
     rescan_interfaces_.store(true);
+}
+
+bool UDPTransportInterface::is_localhost_allowed() const
+{
+    Locator local_locator;
+    fill_local_ip(local_locator);
+    return is_locator_allowed(local_locator);
 }
 
 } // namespace rtps

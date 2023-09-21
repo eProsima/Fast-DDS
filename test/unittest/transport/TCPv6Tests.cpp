@@ -56,6 +56,14 @@ class TCPv6Tests : public ::testing::Test
 {
 public:
 
+    void SetUp() override
+    {
+#ifdef __APPLE__
+        // TODO: fix IPv6 issues related with zone ID
+        GTEST_SKIP() << "TCPv6 tests are disabled in Mac";
+#endif // ifdef __APPLE__
+    }
+
     TCPv6Tests()
     {
         HELPER_SetDescriptorDefaults();

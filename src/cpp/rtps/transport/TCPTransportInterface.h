@@ -293,16 +293,20 @@ public:
      * Transforms a remote locator into a locator optimized for local communications.
      *
      * If the remote locator corresponds to one of the local interfaces, it is converted
-     * to the corresponding local address.
+     * to the corresponding local address if allowed by both local and remote transports.
      *
      * @param [in]  remote_locator Locator to be converted.
      * @param [out] result_locator Converted locator.
+     * @param [in]  allowed_remote_localhost Whether localhost is allowed (and hence used) in the remote transport.
+     * @param [in]  allowed_local_localhost Whether localhost is allowed locally (by this or other transport).
      *
      * @return false if the input locator is not supported/allowed by this transport, true otherwise.
      */
     bool transform_remote_locator(
             const Locator& remote_locator,
-            Locator& result_locator) const override;
+            Locator& result_locator,
+            bool allowed_remote_localhost,
+            bool allowed_local_localhost) const override;
 
     /**
      * Blocking Receive from the specified channel.
@@ -428,6 +432,8 @@ public:
     void keep_alive();
 
     void update_network_interfaces() override;
+
+    bool is_localhost_allowed() const override;
 };
 
 } // namespace rtps

@@ -99,17 +99,30 @@ public:
      * Transform a remote locator into a locator optimized for local communications.
      *
      * If the remote locator corresponds to one of the local interfaces, it is converted
-     * to the corresponding local address.
+     * to the corresponding local address if allowed by both local and remote transports.
      *
      * @param [in]  remote_locator Locator to be converted.
      * @param [out] result_locator Converted locator.
+     * @param [in]  remote_network_config Remote network configuration.
      *
      * @return false if the input locator is not supported/allowed by any of the registered transports,
      *         true otherwise.
      */
     bool transform_remote_locator(
             const Locator_t& remote_locator,
-            Locator_t& result_locator) const;
+            Locator_t& result_locator,
+            const NetworkConfigSet_t& remote_network_config) const;
+
+    /**
+     * Must report whether the given locator is allowed by at least one of the registered transports.
+     *
+     * @param [in]  locator Locator to check if allowed.
+     *
+     * @return false if the input locator is not supported/allowed by any of the registered transports,
+     *         true otherwise.
+     */
+    bool is_locator_allowed(
+            const Locator_t& locator) const;
 
     /**
      * Perform the locator selection algorithm.
@@ -136,6 +149,11 @@ public:
     uint32_t get_min_send_buffer_size()
     {
         return minSendBufferSize_;
+    }
+
+    NetworkConfigSet_t network_configuration() const
+    {
+        return network_configuration_;
     }
 
     /**
@@ -230,6 +248,9 @@ private:
 
     // Whether multicast metatraffic on SHM transport should always be used
     bool enforce_shm_multicast_metatraffic_ = false;
+
+    // Mask using transport kinds to indicate whether the transports allows localhost
+    NetworkConfigSet_t network_configuration_;
 
     /**
      * Calculate well-known ports.
