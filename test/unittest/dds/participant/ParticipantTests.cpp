@@ -2979,7 +2979,7 @@ TEST(ParticipantTests, SetDomainParticipantQos)
 }
 
 /*
- * This test checks that the mmutable policy qos can not be
+ * This test checks that the inmutable policy qos can not be
  * changed in an enabled participant
  */
 TEST(ParticipantTests, UpdatableDomainParticipantQos)
