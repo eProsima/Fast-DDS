@@ -341,7 +341,9 @@ SharedMemChannelResource* SharedMemTransport::CreateInputChannelResource(
             open_mode)->create_listener(),
         locator,
         receiver,
-        configuration_.rtps_dump_file());
+        configuration_.rtps_dump_file(),
+        true,
+        configuration_.get_thread_config_for_port(locator.port));
 }
 
 bool SharedMemTransport::OpenOutputChannel(
