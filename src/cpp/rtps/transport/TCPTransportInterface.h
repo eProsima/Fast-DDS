@@ -79,8 +79,8 @@ protected:
 #if TLS_FOUND
     asio::ssl::context ssl_context_;
 #endif // if TLS_FOUND
-    std::shared_ptr<std::thread> io_service_thread_;
-    std::shared_ptr<std::thread> io_service_timers_thread_;
+    std::thread io_service_thread_;
+    std::thread io_service_timers_thread_;
     std::shared_ptr<RTCPMessageManager> rtcp_message_manager_;
     std::mutex rtcp_message_manager_mutex_;
     std::condition_variable rtcp_message_manager_cv_;

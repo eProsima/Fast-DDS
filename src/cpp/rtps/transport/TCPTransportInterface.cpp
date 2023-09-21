@@ -196,11 +196,10 @@ void TCPTransportInterface::clean()
     alive_.store(false);
 
     keep_alive_event_.cancel();
-    if (io_service_timers_thread_)
+    if (io_service_timers_thread_.joinable())
     {
         io_service_timers_.stop();
-        io_service_timers_thread_->join();
-        io_service_timers_thread_ = nullptr;
+        io_service_timers_thread_.join();
     }
 
     {
@@ -242,11 +241,10 @@ void TCPTransportInterface::clean()
         }
     }
 
-    if (io_service_thread_)
+    if (io_service_thread_.joinable())
     {
         io_service_.stop();
-        io_service_thread_->join();
-        io_service_thread_ = nullptr;
+        io_service_thread_.join();
     }
 }
 
@@ -455,7 +453,6 @@ bool TCPTransportInterface::init(
 
     auto ioServiceFunction = [&]()
             {
-                set_name_to_current_thread("dds.tcp_accept");
 #if ASIO_VERSION >= 101200
                 asio::executor_work_guard<asio::io_service::executor_type> work(io_service_.get_executor());
 #else
@@ -463,21 +460,22 @@ bool TCPTransportInterface::init(
 #endif // if ASIO_VERSION >= 101200
                 io_service_.run();
             };
-    io_service_thread_ = std::make_shared<std::thread>(ioServiceFunction);
+    io_service_thread_ = create_thread(ioServiceFunction, configuration()->accept_thread, "dds.tcp_accept");
 
     if (0 < configuration()->keep_alive_frequency_ms)
     {
-        io_service_timers_thread_ = std::make_shared<std::thread>([&]()
-                        {
-                            set_name_to_current_thread("dds.tcp_keep");
+        auto ioServiceTimersFunction = [&]()
+                {
 #if ASIO_VERSION >= 101200
-                            asio::executor_work_guard<asio::io_service::executor_type> work(io_service_timers_.
+                    asio::executor_work_guard<asio::io_service::executor_type> work(io_service_timers_.
                                     get_executor());
 #else
-                            io_service::work work(io_service_timers_);
+                    io_service::work work(io_service_timers_);
 #endif // if ASIO_VERSION >= 101200
-                            io_service_timers_.run();
-                        });
+                    io_service_timers_.run();
+                };
+        io_service_timers_thread_ = create_thread(ioServiceTimersFunction,
+                        configuration()->keep_alive_thread, "dds.tcp_keep");
     }
 
     return true;
