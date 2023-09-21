@@ -66,7 +66,7 @@ namespace rtps {
 /**
  * Loops over all the readers in the vector, applying the given routine.
  * The loop continues until the result of the routine is true for any reader
- * or all readers have been processes.
+ * or all readers have been processed.
  * The returned value is true if the routine returned true at any point,
  * or false otherwise.
  */
@@ -2030,16 +2030,22 @@ bool StatefulWriter::ack_timer_expired()
 
     while (interval.count() < 0)
     {
+        bool acks_flag = false;
         for_matched_readers(matched_local_readers_, matched_datasharing_readers_, matched_remote_readers_,
-                [this](ReaderProxy* reader)
+                [this, &acks_flag](ReaderProxy* reader)
                 {
                     if (reader->disable_positive_acks())
                     {
                         reader->acked_changes_set(last_sequence_number_ + 1);
+                        acks_flag = true;
                     }
                     return false;
                 }
                 );
+        if (acks_flag)
+        {
+            check_acked_status();
+        }
         last_sequence_number_++;
 
         // Get the next cache change from the history
