@@ -1149,7 +1149,6 @@ public:
      *
      * @return A const pointer to the listener (implemented within the RTPSParticipant)
      *
-     * @note Not supported yet. Currently always returns nullptr
      */
     const fastdds::statistics::rtps::IStatusObserver* create_monitor_service(
             fastdds::statistics::rtps::IStatusQueryable& status_queryable);
@@ -1160,7 +1159,6 @@ public:
      *
      * @return true if the monitor service could be correctly created.
      *
-     * @note Not supported yet. Currently always returns false
      */
     bool create_monitor_service();
 
@@ -1170,7 +1168,6 @@ public:
      * @return true if the monitor service is created.
      * @return false otherwise.
      *
-     * @note Not supported yet. Currently always returns false
      */
     bool is_monitor_service_created() const;
 
@@ -1179,7 +1176,6 @@ public:
      *
      * @return true if the monitor service could be correctly enabled.
      *
-     * @note Not supported yet. Currently always returns false
      */
     bool enable_monitor_service() const;
 
@@ -1189,7 +1185,6 @@ public:
      * @return true if the monitor service could be correctly disabled.
      * @return false if the service could not be properly disabled or if the monitor service was not previously enabled.
      *
-     * @note Not supported yet. Currently always returns false
      */
     bool disable_monitor_service() const;
 
