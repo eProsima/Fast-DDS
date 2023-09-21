@@ -184,7 +184,7 @@ void CustomPayloadPoolDataPublisher::run_thread(
             if (publish())
             {
                 std::cout << "Message: " << hello_.message().data() << " with index: " << hello_.index()
-                        << " SENT" << std::endl;
+                          << " SENT" << std::endl;
                 std::this_thread::sleep_for(std::chrono::milliseconds(sleep));
             }
             // something went wrong writing

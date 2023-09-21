@@ -158,7 +158,7 @@ void CustomPayloadPoolDataSubscriber::on_data_available(
             samples_++;
             // Print your structure data here.
             std::cout << "Message [" << samples_ << "] of " << hello_.message() << " " << hello_.index()
-                    << " RECEIVED" << std::endl;
+                      << " RECEIVED" << std::endl;
 
             if (max_samples_ > 0 && (samples_ >= max_samples_))
             {
@@ -184,8 +184,8 @@ bool CustomPayloadPoolDataSubscriber::run(
 
     std::unique_lock<std::mutex> lck(terminate_cv_mtx_);
     terminate_cv_.wait(lck, []
-    {
-        return is_stopped();
-    });
+            {
+                return is_stopped();
+            });
     return is_stopped();
 }
