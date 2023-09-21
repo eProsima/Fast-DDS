@@ -31,7 +31,7 @@
 #include <fastdds/dds/subscriber/DataReaderListener.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
 
-class CustomPayloadPoolDataSubscriber : public eprosima::fastdds::dds::DataReaderListener
+class CustomPayloadPoolDataSubscriber : private eprosima::fastdds::dds::DataReaderListener
 {
 public:
 
