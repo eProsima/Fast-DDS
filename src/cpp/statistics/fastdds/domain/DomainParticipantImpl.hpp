@@ -131,7 +131,6 @@ public:
      * @return RETCODE_ERROR if the monitor service could not be enabled properly.
      * @return RETCODE_UNSUPPORTED if FASTDDS_STATISTICS is not enabled.
      *
-     * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     ReturnCode_t enable_monitor_service();
 
@@ -143,7 +142,6 @@ public:
      * @return RETCODE_ERROR if the service could not be properly disabled.
      * @return RETCODE_UNSUPPORTED if FASTDDS_STATISTICS is not enabled.
      *
-     * @note Not supported yet. Currently returns RETCODE_UNSUPPORTED
      */
     ReturnCode_t disable_monitor_service();
 
