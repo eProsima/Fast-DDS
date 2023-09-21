@@ -1612,6 +1612,17 @@ void StatefulWriter::updateAttributes(
         const WriterAttributes& att)
 {
     this->updateTimes(att.times);
+    this->updatePositiveAcks(att);
+}
+
+void StatefulWriter::updatePositiveAcks(
+        const WriterAttributes& att)
+{
+    std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+    if (keep_duration_us_.count() != (att.keep_duration.to_ns() * 1e-3))
+    {
+        keep_duration_us_ = std::chrono::nanoseconds {att.keep_duration.to_ns()};
+    }
 }
 
 void StatefulWriter::updateTimes(
