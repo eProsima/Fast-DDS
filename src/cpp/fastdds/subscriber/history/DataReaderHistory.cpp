@@ -469,32 +469,13 @@ bool DataReaderHistory::remove_change_sub(
         return false;
     }
 
-    std::lock_guard<RecursiveTimedMutex> guard(*getMutex());
-    bool found = false;
-    InstanceCollection::iterator vit;
-    if (find_key(change->instanceHandle, vit))
-    {
-        for (auto chit = vit->second->cache_changes.begin(); chit != vit->second->cache_changes.end(); ++chit)
-        {
-            if ((*chit)->sequenceNumber == change->sequenceNumber &&
-                    (*chit)->writerGUID == change->writerGUID)
-            {
-                assert(it == chit);
-                it = vit->second->cache_changes.erase(chit);
-                found = true;
+    CacheChange_t dummy_change;
+    dummy_change.instanceHandle = change->instanceHandle;
+    dummy_change.isRead = change->isRead;
+    dummy_change.sequenceNumber = change->sequenceNumber;
+    dummy_change.writerGUID = change->writerGUID;
 
-                if (change->isRead)
-                {
-                    --counters_.samples_read;
-                }
-                break;
-            }
-        }
-    }
-    if (!found)
-    {
-        EPROSIMA_LOG_ERROR(SUBSCRIBER, "Change not found on this key, something is wrong");
-    }
+    std::lock_guard<RecursiveTimedMutex> guard(*getMutex());
 
     const_iterator chit = find_change_nts(change);
     if (chit == changesEnd())
@@ -503,11 +484,36 @@ bool DataReaderHistory::remove_change_sub(
         return false;
     }
 
-    m_isHistoryFull = false;
-    ReaderHistory::remove_change_nts(chit);
+    auto new_it = ReaderHistory::remove_change_nts(chit);
 
-    counters_.samples_unread = mp_reader->get_unread_count();
-    return true;
+    if (new_it == changesEnd() || !matches_change(&dummy_change, *new_it)) // Change was successfully removed.
+    {
+        InstanceCollection::iterator vit;
+        if (find_key(dummy_change.instanceHandle, vit))
+        {
+            auto in_it = std::find(vit->second->cache_changes.begin(), vit->second->cache_changes.end(), change);
+
+            if (vit->second->cache_changes.end() != in_it)
+            {
+                assert(it == in_it);
+                it = vit->second->cache_changes.erase(in_it);
+                if (dummy_change.isRead)
+                {
+                    --counters_.samples_read;
+                }
+            }
+            else
+            {
+                EPROSIMA_LOG_ERROR(SUBSCRIBER, "Change not found on this key, something is wrong");
+            }
+        }
+
+        m_isHistoryFull = false;
+        counters_.samples_unread = mp_reader->get_unread_count();
+        return true;
+    }
+
+    return false;
 }
 
 bool DataReaderHistory::set_next_deadline(
@@ -667,33 +673,47 @@ ReaderHistory::iterator DataReaderHistory::remove_change_nts(
 {
     if (removal != changesEnd())
     {
-        CacheChange_t* p_sample = *removal;
+        CacheChange_t* change_ptr = *removal;
+        CacheChange_t dummy_change;
+        bool is_fully_assembled = (*removal)->is_fully_assembled();
+        dummy_change.instanceHandle = (*removal)->instanceHandle;
+        dummy_change.isRead = (*removal)->isRead;
+        dummy_change.sequenceNumber = (*removal)->sequenceNumber;
+        dummy_change.writerGUID = (*removal)->writerGUID;
 
-        if (!has_keys_ || p_sample->is_fully_assembled())
+        // call the base class
+        auto ret_val = ReaderHistory::remove_change_nts(removal, release);
+
+        if (ret_val == changesEnd() || !matches_change(&dummy_change, *ret_val)) // Change was successfully removed.
         {
-            // clean any references to this CacheChange in the key state collection
-            auto it = instances_.find(p_sample->instanceHandle);
-
-            // if keyed and in history must be in the map
-            // There is a case when the sample could not be in the keyed map. The first received fragment of a
-            // fragmented sample is stored in the history, and when it is completed it is stored in the keyed map.
-            // But it can occur it is rejected when the sample is completed and removed without being stored in the
-            // keyed map.
-            if (it != instances_.end())
+            if (!has_keys_ || is_fully_assembled)
             {
-                it->second->cache_changes.remove(p_sample);
-                if (p_sample->isRead)
+                // clean any references to this CacheChange in the key state collection
+                auto it = instances_.find(dummy_change.instanceHandle);
+
+                // if keyed and in history must be in the map
+                // There is a case when the sample could not be in the keyed map. The first received fragment of a
+                // fragmented sample is stored in the history, and when it is completed it is stored in the keyed map.
+                // But it can occur it is rejected when the sample is completed and removed without being stored in the
+                // keyed map.
+                if (it != instances_.end())
                 {
-                    --counters_.samples_read;
+                    it->second->cache_changes.remove(change_ptr);
+                    if (dummy_change.isRead)
+                    {
+                        --counters_.samples_read;
+                    }
                 }
             }
+
+            counters_.samples_unread = mp_reader->get_unread_count();
+            return ret_val;
         }
+
+        return remove_iterator_constness(removal);
     }
 
-    // call the base class
-    auto ret_val = ReaderHistory::remove_change_nts(removal, release);
-    counters_.samples_unread = mp_reader->get_unread_count();
-    return ret_val;
+    return changesEnd();
 }
 
 ReaderHistory::iterator DataReaderHistory::remove_change_nts(

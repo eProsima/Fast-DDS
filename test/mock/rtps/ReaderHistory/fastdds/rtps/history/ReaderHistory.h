@@ -147,6 +147,11 @@ public:
         return m_changes.cend();
     }
 
+    iterator changesEnd()
+    {
+        return m_changes.end();
+    }
+
     virtual iterator remove_change_nts(
             const_iterator removal,
             bool release = true)
@@ -175,6 +180,22 @@ public:
     {
         static_cast<void>(writer_guid);
         static_cast<void>(ownership_strength);
+    }
+
+    bool matches_change(
+            const CacheChange_t* inner_change,
+            CacheChange_t* outer_change)
+    {
+        return inner_change->sequenceNumber == outer_change->sequenceNumber &&
+               inner_change->writerGUID == outer_change->writerGUID;
+    }
+
+    iterator remove_iterator_constness(
+            const_iterator c_it)
+    {
+        iterator it = m_changes.begin();
+        std::advance(it, std::distance<const_iterator>(it, c_it));
+        return it;
     }
 
     HistoryAttributes m_att;
