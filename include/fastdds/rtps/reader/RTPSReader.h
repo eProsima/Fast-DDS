@@ -36,7 +36,7 @@
 #ifdef FASTDDS_STATISTICS
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsQueryable.hpp>
 #include <fastdds/statistics/rtps/monitor_service/interfaces/IConnectionsObserver.hpp>
-#endif
+#endif // ifdef FASTDDS_STATISTICS
 
 namespace eprosima {
 namespace fastrtps {
@@ -397,7 +397,7 @@ public:
      * @return True if could be retrieved
      */
     RTPS_DllAPI virtual bool get_connections(
-            fastdds::statistics::rtps::ConnectionList &connection_list) = 0;
+            fastdds::statistics::rtps::ConnectionList& connection_list) = 0;
 
 #endif // FASTDDS_STATISTICS
 

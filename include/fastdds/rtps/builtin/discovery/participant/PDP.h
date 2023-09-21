@@ -456,6 +456,7 @@ public:
     {
         return proxy_observer_;
     }
+
 #else
     bool get_all_local_proxies(
             std::vector<GUID_t>&) override

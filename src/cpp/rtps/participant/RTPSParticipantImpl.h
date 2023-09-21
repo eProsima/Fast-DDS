@@ -688,7 +688,7 @@ private:
     std::unique_ptr<fastdds::statistics::rtps::MonitorService> monitor_server_;
     std::unique_ptr<fastdds::statistics::rtps::SimpleQueryable> simple_queryable_;
     const fastdds::statistics::rtps::IConnectionsObserver* conns_observer_;
-#endif
+#endif // ifdef FASTDDS_STATISTICS
 
     /*
      * Flow controller factory.

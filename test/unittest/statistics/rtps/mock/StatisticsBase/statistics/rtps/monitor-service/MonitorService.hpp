@@ -52,18 +52,18 @@ class MonitorService
 
 public:
 
-    using endpoint_creator_t = std::function<bool(fastrtps::rtps::RTPSWriter**,
-        fastrtps::rtps::WriterAttributes&,
-        const std::shared_ptr<fastrtps::rtps::IPayloadPool>&,
-        fastrtps::rtps::WriterHistory*,
-        fastrtps::rtps::WriterListener*,
-        const fastrtps::rtps::EntityId_t&,
-        bool)>;
+    using endpoint_creator_t = std::function<bool (fastrtps::rtps::RTPSWriter**,
+                    fastrtps::rtps::WriterAttributes&,
+                    const std::shared_ptr<fastrtps::rtps::IPayloadPool>&,
+                    fastrtps::rtps::WriterHistory*,
+                    fastrtps::rtps::WriterListener*,
+                    const fastrtps::rtps::EntityId_t&,
+                    bool)>;
 
-    using endpoint_registrator_t = std::function<bool(
-        fastrtps::rtps::RTPSWriter*,
-        const fastrtps::TopicAttributes&,
-        const fastrtps::WriterQos&)>;
+    using endpoint_registrator_t = std::function<bool (
+                        fastrtps::rtps::RTPSWriter*,
+                        const fastrtps::TopicAttributes&,
+                        const fastrtps::WriterQos&)>;
 
     MonitorService(
             const fastrtps::rtps::GUID_t& guid,
@@ -74,7 +74,8 @@ public:
             endpoint_registrator_t endpoint_registrator,
             fastrtps::rtps::ResourceEvent& event_service);
 
-    void set_writer(fastrtps::rtps::RTPSWriter* writer)
+    void set_writer(
+            fastrtps::rtps::RTPSWriter* writer)
     {
         status_writer_ = static_cast<fastrtps::rtps::StatefulWriter*>(writer);
     }
@@ -165,7 +166,7 @@ private:
      */
     bool add_change(
             MonitorServiceStatusData& status_data,
-            const bool &disposed);
+            const bool& disposed);
 
     /**
      * @brief Creates and initializes the Monitor Service
@@ -190,13 +191,14 @@ private:
      * @param entity_id Identifier of the entity.
      *
      * @return true if the entity was correctly initialized
-    */
-    bool initialize_entity(const fastrtps::rtps::EntityId_t &entity_id);
+     */
+    bool initialize_entity(
+            const fastrtps::rtps::EntityId_t& entity_id);
 
     /**
      * @brief Frees the Payload Pool
      *
-    */
+     */
     void release_payload_pool();
 
     std::atomic<bool> enabled_;

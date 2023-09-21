@@ -183,7 +183,7 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_in
     statistics_pub_impl->insert_policy_violation(dw1->guid(), fastdds::dds::RELIABILITY_QOS_POLICY_ID);
     statistics_pub_impl->insert_policy_violation(dw2->guid(), fastdds::dds::RELIABILITY_QOS_POLICY_ID);
 
-    fastdds::statistics::rtps::DDSEntityStatus* incomp_qos_status_dw_1, *incomp_qos_status_dw_2;
+    fastdds::statistics::rtps::DDSEntityStatus* incomp_qos_status_dw_1, * incomp_qos_status_dw_2;
     incomp_qos_status_dw_1 = new fastdds::statistics::rtps::DDSEntityStatus;
     incomp_qos_status_dw_2 = new fastdds::statistics::rtps::DDSEntityStatus;
     ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw1->guid(), 2, incomp_qos_status_dw_1));
@@ -239,7 +239,7 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_li
     statistics_pub_impl->insert_policy_violation(dw1->guid(), fastdds::dds::LIVELINESS_QOS_POLICY_ID);
     statistics_pub_impl->insert_policy_violation(dw2->guid(), fastdds::dds::LIVELINESS_QOS_POLICY_ID);
 
-    rtps::DDSEntityStatus *liv_lost_status_dw_1, *liv_lost_status_dw_2;
+    rtps::DDSEntityStatus* liv_lost_status_dw_1, * liv_lost_status_dw_2;
     liv_lost_status_dw_1 = new fastdds::statistics::rtps::DDSEntityStatus;
     liv_lost_status_dw_2 = new fastdds::statistics::rtps::DDSEntityStatus;
     ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw1->guid(), 4, liv_lost_status_dw_1));
@@ -293,7 +293,7 @@ TEST_F(StatisticsDomainParticipantStatusQueryableTests, istatus_queryable_get_de
     statistics_pub_impl->insert_policy_violation(dw1->guid(), fastdds::dds::DEADLINE_QOS_POLICY_ID);
     statistics_pub_impl->insert_policy_violation(dw2->guid(), fastdds::dds::DEADLINE_QOS_POLICY_ID);
 
-    rtps::DDSEntityStatus *deadline_missed_status_dw_1, *deadline_missed_status_dw_2;
+    rtps::DDSEntityStatus* deadline_missed_status_dw_1, * deadline_missed_status_dw_2;
     deadline_missed_status_dw_1 = new rtps::DDSEntityStatus;
     deadline_missed_status_dw_2 = new rtps::DDSEntityStatus;
     ASSERT_TRUE(statistics_participant_impl_test->monitoring_status(dw1->guid(), 6, deadline_missed_status_dw_1));

@@ -1427,7 +1427,7 @@ TEST_F(RTPSStatisticsTests, iconnections_queryable_get_entity_connections)
             //! Checking the address can be confusing since the writer_loc could be translated to
             //! 127.0.0.1
             if (statistics::to_statistics_type(writer_loc).port() == locator.port() &&
-                statistics::to_statistics_type(writer_loc).kind() == locator.kind())
+                    statistics::to_statistics_type(writer_loc).kind() == locator.kind())
             {
                 found = true;
             }

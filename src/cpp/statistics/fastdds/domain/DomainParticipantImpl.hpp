@@ -186,7 +186,7 @@ public:
             fastrtps::rtps::ReaderProxyData& data,
             fastdds::statistics::MonitorServiceStatusData& msg);
 
-     /**
+    /**
      * Gets the status observer for that entity
      *
      * @return status observer
@@ -292,7 +292,7 @@ protected:
      */
     bool get_monitoring_status(
             const fastrtps::rtps::GUID_t& entity_guid,
-            const uint32_t &status_id,
+            const uint32_t& status_id,
             eprosima::fastdds::statistics::rtps::DDSEntityStatus*&) override;
 
     efd::Publisher* builtin_publisher_ = nullptr;

@@ -80,6 +80,7 @@ public:
                 break;
         }
     }
+
 };
 
 using MonitorServiceType = eprosima::fastdds::statistics::MonitorServiceStatusDataPubSubType;
@@ -516,7 +517,9 @@ struct SampleValidator
         validation_mask.set();
     }
 
-    SampleValidator(std::bitset<statistics::STATUSES_SIZE> &val_mask) : validation_mask(val_mask)
+    SampleValidator(
+            std::bitset<statistics::STATUSES_SIZE>& val_mask)
+        : validation_mask(val_mask)
     {
 
     }
@@ -549,7 +552,8 @@ public:
 
     }
 
-    MonitorServiceConsumer(std::bitset<statistics::STATUSES_SIZE> &val_mask)
+    MonitorServiceConsumer(
+            std::bitset<statistics::STATUSES_SIZE>& val_mask)
         : PubSubReader<MonitorServiceType>(statistics::MONITOR_SERVICE_TOPIC, true, true)
         , sample_validator_( new SampleValidator(val_mask))
     {
@@ -580,7 +584,8 @@ public:
         statistics_part_ = statistics::dds::DomainParticipant::narrow(get_participant());
     }
 
-    void init_monitor_service_reader(const uint32_t &domain_id)
+    void init_monitor_service_reader(
+            const uint32_t& domain_id)
     {
         reliability(eprosima::fastdds::dds::RELIABLE_RELIABILITY_QOS);
         durability_kind(eprosima::fastdds::dds::TRANSIENT_LOCAL_DURABILITY_QOS);
@@ -588,10 +593,10 @@ public:
         history_depth(1);
 
         participant_ = DomainParticipantFactory::get_instance()->create_participant(
-                domain_id,
-                participant_qos_,
-                &participant_listener_,
-                eprosima::fastdds::dds::StatusMask::none());
+            domain_id,
+            participant_qos_,
+            &participant_listener_,
+            eprosima::fastdds::dds::StatusMask::none());
 
         init();
 
@@ -678,7 +683,8 @@ struct ProxySampleValidator : public SampleValidator
 
             if (it == total_msgs.end())
             {
-                std::cout << "Unexpected proxy " << statistics::to_fastdds_type(data.local_entity()) << data.status_kind() << std::endl;
+                std::cout << "Unexpected proxy " << statistics::to_fastdds_type(data.local_entity()) <<
+                    data.status_kind() << std::endl;
             }
 
             ASSERT_NE(it, total_msgs.end());
@@ -690,7 +696,7 @@ struct ProxySampleValidator : public SampleValidator
             if (!data.value().entity_proxy().empty())
             {
                 std::cout << "Received Proxy on local_entity "
-                      << statistics::to_fastdds_type(data.local_entity()) << std::endl;
+                          << statistics::to_fastdds_type(data.local_entity()) << std::endl;
 
                 if (guid.entityId == c_EntityId_RTPSParticipant)
                 {
@@ -700,19 +706,20 @@ struct ProxySampleValidator : public SampleValidator
                     ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(pdata, data), ReturnCode_t::RETCODE_OK);
 
                     auto part_names = participant->get_participant_names();
-                    auto it_names = std::find(part_names.begin(), part_names.end(), pdata.m_participantName.to_string());
+                    auto it_names =
+                            std::find(part_names.begin(), part_names.end(), pdata.m_participantName.to_string());
                     ASSERT_TRUE(it_names != part_names.end());
                 }
                 else if (guid.entityId.is_reader())
                 {
-                    ReaderProxyData rdata(4,4);
+                    ReaderProxyData rdata(4, 4);
 
                     ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(rdata, data), ReturnCode_t::RETCODE_OK);
 
                 }
                 else if (guid.entityId.is_writer())
                 {
-                    WriterProxyData wdata(4,4);
+                    WriterProxyData wdata(4, 4);
 
                     ASSERT_EQ(participant->fill_discovery_data_from_cdr_message(wdata, data), ReturnCode_t::RETCODE_OK);
                 }
@@ -725,7 +732,7 @@ struct ProxySampleValidator : public SampleValidator
             else
             {
                 std::cout << "Received Entity disposal of entity "
-                    << statistics::to_fastdds_type(data.local_entity()) << std::endl;
+                          << statistics::to_fastdds_type(data.local_entity()) << std::endl;
             }
 
             if (valid_entity)
@@ -754,6 +761,7 @@ struct ProxySampleValidator : public SampleValidator
             cv.notify_one();
         }
     }
+
 };
 
 struct ConnectionListSampleValidator : public SampleValidator
@@ -802,11 +810,12 @@ struct ConnectionListSampleValidator : public SampleValidator
                                         [&](const statistics::Connection&  total_msgs_elem_connection)
                                         {
                                             if (total_msgs_elem_connection.mode() == data_connection.mode()
-                                                && total_msgs_elem_connection.guid() == data_connection.guid())
+                                            && total_msgs_elem_connection.guid() == data_connection.guid())
                                             {
                                                 //! check locators
                                                 bool same_locators = true;
-                                                for (size_t i = 0; i < total_msgs_elem_connection.announced_locators().size(); i++)
+                                                for (size_t i = 0;
+                                                i < total_msgs_elem_connection.announced_locators().size(); i++)
                                                 {
                                                     bool locator_found = false;
                                                     for (size_t j = 0;
@@ -822,9 +831,12 @@ struct ConnectionListSampleValidator : public SampleValidator
 
                                                     if (!locator_found)
                                                     {
-                                                        EPROSIMA_LOG_ERROR(BBTestsMonitorService, "Locator not found in sample msg "
-                                                                << statistics::to_fastdds_type(total_msgs_elem_connection.announced_locators()[i]) <<
-                                                                " for local entity " << statistics::to_fastdds_type(total_msgs_elem.local_entity()));
+                                                        EPROSIMA_LOG_ERROR(BBTestsMonitorService,
+                                                        "Locator not found in sample msg "
+                                                            << statistics::to_fastdds_type(total_msgs_elem_connection.
+                                                                announced_locators()[i]) <<
+                                                            " for local entity " <<
+                                                            statistics::to_fastdds_type(total_msgs_elem.local_entity()));
                                                         same_locators = false;
                                                         break;
                                                     }
@@ -863,6 +875,7 @@ struct ConnectionListSampleValidator : public SampleValidator
             cv.notify_one();
         }
     }
+
 };
 
 struct IncompatibleQoSSampleValidator : public SampleValidator
@@ -899,6 +912,7 @@ struct IncompatibleQoSSampleValidator : public SampleValidator
             cv.notify_one();
         }
     }
+
 };
 
 struct LivelinessLostSampleValidator : public SampleValidator
@@ -935,6 +949,7 @@ struct LivelinessLostSampleValidator : public SampleValidator
             cv.notify_one();
         }
     }
+
 };
 
 struct LivelinessChangedSampleValidator : public SampleValidator
@@ -971,6 +986,7 @@ struct LivelinessChangedSampleValidator : public SampleValidator
             cv.notify_one();
         }
     }
+
 };
 
 struct DeadlineMissedSampleValidator : public SampleValidator
@@ -1007,6 +1023,7 @@ struct DeadlineMissedSampleValidator : public SampleValidator
             cv.notify_one();
         }
     }
+
 };
 
 struct SampleLostSampleValidator : public SampleValidator
@@ -1043,6 +1060,7 @@ struct SampleLostSampleValidator : public SampleValidator
             cv.notify_one();
         }
     }
+
 };
 
 void validator_selector(
@@ -2081,7 +2099,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_instance_disposals)
     ASSERT_EQ(3, MSPs.size());
 
     //! Expect 6 empty proxies (disposals) (3 entities per each)
-    for(auto& MSP : MSPs)
+    for (auto& MSP : MSPs)
     {
         MonitorServiceType::type msg;
         msg.local_entity(MSP.get_reader_guids().back());
@@ -2091,7 +2109,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_instance_disposals)
     }
 
     //! Plus 48 instance disposals (8 per instance)
-    for(uint32_t i = 0; i < 6*statistics::STATUSES_SIZE; i++)
+    for (uint32_t i = 0; i < 6 * statistics::STATUSES_SIZE; i++)
     {
         expected_msgs.push_back(MonitorServiceType::type());
     }
@@ -2104,7 +2122,7 @@ TEST(DDSMonitorServiceTest, monitor_service_advanced_instance_disposals)
     //! expected_msgs list will not be correct
     std::this_thread::sleep_for(std::chrono::seconds(3));
 
-    for(auto& MSP : MSPs)
+    for (auto& MSP : MSPs)
     {
         MSP.delete_reader();
         MSP.delete_writer();

@@ -32,9 +32,9 @@ namespace statistics {
 namespace rtps {
 
 struct DDSEntityStatus : public eprosima::fastdds::dds::IncompatibleQosStatus,
-                                 public eprosima::fastdds::dds::BaseStatus,
-                                 public eprosima::fastdds::dds::LivelinessChangedStatus,
-                                 public eprosima::fastdds::dds::DeadlineMissedStatus
+    public eprosima::fastdds::dds::BaseStatus,
+    public eprosima::fastdds::dds::LivelinessChangedStatus,
+    public eprosima::fastdds::dds::DeadlineMissedStatus
 {
 
 };

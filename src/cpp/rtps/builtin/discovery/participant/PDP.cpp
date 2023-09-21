@@ -991,21 +991,21 @@ bool PDP::get_all_local_proxies(
         std::vector<GUID_t>& guids)
 {
     std::lock_guard<std::recursive_mutex> guardPDP(*this->mp_mutex);
-    ParticipantProxyData *local_participant = getLocalParticipantProxyData();
+    ParticipantProxyData* local_participant = getLocalParticipantProxyData();
     guids.reserve(local_participant->m_writers->size() +
-                  local_participant->m_readers->size() +
-                  1);
+            local_participant->m_readers->size() +
+            1);
 
     //! Add the Participant entity to the local entities
     guids.push_back(local_participant->m_guid);
 
     // Add all the writers and readers belonging to the participant
-    for (auto &writer : *(local_participant->m_writers))
+    for (auto& writer : *(local_participant->m_writers))
     {
         guids.push_back(writer.second->guid());
     }
 
-    for (auto &reader : *(local_participant->m_readers))
+    for (auto& reader : *(local_participant->m_readers))
     {
         guids.push_back(reader.second->guid());
     }
@@ -1025,7 +1025,7 @@ bool PDP::get_serialized_proxy(
     if (guid.entityId == c_EntityId_RTPSParticipant)
     {
         for (auto part_proxy = participant_proxies_.begin();
-        part_proxy != participant_proxies_.end(); ++part_proxy)
+                part_proxy != participant_proxies_.end(); ++part_proxy)
         {
             if ((*part_proxy)->m_guid == guid)
             {
@@ -1045,11 +1045,11 @@ bool PDP::get_serialized_proxy(
     else if (guid.entityId.is_reader())
     {
         for (auto part_proxy = participant_proxies_.begin();
-        part_proxy != participant_proxies_.end(); ++part_proxy)
+                part_proxy != participant_proxies_.end(); ++part_proxy)
         {
             if ((*part_proxy)->m_guid.guidPrefix == guid.guidPrefix)
             {
-                for (auto &reader : *((*part_proxy)->m_readers))
+                for (auto& reader : *((*part_proxy)->m_readers))
                 {
                     if (reader.second->guid() == guid)
                     {
@@ -1071,11 +1071,11 @@ bool PDP::get_serialized_proxy(
     else if (guid.entityId.is_writer())
     {
         for (auto part_proxy = participant_proxies_.begin();
-        part_proxy != participant_proxies_.end(); ++part_proxy)
+                part_proxy != participant_proxies_.end(); ++part_proxy)
         {
             if ((*part_proxy)->m_guid.guidPrefix == guid.guidPrefix)
             {
-                for (auto &writer : *((*part_proxy)->m_writers))
+                for (auto& writer : *((*part_proxy)->m_writers))
                 {
                     if (writer.second->guid() == guid)
                     {
@@ -1102,7 +1102,8 @@ bool PDP::get_serialized_proxy(
     return ret;
 }
 
-void PDP::set_proxy_observer(const fastdds::statistics::rtps::IProxyObserver *proxy_observer)
+void PDP::set_proxy_observer(
+        const fastdds::statistics::rtps::IProxyObserver* proxy_observer)
 {
     proxy_observer_ = proxy_observer;
 }

@@ -31,15 +31,15 @@ struct MockStatusQueryable : public IStatusQueryable
 {
     MOCK_METHOD3(get_monitoring_status, bool (
                 const fastrtps::rtps::GUID_t& guid,
-                const uint32_t & id,
-                DDSEntityStatus*& status));
+                const uint32_t& id,
+                DDSEntityStatus * &status));
 };
 
 struct MockConnectionsQueryable : public IConnectionsQueryable
 {
     MOCK_METHOD2(get_entity_connections, bool(
                 const fastrtps::rtps::GUID_t& guid,
-                ConnectionList &conns_list));
+                ConnectionList & conns_list));
 };
 
 struct MockProxyQueryable : public IProxyQueryable
@@ -68,18 +68,22 @@ public:
             &mock_conns_q_,
             mock_status_q_,
             [&](fastrtps::rtps::RTPSWriter**,
-        fastrtps::rtps::WriterAttributes&,
-        const std::shared_ptr<fastrtps::rtps::IPayloadPool>&,
-        fastrtps::rtps::WriterHistory*,
-        fastrtps::rtps::WriterListener*,
-        const fastrtps::rtps::EntityId_t&,
-        bool)->bool{
-            return true;},
+            fastrtps::rtps::WriterAttributes&,
+            const std::shared_ptr<fastrtps::rtps::IPayloadPool>&,
+            fastrtps::rtps::WriterHistory*,
+            fastrtps::rtps::WriterListener*,
+            const fastrtps::rtps::EntityId_t&,
+            bool)->bool
+            {
+                return true;
+            },
             [&](
-        fastrtps::rtps::RTPSWriter*,
-        const fastrtps::TopicAttributes&,
-        const fastrtps::WriterQos&)->bool{
-            return true;},
+                fastrtps::rtps::RTPSWriter*,
+                const fastrtps::TopicAttributes&,
+                const fastrtps::WriterQos&)->bool
+            {
+                return true;
+            },
             mock_event_resource_)
     {
         monitor_srv_.set_writer(&writer);
@@ -108,14 +112,14 @@ public:
 
         ON_CALL(mock_proxy_q_, get_serialized_proxy(::testing::_, ::testing::_)).WillByDefault(testing::Invoke(
                     [](const fastrtps::rtps::GUID_t&,
-                                    fastrtps::rtps::CDRMessage_t*)
+                    fastrtps::rtps::CDRMessage_t*)
                     {
                         return true;
                     }));
 
         ON_CALL(mock_conns_q_, get_entity_connections(::testing::_, ::testing::_)).WillByDefault(testing::Invoke(
                     [](const fastrtps::rtps::GUID_t&,
-                                      ConnectionList &)
+                    ConnectionList&)
                     {
                         return true;
                     }));
@@ -200,7 +204,7 @@ TEST_F(MonitorServiceTests, multiple_dds_status_updates)
 
     //! Expect the getters for each status that is going to be updated
     EXPECT_CALL(mock_status_q_, get_monitoring_status(::testing::_, ::testing::_, ::testing::_)).
-            Times(n_local_entities*5);//statuses * n_local_entities
+            Times(n_local_entities * 5);//statuses * n_local_entities
 
     //! Trigger statuses updates for each entity
     for (auto& entity : mock_guids)
@@ -245,7 +249,7 @@ TEST_F(MonitorServiceTests, entity_removal_correctly_performs)
 
     //! Expect the getters for each status that is going to be updated
     EXPECT_CALL(mock_status_q_, get_monitoring_status(::testing::_, ::testing::_, ::testing::_)).
-            Times(5*5);
+            Times(5 * 5);
 
     //! Trigger statuses updates for each of the non-existent entity
     for (auto& entity : mock_guids)

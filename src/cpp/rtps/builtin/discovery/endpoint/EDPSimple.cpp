@@ -779,11 +779,11 @@ bool EDPSimple::removeLocalWriter(
     }
 
 #ifdef FASTDDS_STATISTICS
-        // notify monitor service about the new local entity proxy update
-        if (nullptr != this->mp_PDP->get_proxy_observer())
-        {
-            this->mp_PDP->get_proxy_observer()->on_local_entity_change(W->getGuid(), false);
-        }
+    // notify monitor service about the new local entity proxy update
+    if (nullptr != this->mp_PDP->get_proxy_observer())
+    {
+        this->mp_PDP->get_proxy_observer()->on_local_entity_change(W->getGuid(), false);
+    }
 #endif //FASTDDS_STATISTICS
 
     return mp_PDP->removeWriterProxyData(W->getGuid());
@@ -832,11 +832,11 @@ bool EDPSimple::removeLocalReader(
     }
 
 #ifdef FASTDDS_STATISTICS
-        // notify monitor service about the new local entity proxy update
-        if (nullptr != this->mp_PDP->get_proxy_observer())
-        {
-            this->mp_PDP->get_proxy_observer()->on_local_entity_change(R->getGuid(), false);
-        }
+    // notify monitor service about the new local entity proxy update
+    if (nullptr != this->mp_PDP->get_proxy_observer())
+    {
+        this->mp_PDP->get_proxy_observer()->on_local_entity_change(R->getGuid(), false);
+    }
 #endif //FASTDDS_STATISTICS
 
     return mp_PDP->removeReaderProxyData(R->getGuid());

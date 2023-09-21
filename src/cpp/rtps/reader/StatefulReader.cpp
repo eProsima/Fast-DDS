@@ -1477,7 +1477,7 @@ void StatefulReader::change_read_by_user(
 #ifdef FASTDDS_STATISTICS
 
 bool StatefulReader::get_connections(
-        fastdds::statistics::rtps::ConnectionList &connection_list)
+        fastdds::statistics::rtps::ConnectionList& connection_list)
 {
     connection_list.reserve(matched_writers_.size());
 
@@ -1505,9 +1505,10 @@ bool StatefulReader::get_connections(
             //! equal to the used_locators
             auto locators = writer->remote_locators_shrinked();
             std::vector<fastdds::statistics::detail::Locator_s> statistics_locators;
-            std::for_each(locators.begin(), locators.end(), [&statistics_locators](const Locator_t& locator){
-                statistics_locators.push_back(fastdds::statistics::to_statistics_type(locator));
-            });
+            std::for_each(locators.begin(), locators.end(), [&statistics_locators](const Locator_t& locator)
+                    {
+                        statistics_locators.push_back(fastdds::statistics::to_statistics_type(locator));
+                    });
 
             connection.announced_locators(statistics_locators);
             connection.used_locators(statistics_locators);
@@ -1520,7 +1521,7 @@ bool StatefulReader::get_connections(
     return true;
 }
 
-#endif
+#endif // ifdef FASTDDS_STATISTICS
 
 void StatefulReader::send_acknack(
         const WriterProxy* writer,
