@@ -38,7 +38,7 @@ add_executable(DDSSQLFilterTests
     ${DDSSQLFILTER_SOURCES}
     ${DDSSQLFILTER_LIB_SOURCES}
     )
-target_compile_definitions(DDSSQLFilterTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(DDSSQLFilterTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )

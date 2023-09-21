@@ -54,7 +54,7 @@ if(ANDROID)
 endif()
 
 add_executable(SubscriberTests ${SUBSCRIBERTESTS_SOURCE})
-target_compile_definitions(SubscriberTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(SubscriberTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -68,7 +68,14 @@ target_link_libraries(SubscriberTests fastrtps fastcdr foonathan_memory
 add_gtest(SubscriberTests SOURCES ${SUBSCRIBERTESTS_SOURCE})
 
 add_executable(DataReaderTests ${DATAREADERTESTS_SOURCE})
+<<<<<<< HEAD
 target_compile_definitions(DataReaderTests PRIVATE FASTRTPS_NO_LIB
+=======
+target_compile_definitions(DataReaderTests PRIVATE
+    BOOST_ASIO_STANDALONE
+    ASIO_STANDALONE
+    ASIO_DISABLE_VISIBILITY
+>>>>>>> e00b8e323 (Use FASTRTPS_NO_LIB on unittest root folder (#3856))
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -82,7 +89,7 @@ target_link_libraries(DataReaderTests fastrtps fastcdr foonathan_memory
 add_gtest(DataReaderTests SOURCES ${DATAREADERTESTS_SOURCE})
 
 add_executable(DataReaderInstanceTests ${DATAREADERINSTANCETESTS_SOURCE})
-target_compile_definitions(DataReaderInstanceTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(DataReaderInstanceTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -96,7 +103,7 @@ target_link_libraries(DataReaderInstanceTests foonathan_memory
 add_gtest(DataReaderInstanceTests SOURCES ${DATAREADERINSTANCETESTS_SOURCE})
 
 add_executable(DataReaderHistoryTests ${DATAREADERHISTORYTESTS_SOURCE})
-target_compile_definitions(DataReaderHistoryTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(DataReaderHistoryTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     $<$<BOOL:${MSVC}>:NOMINMAX> # avoid conflic with std::min & std::max in visual studio

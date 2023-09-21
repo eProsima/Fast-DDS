@@ -75,7 +75,7 @@ endif()
 
 
 add_executable(BuiltinDataSerializationTests ${BUILTIN_DATA_SERIALIZATION_TESTS_SOURCE})
-target_compile_definitions(BuiltinDataSerializationTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(BuiltinDataSerializationTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
