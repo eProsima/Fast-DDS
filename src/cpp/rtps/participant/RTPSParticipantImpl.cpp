@@ -417,6 +417,10 @@ RTPSParticipantImpl::RTPSParticipantImpl(
     }
 #endif // if HAVE_SECURITY
 
+    // Copy NetworkFactory network_configuration to participant attributes prior to proxy creation
+    // NOTE: all transports already registered before
+    m_att.builtin.network_configuration = m_network_Factory.network_configuration();
+
     mp_builtinProtocols = new BuiltinProtocols();
 
     // Initialize builtin protocols

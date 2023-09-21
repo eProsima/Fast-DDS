@@ -159,6 +159,7 @@ enum ParameterId_t : uint16_t
     PID_CUSTOM_RELATED_SAMPLE_IDENTITY      = 0x800f,
     PID_DISABLE_POSITIVE_ACKS               = 0x8005,
     PID_DATASHARING                         = 0x8006,
+    PID_NETWORK_CONFIGURATION_SET           = 0x8007,
 };
 
 /*!
@@ -886,6 +887,41 @@ public:
 
 #define PARAMETER_BUILTINENDPOINTSET_LENGTH 4
 
+/**
+ * @ingroup PARAMETER_MODULE
+ */
+class ParameterNetworkConfigSet_t : public Parameter_t
+{
+public:
+
+    //!Network Config Set <br> By default, 0.
+    fastrtps::rtps::NetworkConfigSet_t netconfigSet;
+
+    /**
+     * @brief Constructor without parameters
+     */
+    ParameterNetworkConfigSet_t()
+        : netconfigSet(0)
+    {
+    }
+
+    /**
+     * Constructor using a parameter PID and the parameter length
+     *
+     * @param pid Pid of the parameter
+     * @param in_length Its associated length
+     */
+    ParameterNetworkConfigSet_t(
+            ParameterId_t pid,
+            uint16_t in_length)
+        : Parameter_t(pid, in_length)
+        , netconfigSet(0)
+    {
+    }
+
+};
+
+#define PARAMETER_NETWORKCONFIGSET_LENGTH 4
 
 /**
  * @ingroup PARAMETER_MODULE

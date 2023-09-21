@@ -785,8 +785,10 @@ TEST_F(SHMTransportTests, transform_remote_locator_returns_input_locator)
 
     // Then
     Locator_t otherLocator;
-    ASSERT_TRUE(transportUnderTest.transform_remote_locator(remote_locator, otherLocator));
+    ASSERT_TRUE(transportUnderTest.transform_remote_locator(remote_locator, otherLocator, false, false));
     ASSERT_EQ(otherLocator, remote_locator);
+    // NOTE: transform_remote_locator only checks for kind compatibility in SharedMemTransport, no transformation is
+    // performed and hence \c allowed_remote_localhost and \c allowed_local_localhost args are irrelevant.
 }
 
 TEST_F(SHMTransportTests, all_shared_mem_locators_are_local)
