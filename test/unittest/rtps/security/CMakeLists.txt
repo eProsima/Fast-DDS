@@ -57,7 +57,7 @@ if(WIN32)
     set_source_files_properties(${CMAKE_CURRENT_SOURCE_DIR}/SecurityInitializationTests.cpp PROPERTIES COMPILE_OPTIONS /bigobj)
 endif()
 
-target_compile_definitions(SecurityAuthentication PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(SecurityAuthentication PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>

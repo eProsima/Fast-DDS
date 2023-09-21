@@ -51,7 +51,7 @@ add_executable(BuiltinPKIDH ${COMMON_SOURCES_AUTH_PLUGIN_TEST_SOURCE}
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/IPLocator.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/utils/SystemInfo.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/BuiltinPKIDHTests.cpp)
-target_compile_definitions(BuiltinPKIDH PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(BuiltinPKIDH PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>

@@ -49,7 +49,7 @@ set(TIMETESTS_SOURCE TimeTests.cpp
     ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp)
 
 add_executable(CacheChangeTests ${CACHECHANGETESTS_SOURCE})
-target_compile_definitions(CacheChangeTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(CacheChangeTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -59,7 +59,7 @@ target_link_libraries(CacheChangeTests GTest::gtest)
 add_gtest(CacheChangeTests SOURCES ${CACHECHANGETESTS_SOURCE})
 
 add_executable(GuidUtilsTests ${GUID_UTILS_TESTS_SOURCE})
-target_compile_definitions(GuidUtilsTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(GuidUtilsTests PRIVATE
     BOOST_ASIO_STANDALONE
     ASIO_STANDALONE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
@@ -80,7 +80,7 @@ endif()
 add_gtest(GuidUtilsTests SOURCES ${GUID_UTILS_TESTS_SOURCE})
 
 add_executable(SequenceNumberTests ${SEQUENCENUMBERTESTS_SOURCE})
-target_compile_definitions(SequenceNumberTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(SequenceNumberTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -90,7 +90,7 @@ target_link_libraries(SequenceNumberTests GTest::gtest)
 add_gtest(SequenceNumberTests SOURCES ${SEQUENCENUMBERTESTS_SOURCE})
 
 add_executable(PortParametersTests ${PORTPARAMETERSTESTS_SOURCE})
-target_compile_definitions(PortParametersTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(PortParametersTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -107,7 +107,7 @@ add_gtest(PortParametersTests SOURCES ${PORTPARAMETERSTESTS_SOURCE} LABELS "NoMe
 set(GUIDPREFIXTESTS_SOURCE GuidPrefixTests.cpp)
 
 add_executable(GuidPrefixTests ${GUIDPREFIXTESTS_SOURCE})
-target_compile_definitions(GuidPrefixTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(GuidPrefixTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -124,7 +124,7 @@ add_gtest(GuidPrefixTests SOURCES ${GUIDPREFIXTESTS_SOURCE} LABELS "NoMemoryChec
 set(ENTITYIDTESTS_SOURCE EntityIdTests.cpp)
 
 add_executable(EntityIdTests ${ENTITYIDTESTS_SOURCE})
-target_compile_definitions(EntityIdTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(EntityIdTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -141,7 +141,7 @@ add_gtest(EntityIdTests SOURCES ${ENTITYIDTESTS_SOURCE} LABELS "NoMemoryCheck")
 set(GUIDTESTS_SOURCE GuidTests.cpp)
 
 add_executable(GuidTests ${GUIDTESTS_SOURCE})
-target_compile_definitions(GuidTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(GuidTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
@@ -166,7 +166,7 @@ endif()
 #############
 
 add_executable(TimeTests ${TIMETESTS_SOURCE})
-target_compile_definitions(TimeTests PRIVATE FASTRTPS_NO_LIB
+target_compile_definitions(TimeTests PRIVATE
     $<$<AND:$<NOT:$<BOOL:${WIN32}>>,$<STREQUAL:"${CMAKE_BUILD_TYPE}","Debug">>:__DEBUG>
     $<$<BOOL:${INTERNAL_DEBUG}>:__INTERNALDEBUG> # Internal debug activated.
     )
