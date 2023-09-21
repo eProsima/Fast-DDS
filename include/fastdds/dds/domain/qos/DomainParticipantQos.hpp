@@ -82,9 +82,12 @@ public:
                (this->wire_protocol_ == b.wire_protocol()) &&
                (this->transport_ == b.transport()) &&
                (this->name_ == b.name()) &&
+               (this->builtin_controllers_sender_thread_ == b.builtin_controllers_sender_thread()) &&
                (this->timed_events_thread_ == b.timed_events_thread()) &&
                (this->discovery_server_thread_ == b.discovery_server_thread()) &&
+#if HAVE_SECURITY
                (this->security_log_thread_ == b.security_log_thread()) &&
+#endif // if HAVE_SECURITY
                (this->flow_controllers_ == b.flow_controllers());
     }
 
@@ -418,6 +421,7 @@ public:
         discovery_server_thread_ = value;
     }
 
+#if HAVE_SECURITY
     /**
      * Getter for security log ThreadSettings
      *
@@ -448,6 +452,8 @@ public:
     {
         security_log_thread_ = value;
     }
+
+#endif // if HAVE_SECURITY
 
 private:
 
@@ -487,8 +493,10 @@ private:
     //! Thread settings for the discovery server thread
     rtps::ThreadSettings discovery_server_thread_;
 
+#if HAVE_SECURITY
     //! Thread settings for the security log thread
     rtps::ThreadSettings security_log_thread_;
+#endif // if HAVE_SECURITY
 
 };
 
