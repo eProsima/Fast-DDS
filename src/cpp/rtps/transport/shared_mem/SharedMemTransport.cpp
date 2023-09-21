@@ -290,7 +290,7 @@ bool SharedMemTransport::init(
             auto packets_file_consumer = std::unique_ptr<SHMPacketFileConsumer>(
                 new SHMPacketFileConsumer(configuration_.rtps_dump_file()));
 
-            packet_logger_ = std::make_shared<PacketsLog<SHMPacketFileConsumer>>(0);
+            packet_logger_ = std::make_shared<PacketsLog<SHMPacketFileConsumer>>(0, configuration_.dump_thread());
             packet_logger_->RegisterConsumer(std::move(packets_file_consumer));
         }
     }
@@ -342,6 +342,7 @@ SharedMemChannelResource* SharedMemTransport::CreateInputChannelResource(
         locator,
         receiver,
         configuration_.rtps_dump_file(),
+        configuration_.dump_thread(),
         true,
         configuration_.get_thread_config_for_port(locator.port));
 }

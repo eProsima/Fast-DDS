@@ -40,6 +40,7 @@ public:
             const Locator& locator,
             TransportReceiverInterface* receiver,
             const std::string& dump_file,
+            const ThreadSettings& dump_thr_config,
             bool should_init_thread,
             const ThreadSettings& thr_config)
         : ChannelResource()
@@ -53,7 +54,7 @@ public:
             auto packets_file_consumer = std::unique_ptr<SHMPacketFileConsumer>(
                 new SHMPacketFileConsumer(dump_file));
 
-            packet_logger_ = std::make_shared<PacketsLog<SHMPacketFileConsumer>>(locator.port);
+            packet_logger_ = std::make_shared<PacketsLog<SHMPacketFileConsumer>>(locator.port, dump_thr_config);
             packet_logger_->RegisterConsumer(std::move(packets_file_consumer));
         }
 
