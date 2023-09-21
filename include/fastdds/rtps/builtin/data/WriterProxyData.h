@@ -87,6 +87,28 @@ public:
         return m_guid;
     }
 
+    RTPS_DllAPI void networkConfiguration(
+            const NetworkConfigSet_t& networkConfiguration)
+    {
+        m_networkConfiguration = networkConfiguration;
+    }
+
+    RTPS_DllAPI void networkConfiguration(
+            NetworkConfigSet_t&& networkConfiguration)
+    {
+        m_networkConfiguration = std::move(networkConfiguration);
+    }
+
+    RTPS_DllAPI const NetworkConfigSet_t& networkConfiguration() const
+    {
+        return m_networkConfiguration;
+    }
+
+    RTPS_DllAPI NetworkConfigSet_t& networkConfiguration()
+    {
+        return m_networkConfiguration;
+    }
+
     RTPS_DllAPI void persistence_guid(
             const GUID_t& guid)
     {
@@ -439,6 +461,9 @@ private:
 
     //!GUID
     GUID_t m_guid;
+
+    //!Network configuration
+    NetworkConfigSet_t m_networkConfiguration;
 
     //!Holds locator information
     RemoteLocatorList remote_locators_;

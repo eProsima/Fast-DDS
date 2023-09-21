@@ -40,7 +40,7 @@ TCPAcceptorBasic::TCPAcceptorBasic(
     : TCPAcceptor(io_service, interface, locator)
     , socket_(*io_service_)
 {
-    endpoint_ = asio::ip::tcp::endpoint(asio::ip::address_v4::from_string(interface),
+    endpoint_ = asio::ip::tcp::endpoint(asio::ip::address::from_string(interface),
                     IPLocator::getPhysicalPort(locator_));
 }
 

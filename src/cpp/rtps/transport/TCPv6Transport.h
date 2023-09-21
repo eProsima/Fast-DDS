@@ -121,6 +121,11 @@ protected:
             const asio::ip::tcp::endpoint& endpoint,
             Locator& locator) const override;
 
+    //! Checks if the IP addresses are the same without taking into account the IPv6 scope
+    bool compare_ips(
+            const std::string& ip1,
+            const std::string& ip2) const;
+
 public:
 
     RTPS_DllAPI TCPv6Transport(

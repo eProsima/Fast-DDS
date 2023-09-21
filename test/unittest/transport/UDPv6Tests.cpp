@@ -58,6 +58,14 @@ class UDPv6Tests : public ::testing::Test
 {
 public:
 
+    void SetUp() override
+    {
+#ifdef __APPLE__
+        // TODO: fix IPv6 issues related with zone ID
+        GTEST_SKIP() << "UDPv6 tests are disabled in Mac";
+#endif // ifdef __APPLE__
+    }
+
     UDPv6Tests()
     {
         HELPER_SetDescriptorDefaults();

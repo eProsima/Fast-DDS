@@ -176,6 +176,11 @@ bool SharedMemTransport::is_local_locator(
     return true;
 }
 
+bool SharedMemTransport::is_localhost_allowed() const
+{
+    return true;
+}
+
 void SharedMemTransport::delete_input_channel(
         SharedMemChannelResource* channel)
 {
@@ -392,7 +397,9 @@ Locator SharedMemTransport::RemoteToMainLocal(
 
 bool SharedMemTransport::transform_remote_locator(
         const Locator& remote_locator,
-        Locator& result_locator) const
+        Locator& result_locator,
+        bool,
+        bool) const
 {
     if (IsLocatorSupported(remote_locator))
     {
