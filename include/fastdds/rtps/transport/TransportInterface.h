@@ -20,10 +20,16 @@
 #include <fastdds/rtps/common/Locator.h>
 #include <fastdds/rtps/common/LocatorSelector.hpp>
 #include <fastdds/rtps/common/PortParameters.h>
+<<<<<<< HEAD
 #include <fastdds/rtps/network/SenderResource.h>
 #include <fastdds/rtps/transport/TransportDescriptorInterface.h>
 #include <fastdds/rtps/transport/TransportReceiverInterface.h>
 #include <fastdds/rtps/attributes/PropertyPolicy.h>
+=======
+#include <fastdds/rtps/transport/SenderResource.h>
+#include <fastdds/rtps/transport/TransportDescriptorInterface.h>
+#include <fastdds/rtps/transport/TransportReceiverInterface.h>
+>>>>>>> c8ab8602a (Fix asymmetric whitelist matching (#3733))
 
 namespace eprosima {
 namespace fastdds {
